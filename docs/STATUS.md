@@ -6,7 +6,7 @@
 
 # STATUS.md — AIMM
 
-**2026-10-28 update — Hope speech waveform transient display, build 2026-10-28.1.** The live speaking trace uses raw output time-domain peaks on a fixed −36 to 0 dB range with a 90 ms peak hold. AGC normalization and CSS scale shrink are removed; the analyser fallback is preserved. The Cloudflare production deployment serves the change. A live voice-conversation visual check remains; read-aloud preview follows a separate path.
+**2026-10-28 update — Hope speech waveform transient display, build 2026-10-28.2.** The live speaking trace uses raw output time-domain peaks on a fixed −36 to 0 dB range with a 90 ms peak hold. Speaking bars cap at 42px, 30% below the former 60px maximum; idle/listening retain their prior height. The analyser fallback is preserved. Cloudflare production serves the change. A live voice-conversation visual check remains; read-aloud preview follows a separate path.
 
 **Hope composer — Luna route branch:** four controls are shown: Send, Clear chat, Agent/Luna route, and Primary/Backup account. Screenshots can be dropped or pasted on the textarea. The composer has no mic, mute, or Listen control; Spacebar starts the selected voice route.
 

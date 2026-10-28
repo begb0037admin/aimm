@@ -1962,8 +1962,9 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #hopeRail .rail-head .oz-rail-avatar{align-self:center;order:1}
 #hopeRail .rail-head .oz-rail-title{align-self:stretch;flex:0 1 auto;order:2}
 /* Full-width Hope speech trace with visible transient peaks. */
-/* The 76px band has 60px of usable height. Active bars show raw output
-   peaks on a fixed dB scale; the idle shimmer remains the existing design. */
+/* The 76px band has 60px of usable height. Speaking bars cap at 42px so
+   raw output peaks remain visible without filling the band; idle/listening keep
+   their existing 60px shimmer. */
 #hopeRail #hopeWave{order:5;flex:0 0 76px;min-width:60px;height:76px;align-self:stretch;overflow:visible;margin-top:10px;box-sizing:border-box;display:grid;grid-template-columns:repeat(54,1fr);align-items:center;gap:3px;padding:8px 12px}
 #hopeRail #hopeWave .wave-bar{height:8px;min-height:1px;max-width:2.75px;border-radius:99px;background:linear-gradient(180deg,#5eead4,#a78bfa,#f472b6);opacity:.3;transition:height .04s linear,opacity .04s linear,background-color .35s ease,box-shadow .35s ease;transform-origin:center}
 /* Bar width and spacing stay consistent across standby, listening and speech. */
@@ -3598,7 +3599,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-28.1';
+const AIMM_BUILD = '2026-10-28.2';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -16474,14 +16475,8 @@ document.getElementById('rtCallBtn').addEventListener('click',()=>{
 const HOPE_WAVE = (function(){
   const FULL_BAR_COUNT = 54;                 // PTT ui/app.js:17
   const WAVE_PHASE_SCALE = FULL_BAR_COUNT;   // PTT ui/app.js:137
-  const ACTIVE_BAR_MAX = 60, ACTIVE_BAR_MIN = 4;   // PTT NATIVE full-view paintBar(60,4) — speaking
-  // 2026-09-06 round 4: PTT's actual source (ui/app.js idleShimmerTick, read
-  // directly from begb0037admin/windows-mac-dictation) uses the SAME size as
-  // active — paintBar(60,4) — not a smaller idle-only size. Per PTT's own
-  // historical instruction (Kevin, 2026-07-30 PTT commit): "use the active
-  // as the default in terms of size and bars." The AIMM port's 26/3 was a
-  // drift from that — matching PTT exactly now.
-  const IDLE_BAR_MAX = ACTIVE_BAR_MAX, IDLE_BAR_MIN = ACTIVE_BAR_MIN;
+  const ACTIVE_BAR_MAX = 42, ACTIVE_BAR_MIN = 4;   // speaking peak capped 30% below the former 60px maximum
+  const IDLE_BAR_MAX = 60, IDLE_BAR_MIN = 4;   // preserve existing idle/listening shimmer height
   const PILL_ANIMATION_BOOST = 1.8;         // PTT ui/app.js:144 — pill-view liveliness, ACTIVE only
   let bars = [];
   let audioLevels = new Array(FULL_BAR_COUNT).fill(0);   // PTT ui/app.js:22 (max(54, 48) === 54)
@@ -16657,15 +16652,8 @@ const HOPE_VOICE = (function(){
     raf = requestAnimationFrame(tick);
   }
 
-  // Listening (2026-09-06, round 6 — final simplification, Kevin: "drop the
-  // pulsating, keep it the same as standby but in colour"): NOT real-audio
-  // driven at all. Same exact idleShimmerTick() as true standby — same size
-  // (IDLE_BAR_MAX/MIN, now aliased to ACTIVE_BAR_MAX/MIN so all three states
-  // share one identical size per Kevin's "we need consistency" — the bars
-  // must look structurally the same in every state, colour is the only
-  // difference), same synthetic wobble, same movement. `mono=false` is the
-  // ONLY difference from true standby's `mono=true` — paintBar's own mono
-  // flag switches auroraColor() in for chromeColor(), nothing else changes.
+  // Listening is not audio-driven. It uses the existing idle shimmer and
+  // 60px bar height, recoloured with the in-call accent.
   function setListening(){
     const w = wave();
     if (!w) return;
