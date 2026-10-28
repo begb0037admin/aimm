@@ -2115,7 +2115,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <div class="oz-rail-status" id="hopeRailStatusTxt">chat &amp; voice assistant</div>
     </div>
     <!-- Idle/listening retain the shimmer; speaking uses output peaks with a
-         fixed dB scale and short peak hold. -->
+         linear short-window energy trace. -->
     <div class="hope-wave" id="hopeWave" aria-hidden="true" data-speaking="0"></div>
     <button id="railToggle" title="Collapse — reopen any time with the Chat button">⇥</button>
   </div>
@@ -3598,7 +3598,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-28.3';
+const AIMM_BUILD = '2026-10-28.4';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -16532,24 +16532,19 @@ const HOPE_WAVE = (function(){
     const wobble = 0.5 + 0.5 * Math.sin(now / 130 + frac * 1.7) + 0.3 * Math.sin(now / 260 + frac * 0.6);
     return Math.max(0, Math.min(1, level * (0.3 + 0.7 * wobble) * boost));
   }
-  // Raw output peaks use a linear amplitude scale, short hold, and fast CSS
-  // transition so loud attacks remain distinct from quieter speech.
-  const PEAK_NOISE_FLOOR = 0.02;
-  const PEAK_HOLD_MS = 18;
-  let peakHold = 0, peakTs = 0;
-  function peakToLevel(peak){
-    return Math.max(0, Math.min(1, (peak - PEAK_NOISE_FLOOR) / (1 - PEAK_NOISE_FLOOR)));
+  // A fixed linear energy range preserves differences between voiced frames;
+  // no AGC or peak hold is applied to the real speech envelope.
+  const ENVELOPE_FLOOR = 0.015;
+  const ENVELOPE_CEILING = 0.42;
+  function envelopeToLevel(envelope){
+    return Math.max(0, Math.min(1, (envelope - ENVELOPE_FLOOR) / (ENVELOPE_CEILING - ENVELOPE_FLOOR)));
   }
-  function resetPeakHistory(){ peakHold = 0; peakTs = 0; audioLevels.fill(0); }
-  function feed(value, isTimeDomainPeak){
+  function resetPeakHistory(){ audioLevels.fill(0); }
+  function feed(value, isRawEnvelope){
     if (!bars.length) return;
     let level;
-    if (isTimeDomainPeak){
-      const now = performance.now();
-      const dt = peakTs ? Math.max(0, now - peakTs) : 16;
-      peakHold = Math.max(value, peakHold * Math.exp(-dt / PEAK_HOLD_MS));
-      peakTs = now;
-      level = peakToLevel(peakHold);
+    if (isRawEnvelope){
+      level = envelopeToLevel(value);
     } else {
       // Compatibility fallback for SDK versions without an output analyser.
       level = Math.pow(Math.min(1, Math.max(0, value) * 18), 0.4);
@@ -16560,8 +16555,8 @@ const HOPE_WAVE = (function(){
     const now = Date.now();
     for (let i = 0; i < bars.length; i++){
       const barLevel = audioLevels[offset + i];
-      const visibleLevel = isTimeDomainPeak ? barLevel : shapeLevel(barLevel, i, bars.length, now, PILL_ANIMATION_BOOST);
-      paintBar(bars[i], visibleLevel, ACTIVE_BAR_MAX, isTimeDomainPeak ? 1 : ACTIVE_BAR_MIN, i, bars.length, false);
+      const visibleLevel = isRawEnvelope ? barLevel : shapeLevel(barLevel, i, bars.length, now, PILL_ANIMATION_BOOST);
+      paintBar(bars[i], visibleLevel, ACTIVE_BAR_MAX, isRawEnvelope ? 1 : ACTIVE_BAR_MIN, i, bars.length, false);
     }
   }
   function reset(){ resetPeakHistory(); }   // PTT ui/app.js:219 resetWaveform
@@ -16599,9 +16594,9 @@ const HOPE_VOICE = (function(){
   const conv = () => (typeof EL !== 'undefined' && EL && EL.conversation) ? EL.conversation : null;
 
   // The pinned @elevenlabs/client 0.1.7 exposes its output AnalyserNode at
-  // conversation.output.analyser. Read peaks from the newest 512 samples
-  // (~11 ms at 48 kHz) instead of the SDK's smoothed frequency average.
-  function readOutputPeak(c){
+  // conversation.output.analyser. Measure RMS over the newest 512 samples
+  // (~11 ms at 48 kHz) to keep brief attacks distinct without equalizing peaks.
+  function readOutputEnvelope(c){
     try {
       const analyser = c && c.output && c.output.analyser;
       if (!analyser || !Number.isFinite(analyser.fftSize) || analyser.fftSize < 1) return null;
@@ -16614,23 +16609,28 @@ const HOPE_VOICE = (function(){
       if (timeDomainData instanceof Float32Array) analyser.getFloatTimeDomainData(timeDomainData);
       else if (typeof analyser.getByteTimeDomainData === 'function') analyser.getByteTimeDomainData(timeDomainData);
       else return null;
-      let peak = 0;
+      let sumSquares = 0;
       const start = Math.max(0, timeDomainData.length - 512);
+      const sampleCount = timeDomainData.length - start;
+      if (!sampleCount) return null;
       if (timeDomainData instanceof Float32Array){
-        for (let i = start; i < timeDomainData.length; i++) peak = Math.max(peak, Math.abs(timeDomainData[i]));
+        for (let i = start; i < timeDomainData.length; i++) sumSquares += timeDomainData[i] * timeDomainData[i];
       } else {
-        for (let i = start; i < timeDomainData.length; i++) peak = Math.max(peak, Math.abs(timeDomainData[i] - 128) / 128);
+        for (let i = start; i < timeDomainData.length; i++){
+          const sample = (timeDomainData[i] - 128) / 128;
+          sumSquares += sample * sample;
+        }
       }
-      return peak;
+      return Math.sqrt(sumSquares / sampleCount);
     } catch(_){ return null; }
   }
   function tick(){
     const w = wave();
     if (!w || w.dataset.speaking !== '1'){ raf = null; return; }
     const c = conv();
-    const peak = readOutputPeak(c);
-    if (peak !== null){
-      HOPE_WAVE.feed(peak, true);
+    const envelope = readOutputEnvelope(c);
+    if (envelope !== null){
+      HOPE_WAVE.feed(envelope, true);
     } else {
       let volume = null;
       try {

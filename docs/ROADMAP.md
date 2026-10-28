@@ -8,9 +8,9 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Hope speech waveform transient display — build 2026-10-28.3
+## Hope speech waveform transient display — build 2026-10-28.4
 
-The live speaking trace reads linear peak amplitude from the newest 512 output samples (~11 ms), with an 18 ms peak hold and 10 ms visual transition. Speaking bars cap at 42px, 30% below the former 60px maximum; idle/listening retain their original 60px height. The SDK fallback remains when no output analyser is exposed. Cloudflare production serves the update; a live voice-conversation visual check remains because read-aloud preview uses a separate path. See `docs/STATUS.md` and `docs/HANDOVER.md`.
+Each speaking bar displays RMS energy across the newest 512 output samples (~11 ms), mapped on a fixed linear scale with no AGC or peak hold. Heights therefore track frame-by-frame energy rather than the loudest sample in each window. Speaking bars cap at 42px; idle/listening retain their 60px shimmer. Cloudflare production serves the update. The SDK fallback remains if no output analyser is exposed; read-aloud preview does not exercise the live conversation analyser. See `docs/STATUS.md` and `docs/HANDOVER.md`.
 
 ## Plugin inventory + local scan — build 2026-10-22.1
 

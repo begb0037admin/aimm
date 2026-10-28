@@ -6,7 +6,7 @@
 
 # STATUS.md — AIMM
 
-**2026-10-28 update — Hope speech waveform transient display, build 2026-10-28.3.** The live speaking trace uses linear peak amplitude from the newest 512 output samples (~11 ms), with an 18 ms peak hold and 10 ms visual transition. Speaking bars cap at 42px, 30% below the former 60px maximum; idle/listening retain their prior height. The analyser fallback is preserved. Cloudflare production serves the change. A live voice-conversation visual check remains; read-aloud preview follows a separate path.
+**2026-10-28 update — Hope speech waveform transient display, build 2026-10-28.4.** The live speaking trace displays RMS energy from each newest 512-sample output window (~11 ms) on a fixed linear scale, without AGC or peak hold. Bars cap at 42px while idle/listening retain their previous height. The analyser fallback is preserved. Cloudflare production serves the change; live voice-turn visual confirmation remains.
 
 **Hope composer — Luna route branch:** four controls are shown: Send, Clear chat, Agent/Luna route, and Primary/Backup account. Screenshots can be dropped or pasted on the textarea. The composer has no mic, mute, or Listen control; Spacebar starts the selected voice route.
 
