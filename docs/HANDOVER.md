@@ -14,9 +14,9 @@ GitHub `main` commit `1078d45c9ef2149d363928c53d9d91babc98da15` updates `index.h
 
 # HANDOVER.md — AIMM
 
-## Active checkpoint — Hope speech waveform transient display, build 2026-10-28.2
+## Active checkpoint — Hope speech waveform transient display, build 2026-10-28.3
 
-Cloudflare production runs the `aimm` Worker from GitHub `main`. Hope's speaking trace reads raw output time-domain peaks, maps them to a fixed −36 to 0 dB range, and holds peaks for 90 ms. Speaking bars now cap at 42px, 30% below the former 60px maximum, while idle/listening retain their prior height. The SDK volume/synthetic fallback remains if the analyser is unavailable. The app bundle and build stamp were verified live. The read-aloud preview does not exercise the live conversation analyser, so visual confirmation during an actual voice turn remains with Kevin. No unrelated routes or mix settings were changed.
+Cloudflare production runs the `aimm` Worker from GitHub `main`. Hope's speaking trace reads linear peak amplitude from the newest 512 output samples (~11 ms), with an 18 ms peak hold and 10 ms visual transition. Speaking bars cap at 42px, 30% below the former 60px maximum, while idle/listening retain their prior height. The SDK volume/synthetic fallback remains if the analyser is unavailable. The app bundle and build stamp were verified live. The read-aloud preview does not exercise the live conversation analyser, so visual confirmation during an actual voice turn remains with Kevin. No unrelated routes or mix settings were changed.
 
 ## Active checkpoint — all Fix Queue questions and displays aligned, build `.76` prepared, 2026-10-21
 

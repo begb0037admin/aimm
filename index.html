@@ -1962,11 +1962,10 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #hopeRail .rail-head .oz-rail-avatar{align-self:center;order:1}
 #hopeRail .rail-head .oz-rail-title{align-self:stretch;flex:0 1 auto;order:2}
 /* Full-width Hope speech trace with visible transient peaks. */
-/* The 76px band has 60px of usable height. Speaking bars cap at 42px so
-   raw output peaks remain visible without filling the band; idle/listening keep
-   their existing 60px shimmer. */
+/* Speaking bars cap at 42px and use a short-window linear peak trace; idle and
+   listening keep their existing 60px shimmer. */
 #hopeRail #hopeWave{order:5;flex:0 0 76px;min-width:60px;height:76px;align-self:stretch;overflow:visible;margin-top:10px;box-sizing:border-box;display:grid;grid-template-columns:repeat(54,1fr);align-items:center;gap:3px;padding:8px 12px}
-#hopeRail #hopeWave .wave-bar{height:8px;min-height:1px;max-width:2.75px;border-radius:99px;background:linear-gradient(180deg,#5eead4,#a78bfa,#f472b6);opacity:.3;transition:height .04s linear,opacity .04s linear,background-color .35s ease,box-shadow .35s ease;transform-origin:center}
+#hopeRail #hopeWave .wave-bar{height:8px;min-height:1px;max-width:2.75px;border-radius:99px;background:linear-gradient(180deg,#5eead4,#a78bfa,#f472b6);opacity:.3;transition:height .01s linear,opacity .01s linear,background-color .35s ease,box-shadow .35s ease;transform-origin:center}
 /* Bar width and spacing stay consistent across standby, listening and speech. */
 @media (prefers-reduced-motion:reduce){#hopeRail #hopeWave .wave-bar{transition:none}}
 /* R3 round 13 tab-strip indent moved into the @media (min-width:1024px) block
@@ -3599,7 +3598,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-28.2';
+const AIMM_BUILD = '2026-10-28.3';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -16471,7 +16470,7 @@ document.getElementById('rtCallBtn').addEventListener('click',()=>{
 // =============================================================================
 // HOPE_WAVE — LIKE-FOR-LIKE port of the PTT / Mini Float dictation waveform.
 // Hope rail waveform: idle/listening use the existing shimmer. During speech,
-// bars scroll from output time-domain peaks with a fixed dB range and short hold.
+// bars scroll from linear output time-domain peaks with a short hold.
 const HOPE_WAVE = (function(){
   const FULL_BAR_COUNT = 54;                 // PTT ui/app.js:17
   const WAVE_PHASE_SCALE = FULL_BAR_COUNT;   // PTT ui/app.js:137
@@ -16533,16 +16532,13 @@ const HOPE_WAVE = (function(){
     const wobble = 0.5 + 0.5 * Math.sin(now / 130 + frac * 1.7) + 0.3 * Math.sin(now / 260 + frac * 0.6);
     return Math.max(0, Math.min(1, level * (0.3 + 0.7 * wobble) * boost));
   }
-  // Raw output peaks use a fixed dB scale and brief hold so speech attacks
-  // remain visible without AGC or per-bar wobble.
-  const PEAK_FLOOR_DB = -36;
-  const PEAK_CEILING_DB = 0;
-  const PEAK_HOLD_MS = 90;
+  // Raw output peaks use a linear amplitude scale, short hold, and fast CSS
+  // transition so loud attacks remain distinct from quieter speech.
+  const PEAK_NOISE_FLOOR = 0.02;
+  const PEAK_HOLD_MS = 18;
   let peakHold = 0, peakTs = 0;
   function peakToLevel(peak){
-    if (!(peak > 0)) return 0;
-    const db = 20 * Math.log10(Math.max(peak, 0.000001));
-    return Math.max(0, Math.min(1, (db - PEAK_FLOOR_DB) / (PEAK_CEILING_DB - PEAK_FLOOR_DB)));
+    return Math.max(0, Math.min(1, (peak - PEAK_NOISE_FLOOR) / (1 - PEAK_NOISE_FLOOR)));
   }
   function resetPeakHistory(){ peakHold = 0; peakTs = 0; audioLevels.fill(0); }
   function feed(value, isTimeDomainPeak){
@@ -16603,8 +16599,8 @@ const HOPE_VOICE = (function(){
   const conv = () => (typeof EL !== 'undefined' && EL && EL.conversation) ? EL.conversation : null;
 
   // The pinned @elevenlabs/client 0.1.7 exposes its output AnalyserNode at
-  // conversation.output.analyser. Read time-domain peaks to show real speech
-  // attacks instead of getOutputVolume()'s smoothed frequency average.
+  // conversation.output.analyser. Read peaks from the newest 512 samples
+  // (~11 ms at 48 kHz) instead of the SDK's smoothed frequency average.
   function readOutputPeak(c){
     try {
       const analyser = c && c.output && c.output.analyser;
@@ -16619,10 +16615,11 @@ const HOPE_VOICE = (function(){
       else if (typeof analyser.getByteTimeDomainData === 'function') analyser.getByteTimeDomainData(timeDomainData);
       else return null;
       let peak = 0;
+      const start = Math.max(0, timeDomainData.length - 512);
       if (timeDomainData instanceof Float32Array){
-        for (let i = 0; i < timeDomainData.length; i++) peak = Math.max(peak, Math.abs(timeDomainData[i]));
+        for (let i = start; i < timeDomainData.length; i++) peak = Math.max(peak, Math.abs(timeDomainData[i]));
       } else {
-        for (let i = 0; i < timeDomainData.length; i++) peak = Math.max(peak, Math.abs(timeDomainData[i] - 128) / 128);
+        for (let i = start; i < timeDomainData.length; i++) peak = Math.max(peak, Math.abs(timeDomainData[i] - 128) / 128);
       }
       return peak;
     } catch(_){ return null; }
