@@ -4,7 +4,7 @@ source: "https://www.youtube.com/watch?v=Bc9h9gjtbW4"
 video_id: "Bc9h9gjtbW4"
 ingested: "2026-10-28"
 chunks: 13
-channel: "SEIDS"
+channel: "Mastering.com"
 tags: [hope-kb, mixing, trap, hip-hop]
 ---
 
