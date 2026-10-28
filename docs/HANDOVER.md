@@ -1,3 +1,9 @@
+## Local dirty checkout reconciliation — 2026-10-28
+
+Compared the stale worktree `/Users/admin/aimm-pluginhub-stage2-5` at `d4bdcf741fd940bb9e79fee39fb76d61becb12a3` with this connected GitHub branch at `569ac37a015d853794a045902ffb575a2037b2fb`. Of 41 status entries, 19 file blobs already match the branch, 21 differ, and one is local Wrangler runtime state with no tracked counterpart. The matching files include `DuplicateAnalyzer.swift`, `ScanJournal.swift`, and several already-published evidence files.
+
+The differing local documentation and evidence are stale snapshots; do not publish them wholesale. The local Worker/Companion code is also older than the current branch. For example, local `DeviceSync.swift` removes the branch's 429 `Retry-After` handling and replaces its bounded 202 backoff with a fixed delay. Keep the branch as source of truth and preserve all local modifications. No local files were changed, reset, cleaned, or staged; Wrangler runtime state and its contents were not inspected.
+
 ## Latest continuation — paired-device wrong-ID probe — 2026-10-28
 
 The paired-device wrong-device identity probe now passes: the isolated, one-shot diagnostic Companion used the already paired credential for a read-only GET to a random different device UUID; the development Worker returned HTTP 401. The credential and response body were not displayed or persisted, and the Worker route performs a read-only SELECT. No inventory scan, sync, file action, D1 write, credential change or deployment occurred. Evidence blob 45c721a2a3471d109facbd9c3907b6f0cc855997. The live Worker remains the surgical patch; the branch dry-run is not deployment attestation. Foundation remains NOT MET and Stage 6 gated. [Evidence report](../governance/evidence/PHASE_PLUGINHUB_PAIRED_DEVICE_WRONG_ID_401_20261028.md), blob `45c721a2a3471d109facbd9c3907b6f0cc855997`.
