@@ -6,7 +6,7 @@
 
 # STATUS.md — AIMM
 
-**2026-10-28 update — Hope speech waveform transient display, build 2026-10-28.6.** Hope waveform now analyses the real playback source in the Live Agent, Deepgram/Luna and chat read-aloud paths. The latter two use Web Audio analyser taps on their HTML audio elements. Bars display short-window RMS on a fixed linear scale without AGC or peak hold. Speaking bars cap at 29.4px, 30% below the previous 42px speaking cap; idle/listening remain unchanged.
+**2026-10-28 update — Hope rail waveform restored, build 2026-10-28.7.** Restored the Hope speech waveform to the exact implementation from before the 28 October waveform changes.
 
 **Hope composer — Luna route branch:** four controls are shown: Send, Clear chat, Agent/Luna route, and Primary/Backup account. Screenshots can be dropped or pasted on the textarea. The composer has no mic, mute, or Listen control; Spacebar starts the selected voice route.
 

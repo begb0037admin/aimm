@@ -14,10 +14,6 @@ GitHub `main` commit `1078d45c9ef2149d363928c53d9d91babc98da15` updates `index.h
 
 # HANDOVER.md — AIMM
 
-## Active checkpoint — Hope speech waveform transient display, build 2026-10-28.6
-
-Cloudflare production runs the `aimm` Worker from GitHub `main`. Hope's waveform now reads the actual playback source in all routes: the Live Agent analyser, plus Web Audio analyser taps for Deepgram/Luna and chat read-aloud HTML audio elements. Bars show RMS across the newest 512 samples (~11 ms) on a fixed linear scale without AGC or peak hold. Speaking bars cap at 29.4px, 30% below the previous 42px speaking cap; idle/listening are unchanged. SDK volume/synthetic fallbacks remain when no analyser is available. No unrelated routes or mix settings were changed.
-
 ## Active checkpoint — all Fix Queue questions and displays aligned, build `.76` prepared, 2026-10-21
 
 The main full-mix Fix Queue omits a frequency strip for broadband findings and shows an orange

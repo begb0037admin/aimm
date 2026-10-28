@@ -8,10 +8,6 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Hope speech waveform transient display — build 2026-10-28.6
-
-Hope waveform now reads the actual playback source in all speech paths: the Live Agent analyser, plus Web Audio analyser taps on the Deepgram/Luna and chat read-aloud HTML audio elements. Each bar displays RMS across the newest 512 samples (~11 ms) on a fixed linear scale, without AGC or peak hold. Speaking bars cap at 29.4px, 30% below the previous 42px speaking cap; idle/listening retain their 60px shimmer. Cloudflare production serves the update. See `docs/STATUS.md` and `docs/HANDOVER.md`.
-
 ## Plugin inventory + local scan — build 2026-10-22.1
 
 The live Library now opens to a MixCheck-styled installed plug-in inventory and retains the AIMM catalogue. The browser scans plug-in bundle names and Info.plist metadata from folders the user selects; it does not read plug-in binaries, audio, presets or licences, and it keeps the scan in this browser. On the Mini, the live scan of `/Library/Audio/Plug-Ins` and `/Library/Application Support/Avid/Audio/Plug-Ins` checked 1,880 bundles and found 2,197 readable plug-in records, grouped into 1,618 products across AU, VST2, VST3, AAX and CLAP. Hope chat/voice mechanics remain available; no Logic project was edited. Source commit `77612f0`. See `docs/STATUS.md` and `docs/HANDOVER.md`.
