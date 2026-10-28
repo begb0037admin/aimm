@@ -257,6 +257,19 @@ test("WebAuthn registration options are CSRF protected and challenges are sessio
   assert.match(issued.challenge_id, /^[0-9a-f-]{36}$/i);
   assert.equal(issued.options.authenticatorSelection.userVerification, "required");
   assert.equal(issued.options.rp.id, "aimixmasters.com");
+  const previewOrigin = "https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev";
+  const previewOptionsResponse = await call(env, "/v1/webauthn/registration/options", {
+    method: "POST", headers: { origin: previewOrigin, cookie: first.cookie, "x-csrf-token": first.csrf }, body: {}
+  });
+  assert.equal(previewOptionsResponse.status, 201);
+  const previewOptions = await previewOptionsResponse.json();
+  assert.equal(previewOptions.options.rp.id, new URL(previewOrigin).hostname,
+    "the allowlisted preview must use its exact hostname as its relying-party ID");
+  const deniedPreviewOrigin = await call(env, "/v1/webauthn/registration/options", {
+    method: "POST", headers: { origin: "https://unapproved.example", cookie: first.cookie, "x-csrf-token": first.csrf }, body: {}
+  });
+  assert.equal(deniedPreviewOrigin.status, 403);
+  assert.equal((await deniedPreviewOrigin.json()).error.code, "csrf_rejected");
   const stored = DB.raw("SELECT account_id, session_id, purpose, challenge, created_at, expires_at, consumed_at FROM webauthn_challenges WHERE challenge_id = ?", issued.challenge_id)[0];
   assert.ok(stored);
   assert.equal(stored.purpose, "registration");
@@ -311,6 +324,13 @@ test("WebAuthn assertion challenges require a registered account passkey and are
   const issued = await options.json();
   assert.equal(issued.options.userVerification, "required");
   assert.equal(issued.options.allowCredentials.length, 1);
+  const previewOrigin = "https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev";
+  const previewAuthenticationOptions = await call(env, "/v1/webauthn/authentication/options", {
+    method: "POST", headers: { origin: previewOrigin, cookie: first.cookie, "x-csrf-token": first.csrf, "content-type": "application/json" }, body: {}
+  });
+  assert.equal(previewAuthenticationOptions.status, 201);
+  assert.equal((await previewAuthenticationOptions.json()).options.rpId, new URL(previewOrigin).hostname,
+    "authentication must use the same exact origin-specific relying-party ID as registration");
   const foreign = await call(env, "/v1/webauthn/authentication/verify", {
     method: "POST", headers: { origin: env.SITE_ORIGIN, cookie: second.cookie, "x-csrf-token": second.csrf, "content-type": "application/json" },
     body: { challenge_id: issued.challenge_id, credential: { id: "fixture-credential-id" } }
