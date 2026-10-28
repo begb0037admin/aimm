@@ -1,10 +1,19 @@
 # PluginHub cold-start continuation — 2026-10-28
 
+## Current continuation — 2026-10-28
+
+Branch head before this checkpoint: `66fdc60a8d62ff58790986384c22e53e464606c5`. Owner reports the development passkey enrollment succeeded; do not repeat setup or verification.
+
+The paired Companion left the existing metadata-only synthetic Stage 5 request unclaimed: its 1,642-entry generation does not match the Mac's current 1,641-entry complete local generation/build. No scan or move was started. A metadata-only record cannot be moved locally. Preserve the account inventory and use a compatible synthetic local fixture/generation; do not scan real standard folders to force parity. Exact preview and fresh action confirmation remain required before any move.
+
+A Wrangler dry-run bundle was built from exact GitHub branch blobs at `66fdc60`, with Wrangler 4.152.0. Evidence: [Worker branch-source bundle dry-run](../../governance/evidence/PHASE_PLUGINHUB_WORKER_BRANCH_BUILD_20261028.md), blob `08eab39116cd10f04372880e53678cd37fae1a7b`. Wrangler auth is expired, so there was no upload/deployment. Live development Worker provenance remains the surgical patch. The dry-run used existing linked dependencies; clean lockfile installation and live provenance are open.
+
+
 ## Authoritative project state
 
 Repository: `begb0037admin/aimm`  
 Branch: `codex/pluginhub-foundation`  
-Latest verified Settings implementation source checkpoint: `78a7f68c6166f3297083c4a763d1ca2ca4b304cb`  
+Settings source checkpoint: `78a7f68c6166f3297083c4a763d1ca2ca4b304cb`; current continuation branch head before docs: `66fdc60a8d62ff58790986384c22e53e464606c5`  
 The latest handover and this cold-start note were refreshed after that source checkpoint; check GitHub for the current branch head before continuing.  
 The local checkout at `/Users/admin/aimm-pluginhub-stage2-5` is stale at `d4bdcf741fd940bb9e79fee39fb76d61becb12a3` and has a dirty worktree. Do not reset, clean, or push that whole stale worktree over the branch. Check the latest branch first and reconcile changed files individually.
 
@@ -21,7 +30,7 @@ The current immutable development Pages preview is [deployment a8c52c64](https:/
 
 The approved populated mockup contains synthetic values only. The live page shows an empty results state until the owner signs in and runs an account check; this visual review did not access the real account or invoke Library actions. Development Pages only. No local app build or tests were run for this UI checkpoint.
 
-The development Worker passkey RP fix remains a surgical patch to its deployed bundle, not a reproducible build from current branch source. Version annotation is not build attestation. Rebuild from branch source once Wrangler authentication is restored, and keep this provenance limitation visible. No real passkey ceremony has been completed; Kevin's browser confirmation/Touch ID is still needed.
+The development Worker passkey RP fix remains a surgical patch to its deployed bundle, not a reproducible build from current branch source. Version annotation is not build attestation. Rebuild from branch source once Wrangler authentication is restored, and keep this provenance limitation visible. Kevin has reported successful development passkey enrollment. Do not repeat enrollment or verification. The Companion's queued Stage 5 request is currently mismatched to its local generation/build, as recorded above.
 
 ## Foundation gates and safety
 
@@ -29,7 +38,7 @@ Foundation remains **NOT MET**; Stage 6 remains gated. Do not change this status
 
 The historical 22:47 D1 creation authorization is resolved. The bounded synthetic non-production D1 validation scope is recorded as cleared, with its evidence linked from the root handover. Preserve any narrower currently open hold described by the newest branch records. Use synthetic data only. Do not deploy to production, cut over, accept provider terms, create credentials, or take other separately gated actions without required authorization. No secrets or passkey material belong in repo files.
 
-The latest branch handover records: a 1,641-entry paired-Mac scan; a synthetic move request claimed by the companion but not yet executed; passkey enrollment needed before move/restore; 317 browser-only entries and two version differences; a real paired-credential wrong-device HTTP 401; and fresh independent Foundation review remain open. Recheck the newest GitHub handover because these may have advanced.
+The latest branch handover records: a 1,641-entry paired-Mac scan; a synthetic move request claimed by the companion but not yet executed; owner-reported passkey enrollment complete; the current request remains unclaimed due to generation/build mismatch; 317 browser-only entries and two version differences; a real paired-credential wrong-device HTTP 401; and fresh independent Foundation review remain open. Recheck the newest GitHub handover because these may have advanced.
 
 ## What happened in the stale local session
 

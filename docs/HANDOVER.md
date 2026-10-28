@@ -1,21 +1,16 @@
-## Latest continuation — approved Settings implementation — 2026-10-28 17:43 UTC
+## Latest continuation — owner-reported passkey and Worker source build — 2026-10-28
 
-Latest verified GitHub branch head: `78a7f68c6166f3297083c4a763d1ca2ca4b304cb`. The user approved keeping the Settings page exactly aligned with the populated results mockup at [pluginhub-settings-breathing-room-review.html](mockups/pluginhub-settings-breathing-room-review.html).
+Branch at start: `66fdc60a8d62ff58790986384c22e53e464606c5`. The sign-in change at this head leaves inventory reads user-initiated.
 
-Implementation commits:
-- `e001fdf5f3c06a7e0928cb186a60d9d45dbf1739` — visible API-key Show/Hide and Remove labels, accessible toggle state, inset select arrows, and shared spacious purple checkboxes.
-- `23edfce6869b1aa9f43805cbdcf570b73039e867` — expandable detailed account results with real check progress, empty/error states and a responsive results grid.
-- `78a7f68c6166f3297083c4a763d1ca2ca4b304cb` — state badge specificity and safe sign-out failure handling.
+Kevin confirmed development passkey enrollment succeeded. Accept that confirmation; do not repeat passkey setup or verification. This session did not perform another assertion.
 
-Verified in Chrome on the immutable non-production Pages deployment [a8c52c64](https://a8c52c64.aimm-pluginhub-foundation-dev.pages.dev/), which Cloudflare reports as successful for branch commit `78a7f68`. The displayed Models and Session safety controls have clear inset chevrons and matching spacious purple checkbox treatment. API-key actions now have visible labels. Jules reviewed all source changes; after two findings were fixed, the final review passed with no remaining blockers.
+The existing synthetic Stage 5 request was checked once in the paired AIMM Companion. It was left unclaimed because it does not match the Companion build or its latest complete local generation (1,641 entries versus the request's 1,642-entry generation). The record is metadata-only and is absent from the current local scan, so it cannot safely drive a local move. No real-folder scan or file action was started. Keep the synthetic-only boundary; do not rescan standard plug-in folders to force a match. Reconcile through a compatible synthetic local fixture/generation without replacing the account's full inventory, then review the exact preview before any move.
 
-The populated results mockup contains synthetic illustrative values only. The live Settings page intentionally shows an empty results message until the owner signs in and runs a Library check; this visual review did not access the real Library account or invoke account actions. Automatic development Pages build/deployment only; no production deployment or test suite was run. These presentation fixes are not Foundation exit evidence.
+A branch-source Worker dry-run bundle succeeded from the exact GitHub source/config/package/lock blobs at `66fdc60`. Evidence: [Worker branch-source bundle dry-run](../governance/evidence/PHASE_PLUGINHUB_WORKER_BRANCH_BUILD_20261028.md), blob `08eab39116cd10f04372880e53678cd37fae1a7b`. Wrangler reported its local token expired, so no upload/deployment was attempted. The live development Worker remains the surgical patch, not a reproducible deployed build. The dry-run used an existing linked `node_modules`; clean lockfile installation and live runtime provenance remain open.
 
-**Next:** Kevin can enroll the development passkey using the Settings button, then perform the already-planned synthetic Stage 5 move/restore, remove the fixture, and rescan. Do not bypass browser/passkey confirmation. Also close the real paired-Mac credential wrong-device check; Auth0 User A/B session and CSRF isolation; remaining 317 browser-only rows and 2 version differences; remote action/recovery validation; reproducible Worker build replacing the surgical version-10 patch; then obtain fresh independent end-to-end Foundation review.
+Next: resolve the synthetic local-generation mismatch safely; clean-install and publish the branch-built Worker to the isolated development service when owner Wrangler auth is available; close the real paired-Mac wrong-device check, Auth0 A/B session and CSRF isolation, 317 browser-only inventory rows / two version differences, and remote action/recovery; then obtain fresh independent end-to-end Foundation review.
 
-The Worker RP-ID fix is still live only as a surgical patch to the deployed bundle, not a reproducible build from branch source. Version annotation is not build attestation. Keep this limitation visible.
-
-Foundation remains **NOT MET**; Stage 6 remains gated. Continue using synthetic non-production data only; no production deployment, credential creation, provider terms, or other separately gated action occurred. Existing Foundation evidence pins remain unchanged because this UI checkpoint does not satisfy an exit gate.
+Foundation remains **NOT MET**; Stage 6 remains gated. No production deployment or file action occurred. Existing Foundation exit-evidence pins are unchanged.
 
 ## Latest continuation — Settings results visual proposal — 2026-10-28 17:30 UTC
 
