@@ -9,3 +9,7 @@ The local non-production API suite passed 38/38 after the change. No passkey was
 The fix is committed to the development source branch, but is **not yet running** in Cloudflare. Read-only Cloudflare inspection showed the development Worker still annotated with source commit `b3d0e2800fcc708fddd8096878a9739a5aca0ad3`. Wrangler 4.152.0 is not authenticated; its stored token expired and the shell could not reach the Cloudflare authorization endpoint to refresh it. Do not retry passkey setup until the isolated development Worker is updated and its health/configuration is verified.
 
 Foundation remains **NOT MET**; Stage 6 remains gated. No deployment or credential action occurred in this checkpoint.
+
+## Build verification
+
+The latest branch's `library-api/test/foundation.test.js` passed 22/22, including the preview RP ID and origin rejection cases. The local full Library API suite passed 38/38. Wrangler 4.152.0 `deploy --dry-run` bundled the latest branch Worker successfully (888.66 KiB, 159.81 KiB gzip) with the expected non-production D1 and exact preview allowlist. This was only a dry run; the current Wrangler token is expired, so the Worker remains unchanged.
