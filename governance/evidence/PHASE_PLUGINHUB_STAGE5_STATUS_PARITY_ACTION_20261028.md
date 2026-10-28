@@ -1,3 +1,11 @@
+## Current owner-session update — 2026-10-28
+
+Kevin reports that development passkey enrollment succeeded. No second passkey setup or verification was run.
+
+In the later Companion session, the displayed latest complete local scan was 1,641 entries. Checking the existing move request left it unclaimed because the request's 1,642-entry generation did not match the Companion build or its latest complete local generation. No rescan or file action was performed. This supersedes the earlier “claimed” state recorded above; that state was true at the time of the original check.
+
+The same synthetic operation remains the only pending Stage 5 request; it expires at `2026-10-29T08:06:53.728Z`. Do not create a duplicate while it is valid. Resume only after the Companion can resolve the matching synthetic local generation and the owner reviews the exact preview. Do not scan standard plug-in folders to force a match. Foundation remains **NOT MET**; Stage 6 remains gated.
+
 # Foundation Stage 5 status, Mac parity and blocked action — 2026-10-28 08:09 UTC
 
 ## Scope and result

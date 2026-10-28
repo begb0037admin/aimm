@@ -10,6 +10,8 @@ A branch-source Worker dry-run bundle succeeded from the exact GitHub branch hea
 
 Next: resolve the synthetic local-generation mismatch safely; after owner Wrangler auth is available and the separately required owner approval for the development deployment is recorded, publish the already clean-installed branch-built Worker to the isolated development service; close the real paired-Mac wrong-device check, Auth0 A/B session and CSRF isolation, 317 browser-only inventory rows / two version differences, and remote action/recovery; then obtain fresh independent end-to-end Foundation review.
 
+**Stage 5 current state:** Kevin reports successful development passkey enrollment; do not repeat it. The existing synthetic move request is left unclaimed because the Companion's displayed complete generation is 1,641 entries and the request targets 1,642. No scan or file action was performed. The same request remains valid until `2026-10-29T08:06:53.728Z`; do not duplicate it. Its updated [Stage 5 evidence](../governance/evidence/PHASE_PLUGINHUB_STAGE5_STATUS_PARITY_ACTION_20261028.md), blob `cf62c78b79148a3bbb21fc0362dc99ad442a2c55`, supersedes the earlier claimed state. Resume with a compatible local synthetic generation, exact owner preview and required action confirmation.
+
 Foundation remains **NOT MET**; Stage 6 remains gated. No production deployment or file action occurred. Existing Foundation exit-evidence pins are unchanged.
 
 ## Latest continuation — Settings results visual proposal — 2026-10-28 17:30 UTC
