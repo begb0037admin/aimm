@@ -4,19 +4,24 @@
 
 Repository: `begb0037admin/aimm`  
 Branch: `codex/pluginhub-foundation`  
-Latest verified GitHub branch head at this handover: `d7e9bd1c36d7bada7878acaf7c87cfb0ac8ebb10`  
-Latest handover commit: `d7e9bd1c36d7bada7878acaf7c87cfb0ac8ebb10`  
+Latest verified Settings implementation source checkpoint: `78a7f68c6166f3297083c4a763d1ca2ca4b304cb`  
+The latest handover and this cold-start note were refreshed after that source checkpoint; check GitHub for the current branch head before continuing.  
 The local checkout at `/Users/admin/aimm-pluginhub-stage2-5` is stale at `d4bdcf741fd940bb9e79fee39fb76d61becb12a3` and has a dirty worktree. Do not reset, clean, or push that whole stale worktree over the branch. Check the latest branch first and reconcile changed files individually.
 
 Read `docs/HANDOVER.md`, this file, `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`, `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`, and `docs/PLUGINHUB_PHASE2_ARCHITECTURE.md`.
 
 ## Current UI and passkey state
 
-The Settings page work is already on GitHub. The Library account section is in Settings; inventory/status tools are tucked into “More Library settings,” with short background notifications and collapsed detail output. The branch preview was verified in Chrome at `https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/`, deployment `feb20e90-cf3d-4a0a-9b43-b8be1433df4f`. The visible “Set up a passkey” button was confirmed. No local build or tests were run for that UI checkpoint.
+The user approved the populated account-results mockup as the exact visual direction. The implementation is on the branch:
+- `e001fdf5f3c06a7e0928cb186a60d9d45dbf1739`: labeled Show/Hide and Remove controls, accessible state, inset select arrows and shared roomy purple checks.
+- `23edfce6869b1aa9f43805cbdcf570b73039e867`: expandable live account result status, empty state and responsive detailed results.
+- `78a7f68c6166f3297083c4a763d1ca2ca4b304cb`: fixed result-state badge styling and made sign-out clear displayed/cached session state immediately; API revocation failure is explicit and does not redirect.
 
-The preview’s passkey error was traced to a WebAuthn RP ID mismatch. Branch source fix is commit `19bd4a048990a7178e84e307b35efccb9bf190bc`, source blob `05bd55aaf196cb5743d3a2bf80f1482aebd03cf8`; test commit `9bd7935f92ed64a98420f83f55b7b1cb3dc53f83`, test blob `ee45e0d5515c750ca366eca73dbc2bdb7ce5a9a9`. Branch Worker tests passed 22/22, local API suite 38/38, and Wrangler dry-run bundling succeeded.
+The current immutable development Pages preview is [deployment a8c52c64](https://a8c52c64.aimm-pluginhub-foundation-dev.pages.dev/), reported successful by Cloudflare for commit `78a7f68`. Chrome visual review confirmed the Models and Session safety spacing, inset arrows, matching purple tickboxes, and visible labels on key controls. Jules reviewed the source changes; final review passed after fixing two findings.
 
-The non-production Worker is serving version 10 at 100%, deployment `7562c0a0-cfe8-4472-8897-f00853453900`; `/health` returned 200. The passkey behaviour was installed as a surgical patch to the prior deployed bundle because Wrangler auth was expired. This is not a reproducible bundle built from branch source; the Worker commit annotation is not build attestation. Keep that limitation visible for independent review and rebuild from branch source when Wrangler authentication is restored. No passkey ceremony was complete at the latest verified handover. The latest recorded next step is to refresh the preview, sign in, and retry “Set up a passkey”; Touch ID/browser confirmation is Kevin’s action.
+The approved populated mockup contains synthetic values only. The live page shows an empty results state until the owner signs in and runs an account check; this visual review did not access the real account or invoke Library actions. Development Pages only. No local app build or tests were run for this UI checkpoint.
+
+The development Worker passkey RP fix remains a surgical patch to its deployed bundle, not a reproducible build from current branch source. Version annotation is not build attestation. Rebuild from branch source once Wrangler authentication is restored, and keep this provenance limitation visible. No real passkey ceremony has been completed; Kevin's browser confirmation/Touch ID is still needed.
 
 ## Foundation gates and safety
 
@@ -43,7 +48,7 @@ A separate local-only session added another cold-start file and inserted notes i
 ```text
 Continue the PluginHub project in begb0037admin/aimm, branch codex/pluginhub-foundation. Start by reading docs/HANDOVER.md and docs/handovers/2026-10-28-pluginhub-settings-cold-start.md, then the linked Foundation closeout, evidence package and approved seven-stage architecture. Check GitHub for a newer head first. The local Mac checkout is stale and dirty; preserve it and do not push or overwrite it wholesale.
 
-The Settings UI redesign is already published and its GitHub Pages development preview was verified. The passkey RP-ID fix is live on the development Worker, but it was installed as a surgical bundle patch rather than a reproducible branch build. Read the latest handover for the exact preview, runtime and next passkey step, and keep that provenance limitation visible.
+The approved Settings redesign is implemented and Jules-reviewed. Its immutable GitHub Pages development preview is linked in the latest handover. The populated mockup uses synthetic values; the live account results remain empty until a Library check is actually run. The passkey RP-ID fix is live on the development Worker as a surgical bundle patch, not a reproducible branch build. Keep that provenance limitation visible.
 
 Continue the authorized PluginHub work without repeating completed checks. Foundation remains NOT MET and Stage 6 remains gated until every exit requirement is evidenced and fresh independent review accepts it. Use synthetic non-production data only. Do not deploy to production, cut over, accept provider terms, create credentials, or take separately gated external actions without the required authorization. Keep project records and evidence SHAs synchronized as verified work is published.
 ```
