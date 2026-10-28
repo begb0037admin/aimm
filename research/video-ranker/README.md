@@ -52,6 +52,19 @@ python3 scripts/research/make_question_jobs.py \
 
 This creates 737 transcript-grounded jobs requesting up to 8,844 varied questions. It does **not** call a model, spend API credits, or mark results verified. Review generated questions against their cited chunk/quote, remove duplicates and incorrectly answerable questions, and set `verified: true` only after that review. Internet questions can diversify wording, but their original labels point to web documents, not our videos; map and verify them against transcript evidence before training.
 
+For local Apple Silicon generation, install `mlx-lm` in an isolated environment and run:
+
+```sh
+python3 scripts/research/generate_pilot_queries.py \
+  --cards research/video-ranker/local/video-cards.jsonl \
+  --benchmark research/video-ranker/local/benchmark.json \
+  --train-queries 100 \
+  --validation-queries 20 \
+  --output research/video-ranker/local/query-candidates.jsonl
+```
+
+The default generator is `mlx-community/Qwen3-4B-4bit`. It writes unverified candidates and requires exact evidence quotes. `verify_pilot_queries.py` can independently screen the draft answer against transcript evidence and mine possible hard negatives, but its NLI scores are weak labels: they do not prove the query and answer match, or that each negative is truly irrelevant. Do not mark these rows as ground truth without review.
+
 ## Reviewed judgments format
 
 Create a private local `judgments.jsonl`, one question per line:
@@ -102,10 +115,8 @@ python3 scripts/research/evaluate_video_cross_encoder.py \
 
 Compare top-5 accuracy, reciprocal rank, and per-question ranks against the same frozen benchmark and the prior vector/hybrid results. Report confirmed and uncertain-label groups separately. No model, site, Worker, secret, route, or live ranking is changed by these tools.
 
-## Current readiness and known blockers
+## Bounded pilot outcome
 
-- Full-catalogue reranking and local model evaluation are implemented as separate reproducible commands.
-- Data generation is prepared as prompt jobs. It awaits an explicitly selected, already-authorized generation model/credential; this pilot does not access or create credentials.
-- A trainable dataset does not exist yet. The scripts reject unverified labels and require reviewed hard negatives and a validation split.
-- Do not treat thousands of generated or internet questions as thousands of independent facts. They are useful supervision only when each positive is supported by this library's video content.
-- This pilot is local, unmerged, and undeployed. The live app and Worker remain untouched.
+The 28 October 2026 pilot trained one local cross-encoder on 100 synthetic training queries and 21 machine-screened validation queries. It scored 18/20 on the title-derived holdout, versus 17/20 for the current full-catalogue reranker, and 1/6 on confirmed real queries, versus 4/6 for the hybrid baseline. The pilot did not meet its improvement gate; stop this training line for now. See [the results and full rank tables](PILOT-RESULTS-2026-10-28.md).
+
+The local generator and NLI screening scripts are experimental. They produce weak labels, not ground truth; in particular, NLI answer entailment alone does not prove the query-answer pair is aligned. Keep all generated queries, judgments, model weights, and benchmark outputs local and gitignored. This pilot remains unmerged and undeployed; the live app and Worker were not changed.
