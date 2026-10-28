@@ -1,3 +1,7 @@
+## Cold-session entry point — 2026-10-28
+
+Start with [the cold-start continuation](handovers/2026-10-28-pluginhub-settings-cold-start.md) for the latest verified GitHub state, the stale dirty Mac checkout warning, the passkey preview fix provenance, and a copy/paste new-session prompt. This handover is in branch commit `9a4e2e098a776ff5a2eae23b0e12dc4a9223c118`; check for a newer branch head before acting.
+
 ## Latest continuation — passkey RP fix live in development — 2026-10-28 09:50 UTC
 
 Use connected GitHub branch `codex/pluginhub-foundation` as authoritative. Branch head before this handover refresh: `9a53f77ec8551a114e6950060488829ca5beb103`. The local checkout remains stale and dirty; do not overwrite it.
