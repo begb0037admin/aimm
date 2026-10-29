@@ -1,3 +1,9 @@
+# Current continuation — 2026-10-29
+
+Branch `codex/pluginhub-foundation` was rechecked at `47efd003e2429f82cf2a6b21bbacbfa0404cbb92`. The category-count resolver change is reviewed PASS by Jules and deployed to development Pages (`9096b1f9-9ec6-47a9-9e03-dea0ea682b61`). First Library render shows populated category totals before filters are touched. Cards/List/Ledger, four sort modes, Hidden/Favorites/My tags, and vendor collapse/expand are present. See [the parity update](../../governance/evidence/PHASE_PLUGINHUB_PARITY_UPDATE_20261029.md).
+
+Continue the remaining PluginHub parity work from [the updated parity sweep](../../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md). Foundation remains **NOT MET** and Stage 6 remains gated. The development Worker passkey RP fix remains a surgical patch, not a reproducible branch-source build. No production deployment or separately gated external action. Synthetic non-production data only.
+
 ## Latest Stage 5 passkey resume — 2026-10-29
 
 Source fix `98754965a901b37a193fa6363b7e01758283e9cb` passed Jules review. On the same signed-in development session and synthetic operation `caebb13c-1f6b-4422-b23c-570b4d8a0e9f`, the first saved-passkey assertion succeeded and revealed the exact synthetic fixture paths. The next confirmation expired while 1Password loaded; Companion safely cleared that expired preview and reported no files changed. The same operation resumed with the previously approved isolated `Unused` folder and a fresh preview.
