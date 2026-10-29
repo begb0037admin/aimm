@@ -51,21 +51,21 @@ The Library also has:
 
 The current row menu was visually checked for a product with one known version. Category and tag submenus open; the top category option is accurately labelled “Use AIMM’s inferred category.” The action menu contains working local/preview actions and visibly disabled Companion/service actions. No preference was saved during this inspection.
 
-## Remaining parity gaps after the latest implementation checkpoint
+## Current parity gaps after Tag Manager implementation
 
 | Gap | Current preview state | Required next work |
 |---|---|---|
 | Status groups and counters | Updates Available, Up to Date and Manual Check remain disabled because vendor checks are not connected. Unchecked and paid-upgrade states are absent. | Implement status semantics and live vendor checks before enabling these filters or counters. |
-| Tag management | Per-product tags exist; a complete Tag Manager, rename/recolour, and persistent account-level management are not established. | Implement the manager against the reviewed preference contract. |
-| Browse controls | All plugins, Favorites, My tags, Hidden, category filters, four format filters, search, sort, and collapse/expand vendor controls are visible. Intel-only and snoozed controls remain absent. | Add the missing browse controls; connect snooze only to real update status. |
+| Tag management | Browser-local Tag Manager is present: create, rename, recolour, order and delete tags; search inventory and manage per-product membership, including vendor-level Add all. It is not account-synchronised. | Implement individual/multiple My Tags browse selection and compare combined filters with PluginHub. |
+| Browse controls | All plugins, Favorites, My tags, Hidden, category filters, four format filters, search, sort, and collapse/expand controls are present. Tag editing is in the manager; individual/multiple tag selection remains open. Intel-only and snoozed controls are absent. | Add Intel-only only when architecture data exists; add snooze only with live status observations. |
 | Per-row actions | Local metadata actions are present. Move to Unused, Uninstall/Trash, and Reveal require the native Companion. Snooze depends on status data; License Vault and Report a problem need their own backends. | Use the preview/confirmation/receipt protocol for local file operations. Keep unavailable actions disabled until reviewed backends exist. |
-| Whole-library Tools | No complete PluginHub-style Tools collection or equivalents for installer cleanup, duplicate review, License Vault, sharing, profile comparison, entitlement, Compatibility, or Tag Manager are verified. | Add tool navigation and implement each surface against its own reviewed contract. |
+| Whole-library Tools | No complete PluginHub-style Tools collection or equivalents for installer cleanup, duplicate review, License Vault, sharing, profile comparison, entitlement or Compatibility are verified. Tag Manager is now a Library surface. | Add tool navigation and implement each surface against its own reviewed contract. |
 | Vendor and layout details | Four-column Cards, List and Ledger modes, Vendor/Product/Format/Version sorting, vendor links, and collapse/expand controls are present. | Continue the reference walk for unverified interaction and spacing details, especially across alternate layouts. |
 | Reference-only formats | PluginHub supports AAX. Approved AIMM scanner architecture excludes it. | Keep as a documented difference unless architecture is formally revised. |
 
 ## Safe implementation order
 
-1. Complete Tag Manager and persistent tag editing against the approved preference contract; verify category multi-select and combined filters during the manual walk.
+1. Add individual/multiple My Tags browse selection, then compare category/tag/search combinations with the reference.
 2. Add Intel-only and snoozed controls. Implement status semantics and vendor adapters before enabling update counters, snooze or paid-upgrade badges.
 3. Build native Companion actions through the existing exact-preview, confirmation, WebAuthn and per-item-receipt contracts. This covers Move to Unused, Restore, Reveal, Trash, batch work, duplicate review and installer cleanup.
 4. Add License Key Vault, compatibility, share/profile and entitlement surfaces under their separate privacy and account contracts.
