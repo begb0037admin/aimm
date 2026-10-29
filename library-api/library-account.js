@@ -275,7 +275,7 @@
     return api("/v1/webauthn/registration/verify", { method: "POST", body: { challenge_id: challengeID, credential: response } });
   }
 
-  async function verifyAccountPasskey(purpose = {}) {
+  async function verifyAccountPasskey(purpose = {}, progress = {}) {
     await ensureSession();
     if (!window.isSecureContext || !navigator.credentials?.get || !window.PublicKeyCredential) {
       throw new Error("Passkeys need a supported browser on this secure site.");
@@ -286,6 +286,7 @@
       challenge: decodeBase64url(options.challenge),
       allowCredentials: (options.allowCredentials || []).map((item) => ({ ...item, id: decodeBase64url(item.id) }))
     };
+    progress.onCredentialRequest?.();
     const credential = await navigator.credentials.get({ publicKey });
     if (!(credential instanceof PublicKeyCredential)) throw new Error("The browser did not return a passkey assertion.");
     const response = {
@@ -1561,6 +1562,8 @@
       deviceSelect.disabled = true;
       loadDevices.disabled = true;
       try {
+        syntheticStatus.textContent = "Rechecking the exact synthetic preview…";
+        syntheticStatus.dataset.tone = "";
         const current = await getPluginActionResult({ operation_id: operationID });
         if (epoch !== syntheticFlowEpoch || operationID !== syntheticOperationID || deviceID !== syntheticDeviceID) return;
         if (current.operation_id !== operationID || current.device_id !== deviceID || current.kind !== "move_to_unused" ||
@@ -1568,8 +1571,15 @@
             !current.preview_expires_at || Date.parse(current.preview_expires_at) <= Date.now()) {
           throw new Error("The exact action preview changed or expired. Check the Mac preview again.");
         }
+        syntheticStatus.textContent = "Requesting a passkey challenge from the development Library…";
         const verified = await verifyAccountPasskey({
           purpose: "action_preview_unlock", operation_id: operationID, preview_digest: digest
+        }, {
+          onCredentialRequest: () => {
+            if (epoch === syntheticFlowEpoch && operationID === syntheticOperationID && deviceID === syntheticDeviceID) {
+              syntheticStatus.textContent = "Waiting for the passkey chooser in Chrome or 1Password…";
+            }
+          }
         });
         if (epoch !== syntheticFlowEpoch || operationID !== syntheticOperationID || deviceID !== syntheticDeviceID) return;
         const exact = await api(`/v1/actions/${encodeURIComponent(operationID)}/owner-preview`, {
