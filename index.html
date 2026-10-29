@@ -6216,9 +6216,9 @@ function invOpenTagManager(){
     if(!tags.length){const empty=document.createElement("div");empty.className="inv-tag-empty";empty.textContent="No tags yet. Create one below.";tagList.appendChild(empty);}
     tags.forEach((tag,index)=>{
       const row=document.createElement("div");row.className="inv-tag-row"+(tag===selectedTag?" selected":"");row.draggable=true;row.dataset.tagRow=tag;
-      const color=colors[tag]||palette[index%palette.length];
+      const storedColor=colors[tag],color=/^#[0-9a-f]{6}$/i.test(storedColor||"")?storedColor:palette[index%palette.length];
       const select=document.createElement("button");select.type="button";select.className="inv-tag-select";select.dataset.tagSelect=tag;select.setAttribute("aria-pressed",String(tag===selectedTag));select.innerHTML='<span class="inv-tag-swatch" style="background:'+escapeAttr(color)+'"></span><span class="inv-tag-name">'+invEsc(tag)+'</span><span class="inv-tag-count">'+countTag(tag).toLocaleString()+'</span>';
-      const colorInput=document.createElement("input");colorInput.type="color";colorInput.className="inv-tag-color";colorInput.value=/^#[0-9a-f]{6}$/i.test(colors[tag]||"")?colors[tag]:palette[index%palette.length];colorInput.setAttribute("aria-label","Change "+tag+" tag colour");colorInput.dataset.tagColor=tag;
+      const colorInput=document.createElement("input");colorInput.type="color";colorInput.className="inv-tag-color";colorInput.value=color;colorInput.setAttribute("aria-label","Change "+tag+" tag colour");colorInput.dataset.tagColor=tag;
       const order=document.createElement("span");order.className="inv-tag-order";order.setAttribute("aria-label","Change tag order");
       const moveUp=document.createElement("button");moveUp.type="button";moveUp.textContent="↑";moveUp.title="Move "+tag+" up";moveUp.setAttribute("aria-label","Move "+tag+" up");moveUp.dataset.tagMove="up";moveUp.disabled=index===0;
       const moveDown=document.createElement("button");moveDown.type="button";moveDown.textContent="↓";moveDown.title="Move "+tag+" down";moveDown.setAttribute("aria-label","Move "+tag+" down");moveDown.dataset.tagMove="down";moveDown.disabled=index===tags.length-1;order.append(moveUp,moveDown);
@@ -6234,14 +6234,14 @@ function invOpenTagManager(){
     const tags=safeTags();if(tags.some(tag=>tag!==oldName&&tag.toLowerCase()===value.toLowerCase())){invStatus("A tag with that name already exists.","error");return false;}
     const actions=invReadProductActions();Object.values(actions).forEach(record=>{if(record&&Array.isArray(record.tags)){record.tags=record.tags.map(tag=>tag===oldName?value:tag).filter((tag,index,list)=>list.indexOf(tag)===index);if(!record.tags.length)delete record.tags;}});
     const nextTags=tags.map(tag=>tag===oldName?value:tag),colors=invReadTagColors();if(colors[oldName]){colors[value]=colors[oldName];delete colors[oldName];}
-    if(!invTagCommit(nextTags,actions,colors)){invStatus("The tag could not be renamed in this browser.","error");return false;}
+    if(!invTagCommit(nextTags,actions,colors))return false;
     selectedTag=selectedTag===oldName?value:selectedTag;editTag="";invRenderInventory();return true;
   };
   overlay.querySelector("[data-tag-new-form]").addEventListener("submit",event=>{
     event.preventDefault();const input=event.currentTarget.querySelector("input"),value=input.value.trim().replace(/\s+/g," ");if(!value)return;
     const tags=safeTags();if(tags.some(tag=>tag.toLowerCase()===value.toLowerCase())){invStatus("A tag with that name already exists.","error");input.focus();return;}
     tags.push(value);const colors=invReadTagColors();colors[value]=palette[(tags.length-1)%palette.length];
-    if(!invTagCommit(tags,invReadProductActions(),colors)){invStatus("The tag could not be created in this browser.","error");return;}
+    if(!invTagCommit(tags,invReadProductActions(),colors))return;
     selectedTag=value;input.value="";search.value="";renderTags();invRenderInventory();search.focus();
   });
   tagList.addEventListener("click",event=>{
@@ -6252,14 +6252,14 @@ function invOpenTagManager(){
     const remove=event.target.closest("[data-tag-delete]");if(remove){
       const name=remove.dataset.tagDelete;if(!window.confirm('Delete the "'+name+'" tag and remove it from all plug-ins?'))return;
       const tags=safeTags().filter(tag=>tag!==name),actions=invReadProductActions(),colors=invReadTagColors();Object.values(actions).forEach(record=>{if(record&&Array.isArray(record.tags)){record.tags=record.tags.filter(tag=>tag!==name);if(!record.tags.length)delete record.tags;}});
-      delete colors[name];if(!invTagCommit(tags,actions,colors)){invStatus("The tag could not be deleted in this browser.","error");return;}
+      delete colors[name];if(!invTagCommit(tags,actions,colors))return;
       if(selectedTag===name)selectedTag="";if(editTag===name)editTag="";invRenderInventory();renderTags();const nextTag=safeTags()[0];if(nextTag)focusTagSelect(nextTag);else overlay.querySelector("[data-tag-new-form] input").focus();return;
     }
   });
   tagList.addEventListener("change",event=>{
     const input=event.target.closest("[data-tag-color]");if(!input)return;
     const colors=invReadTagColors();colors[input.dataset.tagColor]=input.value;
-    if(!invTagCommit(safeTags(),invReadProductActions(),colors)){invStatus("The colour could not be saved in this browser.","error");return;}
+    if(!invTagCommit(safeTags(),invReadProductActions(),colors))return;
     renderTags();invRenderInventory();focusTagColor(input.dataset.tagColor);
   });
   tagList.addEventListener("submit",event=>{
@@ -6273,7 +6273,7 @@ function invOpenTagManager(){
     const row=event.target.closest("[data-tag-row]");if(!row||!dragTag||row.dataset.tagRow===dragTag)return;event.preventDefault();
     const tags=safeTags(),from=tags.indexOf(dragTag),to=tags.indexOf(row.dataset.tagRow);if(from<0||to<0)return;
     tags.splice(to,0,tags.splice(from,1)[0]);
-    if(invTagCommit(tags,invReadProductActions(),invReadTagColors())){renderTags();focusTagSelect(row.dataset.tagRow);}else invStatus("The tag order could not be saved in this browser.","error");
+    if(invTagCommit(tags,invReadProductActions(),invReadTagColors())){renderTags();focusTagSelect(row.dataset.tagRow);};
   });
   search.addEventListener("input",renderPlugins);
   pluginHost.addEventListener("click",event=>{
@@ -6288,7 +6288,7 @@ function invOpenTagManager(){
   clearButton.addEventListener("click",()=>{
     if(!selectedTag||!window.confirm('Remove the "'+selectedTag+'" tag from every plug-in? The tag itself will remain.'))return;
     const actions=invReadProductActions();Object.values(actions).forEach(record=>{if(record&&Array.isArray(record.tags)){record.tags=record.tags.filter(tag=>tag!==selectedTag);if(!record.tags.length)delete record.tags;}});
-    if(!invTagCommit(safeTags(),actions,invReadTagColors())){invStatus("The tag could not be cleared in this browser.","error");return;}
+    if(!invTagCommit(safeTags(),actions,invReadTagColors()))return;
     invRenderInventory();renderTags();clearButton.focus();
   });
   const close=()=>{overlay.remove();invRenderInventory();document.querySelector("[data-inv-tag-manager]")?.focus();};
