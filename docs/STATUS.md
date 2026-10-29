@@ -1,10 +1,12 @@
 ## Latest PluginHub parity checkpoint — 2026-10-29
 
-Branch source `47efd003e2429f82cf2a6b21bbacbfa0404cbb92` is deployed successfully to the development Pages preview (`9096b1f9-9ec6-47a9-9e03-dea0ea682b61`). The initial Library render now shows category totals before any category/filter selection. Jules reviewed the committed resolver change and passed. Evidence: [parity update](../governance/evidence/PHASE_PLUGINHUB_PARITY_UPDATE_20261029.md).
+Branch source `3570ad1bd5dfb55d69685f6a10c201e6b2553048` is deployed successfully to development Pages (deployment `01f39e82-a295-4204-9b27-32f94d6c0cdf`). The four-column Cards view, List/Ledger layouts, sort controls, vendor cards, initial category totals and Plugin Tag Manager are present. Jules reviewed and passed the Tag Manager source, including the clean-inventory empty state. Evidence: [Tag Manager implementation](../governance/evidence/PHASE_PLUGINHUB_TAG_MANAGER_20261029.md).
 
-The preview has Cards, List and Ledger, Vendor/Product/Format/Version sorting, Hidden, Favorites and My tags filters, and vendor collapse/expand. Remaining gaps include complete Tag Manager, Intel-only and snoozed controls, live vendor status checks, Companion-backed file actions, and the PluginHub-style whole-library tools. This is not Foundation exit acceptance. No tests, folder scan, inventory upload, Worker deployment or production action occurred. The Worker passkey RP fix remains a surgical patch, not a reproducible branch-source deployment.
+The Tag Manager creates, selects, renames, recolours, orders and deletes browser-local tags and manages per-product membership, including vendor-level Add all. A clean isolated preview origin showed no installed inventory and opened the two-pane manager without scanning or uploading anything. Tag definitions remain browser-local, not account-synchronised.
 
-Foundation remains **NOT MET**; Stage 6 remains gated. Synthetic non-production data only for further gated work.
+Remaining gaps include PluginHub’s individual/multi-tag browse selection, Intel-only and snoozed controls, live vendor status checks, Companion-backed file actions, and whole-library Tools workflows. No automated tests, folder scan, inventory upload, Worker deployment or production action occurred. The development Worker passkey RP fix remains a surgical patch, not a reproducible branch-source deployment.
+
+Foundation remains **NOT MET**; Stage 6 remains gated. Use synthetic non-production data only for gated work.
 
 ## Historical PluginHub parity sweep — superseded by latest checkpoint
 
