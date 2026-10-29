@@ -5836,7 +5836,7 @@ function invRenderSidebar(groups,stageMap){
   const favCount=groups.filter(group=>typeof isFav==="function"&&isFav(group.name)).length;
   const tagCount=groups.filter(group=>{const state=invGetProductActions(group.vendor,group.name);return Array.isArray(state.tags)&&state.tags.length>0}).length;
   const hiddenCount=groups.filter(group=>invGetProductActions(group.vendor,group.name).hidden===true).length;
-  const categoryCounts=new Map();groups.forEach(group=>categoryCounts.set(group.browseCategory,(categoryCounts.get(group.browseCategory)||0)+1));
+  const categoryCounts=new Map();groups.forEach(group=>{const category=invDisplayCategory(group);if(Object.keys(INV_CATEGORY_STAGES).includes(category))categoryCounts.set(category,(categoryCounts.get(category)||0)+1);});
   sidebar.querySelectorAll("[data-inv-category]").forEach(button=>{let count=button.querySelector(".inv-side-count");if(!count){count=document.createElement("span");count.className="inv-side-count";button.appendChild(count);}count.textContent=(categoryCounts.get(button.getAttribute("data-inv-category"))||0).toLocaleString();});
   const hiddenButton=sidebar.querySelector('[data-inv-scope="hidden"]');if(hiddenButton){hiddenButton.classList.toggle("active",INV_SCOPE==="hidden"&&!INV_CATEGORIES.size);hiddenButton.setAttribute("aria-pressed",String(INV_SCOPE==="hidden"));const count=hiddenButton.querySelector(".inv-side-count");if(count)count.textContent=hiddenCount.toLocaleString();}
   const tagButton=sidebar.querySelector('[data-inv-scope="tags"]');if(tagButton){tagButton.classList.toggle("active",INV_SCOPE==="tags");tagButton.setAttribute("aria-pressed",String(INV_SCOPE==="tags"));let count=tagButton.querySelector(".inv-side-count");if(!count){count=document.createElement("span");count.className="inv-side-count";tagButton.appendChild(count);}count.textContent=tagCount.toLocaleString();}
@@ -6220,7 +6220,7 @@ function invRenderInventory(){
     const actionState=invGetProductActions(group.vendor,group.name);
     const hidden=actionState.hidden===true;
     const scopeOK=INV_SCOPE==="favorites"?(typeof isFav==="function"&&isFav(group.name)):INV_SCOPE==="tags"?(Array.isArray(actionState.tags)&&actionState.tags.length>0):INV_SCOPE==="hidden"?hidden:!hidden;
-    const categoryOK=!INV_CATEGORIES.size||INV_CATEGORIES.has(group.browseCategory);
+    const categoryOK=!INV_CATEGORIES.size||INV_CATEGORIES.has(invDisplayCategory(group));
     return formatOK&&searchOK&&scopeOK&&categoryOK;
   });
   const collator=new Intl.Collator(undefined,{sensitivity:"base",numeric:true});
