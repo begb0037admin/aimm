@@ -1,3 +1,11 @@
+## Latest Stage 5 passkey resume — 2026-10-29
+
+Source fix `98754965a901b37a193fa6363b7e01758283e9cb` passed Jules review. On the same signed-in development session and synthetic operation `caebb13c-1f6b-4422-b23c-570b4d8a0e9f`, the first saved-passkey assertion succeeded and revealed the exact synthetic fixture paths. The next confirmation expired while 1Password loaded; Companion safely cleared that expired preview and reported no files changed. The same operation resumed with the previously approved isolated `Unused` folder and a fresh preview.
+
+The second passkey chooser appeared; continuing with the existing 1Password passkey opened an Autofill spinner which remains stuck. No second assertion succeeded, the Companion Move control remains disabled, and no file moved. Do not repeat enrollment or create another operation. Resume after the provider handoff is resolved, then complete the second passkey and separate Companion confirmation. Stage 5 **PARTIAL**; Foundation **NOT MET**; Stage 6 gated. The development Worker is the reproducible branch build recorded below; no production deploy. Synthetic data only.
+
+Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`, blob `e59186553e5636de5bf9c32e0b0b448f5e35f755`.
+
 # Stage 5 synthetic action and development Worker checkpoint — 2026-10-29
 
 ## Verified branch and development deployment
@@ -16,7 +24,7 @@ The browser passkey-gated exact-path reveal/confirmation has not completed. Comp
 
 The existing operation was resumed in the same development preview, and **View exact paths with passkey** was attempted. No Chrome, macOS, or 1Password approval prompt appeared. The 1Password extension showed the saved development passkey entry and a generic sign-in-options notice, but no pending request; its main app remained on All Items. The page’s passkey control is now disabled while its status still requests passkey path review. No assertion succeeded and no file moved. Do not ask the owner to accept a prompt that is not present, repeat passkey enrollment, or create another operation. Diagnose the stalled browser/API/passkey path, then resume this same operation.
 
-## Latest resume result — 2026-10-29
+## Earlier resume result — superseded by the latest passkey resume
 
 The same operation was resumed in the verified development Pages preview after the source added explicit progress reporting. The paired diagnostic Companion showed the exact synthetic fixture-to-isolated-`Unused` preview. The browser reached **“Waiting for the passkey chooser in Chrome or 1Password…”**. No chooser appeared in Chrome; 1Password remained on All Items and Chrome surfaced only a generic sign-in-options notice. Chrome DevTools recorded `POST /v1/webauthn/authentication/options` as `201 Created`, followed by a canceled 1Password universal sign-on iframe request; no assertion-verification request appears in the captured log. The stall is before passkey assertion. No passkey assertion succeeded, no file moved, and the Companion Move control remains disabled. The UI progress change was reviewed by Jules and passed. No tests were run. Do not repeat enrollment or create another operation; resume this one when the passkey chooser is available.
 
