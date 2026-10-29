@@ -6,9 +6,9 @@ The preview has Cards, List and Ledger, Vendor/Product/Format/Version sorting, H
 
 Foundation remains **NOT MET**; Stage 6 remains gated. Synthetic non-production data only for further gated work.
 
-## 2026-10-29 PluginHub parity sweep
+## Historical PluginHub parity sweep — superseded by latest checkpoint
 
-Manual-to-preview comparison is recorded in [PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md](../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md) (blob `a14e42367f30d157b606f134ab3cd85be4fdfdef`; corrected in commit `a84321d3227acb2a28422b0564eca8280184528b`). Latest inspected branch source: `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62`. The four-column vendor cards and current per-product menu render; whole-library tools, alternate layouts, status views and native actions remain open. Jules reviewed the corrected parity report and passed; no implementation or Foundation gate is approved by that review.
+Manual-to-preview comparison is recorded in [PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md](../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md) (blob `a14e42367f30d157b606f134ab3cd85be4fdfdef`; corrected in commit `a84321d3227acb2a28422b0564eca8280184528b`). Inspection at that checkpoint used source `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62`. At that point whole-library tools, alternate layouts, status views and native actions remained open; the newer checkpoint above records which layout controls have since landed. Jules reviewed the corrected parity report and passed; no implementation or Foundation gate is approved by that review.
 
 Foundation remains **NOT MET**. Stage 6 remains gated. The Pages inspection did not run tests or alter the Worker deployment. The development Worker surgical passkey RP-fix provenance limitation remains separately open. Continue with the parity report’s ordered work, preserve synthetic non-production data, and keep production and separately gated actions out of scope.
 
