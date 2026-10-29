@@ -5761,10 +5761,10 @@ function invRenderSidebar(groups,stageMap){
 }
 function invLayoutTiles(host){
   const grid=host&&host.querySelector(".inv-cards");if(!grid)return;
-  const GAP=12,MIN=268,MAX=3;
+  const GAP=12,MIN=268;
   const cs=getComputedStyle(grid),padL=parseFloat(cs.paddingLeft)||0,padR=parseFloat(cs.paddingRight)||0,padT=parseFloat(cs.paddingTop)||0,padB=parseFloat(cs.paddingBottom)||0;
   const inner=grid.clientWidth-padL-padR;if(inner<=0)return;
-  const cols=Math.min(MAX,Math.max(1,Math.floor((inner+GAP)/(MIN+GAP))));
+  const cols=Math.max(1,Math.floor((inner+GAP)/(MIN+GAP)));
   const colW=(inner-GAP*(cols-1))/cols,heights=new Array(cols).fill(0);
   const cards=Array.from(grid.children).filter(card=>card.classList&&card.classList.contains("inv-vendor"));
   for(const card of cards){
