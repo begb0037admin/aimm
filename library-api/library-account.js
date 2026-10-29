@@ -1329,7 +1329,7 @@
     let syntheticCurrentAction = null;
     let syntheticOwnerPreviewViewed = false;
     let syntheticActionConfirmed = false;
-    const syntheticRecordID = "34234152-d78b-4e0d-8ae2-4a638a0ab619";
+    const syntheticRecordID = "21e8fef3-f9a1-4e71-bfc9-244bdd22472f";
     let syntheticDeviceID = null;
     let syntheticPreviewReady = false;
     let syntheticIdempotencyKey = null;
