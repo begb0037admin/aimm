@@ -6,7 +6,7 @@ The same signed-in session resumed synthetic operation `caebb13c-1f6b-4422-b23c-
 
 The current passkey chooser appeared. Continuing with the saved 1Password credential opened a 1Password Autofill sheet that remains on a spinner. No second assertion succeeded; Companion’s **Move to Unused** control remains disabled; no file moved. Do not create another operation or enroll a passkey. Resume the same operation after the 1Password provider handoff is resolved, review the fresh exact preview, complete the second passkey confirmation, then the separate Companion confirmation.
 
-Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`, blob `e59186553e5636de5bf9c32e0b0b448f5e35f755`.
+Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`, blob `6c937dddc157429c0b6473c72f6c33612e2ae220`.
 
 Stage 5 remains **PARTIAL**; Foundation remains **NOT MET** and Stage 6 remains gated. The development Worker is a reproducible branch-source build as recorded below. Synthetic non-production data only; no production deployment or separately gated external action occurred.
 
@@ -32,9 +32,9 @@ Stage 5 remains **PARTIAL**; Foundation remains **NOT MET** and Stage 6 remains 
 
 Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`.
 
-## Current synchronized record pins — verified from sibling records at head `35b0e643eb2f531002a85017753e04e655d73a9d`
+## Current synchronized record pins — verified from sibling records at head `1d69a95a09b5082769cbf04e24ab6d1048cc3414`
 
-Dashboard `DASHBOARD.html` blob `268be5a27f302e4fafe95dcc3629d690dd1469b9`; Roadmap `docs/ROADMAP.md` blob `f79f64439594e2a6171c955556c0fb1ffe7ea608`; Status `docs/STATUS.md` blob `1258d95d608d366eb41e6860e5ba0a90924ada16`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `20df17f0d357f407d7d6410a2d6411ff25644494`; Foundation closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` blob `a229f4ab25f931581bd9cdafef3e873da585f958`; Foundation evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md` blob `53857ed94a6246b5f27251653a55e17eb5b4ce32`; current Stage 5 synthetic action and Worker report `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md` blob `6c937dddc157429c0b6473c72f6c33612e2ae220`. Settings source fix: `98754965a901b37a193fa6363b7e01758283e9cb`. This handover does not self-pin.
+Dashboard `DASHBOARD.html` blob `268be5a27f302e4fafe95dcc3629d690dd1469b9`; Roadmap `docs/ROADMAP.md` blob `f79f64439594e2a6171c955556c0fb1ffe7ea608`; Status `docs/STATUS.md` blob `1258d95d608d366eb41e6860e5ba0a90924ada16`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `bed64d97ab81ab2beb8b469e7c9366e8c6f2bb06`; Foundation closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` blob `a229f4ab25f931581bd9cdafef3e873da585f958`; Foundation evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md` blob `53857ed94a6246b5f27251653a55e17eb5b4ce32`; current Stage 5 synthetic action and Worker report `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md` blob `6c937dddc157429c0b6473c72f6c33612e2ae220`. Settings source fix: `98754965a901b37a193fa6363b7e01758283e9cb`. This handover does not self-pin.
 
 ## Historical synchronized pins before this checkpoint — 2026-10-29
 
