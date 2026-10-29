@@ -4,7 +4,7 @@ A feature-by-feature manual and running-app sweep is recorded in `governance/evi
 
 Verified in the preview: four-column vendor cards, official vendor/Installer Hub links, menu open, category/tag submenus, local note/rating, copy/rescan, local up-to-date and keep markers. Menu actions requiring the native Companion and unconnected services remain clearly disabled. The audit identifies the missing List/Ledger views, sorting, status groups, complete Tag Manager and browse controls, whole-library Tools section, and Companion-backed/native services. The exact gaps and safe order are in the parity report.
 
-The Pages preview still represents source commit `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62` (deployment `113a7790-36e5-49d4-a1b0-aef81d9f45d2`); the documentation-only parity commit does not change the deployed page. This sweep did not run tests or deploy. It does not resolve the development Worker’s surgical passkey RP-fix provenance limitation.
+The Pages preview still represents source commit `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62` (deployment URL `https://113a7790.aimm-pluginhub-foundation-dev.pages.dev`); the documentation-only parity commit does not change the deployed page. This sweep did not run tests or deploy. It does not resolve the development Worker’s surgical passkey RP-fix provenance limitation.
 
 Foundation remains **NOT MET** and Stage 6 remains gated. Continue with the preview parity items in report order, then implement Companion and tool surfaces only through their existing reviewed contracts. Preserve synthetic non-production data for these steps. No production deployment or separately gated external action occurred.
 
