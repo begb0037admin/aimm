@@ -65,11 +65,11 @@ The current row menu was visually checked for a product with one known version. 
 
 ## Safe implementation order
 
-1. Complete the browser Library parity surface first: View menu (Cards/List/Ledger), sorting, multi-select category/tag filtering, vendor collapse, hidden and pinned/favourite views, and the matching counts. Keep the current four-column card layout as the preferred default.
-2. Implement status semantics and vendor adapters. Only then enable status counts, snooze and paid-upgrade badges.
-3. Build the native Companion actions through the existing exact-preview, confirmation, WebAuthn and per-item-receipt contracts. This covers Move to Unused, Restore, Reveal, Trash, batch work, duplicate review and installer cleanup.
+1. Complete Tag Manager and persistent tag editing against the approved preference contract; verify category multi-select and combined filters during the manual walk.
+2. Add Intel-only and snoozed controls. Implement status semantics and vendor adapters before enabling update counters, snooze or paid-upgrade badges.
+3. Build native Companion actions through the existing exact-preview, confirmation, WebAuthn and per-item-receipt contracts. This covers Move to Unused, Restore, Reveal, Trash, batch work, duplicate review and installer cleanup.
 4. Add License Key Vault, compatibility, share/profile and entitlement surfaces under their separate privacy and account contracts.
-5. Re-run the same manual-to-preview walk and get fresh independent review before changing any phase gate.
+5. Re-run the manual-to-preview walk across Cards, List and Ledger, all sort modes and combined filters. Obtain fresh independent review before changing any phase gate.
 
 ## Gate state
 
