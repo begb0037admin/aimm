@@ -1,12 +1,14 @@
 ## Latest implementation checkpoint — 2026-10-29
 
-Branch source `3570ad1bd5dfb55d69685f6a10c201e6b2553048` passed Jules review and is deployed to the development Pages preview (deployment `01f39e82-a295-4204-9b27-32f94d6c0cdf`). The preview uses the [stable branch URL](https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/); the deployment-specific URL was opened for clean-origin verification.
+Branch source `80dd8012a19f8b3cd662ee2125aa1c30e94b4ae6` passed Jules source review and is deployed to the development Pages preview (deployment `415a8b76-f53c-4c0e-82d5-20f7dd4eeb23`). The clean deployment-specific origin showed zero installed products and zero connected folders. It visually presents the Library toolbar with the My Tags dropdown and format controls.
 
-The first Library render has category counts. Four-column Cards, List and Ledger, sort controls, existing local/vendor card actions and the two-pane Plugin Tag Manager are present. Tag Manager supports browser-local create, rename, recolour, order, delete, search and per-product membership, including atomic vendor-level Add all. The clean deployment origin showed zero installed products/folders and the accurate Tag Manager empty state. No folder picker or scan was invoked. Details: [Tag Manager implementation evidence](PHASE_PLUGINHUB_TAG_MANAGER_20261029.md).
+My Tags now provides ordered, colour-coded tag choices, single selection, Shift-click combinations, clearable active chips, and New tag/Tag Manager entry points. Tag selection composes with category, format and search filters. Format pills follow the manual's normal-click replace and Shift-click combine/remove behavior; All formats clears selections. Search includes the resolved category. The exact source, deployment, and visible interaction evidence are in [the filter implementation report](PHASE_PLUGINHUB_FILTERS_20261029.md). The browser-local Tag Manager remains in [its implementation report](PHASE_PLUGINHUB_TAG_MANAGER_20261029.md).
 
-Current remaining parity: My Tags filtering still needs individual/multiple tag selection and combined-filter comparison with the reference. Intel-only filtering requires architecture metadata; snooze and update-status filters require live status observations. Per-row filesystem actions need the native Companion protocol. Whole-library tools need their own reviewed backends and flows. AAX remains excluded by the approved scanner architecture.
+The clean preview had no inventory, so no product-result matching was claimed. A deployment-specific isolated origin held one synthetic tag without product membership for the chip interaction. No real inventory was scanned or uploaded. No folder picker was used.
 
-Jules reviewed the Tag Manager source, not Foundation acceptance. No automated tests, folder scan, inventory upload, Worker deployment or production action occurred. Foundation remains **NOT MET**; Stage 6 remains gated. The live development Worker passkey RP fix remains a surgical patch, not a reproducible branch-source deployment.
+Remaining parity work: PluginHub's VST cycle (AIMM still exposes separate VST2/VST3 pills); Intel-only and snoozed/status filters, which require architecture metadata and current vendor observations; Companion-backed filesystem actions; whole-library Tools workflows; and a renewed end-to-end manual comparison. AAX remains excluded by the approved scanner architecture.
+
+Jules passed the source review; that is not Foundation acceptance. No automated tests, folder scan, inventory upload, Worker deployment or production action occurred. Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP fix is still a surgical patch, not a reproducible branch-source deployment.
 
 # PluginHub parity sweep — 2026-10-29
 
@@ -51,13 +53,13 @@ The Library also has:
 
 The current row menu was visually checked for a product with one known version. Category and tag submenus open; the top category option is accurately labelled “Use AIMM’s inferred category.” The action menu contains working local/preview actions and visibly disabled Companion/service actions. No preference was saved during this inspection.
 
-## Current parity gaps after Tag Manager implementation
+## Current parity gaps after browse filter implementation
 
 | Gap | Current preview state | Required next work |
 |---|---|---|
 | Status groups and counters | Updates Available, Up to Date and Manual Check remain disabled because vendor checks are not connected. Unchecked and paid-upgrade states are absent. | Implement status semantics and live vendor checks before enabling these filters or counters. |
-| Tag management | Browser-local Tag Manager is present: create, rename, recolour, order and delete tags; search inventory and manage per-product membership, including vendor-level Add all. It is not account-synchronised. | Implement individual/multiple My Tags browse selection and compare combined filters with PluginHub. |
-| Browse controls | All plugins, Favorites, My tags, Hidden, category filters, four format filters, search, sort, and collapse/expand controls are present. Tag editing is in the manager; individual/multiple tag selection remains open. Intel-only and snoozed controls are absent. | Add Intel-only only when architecture data exists; add snooze only with live status observations. |
+| Tag management | Browser-local Tag Manager supports create, rename, recolour, order and delete; per-product membership and vendor-level Add all. My Tags toolbar selection supports single and Shift-click multi-select with clearable chips. Not account-synchronised. | Remaining parity is account sync if required by the approved preference contract; individual/multi-tag browse behavior is implemented. |
+| Browse controls | All plugins, Favorites, My tags (single and multi-select), Hidden, category filters, four format filters (multi-select), search including category, sort, and collapse/expand controls are present. Intel-only and snoozed controls remain absent; AIMM's VST2/VST3 pills do not yet match PluginHub's VST cycle. | Add Intel-only only with architecture metadata; add snooze/status only with live observations; align VST cycling while retaining four scanner formats. |
 | Per-row actions | Local metadata actions are present. Move to Unused, Uninstall/Trash, and Reveal require the native Companion. Snooze depends on status data; License Vault and Report a problem need their own backends. | Use the preview/confirmation/receipt protocol for local file operations. Keep unavailable actions disabled until reviewed backends exist. |
 | Whole-library Tools | No complete PluginHub-style Tools collection or equivalents for installer cleanup, duplicate review, License Vault, sharing, profile comparison, entitlement or Compatibility are verified. Tag Manager is now a Library surface. | Add tool navigation and implement each surface against its own reviewed contract. |
 | Vendor and layout details | Four-column Cards, List and Ledger modes, Vendor/Product/Format/Version sorting, vendor links, and collapse/expand controls are present. | Continue the reference walk for unverified interaction and spacing details, especially across alternate layouts. |
@@ -65,7 +67,7 @@ The current row menu was visually checked for a product with one known version. 
 
 ## Safe implementation order
 
-1. Add individual/multiple My Tags browse selection, then compare category/tag/search combinations with the reference.
+1. Compare combined category/tag/format/search behavior with PluginHub; next align the VST cycling control.
 2. Add Intel-only and snoozed controls. Implement status semantics and vendor adapters before enabling update counters, snooze or paid-upgrade badges.
 3. Build native Companion actions through the existing exact-preview, confirmation, WebAuthn and per-item-receipt contracts. This covers Move to Unused, Restore, Reveal, Trash, batch work, duplicate review and installer cleanup.
 4. Add License Key Vault, compatibility, share/profile and entitlement surfaces under their separate privacy and account contracts.
