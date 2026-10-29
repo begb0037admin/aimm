@@ -1,3 +1,10 @@
+## 2026-10-29 PluginHub parity sweep
+
+Manual-to-preview comparison is recorded in [PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md](../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md) (blob `50bae6639e116900609b85d519a52959d6f4d65d`; created by commit `62f7f1fd10b079ca33273ef859115e6b6668d3a6`). Latest inspected branch source: `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62`. The four-column vendor cards and current per-product menu render; whole-library tools, alternate layouts, status views and native actions remain open. Jules review of the parity report is pending.
+
+Foundation remains **NOT MET**. Stage 6 remains gated. The Pages inspection did not run tests or alter the Worker deployment. The development Worker surgical passkey RP-fix provenance limitation remains separately open. Continue with the parity report’s ordered work, preserve synthetic non-production data, and keep production and separately gated actions out of scope.
+
+## Latest Stage 5 passkey and worker-access status — 2026-10-29
 ## Latest Stage 5 passkey resume — 2026-10-29
 
 Source fix `98754965a901b37a193fa6363b7e01758283e9cb` was reviewed and passed by Jules. The same signed-in development session resumed synthetic operation `caebb13c-1f6b-4422-b23c-570b4d8a0e9f` on the paired device and verified the exact preview. The first saved-passkey assertion eventually succeeded and revealed the exact synthetic source and isolated `Unused` destination. The second confirmation attempt expired while the 1Password handoff was loading; Companion safely cleared only that expired, unconfirmed preview and reported no file changes. The same operation was resumed, the existing `Unused` folder selected again, and a fresh preview prepared.
