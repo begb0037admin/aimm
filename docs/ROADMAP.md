@@ -12,13 +12,13 @@ Next sequence:
 
 AAX remains excluded by the approved scanner architecture. No automated tests, folder scan, inventory upload, Worker deployment or production action occurred in this checkpoint. The Worker passkey RP fix remains surgical, not reproducible from branch source. Foundation remains **NOT MET**; Stage 6 remains gated.
 
-## 2026-10-29 PluginHub UI parity continuation
+## Historical initial parity plan — superseded by current sequence
 
-Use the new [PluginHub parity sweep](../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md) (blob `a14e42367f30d157b606f134ab3cd85be4fdfdef`) as the implementation checklist for the Library UI and reference-tool sweep. It compares the actual installed PluginHub manual/UI with branch source `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62`. Jules reviewed the corrected parity report and passed.
+The initial sweep compared the installed PluginHub manual/UI with branch source `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62`. The updated status and remaining gaps are at the top of this roadmap and in the [current parity sweep](../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md).
 
 Next sequence:
 
-1. Add the reference View selector and implement Cards, List and Ledger, retaining the chosen four-column Cards default; add sorting and complete category/tag selection semantics.
+1. Complete Tag Manager and persistent tag editing against the approved preference contract. Recheck category multi-select behavior during the next manual pass.
 2. Add the missing browse/status controls only when their data is real. Status buckets, vendor checks, paid-upgrade signals and snooze behavior need the shared status model.
 3. Add a PluginHub-style Tools section with clearly scoped surfaces. Keep local filesystem work behind the native Companion preview/confirmation/receipt protocol; do not make unsupported actions appear active.
 4. Complete vault, compatibility, sharing and profile flows against their separate privacy/account contracts.
