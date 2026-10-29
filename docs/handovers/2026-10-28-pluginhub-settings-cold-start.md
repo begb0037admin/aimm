@@ -4,7 +4,7 @@ Source fix `98754965a901b37a193fa6363b7e01758283e9cb` passed Jules review. On th
 
 The second passkey chooser appeared; continuing with the existing 1Password passkey opened an Autofill spinner which remains stuck. No second assertion succeeded, the Companion Move control remains disabled, and no file moved. Do not repeat enrollment or create another operation. Resume after the provider handoff is resolved, then complete the second passkey and separate Companion confirmation. Stage 5 **PARTIAL**; Foundation **NOT MET**; Stage 6 gated. The development Worker is the reproducible branch build recorded below; no production deploy. Synthetic data only.
 
-Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`, blob `e59186553e5636de5bf9c32e0b0b448f5e35f755`.
+Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`, blob `6c937dddc157429c0b6473c72f6c33612e2ae220`.
 
 ## Historical Stage 5 synthetic action checkpoint — superseded by the latest passkey resume
 
