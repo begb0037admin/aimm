@@ -1,3 +1,11 @@
+## Latest Stage 5 owner-preview handoff — 2026-10-29
+
+The reviewed development Settings preview now offers a targeted, synthetic-only move flow. Source commit `3a35e2139bfb28f1b0c95eac944420223e577665`, `library-api/library-account.js` blob `461459466a361f59564582b5a0e50757013a7362`; Jules reviewed the exact source. Cloudflare development Pages deployment `7f9e75c4-a1c3-4393-b9aa-7efbd465b8b8` succeeded on the approved branch preview: https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/.
+
+A device-scoped preview matched only the known synthetic AU fixture, “AIMM Stage 5 Synthetic Probe” version 1.0.0. One `move_to_unused` request was queued. The isolated synthetic diagnostic Companion fetched it and opened its “Choose the Unused folder” picker. It is waiting for the owner to select the intended destination, review the exact source and destination shown by Companion, and confirm with the passkey. **No files have moved and no passkey assertion has occurred.** A separate normal Companion installation showed an empty queue; it is not the diagnostic install paired to this fixture, so that result does not indicate request failure.
+
+No device metadata or local paths are recorded here, and no unrelated plug-in inventory was requested. Stage 5 remains **PARTIAL**; Foundation remains **NOT MET** and Stage 6 remains gated. The development Worker passkey RP fix remains a surgical bundle patch, not a reproducible branch build. No production deployment occurred.
+
 ## Latest Settings sign-in indicator and synthetic Stage 5 preview — 2026-10-29
 
 The development Library session is confirmed: the owner’s read-only Account preferences request completed. The Settings UI initially kept showing “Sign in” even while the session was active. A reviewed fix now shows a green, checkmarked “Signed in” control after a successful same-origin session check on page load; HTTP 401 shows signed out, while origin or service errors show status unavailable. Jules passed the exact source diff. Source commit `24dcbe1bbf21f0e873317f37ee612ea4b45258be`, blob `c8050ee01630a4e5f3dc754bfb67bd1c6bd499c6`. Visual confirmation: development Pages preview `81628aed-b972-4a52-9268-cc88ab735ff0`, https://81628aed.aimm-pluginhub-foundation-dev.pages.dev/. No passkey ceremony, Worker deploy, or production deploy occurred.
