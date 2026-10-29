@@ -1293,7 +1293,7 @@
     const syntheticDiagnostic = document.createElement("details");
     syntheticDiagnostic.className = "account-synthetic-diagnostic";
     syntheticDiagnostic.append(text("summary", "Synthetic Stage 5 move preview"));
-    const syntheticHelp = text("p", "Development only. Loading devices shows their names from this development account; it does not read plug-in inventory. Choose the paired device. The preview checks only the one known synthetic record. The Mac must show the exact paths before you confirm with your passkey.");
+    const syntheticHelp = text("p", "Development only. This flow checks one synthetic fixture without reading plug-in inventory. When resuming a request, include its operation ID as stage5-operation and the UUID from the Companion’s isolated /tmp/aimm-stage5-… folder as stage5-root in this development preview URL. After selecting the paired Mac, check the request; a passkey reveals the exact paths in this browser for review, then a second passkey confirms that same preview. The Mac requires a separate local Move to Unused confirmation.");
     const syntheticControls = document.createElement("div");
     syntheticControls.className = "account-row";
     const loadDevices = text("button", "Load development devices");
@@ -1310,6 +1310,25 @@
     const requestSyntheticMove = text("button", "Request on Mac");
     requestSyntheticMove.type = "button";
     requestSyntheticMove.disabled = true;
+    const checkSyntheticMove = text("button", "Check Mac preview");
+    checkSyntheticMove.type = "button";
+    checkSyntheticMove.disabled = true;
+    const viewSyntheticPaths = text("button", "View exact paths with passkey");
+    viewSyntheticPaths.type = "button";
+    viewSyntheticPaths.disabled = true;
+    const confirmSyntheticMove = text("button", "Confirm exact move with passkey");
+    confirmSyntheticMove.type = "button";
+    confirmSyntheticMove.disabled = true;
+    const stage5URL = new URL(location.href);
+    const operationFromURL = stage5URL.searchParams.get("stage5-operation");
+    const rootFromURL = stage5URL.searchParams.get("stage5-root");
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    let syntheticOperationID = operationFromURL && uuidPattern.test(operationFromURL) ? operationFromURL : null;
+    const syntheticStage5RootID = rootFromURL && uuidPattern.test(rootFromURL) ? rootFromURL.toUpperCase() : null;
+    let syntheticActionDigest = null;
+    let syntheticCurrentAction = null;
+    let syntheticOwnerPreviewViewed = false;
+    let syntheticActionConfirmed = false;
     const syntheticRecordID = "34234152-d78b-4e0d-8ae2-4a638a0ab619";
     let syntheticDeviceID = null;
     let syntheticPreviewReady = false;
@@ -1319,7 +1338,7 @@
     const syntheticStatus = text("p", "Load development devices to begin.", "account-synthetic-status");
     syntheticStatus.setAttribute("role", "status");
     syntheticStatus.setAttribute("aria-live", "polite");
-    syntheticControls.append(loadDevices, deviceSelect, previewSyntheticMove, requestSyntheticMove);
+    syntheticControls.append(loadDevices, deviceSelect, previewSyntheticMove, requestSyntheticMove, checkSyntheticMove, viewSyntheticPaths, confirmSyntheticMove);
     syntheticDiagnostic.append(syntheticHelp, syntheticControls, syntheticStatus);
     const developmentPreviewOrigin = "https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev";
     const clearSyntheticFlow = (message, locked = false) => {
@@ -1328,6 +1347,14 @@
       syntheticPreviewReady = false;
       syntheticIdempotencyKey = null;
       syntheticRequestAttempted = false;
+      syntheticOperationID = null;
+      syntheticActionDigest = null;
+      syntheticCurrentAction = null;
+      syntheticOwnerPreviewViewed = false;
+      syntheticActionConfirmed = false;
+      checkSyntheticMove.disabled = true;
+      viewSyntheticPaths.disabled = true;
+      confirmSyntheticMove.disabled = true;
       deviceSelect.replaceChildren(devicePlaceholder.cloneNode(true));
       deviceSelect.disabled = true;
       loadDevices.disabled = locked;
@@ -1387,15 +1414,22 @@
       syntheticPreviewReady = false;
       syntheticIdempotencyKey = null;
       syntheticRequestAttempted = false;
-      previewSyntheticMove.disabled = !syntheticDeviceID;
+      syntheticActionDigest = null;
+      syntheticCurrentAction = null;
+      syntheticOwnerPreviewViewed = false;
+      syntheticActionConfirmed = false;
+      checkSyntheticMove.disabled = !syntheticDeviceID || !syntheticOperationID;
+      viewSyntheticPaths.disabled = true;
+      confirmSyntheticMove.disabled = true;
+      previewSyntheticMove.disabled = !syntheticDeviceID || Boolean(syntheticOperationID);
       requestSyntheticMove.disabled = true;
       syntheticStatus.textContent = syntheticDeviceID
-        ? "Preview will read only the synthetic fixture record on this device."
+        ? (syntheticOperationID ? "Check this synthetic action on the selected Mac." : "Preview will read only the synthetic fixture record on this device.")
         : "Choose one development device.";
       syntheticStatus.dataset.tone = "";
     });
     previewSyntheticMove.addEventListener("click", async () => {
-      if (!syntheticDeviceID || syntheticRequestAttempted) return;
+      if (!syntheticDeviceID || syntheticRequestAttempted || syntheticOperationID) return;
       const requestedDeviceID = syntheticDeviceID;
       const epoch = ++syntheticFlowEpoch;
       loadDevices.disabled = true;
@@ -1429,7 +1463,7 @@
         if (epoch === syntheticFlowEpoch) {
           loadDevices.disabled = false;
           deviceSelect.disabled = false;
-          previewSyntheticMove.disabled = !syntheticDeviceID || syntheticRequestAttempted;
+          previewSyntheticMove.disabled = !syntheticDeviceID || syntheticRequestAttempted || Boolean(syntheticOperationID);
         }
       }
     });
@@ -1449,7 +1483,15 @@
         });
         if (epoch !== syntheticFlowEpoch || syntheticDeviceID !== requestedDeviceID) return;
         syntheticPreviewReady = false;
-        syntheticStatus.textContent = `Request sent to the paired Mac (${action.state}). No files have moved. Review the exact source and destination on the Mac before confirming with your passkey.`;
+        syntheticOperationID = action.operation_id;
+        syntheticActionDigest = null;
+        syntheticCurrentAction = null;
+        syntheticOwnerPreviewViewed = false;
+        syntheticActionConfirmed = false;
+        checkSyntheticMove.disabled = !syntheticOperationID;
+        viewSyntheticPaths.disabled = true;
+        confirmSyntheticMove.disabled = true;
+        syntheticStatus.textContent = `Request sent to the paired Mac (${action.state}). No files have moved. Check the Mac preview to continue.`;
         syntheticStatus.dataset.tone = "ok";
       } catch (error) {
         if (epoch !== syntheticFlowEpoch) return;
@@ -1457,6 +1499,179 @@
         syntheticStatus.dataset.tone = "error";
         syntheticRequestAttempted = false;
         requestSyntheticMove.disabled = false;
+      }
+    });
+
+    checkSyntheticMove.addEventListener("click", async () => {
+      if (!syntheticOperationID || !syntheticDeviceID || syntheticActionConfirmed) return;
+      const operationID = syntheticOperationID;
+      const deviceID = syntheticDeviceID;
+      const epoch = syntheticFlowEpoch;
+      checkSyntheticMove.disabled = true;
+      viewSyntheticPaths.disabled = true;
+      confirmSyntheticMove.disabled = true;
+      deviceSelect.disabled = true;
+      loadDevices.disabled = true;
+      syntheticActionDigest = null;
+      syntheticCurrentAction = null;
+      syntheticOwnerPreviewViewed = false;
+      syntheticStatus.textContent = "Checking this one synthetic action…";
+      try {
+        const action = await getPluginActionResult({ operation_id: operationID });
+        if (epoch !== syntheticFlowEpoch || operationID !== syntheticOperationID || deviceID !== syntheticDeviceID) return;
+        if (action.operation_id !== operationID || action.device_id !== deviceID ||
+            action.kind !== "move_to_unused" || action.item_count !== 1) {
+          throw new Error("This action does not match the selected device and single-item synthetic move.");
+        }
+        syntheticCurrentAction = action;
+        if (action.state !== "claimed" || !action.preview_digest || !action.preview_expires_at ||
+            Date.parse(action.preview_expires_at) <= Date.now()) {
+          syntheticStatus.textContent = action.state === "requested"
+            ? "The Mac has not prepared the move preview yet. Check again after choosing Unused."
+            : `The action is ${action.state}; no current exact preview is available.`;
+        } else {
+          syntheticActionDigest = action.preview_digest;
+          viewSyntheticPaths.disabled = !syntheticStage5RootID;
+          syntheticStatus.textContent = syntheticStage5RootID
+            ? "The Mac prepared a current signed preview for the one synthetic item. View its exact paths with your passkey."
+            : "Add the UUID from the Companion’s isolated /tmp/aimm-stage5-… folder to this URL as stage5-root before viewing paths.";
+        }
+      } catch (error) {
+        if (epoch === syntheticFlowEpoch && operationID === syntheticOperationID && deviceID === syntheticDeviceID) {
+          syntheticStatus.textContent = error.message;
+          syntheticStatus.dataset.tone = "error";
+        }
+      } finally {
+        if (epoch === syntheticFlowEpoch && operationID === syntheticOperationID && deviceID === syntheticDeviceID) {
+          checkSyntheticMove.disabled = false;
+          deviceSelect.disabled = false;
+          loadDevices.disabled = false;
+        }
+      }
+    });
+    viewSyntheticPaths.addEventListener("click", async () => {
+      if (!syntheticCurrentAction || !syntheticActionDigest || !syntheticOperationID || !syntheticDeviceID) return;
+      const operationID = syntheticOperationID;
+      const deviceID = syntheticDeviceID;
+      const digest = syntheticActionDigest;
+      const epoch = syntheticFlowEpoch;
+      checkSyntheticMove.disabled = true;
+      viewSyntheticPaths.disabled = true;
+      confirmSyntheticMove.disabled = true;
+      deviceSelect.disabled = true;
+      loadDevices.disabled = true;
+      try {
+        const current = await getPluginActionResult({ operation_id: operationID });
+        if (epoch !== syntheticFlowEpoch || operationID !== syntheticOperationID || deviceID !== syntheticDeviceID) return;
+        if (current.operation_id !== operationID || current.device_id !== deviceID || current.kind !== "move_to_unused" ||
+            current.state !== "claimed" || current.preview_digest !== digest ||
+            !current.preview_expires_at || Date.parse(current.preview_expires_at) <= Date.now()) {
+          throw new Error("The exact action preview changed or expired. Check the Mac preview again.");
+        }
+        const verified = await verifyAccountPasskey({
+          purpose: "action_preview_unlock", operation_id: operationID, preview_digest: digest
+        });
+        if (epoch !== syntheticFlowEpoch || operationID !== syntheticOperationID || deviceID !== syntheticDeviceID) return;
+        const exact = await api(`/v1/actions/${encodeURIComponent(operationID)}/owner-preview`, {
+          headers: { "x-action-preview-capability": verified.capability }
+        });
+        if (epoch !== syntheticFlowEpoch || operationID !== syntheticOperationID || deviceID !== syntheticDeviceID) return;
+        const preview = exact?.preview;
+        const item = preview?.items?.length === 1 ? preview.items[0] : null;
+        const source = item?.source_display_path;
+        const destination = item?.destination_display_path;
+        const sourceMatch = typeof source === "string"
+          ? source.match(/^((?:\/private)?\/tmp\/aimm-stage5-([0-9A-F-]+))\/fixture\/Stage5SyntheticProbe\.component$/i)
+          : null;
+        const root = sourceMatch?.[1] || null;
+        const pathRootID = sourceMatch?.[2] || null;
+        const permittedRoots = syntheticStage5RootID
+          ? new Set([`/tmp/aimm-stage5-${syntheticStage5RootID}`.toLowerCase(), `/private/tmp/aimm-stage5-${syntheticStage5RootID}`.toLowerCase()])
+          : new Set();
+        const expectedDestination = root ? `${root}/Unused/Stage5SyntheticProbe.component` : null;
+        if (exact.operation_id !== operationID || preview?.kind !== "move_to_unused" ||
+            item?.name !== "AIMM Stage 5 Synthetic Probe" || item?.format !== "AU" || item?.version !== "1.0.0" ||
+            (item?.record_id != null && item.record_id !== syntheticRecordID) ||
+            !root || !syntheticStage5RootID || pathRootID.toLowerCase() !== syntheticStage5RootID.toLowerCase() ||
+            !permittedRoots.has(root.toLowerCase()) || destination !== expectedDestination) {
+          throw new Error("The owner preview is not the expected synthetic-only move inside the selected isolated temporary folder.");
+        }
+        syntheticOwnerPreviewViewed = true;
+        syntheticStatus.replaceChildren(
+          text("strong", "Exact synthetic move preview"),
+          text("div", `${item.name} · ${item.format} · ${item.version}`),
+          text("div", `Source: ${source}`),
+          text("div", `Destination: ${destination}`)
+        );
+        syntheticStatus.dataset.tone = "ok";
+        confirmSyntheticMove.disabled = false;
+        const viewedEpoch = epoch;
+        setTimeout(() => {
+          if (viewedEpoch !== syntheticFlowEpoch || operationID !== syntheticOperationID || digest !== syntheticActionDigest || syntheticActionConfirmed) return;
+          syntheticOwnerPreviewViewed = false;
+          confirmSyntheticMove.disabled = true;
+          checkSyntheticMove.disabled = false;
+          syntheticStatus.replaceChildren(text("span", "The exact path view expired. Check the Mac preview again before confirming."));
+        }, 2 * 60_000);
+      } catch (error) {
+        if (epoch === syntheticFlowEpoch && operationID === syntheticOperationID && deviceID === syntheticDeviceID) {
+          syntheticStatus.textContent = error.name === "NotAllowedError" ? "Passkey path review was cancelled." : error.message;
+          syntheticStatus.dataset.tone = "error";
+          viewSyntheticPaths.disabled = false;
+        }
+      } finally {
+        if (epoch === syntheticFlowEpoch && operationID === syntheticOperationID && deviceID === syntheticDeviceID) {
+          deviceSelect.disabled = false;
+          loadDevices.disabled = false;
+          checkSyntheticMove.disabled = syntheticOwnerPreviewViewed || syntheticActionConfirmed;
+        }
+      }
+    });
+    confirmSyntheticMove.addEventListener("click", async () => {
+      if (!syntheticOwnerPreviewViewed || !syntheticCurrentAction || !syntheticActionDigest || !syntheticOperationID || !syntheticDeviceID) return;
+      const operationID = syntheticOperationID;
+      const deviceID = syntheticDeviceID;
+      const digest = syntheticActionDigest;
+      const epoch = syntheticFlowEpoch;
+      checkSyntheticMove.disabled = true;
+      confirmSyntheticMove.disabled = true;
+      deviceSelect.disabled = true;
+      loadDevices.disabled = true;
+      try {
+        const current = await getPluginActionResult({ operation_id: operationID });
+        if (epoch !== syntheticFlowEpoch || operationID !== syntheticOperationID || deviceID !== syntheticDeviceID) return;
+        if (current.operation_id !== operationID || current.device_id !== deviceID || current.kind !== "move_to_unused" ||
+            current.state !== "claimed" || current.preview_digest !== digest || current.preview_viewed !== true ||
+            !current.preview_expires_at || Date.parse(current.preview_expires_at) <= Date.now()) {
+          throw new Error("The exact path preview changed or expired. Review a fresh preview before confirming.");
+        }
+        const confirmed = await verifyAccountPasskey({
+          purpose: "action_confirm", operation_id: operationID, preview_digest: digest
+        });
+        if (epoch !== syntheticFlowEpoch || operationID !== syntheticOperationID || deviceID !== syntheticDeviceID) return;
+        if (confirmed.confirmed_operation_id !== operationID || confirmed.preview_digest !== digest) {
+          throw new Error("The passkey confirmation did not match this exact synthetic move preview.");
+        }
+        syntheticOwnerPreviewViewed = false;
+        syntheticActionConfirmed = true;
+        viewSyntheticPaths.disabled = true;
+        checkSyntheticMove.disabled = true;
+        syntheticStatus.replaceChildren(
+          text("strong", "Passkey confirmation complete"),
+          text("div", "The isolated Mac can now receive this exact move authorization. No file has moved yet.")
+        );
+        syntheticStatus.dataset.tone = "ok";
+      } catch (error) {
+        if (epoch === syntheticFlowEpoch && operationID === syntheticOperationID && deviceID === syntheticDeviceID) {
+          syntheticStatus.append(text("div", error.name === "NotAllowedError" ? "Passkey confirmation was cancelled." : error.message));
+          syntheticStatus.dataset.tone = "error";
+          confirmSyntheticMove.disabled = false;
+        }
+      } finally {
+        if (epoch === syntheticFlowEpoch && operationID === syntheticOperationID && deviceID === syntheticDeviceID) {
+          deviceSelect.disabled = false;
+          loadDevices.disabled = false;
+        }
       }
     });
 
