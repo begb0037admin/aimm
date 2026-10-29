@@ -1,3 +1,17 @@
+## Recovery record pins — 2026-10-29
+
+These synchronized records describe source commit `5a90b392fcd439d8c8f4006bab5d389285387865`. Dashboard `DASHBOARD.html` blob `5b6c44150fc4c655d4207855269f3119c1ec1ac4`; Roadmap `docs/ROADMAP.md` blob `f84b944dc47a8a456a7494ae08600c0c81e1f9c9`; Status `docs/STATUS.md` blob `ee121b44ed95cb5820e237395775b32b0d2dc267`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `4acfd3e96122a9ca7a661182bf00688eb0f4fa78`; Foundation closeout blob `65b611f10ffed502c857e2db64f833c7059e2c85`; Foundation evidence package blob `d7caa7b3ec475c8223bf140986adb416c5fac084`; Stage 5 status blob `338c60802f742d9e49e7f4b5748f1c5965375ba1`; new Stage 5 preview-recovery report blob `e3a08ffc8db3ea28fe59cbb242f5c3de99afbed4`. This handover does not self-pin.
+
+## Latest Stage 5 recovery checkpoint — 2026-10-29
+
+The owner selected the intended isolated `Unused` folder earlier. Once recovery can proceed, Companion may reopen the folder picker and require selecting that same destination again for a fresh preview; the app is currently blocked before that step by Keychain access. The earlier exact preview expired before path review, and no file move or passkey assertion occurred. Jules reviewed and passed the expired-preview recovery changes in source commit `5a90b392fcd439d8c8f4006bab5d389285387865`. The Companion guards recovery against a live operation, a confirmed action, or a journaled local action; the Worker clears the preview digest and matching payload atomically. Source/build checks passed; no test suite was run.
+
+When the rebuilt diagnostic Companion checked the queue, macOS Keychain returned `-25244` (`errSecInvalidOwnerEdit`), so the existing paired-device credential could not be used and the queue did not load. No Keychain item was removed or replaced. Do not repeat passkey enrollment or create another request. Resume with a Companion build that can use the existing paired credential, then recover the same synthetic request and review exact paths before owner confirmation. No file action has occurred.
+
+A development Worker deployment unexpectedly published version `802bb879-e32b-45c2-bc84-c6389b257d4a`; it was rolled back immediately. Rollback deployment `55cad8f4-72d1-414e-aef6-7957534ee592` restored surgical passkey RP-fix version `68932c1c-2419-4b36-8208-b90449f4302c` at 100%. The committed Worker recovery change is not live. No production deployment occurred; the RP fix is still not reproducible from branch source. Stage 5 remains **PARTIAL**, Foundation **NOT MET**, and Stage 6 gated.
+
+Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_PREVIEW_RECOVERY_20261029.md`.
+
 ## Latest Stage 5 owner-preview handoff — 2026-10-29
 
 The reviewed development Settings preview now offers a targeted, synthetic-only move flow. Source commit `3a35e2139bfb28f1b0c95eac944420223e577665`, `library-api/library-account.js` blob `461459466a361f59564582b5a0e50757013a7362`; Jules reviewed the exact source. Cloudflare development Pages deployment `7f9e75c4-a1c3-4393-b9aa-7efbd465b8b8` succeeded on the approved branch preview: https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/.
