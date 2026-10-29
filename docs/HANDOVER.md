@@ -1,14 +1,16 @@
-## Latest Stage 5 passkey provider handoff — 2026-10-29
+## Latest Stage 5 passkey resume — 2026-10-29
 
-Current source head before this record update: `98754965a901b37a193fa6363b7e01758283e9cb` (commit `fix: trigger Stage 5 passkey chooser from user action`). Jules reviewed that source change and passed; no tests were run. The approved branch Pages preview is live at https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/.
+Source fix: `98754965a901b37a193fa6363b7e01758283e9cb`; Jules reviewed and passed. The approved branch Pages preview is live at https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/. No tests were run.
 
-The same signed-in development session resumed operation `caebb13c-1f6b-4422-b23c-570b4d8a0e9f`, selected the previously approved paired device `Mac mini (2)`, and verified the exact synthetic preview was ready. Clicking **View exact paths with passkey** opened the macOS saved-passkey chooser for the existing 1Password credential. Continuing opened a 1Password Autofill sheet which stayed on a spinner for more than eight seconds. The chooser is therefore present; the remaining stall is at the 1Password provider handoff. No assertion succeeded, exact paths were not revealed in the browser, no Companion move confirmation became available, and no file moved. The same operation remains active; do not enroll again or create another request. The browser is left at the loading sheet for the owner to resolve or dismiss when available, then resume the same operation.
+The same signed-in session resumed synthetic operation `caebb13c-1f6b-4422-b23c-570b4d8a0e9f` on the previously selected paired device `Mac mini (2)`. The exact synthetic preview loaded. The first saved-passkey assertion eventually succeeded and revealed the exact source and isolated `Unused` destination in the browser. The second confirmation attempt expired while the 1Password handoff was loading. Companion safely cleared only that expired, unconfirmed preview; it reported no files changed. The same operation was resumed, the already approved `Unused` folder was selected again within the isolated synthetic root, and a fresh preview was prepared.
 
-Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`, blob `966c707c6d5d39b0bd54580015bdcb12ff9dd12d`.
+The current passkey chooser appeared. Continuing with the saved 1Password credential opened a 1Password Autofill sheet that remains on a spinner. No second assertion succeeded; Companion’s **Move to Unused** control remains disabled; no file moved. Do not create another operation or enroll a passkey. Resume the same operation after the 1Password provider handoff is resolved, review the fresh exact preview, complete the second passkey confirmation, then the separate Companion confirmation.
 
-Stage 5 remains **PARTIAL**; Foundation remains **NOT MET** and Stage 6 remains gated. The development Worker provenance is still the reproducible branch-source build recorded below. Synthetic non-production data only; no production deployment or separately gated external action occurred.
+Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`, blob `e59186553e5636de5bf9c32e0b0b448f5e35f755`.
 
-## Latest Stage 5 passkey chooser diagnosis — 2026-10-29
+Stage 5 remains **PARTIAL**; Foundation remains **NOT MET** and Stage 6 remains gated. The development Worker is a reproducible branch-source build as recorded below. Synthetic non-production data only; no production deployment or separately gated external action occurred.
+
+## Earlier Stage 5 passkey chooser observation — superseded on 2026-10-29
 
 GitHub branch `codex/pluginhub-foundation` was verified at source commit `778116538dbe294036490064574a5658e0a990ba` before this record update. The development Pages preview for that commit succeeded (deployment `f03db279-b71e-4197-b253-998d755578c6`). The source now reports separate progress states for preview lookup, challenge request, and waiting for the passkey chooser; Jules reviewed the change and passed. No tests were run.
 
