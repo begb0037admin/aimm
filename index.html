@@ -3156,8 +3156,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #library .inv-format.on{color:#fff;border-color:#4484aa;background:rgba(47,161,230,.12)}
     #library .inv-search{margin-left:auto;display:flex;align-items:center;gap:8px;min-width:220px;flex:1;max-width:420px;background:#14171a;border:1px solid #34383d;border-radius:8px;padding:0 10px}
     #library .inv-search input{width:100%;border:0;outline:0;background:transparent;color:#f2f4f5;padding:9px 0;font-size:12px}
-    #library .inv-cards{display:block;column-count:3;column-gap:12px;margin-top:10px}
-    #library .inv-vendor{display:inline-block;vertical-align:top;width:100%;break-inside:avoid;column-span:none;border:1px solid #303640;background:#1c1f24;border-radius:9px;overflow:hidden;min-width:0;margin:0 0 12px}
+    #library .inv-cards{display:block;position:relative;padding:10px 14px 14px;border:0;margin-top:10px}
+    #library .inv-vendor{position:absolute;top:0;left:0;width:268px;border:1px solid #303640;background:#1c1f24;border-radius:9px;overflow:hidden;min-width:0;margin:0}
     #library .inv-vendor-head{display:flex;align-items:center;gap:8px;padding:9px 10px;border-bottom:1px solid #2d333c;min-width:0}
     #library .inv-logo{width:27px;height:27px;display:grid;place-items:center;flex:none;position:relative;overflow:hidden;border-radius:5px;background:#23384b;color:#fff;font-size:10px;font-weight:800}
     #library .inv-logo.coral{background:#432729}#library .inv-logo.gold{background:#443923}#library .inv-logo.mint{background:#1e3b35}#library .inv-logo.violet{background:#362747}
@@ -3184,8 +3184,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #library .inv-fav.on{color:#f4cf75}
     #library .inv-more{display:block;width:100%;padding:6px 10px;border:0;border-top:1px solid #292e35;background:transparent;color:#8d98a5;text-align:left;font:9px ui-monospace,Menlo,monospace;cursor:pointer}
     #library .inv-more:hover{color:#fff;background:#242a32}
-    @media(max-width:1180px){#library .inv-cards{column-count:2}}
-    @media(max-width:760px){#library .inv-cards{column-count:1}}
+    
     #library .inv-empty{border:1px dashed #394149;border-radius:9px;padding:28px;text-align:center;color:#87919b;font-size:12px;margin-top:12px}
     #library .inv-small{color:#75808a;font-size:10px}
     #library .inv-sidebar.is-collapsed{padding-left:8px;padding-right:8px}
@@ -5760,6 +5759,25 @@ function invRenderSidebar(groups,stageMap){
   sidebar.querySelectorAll("[data-inv-scope]").forEach(button=>button.classList.toggle("active",!INV_CATEGORY&&button.getAttribute("data-inv-scope")===INV_SCOPE));
   sidebar.querySelectorAll("[data-inv-category]").forEach(button=>button.classList.toggle("active",button.getAttribute("data-inv-category")===INV_CATEGORY));
 }
+function invLayoutTiles(host){
+  const grid=host&&host.querySelector(".inv-cards");if(!grid)return;
+  const GAP=12,MIN=268,MAX=3;
+  const cs=getComputedStyle(grid),padL=parseFloat(cs.paddingLeft)||0,padR=parseFloat(cs.paddingRight)||0,padT=parseFloat(cs.paddingTop)||0,padB=parseFloat(cs.paddingBottom)||0;
+  const inner=grid.clientWidth-padL-padR;if(inner<=0)return;
+  const cols=Math.min(MAX,Math.max(1,Math.floor((inner+GAP)/(MIN+GAP))));
+  const colW=(inner-GAP*(cols-1))/cols,heights=new Array(cols).fill(0);
+  const cards=Array.from(grid.children).filter(card=>card.classList&&card.classList.contains("inv-vendor"));
+  for(const card of cards){
+    if(card.style.display==="none"||getComputedStyle(card).display==="none")continue;
+    card.style.width=colW+"px";
+    let col=0;for(let i=1;i<cols;i++)if(heights[i]<heights[col])col=i;
+    card.style.left=(padL+col*(colW+GAP))+"px";
+    card.style.top=(padT+heights[col])+"px";
+    heights[col]+=card.offsetHeight+GAP;
+  }
+  const tallest=Math.max(0,...heights);
+  grid.style.height=(padT+Math.max(0,tallest-GAP)+padB)+"px";
+}
 function invRenderInventory(){
   const host=document.getElementById("invInventory");
   if(!host)return;
@@ -5859,6 +5877,7 @@ function invRenderInventory(){
     if(expanded)INV_EXPANDED_VENDORS.add(key);else INV_EXPANDED_VENDORS.delete(key);
     button.textContent=expanded?"Show fewer plug-ins":"＋ "+(card.querySelectorAll(".inv-product").length-4)+" more plug-ins";
     button.setAttribute("aria-expanded",String(expanded));
+    invLayoutTiles(host);
   }));
   host.querySelectorAll("[data-inv-toggle]").forEach(button=>button.addEventListener("click",()=>{
     const card=button.closest(".inv-vendor");if(!card)return;
@@ -5868,7 +5887,10 @@ function invRenderInventory(){
     button.setAttribute("aria-label","Toggle "+card.querySelector(".inv-vendor-name strong").textContent+" card");
     button.title=(collapsed?"Expand":"Collapse")+" publisher";
     button.setAttribute("aria-expanded",String(!collapsed));
+    invLayoutTiles(host);
   }));
+  invLayoutTiles(host);
+  if(!window.__aimmInvTileResizeBound){window.addEventListener("resize",()=>{const live=document.getElementById("invInventory");if(live)invLayoutTiles(live);},{passive:true});window.__aimmInvTileResizeBound=true;}
 }
 function invRenderLibrary(){
   const installed=document.getElementById("pluginInventoryUI");
