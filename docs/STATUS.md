@@ -1,3 +1,13 @@
+## Latest Stage 5 Keychain and Worker access status — 2026-10-29
+
+The owner approved adding the synthetic diagnostic Companion to the access lists for its paired-device credential and its single saved action-preview Keychain item. Both items remained set to confirm-before-allowing access; no credential or path value was revealed. The Companion then reported “No pending local actions,” and the expired saved preview no longer appears in Keychain. No file moved, no passkey assertion occurred, and no replacement request was created.
+
+The signed-in development Pages preview cannot currently read device/action state from the live Worker: “Load development devices” and “Check Mac preview” each returned “A valid Library API access token is required.” No device list, inventory, or action result was returned. Branch source commit `5a90b392fcd439d8c8f4006bab5d389285387865` built with Wrangler 4.152.0 and passed a dry-run; artifact SHA-256 `fc0ddd0a46edde56f8aff14b7ddc6fb59d50e663d45c1e7693607d60f7a7f102`. It was not deployed.
+
+The live development Worker remains surgical passkey RP-fix version `68932c1c-2419-4b36-8208-b90449f4302c`. A branch Worker deployment is separately gated on explicit owner approval. No production deployment occurred. Stage 5 remains **PARTIAL**; Foundation **NOT MET**; Stage 6 gated. Next: approve the exact development Worker deployment, then check the existing synthetic action state without creating another request. Exact-path review and owner confirmation remain required before any file move.
+
+Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`.
+
 ## Latest Stage 5 recovery checkpoint — 2026-10-29
 
 The owner selected the intended isolated `Unused` folder earlier. Once recovery can proceed, Companion may reopen the folder picker and require selecting that same destination again for a fresh preview; the app is currently blocked before that step by Keychain access. The earlier exact preview expired before path review, and no file move or passkey assertion occurred. Jules reviewed and passed the expired-preview recovery changes in source commit `5a90b392fcd439d8c8f4006bab5d389285387865`. The Companion guards recovery against a live operation, a confirmed action, or a journaled local action; the Worker clears the preview digest and matching payload atomically. Source/build checks passed; no test suite was run.
