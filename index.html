@@ -5817,6 +5817,17 @@ function invCategoryFor(group,stageMap){
   for(const [category,stages] of Object.entries(INV_CATEGORY_STAGES))if(stages.includes(stage))return category;
   return "";
 }
+function invKnownBrowseCategory(value){
+  const normalized=invNorm(value);
+  if(!normalized)return "";
+  for(const category of Object.keys(INV_CATEGORY_STAGES))if(invNorm(category)===normalized)return category;
+  return normalized==="instrument"||normalized==="instruments"?"Instruments & MIDI":"";
+}
+function invDisplayCategory(group){
+  const category=group.browseCategory||invKnownBrowseCategory(group.category);
+  if(category)return category;
+  return !group.category||invNorm(group.category)==="effect"?"Uncategorised":group.category;
+}
 function invRenderSidebar(groups,stageMap){
   const sidebar=document.getElementById("invSidebar");
   const layout=document.getElementById("invLayout");
@@ -6186,7 +6197,7 @@ function invRenderInventory(){
   try{catalogNames=new Set(allPlugins().map(plugin=>invNorm(plugin.n)));}catch(_){}
   groups.forEach(group=>{
     group.catalogMatch=catalogNames.has(invNorm(group.name));
-    group.browseCategory=invCategoryFor(group,stageMap);
+    group.browseCategory=invCategoryFor(group,stageMap)||invKnownBrowseCategory(group.category);
   });
   invRenderSidebar(groups,stageMap);
   const formats=new Set(rows.map(row=>row.format));
@@ -6364,7 +6375,7 @@ function invRenderInventory(){
     const rowsHTML=filtered.map(group=>{
       const vendor=group.vendor||"Unknown vendor",normalized=invNorm(vendor).replace(/ (inc|llc|ltd|limited|gmbh|corporation|corp)$/,""),domain=brandDomains[normalized]||"";
       const hubUrl=installerHubs[normalized.replace(/[^a-z0-9]/g,"")]||"",websiteUrl=vendorHomepages[normalized.replace(/[^a-z0-9]/g,"")]||(domain?"https://www."+domain+"/":"");
-      const category=group.browseCategory||group.category||"Uncategorised",formats=Array.from(group.formats).sort(),versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
+      const category=invDisplayCategory(group),formats=Array.from(group.formats).sort(),versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const chips=formats.map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
       const fav=typeof isFav==="function"&&isFav(group.name),meta=invProductUserMetaHTML(vendor,group.name);
       const action=invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}));
@@ -6391,14 +6402,14 @@ function invRenderInventory(){
     const visible=items.slice(0,4).map(group=>{
       const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
-      const category=group.browseCategory||group.category||"Uncategorised";
+      const category=invDisplayCategory(group);
       const fav=typeof isFav==="function"&&isFav(group.name);
       return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const hidden=items.slice(4).map(group=>{
       const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
-      const category=group.browseCategory||group.category||"Uncategorised";
+      const category=invDisplayCategory(group);
       const fav=typeof isFav==="function"&&isFav(group.name);
       return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
