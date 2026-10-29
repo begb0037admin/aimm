@@ -6,6 +6,8 @@
 
 # STATUS.md — AIMM
 
+**2026-10-29 update — Spacebar starts selected Hope route from the empty composer, build 2026-10-29.1.** When the Luna/Deepgram route is selected, Spacebar now starts it even if the empty Hope composer has focus; once text is present, Space still types normally. The screenshot's audio-check error says the browser-local Hope usage token is missing, so that browser needs the token saved in Settings → API Keys before Deepgram can open the microphone. This does not address the separately tracked Luna delay/cut-off issue.
+
 **2026-10-28 update — Deepgram Hope waveform follows ElevenLabs TTS, build 2026-10-28.8.** The Deepgram route now samples Hope’s actual ElevenLabs speech audio using the pinned SDK’s mean byte-frequency volume calculation. The original Hope waveform renderer and settings remain unchanged; ElevenLabs Live stays on its existing SDK output-volume source. Voice/model/TTS settings are unchanged.
 
 **2026-10-28 update — Hope rail waveform restored, build 2026-10-28.7.** Restored the Hope speech waveform to the exact implementation from before the 28 October waveform changes.

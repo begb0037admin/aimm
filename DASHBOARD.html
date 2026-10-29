@@ -209,8 +209,8 @@
     <div class="now-sub" style="margin-top:12px">
       <div class="now-sub-head p1">Hope usage-based voice — separate route</div>
       <article class="card" style="border-left:3px solid #a855f7">
-        <div class="card-title">Deepgram + Luna + Flash <span class="badge bk">Build .58 · delay unresolved</span></div>
-        <div class="card-body">Live on <code>aimixmasters.com</code>: Deepgram Flux → GPT-6 Luna → AIMM tools → Hope’s ElevenLabs Flash voice. Kevin previously confirmed a spoken test passed, then reported long delays and incomplete/cut-off speech. Fallback-agent tuning (`max_tokens: -1`, temperature `0`) did not resolve it. Latest call `conv_4201m5erevmpfe18qc8wvxqrxzj3` has no LLM/TTS output and cannot measure response time; earlier `conv_2301m5ent5vte5p9mw6tnnjvq8gb` had Luna failure, Gemini fallback and about 7.87s TTFB. No savings claim. See <code>docs/STATUS.md</code> and the 2026-10-21 handover.</div>
+        <div class="card-title">Deepgram + Luna + Flash <span class="badge bk">Build .58 · spacebar fix 2026-10-29.1 · delay unresolved</span></div>
+        <div class="card-body">Live on <code>aimixmasters.com</code>: Deepgram Flux → GPT-6 Luna → AIMM tools → Hope’s ElevenLabs Flash voice. Spacebar now starts the selected route when the empty Hope composer has focus; with text present, Space continues to type normally. The current screenshot reports that this browser has no Hope usage access token saved; add it in Settings → API Keys for each browser profile before Deepgram can open the microphone. Kevin previously confirmed a spoken test passed, then reported long delays and incomplete/cut-off speech. Fallback-agent tuning (`max_tokens: -1`, temperature `0`) did not resolve it. Latest call `conv_4201m5erevmpfe18qc8wvxqrxzj3` has no LLM/TTS output and cannot measure response time; earlier `conv_2301m5ent5vte5p9mw6tnnjvq8gb` had Luna failure, Gemini fallback and about 7.87s TTFB. No savings claim. See <code>docs/STATUS.md</code> and the 2026-10-21 handover.</div>
         <div class="card-meta"><span class="effort">M</span> · owner: Markey voice engineering; Codex implementation</div>
       </article>
     </div>

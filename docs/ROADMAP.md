@@ -12,6 +12,10 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
+## Spacebar starts selected Hope route from the empty composer — build 2026-10-29.1
+
+When the Luna/Deepgram route is selected, Spacebar starts it even if the empty Hope composer has focus; once text is present, Space still types normally. The screenshot's audio-check error says the browser-local Hope usage token is missing, so that browser needs the token saved in Settings → API Keys before Deepgram can open the microphone. The separately tracked Luna delay/cut-off issue remains unresolved.
+
 ## Plugin inventory + local scan — build 2026-10-22.1
 
 The live Library now opens to a MixCheck-styled installed plug-in inventory and retains the AIMM catalogue. The browser scans plug-in bundle names and Info.plist metadata from folders the user selects; it does not read plug-in binaries, audio, presets or licences, and it keeps the scan in this browser. On the Mini, the live scan of `/Library/Audio/Plug-Ins` and `/Library/Application Support/Avid/Audio/Plug-Ins` checked 1,880 bundles and found 2,197 readable plug-in records, grouped into 1,618 products across AU, VST2, VST3, AAX and CLAP. Hope chat/voice mechanics remain available; no Logic project was edited. Source commit `77612f0`. See `docs/STATUS.md` and `docs/HANDOVER.md`.

@@ -3651,7 +3651,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-28.8';
+const AIMM_BUILD = '2026-10-29.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -17747,7 +17747,13 @@ window.addEventListener('keydown', e=>{
     elEnd();
     return;
   }
-  if (isTypingTarget(e.target)) return;
+  // The composer owns focus after a user clears/sends a message. Let the
+  // documented spacebar shortcut start the selected Deepgram route there
+  // while the compose box is empty; once text exists, spaces remain typing.
+  const usageSpaceStart = hopeUsageGetMode()==='usage'
+    && e.target?.id==='aiChatInput'
+    && !String(e.target.value||'').trim();
+  if (isTypingTarget(e.target) && !usageSpaceStart) return;
   e.preventDefault();
   RT.spaceHeld = true;
   const tab = activeTabId();
