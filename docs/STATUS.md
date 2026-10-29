@@ -1,8 +1,16 @@
-## Latest Stage 5 passkey chooser diagnosis — 2026-10-29
+## Latest Stage 5 passkey resume — 2026-10-29
+
+Source fix `98754965a901b37a193fa6363b7e01758283e9cb` was reviewed and passed by Jules. The same signed-in development session resumed synthetic operation `caebb13c-1f6b-4422-b23c-570b4d8a0e9f` on the paired device and verified the exact preview. The first saved-passkey assertion eventually succeeded and revealed the exact synthetic source and isolated `Unused` destination. The second confirmation attempt expired while the 1Password handoff was loading; Companion safely cleared only that expired, unconfirmed preview and reported no file changes. The same operation was resumed, the existing `Unused` folder selected again, and a fresh preview prepared.
+
+The current passkey chooser appeared. Continuing with the saved 1Password credential opened an Autofill sheet which remains on its spinner. No second assertion succeeded; the Companion **Move to Unused** control remains disabled; no file moved. Do not create another operation or repeat enrollment. Resume this operation when the provider handoff is resolved, then complete the second passkey confirmation and separate Companion confirmation. Stage 5 remains **PARTIAL**; Foundation **NOT MET**; Stage 6 gated. Worker provenance remains the reproducible development branch build recorded below. Synthetic non-production data only; no production deployment or separately gated external action.
+
+Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`.
+
+## Earlier Stage 5 passkey chooser observation — superseded on 2026-10-29
 
 The verified branch Pages preview at source commit `778116538dbe294036490064574a5658e0a990ba` (deployment `f03db279-b71e-4197-b253-998d755578c6`) now distinguishes the preview lookup, challenge request, and passkey-chooser wait. Jules reviewed the source change and passed; no tests were run. On the same synthetic operation, Companion showed the selected isolated `Unused` destination and the exact fixture-to-destination preview. The browser reached **“Waiting for the passkey chooser in Chrome or 1Password…”**, but no chooser appeared. Chrome DevTools recorded the authentication-options request as `201 Created`, then the 1Password universal sign-on iframe request as canceled; no assertion-verification request appears in the captured log. The stall is before passkey assertion. 1Password remained on All Items and Chrome showed only a generic sign-in-options notice. No assertion succeeded, no file moved, and the Companion Move control remains disabled. Do not repeat enrollment or create another operation. Resume this same operation when the chooser is available. Stage 5 remains **PARTIAL**; Foundation remains **NOT MET**; Stage 6 remains gated. No production deployment or separately gated action occurred.
 
-## Latest Stage 5 synthetic action checkpoint — 2026-10-29
+## Historical Stage 5 synthetic action checkpoint — superseded by the latest passkey resume
 
 GitHub branch `codex/pluginhub-foundation` was verified at source commit `00b07d037fae2f665ba90895a6e2ae3e9a323b5e` before this record update. The synthetic record selector was corrected to the paired fixture ID in that commit; Jules had reviewed the exact source change. The branch Pages preview reflects the commit at `https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/` (deployment `c6dd0988-00b6-4f72-be36-24705fd0f573`).
 
