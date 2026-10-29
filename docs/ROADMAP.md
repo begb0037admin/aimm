@@ -1,3 +1,17 @@
+## 2026-10-29 PluginHub parity continuation
+
+The latest branch source `47efd003e2429f82cf2a6b21bbacbfa0404cbb92` is deployed to the approved development Pages preview. Category counts now appear on the first Library render. Cards, List and Ledger, four sort modes, Hidden/Favorites/My tags filters, and vendor collapse/expand controls are present. Jules reviewed the category resolver change and passed. See [the implementation evidence](../governance/evidence/PHASE_PLUGINHUB_PARITY_UPDATE_20261029.md) and [the updated parity sweep](../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md).
+
+Next sequence:
+
+1. Complete Tag Manager and persistent tag editing against the approved preference contract.
+2. Add Intel-only and snoozed controls; only enable update status groups after real vendor checks provide current status data.
+3. Build out the PluginHub-style whole-library Tools surfaces, using reviewed contracts and explicit unavailable states where a backend is missing.
+4. Complete Companion-backed file operations through its existing preview, confirmation and receipt protocol.
+5. Repeat the manual parity walk and obtain fresh independent end-to-end acceptance before considering any Foundation/Stage 6 gate.
+
+AAX remains excluded by the approved scanner architecture. No automated tests, folder scan, inventory upload, Worker deployment or production action occurred in this checkpoint. The Worker passkey RP fix remains surgical, not reproducible from branch source. Foundation remains **NOT MET**; Stage 6 remains gated.
+
 ## 2026-10-29 PluginHub UI parity continuation
 
 Use the new [PluginHub parity sweep](../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md) (blob `a14e42367f30d157b606f134ab3cd85be4fdfdef`) as the implementation checklist for the Library UI and reference-tool sweep. It compares the actual installed PluginHub manual/UI with branch source `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62`. Jules reviewed the corrected parity report and passed.
