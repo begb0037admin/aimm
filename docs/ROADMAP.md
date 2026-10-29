@@ -1,6 +1,6 @@
 ## 2026-10-29 PluginHub UI parity continuation
 
-Use the new [PluginHub parity sweep](../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md) (blob `50bae6639e116900609b85d519a52959d6f4d65d`) as the implementation checklist for the Library UI and reference-tool sweep. It compares the actual installed PluginHub manual/UI with branch source `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62`.
+Use the new [PluginHub parity sweep](../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md) (blob `a14e42367f30d157b606f134ab3cd85be4fdfdef`) as the implementation checklist for the Library UI and reference-tool sweep. It compares the actual installed PluginHub manual/UI with branch source `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62`.
 
 Next sequence:
 
