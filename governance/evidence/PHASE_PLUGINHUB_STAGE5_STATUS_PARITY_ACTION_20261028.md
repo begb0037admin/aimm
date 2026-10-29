@@ -1,3 +1,13 @@
+## Latest Stage 5 recovery checkpoint — 2026-10-29
+
+The owner selected the intended isolated `Unused` folder earlier. Once recovery can proceed, Companion may reopen the folder picker and require selecting that same destination again for a fresh preview; the app is currently blocked before that step by Keychain access. The earlier exact preview expired before path review, and no file move or passkey assertion occurred. Jules reviewed and passed the expired-preview recovery changes in source commit `5a90b392fcd439d8c8f4006bab5d389285387865`. The Companion guards recovery against a live operation, a confirmed action, or a journaled local action; the Worker clears the preview digest and matching payload atomically. Source/build checks passed; no test suite was run.
+
+When the rebuilt diagnostic Companion checked the queue, macOS Keychain returned `-25244` (`errSecInvalidOwnerEdit`), so the existing paired-device credential could not be used and the queue did not load. No Keychain item was removed or replaced. Do not repeat passkey enrollment or create another request. Resume with a Companion build that can use the existing paired credential, then recover the same synthetic request and review exact paths before owner confirmation. No file action has occurred.
+
+A development Worker deployment unexpectedly published version `802bb879-e32b-45c2-bc84-c6389b257d4a`; it was rolled back immediately. Rollback deployment `55cad8f4-72d1-414e-aef6-7957534ee592` restored surgical passkey RP-fix version `68932c1c-2419-4b36-8208-b90449f4302c` at 100%. The committed Worker recovery change is not live. No production deployment occurred; the RP fix is still not reproducible from branch source. Stage 5 remains **PARTIAL**, Foundation **NOT MET**, and Stage 6 gated.
+
+Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_PREVIEW_RECOVERY_20261029.md`.
+
 ## Latest Stage 5 owner-preview handoff — 2026-10-29
 
 The reviewed development Settings preview now offers a targeted, synthetic-only move flow. Source commit `3a35e2139bfb28f1b0c95eac944420223e577665`, `library-api/library-account.js` blob `461459466a361f59564582b5a0e50757013a7362`; Jules reviewed the exact source. Cloudflare development Pages deployment `7f9e75c4-a1c3-4393-b9aa-7efbd465b8b8` succeeded on the approved branch preview: https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/.
