@@ -6154,13 +6154,15 @@ function invTagCommit(tags,actions,colors){
     return false;
   }
 }
-function invTagMembership(group,tag,add){
-  const actions=invReadProductActions(),key=invActionKey(group.vendor,group.name),record=actions[key]||{},tags=Array.isArray(record.tags)?record.tags.filter(value=>typeof value==="string"):[];
-  const present=tags.includes(tag);
-  if(add&&!present)tags.push(tag);
-  if(!add&&present){const at=tags.indexOf(tag);tags.splice(at,1);}
-  if(tags.length)record.tags=tags;else delete record.tags;
-  if(Object.keys(record).length)actions[key]=record;else delete actions[key];
+function invTagMembership(group,tag,add){return invTagMembershipBatch([group],tag,add)}
+function invTagMembershipBatch(groups,tag,add){
+  const actions=invReadProductActions();
+  groups.forEach(group=>{
+    const key=invActionKey(group.vendor,group.name),record=actions[key]||{},tags=Array.isArray(record.tags)?record.tags.filter(value=>typeof value==="string"):[];
+    const present=tags.includes(tag);if(add&&!present)tags.push(tag);if(!add&&present){const at=tags.indexOf(tag);tags.splice(at,1);}
+    if(tags.length)record.tags=tags;else delete record.tags;
+    if(Object.keys(record).length)actions[key]=record;else delete actions[key];
+  });
   return invTagCommit(invReadUserTags(),actions,invReadTagColors());
 }
 function invOpenTagManager(){
@@ -6278,11 +6280,11 @@ function invOpenTagManager(){
   search.addEventListener("input",renderPlugins);
   pluginHost.addEventListener("click",event=>{
     const item=event.target.closest("[data-tag-item]");
-    if(item){const group={vendor:item.dataset.tagVendor,name:item.dataset.tagItem};if(!invTagMembership(group,selectedTag,item.dataset.tagAdded!=="true")){invStatus("The plug-in tag could not be saved in this browser.","error");return;}invRenderInventory();renderTags();Array.from(pluginHost.querySelectorAll("[data-tag-item]")).find(button=>button.dataset.tagVendor===group.vendor&&button.dataset.tagItem===group.name)?.focus();return;}
+    if(item){const group={vendor:item.dataset.tagVendor,name:item.dataset.tagItem};if(!invTagMembership(group,selectedTag,item.dataset.tagAdded!=="true"))return;invRenderInventory();renderTags();Array.from(pluginHost.querySelectorAll("[data-tag-item]")).find(button=>button.dataset.tagVendor===group.vendor&&button.dataset.tagItem===group.name)?.focus();return;}
     const vendorButton=event.target.closest("[data-tag-add-vendor]");
     if(vendorButton){const vendor=vendorButton.dataset.tagAddVendor,groups=invTagGroups().filter(group=>(group.vendor||"Unknown vendor")===vendor&&invNorm((group.vendor||"Unknown vendor")+" "+group.name).includes(invNorm(search.value||"")));
-      let ok=true;groups.forEach(group=>{if(!invTagMembership(group,selectedTag,true))ok=false;});
-      if(!ok)invStatus("Some plug-in tags could not be saved in this browser.","error");invRenderInventory();renderTags();Array.from(pluginHost.querySelectorAll("[data-tag-add-vendor]")).find(button=>button.dataset.tagAddVendor===vendor)?.focus();
+      if(!invTagMembershipBatch(groups,selectedTag,true))return;
+      invRenderInventory();renderTags();Array.from(pluginHost.querySelectorAll("[data-tag-add-vendor]")).find(button=>button.dataset.tagAddVendor===vendor)?.focus();
     }
   });
   clearButton.addEventListener("click",()=>{
