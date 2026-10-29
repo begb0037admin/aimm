@@ -17,11 +17,11 @@ The manual and running app show these distinct surfaces:
 | Area | PluginHub reference |
 |---|---|
 | Status | Updates Available, Up to Date, Manual Check, Unchecked; counts reflect check results. Paid-upgrade signals are separate from ordinary updates. |
-| Browse | All Plugins, Hidden, format filters (AAX, AU, VST2, VST3, CLAP), vendor folders, My Tags, search, sort and a View menu. |
+| Browse | All Plugins, Hidden, format filters (AAX, AU, VST, CLAP), where VST cycles through VST (all), VST3 and VST2; vendor folders, My Tags, search, sort and a View menu. |
 | Layouts | Cards, List and Ledger. Card view uses vendor tiles with compact plug-in rows, format/status pills, vendor identity, vendor links, collapse controls and an installer-hub link where available. |
 | Filters | Categories, tags, favourites/pinning, Intel-only filtering, and show/hide snoozed plug-ins. The manual supports combining category selections with Shift-click. |
-| Tools | Install Manager; Batch Plugin Management; Remove Old Installers; Check for Duplicates; License Key Vault; Share Plugin List; Compare Plugin Profiles; PluginHub License; Plugin Compatibility; Tag Manager. |
-| Row menu | Category; Tags; Note & rating; Mark as up to date; Move to Unused; Uninstall (Move to Trash); Reveal in Finder; Rescan plugin folders; Copy plugin name; License Key Vault; Keep this version; Snooze update; Report a problem. Some items depend on item state or require macOS access. |
+| Tools | Install Manager; Batch Plugin Management; Remove Old Installers; Check for Duplicates; License Key Vault; Share Plugin List; Compare Plugin Profiles; PluginHub License. The Library section separately contains All Plugins, Plugin Compatibility and Tag Manager. |
+| Row menu | Category; Tags; Note & rating; Mark as up to date; Move to Unused; Uninstall (Move to Trash); Reveal in Finder; Rescan plugin folders; Copy plugin name; License Key Vault; Keep this version; Snooze update; Report a problem. Snooze includes timed choices (one week, one month, a chosen date or forever) and vendor-level snoozing; when already snoozed the menu offers stop-snoozing actions. A global Show/Hide Snoozed Plugins control also exists. Some actions are conditional on item state or require macOS access. |
 | Settings and support | Plugin folders and custom install paths; update-check frequency; launch-at-login; sound on update; show snoozed plugins; anonymous sharing choice; reset; privacy and troubleshooting guidance. |
 | Other library flows | Session imports for supported DAWs, vendor management/hiding, compatibility guidance, installer cleanup and profile comparison. |
 
@@ -33,7 +33,7 @@ The current development preview visibly has a four-column vendor-card layout at 
 
 The Library also has:
 
-- AU, VST2, VST3 and CLAP filters, free-text search, inventory totals and connected-folder scan controls.
+- AU, VST2, VST3 and CLAP filters, free-text search, inventory totals and connected-folder scan controls. (AIMM's separate VST2 and VST3 buttons do not yet match PluginHub's VST cycle.)
 - Single-category filtering, a favourites filter and a My Tags filter.
 - A per-product ⋮ action menu, opened and inspected in the preview.
 - Editable categories and tags, notes and ratings, copying the product name, a local up-to-date marker, a local keep label and rescan controls.
