@@ -3207,6 +3207,20 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #invProductMenu .inv-menu-row.disabled:hover{background:transparent}
     #invProductMenu .inv-menu-row .inv-menu-help{margin-left:auto;color:#7f8995;font-size:9px}
     #invProductMenu hr{border:0;border-top:1px solid #343b45;margin:4px 2px}
+    #invNoteOverlay,#invProductMetaOverlay{position:fixed;inset:0;z-index:20001;display:grid;place-items:center;background:#0009;padding:20px}
+    #invProductMetaOverlay .inv-product-meta-dialog{width:min(430px,100%);max-height:min(80vh,650px);overflow:auto;padding:20px;border:1px solid #3a414b;border-radius:12px;background:#202329;color:#e6e9ed;box-shadow:0 18px 46px #000b}
+    #invProductMetaOverlay h3{margin:0 0 6px;font-size:17px}
+    #invProductMetaOverlay .inv-product-meta-options,#invProductMetaOverlay .inv-product-tag-list{display:grid;gap:5px;max-height:45vh;overflow:auto}
+    #invProductMetaOverlay .inv-product-meta-option,#invProductMetaOverlay .inv-product-tag-choice{display:flex;align-items:center;gap:9px;width:100%;box-sizing:border-box;padding:9px 10px;border:1px solid #353c46;border-radius:6px;background:#181b20;color:#e6e9ed;text-align:left;font:inherit}
+    #invProductMetaOverlay .inv-product-meta-option{cursor:pointer}
+    #invProductMetaOverlay .inv-product-meta-option:hover,#invProductMetaOverlay .inv-product-meta-option.selected{border-color:#8563c7;background:#282334}
+    #invProductMetaOverlay .inv-product-tag-choice input{accent-color:#8050c8;width:16px;height:16px;margin:0 3px 0 0}
+    #invProductMetaOverlay .inv-product-tag-choice span{flex:1}
+    #invProductMetaOverlay .inv-product-tag-remove{border:0;background:transparent;color:#9aa3ad;font-size:18px;cursor:pointer}
+    #invProductMetaOverlay .inv-product-tag-add{display:flex;gap:8px;margin:12px 0}
+    #invProductMetaOverlay .inv-product-tag-add input{flex:1;min-width:0;border:1px solid #3a414b;border-radius:6px;background:#15181c;color:#e6e9ed;padding:9px}
+    #invProductMetaOverlay .inv-product-tag-empty{padding:12px;color:#89939f}
+    #invProductMetaOverlay .inv-note-context{margin-bottom:14px;color:#89939f;font-size:12px}
     #invNoteOverlay{position:fixed;inset:0;z-index:20001;display:grid;place-items:center;background:#0009;padding:20px}
     #invNoteOverlay .inv-note-dialog{width:min(430px,100%);padding:20px;border:1px solid #3a414b;border-radius:12px;background:#202329;color:#e6e9ed;box-shadow:0 18px 46px #000b}
     #invNoteOverlay h3{margin:0 0 6px;font-size:17px}
@@ -5763,6 +5777,8 @@ function invStageMap(){
   return map;
 }
 function invCategoryFor(group,stageMap){
+  const userCategory=invGetProductActions(group.vendor||"",group.name||"").category;
+  if(userCategory)return userCategory;
   if(String(group.category||"").toLowerCase().includes("instrument"))return "Instruments & MIDI";
   const stage=stageMap.get(invNorm(group.name));
   if(!stage)return "";
@@ -5878,6 +5894,7 @@ function invProductUserMetaHTML(vendor,name){
   const state=invGetProductActions(vendor,name),parts=[];
   if(state.note&&state.note.rating)parts.push("★ "+state.note.rating+"/5");
   if(state.note&&state.note.text)parts.push("Note saved");
+  if(Array.isArray(state.tags)&&state.tags.length)parts.push("Tags: "+state.tags.join(", "));
   if(state.marked)parts.push("Marked up to date");
   if(state.kept)parts.push("Kept version");
   if(!parts.length)return "";
@@ -5907,8 +5924,8 @@ function invOpenProductActionMenu(button){
   const disabled=(label,help)=>'<div class="inv-menu-row disabled" role="menuitem" aria-disabled="true" title="'+invEsc(help)+'">'+label+'<span class="inv-menu-help">'+invEsc(help)+'</span></div>';
   const link=(url,label)=>url?'<a class="inv-menu-row" role="menuitem" href="'+invEsc(url)+'" target="_blank" rel="noopener noreferrer">'+label+' ↗</a>':"";
   menu.innerHTML='<div class="inv-menu-head"><div style="min-width:0;flex:1"><div class="inv-menu-title">'+invEsc(context.name||"Plugin actions")+'</div><div class="inv-menu-sub">'+invEsc(context.vendor)+'</div></div><button type="button" class="inv-menu-close" aria-label="Close menu">×</button></div>'
-    +'<div class="inv-menu-row disabled" role="menuitem" aria-disabled="true">Category · '+invEsc(context.category||"Uncategorised")+'<span class="inv-menu-help">›</span></div>'
-    +'<div class="inv-menu-row disabled" role="menuitem" aria-disabled="true" title="Tags are not available in this preview">Tags · None<span class="inv-menu-help">›</span></div><hr>'
+    +row("category","Category · "+(state.category||context.category||"Uncategorised"),"", "›")
+    +row("tags","Tags · "+((state.tags&&state.tags.length)?state.tags.join(", "):"None"),"", "›") + '<hr>'
     +row("note","Note &amp; rating…")
     +row("mark",state.marked?"Unmark up to date":"Mark as up to date","green")
     +disabled("Move to Unused…","Requires native Companion actions")
@@ -5934,6 +5951,8 @@ function invOpenProductActionMenu(button){
     const actionEl=event.target.closest("[data-inv-action]");if(!actionEl)return;
     const action=actionEl.getAttribute("data-inv-action"),key=invActionKey(context.vendor,context.name);
     if(action==="note"){invCloseProductActionMenu();invOpenProductNote(context.vendor,context.name);return;}
+    if(action==="category"){invCloseProductActionMenu();invOpenProductCategory(context.vendor,context.name,context.category||"");return;}
+    if(action==="tags"){invCloseProductActionMenu();invOpenProductTags(context.vendor,context.name);return;}
     if(action==="copy"){
       const copy=async()=>{try{await navigator.clipboard.writeText(context.name);invStatus("Copied "+context.name+" to the clipboard.");}catch(_){invStatus("Clipboard access is unavailable in this browser.","error");}};
       invCloseProductActionMenu();copy();return;
@@ -5947,6 +5966,71 @@ function invOpenProductActionMenu(button){
     all[key]=current;invWriteProductActions(all);invCloseProductActionMenu();invRenderInventory();
   });
   setTimeout(()=>{document.addEventListener("pointerdown",invProductMenuOutside,true);document.addEventListener("keydown",invProductMenuKey,true);},0);
+}
+function invOpenProductCategory(vendor,name,currentCategory){
+  const state=invGetProductActions(vendor,name),current=state.category||currentCategory||"";
+  const categories=Object.keys(INV_CATEGORY_STAGES||{});
+  const overlay=document.createElement("div");overlay.id="invProductMetaOverlay";
+  overlay.innerHTML='<div class="inv-product-meta-dialog" role="dialog" aria-modal="true" aria-labelledby="invProductMetaTitle"><h3 id="invProductMetaTitle">Category</h3><div class="inv-note-context">'+invEsc(name)+' · '+invEsc(vendor)+'</div><div class="inv-product-meta-options"></div><div class="inv-note-actions"><button type="button" data-meta-close>Cancel</button></div></div>';
+  const list=overlay.querySelector(".inv-product-meta-options");
+  ["Uncategorised",...categories].forEach(label=>{
+    const value=label==="Uncategorised"?"":label,button=document.createElement("button");
+    button.type="button";button.className="inv-product-meta-option"+(value===current?" selected":"");
+    button.textContent=(value===current?"✓  ":"")+label;
+    button.addEventListener("click",()=>{
+      const all=invReadProductActions(),key=invActionKey(vendor,name),next=all[key]||{};
+      if(value)next.category=value;else delete next.category;
+      all[key]=next;
+      if(invWriteProductActions(all)){overlay.remove();invRenderInventory();invStatus(value?"Category set to "+value+".":"Category cleared.");}
+      else invStatus("The category could not be saved in this browser.","error");
+    });
+    list.appendChild(button);
+  });
+  document.body.appendChild(overlay);
+  overlay.addEventListener("click",event=>{if(event.target===overlay)overlay.remove();});
+  overlay.querySelector("[data-meta-close]").addEventListener("click",()=>overlay.remove());
+}
+const INV_PRODUCT_TAGS_KEY="aimm.pluginInventory.userTags.v1";
+function invReadUserTags(){try{const tags=JSON.parse(localStorage.getItem(INV_PRODUCT_TAGS_KEY)||"[]");return Array.isArray(tags)?tags.filter(tag=>typeof tag==="string"):[]}catch(_){return []}}
+function invOpenProductTags(vendor,name){
+  const state=invGetProductActions(vendor,name),selected=new Set(Array.isArray(state.tags)?state.tags:[]);
+  const overlay=document.createElement("div");overlay.id="invProductMetaOverlay";
+  overlay.innerHTML='<div class="inv-product-meta-dialog" role="dialog" aria-modal="true" aria-labelledby="invProductMetaTitle"><h3 id="invProductMetaTitle">Tags</h3><div class="inv-note-context">'+invEsc(name)+' · '+invEsc(vendor)+'</div><div class="inv-product-tag-list"></div><div class="inv-product-tag-add"><input type="text" maxlength="32" placeholder="Create or find a tag"><button type="button" data-tag-add>Add</button></div><div class="inv-note-actions"><button type="button" data-meta-close>Cancel</button><button type="button" class="primary" data-tag-save>Save tags</button></div></div>';
+  const list=overlay.querySelector(".inv-product-tag-list"),input=overlay.querySelector("input");
+  const render=()=>{
+    list.replaceChildren();
+    const tags=invReadUserTags();
+    if(!tags.length){const empty=document.createElement("div");empty.className="inv-product-tag-empty";empty.textContent="No tags yet. Add one below.";list.appendChild(empty);}
+    tags.forEach(tag=>{
+      const label=document.createElement("label");label.className="inv-product-tag-choice";
+      const checkbox=document.createElement("input");checkbox.type="checkbox";checkbox.checked=selected.has(tag);
+      checkbox.addEventListener("change",()=>checkbox.checked?selected.add(tag):selected.delete(tag));
+      const text=document.createElement("span");text.textContent=tag;
+      const remove=document.createElement("button");remove.type="button";remove.className="inv-product-tag-remove";remove.textContent="×";remove.setAttribute("aria-label","Delete tag "+tag);
+      remove.addEventListener("click",()=>{
+        try{localStorage.setItem(INV_PRODUCT_TAGS_KEY,JSON.stringify(invReadUserTags().filter(value=>value!==tag)));selected.delete(tag);render();}
+        catch(_){invStatus("The tag could not be deleted.","error");}
+      });
+      label.append(checkbox,text,remove);list.appendChild(label);
+    });
+  };
+  overlay.querySelector("[data-tag-add]").addEventListener("click",()=>{
+    const value=input.value.trim().replace(/\s+/g," ");
+    if(!value)return;
+    const tags=invReadUserTags();if(!tags.some(tag=>tag.toLowerCase()===value.toLowerCase()))tags.push(value);
+    try{localStorage.setItem(INV_PRODUCT_TAGS_KEY,JSON.stringify(tags));selected.add(value);input.value="";render();}
+    catch(_){invStatus("The tag could not be saved.","error");}
+  });
+  input.addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();overlay.querySelector("[data-tag-add]").click();}});
+  overlay.querySelector("[data-tag-save]").addEventListener("click",()=>{
+    const all=invReadProductActions(),key=invActionKey(vendor,name),next=all[key]||{};
+    next.tags=Array.from(selected);if(!next.tags.length)delete next.tags;all[key]=next;
+    if(invWriteProductActions(all)){overlay.remove();invRenderInventory();invStatus("Tags saved for "+name+".");}
+    else invStatus("The tags could not be saved in this browser.","error");
+  });
+  overlay.querySelector("[data-meta-close]").addEventListener("click",()=>overlay.remove());
+  overlay.addEventListener("click",event=>{if(event.target===overlay)overlay.remove();});
+  document.body.appendChild(overlay);render();input.focus();
 }
 function invOpenProductNote(vendor,name){
   const state=invGetProductActions(vendor,name),note=state.note||{};
