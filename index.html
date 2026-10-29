@@ -3241,6 +3241,52 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #invProductMetaOverlay .inv-product-tag-remove{border:0;background:transparent;color:#9aa3ad;font-size:18px;cursor:pointer}
     #invProductMetaOverlay .inv-product-tag-add{display:flex;gap:8px;margin:12px 0}
     #invProductMetaOverlay .inv-product-tag-add input{flex:1;min-width:0;border:1px solid #3a414b;border-radius:6px;background:#15181c;color:#e6e9ed;padding:9px}
+    #invTagManagerOverlay{position:fixed;inset:0;z-index:20002;display:grid;place-items:center;background:#000a;padding:20px}
+    #invTagManagerOverlay .inv-tag-manager{width:min(1180px,96vw);height:min(820px,90vh);display:flex;flex-direction:column;overflow:hidden;border:1px solid #3a414b;border-radius:12px;background:#202329;color:#e6e9ed;box-shadow:0 18px 46px #000b}
+    #invTagManagerOverlay .inv-tag-manager-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px;border-bottom:1px solid #343b45}
+    #invTagManagerOverlay .inv-tag-manager-head h2{margin:0;font-size:18px}
+    #invTagManagerOverlay .inv-tag-manager-head p{margin:4px 0 0;color:#89939f;font-size:12px}
+    #invTagManagerOverlay button,#invTagManagerOverlay input{font:inherit}
+    #invTagManagerOverlay button{cursor:pointer}
+    #invTagManagerOverlay .inv-tag-done,#invTagManagerOverlay .inv-tag-action{border:1px solid #434a55;border-radius:7px;background:#292d34;color:#e6e9ed;padding:8px 12px}
+    #invTagManagerOverlay .inv-tag-done:hover,#invTagManagerOverlay .inv-tag-action:hover{border-color:#8563c7;background:#302a3d}
+    #invTagManagerOverlay .inv-tag-manager-body{display:grid;grid-template-columns:minmax(270px,32%) minmax(0,1fr);flex:1;min-height:0}
+    #invTagManagerOverlay .inv-tag-manager-left{display:flex;flex-direction:column;min-height:0;border-right:1px solid #343b45}
+    #invTagManagerOverlay .inv-tag-manager-left h3{margin:0;padding:17px 18px 10px;color:#98a1ac;font-size:11px;letter-spacing:.13em;text-transform:uppercase}
+    #invTagManagerOverlay .inv-tag-list{display:grid;align-content:start;gap:5px;overflow:auto;padding:0 10px 12px}
+    #invTagManagerOverlay .inv-tag-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;align-items:center;gap:5px;padding:6px;border:1px solid transparent;border-radius:7px;background:#1b1e23}
+    #invTagManagerOverlay .inv-tag-row.selected{border-color:#6953a0;background:#292531}
+    #invTagManagerOverlay .inv-tag-row.dragging{opacity:.55}
+    #invTagManagerOverlay .inv-tag-select{display:flex;align-items:center;gap:9px;min-width:0;border:0;background:transparent;color:#e6e9ed;text-align:left;padding:5px}
+    #invTagManagerOverlay .inv-tag-swatch{width:12px;height:12px;flex:none;border:1px solid #ffffff42;border-radius:50%}
+    #invTagManagerOverlay .inv-tag-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    #invTagManagerOverlay .inv-tag-count{color:#89939f;font-variant-numeric:tabular-nums}
+    #invTagManagerOverlay .inv-tag-color{width:26px;height:26px;border:0;background:transparent;padding:2px}
+    #invTagManagerOverlay .inv-tag-icon{width:28px;height:28px;border:1px solid transparent;border-radius:5px;background:transparent;color:#9ca5af}
+    #invTagManagerOverlay .inv-tag-icon:hover{border-color:#454c57;color:#fff}
+    #invTagManagerOverlay .inv-tag-edit{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;padding:5px}
+    #invTagManagerOverlay .inv-tag-edit input[type=text],#invTagManagerOverlay .inv-tag-new input,#invTagManagerOverlay .inv-tag-search{min-width:0;border:1px solid #424955;border-radius:7px;background:#15181c;color:#e6e9ed;padding:9px 10px}
+    #invTagManagerOverlay .inv-tag-edit input[type=color]{width:36px;height:36px;border:1px solid #424955;border-radius:7px;background:#15181c;padding:3px}
+    #invTagManagerOverlay .inv-tag-new{display:flex;gap:7px;margin-top:auto;padding:12px 10px;border-top:1px solid #343b45}
+    #invTagManagerOverlay .inv-tag-new input{flex:1}
+    #invTagManagerOverlay .inv-tag-manager-right{display:flex;flex-direction:column;min-width:0;min-height:0}
+    #invTagManagerOverlay .inv-tag-manager-right-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px 10px}
+    #invTagManagerOverlay .inv-tag-manager-right-head strong{font-size:16px}
+    #invTagManagerOverlay .inv-tag-manager-right-head span{color:#89939f;font-size:12px}
+    #invTagManagerOverlay .inv-tag-search{margin:0 18px 10px}
+    #invTagManagerOverlay .inv-tag-plugin-groups{min-height:0;overflow:auto;padding:0 12px 16px}
+    #invTagManagerOverlay .inv-tag-vendor{margin:5px 0 10px}
+    #invTagManagerOverlay .inv-tag-vendor-head{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;border:1px solid #343b45;border-radius:7px;background:#2a2e35}
+    #invTagManagerOverlay .inv-tag-vendor-title{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+    #invTagManagerOverlay .inv-tag-vendor-count{margin-left:8px;color:#89939f;font-size:11px}
+    #invTagManagerOverlay .inv-tag-plugin-list{display:grid;gap:3px;margin:4px 0 0 14px;padding-left:12px;border-left:2px solid #353b45}
+    #invTagManagerOverlay .inv-tag-plugin{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:34px;padding:3px 8px;border-radius:5px}
+    #invTagManagerOverlay .inv-tag-plugin:hover{background:#282c33}
+    #invTagManagerOverlay .inv-tag-plugin-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    #invTagManagerOverlay .inv-tag-plugin.is-added .inv-tag-plugin-name{color:#929ba6}
+    #invTagManagerOverlay .inv-tag-empty{padding:24px;color:#89939f;text-align:center}
+    #invTagManagerOverlay .inv-tag-help{padding:8px 18px 12px;color:#89939f;font-size:12px}
+    @media(max-width:760px){#invTagManagerOverlay{padding:8px}#invTagManagerOverlay .inv-tag-manager{width:100%;height:94vh}#invTagManagerOverlay .inv-tag-manager-body{grid-template-columns:minmax(155px,40%) minmax(0,1fr)}#invTagManagerOverlay .inv-tag-manager-head{padding:12px}#invTagManagerOverlay .inv-tag-manager-right-head{align-items:flex-start;flex-direction:column}#invTagManagerOverlay .inv-tag-search{margin-inline:10px}#invTagManagerOverlay .inv-tag-vendor-head{padding:7px}#invTagManagerOverlay .inv-tag-action{padding:6px 8px;font-size:11px}}
     #invProductMetaOverlay .inv-product-tag-empty{padding:12px;color:#89939f}
     #invProductMetaOverlay .inv-note-context{margin-bottom:14px;color:#89939f;font-size:12px}
     #invNoteOverlay{position:fixed;inset:0;z-index:20001;display:grid;place-items:center;background:#0009;padding:20px}
@@ -3285,6 +3331,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <nav class="inv-sidebar-nav" aria-label="Saved plug-ins">
           <button class="inv-side-button" type="button" data-inv-scope="favorites" aria-label="Favorites" title="Favorites"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg></span><span class="inv-side-label">Favorites</span><span class="inv-side-count" id="invSidebarFavCount">0</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="tags" aria-label="My tags" title="Show plug-ins with saved tags"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m20 13-7 7-9-9V4h7l9 9Z"/><circle cx="8.5" cy="8.5" r=".8"/></svg></span><span class="inv-side-label">My tags</span></button>
+          <button class="inv-side-button" type="button" data-inv-tag-manager aria-label="Plugin Tag Manager" title="Manage tags on this browser"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 13 11 22l-9-9V3h10l8 10Z"/><circle cx="7" cy="7" r="1"/></svg></span><span class="inv-side-label">Tag Manager</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="hidden" aria-label="Hidden plug-ins" title="Show plug-ins hidden from the main library"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c5.5 0 9 7 9 7a16 16 0 0 1-3.1 3.8M6.2 6.2C4.1 7.6 3 12 3 12s3.5 7 9 7a10 10 0 0 0 3-.5"/></svg></span><span class="inv-side-label">Hidden</span><span class="inv-side-count" id="invSidebarHiddenCount">0</span></button>
         </nav>
         <div class="inv-sidebar-section">CATEGORIES</div>
@@ -6086,6 +6133,151 @@ function invOpenProductCategory(vendor,name,currentCategory){
 }
 const INV_PRODUCT_TAGS_KEY="aimm.pluginInventory.userTags.v1";
 function invReadUserTags(){try{const tags=JSON.parse(localStorage.getItem(INV_PRODUCT_TAGS_KEY)||"[]");return Array.isArray(tags)?tags.filter(tag=>typeof tag==="string"):[]}catch(_){return []}}
+const INV_TAG_COLORS_KEY="aimm.pluginInventory.userTagColors.v1";
+function invReadTagColors(){try{const value=JSON.parse(localStorage.getItem(INV_TAG_COLORS_KEY)||"{}");return value&&typeof value==="object"&&!Array.isArray(value)?value:{}}catch(_){return {}}}
+function invTagGroups(){return invBuildGroups(Array.isArray(INV_SCAN_ROWS)?INV_SCAN_ROWS:[]).sort((a,b)=>invNorm(a.vendor).localeCompare(invNorm(b.vendor))||invNorm(a.name).localeCompare(invNorm(b.name)))}
+function invTagCommit(tags,actions,colors){
+  const before={tags:localStorage.getItem(INV_PRODUCT_TAGS_KEY),actions:localStorage.getItem(INV_PRODUCT_ACTIONS_KEY),colors:localStorage.getItem(INV_TAG_COLORS_KEY)};
+  try{localStorage.setItem(INV_PRODUCT_ACTIONS_KEY,JSON.stringify(actions));localStorage.setItem(INV_PRODUCT_TAGS_KEY,JSON.stringify(tags));localStorage.setItem(INV_TAG_COLORS_KEY,JSON.stringify(colors));return true}
+  catch(_){try{Object.keys(before).forEach(key=>{const storageKey=key==="tags"?INV_PRODUCT_TAGS_KEY:key==="actions"?INV_PRODUCT_ACTIONS_KEY:INV_TAG_COLORS_KEY;if(before[key]===null)localStorage.removeItem(storageKey);else localStorage.setItem(storageKey,before[key]);})}catch(__){}return false}
+}
+function invTagMembership(group,tag,add){
+  const actions=invReadProductActions(),key=invActionKey(group.vendor,group.name),record=actions[key]||{},tags=Array.isArray(record.tags)?record.tags.filter(value=>typeof value==="string"):[];
+  const present=tags.includes(tag);
+  if(add&&!present)tags.push(tag);
+  if(!add&&present){const at=tags.indexOf(tag);tags.splice(at,1);}
+  if(tags.length)record.tags=tags;else delete record.tags;
+  if(Object.keys(record).length)actions[key]=record;else delete actions[key];
+  return invTagCommit(invReadUserTags(),actions,invReadTagColors());
+}
+function invOpenTagManager(){
+  if(document.getElementById("invTagManagerOverlay"))return;
+  const overlay=document.createElement("div");overlay.id="invTagManagerOverlay";
+  overlay.innerHTML='<div class="inv-tag-manager" role="dialog" aria-modal="true" aria-labelledby="invTagManagerTitle"><header class="inv-tag-manager-head"><div><h2 id="invTagManagerTitle">Plugin Tag Manager</h2><p>Manage tags and plug-in membership in this browser.</p></div><button type="button" class="inv-tag-done" data-tag-done>Done</button></header><div class="inv-tag-manager-body"><aside class="inv-tag-manager-left"><h3>Your tags</h3><div class="inv-tag-list" data-tag-list></div><form class="inv-tag-new" data-tag-new-form><input type="text" maxlength="32" aria-label="New tag name" placeholder="New tag…"><button type="submit" class="inv-tag-action">Add</button></form></aside><section class="inv-tag-manager-right"><div class="inv-tag-manager-right-head"><strong data-tag-selected>Choose a tag</strong><span data-tag-summary>Select a tag to manage its plug-ins.</span><button type="button" class="inv-tag-action" data-tag-clear hidden>Clear tag</button></div><input class="inv-tag-search" data-tag-search type="search" aria-label="Search plug-ins or vendors" placeholder="Search plug-ins or vendors…" disabled><div class="inv-tag-plugin-groups" data-tag-plugin-groups><div class="inv-tag-empty">Create or choose a tag to begin.</div></div><div class="inv-tag-help">Add marks a plug-in with this tag; Added removes it. Add all applies the selected tag to every visible plug-in from that vendor. Changes are stored in this browser.</div></section></div></div>';
+  document.body.appendChild(overlay);
+  const tagList=overlay.querySelector("[data-tag-list]"),pluginHost=overlay.querySelector("[data-tag-plugin-groups]"),search=overlay.querySelector("[data-tag-search]"),selectedLabel=overlay.querySelector("[data-tag-selected]"),summary=overlay.querySelector("[data-tag-summary]"),clearButton=overlay.querySelector("[data-tag-clear]");
+  let selectedTag="",editTag="",dragTag="";
+  const palette=["#f5b942","#40c4d8","#70dfbf","#aa8af7","#ff7a86","#68a8ff","#ee8ac5","#9ca8b5"];
+  const safeTags=()=>{
+    const all=invReadUserTags(),actions=invReadProductActions();
+    Object.values(actions).forEach(record=>{if(record&&Array.isArray(record.tags))record.tags.forEach(tag=>{if(typeof tag==="string"&&!all.some(value=>value.toLowerCase()===tag.toLowerCase()))all.push(tag);});});
+    return all;
+  };
+  const countTag=(tag)=>Object.values(invReadProductActions()).filter(record=>record&&Array.isArray(record.tags)&&record.tags.includes(tag)).length;
+  const escapeAttr=(value)=>invEsc(value).replace(/"/g,"&quot;");
+  const renderPlugins=()=>{
+    selectedLabel.textContent=selectedTag?"Add plugins to "+selectedTag:"Choose a tag";
+    const groups=invTagGroups(),needle=invNorm(search.value||"");
+    const filtered=needle?groups.filter(group=>invNorm(group.vendor+" "+group.name).includes(needle)):groups;
+    const tagCount=selectedTag?countTag(selectedTag):0;
+    summary.textContent=selectedTag?tagCount.toLocaleString()+" plugins added":"Select a tag to manage its plug-ins.";
+    clearButton.hidden=!selectedTag||tagCount===0;
+    search.disabled=!selectedTag;
+    pluginHost.replaceChildren();
+    if(!selectedTag){const empty=document.createElement("div");empty.className="inv-tag-empty";empty.textContent="Create or choose a tag to begin.";pluginHost.appendChild(empty);return;}
+    if(!filtered.length){const empty=document.createElement("div");empty.className="inv-tag-empty";empty.textContent="No plug-ins match this search.";pluginHost.appendChild(empty);return;}
+    const actionMap=invReadProductActions(),byVendor=new Map();
+    filtered.forEach(group=>{const key=group.vendor||"Unknown vendor";if(!byVendor.has(key))byVendor.set(key,[]);byVendor.get(key).push(group);});
+    byVendor.forEach((vendorGroups,vendor)=>{
+      const section=document.createElement("section");section.className="inv-tag-vendor";section.dataset.vendor=vendor;
+      const head=document.createElement("div");head.className="inv-tag-vendor-head";
+      const title=document.createElement("div");title.innerHTML='<span class="inv-tag-vendor-title">'+invEsc(vendor)+'</span><span class="inv-tag-vendor-count">'+vendorGroups.length.toLocaleString()+'</span>';
+      const addAll=document.createElement("button");addAll.type="button";addAll.className="inv-tag-action";addAll.textContent="Add all";addAll.setAttribute("aria-label","Add all "+vendorGroups.length+" visible "+vendor+" plug-ins to "+selectedTag);addAll.dataset.tagAddVendor=vendor;
+      head.append(title,addAll);section.appendChild(head);
+      const list=document.createElement("div");list.className="inv-tag-plugin-list";
+      vendorGroups.forEach(group=>{
+        const action=actionMap[invActionKey(group.vendor,group.name)]||{},isAdded=Array.isArray(action.tags)&&action.tags.includes(selectedTag);
+        const row=document.createElement("div");row.className="inv-tag-plugin"+(isAdded?" is-added":"");
+        const name=document.createElement("span");name.className="inv-tag-plugin-name";name.textContent=group.name;
+        const button=document.createElement("button");button.type="button";button.className="inv-tag-action";button.textContent=isAdded?"Added ✓":"Add";button.setAttribute("aria-label",(isAdded?"Remove ":"Add ")+group.name+(isAdded?" from ":" to ")+selectedTag);button.dataset.tagItem=group.name;button.dataset.tagVendor=group.vendor;button.dataset.tagAdded=String(isAdded);
+        row.append(name,button);list.appendChild(row);
+      });
+      section.appendChild(list);pluginHost.appendChild(section);
+    });
+  };
+  const renderTags=()=>{
+    const tags=safeTags(),colors=invReadTagColors();tagList.replaceChildren();
+    if(selectedTag&&!tags.includes(selectedTag))selectedTag="";
+    if(!tags.length){const empty=document.createElement("div");empty.className="inv-tag-empty";empty.textContent="No tags yet. Create one below.";tagList.appendChild(empty);}
+    tags.forEach((tag,index)=>{
+      const row=document.createElement("div");row.className="inv-tag-row"+(tag===selectedTag?" selected":"");row.draggable=true;row.dataset.tagRow=tag;
+      const color=colors[tag]||palette[index%palette.length];
+      const select=document.createElement("button");select.type="button";select.className="inv-tag-select";select.dataset.tagSelect=tag;select.setAttribute("aria-pressed",String(tag===selectedTag));select.innerHTML='<span class="inv-tag-swatch" style="background:'+escapeAttr(color)+'"></span><span class="inv-tag-name">'+invEsc(tag)+'</span><span class="inv-tag-count">'+countTag(tag).toLocaleString()+'</span>';
+      const colorInput=document.createElement("input");colorInput.type="color";colorInput.className="inv-tag-color";colorInput.value=/^#[0-9a-f]{6}$/i.test(colors[tag]||"")?colors[tag]:palette[index%palette.length];colorInput.setAttribute("aria-label","Change "+tag+" tag colour");colorInput.dataset.tagColor=tag;
+      const edit=document.createElement("button");edit.type="button";edit.className="inv-tag-icon";edit.textContent="✎";edit.title="Rename "+tag;edit.setAttribute("aria-label","Rename "+tag);edit.dataset.tagEdit=tag;
+      const remove=document.createElement("button");remove.type="button";remove.className="inv-tag-icon";remove.textContent="×";remove.title="Delete "+tag;remove.setAttribute("aria-label","Delete "+tag);remove.dataset.tagDelete=tag;
+      row.append(select,colorInput,edit,remove);tagList.appendChild(row);
+      if(editTag===tag){const editor=document.createElement("form");editor.className="inv-tag-edit";editor.dataset.tag-edit-form=tag;editor.innerHTML='<input type="text" maxlength="32" aria-label="New name for '+escapeAttr(tag)+'" value="'+escapeAttr(tag)+'"><button type="submit" class="inv-tag-action">Save</button><button type="button" class="inv-tag-action" data-tag-edit-cancel>Cancel</button>';tagList.appendChild(editor);}
+    });
+    renderPlugins();
+  };
+  const commitRename=(oldName,newName)=>{
+    const value=newName.trim().replace(/\s+/g," ");if(!value||value===oldName)return false;
+    const tags=safeTags();if(tags.some(tag=>tag!==oldName&&tag.toLowerCase()===value.toLowerCase())){invStatus("A tag with that name already exists.","error");return false;}
+    const actions=invReadProductActions();Object.values(actions).forEach(record=>{if(record&&Array.isArray(record.tags)){record.tags=record.tags.map(tag=>tag===oldName?value:tag).filter((tag,index,list)=>list.indexOf(tag)===index);if(!record.tags.length)delete record.tags;}});
+    const nextTags=tags.map(tag=>tag===oldName?value:tag),colors=invReadTagColors();if(colors[oldName]){colors[value]=colors[oldName];delete colors[oldName];}
+    if(!invTagCommit(nextTags,actions,colors)){invStatus("The tag could not be renamed; the original browser data was restored.","error");return false;}
+    selectedTag=selectedTag===oldName?value:selectedTag;editTag="";invRenderInventory();return true;
+  };
+  overlay.querySelector("[data-tag-new-form]").addEventListener("submit",event=>{
+    event.preventDefault();const input=event.currentTarget.querySelector("input"),value=input.value.trim().replace(/\s+/g," ");if(!value)return;
+    const tags=safeTags();if(tags.some(tag=>tag.toLowerCase()===value.toLowerCase())){invStatus("A tag with that name already exists.","error");input.focus();return;}
+    tags.push(value);const colors=invReadTagColors();colors[value]=palette[(tags.length-1)%palette.length];
+    if(!invTagCommit(tags,invReadProductActions(),colors)){invStatus("The tag could not be created in this browser.","error");return;}
+    selectedTag=value;input.value="";search.value="";renderTags();invRenderInventory();search.focus();
+  });
+  tagList.addEventListener("click",event=>{
+    const select=event.target.closest("[data-tag-select]");if(select){selectedTag=select.dataset.tagSelect;editTag="";search.value="";renderTags();return;}
+    const edit=event.target.closest("[data-tag-edit]");if(edit){editTag=edit.dataset.tagEdit;renderTags();const input=tagList.querySelector(".inv-tag-edit input");if(input){input.focus();input.select();}return;}
+    if(event.target.closest("[data-tag-edit-cancel]")){editTag="";renderTags();return;}
+    const remove=event.target.closest("[data-tag-delete]");if(remove){
+      const name=remove.dataset.tagDelete;if(!window.confirm('Delete the "'+name+'" tag and remove it from all plug-ins?'))return;
+      const tags=safeTags().filter(tag=>tag!==name),actions=invReadProductActions(),colors=invReadTagColors();Object.values(actions).forEach(record=>{if(record&&Array.isArray(record.tags)){record.tags=record.tags.filter(tag=>tag!==name);if(!record.tags.length)delete record.tags;}});
+      delete colors[name];if(!invTagCommit(tags,actions,colors)){invStatus("The tag could not be deleted; the original browser data was restored.","error");return;}
+      if(selectedTag===name)selectedTag="";if(editTag===name)editTag="";invRenderInventory();renderTags();return;
+    }
+  });
+  tagList.addEventListener("change",event=>{
+    const input=event.target.closest("[data-tag-color]");if(!input)return;
+    const colors=invReadTagColors();colors[input.dataset.tagColor]=input.value;
+    if(!invTagCommit(safeTags(),invReadProductActions(),colors)){invStatus("The colour could not be saved in this browser.","error");return;}
+    renderTags();invRenderInventory();
+  });
+  tagList.addEventListener("submit",event=>{
+    const form=event.target.closest("[data-tag-edit-form]");if(!form)return;event.preventDefault();
+    if(commitRename(form.dataset.tagEditForm,form.querySelector("input").value))renderTags();
+  });
+  tagList.addEventListener("dragstart",event=>{const row=event.target.closest("[data-tag-row]");if(row){dragTag=row.dataset.tagRow;row.classList.add("dragging");event.dataTransfer.effectAllowed="move";}});
+  tagList.addEventListener("dragend",event=>{const row=event.target.closest("[data-tag-row]");if(row)row.classList.remove("dragging");dragTag="";});
+  tagList.addEventListener("dragover",event=>{if(event.target.closest("[data-tag-row]"))event.preventDefault();});
+  tagList.addEventListener("drop",event=>{
+    const row=event.target.closest("[data-tag-row]");if(!row||!dragTag||row.dataset.tagRow===dragTag)return;event.preventDefault();
+    const tags=safeTags(),from=tags.indexOf(dragTag),to=tags.indexOf(row.dataset.tagRow);if(from<0||to<0)return;
+    tags.splice(to,0,tags.splice(from,1)[0]);
+    if(invTagCommit(tags,invReadProductActions(),invReadTagColors()))renderTags();else invStatus("The tag order could not be saved in this browser.","error");
+  });
+  search.addEventListener("input",renderPlugins);
+  pluginHost.addEventListener("click",event=>{
+    const item=event.target.closest("[data-tag-item]");
+    if(item){const group={vendor:item.dataset.tagVendor,name:item.dataset.tagItem};if(!invTagMembership(group,selectedTag,item.dataset.tagAdded!=="true")){invStatus("The plug-in tag could not be saved in this browser.","error");return;}invRenderInventory();renderTags();return;}
+    const vendorButton=event.target.closest("[data-tag-add-vendor]");
+    if(vendorButton){const vendor=vendorButton.dataset.tagAddVendor,groups=invTagGroups().filter(group=>group.vendor===vendor&&invNorm(group.vendor+" "+group.name).includes(invNorm(search.value||"")));
+      let ok=true;groups.forEach(group=>{if(!invTagMembership(group,selectedTag,true))ok=false;});
+      if(!ok)invStatus("Some plug-in tags could not be saved in this browser.","error");invRenderInventory();renderTags();
+    }
+  });
+  clearButton.addEventListener("click",()=>{
+    if(!selectedTag||!window.confirm('Remove the "'+selectedTag+'" tag from every plug-in? The tag itself will remain.'))return;
+    const actions=invReadProductActions();Object.values(actions).forEach(record=>{if(record&&Array.isArray(record.tags)){record.tags=record.tags.filter(tag=>tag!==selectedTag);if(!record.tags.length)delete record.tags;}});
+    if(!invTagCommit(safeTags(),actions,invReadTagColors())){invStatus("The tag could not be cleared; the original browser data was restored.","error");return;}
+    invRenderInventory();renderTags();
+  });
+  const close=()=>{overlay.remove();invRenderInventory();};
+  overlay.querySelector("[data-tag-done]").addEventListener("click",close);
+  overlay.addEventListener("click",event=>{if(event.target===overlay)close();});
+  overlay.addEventListener("keydown",event=>{if(event.key==="Escape"){event.preventDefault();close();}});
+  renderTags();invTrapDialogFocus(overlay);overlay.querySelector("[data-tag-new-form] input").focus();
+}
 function invOpenProductTags(vendor,name){
   const state=invGetProductActions(vendor,name),selected=new Set(Array.isArray(state.tags)?state.tags:[]);
   const overlay=document.createElement("div");overlay.id="invProductMetaOverlay";
@@ -6541,6 +6733,7 @@ function invInit(){
     invRenderInventory();
   });
   if(sidebar)sidebar.addEventListener("click",event=>{
+    const managerButton=event.target.closest("[data-inv-tag-manager]");if(managerButton){invOpenTagManager();return;}
     const button=event.target.closest("[data-inv-scope],[data-inv-category]");
     if(!button||button.disabled)return;
     if(button.hasAttribute("data-inv-scope")){INV_SCOPE=button.getAttribute("data-inv-scope")||"all";INV_CATEGORIES.clear();}
