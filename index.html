@@ -3184,6 +3184,12 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #library .inv-fav.on{color:#f4cf75}
     #library .inv-more{display:block;width:100%;padding:6px 10px;border:0;border-top:1px solid #292e35;background:transparent;color:#8d98a5;text-align:left;font:9px ui-monospace,Menlo,monospace;cursor:pointer}
     #library .inv-more:hover{color:#fff;background:#242a32}
+    #library .inv-cards.inv-tiles-unplaced{visibility:hidden}
+    #library .inv-actions{display:flex;gap:7px;padding:8px 10px;border-top:1px solid #292e35}
+    #library .inv-action{display:block;flex:1;min-width:0;padding:7px 8px;border:1px solid #303640;border-radius:6px;background:#20242a;color:#aeb7c1;text-align:center;text-decoration:none;font-size:10px;font-weight:650;line-height:1.2}
+    #library .inv-action.hub{border-color:#2d725a;background:#18352d;color:#83dfb5}
+    #library .inv-action:hover{border-color:#536272;background:#28303a;color:#f3f6f8}
+    #library .inv-action.hub:hover{border-color:#45a47d;background:#204638;color:#b4f0d2}
     
     #library .inv-empty{border:1px dashed #394149;border-radius:9px;padding:28px;text-align:center;color:#87919b;font-size:12px;margin-top:12px}
     #library .inv-small{color:#75808a;font-size:10px}
@@ -5759,24 +5765,75 @@ function invRenderSidebar(groups,stageMap){
   sidebar.querySelectorAll("[data-inv-scope]").forEach(button=>button.classList.toggle("active",!INV_CATEGORY&&button.getAttribute("data-inv-scope")===INV_SCOPE));
   sidebar.querySelectorAll("[data-inv-category]").forEach(button=>button.classList.toggle("active",button.getAttribute("data-inv-category")===INV_CATEGORY));
 }
-function invLayoutTiles(host){
-  const grid=host&&host.querySelector(".inv-cards");if(!grid)return;
-  const GAP=12,MIN=268;
+var invTileResizeObserver=null,invTileIntersectionObserver=null,invTileRAF=0,invTileForce=false;
+function invTileScheduleLayout(force){
+  if(force)invTileForce=true;
+  if(invTileRAF)return;
+  invTileRAF=requestAnimationFrame(()=>{
+    invTileRAF=0;
+    const full=invTileForce;invTileForce=false;
+    document.querySelectorAll("#invInventory .inv-cards").forEach(grid=>{
+      invTileObserveGrid(grid);
+      invTileLayoutGrid(grid,!full);
+    });
+  });
+}
+function invTileObserveGrid(grid){
+  if(!grid)return;
+  if(typeof ResizeObserver==="function"){
+    if(!invTileResizeObserver)invTileResizeObserver=new ResizeObserver(()=>invTileScheduleLayout(false));
+    if(!grid._invTileGridObserved){grid._invTileGridObserved=true;invTileResizeObserver.observe(grid);}
+  }
+  if(typeof IntersectionObserver==="function"){
+    if(!invTileIntersectionObserver)invTileIntersectionObserver=new IntersectionObserver(entries=>{
+      for(const entry of entries){
+        const g=entry.target;
+        if(entry.isIntersecting&&(g._invTileDeferred||Array.from(g.children).some(card=>card.classList&&card.classList.contains("inv-vendor")&&typeof card._invTileCol!=="number"))){invTileScheduleLayout(true);return;}
+      }
+    });
+    if(!grid._invTileIntersectionObserved){grid._invTileIntersectionObserved=true;invTileIntersectionObserver.observe(grid);}
+  }
+}
+function invTileLayoutGrid(grid,keepCols){
+  if(!grid)return;
+  invTileObserveGrid(grid);
+  const GAP=10,MIN=268;
   const cs=getComputedStyle(grid),padL=parseFloat(cs.paddingLeft)||0,padR=parseFloat(cs.paddingRight)||0,padT=parseFloat(cs.paddingTop)||0,padB=parseFloat(cs.paddingBottom)||0;
-  const inner=grid.clientWidth-padL-padR;if(inner<=0)return;
-  const cols=Math.max(1,Math.floor((inner+GAP)/(MIN+GAP)));
-  const colW=(inner-GAP*(cols-1))/cols,heights=new Array(cols).fill(0);
+  const inner=grid.clientWidth-padL-padR;
+  if(inner<=0){
+    grid._invTileDeferred=true;
+    if(invTileIntersectionObserver)grid.classList.add("inv-tiles-unplaced");
+    return;
+  }
+  grid._invTileDeferred=false;
+  const cols=Math.max(1,Math.floor((inner+GAP)/(MIN+GAP))),colW=(inner-GAP*(cols-1))/cols;
+  if(grid._invTileCols!==cols||Math.abs((grid._invTileColW||0)-colW)>0.5)keepCols=false;
+  grid._invTileCols=cols;grid._invTileColW=colW;
   const cards=Array.from(grid.children).filter(card=>card.classList&&card.classList.contains("inv-vendor"));
+  const hidden=card=>card.style.display==="none"||card.classList.contains("inv-filtered")||getComputedStyle(card).display==="none";
+  const visKey=cards.map((card,index)=>hidden(card)?"":index).filter(index=>index!=="").join(",");
+  if(grid._invTileVisKey!==visKey){grid._invTileVisKey=visKey;keepCols=false;}
+  const heights=new Array(cols).fill(0);
   for(const card of cards){
-    if(card.style.display==="none"||getComputedStyle(card).display==="none")continue;
-    card.style.width=colW+"px";
-    let col=0;for(let i=1;i<cols;i++)if(heights[i]<heights[col])col=i;
+    if(typeof ResizeObserver==="function"&&!card._invTileObserved&&invTileResizeObserver){card._invTileObserved=true;invTileResizeObserver.observe(card);}
+    if(hidden(card)){card._invTileCol=-1;continue;}
+    const width=colW+"px";if(card.style.width!==width)card.style.width=width;
+    let col=(keepCols&&Number.isInteger(card._invTileCol)&&card._invTileCol>=0&&card._invTileCol<cols)?card._invTileCol:-1;
+    if(col<0){col=0;for(let n=1;n<cols;n++)if(heights[n]<heights[col])col=n;}
+    card._invTileCol=col;
     card.style.left=(padL+col*(colW+GAP))+"px";
     card.style.top=(padT+heights[col])+"px";
     heights[col]+=card.offsetHeight+GAP;
   }
   const tallest=Math.max(0,...heights);
   grid.style.height=(padT+Math.max(0,tallest-GAP)+padB)+"px";
+  grid.classList.remove("inv-tiles-unplaced");
+}
+function invLayoutTiles(host){
+  const grid=host&&host.matches&&host.matches(".inv-cards")?host:host&&host.querySelector(".inv-cards");
+  if(!grid)return;
+  invTileObserveGrid(grid);
+  invTileLayoutGrid(grid,false);
 }
 function invRenderInventory(){
   const host=document.getElementById("invInventory");
@@ -5837,12 +5894,128 @@ function invRenderInventory(){
     "t-racks":"ikmultimedia.com","ik multimedia":"ikmultimedia.com","antelope audio":"antelopeaudio.com",
     "liquidsonics":"liquidsonics.com","melda production":"meldaproduction.com","native instruments":"native-instruments.com"
   };
+  const installerHubs={
+    "pluginalliance":"https://www.plugin-alliance.com/en/installation-manager.html",
+    "avidtechnology":"https://www.avid.com/avid-link",
+    "airmusictechnology":"https://www.airmusictech.com/downloads/",
+    "airmusictech":"https://www.airmusictech.com/downloads/",
+    "blacksaltaudio":"https://www.blacksaltaudio.com/",
+    "toontrack":"https://www.toontrack.com/product-manager/",
+    "arturia":"https://www.arturia.com/technology/asc",
+    "steinberg":"https://www.steinberg.net/downloads/",
+    "nativeinstruments":"https://www.native-instruments.com/en/specials/native-access/",
+    "izotope":"https://www.izotope.com/en/products/product-portal.html",
+    "waves":"https://www.waves.com/downloads#waves-central",
+    "cradle":"https://cradle.app",
+    "spitfireaudio":"https://www.spitfireaudio.com/",
+    "ikmultimedia":"https://www.ikmultimedia.com/products/",
+    "slatedigital":"https://app.slatedigital.com/installers",
+    "stevenslateaudio":"https://stevenslateaudio.com/installers",
+    "universalaudio":"https://www.uaudio.com/uad-software/installer.html",
+    "universalaudiodsp":"https://www.uaudio.com/uad-software/installer.html",
+    "universalaudionative":"https://www.uaudio.com/uad-software/installer.html",
+    "uaudio":"https://www.uaudio.com/uad-software/installer.html",
+    "ssl":"https://www.solidstatelogic.com/support/downloads",
+    "softube":"https://www.softube.com/central",
+    "meldaproduction":"https://www.meldaproduction.com/download",
+    "ujam":"https://www.ujam.com/ujam-app/",
+    "output":"https://output.com/",
+    "uvi":"https://www.uvi.net/uvi-portal",
+    "tracktion":"https://www.tracktion.com/download",
+    "roland":"https://www.roland.com/global/categories/software/roland_cloud_manager/",
+    "cherryaudio":"https://cherryaudio.com/products/sync",
+    "acusticaaudio":"https://www.acustica-audio.com/aquarius",
+    "safariaudio":"https://safariaudio.com/",
+    "tokyodawnlabs":"https://www.tokyodawn.net/tdr-collector/",
+    "klevgrand":"https://klevgrand.com/helper",
+    "antelopeaudio":"https://antelopeaudio.com/",
+    "antarestec":"https://www.antarestech.com/software-download",
+    "xlnaudio":"https://www.xlnaudio.com/install",
+    "flux":"https://www.flux.audio/download/",
+    "lexicon":"https://lexiconpro.com/",
+    "minimalaudio":"https://www.minimal.audio/account",
+    "hornet":"https://www.hornetplugins.com/hornet-doin/",
+    "kilohearts":"https://kilohearts.com/download",
+    "gforce":"https://www.gforcesoftware.com/support/",
+    "crowhillcompany":"https://thecrowhillcompany.com/crow-hill-app/",
+    "techivation":"https://techivation.com/support/",
+    "tdr":"https://www.tokyodawn.net/tdr-collector/",
+    "kazrog":"https://kazrog.com/pages/kazrog-plugin-manager",
+    "hofa":"https://hofa-plugins.de/en/downloads/",
+    "bfd":"https://bfddrums.com/",
+    "unitedplugins":"https://unitedplugins.com/",
+    "jmgSound":"https://unitedplugins.com/jmg-sound/",
+    "firesonic":"https://unitedplugins.com/",
+    "noiseengineering":"https://noiseengineering.us/portal/plugins",
+    "dawesome":"https://www.dawesomemusic.com/",
+    "hushaudio":"https://hush.audio/",
+    "blackbox":"https://www.uaudio.com/uad-software/installer.html"
+  };
+  const vendorHomepages={
+    "pluginalliance":"https://www.plugin-alliance.com/",
+    "avidtechnology":"https://www.avid.com/plugins/avid-complete-plugin-bundle",
+    "airmusictechnology":"https://www.avid.com/plugins/first-air-instrument-bundle",
+    "airmusictech":"https://www.avid.com/plugins/first-air-instrument-bundle",
+    "blacksaltaudio":"https://www.blacksaltaudio.com/",
+    "toontrack":"https://www.toontrack.com/",
+    "arturia":"https://www.arturia.com/",
+    "steinberg":"https://www.steinberg.net/",
+    "nativeinstruments":"https://www.native-instruments.com/",
+    "izotope":"https://www.izotope.com/",
+    "waves":"https://www.waves.com/",
+    "cradle":"https://cradle.app/",
+    "spitfireaudio":"https://www.spitfireaudio.com/",
+    "ikmultimedia":"https://www.ikmultimedia.com/",
+    "slatedigital":"https://slatedigital.com/",
+    "stevenslateaudio":"https://stevenslateaudio.com/",
+    "universalaudio":"https://www.uaudio.com/",
+    "universalaudiodsp":"https://www.uaudio.com/",
+    "universalaudionative":"https://www.uaudio.com/",
+    "uaudio":"https://www.uaudio.com/",
+    "ssl":"https://store.solidstatelogic.com/index.php",
+    "softube":"https://www.softube.com/",
+    "meldaproduction":"https://www.meldaproduction.com/",
+    "ujam":"https://www.ujam.com/",
+    "output":"https://output.com/",
+    "uvi":"https://www.uvi.net/",
+    "tracktion":"https://www.tracktion.com/",
+    "roland":"https://www.roland.com/",
+    "cherryaudio":"https://cherryaudio.com/",
+    "acusticaaudio":"https://www.acustica-audio.com/",
+    "safariaudio":"https://safariaudio.com/",
+    "tokyodawnlabs":"https://www.tokyodawn.net/",
+    "klevgrand":"https://klevgrand.com/products",
+    "antelopeaudio":"https://antelopeaudio.com/",
+    "antares":"https://www.antarestech.com/",
+    "xlnaudio":"https://www.xlnaudio.com/",
+    "flux":"https://www.flux.audio/",
+    "lexicon":"https://lexiconpro.com/",
+    "minimalaudio":"https://www.minimal.audio/",
+    "hornet":"https://www.hornetplugins.com/",
+    "kilohearts":"https://kilohearts.com/",
+    "gforce":"https://www.gforcesoftware.com/",
+    "crowhillcompany":"https://www.thecrowhillcompany.com/",
+    "techivation":"https://techivation.com/",
+    "tdr":"https://www.tokyodawn.net/",
+    "kazrog":"https://kazrog.com/",
+    "hofa":"https://hofa-plugins.de/en/",
+    "bfd":"https://bfddrums.com/",
+    "unitedplugins":"https://unitedplugins.com/",
+    "jmgsound":"https://unitedplugins.com/jmg-sound/",
+    "firesonic":"https://unitedplugins.com/",
+    "noiseengineering":"https://noiseengineering.us/",
+    "dawesome":"https://www.dawesomemusic.com/",
+    "hushaudio":"https://hush.audio/"
+  };
   const tones=["","coral","gold","mint","violet"];
   const formatTone={AU:"au",VST2:"vst",VST3:"vst",CLAP:"clap"};
   host.innerHTML='<div class="inv-cards">'+Array.from(byVendor.entries()).map(([vendorKey,vendorData])=>{
     const vendor=vendorData.name,items=vendorData.items;
     const normalized=invNorm(vendor).replace(/ (inc|llc|ltd|limited|gmbh|corporation|corp)$/,"");
     const domain=brandDomains[normalized]||"";
+    const hubUrl=installerHubs[normalized.replace(/[^a-z0-9]/g,"")]||"";
+    const websiteUrl=vendorHomepages[normalized.replace(/[^a-z0-9]/g,"")]||(domain?"https://www."+domain+"/":"");
+    const actionsHTML=(hubUrl||websiteUrl)?'<div class="inv-actions">'+(hubUrl?'<a class="inv-action hub" href="'+invEsc(hubUrl)+'" target="_blank" rel="noopener noreferrer" aria-label="Open installer hub for '+invEsc(vendor)+'">Installer hub ↗</a>':"")+(websiteUrl?'<a class="inv-action" href="'+invEsc(websiteUrl)+'" target="_blank" rel="noopener noreferrer" aria-label="Open '+invEsc(vendor)+' website">Website ↗</a>':"")+'</div>':"";
     const initials=String(vendor).split(/[^A-Za-z0-9]+/).filter(Boolean).slice(0,2).map(part=>part[0]).join("").toUpperCase()||"PL";
     let toneHash=0;for(let i=0;i<vendorKey.length;i++)toneHash=(toneHash*31+vendorKey.charCodeAt(i))>>>0;
     const tone=tones[toneHash%tones.length];
@@ -5863,7 +6036,7 @@ function invRenderInventory(){
       return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button></div><div class="inv-meta">'+invEsc(category)+'</div><div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const more=items.length>4?'<button class="inv-more" type="button" data-inv-more aria-expanded="'+String(expanded)+'">'+(expanded?"Show fewer plug-ins":"＋ "+(items.length-4)+" more plug-ins")+'</button>':"";
-    return '<section class="inv-vendor'+(expanded?" expanded":"")+(collapsed?" collapsed":"")+'" data-inv-vendor="'+invEsc(vendorKey)+'"><div class="inv-vendor-head"><span class="inv-logo '+tone+'"><span>'+invEsc(initials)+'</span>'+logo+'</span><span class="inv-vendor-name"><strong>'+invEsc(vendor)+'</strong><small>'+(domain?invEsc(domain)+' · ':'')+items.length+' '+(items.length===1?'plug-in':'plug-ins')+'</small></span><span class="inv-vendor-count">'+items.length+'</span><button type="button" class="inv-vendor-toggle" data-inv-toggle aria-label="Toggle '+invEsc(vendor)+' card" aria-expanded="'+String(!collapsed)+'" title="'+(collapsed?"Expand":"Collapse")+' publisher">'+(collapsed?"›":"⌃")+'</button></div><div class="inv-products">'+visible+hidden+'</div>'+more+'</section>';
+    return '<section class="inv-vendor'+(expanded?" expanded":"")+(collapsed?" collapsed":"")+'" data-inv-vendor="'+invEsc(vendorKey)+'"><div class="inv-vendor-head"><span class="inv-logo '+tone+'"><span>'+invEsc(initials)+'</span>'+logo+'</span><span class="inv-vendor-name"><strong>'+invEsc(vendor)+'</strong><small>'+(domain?invEsc(domain)+' · ':'')+items.length+' '+(items.length===1?'plug-in':'plug-ins')+'</small></span><span class="inv-vendor-count">'+items.length+'</span><button type="button" class="inv-vendor-toggle" data-inv-toggle aria-label="Toggle '+invEsc(vendor)+' card" aria-expanded="'+String(!collapsed)+'" title="'+(collapsed?"Expand":"Collapse")+' publisher">'+(collapsed?"›":"⌃")+'</button></div><div class="inv-products">'+visible+hidden+'</div>'+more+actionsHTML+'</section>';
   }).join("")+'</div>';
   host.querySelectorAll("[data-inv-fav]").forEach(button=>button.addEventListener("click",()=>{
     const name=button.getAttribute("data-inv-fav");
@@ -5890,7 +6063,7 @@ function invRenderInventory(){
     invLayoutTiles(host);
   }));
   invLayoutTiles(host);
-  if(!window.__aimmInvTileResizeBound){window.addEventListener("resize",()=>{const live=document.getElementById("invInventory");if(live)invLayoutTiles(live);},{passive:true});window.__aimmInvTileResizeBound=true;}
+  if(!window.__aimmInvTileResizeBound){window.addEventListener("resize",()=>invTileScheduleLayout(true),{passive:true});window.__aimmInvTileResizeBound=true;}
 }
 function invRenderLibrary(){
   const installed=document.getElementById("pluginInventoryUI");
