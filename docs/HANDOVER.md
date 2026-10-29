@@ -1,3 +1,11 @@
+## Latest Stage 5 passkey chooser diagnosis — 2026-10-29
+
+GitHub branch `codex/pluginhub-foundation` was verified at source commit `778116538dbe294036490064574a5658e0a990ba` before this record update. The development Pages preview for that commit succeeded (deployment `f03db279-b71e-4197-b253-998d755578c6`). The source now reports separate progress states for preview lookup, challenge request, and waiting for the passkey chooser; Jules reviewed the change and passed. No tests were run.
+
+The same synthetic operation was resumed. The paired diagnostic Companion showed its exact fixture-to-`Unused` paths; the selected destination is the isolated `Unused` folder. The page reached **“Waiting for the passkey chooser in Chrome or 1Password…”**. Chrome showed no chooser; 1Password remained on All Items and Chrome only surfaced its generic sign-in-options notice. No assertion succeeded and no file moved. The Companion Move button remains disabled. Do not repeat the passkey attempt or enrollment, and do not create another operation. Resume only after the chooser becomes available, then reveal/review the exact paths and complete the separate Companion confirmation. Local paths and device metadata remain transient and are not recorded here.
+
+Stage 5 remains **PARTIAL**; Foundation remains **NOT MET**; Stage 6 remains gated. Use synthetic non-production data only; no production deployment or separately gated external action occurred. The development Worker is still the reproducible branch-source deployment described below; this Pages UI update does not change Worker provenance.
+
 ## Latest Stage 5 synthetic action checkpoint — 2026-10-29
 
 GitHub branch `codex/pluginhub-foundation` was verified at source commit `00b07d037fae2f665ba90895a6e2ae3e9a323b5e` before this record update. The synthetic record selector was corrected to the paired fixture ID in that commit; Jules had reviewed the exact source change. The branch Pages preview reflects the commit at `https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/` (deployment `c6dd0988-00b6-4f72-be36-24705fd0f573`).
@@ -12,9 +20,9 @@ Stage 5 remains **PARTIAL**; Foundation remains **NOT MET** and Stage 6 remains 
 
 Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`.
 
-## Current synchronized record pins — updated from verified GitHub branch head `540a9e3`
+## Current synchronized record pins — updated from verified GitHub source head `7781165`
 
-Dashboard `DASHBOARD.html` blob `4f6f7d2ecaab2c3419b2948984996978138d124f`; Roadmap `docs/ROADMAP.md` blob `bf523689e2afcd0451eabf3d35170a5e0de6ca69`; Status `docs/STATUS.md` blob `b21cfa21559338bdd481c4e6cc87af52222e9bf5`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `680ea0522d865cd98be626688c50e08aea2d2fc4`; Foundation closeout blob `c6034609ff02b80ff702731cf7a3f909178028f2`; Foundation evidence package blob `f4bdc0f36a376d4b227941177fd76fedba6738f7`; Stage 5 synthetic action and Worker report blob `dd72c4a8eae551c186e8536bb68ed77654b8d6b7`. This handover does not self-pin.
+Dashboard `DASHBOARD.html` blob `0598b06fa1e352d63fb43685598f5bf742ffd759`; Roadmap `docs/ROADMAP.md` blob `bc8d2a6933f4a313465be32ab8df3051f4446249`; Status `docs/STATUS.md` blob `f0194a2c85f7022ae424c7b904343fa8eea25ab5`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `680ea0522d865cd98be626688c50e08aea2d2fc4`; Foundation closeout blob `27225f1c60fc953bd26f2fcb5b2fe3547fe7d89e`; Foundation evidence package blob `b7e46e0195961e2743ec6eea2a969d52c58c7a96`; Stage 5 synthetic action and Worker report blob `78b5d5c1a47c21b4a67ed4328ca2683d5bd9b1dd`. This handover does not self-pin.
 
 ## Historical synchronized pins before this checkpoint — 2026-10-29
 

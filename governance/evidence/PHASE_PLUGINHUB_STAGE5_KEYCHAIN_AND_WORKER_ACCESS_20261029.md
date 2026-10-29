@@ -12,9 +12,13 @@ The signed-in development preview returned the paired development device list an
 
 The browser passkey-gated exact-path reveal/confirmation has not completed. Companion’s local **Move to Unused** control remains disabled pending that browser confirmation. No file has moved, no successful passkey assertion is recorded, and the pending operation must be resumed rather than duplicated. Once the browser confirmation succeeds, review the same operation in Companion and use its separate local confirmation; then restore the synthetic fixture and remove diagnostic-only credentials/state. Fresh independent Stage 5 review remains required.
 
-### Passkey prompt follow-up
+### First passkey prompt follow-up
 
 The existing operation was resumed in the same development preview, and **View exact paths with passkey** was attempted. No Chrome, macOS, or 1Password approval prompt appeared. The 1Password extension showed the saved development passkey entry and a generic sign-in-options notice, but no pending request; its main app remained on All Items. The page’s passkey control is now disabled while its status still requests passkey path review. No assertion succeeded and no file moved. Do not ask the owner to accept a prompt that is not present, repeat passkey enrollment, or create another operation. Diagnose the stalled browser/API/passkey path, then resume this same operation.
+
+## Latest resume result — 2026-10-29
+
+The same operation was resumed in the verified development Pages preview after the source added explicit progress reporting. The paired diagnostic Companion showed the exact synthetic fixture-to-isolated-`Unused` preview. The browser reached **“Waiting for the passkey chooser in Chrome or 1Password…”**. No chooser appeared in Chrome; 1Password remained on All Items and Chrome surfaced only a generic sign-in-options notice. No passkey assertion succeeded, no file moved, and the Companion Move control remains disabled. The UI progress change was reviewed by Jules and passed. No tests were run. Do not repeat enrollment or create another operation; resume this one when the passkey chooser is available.
 
 ## Status and remaining gates
 

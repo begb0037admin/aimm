@@ -1,3 +1,7 @@
+## Latest Stage 5 passkey chooser diagnosis — 2026-10-29
+
+The verified branch Pages preview at source commit `778116538dbe294036490064574a5658e0a990ba` (deployment `f03db279-b71e-4197-b253-998d755578c6`) now shows distinct progress for the passkey challenge and chooser. Jules reviewed and passed the source change; no tests were run. The same synthetic operation remains staged in Companion with the isolated `Unused` destination. Its exact fixture-to-destination preview was visible. The browser reached **“Waiting for the passkey chooser in Chrome or 1Password…”**; no chooser appeared, 1Password remained on All Items, and Chrome showed only its generic sign-in-options notice. No assertion succeeded and no file moved. The Companion Move control is disabled. Resume the same operation when the chooser is available; do not repeat enrollment or create another operation. Stage 5 remains **PARTIAL**, Foundation **NOT MET**, and Stage 6 gated. No production deployment or separately gated action occurred.
+
 ## Latest Stage 5 synthetic action checkpoint — 2026-10-29
 
 GitHub branch `codex/pluginhub-foundation` was verified at source commit `00b07d037fae2f665ba90895a6e2ae3e9a323b5e` before this record update. The synthetic record selector was corrected to the paired fixture ID in that commit; Jules had reviewed the exact source change. The branch Pages preview reflects the commit at `https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/` (deployment `c6dd0988-00b6-4f72-be36-24705fd0f573`).
