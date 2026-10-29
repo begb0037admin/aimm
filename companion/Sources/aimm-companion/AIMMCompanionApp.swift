@@ -437,6 +437,10 @@ final class CompanionModel: ObservableObject {
                         preparedPreview, action: action, record: record, credential: credential,
                         allowExpiredPreviewForRecovery: hasJournaledAction
                     ) else {
+                        if await discardExpiredUnconfirmedPreviewIfSafe(action, credential: credential,
+                                                                        hasJournaledAction: hasJournaledAction) {
+                            return
+                        }
                         actionStatus = "The server's preview digest, item, scan, or expiry no longer matches this Mac's copy. Request a fresh action."
                         clearPendingAction()
                         return
@@ -460,6 +464,10 @@ final class CompanionModel: ObservableObject {
                     return
                 }
                 if action.previewDigest != nil {
+                    if await discardExpiredUnconfirmedPreviewIfSafe(action, credential: credential,
+                                                                    hasJournaledAction: hasJournaledAction) {
+                        return
+                    }
                     actionStatus = "The Mac's exact preview was lost. Request a fresh action so the destination and item can be reviewed again."
                     clearPendingAction()
                     return
@@ -542,6 +550,35 @@ final class CompanionModel: ObservableObject {
                 actionStatus = "Could not load the action queue. No local action was taken. \(error.localizedDescription)"
             }
         }
+    }
+
+    private func discardExpiredUnconfirmedPreviewIfSafe(_ action: PendingDeviceAction,
+                                                         credential: StoredDeviceCredential,
+                                                         hasJournaledAction: Bool) async -> Bool {
+        guard action.state == "claimed", !hasJournaledAction, action.ownerConfirmedAt == nil,
+              let digest = action.previewDigest,
+              let previewExpiryText = action.previewExpiresAt,
+              let previewExpiry = LibraryAPIClient.parseISO8601(previewExpiryText),
+              previewExpiry <= Date(),
+              let operationExpiry = LibraryAPIClient.parseISO8601(action.expiresAt),
+              operationExpiry > Date() else {
+            return false
+        }
+
+        do {
+            try await apiClient.discardPreparedPreview(action, digest: digest, credential: credential)
+            do {
+                try PreparedActionPreviewStore.delete(operationID: action.operationID)
+            } catch {
+                actionStatus = "The expired preview was cleared from the server, but this Mac could not remove its saved copy. No files changed; stop and resolve the local preview before continuing. \(error.localizedDescription)"
+                return true
+            }
+            if pendingAction?.operationID == action.operationID { clearPendingAction() }
+            actionStatus = "The expired, unconfirmed preview was cleared safely. Check for requests to choose the Unused folder and prepare a fresh exact preview. No files changed."
+        } catch {
+            actionStatus = "The expired preview could not be cleared, so no recovery occurred. No files changed. \(error.localizedDescription)"
+        }
+        return true
     }
 
     func performReveal() {

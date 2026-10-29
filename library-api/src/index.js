@@ -1638,12 +1638,15 @@ async function discardPreparedPreview(request, env, requestId, origin, deviceId,
   }
   const now = new Date().toISOString();
   try {
-    const result = await env.DB.prepare(
+    const results = await env.DB.batch([
+      env.DB.prepare(
       "UPDATE operations SET preview_digest = NULL, preview_expires_at = NULL, preview_unlocked_at = NULL, owner_preview_capability_hash = NULL, owner_preview_capability_expires_at = NULL, owner_preview_capability_session_id = NULL, owner_preview_viewed_at = NULL WHERE operation_id = ?1 AND device_id = ?2 AND account_id = ?3 AND state = 'claimed' AND expires_at > ?4 AND preview_digest = ?5 AND owner_confirmed_at IS NULL"
-    ).bind(operationId, deviceId, device.account_id, now, body.preview_digest).run();
-    if (result?.meta?.changes !== 1) return errorResponse("preview_unavailable", "This preview was confirmed, changed, or expired; no discard was made.", 409, requestId, origin, env);
-    await env.DB.prepare("DELETE FROM action_preview_payloads WHERE operation_id = ?1 AND device_id = ?2 AND preview_digest = ?3")
-      .bind(operationId, deviceId, body.preview_digest).run();
+      ).bind(operationId, deviceId, device.account_id, now, body.preview_digest),
+      env.DB.prepare(
+        "DELETE FROM action_preview_payloads WHERE operation_id = ?1 AND device_id = ?2 AND account_id = ?3 AND preview_digest = ?4 AND EXISTS (SELECT 1 FROM operations WHERE operation_id = ?1 AND device_id = ?2 AND account_id = ?3 AND state = 'claimed' AND expires_at > ?5 AND preview_digest IS NULL AND owner_confirmed_at IS NULL)"
+      ).bind(operationId, deviceId, device.account_id, body.preview_digest, now)
+    ]);
+    if (results?.[0]?.meta?.changes !== 1) return errorResponse("preview_unavailable", "This preview was confirmed, changed, or expired; no discard was made.", 409, requestId, origin, env);
     return json({ operation_id: operationId, discarded: true }, 200, requestId, origin, env);
   } catch { return errorResponse("database_unavailable", "The preview could not be safely discarded.", 503, requestId, origin, env); }
 }
