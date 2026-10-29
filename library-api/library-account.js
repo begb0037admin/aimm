@@ -305,6 +305,36 @@
     return api("/v1/webauthn/authentication/verify", { method: "POST", body: { challenge_id: challengeID, credential: response } });
   }
 
+  function beginPreparedPasskeyAssertion(options) {
+    if (!window.isSecureContext || !navigator.credentials?.get || !window.PublicKeyCredential) {
+      throw new Error("Passkeys need a supported browser on this secure site.");
+    }
+    const publicKey = {
+      ...options,
+      timeout: Math.min(Number(options.timeout) || 45_000, 45_000),
+      challenge: decodeBase64url(options.challenge),
+      allowCredentials: (options.allowCredentials || []).map((item) => ({ ...item, id: decodeBase64url(item.id) }))
+    };
+    return navigator.credentials.get({ publicKey, mediation: "required" });
+  }
+
+  function serializePasskeyAssertion(credential) {
+    if (!(credential instanceof PublicKeyCredential)) throw new Error("The browser did not return a passkey assertion.");
+    return {
+      id: credential.id,
+      rawId: encodeBase64url(credential.rawId),
+      type: credential.type,
+      authenticatorAttachment: credential.authenticatorAttachment || undefined,
+      clientExtensionResults: credential.getClientExtensionResults(),
+      response: {
+        clientDataJSON: encodeBase64url(credential.response.clientDataJSON),
+        authenticatorData: encodeBase64url(credential.response.authenticatorData),
+        signature: encodeBase64url(credential.response.signature),
+        userHandle: credential.response.userHandle ? encodeBase64url(credential.response.userHandle) : undefined
+      }
+    };
+  }
+
   async function getInstalledInventory(args = {}) {
     const deviceID = selectedDeviceID(args);
     await ensureSession();
@@ -1330,6 +1360,8 @@
     let syntheticCurrentAction = null;
     let syntheticOwnerPreviewViewed = false;
     let syntheticActionConfirmed = false;
+    let syntheticViewChallenge = null;
+    let syntheticConfirmChallenge = null;
     const syntheticRecordID = "21e8fef3-f9a1-4e71-bfc9-244bdd22472f";
     let syntheticDeviceID = null;
     let syntheticPreviewReady = false;
@@ -1353,6 +1385,8 @@
       syntheticCurrentAction = null;
       syntheticOwnerPreviewViewed = false;
       syntheticActionConfirmed = false;
+      syntheticViewChallenge = null;
+      syntheticConfirmChallenge = null;
       checkSyntheticMove.disabled = true;
       viewSyntheticPaths.disabled = true;
       confirmSyntheticMove.disabled = true;
@@ -1419,6 +1453,8 @@
       syntheticCurrentAction = null;
       syntheticOwnerPreviewViewed = false;
       syntheticActionConfirmed = false;
+      syntheticViewChallenge = null;
+      syntheticConfirmChallenge = null;
       checkSyntheticMove.disabled = !syntheticDeviceID || !syntheticOperationID;
       viewSyntheticPaths.disabled = true;
       confirmSyntheticMove.disabled = true;
@@ -1489,6 +1525,8 @@
         syntheticCurrentAction = null;
         syntheticOwnerPreviewViewed = false;
         syntheticActionConfirmed = false;
+        syntheticViewChallenge = null;
+        syntheticConfirmChallenge = null;
         checkSyntheticMove.disabled = !syntheticOperationID;
         viewSyntheticPaths.disabled = true;
         confirmSyntheticMove.disabled = true;
@@ -1516,6 +1554,8 @@
       syntheticActionDigest = null;
       syntheticCurrentAction = null;
       syntheticOwnerPreviewViewed = false;
+      syntheticViewChallenge = null;
+      syntheticConfirmChallenge = null;
       syntheticStatus.textContent = "Checking this one synthetic action…";
       try {
         const action = await getPluginActionResult({ operation_id: operationID });
@@ -1532,10 +1572,19 @@
             : `The action is ${action.state}; no current exact preview is available.`;
         } else {
           syntheticActionDigest = action.preview_digest;
-          viewSyntheticPaths.disabled = !syntheticStage5RootID;
-          syntheticStatus.textContent = syntheticStage5RootID
-            ? "The Mac prepared a current signed preview for the one synthetic item. View its exact paths with your passkey."
-            : "Add the UUID from the Companion’s isolated /tmp/aimm-stage5-… folder to this URL as stage5-root before viewing paths.";
+          if (!syntheticStage5RootID) {
+            syntheticStatus.textContent = "Add the UUID from the Companion’s isolated /tmp/aimm-stage5-… folder to this URL as stage5-root before viewing paths.";
+          } else {
+            syntheticStatus.textContent = "Preparing the passkey prompt for this exact preview…";
+            const prepared = await api("/v1/webauthn/authentication/options", {
+              method: "POST",
+              body: { purpose: "action_preview_unlock", operation_id: operationID, preview_digest: action.preview_digest }
+            });
+            if (epoch !== syntheticFlowEpoch || operationID !== syntheticOperationID || deviceID !== syntheticDeviceID) return;
+            syntheticViewChallenge = { ...prepared, operationID, deviceID, digest: action.preview_digest };
+            viewSyntheticPaths.disabled = false;
+            syntheticStatus.textContent = "The exact synthetic preview is ready. Select View exact paths with passkey to open the chooser.";
+          }
         }
       } catch (error) {
         if (epoch === syntheticFlowEpoch && operationID === syntheticOperationID && deviceID === syntheticDeviceID) {
@@ -1556,30 +1605,28 @@
       const deviceID = syntheticDeviceID;
       const digest = syntheticActionDigest;
       const epoch = syntheticFlowEpoch;
+      const prepared = syntheticViewChallenge;
+      if (!prepared || prepared.operationID !== operationID || prepared.deviceID !== deviceID || prepared.digest !== digest ||
+          Date.parse(prepared.expires_at) <= Date.now() || Date.parse(syntheticCurrentAction.preview_expires_at) <= Date.now()) {
+        syntheticViewChallenge = null;
+        syntheticStatus.textContent = "The passkey prompt expired. Check the Mac preview once to prepare a fresh one.";
+        viewSyntheticPaths.disabled = true;
+        checkSyntheticMove.disabled = false;
+        return;
+      }
       checkSyntheticMove.disabled = true;
       viewSyntheticPaths.disabled = true;
       confirmSyntheticMove.disabled = true;
       deviceSelect.disabled = true;
       loadDevices.disabled = true;
       try {
-        syntheticStatus.textContent = "Rechecking the exact synthetic preview…";
+        syntheticStatus.textContent = "Opening the passkey chooser…";
         syntheticStatus.dataset.tone = "";
-        const current = await getPluginActionResult({ operation_id: operationID });
-        if (epoch !== syntheticFlowEpoch || operationID !== syntheticOperationID || deviceID !== syntheticDeviceID) return;
-        if (current.operation_id !== operationID || current.device_id !== deviceID || current.kind !== "move_to_unused" ||
-            current.state !== "claimed" || current.preview_digest !== digest ||
-            !current.preview_expires_at || Date.parse(current.preview_expires_at) <= Date.now()) {
-          throw new Error("The exact action preview changed or expired. Check the Mac preview again.");
-        }
-        syntheticStatus.textContent = "Requesting a passkey challenge from the development Library…";
-        const verified = await verifyAccountPasskey({
-          purpose: "action_preview_unlock", operation_id: operationID, preview_digest: digest
-        }, {
-          onCredentialRequest: () => {
-            if (epoch === syntheticFlowEpoch && operationID === syntheticOperationID && deviceID === syntheticDeviceID) {
-              syntheticStatus.textContent = "Waiting for the passkey chooser in Chrome or 1Password…";
-            }
-          }
+        const assertionPromise = beginPreparedPasskeyAssertion(prepared.options);
+        syntheticStatus.textContent = "Waiting for the passkey chooser in Chrome or 1Password…";
+        const credential = await assertionPromise;
+        const verified = await api("/v1/webauthn/authentication/verify", {
+          method: "POST", body: { challenge_id: prepared.challenge_id, credential: serializePasskeyAssertion(credential) }
         });
         if (epoch !== syntheticFlowEpoch || operationID !== syntheticOperationID || deviceID !== syntheticDeviceID) return;
         const exact = await api(`/v1/actions/${encodeURIComponent(operationID)}/owner-preview`, {
@@ -1614,12 +1661,21 @@
           text("div", `Destination: ${destination}`)
         );
         syntheticStatus.dataset.tone = "ok";
+        syntheticStatus.append(text("div", "Preparing the confirmation prompt…"));
+        const confirmPrepared = await api("/v1/webauthn/authentication/options", {
+          method: "POST",
+          body: { purpose: "action_confirm", operation_id: operationID, preview_digest: digest }
+        });
+        if (epoch !== syntheticFlowEpoch || operationID !== syntheticOperationID || deviceID !== syntheticDeviceID) return;
+        syntheticConfirmChallenge = { ...confirmPrepared, operationID, deviceID, digest };
+        syntheticStatus.append(text("div", "Review the two paths above. When ready, select Confirm exact move with passkey."));
         confirmSyntheticMove.disabled = false;
         const viewedEpoch = epoch;
         setTimeout(() => {
           if (viewedEpoch !== syntheticFlowEpoch || operationID !== syntheticOperationID || digest !== syntheticActionDigest || syntheticActionConfirmed) return;
           syntheticOwnerPreviewViewed = false;
           confirmSyntheticMove.disabled = true;
+          syntheticConfirmChallenge = null;
           checkSyntheticMove.disabled = false;
           syntheticStatus.replaceChildren(text("span", "The exact path view expired. Check the Mac preview again before confirming."));
         }, 2 * 60_000);
@@ -1627,7 +1683,11 @@
         if (epoch === syntheticFlowEpoch && operationID === syntheticOperationID && deviceID === syntheticDeviceID) {
           syntheticStatus.textContent = error.name === "NotAllowedError" ? "Passkey path review was cancelled." : error.message;
           syntheticStatus.dataset.tone = "error";
-          viewSyntheticPaths.disabled = false;
+          syntheticViewChallenge = null;
+          syntheticConfirmChallenge = null;
+          syntheticOwnerPreviewViewed = false;
+          confirmSyntheticMove.disabled = true;
+          viewSyntheticPaths.disabled = true;
         }
       } finally {
         if (epoch === syntheticFlowEpoch && operationID === syntheticOperationID && deviceID === syntheticDeviceID) {
@@ -1643,20 +1703,26 @@
       const deviceID = syntheticDeviceID;
       const digest = syntheticActionDigest;
       const epoch = syntheticFlowEpoch;
+      const prepared = syntheticConfirmChallenge;
+      if (!prepared || prepared.operationID !== operationID || prepared.deviceID !== deviceID || prepared.digest !== digest ||
+          Date.parse(prepared.expires_at) <= Date.now() || Date.parse(syntheticCurrentAction.preview_expires_at) <= Date.now()) {
+        syntheticConfirmChallenge = null;
+        syntheticStatus.append(text("div", "The confirmation prompt expired. Review a fresh Mac preview before confirming."));
+        confirmSyntheticMove.disabled = true;
+        checkSyntheticMove.disabled = false;
+        return;
+      }
       checkSyntheticMove.disabled = true;
       confirmSyntheticMove.disabled = true;
       deviceSelect.disabled = true;
       loadDevices.disabled = true;
       try {
-        const current = await getPluginActionResult({ operation_id: operationID });
-        if (epoch !== syntheticFlowEpoch || operationID !== syntheticOperationID || deviceID !== syntheticDeviceID) return;
-        if (current.operation_id !== operationID || current.device_id !== deviceID || current.kind !== "move_to_unused" ||
-            current.state !== "claimed" || current.preview_digest !== digest || current.preview_viewed !== true ||
-            !current.preview_expires_at || Date.parse(current.preview_expires_at) <= Date.now()) {
-          throw new Error("The exact path preview changed or expired. Review a fresh preview before confirming.");
-        }
-        const confirmed = await verifyAccountPasskey({
-          purpose: "action_confirm", operation_id: operationID, preview_digest: digest
+        syntheticStatus.append(text("div", "Opening the passkey chooser…"));
+        const assertionPromise = beginPreparedPasskeyAssertion(prepared.options);
+        syntheticStatus.append(text("div", "Waiting for the passkey chooser in Chrome or 1Password…"));
+        const credential = await assertionPromise;
+        const confirmed = await api("/v1/webauthn/authentication/verify", {
+          method: "POST", body: { challenge_id: prepared.challenge_id, credential: serializePasskeyAssertion(credential) }
         });
         if (epoch !== syntheticFlowEpoch || operationID !== syntheticOperationID || deviceID !== syntheticDeviceID) return;
         if (confirmed.confirmed_operation_id !== operationID || confirmed.preview_digest !== digest) {
@@ -1664,6 +1730,7 @@
         }
         syntheticOwnerPreviewViewed = false;
         syntheticActionConfirmed = true;
+        syntheticConfirmChallenge = null;
         viewSyntheticPaths.disabled = true;
         checkSyntheticMove.disabled = true;
         syntheticStatus.replaceChildren(
@@ -1675,7 +1742,9 @@
         if (epoch === syntheticFlowEpoch && operationID === syntheticOperationID && deviceID === syntheticDeviceID) {
           syntheticStatus.append(text("div", error.name === "NotAllowedError" ? "Passkey confirmation was cancelled." : error.message));
           syntheticStatus.dataset.tone = "error";
-          confirmSyntheticMove.disabled = false;
+          syntheticConfirmChallenge = null;
+          confirmSyntheticMove.disabled = true;
+          checkSyntheticMove.disabled = false;
         }
       } finally {
         if (epoch === syntheticFlowEpoch && operationID === syntheticOperationID && deviceID === syntheticDeviceID) {
