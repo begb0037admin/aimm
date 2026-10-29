@@ -12,9 +12,9 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Spacebar starts selected Hope route from the empty composer — build 2026-10-29.1
+## Spacebar starts the selected Hope route from the empty composer — build 2026-10-29.2
 
-When the Luna/Deepgram route is selected, Spacebar starts it even if the empty Hope composer has focus; once text is present, Space still types normally. The screenshot's audio-check error says the browser-local Hope usage token is missing, so that browser needs the token saved in Settings → API Keys before Deepgram can open the microphone. The separately tracked Luna delay/cut-off issue remains unresolved.
+Spacebar starts either ElevenLabs or Luna/Deepgram even if the empty Hope composer has focus; once text is present, Space still types normally. The screenshot's audio-check error says the browser-local Hope usage token is missing, so that browser needs the token saved in Settings → API Keys before Deepgram can open the microphone. The separately tracked Luna delay/cut-off issue remains unresolved.
 
 ## Plugin inventory + local scan — build 2026-10-22.1
 
