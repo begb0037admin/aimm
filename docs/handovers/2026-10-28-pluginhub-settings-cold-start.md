@@ -1,4 +1,12 @@
-## Latest Stage 5 synthetic action checkpoint — 2026-10-29
+## Latest Stage 5 passkey resume — 2026-10-29
+
+Source fix `98754965a901b37a193fa6363b7e01758283e9cb` passed Jules review. On the same signed-in development session and synthetic operation `caebb13c-1f6b-4422-b23c-570b4d8a0e9f`, the first saved-passkey assertion succeeded and revealed the exact synthetic fixture paths. The next confirmation expired while 1Password loaded; Companion safely cleared that expired preview and reported no files changed. The same operation resumed with the previously approved isolated `Unused` folder and a fresh preview.
+
+The second passkey chooser appeared; continuing with the existing 1Password passkey opened an Autofill spinner which remains stuck. No second assertion succeeded, the Companion Move control remains disabled, and no file moved. Do not repeat enrollment or create another operation. Resume after the provider handoff is resolved, then complete the second passkey and separate Companion confirmation. Stage 5 **PARTIAL**; Foundation **NOT MET**; Stage 6 gated. The development Worker is the reproducible branch build recorded below; no production deploy. Synthetic data only.
+
+Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`, blob `e59186553e5636de5bf9c32e0b0b448f5e35f755`.
+
+## Historical Stage 5 synthetic action checkpoint — superseded by the latest passkey resume
 
 GitHub branch `codex/pluginhub-foundation` was verified at source commit `00b07d037fae2f665ba90895a6e2ae3e9a323b5e` before this record update. The synthetic record selector was corrected to the paired fixture ID in that commit; Jules had reviewed the exact source change. The branch Pages preview reflects the commit at `https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/` (deployment `c6dd0988-00b6-4f72-be36-24705fd0f573`).
 
