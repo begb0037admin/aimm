@@ -3156,8 +3156,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #library .inv-format.on{color:#fff;border-color:#4484aa;background:rgba(47,161,230,.12)}
     #library .inv-search{margin-left:auto;display:flex;align-items:center;gap:8px;min-width:220px;flex:1;max-width:420px;background:#14171a;border:1px solid #34383d;border-radius:8px;padding:0 10px}
     #library .inv-search input{width:100%;border:0;outline:0;background:transparent;color:#f2f4f5;padding:9px 0;font-size:12px}
-    #library .inv-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:start;margin-top:10px}
-    #library .inv-vendor{border:1px solid #303640;background:#1c1f24;border-radius:9px;overflow:hidden;min-width:0;margin:0}
+    #library .inv-cards{display:block;column-count:3;column-gap:12px;margin-top:10px}
+    #library .inv-vendor{display:inline-block;vertical-align:top;width:100%;break-inside:avoid;column-span:none;border:1px solid #303640;background:#1c1f24;border-radius:9px;overflow:hidden;min-width:0;margin:0 0 12px}
     #library .inv-vendor-head{display:flex;align-items:center;gap:8px;padding:9px 10px;border-bottom:1px solid #2d333c;min-width:0}
     #library .inv-logo{width:27px;height:27px;display:grid;place-items:center;flex:none;position:relative;overflow:hidden;border-radius:5px;background:#23384b;color:#fff;font-size:10px;font-weight:800}
     #library .inv-logo.coral{background:#432729}#library .inv-logo.gold{background:#443923}#library .inv-logo.mint{background:#1e3b35}#library .inv-logo.violet{background:#362747}
@@ -3184,8 +3184,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #library .inv-fav.on{color:#f4cf75}
     #library .inv-more{display:block;width:100%;padding:6px 10px;border:0;border-top:1px solid #292e35;background:transparent;color:#8d98a5;text-align:left;font:9px ui-monospace,Menlo,monospace;cursor:pointer}
     #library .inv-more:hover{color:#fff;background:#242a32}
-    @media(max-width:1180px){#library .inv-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:760px){#library .inv-cards{grid-template-columns:minmax(0,1fr)}}
+    @media(max-width:1180px){#library .inv-cards{column-count:2}}
+    @media(max-width:760px){#library .inv-cards{column-count:1}}
     #library .inv-empty{border:1px dashed #394149;border-radius:9px;padding:28px;text-align:center;color:#87919b;font-size:12px;margin-top:12px}
     #library .inv-small{color:#75808a;font-size:10px}
     #library .inv-sidebar.is-collapsed{padding-left:8px;padding-right:8px}
@@ -5806,7 +5806,8 @@ function invRenderInventory(){
   }
   const byVendor=new Map();
   filtered.forEach(group=>{
-    const key=invNorm(group.vendor).replace(/ (inc|llc|ltd|limited|gmbh|corporation|corp)$/,"");
+    const normalizedVendor=invNorm(group.vendor).replace(/ (inc|llc|ltd|limited|gmbh|corporation|corp)$/,"");
+    const key=normalizedVendor.replace(/\s+/g,"");
     if(!byVendor.has(key))byVendor.set(key,{name:group.vendor,items:[]});
     byVendor.get(key).items.push(group);
   });
@@ -5822,7 +5823,7 @@ function invRenderInventory(){
   const formatTone={AU:"au",VST2:"vst",VST3:"vst",CLAP:"clap"};
   host.innerHTML='<div class="inv-cards">'+Array.from(byVendor.entries()).map(([vendorKey,vendorData])=>{
     const vendor=vendorData.name,items=vendorData.items;
-    const normalized=vendorKey;
+    const normalized=invNorm(vendor).replace(/ (inc|llc|ltd|limited|gmbh|corporation|corp)$/,"");
     const domain=brandDomains[normalized]||"";
     const initials=String(vendor).split(/[^A-Za-z0-9]+/).filter(Boolean).slice(0,2).map(part=>part[0]).join("").toUpperCase()||"PL";
     let toneHash=0;for(let i=0;i<vendorKey.length;i++)toneHash=(toneHash*31+vendorKey.charCodeAt(i))>>>0;
@@ -5844,7 +5845,7 @@ function invRenderInventory(){
       return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button></div><div class="inv-meta">'+invEsc(category)+'</div><div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const more=items.length>4?'<button class="inv-more" type="button" data-inv-more aria-expanded="'+String(expanded)+'">'+(expanded?"Show fewer plug-ins":"＋ "+(items.length-4)+" more plug-ins")+'</button>':"";
-    return '<section class="inv-vendor'+(expanded?" expanded":"")+(collapsed?" collapsed":"")+'" data-inv-vendor="'+invEsc(vendorKey)+'"><div class="inv-vendor-head"><span class="inv-logo '+tone+'"><span>'+invEsc(initials)+'</span>'+logo+'</span><span class="inv-vendor-name"><strong>'+invEsc(vendor)+'</strong><small>'+(domain?invEsc(domain)+' · ':'')+items.length+' plug-ins</small></span><span class="inv-vendor-count">'+items.length+'</span><button type="button" class="inv-vendor-toggle" data-inv-toggle aria-label="Toggle '+invEsc(vendor)+' card" aria-expanded="'+String(!collapsed)+'" title="'+(collapsed?"Expand":"Collapse")+' publisher">'+(collapsed?"›":"⌃")+'</button></div><div class="inv-products">'+visible+hidden+'</div>'+more+'</section>';
+    return '<section class="inv-vendor'+(expanded?" expanded":"")+(collapsed?" collapsed":"")+'" data-inv-vendor="'+invEsc(vendorKey)+'"><div class="inv-vendor-head"><span class="inv-logo '+tone+'"><span>'+invEsc(initials)+'</span>'+logo+'</span><span class="inv-vendor-name"><strong>'+invEsc(vendor)+'</strong><small>'+(domain?invEsc(domain)+' · ':'')+items.length+' '+(items.length===1?'plug-in':'plug-ins')+'</small></span><span class="inv-vendor-count">'+items.length+'</span><button type="button" class="inv-vendor-toggle" data-inv-toggle aria-label="Toggle '+invEsc(vendor)+' card" aria-expanded="'+String(!collapsed)+'" title="'+(collapsed?"Expand":"Collapse")+' publisher">'+(collapsed?"›":"⌃")+'</button></div><div class="inv-products">'+visible+hidden+'</div>'+more+'</section>';
   }).join("")+'</div>';
   host.querySelectorAll("[data-inv-fav]").forEach(button=>button.addEventListener("click",()=>{
     const name=button.getAttribute("data-inv-fav");
