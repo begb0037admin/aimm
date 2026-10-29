@@ -6815,7 +6815,6 @@ function invInit(){
   const tagFilter=document.getElementById("invTagFilter");
   if(tagFilter)tagFilter.addEventListener("click",event=>{
     if(event.target.closest("[data-inv-new-tag]")||event.target.closest("[data-inv-open-tag-manager]")){invOpenTagManager();return;}
-    const clear=event.target.closest("[data-inv-tag-clear]");if(clear){INV_TAG_FILTERS.delete(clear.dataset.invTagClear);invRenderInventory();tagFilter.querySelector("summary").focus();return;}
     const option=event.target.closest("[data-inv-tag-filter]");if(!option)return;
     const tag=option.dataset.invTagFilter,wasOnly=INV_TAG_FILTERS.size===1&&INV_TAG_FILTERS.has(tag);
     if(event.shiftKey){if(INV_TAG_FILTERS.has(tag))INV_TAG_FILTERS.delete(tag);else INV_TAG_FILTERS.add(tag);}
@@ -6823,6 +6822,13 @@ function invInit(){
     INV_SCOPE="all";invRenderInventory();
     const focus=Array.from(tagFilter.querySelectorAll("[data-inv-tag-filter]")).find(button=>button.dataset.invTagFilter===tag);
     if(focus)focus.focus();else tagFilter.querySelector("summary").focus();
+  });
+  const activeTagFilters=document.getElementById("invActiveTagFilters");
+  if(activeTagFilters)activeTagFilters.addEventListener("click",event=>{
+    const clear=event.target.closest("[data-inv-tag-clear]");if(!clear)return;
+    const tag=clear.dataset.invTagClear;INV_TAG_FILTERS.delete(tag);invRenderInventory();
+    const option=Array.from(tagFilter.querySelectorAll("[data-inv-tag-filter]")).find(button=>button.dataset.invTagFilter===tag);
+    if(option)option.focus();else tagFilter.querySelector("summary").focus();
   });
   const search=document.getElementById("invSearch");
   if(search)search.addEventListener("input",()=>{INV_SEARCH=search.value||"";invRenderInventory();});
