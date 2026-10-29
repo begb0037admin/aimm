@@ -3154,6 +3154,25 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #library .inv-filters{display:flex;gap:6px;flex-wrap:wrap}
     #library .inv-format{padding:6px 10px;font-size:11px;font-weight:500}
     #library .inv-format.on{color:#fff;border-color:#4484aa;background:rgba(47,161,230,.12)}
+    #library .inv-tag-filter{position:relative;flex:none}
+    #library .inv-tag-filter>summary{display:flex;align-items:center;gap:7px;list-style:none;user-select:none;white-space:nowrap}
+    #library .inv-tag-filter>summary::-webkit-details-marker{display:none}
+    #library .inv-tag-filter>summary::after{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin:0 2px 3px}
+    #library .inv-tag-filter[open]>summary::after{transform:rotate(225deg);margin:4px 2px 0}
+    #library .inv-tag-filter-menu{position:absolute;top:calc(100% + 7px);left:0;z-index:120;width:min(290px,80vw);max-height:min(420px,65vh);overflow:auto;padding:8px;border:1px solid #3a414b;border-radius:9px;background:#202329;box-shadow:0 14px 34px #000a}
+    #library .inv-tag-filter-options{display:grid;gap:3px}
+    #library .inv-tag-filter-empty{padding:10px;color:#89939f;font-size:12px}
+    #library .inv-tag-filter-option{display:flex;align-items:center;gap:9px;width:100%;padding:8px 9px;border:1px solid transparent;border-radius:6px;background:transparent;color:#d5dbe2;text-align:left;cursor:pointer}
+    #library .inv-tag-filter-option:hover{background:#292d34;border-color:#424955}
+    #library .inv-tag-filter-option[aria-pressed="true"]{background:#30283e;border-color:#8050c8}
+    #library .inv-tag-filter-swatch{width:10px;height:10px;border-radius:3px;flex:none}
+    #library .inv-tag-filter-name{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    #library .inv-tag-filter-count{color:#89939f;font:11px ui-monospace,Menlo,monospace}
+    #library .inv-tag-filter-actions{display:flex;gap:7px;flex-wrap:wrap;border-top:1px solid #343b45;margin-top:7px;padding-top:8px}
+    #library .inv-active-tag-filters{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+    #library .inv-active-tag-filters[hidden]{display:none}
+    #library .inv-tag-filter-chip{display:inline-flex;align-items:center;gap:7px;padding:5px 8px;border:1px solid #61489a;border-radius:999px;background:#282238;color:#e6e0f4;font-size:11px;white-space:nowrap}
+    #library .inv-tag-filter-chip button{border:0;background:transparent;color:#c8b8ec;font-size:15px;line-height:1;cursor:pointer;padding:0 1px}
     #library .inv-search{margin-left:auto;display:flex;align-items:center;gap:8px;min-width:220px;flex:1;max-width:420px;background:#14171a;border:1px solid #34383d;border-radius:8px;padding:0 10px}
     #library .inv-search input{width:100%;border:0;outline:0;background:transparent;color:#f2f4f5;padding:9px 0;font-size:12px}
     #library .inv-view-tools{display:flex;align-items:center;gap:8px;margin-left:auto}
@@ -3361,7 +3380,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <div class="inv-roots" id="invRoots" aria-label="Connected plug-in folders"></div>
         <div class="inv-status" id="invScanStatus" role="status">Connect the Audio/Plug-Ins folder and, if needed, Avid/Audio/Plug-Ins. You can add more folders later.</div>
         <div class="inv-stats"><div class="inv-stat"><span>Installed products</span><strong id="invProductCount">—</strong><small>grouped by name and publisher</small></div><div class="inv-stat"><span>Format bundles</span><strong id="invBundleCount">—</strong><small>one plug-in may have several formats</small></div><div class="inv-stat"><span>Formats found</span><strong id="invFormatCount">—</strong><small>AU · VST2 · VST3 · CLAP</small></div></div>
-        <div class="inv-controls"><div class="inv-filters" id="invFormatFilters"><button class="inv-format on" type="button" data-inv-format="All">All formats</button><button class="inv-format" type="button" data-inv-format="AU">AU</button><button class="inv-format" type="button" data-inv-format="VST2">VST2</button><button class="inv-format" type="button" data-inv-format="VST3">VST3</button><button class="inv-format" type="button" data-inv-format="CLAP">CLAP</button></div><label class="inv-search"><span class="inv-small">Find</span><input id="invSearch" type="search" placeholder="Plug-in or publisher…" autocomplete="off"></label><div class="inv-view-tools"><label>View<select id="invView" aria-label="Inventory view"><option value="cards">Cards</option><option value="list">List</option><option value="ledger">Ledger</option></select></label><label>Sort<select id="invSort" aria-label="Sort inventory"><option value="vendor">Vendor</option><option value="product">Product</option><option value="format">Format</option><option value="version">Version</option></select></label></div><button class="inv-btn" type="button" data-inv-collapse-all title="Collapse every publisher card">Collapse vendors</button><button class="inv-btn" type="button" data-inv-expand-all title="Expand every publisher card">Expand vendors</button></div>
+        <div class="inv-controls"><div class="inv-filters" id="invFormatFilters"><button class="inv-format on" type="button" data-inv-format="All">All formats</button><button class="inv-format" type="button" data-inv-format="AU">AU</button><button class="inv-format" type="button" data-inv-format="VST2">VST2</button><button class="inv-format" type="button" data-inv-format="VST3">VST3</button><button class="inv-format" type="button" data-inv-format="CLAP">CLAP</button></div><details class="inv-tag-filter" id="invTagFilter"><summary class="inv-btn" aria-label="Filter by your tags">My Tags <span id="invTagFilterCount">0</span> ▾</summary><div class="inv-tag-filter-menu"><div class="inv-tag-filter-options" data-inv-tag-filter-options></div><div class="inv-tag-filter-actions"><button class="inv-btn" type="button" data-inv-new-tag>New tag</button><button class="inv-btn" type="button" data-inv-open-tag-manager>Plugin Tag Manager</button></div></div></details><div class="inv-active-tag-filters" id="invActiveTagFilters" hidden></div><label class="inv-search"><span class="inv-small">Find</span><input id="invSearch" type="search" placeholder="Plug-in or publisher…" autocomplete="off"></label><div class="inv-view-tools"><label>View<select id="invView" aria-label="Inventory view"><option value="cards">Cards</option><option value="list">List</option><option value="ledger">Ledger</option></select></label><label>Sort<select id="invSort" aria-label="Sort inventory"><option value="vendor">Vendor</option><option value="product">Product</option><option value="format">Format</option><option value="version">Version</option></select></label></div><button class="inv-btn" type="button" data-inv-collapse-all title="Collapse every publisher card">Collapse vendors</button><button class="inv-btn" type="button" data-inv-expand-all title="Expand every publisher card">Expand vendors</button></div>
         <div id="invInventory" aria-live="polite"></div>
       </main>
     </div>
@@ -5437,6 +5456,7 @@ let INV_ROOTS_LOADED=false;
 let INV_ROOTS_REVISION=0,INV_SCAN_ACTIVE=false,INV_SCAN_QUEUED=false;
 const INV_EXPANDED_VENDORS=new Set(),INV_COLLAPSED_VENDORS=new Set();
 let INV_CATEGORIES=new Set();
+let INV_TAG_FILTERS=new Set();
 let INV_SCAN_ROWS = (() => { try { const rows=JSON.parse(localStorage.getItem(INV_ROWS_KEY)||"[]");if(!Array.isArray(rows))return [];const allowed=rows.filter(row=>row&&["AU","VST2","VST3","CLAP"].includes(String(row.format||"").toUpperCase()));if(allowed.length!==rows.length)localStorage.setItem(INV_ROWS_KEY,JSON.stringify(allowed));return allowed; } catch (_) { return []; } })();
 let INV_SCAN_INFO = (() => { try { const info=JSON.parse(localStorage.getItem(INV_SCAN_KEY)||"{}");return info&&typeof info==="object"&&!Array.isArray(info)?info:{}; } catch (_) { return {}; } })();
 const INV_EXT_FORMAT = {".component":"AU",".vst":"VST2",".vst3":"VST3",".clap":"CLAP"};
@@ -5886,6 +5906,34 @@ function invDisplayCategory(group){
   if(category)return category;
   return !group.category||invNorm(group.category)==="effect"?"Uncategorised":group.category;
 }
+function invRenderTagFilter(groups){
+  const details=document.getElementById("invTagFilter"),options=document.querySelector("[data-inv-tag-filter-options]"),countLabel=document.getElementById("invTagFilterCount"),chips=document.getElementById("invActiveTagFilters");
+  if(!details||!options||!countLabel||!chips)return;
+  const tags=invReadUserTags(),actions=invReadProductActions();
+  Object.values(actions).forEach(record=>{if(record&&Array.isArray(record.tags))record.tags.forEach(tag=>{if(typeof tag==="string"&&!tags.some(value=>value.toLowerCase()===tag.toLowerCase()))tags.push(tag);});});
+  const valid=new Set(tags);INV_TAG_FILTERS=new Set(Array.from(INV_TAG_FILTERS).filter(tag=>valid.has(tag)));
+  const colors=invReadTagColors(),palette=["#f5b942","#40c4d8","#70dfbf","#aa8af7","#ff7a86","#68a8ff","#ee8ac5","#9ca8b5"];
+  const tagCounts=new Map(tags.map(tag=>[tag,0]));
+  groups.forEach(group=>{const state=invGetProductActions(group.vendor,group.name);if(Array.isArray(state.tags))state.tags.forEach(tag=>{if(tagCounts.has(tag))tagCounts.set(tag,tagCounts.get(tag)+1);});});
+  countLabel.textContent=tags.length.toLocaleString();
+  options.replaceChildren();
+  if(!tags.length){const empty=document.createElement("div");empty.className="inv-tag-filter-empty";empty.textContent="No tags yet. Create one below.";options.appendChild(empty);}
+  tags.forEach((tag,index)=>{
+    const button=document.createElement("button");button.type="button";button.className="inv-tag-filter-option";button.dataset.invTagFilter=tag;button.setAttribute("aria-pressed",String(INV_TAG_FILTERS.has(tag)));button.setAttribute("aria-label","Filter by "+tag+"; hold Shift to combine tags");button.title="Click to filter by this tag; Shift-click to combine tags.";
+    const swatch=document.createElement("span");swatch.className="inv-tag-filter-swatch";swatch.style.backgroundColor=/^#[0-9a-f]{6}$/i.test(colors[tag]||"")?colors[tag]:palette[index%palette.length];
+    const name=document.createElement("span");name.className="inv-tag-filter-name";name.textContent=tag;
+    const count=document.createElement("span");count.className="inv-tag-filter-count";count.textContent=(tagCounts.get(tag)||0).toLocaleString();
+    button.append(swatch,name,count);options.appendChild(button);
+  });
+  chips.replaceChildren();
+  INV_TAG_FILTERS.forEach(tag=>{
+    const chip=document.createElement("span");chip.className="inv-tag-filter-chip";
+    const label=document.createElement("span");label.textContent=tag;
+    const clear=document.createElement("button");clear.type="button";clear.dataset.invTagClear=tag;clear.setAttribute("aria-label","Clear "+tag+" tag filter");clear.title="Clear this tag filter";clear.textContent="×";
+    chip.append(label,clear);chips.appendChild(chip);
+  });
+  chips.hidden=INV_TAG_FILTERS.size===0;
+}
 function invRenderSidebar(groups,stageMap){
   const sidebar=document.getElementById("invSidebar");
   const layout=document.getElementById("invLayout");
@@ -5893,6 +5941,7 @@ function invRenderSidebar(groups,stageMap){
   const allCount=groups.length;
   const favCount=groups.filter(group=>typeof isFav==="function"&&isFav(group.name)).length;
   const tagCount=groups.filter(group=>{const state=invGetProductActions(group.vendor,group.name);return Array.isArray(state.tags)&&state.tags.length>0}).length;
+  invRenderTagFilter(groups);
   const hiddenCount=groups.filter(group=>invGetProductActions(group.vendor,group.name).hidden===true).length;
   const categoryCounts=new Map();groups.forEach(group=>{const category=invResolvedBrowseCategory(group,stageMap);if(Object.keys(INV_CATEGORY_STAGES).includes(category))categoryCounts.set(category,(categoryCounts.get(category)||0)+1);});
   sidebar.querySelectorAll("[data-inv-category]").forEach(button=>{let count=button.querySelector(".inv-side-count");if(!count){count=document.createElement("span");count.className="inv-side-count";button.appendChild(count);}count.textContent=(categoryCounts.get(button.getAttribute("data-inv-category"))||0).toLocaleString();});
@@ -6238,7 +6287,7 @@ function invOpenTagManager(){
     const actions=invReadProductActions();Object.values(actions).forEach(record=>{if(record&&Array.isArray(record.tags)){record.tags=record.tags.map(tag=>tag===oldName?value:tag).filter((tag,index,list)=>list.indexOf(tag)===index);if(!record.tags.length)delete record.tags;}});
     const nextTags=tags.map(tag=>tag===oldName?value:tag),colors=invReadTagColors();if(colors[oldName]){colors[value]=colors[oldName];delete colors[oldName];}
     if(!invTagCommit(nextTags,actions,colors))return false;
-    selectedTag=selectedTag===oldName?value:selectedTag;editTag="";invRenderInventory();return true;
+    selectedTag=selectedTag===oldName?value:selectedTag;if(INV_TAG_FILTERS.delete(oldName))INV_TAG_FILTERS.add(value);editTag="";invRenderInventory();return true;
   };
   overlay.querySelector("[data-tag-new-form]").addEventListener("submit",event=>{
     event.preventDefault();const input=event.currentTarget.querySelector("input"),value=input.value.trim().replace(/\s+/g," ");if(!value)return;
@@ -6256,7 +6305,7 @@ function invOpenTagManager(){
       const name=remove.dataset.tagDelete;if(!window.confirm('Delete the "'+name+'" tag and remove it from all plug-ins?'))return;
       const tags=safeTags().filter(tag=>tag!==name),actions=invReadProductActions(),colors=invReadTagColors();Object.values(actions).forEach(record=>{if(record&&Array.isArray(record.tags)){record.tags=record.tags.filter(tag=>tag!==name);if(!record.tags.length)delete record.tags;}});
       delete colors[name];if(!invTagCommit(tags,actions,colors))return;
-      if(selectedTag===name)selectedTag="";if(editTag===name)editTag="";invRenderInventory();renderTags();const nextTag=safeTags()[0];if(nextTag)focusTagSelect(nextTag);else overlay.querySelector("[data-tag-new-form] input").focus();return;
+      if(selectedTag===name)selectedTag="";if(editTag===name)editTag="";INV_TAG_FILTERS.delete(name);invRenderInventory();renderTags();const nextTag=safeTags()[0];if(nextTag)focusTagSelect(nextTag);else overlay.querySelector("[data-tag-new-form] input").focus();return;
     }
   });
   tagList.addEventListener("change",event=>{
@@ -6442,7 +6491,8 @@ function invRenderInventory(){
     const hidden=actionState.hidden===true;
     const scopeOK=INV_SCOPE==="favorites"?(typeof isFav==="function"&&isFav(group.name)):INV_SCOPE==="tags"?(Array.isArray(actionState.tags)&&actionState.tags.length>0):INV_SCOPE==="hidden"?hidden:!hidden;
     const categoryOK=!INV_CATEGORIES.size||INV_CATEGORIES.has(invDisplayCategory(group));
-    return formatOK&&searchOK&&scopeOK&&categoryOK;
+    const tagOK=!INV_TAG_FILTERS.size||(Array.isArray(actionState.tags)&&actionState.tags.some(tag=>INV_TAG_FILTERS.has(tag)));
+    return formatOK&&searchOK&&scopeOK&&categoryOK&&tagOK;
   });
   const collator=new Intl.Collator(undefined,{sensitivity:"base",numeric:true});
   const sortValue=group=>INV_SORT==="product"?group.name:INV_SORT==="format"?Array.from(group.formats).sort().join(", "):INV_SORT==="version"?Array.from(group.versions).sort().join(", "):group.vendor;
@@ -6456,7 +6506,7 @@ function invRenderInventory(){
     return;
   }
   if(!filtered.length){
-    const message=INV_SCOPE==="favorites"?"No favourited installed plug-ins match this view.":INV_SCOPE==="tags"?"No tagged installed plug-ins match this view.":INV_SCOPE==="hidden"?"No hidden plug-ins match this view.":"No installed plug-ins match this search and filter.";
+    const message=INV_TAG_FILTERS.size?"No plug-ins with the selected tags match this view.":INV_SCOPE==="favorites"?"No favourited installed plug-ins match this view.":INV_SCOPE==="tags"?"No tagged installed plug-ins match this view.":INV_SCOPE==="hidden"?"No hidden plug-ins match this view.":"No installed plug-ins match this search and filter.";
     host.innerHTML='<div class="inv-empty">'+message+'</div>';
     return;
   }
@@ -6758,9 +6808,21 @@ function invInit(){
     const managerButton=event.target.closest("[data-inv-tag-manager]");if(managerButton){invOpenTagManager();return;}
     const button=event.target.closest("[data-inv-scope],[data-inv-category]");
     if(!button||button.disabled)return;
-    if(button.hasAttribute("data-inv-scope")){INV_SCOPE=button.getAttribute("data-inv-scope")||"all";INV_CATEGORIES.clear();}
+    if(button.hasAttribute("data-inv-scope")){INV_SCOPE=button.getAttribute("data-inv-scope")||"all";INV_CATEGORIES.clear();INV_TAG_FILTERS.clear();}
     else {const category=button.getAttribute("data-inv-category")||"";if(event.shiftKey){if(INV_CATEGORIES.has(category))INV_CATEGORIES.delete(category);else INV_CATEGORIES.add(category);}else{INV_CATEGORIES.clear();INV_CATEGORIES.add(category);}INV_SCOPE="all";}
     invRenderInventory();
+  });
+  const tagFilter=document.getElementById("invTagFilter");
+  if(tagFilter)tagFilter.addEventListener("click",event=>{
+    if(event.target.closest("[data-inv-new-tag]")||event.target.closest("[data-inv-open-tag-manager]")){invOpenTagManager();return;}
+    const clear=event.target.closest("[data-inv-tag-clear]");if(clear){INV_TAG_FILTERS.delete(clear.dataset.invTagClear);invRenderInventory();tagFilter.querySelector("summary").focus();return;}
+    const option=event.target.closest("[data-inv-tag-filter]");if(!option)return;
+    const tag=option.dataset.invTagFilter,wasOnly=INV_TAG_FILTERS.size===1&&INV_TAG_FILTERS.has(tag);
+    if(event.shiftKey){if(INV_TAG_FILTERS.has(tag))INV_TAG_FILTERS.delete(tag);else INV_TAG_FILTERS.add(tag);}
+    else{INV_TAG_FILTERS.clear();if(!wasOnly)INV_TAG_FILTERS.add(tag);}
+    INV_SCOPE="all";invRenderInventory();
+    const focus=Array.from(tagFilter.querySelectorAll("[data-inv-tag-filter]")).find(button=>button.dataset.invTagFilter===tag);
+    if(focus)focus.focus();else tagFilter.querySelector("summary").focus();
   });
   const search=document.getElementById("invSearch");
   if(search)search.addEventListener("input",()=>{INV_SEARCH=search.value||"";invRenderInventory();});
