@@ -1,3 +1,13 @@
+## Latest implementation checkpoint — 2026-10-29
+
+Source commit `47efd003e2429f82cf2a6b21bbacbfa0404cbb92`; Jules reviewed the committed category resolver change and passed. Development Pages deployment `9096b1f9-9ec6-47a9-9e03-dea0ea682b61` succeeded at the [approved branch preview](https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/). The first Library render displayed category totals immediately without selecting a category or filter. This corrects the stale initial-render gap described below. See [the implementation evidence](PHASE_PLUGINHUB_PARITY_UPDATE_20261029.md).
+
+The current preview also exposes Cards, List and Ledger; Vendor, Product, Format and Version sorting; All plugins, Favorites, My tags and Hidden browse filters; and collapse/expand-all vendor controls. The four-column Cards view remains the default. These controls were visible in the development preview. This checkpoint did not verify every interaction combination or resolve backend-dependent status/native actions.
+
+Remaining parity work: complete Tag Manager and tag editing; Intel-only and snoozed controls; status groups backed by real, current vendor-check results; per-row Companion actions; native whole-library tools (including Compatibility and share/profile/cleanup/license workflows); and a renewed end-to-end manual comparison. Keep actions visibly unavailable until their reviewed backends exist. AAX remains excluded by the approved scanner architecture.
+
+Jules reviewed the source change only; that review is not Foundation acceptance. No automated tests, folder scan, inventory upload, Worker deployment, or production action occurred. Foundation remains **NOT MET** and Stage 6 remains gated. The live development Worker passkey RP fix remains a surgical patch rather than a reproducible branch-source deployment.
+
 # PluginHub parity sweep — 2026-10-29
 
 ## Scope and evidence
@@ -41,18 +51,17 @@ The Library also has:
 
 The current row menu was visually checked for a product with one known version. Category and tag submenus open; the top category option is accurately labelled “Use AIMM’s inferred category.” The action menu contains working local/preview actions and visibly disabled Companion/service actions. No preference was saved during this inspection.
 
-## Parity gaps still visible
+## Remaining parity gaps after the latest implementation checkpoint
 
 | Gap | Current preview state | Required next work |
 |---|---|---|
-| Status groups and counters | Updates Available, Up to Date and Manual Check are visibly disabled because a vendor checker is not connected. There is no Unchecked view or paid-upgrade state. | Implement the shared status model and current vendor checks before enabling these filters or displaying counts. |
-| View menu | Only the four-column card layout is available. List and Ledger modes, sort controls and the reference View menu are absent. | Add the view selector and reproduce Cards, List and Ledger with the same inventory data and filtering. Preserve the requested four-column card default. |
-| Tag/category management | Product tags and category overrides work locally; there is no complete Tag Manager, tag rename/recolour, multi-select/Shift-click categories, or persistent cross-device account preference. | Add the manager and matching selection semantics, then move state to the approved account model when ready. |
-| Browse controls | Favorites and My Tags exist. Hidden plug-ins, pinned status, show/hide snoozed controls, Intel-only filtering and all-vendor collapse are absent. | Add the safe view preferences and controls; leave update snooze dependent on real status data. |
-| Per-row action coverage | Move to Unused, Uninstall/Trash and Reveal require the native Companion. Snooze needs status integration. License Vault and Report a problem are not connected. | Wire local file actions only through the preview/confirmation/receipt protocol. Implement vault and feedback as their own reviewed surfaces. Keep controls clearly unavailable until their backends exist. |
-| Whole-library Tools section | The AIMM Library has no PluginHub-style Tools section or equivalents for Install Manager, batch management, old-installer cleanup, duplicate review, License Vault, list sharing, profile comparison, PluginHub entitlement, Compatibility or Tag Manager. | Add the tool navigation and implement each tool against its own reviewed data/action contract; do not make inert buttons look active. |
-| Vendor and layout details | Vendor cards and installer links are present, but vendor management/hiding, full count/filter semantics, status/compatibility pills and all original spacing/interaction details are not complete. | Continue a visual parity pass after the missing layout and status functions exist. |
-| Reference-only formats | PluginHub supports AAX. The approved AIMM architecture deliberately excludes AAX from the scanner. | Keep this as a documented product difference unless the architecture is formally revised. Do not silently scan AAX. |
+| Status groups and counters | Updates Available, Up to Date and Manual Check remain disabled because vendor checks are not connected. Unchecked and paid-upgrade states are absent. | Implement status semantics and live vendor checks before enabling these filters or counters. |
+| Tag management | Per-product tags exist; a complete Tag Manager, rename/recolour, and persistent account-level management are not established. | Implement the manager against the reviewed preference contract. |
+| Browse controls | All plugins, Favorites, My tags, Hidden, category filters, four format filters, search, sort, and collapse/expand vendor controls are visible. Intel-only and snoozed controls remain absent. | Add the missing browse controls; connect snooze only to real update status. |
+| Per-row actions | Local metadata actions are present. Move to Unused, Uninstall/Trash, and Reveal require the native Companion. Snooze depends on status data; License Vault and Report a problem need their own backends. | Use the preview/confirmation/receipt protocol for local file operations. Keep unavailable actions disabled until reviewed backends exist. |
+| Whole-library Tools | No complete PluginHub-style Tools collection or equivalents for installer cleanup, duplicate review, License Vault, sharing, profile comparison, entitlement, Compatibility, or Tag Manager are verified. | Add tool navigation and implement each surface against its own reviewed contract. |
+| Vendor and layout details | Four-column Cards, List and Ledger modes, Vendor/Product/Format/Version sorting, vendor links, and collapse/expand controls are present. | Continue the reference walk for unverified interaction and spacing details, especially across alternate layouts. |
+| Reference-only formats | PluginHub supports AAX. Approved AIMM scanner architecture excludes it. | Keep as a documented difference unless architecture is formally revised. |
 
 ## Safe implementation order
 
