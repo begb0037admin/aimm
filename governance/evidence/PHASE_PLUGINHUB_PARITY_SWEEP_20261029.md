@@ -1,14 +1,8 @@
-## Latest implementation checkpoint — 2026-10-29
+## Latest filter and visual checkpoint — 2026-10-29
 
-Branch source `80dd8012a19f8b3cd662ee2125aa1c30e94b4ae6` passed Jules source review and is deployed to the development Pages preview (deployment `415a8b76-f53c-4c0e-82d5-20f7dd4eeb23`). The clean deployment-specific origin showed zero installed products and zero connected folders. It visually presents the Library toolbar with the My Tags dropdown and format controls.
+The browse filter implementation at `80dd8012a19f8b3cd662ee2125aa1c30e94b4ae6` was reviewed and deployed at `415a8b76-f53c-4c0e-82d5-20f7dd4eeb23`; the follow-up chevron correction at `ad1e460dea5009dbf7e88eba6cd5c16d5941ba54` is active at deployment `1a5f0a2b-b78f-493f-8532-0d57ce2540e5`. Jules passed source and final visual review. My Tags now displays one CSS chevron that flips from down to up; tag selection, Shift-click combination, chips, format selection and search details are in [filter implementation evidence](PHASE_PLUGINHUB_FILTERS_20261029.md).
 
-My Tags now provides ordered, colour-coded tag choices, single selection, Shift-click combinations, clearable active chips, and New tag/Tag Manager entry points. Tag selection composes with category, format and search filters. Format pills follow the manual's normal-click replace and Shift-click combine/remove behavior; All formats clears selections. Search includes the resolved category. The exact source, deployment, and visible interaction evidence are in [the filter implementation report](PHASE_PLUGINHUB_FILTERS_20261029.md). The browser-local Tag Manager remains in [its implementation report](PHASE_PLUGINHUB_TAG_MANAGER_20261029.md).
-
-The clean preview had no inventory, so no product-result matching was claimed. A deployment-specific isolated origin held one synthetic tag without product membership for the chip interaction. No real inventory was scanned or uploaded. No folder picker was used.
-
-Remaining parity work: PluginHub's VST cycle (AIMM still exposes separate VST2/VST3 pills); Intel-only and snoozed/status filters, which require architecture metadata and current vendor observations; Companion-backed filesystem actions; whole-library Tools workflows; and a renewed end-to-end manual comparison. AAX remains excluded by the approved scanner architecture.
-
-Jules passed the source review; that is not Foundation acceptance. No automated tests, folder scan, inventory upload, Worker deployment or production action occurred. Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP fix is still a surgical patch, not a reproducible branch-source deployment.
+The final unique preview origin contained zero installed products and zero connected folders. No scan, upload, Worker deployment, production action or automated tests occurred. Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP fix remains a surgical patch, not a reproducible branch-source deployment.
 
 # PluginHub parity sweep — 2026-10-29
 
