@@ -1,3 +1,13 @@
+## Latest Stage 5 passkey provider handoff — 2026-10-29
+
+Current source head before this record update: `98754965a901b37a193fa6363b7e01758283e9cb` (commit `fix: trigger Stage 5 passkey chooser from user action`). Jules reviewed that source change and passed; no tests were run. The approved branch Pages preview is live at https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/.
+
+The same signed-in development session resumed operation `caebb13c-1f6b-4422-b23c-570b4d8a0e9f`, selected the previously approved paired device `Mac mini (2)`, and verified the exact synthetic preview was ready. Clicking **View exact paths with passkey** opened the macOS saved-passkey chooser for the existing 1Password credential. Continuing opened a 1Password Autofill sheet which stayed on a spinner for more than eight seconds. The chooser is therefore present; the remaining stall is at the 1Password provider handoff. No assertion succeeded, exact paths were not revealed in the browser, no Companion move confirmation became available, and no file moved. The same operation remains active; do not enroll again or create another request. The browser is left at the loading sheet for the owner to resolve or dismiss when available, then resume the same operation.
+
+Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`, blob `966c707c6d5d39b0bd54580015bdcb12ff9dd12d`.
+
+Stage 5 remains **PARTIAL**; Foundation remains **NOT MET** and Stage 6 remains gated. The development Worker provenance is still the reproducible branch-source build recorded below. Synthetic non-production data only; no production deployment or separately gated external action occurred.
+
 ## Latest Stage 5 passkey chooser diagnosis — 2026-10-29
 
 GitHub branch `codex/pluginhub-foundation` was verified at source commit `778116538dbe294036490064574a5658e0a990ba` before this record update. The development Pages preview for that commit succeeded (deployment `f03db279-b71e-4197-b253-998d755578c6`). The source now reports separate progress states for preview lookup, challenge request, and waiting for the passkey chooser; Jules reviewed the change and passed. No tests were run.
