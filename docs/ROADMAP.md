@@ -1,16 +1,16 @@
-## 2026-10-29 PluginHub parity continuation — filter work landed
+## 2026-10-29 PluginHub parity continuation — filters reviewed
 
-Branch source `80dd8012a19f8b3cd662ee2125aa1c30e94b4ae6` is deployed to development Pages (`415a8b76-f53c-4c0e-82d5-20f7dd4eeb23`). Tag Manager and browse-by-tag behavior are now present: a My Tags toolbar dropdown, normal-click selection, Shift-click combinations, clearable active chips, New tag and Manager entry points. Format pills now match the manual's replace/Shift-click-combine behavior; search includes the resolved category. Jules reviewed the source and passed. See [Tag Manager evidence](../governance/evidence/PHASE_PLUGINHUB_TAG_MANAGER_20261029.md) and [filter evidence](../governance/evidence/PHASE_PLUGINHUB_FILTERS_20261029.md).
+Source `ad1e460dea5009dbf7e88eba6cd5c16d5941ba54` is active on development Pages at [deployment 1a5f0a2b](https://1a5f0a2b.aimm-pluginhub-foundation-dev.pages.dev/). Jules passed source and visual review of the My Tags chevron correction: one chevron points down while closed and flips up while open. Browse-tag and format interactions were previously verified on source `80dd8012a19f8b3cd662ee2125aa1c30e94b4ae6` at deployment `415a8b76-f53c-4c0e-82d5-20f7dd4eeb23`. Details and data limits are in [filter evidence](../governance/evidence/PHASE_PLUGINHUB_FILTERS_20261029.md).
 
 Next sequence:
 
-1. Match PluginHub's VST cycling control while preserving AIMM's four supported scanner formats and AAX exclusion.
+1. Align PluginHub's VST cycling control while preserving AIMM's supported AU, VST2, VST3 and CLAP scanner formats and AAX exclusion.
 2. Add Intel-only and snoozed/status controls only when architecture metadata and live vendor-check observations support them.
-3. Build out the PluginHub-style whole-library Tools through reviewed backends. Keep filesystem tools unavailable until native Companion paths exist.
+3. Build the PluginHub-style whole-library Tools through reviewed backends; keep filesystem tools unavailable until native Companion paths exist.
 4. Complete Companion-backed file operations through exact preview, fresh confirmation and receipt.
 5. Repeat the full manual parity walk and obtain fresh independent acceptance before any Foundation/Stage 6 gate changes.
 
-The clean deployment origin showed zero products and zero folders; UI state was checked without scanning or uploading inventory. No automated tests, Worker deployment or production action occurred. The Worker passkey RP fix remains surgical, not reproducible from branch source. Foundation remains **NOT MET**; Stage 6 remains gated.
+The final visual preview had zero products and zero connected folders; no real inventory was scanned or uploaded. No automated tests, Worker deployment or production action occurred. The Worker passkey RP fix remains surgical, not reproducible from branch source. Foundation remains **NOT MET**; Stage 6 remains gated.
 
 ## Historical initial parity plan — superseded by current sequence
 
