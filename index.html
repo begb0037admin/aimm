@@ -6012,15 +6012,17 @@ function invOpenProductCategory(vendor,name,currentCategory){
   const overlay=document.createElement("div");overlay.id="invProductMetaOverlay";
   overlay.innerHTML='<div class="inv-product-meta-dialog" role="dialog" aria-modal="true" aria-labelledby="invProductMetaTitle"><h3 id="invProductMetaTitle">Category</h3><div class="inv-note-context">'+invEsc(name)+' · '+invEsc(vendor)+'</div><div class="inv-product-meta-options"></div><div class="inv-note-actions"><button type="button" data-meta-close>Cancel</button></div></div>';
   const list=overlay.querySelector(".inv-product-meta-options");
-  ["Use PluginHub's pick","Uncategorised",...categories].forEach(label=>{
-    const reset=label==="Use PluginHub's pick",value=reset?null:label==="Uncategorised"?"":label,button=document.createElement("button");
-    button.type="button";button.className="inv-product-meta-option"+((reset&&!Object.prototype.hasOwnProperty.call(state,"categoryOverride")||!reset&&value===current)?" selected":"");
-    button.textContent=(reset&&!Object.prototype.hasOwnProperty.call(state,"categoryOverride")||!reset&&value===current?"✓  ":"")+label;
+  const hasOverride=Object.prototype.hasOwnProperty.call(state,"categoryOverride");
+  ["Use AIMM's inferred category","Uncategorised",...categories].forEach(label=>{
+    const reset=label==="Use AIMM's inferred category",value=reset?null:label==="Uncategorised"?"":label,button=document.createElement("button");
+    const selected=hasOverride?(!reset&&value===state.categoryOverride):reset;
+    button.type="button";button.className="inv-product-meta-option"+(selected?" selected":"");
+    button.textContent=(selected?"✓  ":"")+label;
     button.addEventListener("click",()=>{
       const all=invReadProductActions(),key=invActionKey(vendor,name),next=all[key]||{};
       if(reset){delete next.categoryOverride;delete next.category;}else next.categoryOverride=value;
       all[key]=next;
-      if(invWriteProductActions(all)){overlay.remove();invRenderInventory();invStatus(reset?"Restored PluginHub's inferred category.":value?"Category set to "+value+".":"Category set to Uncategorised.");}
+      if(invWriteProductActions(all)){overlay.remove();invRenderInventory();invStatus(reset?"Restored AIMM's inferred category.":value?"Category set to "+value+".":"Category set to Uncategorised.");}
       else invStatus("The category could not be saved in this browser.","error");
     });
     list.appendChild(button);
