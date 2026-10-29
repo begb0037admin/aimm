@@ -5807,8 +5807,8 @@ function invStageMap(){
   try{allPlugins().forEach(plugin=>map.set(invNorm(plugin.n),STATE.pluginStageOverrides?.[plugin.n]||plugin.s||""));}catch(_){}
   return map;
 }
-function invCategoryFor(group,stageMap){
-  const userActions=invGetProductActions(group.vendor||"",group.name||"");
+function invCategoryFor(group,stageMap,userActions){
+  userActions=userActions||invGetProductActions(group.vendor||"",group.name||"");
   if(Object.prototype.hasOwnProperty.call(userActions,"categoryOverride"))return userActions.categoryOverride||"";
   if(userActions.category)return userActions.category;
   if(String(group.category||"").toLowerCase().includes("instrument"))return "Instruments & MIDI";
@@ -5823,7 +5823,14 @@ function invKnownBrowseCategory(value){
   for(const category of Object.keys(INV_CATEGORY_STAGES))if(invNorm(category)===normalized)return category;
   return normalized==="instrument"||normalized==="instruments"?"Instruments & MIDI":"";
 }
+function invResolvedBrowseCategory(group,stageMap){
+  const userActions=invGetProductActions(group.vendor||"",group.name||"");
+  if(Object.prototype.hasOwnProperty.call(userActions,"categoryOverride"))return userActions.categoryOverride||"";
+  return invCategoryFor(group,stageMap,userActions)||invKnownBrowseCategory(group.category);
+}
 function invDisplayCategory(group){
+  const userActions=invGetProductActions(group.vendor||"",group.name||"");
+  if(Object.prototype.hasOwnProperty.call(userActions,"categoryOverride"))return userActions.categoryOverride||"Uncategorised";
   const category=group.browseCategory||invKnownBrowseCategory(group.category);
   if(category)return category;
   return !group.category||invNorm(group.category)==="effect"?"Uncategorised":group.category;
@@ -5836,7 +5843,7 @@ function invRenderSidebar(groups,stageMap){
   const favCount=groups.filter(group=>typeof isFav==="function"&&isFav(group.name)).length;
   const tagCount=groups.filter(group=>{const state=invGetProductActions(group.vendor,group.name);return Array.isArray(state.tags)&&state.tags.length>0}).length;
   const hiddenCount=groups.filter(group=>invGetProductActions(group.vendor,group.name).hidden===true).length;
-  const categoryCounts=new Map();groups.forEach(group=>{const category=invDisplayCategory(group);if(Object.keys(INV_CATEGORY_STAGES).includes(category))categoryCounts.set(category,(categoryCounts.get(category)||0)+1);});
+  const categoryCounts=new Map();groups.forEach(group=>{const category=invResolvedBrowseCategory(group,stageMap);if(Object.keys(INV_CATEGORY_STAGES).includes(category))categoryCounts.set(category,(categoryCounts.get(category)||0)+1);});
   sidebar.querySelectorAll("[data-inv-category]").forEach(button=>{let count=button.querySelector(".inv-side-count");if(!count){count=document.createElement("span");count.className="inv-side-count";button.appendChild(count);}count.textContent=(categoryCounts.get(button.getAttribute("data-inv-category"))||0).toLocaleString();});
   const hiddenButton=sidebar.querySelector('[data-inv-scope="hidden"]');if(hiddenButton){hiddenButton.classList.toggle("active",INV_SCOPE==="hidden"&&!INV_CATEGORIES.size);hiddenButton.setAttribute("aria-pressed",String(INV_SCOPE==="hidden"));const count=hiddenButton.querySelector(".inv-side-count");if(count)count.textContent=hiddenCount.toLocaleString();}
   const tagButton=sidebar.querySelector('[data-inv-scope="tags"]');if(tagButton){tagButton.classList.toggle("active",INV_SCOPE==="tags");tagButton.setAttribute("aria-pressed",String(INV_SCOPE==="tags"));let count=tagButton.querySelector(".inv-side-count");if(!count){count=document.createElement("span");count.className="inv-side-count";tagButton.appendChild(count);}count.textContent=tagCount.toLocaleString();}
@@ -6197,7 +6204,7 @@ function invRenderInventory(){
   try{catalogNames=new Set(allPlugins().map(plugin=>invNorm(plugin.n)));}catch(_){}
   groups.forEach(group=>{
     group.catalogMatch=catalogNames.has(invNorm(group.name));
-    group.browseCategory=invCategoryFor(group,stageMap)||invKnownBrowseCategory(group.category);
+    group.browseCategory=invResolvedBrowseCategory(group,stageMap);
   });
   invRenderSidebar(groups,stageMap);
   const formats=new Set(rows.map(row=>row.format));
