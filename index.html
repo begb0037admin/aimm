@@ -3229,6 +3229,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #invProductMetaOverlay .inv-meta-label{display:block;margin:12px 0 6px;color:#aeb7c1;font-size:11px;font-weight:650}
     #invProductMetaOverlay textarea,#invProductMetaOverlay select{width:100%;box-sizing:border-box;border:1px solid #3a414b;border-radius:6px;background:#15181c;color:#e6e9ed;padding:9px;font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     #invProductMetaOverlay .inv-kept-version{padding:9px;border:1px solid #353c46;border-radius:6px;background:#181b20}
+    #invProductMetaOverlay .inv-meta-help{margin:10px 0;color:#89939f;font-size:11px}
     #invNoteOverlay textarea,#invNoteOverlay select{width:100%;box-sizing:border-box;border:1px solid #3a414b;border-radius:6px;background:#15181c;color:#e6e9ed;padding:9px;font:12px inherit}
     #invNoteOverlay textarea{min-height:100px;resize:vertical}
     #invNoteOverlay .inv-note-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
@@ -5780,8 +5781,9 @@ function invStageMap(){
   return map;
 }
 function invCategoryFor(group,stageMap){
-  const userCategory=invGetProductActions(group.vendor||"",group.name||"").category;
-  if(userCategory)return userCategory;
+  const userActions=invGetProductActions(group.vendor||"",group.name||"");
+  if(Object.prototype.hasOwnProperty.call(userActions,"categoryOverride"))return userActions.categoryOverride||"";
+  if(userActions.category)return userActions.category;
   if(String(group.category||"").toLowerCase().includes("instrument"))return "Instruments & MIDI";
   const stage=stageMap.get(invNorm(group.name));
   if(!stage)return "";
@@ -5900,8 +5902,8 @@ function invProductUserMetaHTML(vendor,name){
   if(state.note&&state.note.rating)parts.push("★ "+state.note.rating+"/5");
   if(state.note&&state.note.text)parts.push("Note saved");
   if(Array.isArray(state.tags)&&state.tags.length)parts.push("Tags: "+state.tags.join(", "));
-  if(state.marked)parts.push("Marked up to date");
-  if(state.kept)parts.push("Kept version");
+  if(state.marked)parts.push("Local up-to-date marker · "+(state.marked.version||"version unknown"));
+  if(state.kept)parts.push("Local keep note · "+(state.kept.version||"version unknown"));
   if(!parts.length)return "";
   const note=state.note&&state.note.text?state.note.text:"";
   return '<div class="inv-meta inv-user-note" title="'+invEsc(note||parts.join(" · "))+'">'+invEsc(parts.join(" · "))+'</div>';
@@ -5936,17 +5938,17 @@ function invOpenProductActionMenu(button){
   invCloseProductActionMenu();
   let context={};
   try{context=JSON.parse(button.getAttribute("data-inv-product-action")||"{}")}catch(_){}
-  context.name=String(context.name||"");context.vendor=String(context.vendor||"");context.hubUrl=invSafeExternalUrl(context.hubUrl);context.websiteUrl=invSafeExternalUrl(context.websiteUrl);context.version=String(context.version||"");
+  context.name=String(context.name||"");context.vendor=String(context.vendor||"");context.hubUrl=invSafeExternalUrl(context.hubUrl);context.websiteUrl=invSafeExternalUrl(context.websiteUrl);context.versions=Array.isArray(context.versions)?context.versions.map(String).filter(Boolean):[];context.version=String(context.version||"");if(!context.version&&context.versions.length===1)context.version=context.versions[0];
   const state=invGetProductActions(context.vendor,context.name);
   const menu=document.createElement("div");menu.id="invProductMenu";menu.setAttribute("role","menu");
   const row=(action,label,classes="",help="")=>'<button type="button" class="inv-menu-row '+classes+'" role="menuitem" data-inv-action="'+action+'">'+label+(help?'<span class="inv-menu-help">'+help+'</span>':"")+'</button>';
   const disabled=(label,help)=>'<div class="inv-menu-row disabled" role="menuitem" aria-disabled="true" title="'+invEsc(help)+'">'+label+'<span class="inv-menu-help">'+invEsc(help)+'</span></div>';
   const link=(url,label)=>url?'<a class="inv-menu-row" role="menuitem" href="'+invEsc(url)+'" target="_blank" rel="noopener noreferrer">'+label+' ↗</a>':"";
   menu.innerHTML='<div class="inv-menu-head"><div style="min-width:0;flex:1"><div class="inv-menu-title">'+invEsc(context.name||"Plugin actions")+'</div><div class="inv-menu-sub">'+invEsc(context.vendor)+'</div></div><button type="button" class="inv-menu-close" aria-label="Close menu">×</button></div>'
-    +row("category","Category · "+invEsc(state.category||context.category||"Uncategorised"),"", "›")
+    +row("category","Category · "+invEsc(Object.prototype.hasOwnProperty.call(state,"categoryOverride")?(state.categoryOverride||"Uncategorised"):(state.category||context.category||"Uncategorised")),"", "›")
     +row("tags","Tags · "+invEsc((state.tags&&state.tags.length)?state.tags.join(", "):"None"),"", "›") + '<hr>'
     +row("note","Note &amp; rating…")
-    +(context.version?row("mark",state.marked?"Unmark up to date":"Mark as up to date · "+invEsc(context.version),"green"):disabled("Mark as up to date","Version data is not available for this item"))
+    +(context.version?row("mark",state.marked?"Unmark up to date":("Mark as up to date"+(context.versions.length>1?"…":context.version?" · "+invEsc(context.version):"")),"green"):disabled("Mark as up to date","Version data is not available for this item"))
     +disabled("Move to Unused…","Requires native Companion actions")
     +disabled("Uninstall (Move to Trash)…","Requires native Companion actions")
     +disabled("Reveal in Finder","Requires native Companion actions")
@@ -5982,17 +5984,33 @@ function invOpenProductActionMenu(button){
       invCloseProductActionMenu();const scan=document.getElementById("invScanBtn");if(scan)scan.click();else invStatus("Scan connected folders is unavailable.","error");return;
     }
     const all=invReadProductActions(),current=all[key]||{};
-    if(action==="mark"){if(current.marked)delete current.marked;else current.marked={at:new Date().toISOString(),version:context.version};}
+    if(action==="mark"){
+      if(current.marked){delete current.marked;all[key]=current;invWriteProductActions(all);invCloseProductActionMenu();invRenderInventory();invStatus("Removed the local up-to-date marker for "+context.name+".");return;}
+      if(context.versions.length>1){invCloseProductActionMenu();invOpenMarkVersion(context.vendor,context.name,context.versions);return;}
+      current.marked={at:new Date().toISOString(),version:context.version,localOnly:true};
+    }
     if(action==="keep"){
       if(current.kept){delete current.kept;all[key]=current;invWriteProductActions(all);invCloseProductActionMenu();invRenderInventory();invStatus("Removed the kept-version note for "+context.name+".");return;}
-      invCloseProductActionMenu();invOpenKeepVersion(context.vendor,context.name,context.version);return;
+      invCloseProductActionMenu();invOpenKeepVersion(context.vendor,context.name,context.versions.length?context.versions:[context.version]);return;
     }
     all[key]=current;invWriteProductActions(all);invCloseProductActionMenu();invRenderInventory();
   });
   setTimeout(()=>{document.addEventListener("pointerdown",invProductMenuOutside,true);document.addEventListener("keydown",invProductMenuKey,true);},0);
 }
+function invTrapDialogFocus(overlay){
+  overlay.addEventListener("keydown",event=>{
+    if(event.key==="Escape"){event.preventDefault();overlay.remove();return;}
+    if(event.key!=="Tab")return;
+    const items=Array.from(overlay.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),a[href]')).filter(item=>item.offsetParent!==null);
+    if(!items.length)return;
+    const first=items[0],last=items[items.length-1];
+    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  });
+  const first=overlay.querySelector('input,select,textarea,button:not([disabled])');if(first)first.focus();
+}
 function invOpenProductCategory(vendor,name,currentCategory){
-  const state=invGetProductActions(vendor,name),current=state.category||currentCategory||"";
+  const state=invGetProductActions(vendor,name),current=Object.prototype.hasOwnProperty.call(state,"categoryOverride")?state.categoryOverride:(state.category||currentCategory||"");
   const categories=Object.keys(INV_CATEGORY_STAGES||{});
   const overlay=document.createElement("div");overlay.id="invProductMetaOverlay";
   overlay.innerHTML='<div class="inv-product-meta-dialog" role="dialog" aria-modal="true" aria-labelledby="invProductMetaTitle"><h3 id="invProductMetaTitle">Category</h3><div class="inv-note-context">'+invEsc(name)+' · '+invEsc(vendor)+'</div><div class="inv-product-meta-options"></div><div class="inv-note-actions"><button type="button" data-meta-close>Cancel</button></div></div>';
@@ -6003,14 +6021,14 @@ function invOpenProductCategory(vendor,name,currentCategory){
     button.textContent=(value===current?"✓  ":"")+label;
     button.addEventListener("click",()=>{
       const all=invReadProductActions(),key=invActionKey(vendor,name),next=all[key]||{};
-      if(value)next.category=value;else delete next.category;
+      next.categoryOverride=value;delete next.category;
       all[key]=next;
       if(invWriteProductActions(all)){overlay.remove();invRenderInventory();invStatus(value?"Category set to "+value+".":"Category cleared.");}
       else invStatus("The category could not be saved in this browser.","error");
     });
     list.appendChild(button);
   });
-  document.body.appendChild(overlay);
+  document.body.appendChild(overlay);invTrapDialogFocus(overlay);
   overlay.addEventListener("click",event=>{if(event.target===overlay)overlay.remove();});
   overlay.querySelector("[data-meta-close]").addEventListener("click",()=>overlay.remove());
 }
@@ -6032,7 +6050,9 @@ function invOpenProductTags(vendor,name){
       const text=document.createElement("span");text.textContent=tag;
       const remove=document.createElement("button");remove.type="button";remove.className="inv-product-tag-remove";remove.textContent="×";remove.setAttribute("aria-label","Delete tag "+tag);
       remove.addEventListener("click",()=>{
-        try{localStorage.setItem(INV_PRODUCT_TAGS_KEY,JSON.stringify(invReadUserTags().filter(value=>value!==tag)));selected.delete(tag);render();}
+        try{localStorage.setItem(INV_PRODUCT_TAGS_KEY,JSON.stringify(invReadUserTags().filter(value=>value!==tag)));
+          const allActions=invReadProductActions();Object.keys(allActions).forEach(actionKey=>{const record=allActions[actionKey];if(record&&Array.isArray(record.tags)){record.tags=record.tags.filter(value=>value!==tag);if(!record.tags.length)delete record.tags;}});
+          invWriteProductActions(allActions);selected.delete(tag);render();invRenderInventory();}
         catch(_){invStatus("The tag could not be deleted.","error");}
       });
       label.append(checkbox,text,remove);list.appendChild(label);
@@ -6054,29 +6074,47 @@ function invOpenProductTags(vendor,name){
   });
   overlay.querySelector("[data-meta-close]").addEventListener("click",()=>overlay.remove());
   overlay.addEventListener("click",event=>{if(event.target===overlay)overlay.remove();});
-  document.body.appendChild(overlay);render();input.focus();
+  document.body.appendChild(overlay);render();invTrapDialogFocus(overlay);input.focus();
 }
-function invOpenKeepVersion(vendor,name,version){
+function invOpenKeepVersion(vendor,name,versions){
+  versions=(Array.isArray(versions)?versions:[versions]).filter(Boolean);
+  const version=versions.length===1?versions[0]:"";
   const state=invGetProductActions(vendor,name),kept=state.kept&&typeof state.kept==="object"?state.kept:{};
+  const versionOptions=versions.map(item=>'<option value="'+invEsc(item)+'">'+invEsc(item)+'</option>').join("");
   const overlay=document.createElement("div");overlay.id="invProductMetaOverlay";
-  overlay.innerHTML='<div class="inv-product-meta-dialog" role="dialog" aria-modal="true" aria-labelledby="invKeepTitle"><h3 id="invKeepTitle">Keep this version</h3><div class="inv-note-context">'+invEsc(name)+' · '+invEsc(vendor)+'</div><label class="inv-meta-label">Installed version</label><div class="inv-kept-version">'+invEsc(version||"Version not reported by scan")+'</div><label class="inv-meta-label" for="invKeepReason">Reason</label><select id="invKeepReason"><option>Compatibility</option><option>Project requirement</option><option>Preferred sound</option><option>Other</option></select><label class="inv-meta-label" for="invKeepNote">Note (optional)</label><textarea id="invKeepNote" maxlength="240" placeholder="Add a short reason…">'+invEsc(kept.note||"")+'</textarea><div class="inv-note-actions"><button type="button" data-keep-cancel>Cancel</button><button type="button" class="primary" data-keep-save>Keep version</button></div></div>';
+  overlay.innerHTML='<div class="inv-product-meta-dialog" role="dialog" aria-modal="true" aria-labelledby="invKeepTitle"><h3 id="invKeepTitle">Keep this version</h3><div class="inv-note-context">'+invEsc(name)+' · '+invEsc(vendor)+'</div><label class="inv-meta-label" for="invKeepVersion">Installed version</label><select id="invKeepVersion">'+(versionOptions||'<option value="">Version not reported by scan</option>')+'</select><label class="inv-meta-label" for="invKeepScope">Scope</label><select id="invKeepScope"><option>This installed version</option><option>All formats for this plug-in</option></select><label class="inv-meta-label" for="invKeepReason">Reason</label><select id="invKeepReason"><option>Compatibility</option><option>Project requirement</option><option>Preferred sound</option><option>Other</option></select><p class="inv-meta-help">Saved as a local note in this preview. It does not affect duplicate recommendations.</p><label class="inv-meta-label" for="invKeepNote">Note (optional)</label><textarea id="invKeepNote" maxlength="240" placeholder="Add a short reason…">'+invEsc(kept.note||"")+'</textarea><div class="inv-note-actions"><button type="button" data-keep-cancel>Cancel</button><button type="button" class="primary" data-keep-save>Keep version</button></div></div>';
   const reason=overlay.querySelector("#invKeepReason");if(kept.reason)reason.value=kept.reason;
+  const versionSelect=overlay.querySelector("#invKeepVersion");if(kept.version&&Array.from(versionSelect.options).some(option=>option.value===kept.version))versionSelect.value=kept.version;
+  const scopeSelect=overlay.querySelector("#invKeepScope");if(kept.scope)scopeSelect.value=kept.scope;
   overlay.querySelector("[data-keep-cancel]").addEventListener("click",()=>overlay.remove());
   overlay.addEventListener("click",event=>{if(event.target===overlay)overlay.remove();});
   overlay.querySelector("[data-keep-save]").addEventListener("click",()=>{
     const all=invReadProductActions(),key=invActionKey(vendor,name),next=all[key]||{};
-    next.kept={version:String(version||""),reason:reason.value,note:overlay.querySelector("#invKeepNote").value.trim(),at:new Date().toISOString()};
+    next.kept={version:String(versionSelect.value||""),scope:scopeSelect.value,reason:reason.value,note:overlay.querySelector("#invKeepNote").value.trim(),at:new Date().toISOString(),localOnly:true};
     all[key]=next;
-    if(invWriteProductActions(all)){overlay.remove();invRenderInventory();invStatus("Kept version "+(version||"unknown")+" for "+name+".");}
+    if(invWriteProductActions(all)){overlay.remove();invRenderInventory();invStatus("Saved a local keep note for "+name+".");}
     else invStatus("The kept-version note could not be saved in this browser.","error");
   });
-  document.body.appendChild(overlay);
+  document.body.appendChild(overlay);invTrapDialogFocus(overlay);
+}
+function invOpenMarkVersion(vendor,name,versions){
+  const overlay=document.createElement("div");overlay.id="invProductMetaOverlay";
+  overlay.innerHTML='<div class="inv-product-meta-dialog" role="dialog" aria-modal="true" aria-labelledby="invMarkTitle"><h3 id="invMarkTitle">Mark version as up to date</h3><div class="inv-note-context">'+invEsc(name)+' · '+invEsc(vendor)+'</div><label class="inv-meta-label" for="invMarkVersion">Installed version</label><select id="invMarkVersion">'+versions.map(version=>'<option value="'+invEsc(version)+'">'+invEsc(version)+'</option>').join("")+'</select><p class="inv-meta-help">This is a local preview marker. Vendor update checks are not connected.</p><div class="inv-note-actions"><button type="button" data-mark-cancel>Cancel</button><button type="button" class="primary" data-mark-save>Mark version</button></div></div>';
+  overlay.querySelector("[data-mark-cancel]").addEventListener("click",()=>overlay.remove());
+  overlay.addEventListener("click",event=>{if(event.target===overlay)overlay.remove();});
+  overlay.querySelector("[data-mark-save]").addEventListener("click",()=>{
+    const all=invReadProductActions(),key=invActionKey(vendor,name),next=all[key]||{};
+    next.marked={at:new Date().toISOString(),version:overlay.querySelector("#invMarkVersion").value,localOnly:true};delete next.snoozed;all[key]=next;
+    if(invWriteProductActions(all)){overlay.remove();invRenderInventory();invStatus("Saved a local marker for "+name+".");}
+    else invStatus("The marker could not be saved in this browser.","error");
+  });
+  document.body.appendChild(overlay);invTrapDialogFocus(overlay);
 }
 function invOpenProductNote(vendor,name){
   const state=invGetProductActions(vendor,name),note=state.note||{};
   const overlay=document.createElement("div");overlay.id="invNoteOverlay";
   overlay.innerHTML='<div class="inv-note-dialog" role="dialog" aria-modal="true" aria-labelledby="invNoteTitle"><h3 id="invNoteTitle">Note &amp; rating</h3><div class="inv-note-context">'+invEsc(name)+' · '+invEsc(vendor)+'</div><label for="invNoteRating">Rating</label><select id="invNoteRating"><option value="">No rating</option><option value="1">1 of 5</option><option value="2">2 of 5</option><option value="3">3 of 5</option><option value="4">4 of 5</option><option value="5">5 of 5</option></select><label for="invNoteText">Your note</label><textarea id="invNoteText" maxlength="500" placeholder="Add a note about this plug-in…">'+invEsc(note.text||"")+'</textarea><div class="inv-note-actions">'+(note.text||note.rating?'<button type="button" class="danger" data-inv-note-delete>Clear note</button>':"")+'<button type="button" data-inv-note-cancel>Cancel</button><button type="button" class="primary" data-inv-note-save>Save</button></div></div>';
-  document.body.appendChild(overlay);
+  document.body.appendChild(overlay);invTrapDialogFocus(overlay);
   overlay.querySelector("#invNoteRating").value=note.rating?String(note.rating):"";
   const close=()=>overlay.remove();
   overlay.addEventListener("click",event=>{if(event.target===overlay)close();});
@@ -6287,14 +6325,14 @@ function invRenderInventory(){
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=group.browseCategory||group.category||"Uncategorised";
       const fav=typeof isFav==="function"&&isFav(group.name);
-      return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,version:Array.from(group.versions)[0]||""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
+      return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const hidden=items.slice(4).map(group=>{
       const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=group.browseCategory||group.category||"Uncategorised";
       const fav=typeof isFav==="function"&&isFav(group.name);
-      return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,version:Array.from(group.versions)[0]||""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
+      return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const more=items.length>4?'<button class="inv-more" type="button" data-inv-more aria-expanded="'+String(expanded)+'">'+(expanded?"Show fewer plug-ins":"＋ "+(items.length-4)+" more plug-ins")+'</button>':"";
     return '<section class="inv-vendor'+(expanded?" expanded":"")+(collapsed?" collapsed":"")+'" data-inv-vendor="'+invEsc(vendorKey)+'"><div class="inv-vendor-head"><span class="inv-logo '+tone+'"><span>'+invEsc(initials)+'</span>'+logo+'</span><span class="inv-vendor-name"><strong>'+invEsc(vendor)+'</strong><small>'+(domain?invEsc(domain)+' · ':'')+items.length+' '+(items.length===1?'plug-in':'plug-ins')+'</small></span><span class="inv-vendor-count">'+items.length+'</span><button type="button" class="inv-vendor-toggle" data-inv-toggle aria-label="Toggle '+invEsc(vendor)+' card" aria-expanded="'+String(!collapsed)+'" title="'+(collapsed?"Expand":"Collapse")+' publisher">'+(collapsed?"›":"⌃")+'</button></div><div class="inv-products">'+visible+hidden+'</div>'+more+actionsHTML+'</section>';
