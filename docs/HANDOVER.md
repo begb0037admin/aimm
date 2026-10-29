@@ -1,12 +1,16 @@
 ## Latest PluginHub reference parity sweep — 2026-10-29
 
-A feature-by-feature manual and running-app sweep is recorded in `governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md`, blob `50bae6639e116900609b85d519a52959d6f4d65d`, added in commit `62f7f1fd10b079ca33273ef859115e6b6668d3a6`. It compares the installed PluginHub v2.0.12/manual to branch source `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62` and the current development Pages preview. Jules review of the parity document is pending.
+A feature-by-feature manual and running-app sweep is recorded in `governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md`, blob `a14e42367f30d157b606f134ab3cd85be4fdfdef`, corrected in commit `a84321d3227acb2a28422b0564eca8280184528b`. It compares the installed PluginHub v2.0.12/manual to branch source `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62` and the current development Pages preview. Jules reviewed the corrected parity report and passed.
 
 Verified in the preview: four-column vendor cards, official vendor/Installer Hub links, menu open, category/tag submenus, local note/rating, copy/rescan, local up-to-date and keep markers. Menu actions requiring the native Companion and unconnected services remain clearly disabled. The audit identifies the missing List/Ledger views, sorting, status groups, complete Tag Manager and browse controls, whole-library Tools section, and Companion-backed/native services. The exact gaps and safe order are in the parity report.
 
-The Pages preview still represents source commit `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62` (deployment URL `https://113a7790.aimm-pluginhub-foundation-dev.pages.dev`); the documentation-only parity commit does not change the deployed page. This sweep did not run tests or deploy. It does not resolve the development Worker’s surgical passkey RP-fix provenance limitation.
+The visual check was on source commit `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62` at `https://113a7790.aimm-pluginhub-foundation-dev.pages.dev`. Documentation commits through `4e4f2e1215e89a943dc17b1581b5cb3ec960b090` triggered an automatic Pages preview build from branch source; the build was queued when last checked. The UI source is unchanged by those docs commits. Verify the latest preview status before sharing its newest deployment URL. This sweep did not run tests or manually deploy. It does not resolve the development Worker’s surgical passkey RP-fix provenance limitation.
 
 Foundation remains **NOT MET** and Stage 6 remains gated. Continue with the preview parity items in report order, then implement Companion and tool surfaces only through their existing reviewed contracts. Preserve synthetic non-production data for these steps. No production deployment or separately gated external action occurred.
+
+## Current synchronized record pins — verified before this handover update at branch head `4e4f2e1215e89a943dc17b1581b5cb3ec960b090`
+
+Dashboard `DASHBOARD.html` blob `268be5a27f302e4fafe95dcc3629d690dd1469b9`; Roadmap `docs/ROADMAP.md` blob `f753cf98f9aaa1eeb6464f62b722e6198ab685b4`; Status `docs/STATUS.md` blob `219d9d721248213f085582b49a928500aa99a097`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `bed64d97ab81ab2beb8b469e7c9366e8c6f2bb06`; Foundation closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` blob `a229f4ab25f931581bd9cdafef3e873da585f958`; Foundation evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md` blob `53857ed94a6246b5f27251653a55e17eb5b4ce32`; Stage 5 synthetic action and Worker report `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md` blob `6c937dddc157429c0b6473c72f6c33612e2ae220`; corrected parity sweep `governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md` blob `a14e42367f30d157b606f134ab3cd85be4fdfdef`. Settings source fix: `98754965a901b37a193fa6363b7e01758283e9cb`. This handover does not self-pin.
 
 ## Earlier Stage 5 passkey resume — 2026-10-29
 ## Latest Stage 5 passkey resume — 2026-10-29
@@ -43,7 +47,7 @@ Stage 5 remains **PARTIAL**; Foundation remains **NOT MET** and Stage 6 remains 
 
 Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`.
 
-## Current synchronized record pins — verified from sibling records at head `1d69a95a09b5082769cbf04e24ab6d1048cc3414`
+## Earlier synchronized record pins — retained from prior checkpoint
 
 Dashboard `DASHBOARD.html` blob `268be5a27f302e4fafe95dcc3629d690dd1469b9`; Roadmap `docs/ROADMAP.md` blob `f79f64439594e2a6171c955556c0fb1ffe7ea608`; Status `docs/STATUS.md` blob `1258d95d608d366eb41e6860e5ba0a90924ada16`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `bed64d97ab81ab2beb8b469e7c9366e8c6f2bb06`; Foundation closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` blob `a229f4ab25f931581bd9cdafef3e873da585f958`; Foundation evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md` blob `53857ed94a6246b5f27251653a55e17eb5b4ce32`; current Stage 5 synthetic action and Worker report `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md` blob `6c937dddc157429c0b6473c72f6c33612e2ae220`. Settings source fix: `98754965a901b37a193fa6363b7e01758283e9cb`. This handover does not self-pin.
 
