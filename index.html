@@ -3226,6 +3226,9 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #invNoteOverlay h3{margin:0 0 6px;font-size:17px}
     #invNoteOverlay .inv-note-context{margin-bottom:14px;color:#89939f;font-size:12px}
     #invNoteOverlay label{display:block;margin:12px 0 6px;color:#aeb7c1;font-size:11px;font-weight:650}
+    #invProductMetaOverlay .inv-meta-label{display:block;margin:12px 0 6px;color:#aeb7c1;font-size:11px;font-weight:650}
+    #invProductMetaOverlay textarea,#invProductMetaOverlay select{width:100%;box-sizing:border-box;border:1px solid #3a414b;border-radius:6px;background:#15181c;color:#e6e9ed;padding:9px;font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    #invProductMetaOverlay .inv-kept-version{padding:9px;border:1px solid #353c46;border-radius:6px;background:#181b20}
     #invNoteOverlay textarea,#invNoteOverlay select{width:100%;box-sizing:border-box;border:1px solid #3a414b;border-radius:6px;background:#15181c;color:#e6e9ed;padding:9px;font:12px inherit}
     #invNoteOverlay textarea{min-height:100px;resize:vertical}
     #invNoteOverlay .inv-note-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
@@ -5912,22 +5915,36 @@ function invProductMenuOutside(event){
   if(invProductMenuTrigger&&invProductMenuTrigger.contains(event.target))return;
   invCloseProductActionMenu();
 }
-function invProductMenuKey(event){if(event.key==="Escape"){invCloseProductActionMenu();}}
+function invProductMenuKey(event){
+  if(!invProductMenu)return;
+  if(event.key==="Escape"){event.preventDefault();const trigger=invProductMenuTrigger;invCloseProductActionMenu();if(trigger)trigger.focus();return;}
+  const items=Array.from(invProductMenu.querySelectorAll('[role="menuitem"]:not([aria-disabled="true"])')).filter(item=>item.offsetParent!==null);
+  if(!items.length)return;
+  const current=items.indexOf(document.activeElement);
+  if(event.key==="ArrowDown"||event.key==="ArrowUp"||event.key==="Home"||event.key==="End"){
+    event.preventDefault();
+    const next=event.key==="Home"?0:event.key==="End"?items.length-1:event.key==="ArrowDown"?(current+1+items.length)%items.length:(current<=0?items.length-1:current-1);
+    items[next].focus();
+  }
+}
+function invSafeExternalUrl(value){
+  try{const url=new URL(String(value||""),location.href);return url.protocol==="https:"?url.href:"";}catch(_){return "";}
+}
 function invOpenProductActionMenu(button){
   invCloseProductActionMenu();
   let context={};
   try{context=JSON.parse(button.getAttribute("data-inv-product-action")||"{}")}catch(_){}
-  context.name=String(context.name||"");context.vendor=String(context.vendor||"");
+  context.name=String(context.name||"");context.vendor=String(context.vendor||"");context.hubUrl=invSafeExternalUrl(context.hubUrl);context.websiteUrl=invSafeExternalUrl(context.websiteUrl);context.version=String(context.version||"");
   const state=invGetProductActions(context.vendor,context.name);
   const menu=document.createElement("div");menu.id="invProductMenu";menu.setAttribute("role","menu");
   const row=(action,label,classes="",help="")=>'<button type="button" class="inv-menu-row '+classes+'" role="menuitem" data-inv-action="'+action+'">'+label+(help?'<span class="inv-menu-help">'+help+'</span>':"")+'</button>';
   const disabled=(label,help)=>'<div class="inv-menu-row disabled" role="menuitem" aria-disabled="true" title="'+invEsc(help)+'">'+label+'<span class="inv-menu-help">'+invEsc(help)+'</span></div>';
   const link=(url,label)=>url?'<a class="inv-menu-row" role="menuitem" href="'+invEsc(url)+'" target="_blank" rel="noopener noreferrer">'+label+' ↗</a>':"";
   menu.innerHTML='<div class="inv-menu-head"><div style="min-width:0;flex:1"><div class="inv-menu-title">'+invEsc(context.name||"Plugin actions")+'</div><div class="inv-menu-sub">'+invEsc(context.vendor)+'</div></div><button type="button" class="inv-menu-close" aria-label="Close menu">×</button></div>'
-    +row("category","Category · "+(state.category||context.category||"Uncategorised"),"", "›")
-    +row("tags","Tags · "+((state.tags&&state.tags.length)?state.tags.join(", "):"None"),"", "›") + '<hr>'
+    +row("category","Category · "+invEsc(state.category||context.category||"Uncategorised"),"", "›")
+    +row("tags","Tags · "+invEsc((state.tags&&state.tags.length)?state.tags.join(", "):"None"),"", "›") + '<hr>'
     +row("note","Note &amp; rating…")
-    +row("mark",state.marked?"Unmark up to date":"Mark as up to date","green")
+    +(context.version?row("mark",state.marked?"Unmark up to date":"Mark as up to date · "+invEsc(context.version),"green"):disabled("Mark as up to date","Version data is not available for this item"))
     +disabled("Move to Unused…","Requires native Companion actions")
     +disabled("Uninstall (Move to Trash)…","Requires native Companion actions")
     +disabled("Reveal in Finder","Requires native Companion actions")
@@ -5936,10 +5953,12 @@ function invOpenProductActionMenu(button){
     +link(context.hubUrl,"Installer hub")
     +link(context.websiteUrl,"Website")
     +'<hr>'+disabled("License Key Vault…","Not connected in this preview")
-    +row("keep",state.kept?"Unkeep this version":"Keep this version…","gold")
+    +row("keep",state.kept?"Unkeep this version":("Keep this version"+(context.version?" · "+invEsc(context.version):"…")),"gold")
+    +disabled("Snooze update…","Vendor update status is not connected in this preview")
     +disabled("Report a problem…","Not connected in this preview");
   document.body.appendChild(menu);
   invProductMenu=menu;invProductMenuTrigger=button;button.setAttribute("aria-expanded","true");
+  const firstMenuItem=menu.querySelector('[role="menuitem"]:not([aria-disabled="true"])');if(firstMenuItem)firstMenuItem.focus();
   const rect=button.getBoundingClientRect(),mr=menu.getBoundingClientRect(),gap=6;
   let left=Math.min(window.innerWidth-mr.width-8,Math.max(8,rect.right-mr.width));
   let top=rect.bottom+gap;
@@ -5961,8 +5980,11 @@ function invOpenProductActionMenu(button){
       invCloseProductActionMenu();const scan=document.getElementById("invScanBtn");if(scan)scan.click();else invStatus("Scan connected folders is unavailable.","error");return;
     }
     const all=invReadProductActions(),current=all[key]||{};
-    if(action==="mark"){if(current.marked)delete current.marked;else current.marked={at:new Date().toISOString(),version:""};}
-    if(action==="keep")current.kept=!current.kept;
+    if(action==="mark"){if(current.marked)delete current.marked;else current.marked={at:new Date().toISOString(),version:context.version};}
+    if(action==="keep"){
+      if(current.kept){delete current.kept;all[key]=current;invWriteProductActions(all);invCloseProductActionMenu();invRenderInventory();invStatus("Removed the kept-version note for "+context.name+".");return;}
+      invCloseProductActionMenu();invOpenKeepVersion(context.vendor,context.name,context.version);return;
+    }
     all[key]=current;invWriteProductActions(all);invCloseProductActionMenu();invRenderInventory();
   });
   setTimeout(()=>{document.addEventListener("pointerdown",invProductMenuOutside,true);document.addEventListener("keydown",invProductMenuKey,true);},0);
@@ -6031,6 +6053,22 @@ function invOpenProductTags(vendor,name){
   overlay.querySelector("[data-meta-close]").addEventListener("click",()=>overlay.remove());
   overlay.addEventListener("click",event=>{if(event.target===overlay)overlay.remove();});
   document.body.appendChild(overlay);render();input.focus();
+}
+function invOpenKeepVersion(vendor,name,version){
+  const state=invGetProductActions(vendor,name),kept=state.kept&&typeof state.kept==="object"?state.kept:{};
+  const overlay=document.createElement("div");overlay.id="invProductMetaOverlay";
+  overlay.innerHTML='<div class="inv-product-meta-dialog" role="dialog" aria-modal="true" aria-labelledby="invKeepTitle"><h3 id="invKeepTitle">Keep this version</h3><div class="inv-note-context">'+invEsc(name)+' · '+invEsc(vendor)+'</div><label class="inv-meta-label">Installed version</label><div class="inv-kept-version">'+invEsc(version||"Version not reported by scan")+'</div><label class="inv-meta-label" for="invKeepReason">Reason</label><select id="invKeepReason"><option>Compatibility</option><option>Project requirement</option><option>Preferred sound</option><option>Other</option></select><label class="inv-meta-label" for="invKeepNote">Note (optional)</label><textarea id="invKeepNote" maxlength="240" placeholder="Add a short reason…">'+invEsc(kept.note||"")+'</textarea><div class="inv-note-actions"><button type="button" data-keep-cancel>Cancel</button><button type="button" class="primary" data-keep-save>Keep version</button></div></div>';
+  const reason=overlay.querySelector("#invKeepReason");if(kept.reason)reason.value=kept.reason;
+  overlay.querySelector("[data-keep-cancel]").addEventListener("click",()=>overlay.remove());
+  overlay.addEventListener("click",event=>{if(event.target===overlay)overlay.remove();});
+  overlay.querySelector("[data-keep-save]").addEventListener("click",()=>{
+    const all=invReadProductActions(),key=invActionKey(vendor,name),next=all[key]||{};
+    next.kept={version:String(version||""),reason:reason.value,note:overlay.querySelector("#invKeepNote").value.trim(),at:new Date().toISOString()};
+    all[key]=next;
+    if(invWriteProductActions(all)){overlay.remove();invRenderInventory();invStatus("Kept version "+(version||"unknown")+" for "+name+".");}
+    else invStatus("The kept-version note could not be saved in this browser.","error");
+  });
+  document.body.appendChild(overlay);
 }
 function invOpenProductNote(vendor,name){
   const state=invGetProductActions(vendor,name),note=state.note||{};
@@ -6246,14 +6284,14 @@ function invRenderInventory(){
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=group.browseCategory||group.category||"Uncategorised";
       const fav=typeof isFav==="function"&&isFav(group.name);
-      return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
+      return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,version:Array.from(group.versions)[0]||""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const hidden=items.slice(4).map(group=>{
       const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=group.browseCategory||group.category||"Uncategorised";
       const fav=typeof isFav==="function"&&isFav(group.name);
-      return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
+      return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,version:Array.from(group.versions)[0]||""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const more=items.length>4?'<button class="inv-more" type="button" data-inv-more aria-expanded="'+String(expanded)+'">'+(expanded?"Show fewer plug-ins":"＋ "+(items.length-4)+" more plug-ins")+'</button>':"";
     return '<section class="inv-vendor'+(expanded?" expanded":"")+(collapsed?" collapsed":"")+'" data-inv-vendor="'+invEsc(vendorKey)+'"><div class="inv-vendor-head"><span class="inv-logo '+tone+'"><span>'+invEsc(initials)+'</span>'+logo+'</span><span class="inv-vendor-name"><strong>'+invEsc(vendor)+'</strong><small>'+(domain?invEsc(domain)+' · ':'')+items.length+' '+(items.length===1?'plug-in':'plug-ins')+'</small></span><span class="inv-vendor-count">'+items.length+'</span><button type="button" class="inv-vendor-toggle" data-inv-toggle aria-label="Toggle '+invEsc(vendor)+' card" aria-expanded="'+String(!collapsed)+'" title="'+(collapsed?"Expand":"Collapse")+' publisher">'+(collapsed?"›":"⌃")+'</button></div><div class="inv-products">'+visible+hidden+'</div>'+more+actionsHTML+'</section>';
