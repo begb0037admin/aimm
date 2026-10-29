@@ -5447,7 +5447,7 @@ const INV_VIEW_KEY="aimmPluginInventoryView_v1",INV_SORT_KEY="aimmPluginInventor
 function invReadChoice(key,choices,fallback){try{const value=localStorage.getItem(key);return choices.includes(value)?value:fallback;}catch(_){return fallback;}}
 let INV_VIEW = invReadChoice(INV_VIEW_KEY,["cards","list","ledger"],"cards");
 let INV_SORT = invReadChoice(INV_SORT_KEY,["vendor","product","format","version"],"vendor");
-let INV_FORMAT = "All";
+let INV_FORMATS = new Set();
 let INV_SEARCH = "";
 let INV_SCOPE = "all";
 let INV_SIDEBAR_COLLAPSED = false;
@@ -6480,13 +6480,13 @@ function invRenderInventory(){
   const last=document.getElementById("invLastScan");
   if(last)last.textContent=INV_SCAN_INFO.needsRefresh?"Rescan needed — connected folders changed":INV_SCAN_INFO.generatedAt?"Last scan "+new Date(INV_SCAN_INFO.generatedAt).toLocaleString():"No scan yet";
   document.querySelectorAll("[data-inv-format]").forEach(button=>{
-    const selected=button.getAttribute("data-inv-format")===INV_FORMAT;
+    const format=button.getAttribute("data-inv-format"),selected=format==="All"?!INV_FORMATS.size:INV_FORMATS.has(format);
     button.classList.toggle("on",selected);button.setAttribute("aria-pressed",String(selected));
   });
   const query=invNorm(INV_SEARCH);
   let filtered=groups.filter(group=>{
-    const formatOK=INV_FORMAT==="All"||group.formats.has(INV_FORMAT);
-    const searchOK=!query||invNorm([group.name,group.vendor,Array.from(group.versions).join(" "),Array.from(group.formats).join(" ")].join(" ")).includes(query);
+    const formatOK=!INV_FORMATS.size||Array.from(INV_FORMATS).some(format=>group.formats.has(format));
+    const searchOK=!query||invNorm([group.name,group.vendor,invDisplayCategory(group),Array.from(group.versions).join(" "),Array.from(group.formats).join(" ")].join(" ")).includes(query);
     const actionState=invGetProductActions(group.vendor,group.name);
     const hidden=actionState.hidden===true;
     const scopeOK=INV_SCOPE==="favorites"?(typeof isFav==="function"&&isFav(group.name)):INV_SCOPE==="tags"?(Array.isArray(actionState.tags)&&actionState.tags.length>0):INV_SCOPE==="hidden"?hidden:!hidden;
@@ -6852,7 +6852,10 @@ function invInit(){
   if(filters)filters.addEventListener("click",event=>{
     const button=event.target.closest("[data-inv-format]");
     if(!button)return;
-    INV_FORMAT=button.getAttribute("data-inv-format")||"All";
+    const format=button.getAttribute("data-inv-format")||"All";
+    if(format==="All")INV_FORMATS.clear();
+    else if(event.shiftKey){if(INV_FORMATS.has(format))INV_FORMATS.delete(format);else INV_FORMATS.add(format);}
+    else{INV_FORMATS.clear();INV_FORMATS.add(format);}
     invRenderInventory();
   });
   invLoadRoots();
