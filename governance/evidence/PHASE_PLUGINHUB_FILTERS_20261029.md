@@ -11,7 +11,7 @@ Source commit: `80dd8012a19f8b3cd662ee2125aa1c30e94b4ae6`
 File: `index.html`, blob `b6295c90c92703fe7e36f9eb289ec7cbc7e031a4`  
 Jules source review: PASS.
 
-The Library toolbar now has a My Tags dropdown with tag colours and membership counts. A normal tag click selects that tag (and clicking the only selected tag again clears it, matching the manual's category behavior); Shift-click combines/removes tags. Active tag chips clear an individual selection. The menu's New tag and Plugin Tag Manager controls open the existing browser-local manager. Tag selection combines with categories, formats, search and the other current Library scope.
+The Library toolbar now has a My Tags dropdown with tag colours and membership counts. A normal tag click selects that tag (and clicking the only selected tag again clears it, matching the manual's category behavior); Shift-click combines/removes tags. Active tag chips clear an individual selection. The menu's New tag and Plugin Tag Manager controls open the existing browser-local manager. Tag selection combines with category, format and search filters. Choosing a specific tag resets the separate sidebar scope (such as Favorites or Hidden) to All.
 
 Format pills now replace the selection on normal click, combine/remove on Shift-click, and All formats clears the selection. Search now includes the resolved category. These controls remain browser-side and do not add a filesystem or network action.
 
