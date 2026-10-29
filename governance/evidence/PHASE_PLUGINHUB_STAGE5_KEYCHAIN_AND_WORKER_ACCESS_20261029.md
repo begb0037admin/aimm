@@ -12,6 +12,10 @@ The signed-in development preview returned the paired development device list an
 
 The browser passkey-gated exact-path reveal/confirmation has not completed. Companion’s local **Move to Unused** control remains disabled pending that browser confirmation. No file has moved, no successful passkey assertion is recorded, and the pending operation must be resumed rather than duplicated. Once the browser confirmation succeeds, review the same operation in Companion and use its separate local confirmation; then restore the synthetic fixture and remove diagnostic-only credentials/state. Fresh independent Stage 5 review remains required.
 
+### Passkey prompt follow-up
+
+The existing operation was resumed in the same development preview, and **View exact paths with passkey** was attempted. No Chrome, macOS, or 1Password approval prompt appeared. The 1Password extension showed the saved development passkey entry and a generic sign-in-options notice, but no pending request; its main app remained on All Items. The page’s passkey control is now disabled while its status still requests passkey path review. No assertion succeeded and no file moved. Do not ask the owner to accept a prompt that is not present, repeat passkey enrollment, or create another operation. Diagnose the stalled browser/API/passkey path, then resume this same operation.
+
 ## Status and remaining gates
 
 Stage 5 remains **PARTIAL**. Foundation remains **NOT MET**; Stage 6 remains gated. Other Foundation exit evidence and fresh independent end-to-end review remain open. Development-only work used synthetic data; no production deployment or separately gated external action occurred.

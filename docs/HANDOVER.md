@@ -6,13 +6,15 @@ The development Worker is now deployed from the reproducible branch-source Wrang
 
 The development Library session is visibly signed in. A single request for the synthetic fixture was sent to the paired diagnostic Companion (operation `caebb13c-1f6b-4422-b23c-570b4d8a0e9f`). The owner selected the isolated `Unused` destination. Companion prepared a signed exact-path preview for the one synthetic fixture; source and destination were checked in its local UI and match the authorized fixture-to-`Unused` operation. Local paths and device metadata are intentionally not persisted. The browser has not completed the passkey-gated exact-path reveal/confirmation; the Companion Move button remains disabled. **No file has moved and no passkey assertion has succeeded.** Do not create another request or repeat passkey enrollment. Resume the existing operation and complete the browser passkey interaction before any local move; the Companion still requires its separate Move to Unused confirmation. Restore the fixture, remove diagnostic-only credentials/state, and obtain fresh independent review afterward.
 
+The browser’s **View exact paths with passkey** action was attempted during resume, but no Chrome/macOS/1Password prompt appeared. The 1Password extension showed the saved development passkey entry, not an active request. The page control is currently disabled and the Companion’s move control remains disabled. No assertion or file move occurred. Diagnose the stalled browser/API/passkey interaction, then resume this same operation; do not enroll again or create another request.
+
 Stage 5 remains **PARTIAL**; Foundation remains **NOT MET** and Stage 6 remains gated. Other Foundation exit evidence and fresh independent end-to-end acceptance remain open. Use synthetic non-production data only; no production deployment or separately gated external action.
 
 Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`.
 
-## Current synchronized record pins — staged from verified branch head `00b07d0`
+## Current synchronized record pins — updated from verified GitHub branch head `540a9e3`
 
-Dashboard `DASHBOARD.html` blob `4f6f7d2ecaab2c3419b2948984996978138d124f`; Roadmap `docs/ROADMAP.md` blob `bf523689e2afcd0451eabf3d35170a5e0de6ca69`; Status `docs/STATUS.md` blob `b21cfa21559338bdd481c4e6cc87af52222e9bf5`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `84e4dae34c0fbebf902624ad4b38617de0f8b5ed`; Foundation closeout blob `6b7280bd8354c33520f0d5d162a179fab176f186`; Foundation evidence package blob `68cb08a7659d720cd53a1386fc715eea8eceec92`; Stage 5 synthetic action and Worker report blob `bf47078f22e68d5127b9294b65ebe949ceced33f`. This handover does not self-pin.
+Dashboard `DASHBOARD.html` blob `4f6f7d2ecaab2c3419b2948984996978138d124f`; Roadmap `docs/ROADMAP.md` blob `bf523689e2afcd0451eabf3d35170a5e0de6ca69`; Status `docs/STATUS.md` blob `b21cfa21559338bdd481c4e6cc87af52222e9bf5`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `680ea0522d865cd98be626688c50e08aea2d2fc4`; Foundation closeout blob `c6034609ff02b80ff702731cf7a3f909178028f2`; Foundation evidence package blob `f4bdc0f36a376d4b227941177fd76fedba6738f7`; Stage 5 synthetic action and Worker report blob `dd72c4a8eae551c186e8536bb68ed77654b8d6b7`. This handover does not self-pin.
 
 ## Historical synchronized pins before this checkpoint — 2026-10-29
 
