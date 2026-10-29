@@ -28,3 +28,10 @@ Jules reviewed the source behavior and passed. No automated tests were run. The 
 The Library filters now cover individual and combined tag selection, multi-select categories and formats, search, and view/sort controls. Remaining parity includes the PluginHub VST cycling control, Intel-only and snoozed/status filters (which require architecture metadata and live status observations), Companion-backed file operations, and whole-library Tools workflows. Tag definitions are browser-local, not account-synchronised. AAX remains excluded by the approved scanner architecture.
 
 This is not Foundation exit evidence. Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP fix remains a surgical patch, not a reproducible build from branch source. Synthetic non-production data only for further gated workflows.
+
+
+## Final My Tags chevron correction — 2026-10-29
+
+The dropdown summary previously rendered a literal down-arrow alongside the CSS chevron, so opening it showed two opposite arrows. Source commit `ad1e460dea5009dbf7e88eba6cd5c16d5941ba54` (index.html blob `ff5ba161b998b7adc36b975242e6d4d38ad952e1`) removes the literal glyph and keeps one CSS chevron. Jules reviewed the exact source and passed. The fresh Pages preview deployment `1a5f0a2b-b78f-493f-8532-0d57ce2540e5` succeeded at https://1a5f0a2b.aimm-pluginhub-foundation-dev.pages.dev/. Visual review confirms one down chevron while closed and the same chevron pointing up while open. The combined format behavior remains verified on source `80dd8012a19f8b3cd662ee2125aa1c30e94b4ae6` / deployment `415a8b76-f53c-4c0e-82d5-20f7dd4eeb23`; this final visual-only correction did not alter it.
+
+No inventory was connected or scanned for the final visual check. Synthetic browser-local tag demos on earlier unique deployment origins had no product memberships and were isolated from the stable app origin. Foundation remains **NOT MET** and Stage 6 remains gated; the Worker RP fix is still a surgical patch, not a reproducible branch-source build.
