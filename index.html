@@ -6192,6 +6192,7 @@ function invOpenTagManager(){
     search.disabled=!selectedTag;
     pluginHost.replaceChildren();
     if(!selectedTag){const empty=document.createElement("div");empty.className="inv-tag-empty";empty.textContent="Create or choose a tag to begin.";pluginHost.appendChild(empty);return;}
+    if(!groups.length){const empty=document.createElement("div");empty.className="inv-tag-empty";empty.textContent="No installed plug-ins are available to tag yet. Connect and scan a folder, then return here.";pluginHost.appendChild(empty);return;}
     if(!filtered.length){const empty=document.createElement("div");empty.className="inv-tag-empty";empty.textContent="No plug-ins match this search.";pluginHost.appendChild(empty);return;}
     const actionMap=invReadProductActions(),byVendor=new Map();
     filtered.forEach(group=>{const key=group.vendor||"Unknown vendor";if(!byVendor.has(key))byVendor.set(key,[]);byVendor.get(key).push(group);});
