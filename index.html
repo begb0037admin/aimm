@@ -3276,7 +3276,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
           <button class="inv-side-button" type="button" data-inv-category="Imaging" aria-label="Imaging" title="Imaging"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="6" height="14" rx="2"/><rect x="14" y="5" width="6" height="14" rx="2"/><path d="M7 9v6M17 9v6"/></svg></span><span class="inv-side-label">Imaging</span></button>
           <button class="inv-side-button" type="button" data-inv-category="Instruments &amp; MIDI" aria-label="Instruments and MIDI" title="Instruments &amp; MIDI"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><span class="inv-side-label">Instruments &amp; MIDI</span></button>
           <button class="inv-side-button" type="button" data-inv-category="Restoration" aria-label="Restoration" title="Restoration"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 14a8 8 0 1 1 2.3 5.7"/><path d="M4 20v-6h6"/></svg></span><span class="inv-side-label">Restoration</span></button>
-          <button class="inv-side-button" type="button" data-inv-category="Channel Strips &amp; More" aria-label="Channel Strips and More" title="Channel Strips &amp; More"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8v8M12 7v10M16 9v6"/></svg></span><span class="inv-side-label">Channel Strips &amp; More</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Channel Strips &amp; Multi-FX" aria-label="Channel Strips and More" title="Channel Strips &amp; Multi-FX"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8v8M12 7v10M16 9v6"/></svg></span><span class="inv-side-label">Channel Strips &amp; Multi-FX</span></button>
         </nav>
         <div class="inv-folder-summary"><strong>SCAN FOLDERS</strong><span id="invSidebarFolderMeta">No folders connected</span></div>
       </aside>
@@ -5374,7 +5374,7 @@ const INV_CATEGORY_STAGES = {
   "Imaging":["imager"],
   "Instruments & MIDI":[],
   "Restoration":["repair"],
-  "Channel Strips & More":["vocal","creative-fx"]
+  "Channel Strips & Multi-FX:["vocal","creative-fx"]
 };
 function invNorm(value){
   return String(value || "").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
@@ -5948,7 +5948,7 @@ function invOpenProductActionMenu(button){
     +row("category","Category · "+invEsc(Object.prototype.hasOwnProperty.call(state,"categoryOverride")?(state.categoryOverride||"Uncategorised"):(state.category||context.category||"Uncategorised")),"", "›")
     +row("tags","Tags · "+invEsc((state.tags&&state.tags.length)?state.tags.join(", "):"None"),"", "›") + '<hr>'
     +row("note","Note &amp; rating…")
-    +(context.version?row("mark",state.marked?"Unmark up to date":("Mark as up to date"+(context.versions.length>1?"…":context.version?" · "+invEsc(context.version):"")),"green"):disabled("Mark as up to date","Version data is not available for this item"))
+    +(context.version?row("mark",state.marked?("Remove local marker"+(state.marked.version?" · "+invEsc(state.marked.version):"")):("Mark as up to date"+(context.versions.length>1?"…":context.version?" · "+invEsc(context.version):"")),"green"):disabled("Mark as up to date","Version data is not available for this item"))
     +disabled("Move to Unused…","Requires native Companion actions")
     +disabled("Uninstall (Move to Trash)…","Requires native Companion actions")
     +disabled("Reveal in Finder","Requires native Companion actions")
@@ -5957,7 +5957,7 @@ function invOpenProductActionMenu(button){
     +link(context.hubUrl,"Installer hub")
     +link(context.websiteUrl,"Website")
     +'<hr>'+disabled("License Key Vault…","Not connected in this preview")
-    +row("keep",state.kept?"Unkeep this version":("Keep this version"+(context.version?" · "+invEsc(context.version):"…")),"gold")
+    +row("keep",state.kept?"Change keep label…":("Keep this version"+(context.versions.length>1?"…":context.version?" · "+invEsc(context.version):"…")),"gold")
     +disabled("Snooze update…","Vendor update status is not connected in this preview")
     +disabled("Report a problem…","Not connected in this preview");
   document.body.appendChild(menu);
@@ -5989,10 +5989,7 @@ function invOpenProductActionMenu(button){
       if(context.versions.length>1){invCloseProductActionMenu();invOpenMarkVersion(context.vendor,context.name,context.versions);return;}
       current.marked={at:new Date().toISOString(),version:context.version,localOnly:true};
     }
-    if(action==="keep"){
-      if(current.kept){delete current.kept;all[key]=current;invWriteProductActions(all);invCloseProductActionMenu();invRenderInventory();invStatus("Removed the kept-version note for "+context.name+".");return;}
-      invCloseProductActionMenu();invOpenKeepVersion(context.vendor,context.name,context.versions.length?context.versions:[context.version]);return;
-    }
+    if(action==="keep"){invCloseProductActionMenu();invOpenKeepVersion(context.vendor,context.name,context.versions.length?context.versions:[context.version]);return;}
     all[key]=current;invWriteProductActions(all);invCloseProductActionMenu();invRenderInventory();
   });
   setTimeout(()=>{document.addEventListener("pointerdown",invProductMenuOutside,true);document.addEventListener("keydown",invProductMenuKey,true);},0);
@@ -6015,15 +6012,15 @@ function invOpenProductCategory(vendor,name,currentCategory){
   const overlay=document.createElement("div");overlay.id="invProductMetaOverlay";
   overlay.innerHTML='<div class="inv-product-meta-dialog" role="dialog" aria-modal="true" aria-labelledby="invProductMetaTitle"><h3 id="invProductMetaTitle">Category</h3><div class="inv-note-context">'+invEsc(name)+' · '+invEsc(vendor)+'</div><div class="inv-product-meta-options"></div><div class="inv-note-actions"><button type="button" data-meta-close>Cancel</button></div></div>';
   const list=overlay.querySelector(".inv-product-meta-options");
-  ["Uncategorised",...categories].forEach(label=>{
-    const value=label==="Uncategorised"?"":label,button=document.createElement("button");
-    button.type="button";button.className="inv-product-meta-option"+(value===current?" selected":"");
-    button.textContent=(value===current?"✓  ":"")+label;
+  ["Use PluginHub's pick","Uncategorised",...categories].forEach(label=>{
+    const reset=label==="Use PluginHub's pick",value=reset?null:label==="Uncategorised"?"":label,button=document.createElement("button");
+    button.type="button";button.className="inv-product-meta-option"+((reset&&!Object.prototype.hasOwnProperty.call(state,"categoryOverride")||!reset&&value===current)?" selected":"");
+    button.textContent=(reset&&!Object.prototype.hasOwnProperty.call(state,"categoryOverride")||!reset&&value===current?"✓  ":"")+label;
     button.addEventListener("click",()=>{
       const all=invReadProductActions(),key=invActionKey(vendor,name),next=all[key]||{};
-      next.categoryOverride=value;delete next.category;
+      if(reset){delete next.categoryOverride;delete next.category;}else next.categoryOverride=value;
       all[key]=next;
-      if(invWriteProductActions(all)){overlay.remove();invRenderInventory();invStatus(value?"Category set to "+value+".":"Category cleared.");}
+      if(invWriteProductActions(all)){overlay.remove();invRenderInventory();invStatus(reset?"Restored PluginHub's inferred category.":value?"Category set to "+value+".":"Category set to Uncategorised.");}
       else invStatus("The category could not be saved in this browser.","error");
     });
     list.appendChild(button);
@@ -6050,9 +6047,11 @@ function invOpenProductTags(vendor,name){
       const text=document.createElement("span");text.textContent=tag;
       const remove=document.createElement("button");remove.type="button";remove.className="inv-product-tag-remove";remove.textContent="×";remove.setAttribute("aria-label","Delete tag "+tag);
       remove.addEventListener("click",()=>{
-        try{localStorage.setItem(INV_PRODUCT_TAGS_KEY,JSON.stringify(invReadUserTags().filter(value=>value!==tag)));
+        try{
           const allActions=invReadProductActions();Object.keys(allActions).forEach(actionKey=>{const record=allActions[actionKey];if(record&&Array.isArray(record.tags)){record.tags=record.tags.filter(value=>value!==tag);if(!record.tags.length)delete record.tags;}});
-          invWriteProductActions(allActions);selected.delete(tag);render();invRenderInventory();}
+          if(!invWriteProductActions(allActions)){invStatus("The tag could not be removed from every plug-in; nothing else was changed.","error");return;}
+          localStorage.setItem(INV_PRODUCT_TAGS_KEY,JSON.stringify(invReadUserTags().filter(value=>value!==tag)));
+          selected.delete(tag);render();invRenderInventory();}
         catch(_){invStatus("The tag could not be deleted.","error");}
       });
       label.append(checkbox,text,remove);list.appendChild(label);
@@ -6082,10 +6081,15 @@ function invOpenKeepVersion(vendor,name,versions){
   const state=invGetProductActions(vendor,name),kept=state.kept&&typeof state.kept==="object"?state.kept:{};
   const versionOptions=versions.map(item=>'<option value="'+invEsc(item)+'">'+invEsc(item)+'</option>').join("");
   const overlay=document.createElement("div");overlay.id="invProductMetaOverlay";
-  overlay.innerHTML='<div class="inv-product-meta-dialog" role="dialog" aria-modal="true" aria-labelledby="invKeepTitle"><h3 id="invKeepTitle">Keep this version</h3><div class="inv-note-context">'+invEsc(name)+' · '+invEsc(vendor)+'</div><label class="inv-meta-label" for="invKeepVersion">Installed version</label><select id="invKeepVersion">'+(versionOptions||'<option value="">Version not reported by scan</option>')+'</select><label class="inv-meta-label" for="invKeepScope">Scope</label><select id="invKeepScope"><option>This installed version</option><option>All formats for this plug-in</option></select><label class="inv-meta-label" for="invKeepReason">Reason</label><select id="invKeepReason"><option>Compatibility</option><option>Project requirement</option><option>Preferred sound</option><option>Other</option></select><p class="inv-meta-help">Saved as a local note in this preview. It does not affect duplicate recommendations.</p><label class="inv-meta-label" for="invKeepNote">Note (optional)</label><textarea id="invKeepNote" maxlength="240" placeholder="Add a short reason…">'+invEsc(kept.note||"")+'</textarea><div class="inv-note-actions"><button type="button" data-keep-cancel>Cancel</button><button type="button" class="primary" data-keep-save>Keep version</button></div></div>';
+  overlay.innerHTML='<div class="inv-product-meta-dialog" role="dialog" aria-modal="true" aria-labelledby="invKeepTitle"><h3 id="invKeepTitle">'+(state.kept?'Change keep label':'Keep this version')+'</h3><div class="inv-note-context">'+invEsc(name)+' · '+invEsc(vendor)+'</div><label class="inv-meta-label" for="invKeepVersion">Installed version</label><select id="invKeepVersion">'+(versionOptions||'<option value="">Version not reported by scan</option>')+'</select><label class="inv-meta-label" for="invKeepScope">Scope</label><select id="invKeepScope"><option value="version">This version only</option><option value="plugin">This plug-in, every version</option><option value="vendor">Everything from this vendor</option></select><label class="inv-meta-label" for="invKeepReason">Reason</label><select id="invKeepReason"><option value="superseded">Superseded</option><option value="projects">Kept for old projects</option><option value="dormant">Dormant</option><option value="review">Review later</option></select><p class="inv-meta-help">This label is saved in this browser only. Duplicate and bulk cleanup tools are not connected in this preview.</p><label class="inv-meta-label" for="invKeepNote">Note (optional)</label><textarea id="invKeepNote" maxlength="240" placeholder="Add a short reason…">'+invEsc(kept.note||"")+'</textarea><div class="inv-note-actions">'+(state.kept?'<button type="button" class="danger" data-keep-remove>Remove label</button>':'')+'<button type="button" data-keep-cancel>Cancel</button><button type="button" class="primary" data-keep-save>'+(state.kept?'Save label':'Keep it')+'</button></div></div>';
   const reason=overlay.querySelector("#invKeepReason");if(kept.reason)reason.value=kept.reason;
   const versionSelect=overlay.querySelector("#invKeepVersion");if(kept.version&&Array.from(versionSelect.options).some(option=>option.value===kept.version))versionSelect.value=kept.version;
   const scopeSelect=overlay.querySelector("#invKeepScope");if(kept.scope)scopeSelect.value=kept.scope;
+  const removeKeep=overlay.querySelector("[data-keep-remove]");if(removeKeep)removeKeep.addEventListener("click",()=>{
+    const all=invReadProductActions(),key=invActionKey(vendor,name),next=all[key]||{};delete next.kept;all[key]=next;
+    if(invWriteProductActions(all)){overlay.remove();invRenderInventory();invStatus("Removed the local keep label for "+name+".");}
+    else invStatus("The keep label could not be removed.","error");
+  });
   overlay.querySelector("[data-keep-cancel]").addEventListener("click",()=>overlay.remove());
   overlay.addEventListener("click",event=>{if(event.target===overlay)overlay.remove();});
   overlay.querySelector("[data-keep-save]").addEventListener("click",()=>{
