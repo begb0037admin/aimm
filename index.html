@@ -3156,7 +3156,29 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #library .inv-format.on{color:#fff;border-color:#4484aa;background:rgba(47,161,230,.12)}
     #library .inv-search{margin-left:auto;display:flex;align-items:center;gap:8px;min-width:220px;flex:1;max-width:420px;background:#14171a;border:1px solid #34383d;border-radius:8px;padding:0 10px}
     #library .inv-search input{width:100%;border:0;outline:0;background:transparent;color:#f2f4f5;padding:9px 0;font-size:12px}
+    #library .inv-view-tools{display:flex;align-items:center;gap:8px;margin-left:auto}
+    #library .inv-view-tools label{display:flex;align-items:center;gap:6px;color:#89939f;font-size:10px}
+    #library .inv-view-tools select{min-height:34px;padding:0 28px 0 10px;border:1px solid #34383d;border-radius:7px;background:#1b1d20;color:#dce2e8;font:600 11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     #library .inv-cards{display:block;position:relative;padding:10px 14px 14px;border:0;margin-top:10px}
+    #library .inv-table{margin:10px 0 0;border:1px solid #303640;border-radius:9px;overflow:hidden;background:#171a1e}
+    #library .inv-list-head,#library .inv-list-row{display:grid;grid-template-columns:minmax(120px,1fr) minmax(180px,1.7fr) minmax(70px,.65fr) minmax(110px,1fr) minmax(90px,.75fr) 56px;align-items:center;gap:10px}
+    #library .inv-list-head{position:sticky;top:0;z-index:1;padding:10px 12px;background:#20242a;border-bottom:1px solid #353c46;color:#87919b;font:700 9px ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase}
+    #library .inv-list-row{min-height:48px;padding:6px 12px;border-bottom:1px solid #292e35;color:#dce2e8;font-size:11px}
+    #library .inv-list-row:last-child{border-bottom:0}
+    #library .inv-list-row:hover{background:#1d2228}
+    #library .inv-list-vendor{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#aeb8c2}
+    #library .inv-list-product{min-width:0;display:flex;align-items:center;gap:7px}
+    #library .inv-list-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:650;color:#edf1f4}
+    #library .inv-list-meta{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#87919b;font-size:9px}
+    #library .inv-list-actions{display:flex;align-items:center;justify-content:flex-end;gap:3px}
+    #library .inv-table.inv-view-ledger .inv-list-head,#library .inv-table.inv-view-ledger .inv-list-row{grid-template-columns:minmax(110px,.9fr) minmax(160px,1.5fr) minmax(130px,1.1fr) minmax(70px,.6fr) minmax(100px,.9fr) minmax(150px,1.2fr) 56px}
+    #library .inv-view-ledger .inv-list-row{min-height:40px;padding-top:4px;padding-bottom:4px}
+    #library .inv-view-ledger .inv-list-meta{white-space:normal;line-height:1.35}
+    #library .inv-view-ledger .inv-list-product{gap:5px}
+    #library .inv-view-ledger .inv-list-name{font-size:10px}
+    #library .inv-view-list .inv-list-meta.ledger-only{display:none}
+    @media(max-width:980px){#library .inv-list-head,#library .inv-list-row{grid-template-columns:minmax(90px,.8fr) minmax(150px,1.5fr) minmax(60px,.55fr) minmax(90px,.8fr) 52px}#library .inv-list-head [data-col="category"],#library .inv-list-row [data-col="category"]{display:none}#library .inv-table.inv-view-ledger .inv-list-head,#library .inv-table.inv-view-ledger .inv-list-row{grid-template-columns:minmax(90px,.8fr) minmax(150px,1.5fr) minmax(60px,.55fr) minmax(90px,.8fr) 52px}#library .inv-view-ledger .ledger-only{display:none!important}}
+    @media(max-width:620px){#library .inv-list-head,#library .inv-list-row{grid-template-columns:minmax(100px,.85fr) minmax(150px,1.4fr) minmax(58px,.5fr) 48px;gap:6px;padding-left:8px;padding-right:8px}#library .inv-list-head [data-col="format"],#library .inv-list-row [data-col="format"]{display:none}#library .inv-view-tools{width:100%;margin-left:0}}
     #library .inv-vendor{position:absolute;top:0;left:0;width:268px;border:1px solid #303640;background:#1c1f24;border-radius:9px;overflow:hidden;min-width:0;margin:0}
     #library .inv-vendor-head{display:flex;align-items:center;gap:8px;padding:9px 10px;border-bottom:1px solid #2d333c;min-width:0}
     #library .inv-logo{width:27px;height:27px;display:grid;place-items:center;flex:none;position:relative;overflow:hidden;border-radius:5px;background:#23384b;color:#fff;font-size:10px;font-weight:800}
@@ -3287,7 +3309,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <div class="inv-roots" id="invRoots" aria-label="Connected plug-in folders"></div>
         <div class="inv-status" id="invScanStatus" role="status">Connect the Audio/Plug-Ins folder and, if needed, Avid/Audio/Plug-Ins. You can add more folders later.</div>
         <div class="inv-stats"><div class="inv-stat"><span>Installed products</span><strong id="invProductCount">—</strong><small>grouped by name and publisher</small></div><div class="inv-stat"><span>Format bundles</span><strong id="invBundleCount">—</strong><small>one plug-in may have several formats</small></div><div class="inv-stat"><span>Formats found</span><strong id="invFormatCount">—</strong><small>AU · VST2 · VST3 · CLAP</small></div></div>
-        <div class="inv-controls"><div class="inv-filters" id="invFormatFilters"><button class="inv-format on" type="button" data-inv-format="All">All formats</button><button class="inv-format" type="button" data-inv-format="AU">AU</button><button class="inv-format" type="button" data-inv-format="VST2">VST2</button><button class="inv-format" type="button" data-inv-format="VST3">VST3</button><button class="inv-format" type="button" data-inv-format="CLAP">CLAP</button></div><label class="inv-search"><span class="inv-small">Find</span><input id="invSearch" type="search" placeholder="Plug-in or publisher…" autocomplete="off"></label></div>
+        <div class="inv-controls"><div class="inv-filters" id="invFormatFilters"><button class="inv-format on" type="button" data-inv-format="All">All formats</button><button class="inv-format" type="button" data-inv-format="AU">AU</button><button class="inv-format" type="button" data-inv-format="VST2">VST2</button><button class="inv-format" type="button" data-inv-format="VST3">VST3</button><button class="inv-format" type="button" data-inv-format="CLAP">CLAP</button></div><label class="inv-search"><span class="inv-small">Find</span><input id="invSearch" type="search" placeholder="Plug-in or publisher…" autocomplete="off"></label><div class="inv-view-tools"><label>View<select id="invView" aria-label="Inventory view"><option value="cards">Cards</option><option value="list">List</option><option value="ledger">Ledger</option></select></label><label>Sort<select id="invSort" aria-label="Sort inventory"><option value="vendor">Vendor</option><option value="product">Product</option><option value="format">Format</option><option value="version">Version</option></select></label></div></div>
         <div id="invInventory" aria-live="polite"></div>
       </main>
     </div>
@@ -3745,7 +3767,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-22.5';
+const AIMM_BUILD = '2026-10-29.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -5350,6 +5372,10 @@ const INV_DB_NAME = "aimmPluginScanFolders_v1";
 const INV_ROWS_KEY = "aimmPluginInventoryRows_v1";
 const INV_SCAN_KEY = "aimmPluginInventoryScan_v1";
 const INV_SIDEBAR_KEY = "aimmPluginInventorySidebarCollapsed_v1";
+const INV_VIEW_KEY="aimmPluginInventoryView_v1",INV_SORT_KEY="aimmPluginInventorySort_v1";
+function invReadChoice(key,choices,fallback){try{const value=localStorage.getItem(key);return choices.includes(value)?value:fallback;}catch(_){return fallback;}}
+let INV_VIEW = invReadChoice(INV_VIEW_KEY,["cards","list","ledger"],"cards");
+let INV_SORT = invReadChoice(INV_SORT_KEY,["vendor","product","format","version"],"vendor");
 let INV_FORMAT = "All";
 let INV_SEARCH = "";
 let INV_SCOPE = "all";
@@ -5857,7 +5883,7 @@ function invTileLayoutGrid(grid,keepCols){
     return;
   }
   grid._invTileDeferred=false;
-  const cols=Math.max(1,Math.floor((inner+GAP)/(MIN+GAP))),colW=(inner-GAP*(cols-1))/cols;
+  const cols=Math.min(4,Math.max(1,Math.floor((inner+GAP)/(MIN+GAP)))),colW=(inner-GAP*(cols-1))/cols;
   if(grid._invTileCols!==cols||Math.abs((grid._invTileColW||0)-colW)>0.5)keepCols=false;
   grid._invTileCols=cols;grid._invTileColW=colW;
   const cards=Array.from(grid.children).filter(card=>card.classList&&card.classList.contains("inv-vendor"));
@@ -6176,7 +6202,12 @@ function invRenderInventory(){
     const categoryOK=!INV_CATEGORY||group.browseCategory===INV_CATEGORY;
     return formatOK&&searchOK&&scopeOK&&categoryOK;
   });
-  filtered.sort((a,b)=>a.vendor.localeCompare(b.vendor)||a.name.localeCompare(b.name));
+  const collator=new Intl.Collator(undefined,{sensitivity:"base",numeric:true});
+  const sortValue=group=>INV_SORT==="product"?group.name:INV_SORT==="format"?Array.from(group.formats).sort().join(", "):INV_SORT==="version"?Array.from(group.versions).sort().join(", "):group.vendor;
+  filtered.sort((a,b)=>collator.compare(sortValue(a),sortValue(b))||collator.compare(a.vendor,b.vendor)||collator.compare(a.name,b.name));
+  const viewControl=document.getElementById("invView"),sortControl=document.getElementById("invSort");
+  if(viewControl)viewControl.value=INV_VIEW;
+  if(sortControl)sortControl.value=INV_SORT;
   if(!rows.length){
     host.innerHTML='<div class="inv-empty">No installed inventory yet. Connect the folder named <strong>Plug-Ins</strong> and the Avid plug-in folder, then scan.</div>';
     return;
@@ -6314,8 +6345,26 @@ function invRenderInventory(){
     "dawesome":"https://www.dawesomemusic.com/",
     "hushaudio":"https://hush.audio/"
   };
-  const tones=["","coral","gold","mint","violet"];
   const formatTone={AU:"au",VST2:"vst",VST3:"vst",CLAP:"clap"};
+  if(INV_VIEW!=="cards"){
+    const ledger=INV_VIEW==="ledger",columns=ledger
+      ?'<span data-col="vendor">Vendor</span><span>Plug-in</span><span data-col="category">Category</span><span>Version</span><span data-col="format">Formats</span><span class="ledger-only">Tags &amp; notes</span><span aria-hidden="true"></span>'
+      :'<span data-col="vendor">Vendor</span><span>Plug-in</span><span>Version</span><span data-col="format">Formats</span><span data-col="category">Category</span><span aria-hidden="true"></span>';
+    const rowsHTML=filtered.map(group=>{
+      const vendor=group.vendor||"Unknown vendor",normalized=invNorm(vendor).replace(/ (inc|llc|ltd|limited|gmbh|corporation|corp)$/,""),domain=brandDomains[normalized]||"";
+      const hubUrl=installerHubs[normalized.replace(/[^a-z0-9]/g,"")]||"",websiteUrl=vendorHomepages[normalized.replace(/[^a-z0-9]/g,"")]||(domain?"https://www."+domain+"/":"");
+      const category=group.browseCategory||group.category||"Uncategorised",formats=Array.from(group.formats).sort(),versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
+      const chips=formats.map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
+      const fav=typeof isFav==="function"&&isFav(group.name),meta=invProductUserMetaHTML(vendor,group.name);
+      const action=invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}));
+      return '<div class="inv-list-row" role="row"><span class="inv-list-vendor" role="cell">'+invEsc(vendor)+'</span><span class="inv-list-product" role="cell"><span class="inv-list-name">'+invEsc(group.name)+'</span></span>'+(ledger?'<span class="inv-list-meta ledger-only" role="cell">'+invEsc(category)+'</span>':'')+'<span class="inv-list-meta" role="cell">'+invEsc(versions)+'</span><span class="inv-list-formats" data-col="format" role="cell">'+chips+'</span>'+(ledger?'':'<span class="inv-list-meta" data-col="category" role="cell">'+invEsc(category)+'</span>')+(ledger?'<span class="inv-list-meta ledger-only" role="cell">'+(meta||"—")+'</span>':'')+'<span class="inv-list-actions" role="cell"><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+action+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></span></div>';
+    }).join("");
+    host.innerHTML='<div class="inv-table inv-view-'+(ledger?"ledger":"list")+'" role="table" aria-label="Installed plug-ins"><div class="inv-list-head" role="row">'+columns+'</div>'+rowsHTML+'</div>';
+    host.querySelectorAll("[data-inv-fav]").forEach(button=>button.addEventListener("click",()=>toggleFav(button.getAttribute("data-inv-fav"))));
+    host.querySelectorAll("[data-inv-product-action]").forEach(button=>button.addEventListener("click",()=>invOpenProductActionMenu(button)));
+    return;
+  }
+  const tones=["","coral","gold","mint","violet"];
   host.innerHTML='<div class="inv-cards">'+Array.from(byVendor.entries()).map(([vendorKey,vendorData])=>{
     const vendor=vendorData.name,items=vendorData.items;
     const normalized=invNorm(vendor).replace(/ (inc|llc|ltd|limited|gmbh|corporation|corp)$/,"");
@@ -6471,6 +6520,19 @@ function invInit(){
   });
   const search=document.getElementById("invSearch");
   if(search)search.addEventListener("input",()=>{INV_SEARCH=search.value||"";invRenderInventory();});
+  const view=document.getElementById("invView"),sort=document.getElementById("invSort");
+  if(view)view.addEventListener("change",()=>{
+    const value=view.value;
+    if(!["cards","list","ledger"].includes(value))return;
+    INV_VIEW=value;try{localStorage.setItem(INV_VIEW_KEY,INV_VIEW);}catch(_){}
+    invRenderInventory();
+  });
+  if(sort)sort.addEventListener("change",()=>{
+    const value=sort.value;
+    if(!["vendor","product","format","version"].includes(value))return;
+    INV_SORT=value;try{localStorage.setItem(INV_SORT_KEY,INV_SORT);}catch(_){}
+    invRenderInventory();
+  });
   const filters=document.getElementById("invFormatFilters");
   if(filters)filters.addEventListener("click",event=>{
     const button=event.target.closest("[data-inv-format]");
