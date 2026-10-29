@@ -5374,7 +5374,7 @@ const INV_CATEGORY_STAGES = {
   "Imaging":["imager"],
   "Instruments & MIDI":[],
   "Restoration":["repair"],
-  "Channel Strips & Multi-FX:["vocal","creative-fx"]
+  "Channel Strips & Multi-FX":["vocal","creative-fx"]
 };
 function invNorm(value){
   return String(value || "").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
