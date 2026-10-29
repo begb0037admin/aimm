@@ -1,3 +1,18 @@
+## 2026-10-29 PluginHub UI parity continuation
+
+Use the new [PluginHub parity sweep](../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md) (blob `50bae6639e116900609b85d519a52959d6f4d65d`) as the implementation checklist for the Library UI and reference-tool sweep. It compares the actual installed PluginHub manual/UI with branch source `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62`.
+
+Next sequence:
+
+1. Add the reference View selector and implement Cards, List and Ledger, retaining the chosen four-column Cards default; add sorting and complete category/tag selection semantics.
+2. Add the missing browse/status controls only when their data is real. Status buckets, vendor checks, paid-upgrade signals and snooze behavior need the shared status model.
+3. Add a PluginHub-style Tools section with clearly scoped surfaces. Keep local filesystem work behind the native Companion preview/confirmation/receipt protocol; do not make unsupported actions appear active.
+4. Complete vault, compatibility, sharing and profile flows against their separate privacy/account contracts.
+5. Repeat the visual/manual parity walk and obtain fresh independent review before any Foundation/Stage 6 gate changes.
+
+AAX remains intentionally excluded by the approved scanner architecture. The parity sweep is not Foundation exit evidence and does not authorize production deployment. Foundation remains **NOT MET**; Stage 6 remains gated.
+
+## Latest roadmap update — 2026-10-29
 ## Latest Stage 5 passkey resume — 2026-10-29
 
 Source fix `98754965a901b37a193fa6363b7e01758283e9cb` was reviewed and passed by Jules. The same signed-in development session resumed synthetic operation `caebb13c-1f6b-4422-b23c-570b4d8a0e9f` on the paired device and verified the exact preview. The first saved-passkey assertion eventually succeeded and revealed the exact synthetic source and isolated `Unused` destination. The second confirmation attempt expired while the 1Password handoff was loading; Companion safely cleared only that expired, unconfirmed preview and reported no file changes. The same operation was resumed, the existing `Unused` folder selected again, and a fresh preview prepared.
