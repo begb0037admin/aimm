@@ -1,6 +1,6 @@
 ## 2026-10-29 PluginHub parity sweep
 
-Manual-to-preview comparison is recorded in [PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md](../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md) (blob `50bae6639e116900609b85d519a52959d6f4d65d`; created by commit `62f7f1fd10b079ca33273ef859115e6b6668d3a6`). Latest inspected branch source: `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62`. The four-column vendor cards and current per-product menu render; whole-library tools, alternate layouts, status views and native actions remain open. Jules review of the parity report is pending.
+Manual-to-preview comparison is recorded in [PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md](../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md) (blob `a14e42367f30d157b606f134ab3cd85be4fdfdef`; corrected in commit `a84321d3227acb2a28422b0564eca8280184528b`). Latest inspected branch source: `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62`. The four-column vendor cards and current per-product menu render; whole-library tools, alternate layouts, status views and native actions remain open. Jules review of the parity report is pending.
 
 Foundation remains **NOT MET**. Stage 6 remains gated. The Pages inspection did not run tests or alter the Worker deployment. The development Worker surgical passkey RP-fix provenance limitation remains separately open. Continue with the parity report’s ordered work, preserve synthetic non-production data, and keep production and separately gated actions out of scope.
 
