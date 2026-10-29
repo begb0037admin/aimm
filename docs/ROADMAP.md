@@ -1,16 +1,17 @@
-## 2026-10-29 PluginHub parity continuation
+## 2026-10-29 PluginHub parity continuation — Tag Manager landed
 
-The latest branch source `47efd003e2429f82cf2a6b21bbacbfa0404cbb92` is deployed to the approved development Pages preview. Category counts now appear on the first Library render. Cards, List and Ledger, four sort modes, Hidden/Favorites/My tags filters, and vendor collapse/expand controls are present. Jules reviewed the category resolver change and passed. See [the implementation evidence](../governance/evidence/PHASE_PLUGINHUB_PARITY_UPDATE_20261029.md) and [the updated parity sweep](../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md).
+Source `3570ad1bd5dfb55d69685f6a10c201e6b2553048` is deployed to development Pages (`01f39e82-a295-4204-9b27-32f94d6c0cdf`). The 4-column Cards view, List/Ledger, sorting, categories and Plugin Tag Manager are present. Tag Manager supports browser-local tag creation, rename, colour, order, deletion, search and per-product membership, including atomic vendor-level Add all. Jules reviewed the exact source and passed. The clean isolated preview origin showed the empty-inventory state; no folder scan or inventory upload occurred. See [Tag Manager evidence](../governance/evidence/PHASE_PLUGINHUB_TAG_MANAGER_20261029.md).
 
 Next sequence:
 
-1. Complete Tag Manager and persistent tag editing against the approved preference contract.
-2. Add Intel-only and snoozed controls; only enable update status groups after real vendor checks provide current status data.
-3. Build out the PluginHub-style whole-library Tools surfaces, using reviewed contracts and explicit unavailable states where a backend is missing.
-4. Complete Companion-backed file operations through its existing preview, confirmation and receipt protocol.
-5. Repeat the manual parity walk and obtain fresh independent end-to-end acceptance before considering any Foundation/Stage 6 gate.
+1. Add browse-by-tag selection and verify combinations with categories and search against the reference behavior.
+2. Add only metadata-backed browse controls; Intel-only requires architecture data and snooze requires live update-status state.
+3. Build the whole-library Tools surfaces with each native/backend-dependent action unavailable until its reviewed backend exists.
+4. Complete Companion-backed file operations through exact preview, confirmation and receipt; no action without the existing gates.
+5. Repeat the PluginHub manual parity walk and obtain fresh independent acceptance before any Foundation/Stage 6 gate changes.
 
-AAX remains excluded by the approved scanner architecture. No automated tests, folder scan, inventory upload, Worker deployment or production action occurred in this checkpoint. The Worker passkey RP fix remains surgical, not reproducible from branch source. Foundation remains **NOT MET**; Stage 6 remains gated.
+No tests, folder scan, inventory upload, Worker deployment or production action occurred. The Worker passkey RP fix remains surgical, not reproducible from branch source. Foundation remains **NOT MET**; Stage 6 remains gated.
+
 
 ## Historical initial parity plan — superseded by current sequence
 
