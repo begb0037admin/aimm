@@ -18,7 +18,7 @@ The same synthetic operation was resumed. The paired diagnostic Companion showed
 
 Stage 5 remains **PARTIAL**; Foundation remains **NOT MET**; Stage 6 remains gated. Use synthetic non-production data only; no production deployment or separately gated external action occurred. The development Worker is still the reproducible branch-source deployment described below; this Pages UI update does not change Worker provenance.
 
-## Latest Stage 5 synthetic action checkpoint — 2026-10-29
+## Historical Stage 5 synthetic action checkpoint — superseded by the latest passkey resume
 
 GitHub branch `codex/pluginhub-foundation` was verified at source commit `00b07d037fae2f665ba90895a6e2ae3e9a323b5e` before this record update. The synthetic record selector was corrected to the paired fixture ID in that commit; Jules had reviewed the exact source change. The branch Pages preview reflects the commit at `https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/` (deployment `c6dd0988-00b6-4f72-be36-24705fd0f573`).
 
@@ -32,9 +32,9 @@ Stage 5 remains **PARTIAL**; Foundation remains **NOT MET** and Stage 6 remains 
 
 Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`.
 
-## Current synchronized record pins — updated from verified GitHub source head `7781165`
+## Current synchronized record pins — verified against branch head `fdb55cbf39fd327b81aeedc8c73b43c5c84b86d0`
 
-Dashboard `DASHBOARD.html` blob `447cf927ddbcfa299ec3313667b5a9933cc1e2ec`; Roadmap `docs/ROADMAP.md` blob `dba93b3ce8d61f95345abe9db7db619d34949fd7`; Status `docs/STATUS.md` blob `03a4dd4b594613b7b63546ebb5512af815d2e8c9`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `680ea0522d865cd98be626688c50e08aea2d2fc4`; Foundation closeout blob `12c55dff6a912c7bb0eee1a46ce9ed4cf3139a47`; Foundation evidence package blob `c6a43b6619f4552f9a7c3a819f06cda461aeafed`; Stage 5 synthetic action and Worker report blob `e19ee3be002616e74fed4d9a2a89ead87f53d529`. This handover does not self-pin.
+Dashboard `DASHBOARD.html` blob `447cf927ddbcfa299ec3313667b5a9933cc1e2ec`; Roadmap `docs/ROADMAP.md` blob `dba93b3ce8d61f95345abe9db7db619d34949fd7`; Status `docs/STATUS.md` blob `03a4dd4b594613b7b63546ebb5512af815d2e8c9`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `680ea0522d865cd98be626688c50e08aea2d2fc4`; Foundation closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` blob `12c55dff6a912c7bb0eee1a46ce9ed4cf3139a47`; Foundation evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md` blob `c6a43b6619f4552f9a7c3a819f06cda461aeafed`; current Stage 5 synthetic action and Worker report `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md` blob `e59186553e5636de5bf9c32e0b0b448f5e35f755`. The Settings source fix is commit `98754965a901b37a193fa6363b7e01758283e9cb`. This handover does not self-pin.
 
 ## Historical synchronized pins before this checkpoint — 2026-10-29
 
