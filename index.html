@@ -3261,7 +3261,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <div class="inv-sidebar-section">LIBRARY</div>
         <nav class="inv-sidebar-nav" aria-label="Saved plug-ins">
           <button class="inv-side-button" type="button" data-inv-scope="favorites" aria-label="Favorites" title="Favorites"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg></span><span class="inv-side-label">Favorites</span><span class="inv-side-count" id="invSidebarFavCount">0</span></button>
-          <button class="inv-side-button" type="button" disabled title="User tags are not available in the installed inventory yet" aria-label="My tags — unavailable"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m20 13-7 7-9-9V4h7l9 9Z"/><circle cx="8.5" cy="8.5" r=".8"/></svg></span><span class="inv-side-label">My tags</span></button>
+          <button class="inv-side-button" type="button" data-inv-scope="tags" aria-label="My tags" title="Show plug-ins with saved tags"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m20 13-7 7-9-9V4h7l9 9Z"/><circle cx="8.5" cy="8.5" r=".8"/></svg></span><span class="inv-side-label">My tags</span></button>
         </nav>
         <div class="inv-sidebar-section">CATEGORIES</div>
         <nav class="inv-sidebar-nav" aria-label="Plug-in categories">
@@ -5794,6 +5794,8 @@ function invRenderSidebar(groups,stageMap){
   if(!sidebar||!layout)return;
   const allCount=groups.length;
   const favCount=groups.filter(group=>typeof isFav==="function"&&isFav(group.name)).length;
+  const tagCount=groups.filter(group=>{const state=invGetProductActions(group.vendor,group.name);return Array.isArray(state.tags)&&state.tags.length>0}).length;
+  const tagButton=sidebar.querySelector('[data-inv-scope="tags"]');if(tagButton){tagButton.classList.toggle("active",INV_SCOPE==="tags");tagButton.setAttribute("aria-pressed",String(INV_SCOPE==="tags"));let count=tagButton.querySelector(".inv-side-count");if(!count){count=document.createElement("span");count.className="inv-side-count";tagButton.appendChild(count);}count.textContent=tagCount.toLocaleString();}
   const allLabel=document.getElementById("invSidebarAllCount");
   const favLabel=document.getElementById("invSidebarFavCount");
   if(allLabel)allLabel.textContent=allCount.toLocaleString();
@@ -6123,7 +6125,8 @@ function invRenderInventory(){
   let filtered=groups.filter(group=>{
     const formatOK=INV_FORMAT==="All"||group.formats.has(INV_FORMAT);
     const searchOK=!query||invNorm([group.name,group.vendor,Array.from(group.versions).join(" "),Array.from(group.formats).join(" ")].join(" ")).includes(query);
-    const scopeOK=INV_SCOPE!=="favorites"||(typeof isFav==="function"&&isFav(group.name));
+    const actionState=invGetProductActions(group.vendor,group.name);
+    const scopeOK=INV_SCOPE==="favorites"?(typeof isFav==="function"&&isFav(group.name)):INV_SCOPE==="tags"?(Array.isArray(actionState.tags)&&actionState.tags.length>0):true;
     const categoryOK=!INV_CATEGORY||group.browseCategory===INV_CATEGORY;
     return formatOK&&searchOK&&scopeOK&&categoryOK;
   });
@@ -6133,7 +6136,7 @@ function invRenderInventory(){
     return;
   }
   if(!filtered.length){
-    const message=INV_SCOPE==="favorites"?"No favourited installed plug-ins match this view.":"No installed plug-ins match this search and filter.";
+    const message=INV_SCOPE==="favorites"?"No favourited installed plug-ins match this view.":INV_SCOPE==="tags"?"No tagged installed plug-ins match this view.":"No installed plug-ins match this search and filter.";
     host.innerHTML='<div class="inv-empty">'+message+'</div>';
     return;
   }
