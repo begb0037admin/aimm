@@ -32,9 +32,9 @@ Stage 5 remains **PARTIAL**; Foundation remains **NOT MET** and Stage 6 remains 
 
 Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`.
 
-## Current synchronized record pins — verified against branch head `fdb55cbf39fd327b81aeedc8c73b43c5c84b86d0`
+## Current synchronized record pins — verified from sibling records at head `1772b3a71ee8037b2ab9b8d8ec0bf99f951ec2e9`
 
-Dashboard `DASHBOARD.html` blob `447cf927ddbcfa299ec3313667b5a9933cc1e2ec`; Roadmap `docs/ROADMAP.md` blob `dba93b3ce8d61f95345abe9db7db619d34949fd7`; Status `docs/STATUS.md` blob `03a4dd4b594613b7b63546ebb5512af815d2e8c9`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `680ea0522d865cd98be626688c50e08aea2d2fc4`; Foundation closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` blob `12c55dff6a912c7bb0eee1a46ce9ed4cf3139a47`; Foundation evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md` blob `c6a43b6619f4552f9a7c3a819f06cda461aeafed`; current Stage 5 synthetic action and Worker report `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md` blob `e59186553e5636de5bf9c32e0b0b448f5e35f755`. The Settings source fix is commit `98754965a901b37a193fa6363b7e01758283e9cb`. This handover does not self-pin.
+Dashboard `DASHBOARD.html` blob `c29f4cc04f643eb9f7ad146f282631388071175f`; Roadmap `docs/ROADMAP.md` blob `f79f64439594e2a6171c955556c0fb1ffe7ea608`; Status `docs/STATUS.md` blob `1258d95d608d366eb41e6860e5ba0a90924ada16`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `680ea0522d865cd98be626688c50e08aea2d2fc4`; Foundation closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` blob `a229f4ab25f931581bd9cdafef3e873da585f958`; Foundation evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md` blob `53857ed94a6246b5f27251653a55e17eb5b4ce32`; current Stage 5 synthetic action and Worker report `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md` blob `e59186553e5636de5bf9c32e0b0b448f5e35f755`. Settings source fix: `98754965a901b37a193fa6363b7e01758283e9cb`. This handover does not self-pin.
 
 ## Historical synchronized pins before this checkpoint — 2026-10-29
 
