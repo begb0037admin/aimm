@@ -155,10 +155,11 @@
     location.assign(authorize.toString());
   }
 
-  function attachLoginHandler(button, errorHost) {
+  function attachLoginHandler(button, errorHost, onStart = () => {}, onError = () => {}) {
     button.addEventListener("click", async () => {
+      onStart();
       try { await beginLogin(); }
-      catch (error) { errorHost.textContent = error.message; }
+      catch (error) { errorHost.textContent = error.message; onError(error); }
     });
   }
 
@@ -1153,6 +1154,7 @@
 #aimm-account-preview .account-results-grid .account-result li{padding:3px 0;overflow-wrap:anywhere}
 #aimm-account-preview .account-tools-toggle{display:flex;gap:14px;align-items:center;min-height:48px;margin:14px 0;color:#dce2e8;font-weight:550}
 @media(max-width:700px){#aimm-account-preview .account-results-grid{grid-template-columns:1fr}#aimm-account-preview .account-results-banner{align-items:flex-start;flex-direction:column}#aimm-account-preview .account-results-banner>div{width:100%;min-width:0;overflow-wrap:anywhere}}#aimm-account-toast-stack{position:fixed;z-index:99999;top:16px;right:18px;display:grid;gap:9px;width:min(440px,calc(100vw - 36px));pointer-events:none}#aimm-account-toast-stack .account-toast{padding:13px 16px;border:1px solid #526078;border-radius:10px;background:#172033;color:#f8fafc;box-shadow:0 12px 34px #0008}#aimm-account-toast-stack .account-toast.is-error{border-color:#f87171}#aimm-account-toast-stack .account-toast.is-busy{border-left:4px solid #818cf8}`;
+    style.textContent += `#aimm-account-preview .account-primary button.is-signed-in{background:#123b2a;border-color:#39a873;color:#c8f7dc;cursor:default}#aimm-account-preview .account-primary button.is-signed-in:before{content:"✓";margin-right:9px;font-weight:800}`;
     settings.prepend(style);
     const card = document.createElement("section");
     card.id = "aimm-account-preview";
@@ -1161,14 +1163,53 @@
     const sectionHelp = text("p", "Manage development Library access and your passkey. Inventory and status checks run quietly and report progress here.");
     const primaryRow = document.createElement("div");
     primaryRow.className = "account-row account-primary";
-    const signIn = text("button", "Sign in");
+    const signIn = text("button", "Checking sign-in…");
     signIn.type = "button";
+    signIn.disabled = true;
+    signIn.setAttribute("aria-live", "polite");
     const passkeyButton = text("button", "Set up a passkey", "account-passkey");
     passkeyButton.type = "button";
     primaryRow.append(signIn, passkeyButton);
     const notice = text("p", "Sign in to manage your development Library account.");
     notice.setAttribute("role", "status");
     notice.setAttribute("aria-live", "polite");
+    const setSessionStatus = (state, message = "") => {
+      signIn.dataset.sessionState = state;
+      signIn.classList.toggle("is-signed-in", state === "signed-in");
+      signIn.textContent = state === "signed-in" ? "Signed in" : state === "checking" || state === "signing-out" ? "Checking sign-in…" : state === "signout-error" ? "Sign-out needs attention" : "Sign in";
+      signIn.disabled = state === "signed-in" || state === "checking" || state === "signing-out" || state === "signout-error";
+      signOut.hidden = state !== "signed-in" && state !== "signing-out" && state !== "signout-error";
+      signOut.disabled = state !== "signed-in" && state !== "signout-error";
+      if (state === "signed-in") notice.textContent = "You’re signed in to the development Library.";
+      else if (state === "signed-out") notice.textContent = "You’re not signed in. Sign in to manage your development Library account.";
+      else if (state === "checking") notice.textContent = "Checking your development Library sign-in…";
+      else if (state === "signing-out") notice.textContent = "Signing out of the development Library…";
+      else if (state === "unavailable") notice.textContent = "Sign-in status is unavailable. Check your connection and try again.";
+      else if (state === "error") notice.textContent = message || "Sign-in needs attention. Please try again.";
+      else if (state === "signout-error") notice.textContent = message || "Sign-out failed. The development Library session may still be active.";
+    };
+    const refreshSessionStatus = async () => {
+      setSessionStatus("checking");
+      const base = apiBase();
+      if (!base) { setSessionStatus("unavailable"); return false; }
+      try {
+        const response = await fetch(`${base}/v1/session`, { credentials: "include", cache: "no-store" });
+        if (response.ok) {
+          sessionInfo = await response.json();
+          csrfToken = sessionInfo.csrf_token;
+          setSessionStatus("signed-in");
+          return true;
+        }
+        sessionInfo = null;
+        csrfToken = null;
+        if (response.status === 401) setSessionStatus("signed-out");
+        else setSessionStatus("unavailable");
+        return false;
+      } catch {
+        setSessionStatus("unavailable");
+        return false;
+      }
+    };
 
     const advanced = document.createElement("details");
     const advancedSummary = text("summary", "More Library settings");
@@ -1189,6 +1230,8 @@
     saveAPI.type = "button";
     const signOut = text("button", "Sign out");
     signOut.type = "button";
+    signOut.hidden = true;
+    signOut.disabled = true;
     const refresh = text("button", "Compare inventory");
     refresh.type = "button";
     const statusButton = text("button", "Check update statuses");
@@ -1286,9 +1329,10 @@
         notifyAccount("Development Library API URL saved.");
       } catch (error) { notifyAccount(error.message, { error: true }); }
     });
-    attachLoginHandler(signIn, notice);
+    attachLoginHandler(signIn, notice, () => setSessionStatus("checking"), (error) => setSessionStatus("error", error.message));
     signOut.addEventListener("click", async () => {
       const job = notifyAccount("Signing out of the development Library…", { busy: true });
+      setSessionStatus("signing-out");
       csrfToken = null;
       sessionInfo = null;
       for (const host of [pairing, result, statusResult, preferencesResult, passkeyResult]) host.replaceChildren();
@@ -1301,10 +1345,12 @@
         csrfToken = null;
         sessionInfo = null;
         setResultsSummary("Signed out", "Sign in again to load account results.", "Signed out", "neutral");
+        setSessionStatus("signed-out");
         job.update("Signed out of the development Library.");
       } catch (error) {
         csrfToken = null;
         sessionInfo = null;
+        setSessionStatus("signout-error", "Sign-out failed. The development Library session may still be active. Retry sign-out before leaving this page.");
         setResultsSummary("API sign-out failed", "The account session may still be active. Stay on this page and retry sign-out.", "Error", "error");
         job.update(`Library API sign-out failed. Its session may still be active. ${error.message}`, true);
         return;
@@ -1535,11 +1581,12 @@
 
     void completeLoginFromCallback().then((completed) => {
       if (completed) {
+        setSessionStatus("signed-in");
         notifyAccount("Signed in to the development Library.");
         setResultsSummary("Signed in", "Run a Library check when you’re ready to load account results.", "Ready", "neutral");
         void renderPairingApproval(pairing);
-      }
-    }).catch((error) => { notice.textContent = error.message; notifyAccount(error.message, { error: true }); });
+      } else void refreshSessionStatus();
+    }).catch((error) => { setSessionStatus("error", error.message); notifyAccount(error.message, { error: true }); });
     setAccountToolsEnabled(localStorage.getItem(FLAG_KEY) === "true");
     if (localStorage.getItem(FLAG_KEY) === "true") void renderPairingApproval(pairing);
 
