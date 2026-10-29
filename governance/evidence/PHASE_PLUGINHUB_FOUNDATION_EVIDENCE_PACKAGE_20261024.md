@@ -1,4 +1,16 @@
-## Latest Stage 5 Keychain and Worker access status — 2026-10-29
+## Latest Stage 5 synthetic action checkpoint — 2026-10-29
+
+GitHub branch `codex/pluginhub-foundation` was verified at source commit `00b07d037fae2f665ba90895a6e2ae3e9a323b5e` before this record update. The synthetic record selector was corrected to the paired fixture ID in that commit; Jules had reviewed the exact source change. The branch Pages preview reflects the commit at `https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/` (deployment `c6dd0988-00b6-4f72-be36-24705fd0f573`).
+
+The development Worker is now deployed from the reproducible branch-source Wrangler 4.152.0 build: artifact SHA-256 `fc0ddd0a46edde56f8aff14b7ddc6fb59d50e663d45c1e7693607d60f7a7f102`; Worker version `6d360126-d613-407d-a4de-be4498743618`, deployment `ccb7a9bd-3ac9-442b-9095-c9e0791ad48b` at 100%. This development deployment followed the owner approval recorded for the exact branch-source deployment. The earlier surgical RP-fix deployment limitation is resolved for the current development runtime only; no production deployment or other separately gated external action occurred.
+
+The development Library session is visibly signed in. A single request for the synthetic fixture was sent to the paired diagnostic Companion (operation `caebb13c-1f6b-4422-b23c-570b4d8a0e9f`). The owner selected the isolated `Unused` destination. Companion prepared a signed exact-path preview for the one synthetic fixture; source and destination were checked in its local UI and match the authorized fixture-to-`Unused` operation. Local paths and device metadata are intentionally not persisted. The browser has not completed the passkey-gated exact-path reveal/confirmation; the Companion Move button remains disabled. **No file has moved and no passkey assertion has succeeded.** Do not create another request or repeat passkey enrollment. Resume the existing operation and complete the browser passkey interaction before any local move; the Companion still requires its separate Move to Unused confirmation. Restore the fixture, remove diagnostic-only credentials/state, and obtain fresh independent review afterward.
+
+Stage 5 remains **PARTIAL**; Foundation remains **NOT MET** and Stage 6 remains gated. Other Foundation exit evidence and fresh independent end-to-end acceptance remain open. Use synthetic non-production data only; no production deployment or separately gated external action.
+
+Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`.
+
+## Historical Stage 5 Keychain and Worker access status — superseded by the 2026-10-29 checkpoint above
 
 The owner approved adding the synthetic diagnostic Companion to the access lists for its paired-device credential and its single saved action-preview Keychain item. Both items remained set to confirm-before-allowing access; no credential or path value was revealed. The Companion then reported “No pending local actions,” and the expired saved preview no longer appears in Keychain. No file moved, no passkey assertion occurred, and no replacement request was created.
 
@@ -8,7 +20,7 @@ The live development Worker remains surgical passkey RP-fix version `68932c1c-24
 
 Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`.
 
-## Latest Stage 5 recovery checkpoint — 2026-10-29
+## Historical Stage 5 recovery checkpoint — superseded by the 2026-10-29 checkpoint above
 
 The owner selected the intended isolated `Unused` folder earlier. Once recovery can proceed, Companion may reopen the folder picker and require selecting that same destination again for a fresh preview; the app is currently blocked before that step by Keychain access. The earlier exact preview expired before path review, and no file move or passkey assertion occurred. Jules reviewed and passed the expired-preview recovery changes in source commit `5a90b392fcd439d8c8f4006bab5d389285387865`. The Companion guards recovery against a live operation, a confirmed action, or a journaled local action; the Worker clears the preview digest and matching payload atomically. Source/build checks passed; no test suite was run.
 
@@ -18,7 +30,7 @@ A development Worker deployment unexpectedly published version `802bb879-e32b-45
 
 Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_PREVIEW_RECOVERY_20261029.md`.
 
-## Latest Stage 5 owner-preview handoff — 2026-10-29
+## Historical Stage 5 owner-preview handoff — superseded by the 2026-10-29 checkpoint above
 
 The reviewed development Settings preview now offers a targeted, synthetic-only move flow. Source commit `3a35e2139bfb28f1b0c95eac944420223e577665`, `library-api/library-account.js` blob `461459466a361f59564582b5a0e50757013a7362`; Jules reviewed the exact source. Cloudflare development Pages deployment `7f9e75c4-a1c3-4393-b9aa-7efbd465b8b8` succeeded on the approved branch preview: https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/.
 
@@ -26,7 +38,7 @@ A device-scoped preview matched only the known synthetic AU fixture, “AIMM Sta
 
 No device metadata or local paths are recorded here, and no unrelated plug-in inventory was requested. Stage 5 remains **PARTIAL**; Foundation remains **NOT MET** and Stage 6 remains gated. The development Worker passkey RP fix remains a surgical bundle patch, not a reproducible branch build. No production deployment occurred.
 
-## Latest Settings sign-in indicator and synthetic Stage 5 preview — 2026-10-29
+## Historical Settings sign-in and synthetic preview checkpoint — superseded by the 2026-10-29 checkpoint above
 
 The development Library session is confirmed: the owner’s read-only Account preferences request completed. The Settings UI initially kept showing “Sign in” even while the session was active. A reviewed fix now shows a green, checkmarked “Signed in” control after a successful same-origin session check on page load; HTTP 401 shows signed out, while origin or service errors show status unavailable. Jules passed the exact source diff. Source commit `24dcbe1bbf21f0e873317f37ee612ea4b45258be`, blob `c8050ee01630a4e5f3dc754bfb67bd1c6bd499c6`. Visual confirmation: development Pages preview `81628aed-b972-4a52-9268-cc88ab735ff0`, https://81628aed.aimm-pluginhub-foundation-dev.pages.dev/. No passkey ceremony, Worker deploy, or production deploy occurred.
 
@@ -38,7 +50,7 @@ Stage 5 remains **PARTIAL** pending exact Companion preview, owner confirmation/
 
 Evidence report: `governance/evidence/PHASE_PLUGINHUB_STAGE5_ISOLATED_SYNTHETIC_DEVICE_SYNC_20261029.md`, blob `32071acd5cd6f98fba16cb3e39a834492e2d3744`.
 
-## Latest Stage 5 isolated synthetic sync — 2026-10-29
+## Historical Stage 5 isolated synthetic sync — superseded by the 2026-10-29 checkpoint above
 
 A fresh diagnostic Companion scanned one metadata-only synthetic AU fixture from an explicitly selected root, paired to the non-production development Worker, and reported the one-entry generation synced. The diagnostic app bundle and fresh journal are under `/private/tmp`; Keychain items use separate service names; no standard plugin folder or plugin inventory record was scanned or read. No independent API inventory readback was made. Evidence: [isolated synthetic sync report](PHASE_PLUGINHUB_STAGE5_ISOLATED_SYNTHETIC_DEVICE_SYNC_20261029.md), blob `32071acd5cd6f98fba16cb3e39a834492e2d3744`.
 

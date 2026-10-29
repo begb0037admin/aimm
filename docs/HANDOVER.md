@@ -1,8 +1,24 @@
-## Latest synchronized pins — 2026-10-29
+## Latest Stage 5 synthetic action checkpoint — 2026-10-29
+
+GitHub branch `codex/pluginhub-foundation` was verified at source commit `00b07d037fae2f665ba90895a6e2ae3e9a323b5e` before this record update. The synthetic record selector was corrected to the paired fixture ID in that commit; Jules had reviewed the exact source change. The branch Pages preview reflects the commit at `https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/` (deployment `c6dd0988-00b6-4f72-be36-24705fd0f573`).
+
+The development Worker is now deployed from the reproducible branch-source Wrangler 4.152.0 build: artifact SHA-256 `fc0ddd0a46edde56f8aff14b7ddc6fb59d50e663d45c1e7693607d60f7a7f102`; Worker version `6d360126-d613-407d-a4de-be4498743618`, deployment `ccb7a9bd-3ac9-442b-9095-c9e0791ad48b` at 100%. This development deployment followed the owner approval recorded for the exact branch-source deployment. The earlier surgical RP-fix deployment limitation is resolved for the current development runtime only; no production deployment or other separately gated external action occurred.
+
+The development Library session is visibly signed in. A single request for the synthetic fixture was sent to the paired diagnostic Companion (operation `caebb13c-1f6b-4422-b23c-570b4d8a0e9f`). The owner selected the isolated `Unused` destination. Companion prepared a signed exact-path preview for the one synthetic fixture; source and destination were checked in its local UI and match the authorized fixture-to-`Unused` operation. Local paths and device metadata are intentionally not persisted. The browser has not completed the passkey-gated exact-path reveal/confirmation; the Companion Move button remains disabled. **No file has moved and no passkey assertion has succeeded.** Do not create another request or repeat passkey enrollment. Resume the existing operation and complete the browser passkey interaction before any local move; the Companion still requires its separate Move to Unused confirmation. Restore the fixture, remove diagnostic-only credentials/state, and obtain fresh independent review afterward.
+
+Stage 5 remains **PARTIAL**; Foundation remains **NOT MET** and Stage 6 remains gated. Other Foundation exit evidence and fresh independent end-to-end acceptance remain open. Use synthetic non-production data only; no production deployment or separately gated external action.
+
+Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`.
+
+## Current synchronized record pins — staged from verified branch head `00b07d0`
+
+Dashboard `DASHBOARD.html` blob `4f6f7d2ecaab2c3419b2948984996978138d124f`; Roadmap `docs/ROADMAP.md` blob `bf523689e2afcd0451eabf3d35170a5e0de6ca69`; Status `docs/STATUS.md` blob `b21cfa21559338bdd481c4e6cc87af52222e9bf5`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `84e4dae34c0fbebf902624ad4b38617de0f8b5ed`; Foundation closeout blob `6b7280bd8354c33520f0d5d162a179fab176f186`; Foundation evidence package blob `68cb08a7659d720cd53a1386fc715eea8eceec92`; Stage 5 synthetic action and Worker report blob `bf47078f22e68d5127b9294b65ebe949ceced33f`. This handover does not self-pin.
+
+## Historical synchronized pins before this checkpoint — 2026-10-29
 
 Recovery source commit `5a90b392fcd439d8c8f4006bab5d389285387865`; development Worker dry-run artifact SHA-256 `fc0ddd0a46edde56f8aff14b7ddc6fb59d50e663d45c1e7693607d60f7a7f102`. Dashboard `DASHBOARD.html` blob `37fd0a7b4a757764542e63df1b6b41718b718559`; Roadmap `docs/ROADMAP.md` blob `eb9122936e8aeb3ee1b1351c77f1b990da266685`; Status `docs/STATUS.md` blob `2d0a8cf2cb2b5f5eda29ff7dd809be5219a6bc12`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `6ff08f12119529eacdee376791fa060fce2bfc1d`; Foundation closeout blob `864fa5e2590fef77cef3312ffb23532e3a660534`; Foundation evidence package blob `e50246e928fb65cbf3e1a88cabcfeea91aa49079`; Stage 5 status blob `3872e9e3ee6479c5a1039c1877493ea7734b48c2`; preview recovery report blob `e3a08ffc8db3ea28fe59cbb242f5c3de99afbed4`; Keychain and Worker access report blob `85e16bfaad57118b749b4ac4e46a5d009773e0a4`. This handover does not self-pin.
 
-## Latest Stage 5 Keychain and Worker access status — 2026-10-29
+## Historical Stage 5 Keychain and Worker access status — superseded by the 2026-10-29 checkpoint above
 
 The owner approved adding the synthetic diagnostic Companion to the access lists for its paired-device credential and its single saved action-preview Keychain item. Both items remained set to confirm-before-allowing access; no credential or path value was revealed. The Companion then reported “No pending local actions,” and the expired saved preview no longer appears in Keychain. No file moved, no passkey assertion occurred, and no replacement request was created.
 
@@ -12,11 +28,11 @@ The live development Worker remains surgical passkey RP-fix version `68932c1c-24
 
 Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`.
 
-## Recovery record pins — 2026-10-29
+## Historical recovery record pins — superseded by the current synchronized pins above
 
 These synchronized records describe source commit `5a90b392fcd439d8c8f4006bab5d389285387865`. Dashboard `DASHBOARD.html` blob `5b6c44150fc4c655d4207855269f3119c1ec1ac4`; Roadmap `docs/ROADMAP.md` blob `f84b944dc47a8a456a7494ae08600c0c81e1f9c9`; Status `docs/STATUS.md` blob `ee121b44ed95cb5820e237395775b32b0d2dc267`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `4acfd3e96122a9ca7a661182bf00688eb0f4fa78`; Foundation closeout blob `65b611f10ffed502c857e2db64f833c7059e2c85`; Foundation evidence package blob `d7caa7b3ec475c8223bf140986adb416c5fac084`; Stage 5 status blob `338c60802f742d9e49e7f4b5748f1c5965375ba1`; new Stage 5 preview-recovery report blob `e3a08ffc8db3ea28fe59cbb242f5c3de99afbed4`. This handover does not self-pin.
 
-## Latest Stage 5 recovery checkpoint — 2026-10-29
+## Historical Stage 5 recovery checkpoint — superseded by the 2026-10-29 checkpoint above
 
 The owner selected the intended isolated `Unused` folder earlier. Once recovery can proceed, Companion may reopen the folder picker and require selecting that same destination again for a fresh preview; the app is currently blocked before that step by Keychain access. The earlier exact preview expired before path review, and no file move or passkey assertion occurred. Jules reviewed and passed the expired-preview recovery changes in source commit `5a90b392fcd439d8c8f4006bab5d389285387865`. The Companion guards recovery against a live operation, a confirmed action, or a journaled local action; the Worker clears the preview digest and matching payload atomically. Source/build checks passed; no test suite was run.
 
@@ -26,7 +42,7 @@ A development Worker deployment unexpectedly published version `802bb879-e32b-45
 
 Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_PREVIEW_RECOVERY_20261029.md`.
 
-## Latest Stage 5 owner-preview handoff — 2026-10-29
+## Historical Stage 5 owner-preview handoff — superseded by the 2026-10-29 checkpoint above
 
 The reviewed development Settings preview now offers a targeted, synthetic-only move flow. Source commit `3a35e2139bfb28f1b0c95eac944420223e577665`, `library-api/library-account.js` blob `461459466a361f59564582b5a0e50757013a7362`; Jules reviewed the exact source. Cloudflare development Pages deployment `7f9e75c4-a1c3-4393-b9aa-7efbd465b8b8` succeeded on the approved branch preview: https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/.
 
@@ -34,7 +50,7 @@ A device-scoped preview matched only the known synthetic AU fixture, “AIMM Sta
 
 No device metadata or local paths are recorded here, and no unrelated plug-in inventory was requested. Stage 5 remains **PARTIAL**; Foundation remains **NOT MET** and Stage 6 remains gated. The development Worker passkey RP fix remains a surgical bundle patch, not a reproducible branch build. No production deployment occurred.
 
-## Latest Settings sign-in indicator and synthetic Stage 5 preview — 2026-10-29
+## Historical Settings sign-in and synthetic preview checkpoint — superseded by the 2026-10-29 checkpoint above
 
 The development Library session is confirmed: the owner’s read-only Account preferences request completed. Settings now shows a persistent “Signed in” state after a successful same-origin session check on page load; HTTP 401 shows signed out, while origin or service errors show status unavailable. The signed-in control uses a saturated green fill, white bold text, a checkmark and full opacity so the disabled-button styling cannot wash it out. Jules reviewed both exact visual diffs and passed. Latest source commit `2142480870a745a08ddae1b13bc2592c50a9344c`, blob `3cc7038d1ae7df1ec2b8f2d0b6c17dad82f6ee00`. Cloudflare development preview deployment `f5982253-4e0d-4813-997a-e9ccae69cd72` succeeded for that commit. Use the approved branch preview for sign-in: https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/#aimm-account-preview. Unique per-deployment Pages URLs are not on the auth-origin allowlist and cannot be used to sign in. No passkey ceremony, Worker deploy, or production deploy occurred.
 
@@ -46,13 +62,13 @@ Stage 5 remains **PARTIAL** pending exact Companion preview, owner confirmation/
 
 Evidence report: `governance/evidence/PHASE_PLUGINHUB_STAGE5_ISOLATED_SYNTHETIC_DEVICE_SYNC_20261029.md`, blob `32071acd5cd6f98fba16cb3e39a834492e2d3744`.
 
-## Latest Stage 5 isolated synthetic sync — 2026-10-29
+## Historical Stage 5 isolated synthetic sync — superseded by the 2026-10-29 checkpoint above
 
 A fresh diagnostic Companion scanned one metadata-only synthetic AU fixture from an explicitly selected root, paired to the non-production development Worker, and reported the one-entry generation synced. The diagnostic app bundle and fresh journal are under `/private/tmp`; Keychain items use separate service names; no standard plugin folder or plugin inventory record was scanned or read. No independent API inventory readback was made. Evidence: [isolated synthetic sync report](../governance/evidence/PHASE_PLUGINHUB_STAGE5_ISOLATED_SYNTHETIC_DEVICE_SYNC_20261029.md), blob `32071acd5cd6f98fba16cb3e39a834492e2d3744`.
 
 Stage 5 remains **PARTIAL**. No move request was created. Kevin approved a narrow read-only device metadata query after the automatic review rejection; the direct GET to the development Pages `/account-api/v1/devices` route returned 401 because this tab had no active Library API access token. No device rows or plug-in inventory were returned. Retry only through this same approved route after an authenticated development Library session is active. The prior 1,642-entry request expired at `2026-10-29T08:06:53.728Z` and was not reused; no replacement request was created. No file move may occur before the owner sees and confirms its exact preview. Restore, fixture cleanup, diagnostic-device revocation and fresh independent Stage 5 review remain open. Foundation remains **NOT MET**; Stage 6 remains gated.
 
-## Current synchronized record pins — 2026-10-29
+## Historical synchronized record pins — superseded by the current pins above
 
 Synchronized record pins for this checkpoint: Dashboard `DASHBOARD.html` `a7510cdc0f3042915e0ff267564cfba0dc22a531`; Roadmap `docs/ROADMAP.md` `e699903fd5ac9d7da214ef5bbb5019bca364d074`; Status `docs/STATUS.md` `6250e4323b35037bdb0e368d240d38f261590dd4`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` `7b7a118f38c6d422919b60534516698308f76f0c`; Foundation closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` `124821f275b116bf77e7fdca7cb74d5fdddb1398`; evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md` `0aa5c63be9d3fca0f873f90f6183117e1340f48e`; Stage 5 status `governance/evidence/PHASE_PLUGINHUB_STAGE5_STATUS_PARITY_ACTION_20261028.md` `c8e2fc285d609a4858b5771f4d80307925294844`; isolated synthetic sync report `governance/evidence/PHASE_PLUGINHUB_STAGE5_ISOLATED_SYNTHETIC_DEVICE_SYNC_20261029.md` `fc48b5f4484e04aa2137f68c2b3de30ea4ecd293`; Settings source `library-api/library-account.js` `461459466a361f59564582b5a0e50757013a7362` (commit `3a35e2139bfb28f1b0c95eac944420223e577665); session-restore report `governance/evidence/PHASE_PLUGINHUB_SESSION_RESTORE_20261028.md` `9dbf776a8e26a6c2a25668a2aea976d4f05b5de2`. This handover does not self-pin.
 
@@ -257,7 +273,7 @@ Use connected GitHub branch `codex/pluginhub-foundation` as authoritative. Keep 
 - Live validation report blob `f5ec44684cbafbfcd793b46213db416ba731ed9d`.
 - Status/recovery checkpoint blob `d2a1fb33f0875d2d0af7ace5a432279e5134b47a`.
 
-### Current synchronized record blobs
+### Historical synchronized record blobs — superseded by the current pins above
 - Dashboard `2ca22607e58bdd2280dcee2cad61e071eec5113e`
 - Roadmap `4c52afbcac04b8b3b888ae7f00781a01970a5f52`
 - Status `05e029a9af75304b3ac7a6ff138067c085eddb28`
@@ -370,7 +386,7 @@ Stages 2–5 remain partial. Browser parity, verified vendor readback and full 3
 
 Keep the 22:47 D1-creation authorization resolved and distinct from the separate 22:51 retention chronology. No production deployment or cutover, migration, credential change, provider-terms acceptance, or plug-in file action occurred during this continuation.
 
-## Current synchronized record blobs
+## Historical synchronized record blobs — superseded by the current pins above
 
 - Dashboard: `1c93fb56c16f549bb371ed460e5341d5c2779fc1`
 - Roadmap: `d73769f45fe6e5b2d917ab5773bf8f86cd84dc00`
@@ -400,7 +416,7 @@ Stages 2–5 remain **partial**. Foundation exit remains **NOT MET**; Stage 6 re
 
 Still open: explain the 317 browser-only rows and 2 version differences; finish/read back the Stage 4 mapping and observations; perform the Stage 5 live preview/confirmation/receipt/recovery walk without executing an unconfirmed file action; run a real paired-credential wrong-device HTTP 401 without exposing the credential; and obtain a fresh independent end-to-end review.
 
-## Current synchronized record blobs
+## Historical synchronized record blobs — superseded by the current pins above
 
 - Dashboard: `aff6b75ca9c52f0b03a0352429fc4bce4c6680c2`
 - Roadmap: `2e971833618c886f351912bf15498accd6e12cb5`
@@ -434,7 +450,7 @@ The isolated populated synthetic D1 Time Travel recovery gate is already **MET**
 
 Evidence: [account-aware Hope and Stage 4 spot checks](../governance/evidence/PHASE_PLUGINHUB_HOPE_ACCOUNT_TOOL_INTEGRATION_20261027.md), blob `01c83197fc80f9abbff83a8f7ab1757cdb6e70e5`.
 
-## Current synchronized record blobs
+## Historical synchronized record blobs — superseded by the current pins above
 
 - Dashboard: `d3a27f9f91d67f7b4396a2d8d118fa3f36634c78`
 - Roadmap: `405e1e53d15730a74b00d6ada3c8bd107874588d`
@@ -455,7 +471,7 @@ No full suite/build ran in this checkpoint. The expected browser session was cre
 
 Next: finish account-backed browser/Mac/Hope parity; run the supported live wrong-device paired-credential 401 probe without exposing credential values; complete remaining approved Stages 2–5 evidence; then obtain fresh independent end-to-end Foundation acceptance. The narrow proxy review does not satisfy that gate.
 
-### Current synchronized record pins
+### Historical synchronized record pins — 2026-10-27
 
 - Dashboard blob: `61357d9eb968c650d053955c1b2de16b9bde2c2b`
 - Roadmap blob: `fbf1c1eb1630967a777a25dfed184dc1ad3b520d`
