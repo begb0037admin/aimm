@@ -1,3 +1,17 @@
+## Latest synchronized pins — 2026-10-29
+
+Recovery source commit `5a90b392fcd439d8c8f4006bab5d389285387865`; development Worker dry-run artifact SHA-256 `fc0ddd0a46edde56f8aff14b7ddc6fb59d50e663d45c1e7693607d60f7a7f102`. Dashboard `DASHBOARD.html` blob `37fd0a7b4a757764542e63df1b6b41718b718559`; Roadmap `docs/ROADMAP.md` blob `eb9122936e8aeb3ee1b1351c77f1b990da266685`; Status `docs/STATUS.md` blob `2d0a8cf2cb2b5f5eda29ff7dd809be5219a6bc12`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `6ff08f12119529eacdee376791fa060fce2bfc1d`; Foundation closeout blob `864fa5e2590fef77cef3312ffb23532e3a660534`; Foundation evidence package blob `e50246e928fb65cbf3e1a88cabcfeea91aa49079`; Stage 5 status blob `3872e9e3ee6479c5a1039c1877493ea7734b48c2`; preview recovery report blob `e3a08ffc8db3ea28fe59cbb242f5c3de99afbed4`; Keychain and Worker access report blob `85e16bfaad57118b749b4ac4e46a5d009773e0a4`. This handover does not self-pin.
+
+## Latest Stage 5 Keychain and Worker access status — 2026-10-29
+
+The owner approved adding the synthetic diagnostic Companion to the access lists for its paired-device credential and its single saved action-preview Keychain item. Both items remained set to confirm-before-allowing access; no credential or path value was revealed. The Companion then reported “No pending local actions,” and the expired saved preview no longer appears in Keychain. No file moved, no passkey assertion occurred, and no replacement request was created.
+
+The signed-in development Pages preview cannot currently read device/action state from the live Worker: “Load development devices” and “Check Mac preview” each returned “A valid Library API access token is required.” No device list, inventory, or action result was returned. Branch source commit `5a90b392fcd439d8c8f4006bab5d389285387865` built with Wrangler 4.152.0 and passed a dry-run; artifact SHA-256 `fc0ddd0a46edde56f8aff14b7ddc6fb59d50e663d45c1e7693607d60f7a7f102`. It was not deployed.
+
+The live development Worker remains surgical passkey RP-fix version `68932c1c-2419-4b36-8208-b90449f4302c`. A branch Worker deployment is separately gated on explicit owner approval. No production deployment occurred. Stage 5 remains **PARTIAL**; Foundation **NOT MET**; Stage 6 gated. Next: approve the exact development Worker deployment, then check the existing synthetic action state without creating another request. Exact-path review and owner confirmation remain required before any file move.
+
+Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md`.
+
 ## Recovery record pins — 2026-10-29
 
 These synchronized records describe source commit `5a90b392fcd439d8c8f4006bab5d389285387865`. Dashboard `DASHBOARD.html` blob `5b6c44150fc4c655d4207855269f3119c1ec1ac4`; Roadmap `docs/ROADMAP.md` blob `f84b944dc47a8a456a7494ae08600c0c81e1f9c9`; Status `docs/STATUS.md` blob `ee121b44ed95cb5820e237395775b32b0d2dc267`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `4acfd3e96122a9ca7a661182bf00688eb0f4fa78`; Foundation closeout blob `65b611f10ffed502c857e2db64f833c7059e2c85`; Foundation evidence package blob `d7caa7b3ec475c8223bf140986adb416c5fac084`; Stage 5 status blob `338c60802f742d9e49e7f4b5748f1c5965375ba1`; new Stage 5 preview-recovery report blob `e3a08ffc8db3ea28fe59cbb242f5c3de99afbed4`. This handover does not self-pin.
