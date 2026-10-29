@@ -6264,7 +6264,7 @@ function invOpenTagManager(){
   });
   tagList.addEventListener("submit",event=>{
     const form=event.target.closest("[data-tag-edit-form]");if(!form)return;event.preventDefault();
-    const newName=form.querySelector("input").value;if(commitRename(form.dataset.tagEditForm,newName)){renderTags();focusTagSelect(newName.trim().replace(/\\s+/g," "));}
+    const newName=form.querySelector("input").value;if(commitRename(form.dataset.tagEditForm,newName)){renderTags();focusTagSelect(newName.trim().replace(/\s+/g," "));}
   });
   tagList.addEventListener("dragstart",event=>{const row=event.target.closest("[data-tag-row]");if(row){dragTag=row.dataset.tagRow;row.classList.add("dragging");event.dataTransfer.effectAllowed="move";}});
   tagList.addEventListener("dragend",event=>{const row=event.target.closest("[data-tag-row]");if(row)row.classList.remove("dragging");dragTag="";});
@@ -6282,14 +6282,14 @@ function invOpenTagManager(){
     const vendorButton=event.target.closest("[data-tag-add-vendor]");
     if(vendorButton){const vendor=vendorButton.dataset.tagAddVendor,groups=invTagGroups().filter(group=>(group.vendor||"Unknown vendor")===vendor&&invNorm((group.vendor||"Unknown vendor")+" "+group.name).includes(invNorm(search.value||"")));
       let ok=true;groups.forEach(group=>{if(!invTagMembership(group,selectedTag,true))ok=false;});
-      if(!ok)invStatus("Some plug-in tags could not be saved in this browser.","error");invRenderInventory();renderTags();
+      if(!ok)invStatus("Some plug-in tags could not be saved in this browser.","error");invRenderInventory();renderTags();Array.from(pluginHost.querySelectorAll("[data-tag-add-vendor]")).find(button=>button.dataset.tagAddVendor===vendor)?.focus();
     }
   });
   clearButton.addEventListener("click",()=>{
     if(!selectedTag||!window.confirm('Remove the "'+selectedTag+'" tag from every plug-in? The tag itself will remain.'))return;
     const actions=invReadProductActions();Object.values(actions).forEach(record=>{if(record&&Array.isArray(record.tags)){record.tags=record.tags.filter(tag=>tag!==selectedTag);if(!record.tags.length)delete record.tags;}});
-    if(!invTagCommit(safeTags(),actions,invReadTagColors())){invStatus("The tag could not be cleared; the original browser data was restored.","error");return;}
-    invRenderInventory();renderTags();
+    if(!invTagCommit(safeTags(),actions,invReadTagColors())){invStatus("The tag could not be cleared in this browser.","error");return;}
+    invRenderInventory();renderTags();clearButton.focus();
   });
   const close=()=>{overlay.remove();invRenderInventory();document.querySelector("[data-inv-tag-manager]")?.focus();};
   overlay.querySelector("[data-tag-done]").addEventListener("click",close);
