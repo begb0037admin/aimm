@@ -1,12 +1,12 @@
-## Latest PluginHub parity checkpoint — 2026-10-29
+## Latest PluginHub filter parity checkpoint — 2026-10-29
 
-Branch source `3570ad1bd5dfb55d69685f6a10c201e6b2553048` is deployed successfully to development Pages (deployment `01f39e82-a295-4204-9b27-32f94d6c0cdf`). The four-column Cards view, List/Ledger layouts, sort controls, vendor cards, initial category totals and Plugin Tag Manager are present. Jules reviewed and passed the Tag Manager source, including the clean-inventory empty state. Evidence: [Tag Manager implementation](../governance/evidence/PHASE_PLUGINHUB_TAG_MANAGER_20261029.md).
+Source `80dd8012a19f8b3cd662ee2125aa1c30e94b4ae6` is deployed to the development Pages preview (`415a8b76-f53c-4c0e-82d5-20f7dd4eeb23`). Jules reviewed the Tag Manager and filter changes and passed. The Library now has a toolbar My Tags dropdown with single/Shift-click multi-tag selection, clearable active chips, and links into New tag and Plugin Tag Manager. Format pills replace on normal click and combine/remove on Shift-click; All formats clears them. Search includes the resolved category. Evidence: [Tag Manager](../governance/evidence/PHASE_PLUGINHUB_TAG_MANAGER_20261029.md) and [filter parity](../governance/evidence/PHASE_PLUGINHUB_FILTERS_20261029.md).
 
-The Tag Manager creates, selects, renames, recolours, orders and deletes browser-local tags and manages per-product membership, including vendor-level Add all. A clean isolated preview origin showed no installed inventory and opened the two-pane manager without scanning or uploading anything. Tag definitions remain browser-local, not account-synchronised.
+Visual review used the exact unique deployment origin with zero installed products and zero connected folders. Format selections and clearing were visibly/accessibly confirmed. A separate deployment origin used one synthetic browser-local tag to verify the selected chip and clear action; no product memberships or real inventory. No folder picker/scan/upload or automated tests.
 
-Remaining gaps include PluginHub’s individual/multi-tag browse selection, Intel-only and snoozed controls, live vendor status checks, Companion-backed file actions, and whole-library Tools workflows. No automated tests, folder scan, inventory upload, Worker deployment or production action occurred. The development Worker passkey RP fix remains a surgical patch, not a reproducible branch-source deployment.
+Remaining gaps include PluginHub's VST cycling control, Intel-only and snoozed/live-status filters, Companion-backed file actions, and whole-library Tools workflows. No Worker or production deployment occurred. The development Worker passkey RP fix remains a surgical patch, not a reproducible branch-source build.
 
-Foundation remains **NOT MET**; Stage 6 remains gated. Use synthetic non-production data only for gated work.
+Foundation remains **NOT MET**; Stage 6 remains gated. Synthetic non-production data only.
 
 ## Historical PluginHub parity sweep — superseded by latest checkpoint
 
