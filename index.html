@@ -3190,6 +3190,34 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #library .inv-action.hub{border-color:#2d725a;background:#18352d;color:#83dfb5}
     #library .inv-action:hover{border-color:#536272;background:#28303a;color:#f3f6f8}
     #library .inv-action.hub:hover{border-color:#45a47d;background:#204638;color:#b4f0d2}
+    #library .inv-product-actions{flex:none;width:20px;height:20px;padding:0;border:0;border-radius:4px;background:transparent;color:#8d98a5;cursor:pointer;font-size:15px;line-height:1}
+    #library .inv-product-actions:hover,#library .inv-product-actions[aria-expanded="true"]{background:#303741;color:#fff}
+    #library .inv-user-note{margin-top:4px;color:#9b8cc8;font-size:9px}
+    #invProductMenu{position:fixed;z-index:20000;width:min(272px,calc(100vw - 16px));max-height:min(72vh,620px);overflow:auto;padding:5px;border:1px solid #3a414b;border-radius:9px;background:#202329;box-shadow:0 12px 34px #0009;color:#e6e9ed;font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    #invProductMenu .inv-menu-head{display:flex;align-items:flex-start;gap:8px;padding:8px 9px;border-bottom:1px solid #343b45}
+    #invProductMenu .inv-menu-title{min-width:0;flex:1;font-weight:650;overflow-wrap:anywhere}
+    #invProductMenu .inv-menu-sub{margin-top:3px;color:#89939f;font-size:10px}
+    #invProductMenu .inv-menu-close{border:0;background:transparent;color:#89939f;cursor:pointer;padding:2px 4px}
+    #invProductMenu .inv-menu-row{display:flex;width:100%;align-items:center;gap:8px;padding:8px 9px;border:0;border-radius:4px;background:transparent;color:#dce1e6;text-align:left;font:inherit;cursor:pointer}
+    #invProductMenu .inv-menu-row:hover{background:#303741}
+    #invProductMenu .inv-menu-row.green{background:#18332a;color:#a1e7c0}
+    #invProductMenu .inv-menu-row.gold{background:#332b20;color:#e7c48b}
+    #invProductMenu .inv-menu-row.red{background:#352428;color:#e6a8b0}
+    #invProductMenu .inv-menu-row.disabled{color:#737d88;cursor:not-allowed}
+    #invProductMenu .inv-menu-row.disabled:hover{background:transparent}
+    #invProductMenu .inv-menu-row .inv-menu-help{margin-left:auto;color:#7f8995;font-size:9px}
+    #invProductMenu hr{border:0;border-top:1px solid #343b45;margin:4px 2px}
+    #invNoteOverlay{position:fixed;inset:0;z-index:20001;display:grid;place-items:center;background:#0009;padding:20px}
+    #invNoteOverlay .inv-note-dialog{width:min(430px,100%);padding:20px;border:1px solid #3a414b;border-radius:12px;background:#202329;color:#e6e9ed;box-shadow:0 18px 46px #000b}
+    #invNoteOverlay h3{margin:0 0 6px;font-size:17px}
+    #invNoteOverlay .inv-note-context{margin-bottom:14px;color:#89939f;font-size:12px}
+    #invNoteOverlay label{display:block;margin:12px 0 6px;color:#aeb7c1;font-size:11px;font-weight:650}
+    #invNoteOverlay textarea,#invNoteOverlay select{width:100%;box-sizing:border-box;border:1px solid #3a414b;border-radius:6px;background:#15181c;color:#e6e9ed;padding:9px;font:12px inherit}
+    #invNoteOverlay textarea{min-height:100px;resize:vertical}
+    #invNoteOverlay .inv-note-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+    #invNoteOverlay button{padding:7px 11px;border:1px solid #3a414b;border-radius:6px;background:#272c33;color:#e6e9ed;cursor:pointer}
+    #invNoteOverlay button.primary{border-color:#537dc1;background:#315b9b;color:#fff}
+    #invNoteOverlay button.danger{margin-right:auto;border-color:#743b43;color:#e6a8b0}
     
     #library .inv-empty{border:1px dashed #394149;border-radius:9px;padding:28px;text-align:center;color:#87919b;font-size:12px;margin-top:12px}
     #library .inv-small{color:#75808a;font-size:10px}
@@ -5835,6 +5863,114 @@ function invLayoutTiles(host){
   invTileObserveGrid(grid);
   invTileLayoutGrid(grid,false);
 }
+const INV_PRODUCT_ACTIONS_KEY="aimm.pluginInventory.productActions.v1";
+let invProductMenu=null,invProductMenuTrigger=null;
+function invActionKey(vendor,name){return invNorm(vendor)+"|"+invNorm(name);}
+function invReadProductActions(){
+  try{const value=JSON.parse(localStorage.getItem(INV_PRODUCT_ACTIONS_KEY)||"{}");return value&&typeof value==="object"?value:{}}catch(_){return {}}
+}
+function invWriteProductActions(value){try{localStorage.setItem(INV_PRODUCT_ACTIONS_KEY,JSON.stringify(value));return true}catch(_){return false}}
+function invGetProductActions(vendor,name){
+  const all=invReadProductActions(),value=all[invActionKey(vendor,name)];
+  return value&&typeof value==="object"?value:{};
+}
+function invProductUserMetaHTML(vendor,name){
+  const state=invGetProductActions(vendor,name),parts=[];
+  if(state.note&&state.note.rating)parts.push("★ "+state.note.rating+"/5");
+  if(state.note&&state.note.text)parts.push("Note saved");
+  if(state.marked)parts.push("Marked up to date");
+  if(state.kept)parts.push("Kept version");
+  if(!parts.length)return "";
+  const note=state.note&&state.note.text?state.note.text:"";
+  return '<div class="inv-meta inv-user-note" title="'+invEsc(note||parts.join(" · "))+'">'+invEsc(parts.join(" · "))+'</div>';
+}
+function invCloseProductActionMenu(){
+  if(invProductMenu){invProductMenu.remove();invProductMenu=null;}
+  if(invProductMenuTrigger){invProductMenuTrigger.setAttribute("aria-expanded","false");invProductMenuTrigger=null;}
+  document.removeEventListener("pointerdown",invProductMenuOutside,true);
+  document.removeEventListener("keydown",invProductMenuKey,true);
+}
+function invProductMenuOutside(event){
+  if(invProductMenu&&invProductMenu.contains(event.target))return;
+  if(invProductMenuTrigger&&invProductMenuTrigger.contains(event.target))return;
+  invCloseProductActionMenu();
+}
+function invProductMenuKey(event){if(event.key==="Escape"){invCloseProductActionMenu();}}
+function invOpenProductActionMenu(button){
+  invCloseProductActionMenu();
+  let context={};
+  try{context=JSON.parse(button.getAttribute("data-inv-product-action")||"{}")}catch(_){}
+  context.name=String(context.name||"");context.vendor=String(context.vendor||"");
+  const state=invGetProductActions(context.vendor,context.name);
+  const menu=document.createElement("div");menu.id="invProductMenu";menu.setAttribute("role","menu");
+  const row=(action,label,classes="",help="")=>'<button type="button" class="inv-menu-row '+classes+'" role="menuitem" data-inv-action="'+action+'">'+label+(help?'<span class="inv-menu-help">'+help+'</span>':"")+'</button>';
+  const disabled=(label,help)=>'<div class="inv-menu-row disabled" role="menuitem" aria-disabled="true" title="'+invEsc(help)+'">'+label+'<span class="inv-menu-help">'+invEsc(help)+'</span></div>';
+  const link=(url,label)=>url?'<a class="inv-menu-row" role="menuitem" href="'+invEsc(url)+'" target="_blank" rel="noopener noreferrer">'+label+' ↗</a>':"";
+  menu.innerHTML='<div class="inv-menu-head"><div style="min-width:0;flex:1"><div class="inv-menu-title">'+invEsc(context.name||"Plugin actions")+'</div><div class="inv-menu-sub">'+invEsc(context.vendor)+'</div></div><button type="button" class="inv-menu-close" aria-label="Close menu">×</button></div>'
+    +'<div class="inv-menu-row disabled" role="menuitem" aria-disabled="true">Category · '+invEsc(context.category||"Uncategorised")+'<span class="inv-menu-help">›</span></div>'
+    +'<div class="inv-menu-row disabled" role="menuitem" aria-disabled="true" title="Tags are not available in this preview">Tags · None<span class="inv-menu-help">›</span></div><hr>'
+    +row("note","Note &amp; rating…")
+    +row("mark",state.marked?"Unmark up to date":"Mark as up to date","green")
+    +disabled("Move to Unused…","Requires native Companion actions")
+    +disabled("Uninstall (Move to Trash)…","Requires native Companion actions")
+    +disabled("Reveal in Finder","Requires native Companion actions")
+    +row("rescan","Rescan plugin folders")
+    +row("copy","Copy plugin name")
+    +link(context.hubUrl,"Installer hub")
+    +link(context.websiteUrl,"Website")
+    +'<hr>'+disabled("License Key Vault…","Not connected in this preview")
+    +row("keep",state.kept?"Unkeep this version":"Keep this version…","gold")
+    +disabled("Report a problem…","Not connected in this preview");
+  document.body.appendChild(menu);
+  invProductMenu=menu;invProductMenuTrigger=button;button.setAttribute("aria-expanded","true");
+  const rect=button.getBoundingClientRect(),mr=menu.getBoundingClientRect(),gap=6;
+  let left=Math.min(window.innerWidth-mr.width-8,Math.max(8,rect.right-mr.width));
+  let top=rect.bottom+gap;
+  if(top+mr.height>window.innerHeight-8)top=Math.max(8,rect.top-mr.height-gap);
+  menu.style.left=left+"px";menu.style.top=top+"px";
+  menu.querySelector(".inv-menu-close").addEventListener("click",invCloseProductActionMenu);
+  menu.addEventListener("click",event=>{
+    const linkEl=event.target.closest("a");if(linkEl){invCloseProductActionMenu();return;}
+    const actionEl=event.target.closest("[data-inv-action]");if(!actionEl)return;
+    const action=actionEl.getAttribute("data-inv-action"),key=invActionKey(context.vendor,context.name);
+    if(action==="note"){invCloseProductActionMenu();invOpenProductNote(context.vendor,context.name);return;}
+    if(action==="copy"){
+      const copy=async()=>{try{await navigator.clipboard.writeText(context.name);invStatus("Copied "+context.name+" to the clipboard.");}catch(_){invStatus("Clipboard access is unavailable in this browser.","error");}};
+      invCloseProductActionMenu();copy();return;
+    }
+    if(action==="rescan"){
+      invCloseProductActionMenu();const scan=document.getElementById("invScanBtn");if(scan)scan.click();else invStatus("Scan connected folders is unavailable.","error");return;
+    }
+    const all=invReadProductActions(),current=all[key]||{};
+    if(action==="mark"){if(current.marked)delete current.marked;else current.marked={at:new Date().toISOString(),version:""};}
+    if(action==="keep")current.kept=!current.kept;
+    all[key]=current;invWriteProductActions(all);invCloseProductActionMenu();invRenderInventory();
+  });
+  setTimeout(()=>{document.addEventListener("pointerdown",invProductMenuOutside,true);document.addEventListener("keydown",invProductMenuKey,true);},0);
+}
+function invOpenProductNote(vendor,name){
+  const state=invGetProductActions(vendor,name),note=state.note||{};
+  const overlay=document.createElement("div");overlay.id="invNoteOverlay";
+  overlay.innerHTML='<div class="inv-note-dialog" role="dialog" aria-modal="true" aria-labelledby="invNoteTitle"><h3 id="invNoteTitle">Note &amp; rating</h3><div class="inv-note-context">'+invEsc(name)+' · '+invEsc(vendor)+'</div><label for="invNoteRating">Rating</label><select id="invNoteRating"><option value="">No rating</option><option value="1">1 of 5</option><option value="2">2 of 5</option><option value="3">3 of 5</option><option value="4">4 of 5</option><option value="5">5 of 5</option></select><label for="invNoteText">Your note</label><textarea id="invNoteText" maxlength="500" placeholder="Add a note about this plug-in…">'+invEsc(note.text||"")+'</textarea><div class="inv-note-actions">'+(note.text||note.rating?'<button type="button" class="danger" data-inv-note-delete>Clear note</button>':"")+'<button type="button" data-inv-note-cancel>Cancel</button><button type="button" class="primary" data-inv-note-save>Save</button></div></div>';
+  document.body.appendChild(overlay);
+  overlay.querySelector("#invNoteRating").value=note.rating?String(note.rating):"";
+  const close=()=>overlay.remove();
+  overlay.addEventListener("click",event=>{if(event.target===overlay)close();});
+  overlay.querySelector("[data-inv-note-cancel]").addEventListener("click",close);
+  overlay.querySelector("[data-inv-note-save]").addEventListener("click",()=>{
+    const all=invReadProductActions(),key=invActionKey(vendor,name),current=all[key]||{};
+    current.note={text:overlay.querySelector("#invNoteText").value.trim(),rating:Number(overlay.querySelector("#invNoteRating").value)||0};
+    if(!current.note.text&&!current.note.rating)delete current.note;
+    all[key]=current;
+    if(invWriteProductActions(all)){close();invRenderInventory();invStatus("Saved your note for "+name+".");}else invStatus("The note could not be saved in this browser.","error");
+  });
+  const clear=overlay.querySelector("[data-inv-note-delete]");
+  if(clear)clear.addEventListener("click",()=>{
+    const all=invReadProductActions(),key=invActionKey(vendor,name),current=all[key]||{};delete current.note;all[key]=current;
+    if(invWriteProductActions(all)){close();invRenderInventory();invStatus("Removed the note for "+name+".");}
+  });
+  overlay.querySelector("#invNoteText").focus();
+}
 function invRenderInventory(){
   const host=document.getElementById("invInventory");
   if(!host)return;
@@ -6026,14 +6162,14 @@ function invRenderInventory(){
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=group.browseCategory||group.category||"Uncategorised";
       const fav=typeof isFav==="function"&&isFav(group.name);
-      return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button></div><div class="inv-meta">'+invEsc(category)+'</div><div class="inv-formats">'+formatsHTML+'</div></div>';
+      return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const hidden=items.slice(4).map(group=>{
       const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=group.browseCategory||group.category||"Uncategorised";
       const fav=typeof isFav==="function"&&isFav(group.name);
-      return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button></div><div class="inv-meta">'+invEsc(category)+'</div><div class="inv-formats">'+formatsHTML+'</div></div>';
+      return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const more=items.length>4?'<button class="inv-more" type="button" data-inv-more aria-expanded="'+String(expanded)+'">'+(expanded?"Show fewer plug-ins":"＋ "+(items.length-4)+" more plug-ins")+'</button>':"";
     return '<section class="inv-vendor'+(expanded?" expanded":"")+(collapsed?" collapsed":"")+'" data-inv-vendor="'+invEsc(vendorKey)+'"><div class="inv-vendor-head"><span class="inv-logo '+tone+'"><span>'+invEsc(initials)+'</span>'+logo+'</span><span class="inv-vendor-name"><strong>'+invEsc(vendor)+'</strong><small>'+(domain?invEsc(domain)+' · ':'')+items.length+' '+(items.length===1?'plug-in':'plug-ins')+'</small></span><span class="inv-vendor-count">'+items.length+'</span><button type="button" class="inv-vendor-toggle" data-inv-toggle aria-label="Toggle '+invEsc(vendor)+' card" aria-expanded="'+String(!collapsed)+'" title="'+(collapsed?"Expand":"Collapse")+' publisher">'+(collapsed?"›":"⌃")+'</button></div><div class="inv-products">'+visible+hidden+'</div>'+more+actionsHTML+'</section>';
@@ -6044,6 +6180,7 @@ function invRenderInventory(){
     const replacement=Array.from(host.querySelectorAll("[data-inv-fav]")).find(item=>item.getAttribute("data-inv-fav")===name);
     if(replacement)replacement.focus();
   }));
+  host.querySelectorAll("[data-inv-product-action]").forEach(button=>button.addEventListener("click",()=>invOpenProductActionMenu(button)));
   host.querySelectorAll("[data-inv-more]").forEach(button=>button.addEventListener("click",()=>{
     const card=button.closest(".inv-vendor");if(!card)return;
     const key=card.getAttribute("data-inv-vendor"),expanded=card.classList.toggle("expanded");
