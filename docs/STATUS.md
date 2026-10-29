@@ -1,12 +1,12 @@
-## Latest PluginHub filter parity checkpoint — 2026-10-29
+## Latest PluginHub filter and visual checkpoint — 2026-10-29
 
-Source `80dd8012a19f8b3cd662ee2125aa1c30e94b4ae6` is deployed to the development Pages preview (`415a8b76-f53c-4c0e-82d5-20f7dd4eeb23`). Jules reviewed the Tag Manager and filter changes and passed. The Library now has a toolbar My Tags dropdown with single/Shift-click multi-tag selection, clearable active chips, and links into New tag and Plugin Tag Manager. Format pills replace on normal click and combine/remove on Shift-click; All formats clears them. Search includes the resolved category. Evidence: [Tag Manager](../governance/evidence/PHASE_PLUGINHUB_TAG_MANAGER_20261029.md) and [filter parity](../governance/evidence/PHASE_PLUGINHUB_FILTERS_20261029.md).
+Source `ad1e460dea5009dbf7e88eba6cd5c16d5941ba54` is active on the development Pages preview: [deployment 1a5f0a2b](https://1a5f0a2b.aimm-pluginhub-foundation-dev.pages.dev/). Jules passed source and visual review: the My Tags dropdown now shows one chevron, which points down while closed and flips up while open. The filter implementation and earlier combined-format verification are recorded in [filter parity evidence](../governance/evidence/PHASE_PLUGINHUB_FILTERS_20261029.md); browser-local tag editing is in [Tag Manager evidence](../governance/evidence/PHASE_PLUGINHUB_TAG_MANAGER_20261029.md).
 
-Visual review used the exact unique deployment origin with zero installed products and zero connected folders. Format selections and clearing were visibly/accessibly confirmed. A separate deployment origin used one synthetic browser-local tag to verify the selected chip and clear action; no product memberships or real inventory. No folder picker/scan/upload or automated tests.
+The verified filter behavior includes My Tags single selection and Shift-click combinations, clearable active chips, New tag/Manager entry points, format replace and Shift-click combine/remove, All formats clearing, and search matching the resolved category. The final chevron preview had zero installed products and zero connected folders. Earlier format interactions used the 80dd source preview; earlier tag-chip interaction used one synthetic browser-local tag on an isolated deployment origin with no product membership. No real inventory or folders were read, no scan/upload or automated tests occurred.
 
-Remaining gaps include PluginHub's VST cycling control, Intel-only and snoozed/live-status filters, Companion-backed file actions, and whole-library Tools workflows. No Worker or production deployment occurred. The development Worker passkey RP fix remains a surgical patch, not a reproducible branch-source build.
+Remaining parity includes PluginHub's VST cycle, Intel-only and snoozed/live-status controls, Companion-backed file actions and whole-library Tools. No Worker or production deployment occurred. The development Worker passkey RP fix remains a surgical patch, not a reproducible branch-source build.
 
-Foundation remains **NOT MET**; Stage 6 remains gated. Synthetic non-production data only.
+Foundation remains **NOT MET**; Stage 6 remains gated. Use synthetic non-production data only.
 
 ## Historical PluginHub parity sweep — superseded by latest checkpoint
 
