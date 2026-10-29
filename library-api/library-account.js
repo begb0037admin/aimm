@@ -1154,7 +1154,7 @@
 #aimm-account-preview .account-results-grid .account-result li{padding:3px 0;overflow-wrap:anywhere}
 #aimm-account-preview .account-tools-toggle{display:flex;gap:14px;align-items:center;min-height:48px;margin:14px 0;color:#dce2e8;font-weight:550}
 @media(max-width:700px){#aimm-account-preview .account-results-grid{grid-template-columns:1fr}#aimm-account-preview .account-results-banner{align-items:flex-start;flex-direction:column}#aimm-account-preview .account-results-banner>div{width:100%;min-width:0;overflow-wrap:anywhere}}#aimm-account-toast-stack{position:fixed;z-index:99999;top:16px;right:18px;display:grid;gap:9px;width:min(440px,calc(100vw - 36px));pointer-events:none}#aimm-account-toast-stack .account-toast{padding:13px 16px;border:1px solid #526078;border-radius:10px;background:#172033;color:#f8fafc;box-shadow:0 12px 34px #0008}#aimm-account-toast-stack .account-toast.is-error{border-color:#f87171}#aimm-account-toast-stack .account-toast.is-busy{border-left:4px solid #818cf8}`;
-    style.textContent += `#aimm-account-preview .account-primary button.is-signed-in{background:#123b2a;border-color:#39a873;color:#c8f7dc;cursor:default}#aimm-account-preview .account-primary button.is-signed-in:before{content:"✓";margin-right:9px;font-weight:800}`;
+    style.textContent += `#aimm-account-preview .account-primary button.is-signed-in{background:#15803d;border-color:#4ade80;color:#fff;opacity:1;box-shadow:0 0 0 2px #4ade8055;font-weight:800;cursor:default}#aimm-account-preview .account-primary button.is-signed-in:before{content:"✓";margin-right:9px;font-weight:800}`;
     settings.prepend(style);
     const card = document.createElement("section");
     card.id = "aimm-account-preview";
