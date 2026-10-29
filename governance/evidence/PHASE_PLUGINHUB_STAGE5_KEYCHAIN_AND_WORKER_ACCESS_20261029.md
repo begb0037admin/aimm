@@ -23,3 +23,12 @@ The same operation was resumed in the verified development Pages preview after t
 ## Status and remaining gates
 
 Stage 5 remains **PARTIAL**. Foundation remains **NOT MET**; Stage 6 remains gated. Other Foundation exit evidence and fresh independent end-to-end review remain open. Development-only work used synthetic data; no production deployment or separately gated external action occurred.
+
+
+## Latest browser-level passkey result — 2026-10-29
+
+The same signed-in development Pages session resumed the existing synthetic operation `caebb13c-1f6b-4422-b23c-570b4d8a0e9f`. “Load development devices” returned the chooser; the previously selected paired device was `Mac mini (2)`. “Check Mac preview” reported that the exact synthetic preview was ready. The updated source’s progress message appeared, confirming the Pages branch build is live.
+
+Selecting “View exact paths with passkey” opened macOS’s native passkey chooser for the saved 1Password credential on the approved development Pages origin. Continuing in that chooser opened a 1Password Autofill sheet that remained on its loading spinner for more than eight seconds. This is a more specific point of failure than the earlier page-only observation: the passkey chooser does appear, but the 1Password provider handoff did not finish. No assertion-verification request or successful assertion was observed; no exact paths were revealed in the browser, no Companion confirmation became available, and no file moved. No new operation or passkey enrollment was created. The browser is left at the existing 1Password loading sheet; the next step needs an available owner to resolve or dismiss that provider handoff, then resume the same operation.
+
+The source fix was reviewed by Jules and passed. No tests were run. No production deployment or separately gated external action occurred. Stage 5 remains **PARTIAL**, Foundation **NOT MET**, and Stage 6 gated. The separate development Worker build provenance remains as stated above.
