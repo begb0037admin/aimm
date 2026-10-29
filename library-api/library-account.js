@@ -451,9 +451,12 @@
         typeof args.record_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.record_id)) {
       throw new Error("Choose one current inventory record and device first.");
     }
+    const idempotencyKey = typeof args.idempotency_key === "string" &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(args.idempotency_key)
+      ? args.idempotency_key : crypto.randomUUID();
     return api("/v1/actions", { method: "POST", body: {
       device_id: args.device_id, kind: "move_to_unused", record_ids: [args.record_id],
-      idempotency_key: crypto.randomUUID()
+      idempotency_key: idempotencyKey
     } });
   }
 
@@ -1155,6 +1158,7 @@
 #aimm-account-preview .account-tools-toggle{display:flex;gap:14px;align-items:center;min-height:48px;margin:14px 0;color:#dce2e8;font-weight:550}
 @media(max-width:700px){#aimm-account-preview .account-results-grid{grid-template-columns:1fr}#aimm-account-preview .account-results-banner{align-items:flex-start;flex-direction:column}#aimm-account-preview .account-results-banner>div{width:100%;min-width:0;overflow-wrap:anywhere}}#aimm-account-toast-stack{position:fixed;z-index:99999;top:16px;right:18px;display:grid;gap:9px;width:min(440px,calc(100vw - 36px));pointer-events:none}#aimm-account-toast-stack .account-toast{padding:13px 16px;border:1px solid #526078;border-radius:10px;background:#172033;color:#f8fafc;box-shadow:0 12px 34px #0008}#aimm-account-toast-stack .account-toast.is-error{border-color:#f87171}#aimm-account-toast-stack .account-toast.is-busy{border-left:4px solid #818cf8}`;
     style.textContent += `#aimm-account-preview .account-primary button.is-signed-in{background:#15803d!important;border-color:#4ade80!important;color:#fff!important;opacity:1!important;box-shadow:0 0 0 2px #4ade8055;font-weight:800;cursor:default}#aimm-account-preview .account-primary button.is-signed-in:before{content:"✓";margin-right:9px;font-weight:800}`;
+    style.textContent += `#aimm-account-preview .account-synthetic-diagnostic{margin-top:16px;padding:16px;border:1px solid #30353a;border-radius:10px;background:#141619}#aimm-account-preview .account-synthetic-diagnostic>summary{cursor:pointer;font-weight:700;padding:4px 0}#aimm-account-preview .account-synthetic-diagnostic p{max-width:900px;line-height:1.5}#aimm-account-preview .account-synthetic-diagnostic select{max-width:420px}#aimm-account-preview .account-synthetic-status{margin-top:10px;color:#cbd5e1}#aimm-account-preview .account-synthetic-status[data-tone="ok"]{color:#6ee7a8}#aimm-account-preview .account-synthetic-status[data-tone="error"]{color:#fca5a5}`;
     settings.prepend(style);
     const card = document.createElement("section");
     card.id = "aimm-account-preview";
@@ -1286,11 +1290,182 @@
       emptyResults.hidden = hasResult;
     };
     new MutationObserver(syncEmptyResults).observe(outputGrid, { subtree: true, childList: true, characterData: true });
+    const syntheticDiagnostic = document.createElement("details");
+    syntheticDiagnostic.className = "account-synthetic-diagnostic";
+    syntheticDiagnostic.append(text("summary", "Synthetic Stage 5 move preview"));
+    const syntheticHelp = text("p", "Development only. Loading devices shows their names from this development account; it does not read plug-in inventory. Choose the paired device. The preview checks only the one known synthetic record. The Mac must show the exact paths before you confirm with your passkey.");
+    const syntheticControls = document.createElement("div");
+    syntheticControls.className = "account-row";
+    const loadDevices = text("button", "Load development devices");
+    loadDevices.type = "button";
+    const deviceSelect = document.createElement("select");
+    deviceSelect.setAttribute("aria-label", "Choose one development device");
+    const devicePlaceholder = text("option", "Choose one development device");
+    devicePlaceholder.value = "";
+    deviceSelect.append(devicePlaceholder);
+    deviceSelect.disabled = true;
+    const previewSyntheticMove = text("button", "Preview move to Unused");
+    previewSyntheticMove.type = "button";
+    previewSyntheticMove.disabled = true;
+    const requestSyntheticMove = text("button", "Request on Mac");
+    requestSyntheticMove.type = "button";
+    requestSyntheticMove.disabled = true;
+    const syntheticRecordID = "34234152-d78b-4e0d-8ae2-4a638a0ab619";
+    let syntheticDeviceID = null;
+    let syntheticPreviewReady = false;
+    let syntheticIdempotencyKey = null;
+    let syntheticRequestAttempted = false;
+    let syntheticFlowEpoch = 0;
+    const syntheticStatus = text("p", "Load development devices to begin.", "account-synthetic-status");
+    syntheticStatus.setAttribute("role", "status");
+    syntheticStatus.setAttribute("aria-live", "polite");
+    syntheticControls.append(loadDevices, deviceSelect, previewSyntheticMove, requestSyntheticMove);
+    syntheticDiagnostic.append(syntheticHelp, syntheticControls, syntheticStatus);
+    const developmentPreviewOrigin = "https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev";
+    const clearSyntheticFlow = (message, locked = false) => {
+      syntheticFlowEpoch++;
+      syntheticDeviceID = null;
+      syntheticPreviewReady = false;
+      syntheticIdempotencyKey = null;
+      syntheticRequestAttempted = false;
+      deviceSelect.replaceChildren(devicePlaceholder.cloneNode(true));
+      deviceSelect.disabled = true;
+      loadDevices.disabled = locked;
+      previewSyntheticMove.disabled = true;
+      requestSyntheticMove.disabled = true;
+      syntheticStatus.textContent = message;
+      syntheticStatus.dataset.tone = "";
+    };
+    if (location.origin === developmentPreviewOrigin) root.append(syntheticDiagnostic);
+    loadDevices.addEventListener("click", async () => {
+      const epoch = ++syntheticFlowEpoch;
+      loadDevices.disabled = true;
+      deviceSelect.disabled = true;
+      syntheticStatus.textContent = "Loading development device names…";
+      deviceSelect.replaceChildren(devicePlaceholder.cloneNode(true));
+      previewSyntheticMove.disabled = true;
+      requestSyntheticMove.disabled = true;
+      syntheticDeviceID = null;
+      syntheticPreviewReady = false;
+      syntheticIdempotencyKey = null;
+      syntheticRequestAttempted = false;
+      try {
+        await ensureSession();
+        const payload = await api("/v1/devices");
+        if (epoch !== syntheticFlowEpoch) return;
+        const devices = Array.isArray(payload.devices) ? payload.devices.filter((device) => !device.revoked_at) : [];
+        const nameCounts = new Map();
+        for (const device of devices) {
+          const name = String(device.display_name || "Development device");
+          nameCounts.set(name, (nameCounts.get(name) || 0) + 1);
+        }
+        const nameSeen = new Map();
+        for (const device of devices) {
+          if (typeof device.device_id !== "string" || !/^[0-9a-f-]{36}$/i.test(device.device_id)) continue;
+          const name = String(device.display_name || "Development device");
+          const ordinal = (nameSeen.get(name) || 0) + 1;
+          nameSeen.set(name, ordinal);
+          const option = text("option", nameCounts.get(name) > 1 ? `${name} (${ordinal})` : name);
+          option.value = device.device_id;
+          deviceSelect.append(option);
+        }
+        deviceSelect.disabled = deviceSelect.options.length <= 1;
+        syntheticStatus.textContent = deviceSelect.disabled
+          ? "No active development devices are available."
+          : "Choose the paired Mac. The next step checks only the synthetic record ID listed for this Stage 5 fixture.";
+      } catch (error) {
+        if (epoch !== syntheticFlowEpoch) return;
+        syntheticStatus.textContent = error.message;
+        syntheticStatus.dataset.tone = "error";
+      } finally {
+        if (epoch === syntheticFlowEpoch) loadDevices.disabled = false;
+      }
+    });
+    deviceSelect.addEventListener("change", () => {
+      syntheticFlowEpoch++;
+      syntheticDeviceID = deviceSelect.value || null;
+      syntheticPreviewReady = false;
+      syntheticIdempotencyKey = null;
+      syntheticRequestAttempted = false;
+      previewSyntheticMove.disabled = !syntheticDeviceID;
+      requestSyntheticMove.disabled = true;
+      syntheticStatus.textContent = syntheticDeviceID
+        ? "Preview will read only the synthetic fixture record on this device."
+        : "Choose one development device.";
+      syntheticStatus.dataset.tone = "";
+    });
+    previewSyntheticMove.addEventListener("click", async () => {
+      if (!syntheticDeviceID || syntheticRequestAttempted) return;
+      const requestedDeviceID = syntheticDeviceID;
+      const epoch = ++syntheticFlowEpoch;
+      loadDevices.disabled = true;
+      deviceSelect.disabled = true;
+      previewSyntheticMove.disabled = true;
+      requestSyntheticMove.disabled = true;
+      syntheticPreviewReady = false;
+      syntheticIdempotencyKey = null;
+      syntheticStatus.textContent = "Loading the read-only preview for the one synthetic record…";
+      syntheticStatus.dataset.tone = "";
+      try {
+        const result = await getPluginActionPreview({ device_id: requestedDeviceID, record_id: syntheticRecordID, kind: "move_to_unused" });
+        if (epoch !== syntheticFlowEpoch || syntheticDeviceID !== requestedDeviceID) return;
+        const item = result?.item;
+        if (item?.record_id !== syntheticRecordID || item?.name !== "AIMM Stage 5 Synthetic Probe" ||
+            item?.format !== "AU" || item?.version !== "1.0.0" ||
+            result?.preview?.kind !== "move_to_unused" || result.preview.changes_local_files !== true ||
+            result.preview.requires_mac_confirmation !== true || result.preview.requires_owner_passkey !== true) {
+          throw new Error("The current record did not match the expected synthetic move preview. No request was created.");
+        }
+        syntheticStatus.textContent = `${item.name} · ${item.format} · ${item.version}. ${result.preview.summary} No files have moved.`;
+        syntheticStatus.dataset.tone = "ok";
+        syntheticPreviewReady = true;
+        syntheticIdempotencyKey = crypto.randomUUID();
+        requestSyntheticMove.disabled = false;
+      } catch (error) {
+        if (epoch !== syntheticFlowEpoch) return;
+        syntheticStatus.textContent = error.message;
+        syntheticStatus.dataset.tone = "error";
+      } finally {
+        if (epoch === syntheticFlowEpoch) {
+          loadDevices.disabled = false;
+          deviceSelect.disabled = false;
+          previewSyntheticMove.disabled = !syntheticDeviceID || syntheticRequestAttempted;
+        }
+      }
+    });
+    requestSyntheticMove.addEventListener("click", async () => {
+      if (!syntheticPreviewReady || !syntheticDeviceID || !syntheticIdempotencyKey || syntheticRequestAttempted) return;
+      const requestedDeviceID = syntheticDeviceID;
+      const epoch = ++syntheticFlowEpoch;
+      syntheticRequestAttempted = true;
+      loadDevices.disabled = true;
+      deviceSelect.disabled = true;
+      previewSyntheticMove.disabled = true;
+      requestSyntheticMove.disabled = true;
+      syntheticStatus.textContent = "Sending one move request to the paired Mac…";
+      try {
+        const action = await requestPluginMoveToUnused({
+          device_id: requestedDeviceID, record_id: syntheticRecordID, idempotency_key: syntheticIdempotencyKey
+        });
+        if (epoch !== syntheticFlowEpoch || syntheticDeviceID !== requestedDeviceID) return;
+        syntheticPreviewReady = false;
+        syntheticStatus.textContent = `Request sent to the paired Mac (${action.state}). No files have moved. Review the exact source and destination on the Mac before confirming with your passkey.`;
+        syntheticStatus.dataset.tone = "ok";
+      } catch (error) {
+        if (epoch !== syntheticFlowEpoch) return;
+        syntheticStatus.textContent = `The request response was unclear. Check for the request on the Mac before retrying. Any retry will reuse the same request ID. ${error.message}`;
+        syntheticStatus.dataset.tone = "error";
+        syntheticRequestAttempted = false;
+        requestSyntheticMove.disabled = false;
+      }
+    });
+
     root.append(title, help, row, toolsLabel, outputDetails);
     advanced.append(root);
     card.style.order = "1";
     card.append(sectionTitle, sectionHelp, primaryRow, notice, advanced);
     if (new URL(location.href).searchParams.has("pairing")) { advanced.open = true; outputDetails.open = true; }
+    if (new URL(location.href).searchParams.has("stage5-synthetic-preview") && location.origin === developmentPreviewOrigin) { advanced.open = true; syntheticDiagnostic.open = true; }
     settings.insertBefore(card, settings.children[2] || null);
 
     const toastStack = document.createElement("div");
@@ -1333,6 +1508,7 @@
     signOut.addEventListener("click", async () => {
       const job = notifyAccount("Signing out of the development Library…", { busy: true });
       setSessionStatus("signing-out");
+      clearSyntheticFlow("Signing out of the development Library…", true);
       csrfToken = null;
       sessionInfo = null;
       for (const host of [pairing, result, statusResult, preferencesResult, passkeyResult]) host.replaceChildren();
