@@ -1,3 +1,11 @@
+## Latest PluginHub parity checkpoint — 2026-10-29
+
+Branch source `47efd003e2429f82cf2a6b21bbacbfa0404cbb92` is deployed successfully to the development Pages preview (`9096b1f9-9ec6-47a9-9e03-dea0ea682b61`). The initial Library render now shows category totals before any category/filter selection. Jules reviewed the committed resolver change and passed. Evidence: [parity update](../governance/evidence/PHASE_PLUGINHUB_PARITY_UPDATE_20261029.md).
+
+The preview has Cards, List and Ledger, Vendor/Product/Format/Version sorting, Hidden, Favorites and My tags filters, and vendor collapse/expand. Remaining gaps include complete Tag Manager, Intel-only and snoozed controls, live vendor status checks, Companion-backed file actions, and the PluginHub-style whole-library tools. This is not Foundation exit acceptance. No tests, folder scan, inventory upload, Worker deployment or production action occurred. The Worker passkey RP fix remains a surgical patch, not a reproducible branch-source deployment.
+
+Foundation remains **NOT MET**; Stage 6 remains gated. Synthetic non-production data only for further gated work.
+
 ## 2026-10-29 PluginHub parity sweep
 
 Manual-to-preview comparison is recorded in [PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md](../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md) (blob `a14e42367f30d157b606f134ab3cd85be4fdfdef`; corrected in commit `a84321d3227acb2a28422b0564eca8280184528b`). Latest inspected branch source: `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62`. The four-column vendor cards and current per-product menu render; whole-library tools, alternate layouts, status views and native actions remain open. Jules reviewed the corrected parity report and passed; no implementation or Foundation gate is approved by that review.
