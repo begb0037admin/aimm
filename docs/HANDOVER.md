@@ -1,4 +1,16 @@
-## Latest PluginHub reference parity sweep — 2026-10-29
+## Latest PluginHub implementation checkpoint — 2026-10-29
+
+Branch `codex/pluginhub-foundation` source is `47efd003e2429f82cf2a6b21bbacbfa0404cbb92`. Jules reviewed and passed the category resolver commit. Development Pages deployment `9096b1f9-9ec6-47a9-9e03-dea0ea682b61` succeeded at the [approved branch preview](https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/). Opening Library showed nonzero category totals on its first render, without choosing a category or filter.
+
+Cards, List and Ledger; Vendor/Product/Format/Version sort; All plugins, Favorites, My tags and Hidden filters; and collapse/expand vendor controls are visibly present. The four-column Cards view remains the default. Latest visual verification used existing browser-local catalogue state; no folder scan, inventory upload, automated tests, Worker deployment or production action occurred.
+
+Next work is the remaining parity list in the updated [parity sweep](governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md): complete Tag Manager, Intel-only and snoozed controls, real vendor-check status buckets, Companion-backed actions, and whole-library Tools. Keep unavailable backends disabled. This correction is not Foundation exit evidence. Foundation remains **NOT MET**; Stage 6 remains gated. The live development Worker passkey RP fix is still a surgical patch and not a reproducible branch-source build. Synthetic non-production data only for further gated workflows.
+
+## Current synchronized record pins — branch head before this handover update `db1060678922db0504e9197e6bd4ecf2f9cf7d6c`
+
+Dashboard `DASHBOARD.html` blob `8d711cd968edadd1da0bf28d71d63feaf2bcc764`; Roadmap `docs/ROADMAP.md` blob `7176e20258e9e939aab3a337880024c42738552d`; Status `docs/STATUS.md` blob `ee8ecfc35d50e8d05f08a0007e6576889786d284`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `d82aaa7891b80433eb9315a5f4044aeb66be8ce7`; Foundation closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` blob `a229f4ab25f931581bd9cdafef3e873da585f958`; Foundation evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md` blob `53857ed94a6246b5f27251653a55e17eb5b4ce32`; Stage 5 synthetic action and Worker report `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md` blob `6c937dddc157429c0b6473c72f6c33612e2ae220`; parity sweep `governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md` blob `9ef96e73b0b92669839618b22a1fb883b9195d50`; parity implementation update `governance/evidence/PHASE_PLUGINHUB_PARITY_UPDATE_20261029.md` blob to be pinned after this handover update. This handover does not self-pin.
+
+## Historical PluginHub reference parity baseline — 2026-10-29 (superseded by checkpoint above)
 
 A feature-by-feature manual and running-app sweep is recorded in `governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md`, blob `a14e42367f30d157b606f134ab3cd85be4fdfdef`, corrected in commit `a84321d3227acb2a28422b0564eca8280184528b`. It compares the installed PluginHub v2.0.12/manual to branch source `304ba8df644c1ceba4cd0eb5f6ddf8693ef3aa62` and the current development Pages preview. Jules reviewed the corrected parity report and passed.
 
