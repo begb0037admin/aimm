@@ -6,7 +6,7 @@ Kevin’s newest comparison requests are tracked as durable implementation items
 
 Foundation remains **NOT MET**, Stage 6 remains gated, and the development Worker passkey RP fix remains a surgical patch, not a reproducible branch build.
 
-Synchronized blob pins: Dashboard `098497d68c3dad8a4b408a398fa1054025d18c9e`; Status `b66732f753ec851709467c6a3ad6066aba5a1480`; Roadmap `935d317406e9cbbc2c71ee6883b8c786f809302c`; cold-start handover `f7ba5d024205899cafa6f4bbd456a4354ead5bf4`; tool contract matrix `5929692f7631c73adbf49b6e593d05a2dd87a86b`; reference sweep `e956db370a3fd183e42e758de0abc77fcf357a66`; View menu report `ab4c0eafe3c4b3b8f0bd183fabe16ff952372133`; typography evidence `5e6eb89c629a141ac0e6fdafcc3dd6819c6766d4`; user parity register `31089944f6793a39d5333d940d3952a41823be40`; Hidden View report `e24ed78d1e375c5cb609ec62364ead1ddf046d89`. Root HANDOVER does not self-pin.
+Synchronized blob pins: Dashboard `098497d68c3dad8a4b408a398fa1054025d18c9e`; Status `b66732f753ec851709467c6a3ad6066aba5a1480`; Roadmap `935d317406e9cbbc2c71ee6883b8c786f809302c`; cold-start handover `f7ba5d024205899cafa6f4bbd456a4354ead5bf4`; tool contract matrix `c51d2eeb1fa23dbdf5ebef7dacb3b4eac13c1c97`; reference sweep `e956db370a3fd183e42e758de0abc77fcf357a66`; View menu report `ab4c0eafe3c4b3b8f0bd183fabe16ff952372133`; typography evidence `5e6eb89c629a141ac0e6fdafcc3dd6819c6766d4`; user parity register `31089944f6793a39d5333d940d3952a41823be40`; Hidden View report `e24ed78d1e375c5cb609ec62364ead1ddf046d89`. Root HANDOVER does not self-pin.
 
 ## Historical continuation — PluginHub View brightness and text size — 2026-10-30 (source commit 82c886d690eaaf41560af83cff4155a769cc553d)
 

@@ -39,9 +39,6 @@ The user-observed PluginHub sidebar has four Status groups, optional Pinned, the
 
 ## Safe implementation order
 
-Kevin’s latest screenshots set the target that all four status scopes and every AIMM-owned Tool are active with complete workflows. Status counts and Install Manager are the first priorities. See [user-directed parity requests](PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md). View Hidden and larger names are implemented and reviewed.
-
-
 Kevin’s latest screenshots set the target that all four status scopes and every AIMM-owned Tool are active with complete workflows. Status counts and Install Manager are the first priorities. See [user-directed parity requests](PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md). The View Hidden visibility and name-size items are complete and reviewed; remaining View gaps are recorded above.
 
 
