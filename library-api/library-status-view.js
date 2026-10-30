@@ -729,7 +729,7 @@
       const formats=Array.from(product.querySelectorAll(".inv-format-state")).map((node)=>{
         const format=node.querySelector(".inv-chip")?.textContent.trim()||"";
         const status=node.querySelector(".inv-format-status")?.getAttribute("aria-label")||"";
-        return {format,status:status.replace(/^.*?·\\s*/,"").trim()};
+        return {format,status:status.replace(/^.*?·\s*/,"").trim()};
       }).filter((item)=>item.format);
       const versionRows=Array.from(product.querySelectorAll(".inv-version-row")).map((node)=>{
         const format=node.querySelector("b")?.textContent.trim()||"";
@@ -776,10 +776,10 @@
       const selected=selectedRows(),columns=["Plug-in","Publisher"];
       if(query("[data-share-categories]").checked)columns.push("Category");columns.push("Formats");if(query("[data-share-versions]").checked)columns.push("Versions");
       const keyMap={"Plug-in":"name","Publisher":"publisher","Category":"category","Formats":"formats","Versions":"versions"};
-      const separator=tsv?"\\t":",";
+      const separator=tsv?"\t":",";
       const listName=query("[data-share-label]").value.trim();
       const header=listName?[[csvCell("List"),csvCell(listName)].join(separator),""]: [];
-      return header.concat([columns.map((col)=>csvCell(col)).join(separator),...selected.map((row)=>columns.map((col)=>csvCell(row[keyMap[col]]||"")).join(separator))]).join("\\n");
+      return header.concat([columns.map((col)=>csvCell(col)).join(separator),...selected.map((row)=>columns.map((col)=>csvCell(row[keyMap[col]]||"")).join(separator))]).join("\n");
     }
     query("[data-share-copy]").addEventListener("click",async()=>{
       if(!selectedRows().length){status.textContent="There are no plug-ins to copy.";return;}
@@ -788,7 +788,7 @@
     });
     query("[data-share-download]").addEventListener("click",()=>{
       if(!selectedRows().length){status.textContent="There are no plug-ins to download.";return;}
-      const blob=new Blob(["\\ufeff"+lines(false)],{type:"text/csv;charset=utf-8"});
+      const blob=new Blob(["\ufeff"+lines(false)],{type:"text/csv;charset=utf-8"});
       const url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download=(query("[data-share-label]").value.trim()||"aimm-plugin-list").replace(/[^a-z0-9-_]+/gi,"-")+".csv";
       a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);status.textContent="CSV export created on this device.";
