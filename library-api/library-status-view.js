@@ -384,7 +384,7 @@
           const format = esc(row.format || "Unknown format");
           const device = esc(row.device || "Unknown device");
           const actionText = state ? esc(state.message) : "";
-          return '<article class="aimm-live-im-row"><div class="aimm-live-im-product"><strong>' + name + '</strong><span>' + device + '</span></div><div class="aimm-live-im-format"><small>Format</small><strong>' + format + '</strong></div><div class="aimm-live-im-version"><small>Installed → available</small><strong><span>' + esc(installed) + '</span> <b>→ ' + esc(latest) + '</b></strong>' + (row.paid_upgrade ? '<em>Paid upgrade</em>' : '') + '</div><div class="aimm-live-im-actions"><button type="button" data-live-im-queue="' + esc(id) + '"' + (liveInstallState.queue.has(id) ? ' disabled' : '') + '>Queue page</button><button type="button" class="primary" data-live-im-open="' + esc(id) + '"' + (liveInstallState.busy ? ' disabled' : '') + '>Open vendor page</button>' + (state?.operation_id ? '<button type="button" data-live-im-refresh="' + esc(id) + '">Refresh request</button>' : '') + (actionText ? '<small role="status">' + actionText + '</small>' : '') + '</div></article>';
+          return '<article class="aimm-live-im-row"><div class="aimm-live-im-product"><strong>' + name + '</strong><span>' + device + '</span></div><div class="aimm-live-im-format"><small>Format</small><strong>' + format + '</strong></div><div class="aimm-live-im-version"><small>Installed → available</small><strong><span>' + esc(installed) + '</span> <b>→ ' + esc(latest) + '</b></strong>' + (row.paid_upgrade ? '<em>Paid upgrade</em>' : '') + '</div><div class="aimm-live-im-actions"><button type="button" data-live-im-hub="' + esc(id) + '" aria-label="Request local vendor app for ' + name + '"' + (liveInstallState.busy ? ' disabled' : '') + '>Choose vendor app…</button><button type="button" data-live-im-queue="' + esc(id) + '"' + (liveInstallState.queue.has(id) ? ' disabled' : '') + '>Queue page</button><button type="button" class="primary" data-live-im-open="' + esc(id) + '"' + (liveInstallState.busy ? ' disabled' : '') + '>Open vendor page</button>' + (state?.operation_id ? '<button type="button" data-live-im-refresh="' + esc(id) + '">Refresh request</button>' : '') + (actionText ? '<small role="status">' + actionText + '</small>' : '') + '</div></article>';
         }).join("") + '</section>';
     }).join("");
     const content = rows.length
@@ -415,8 +415,13 @@
       liveInstallRender(); return;
     }
     if (target.hasAttribute("data-live-im-remove")) { liveInstallState.queue.delete(target.dataset.liveImRemove); liveInstallRender(); return; }
-    const id = target.dataset.liveImQueue || target.dataset.liveImOpen || target.dataset.liveImRefresh;
+    const id = target.dataset.liveImQueue || target.dataset.liveImOpen || target.dataset.liveImHub || target.dataset.liveImRefresh;
     if (target.hasAttribute("data-live-im-queue")) { liveInstallState.queue.add(id); liveInstallRender(); return; }
+    if (target.hasAttribute("data-live-im-hub")) {
+      const row = liveInstallRows().find((item) => [item.device_id,item.generation_id,item.record_id].join("|") === id);
+      if (row) void liveInstallRequest(row,id,"launch_hub");
+      return;
+    }
     if (target.hasAttribute("data-live-im-open") || target.hasAttribute("data-live-im-next")) {
       const selected = target.hasAttribute("data-live-im-next") ? Array.from(liveInstallState.queue)[0] : id;
       const row = liveInstallRows().find((item) => [item.device_id,item.generation_id,item.record_id].join("|") === selected);
@@ -428,16 +433,20 @@
       if (saved?.operation_id) void liveInstallRefresh(id,saved.operation_id);
     }
   }
-  async function liveInstallRequest(row,id) {
+  async function liveInstallRequest(row,id,kind = "open_vendor_site") {
     if (liveInstallState.busy) return;
     liveInstallState.busy = true;
     liveInstallState.actions.set(id,{message:"Requesting vendor page…"});
     liveInstallRender();
     try {
-      if (typeof window.aimmRequestAccountVendorPage !== "function") throw new Error("The account action bridge is unavailable. Reload AIMM and sign in.");
-      const result = await window.aimmRequestAccountVendorPage({device_id:row.device_id,record_id:row.record_id});
+      const bridge = kind === "launch_hub" ? window.aimmRequestAccountHubLaunch : window.aimmRequestAccountVendorPage;
+      if (typeof bridge !== "function") throw new Error("The account action bridge is unavailable. Reload AIMM and sign in.");
+      const result = await bridge({device_id:row.device_id,record_id:row.record_id});
       liveInstallState.queue.delete(id);
-      liveInstallState.actions.set(id,{operation_id:result.operation_id,state:result.state,message:"Request " + (result.state || "queued") + ". The paired Companion must receive it and ask for local confirmation."});
+      const nextStep = kind === "launch_hub"
+        ? "The paired Companion must choose and confirm the local vendor app before opening it."
+        : "The paired Companion must receive it and ask for local confirmation.";
+      liveInstallState.actions.set(id,{operation_id:result.operation_id,state:result.state,kind,message:"Request " + (result.state || "queued") + ". " + nextStep});
     } catch (error) {
       liveInstallState.actions.set(id,{message:error?.message || "The vendor-page request failed."});
     } finally { liveInstallState.busy = false; liveInstallRender(); }
