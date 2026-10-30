@@ -38,7 +38,6 @@
   let loading = false;
   let message = "";
   let originalRender = null;
-  let savedStatContent = null;
   const esc = (value) => String(value ?? "").replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const norm = (value) => String(value ?? "").normalize("NFKC").trim().replace(/\s+/g, " ").toLowerCase();
   const synthetic = () => typeof INV_SYNTHETIC_PREVIEW !== "undefined" && INV_SYNTHETIC_PREVIEW;
@@ -108,11 +107,16 @@
     const stats = document.querySelectorAll("#library .inv-stats .inv-stat");
     if (stats.length < 3) return;
     if (!statusMode) {
-      if (savedStatContent) stats.forEach((stat,index) => {
-        ["span","strong","small"].forEach((tag,part) => {
-          const node = stat.querySelector(tag);
-          if (node) node.textContent = savedStatContent[index][part];
-        });
+      const localValues = [
+        ["Installed products", "invProductCount", "grouped by name and publisher"],
+        ["Format bundles", "invBundleCount", "one plug-in may have several formats"],
+        ["Formats found", "invFormatCount", "AU · VST2 · VST3 · CLAP"]
+      ];
+      stats.forEach((stat,index) => {
+        const [label,id,detail] = localValues[index];
+        stat.querySelector("span").textContent = label;
+        stat.querySelector("strong").textContent = document.getElementById(id)?.textContent || "—";
+        stat.querySelector("small").textContent = detail;
       });
       return;
     }
@@ -230,8 +234,6 @@
       if (button) button.hidden = true;
       if (note) note.textContent = "Synthetic sample · account status is not read";
     }
-    const statNodes = Array.from(document.querySelectorAll("#library .inv-stats .inv-stat"));
-    savedStatContent = statNodes.map((stat) => ["span","strong","small"].map((tag) => stat.querySelector(tag)?.textContent || ""));
     originalRender = window.invRenderInventory;
     if (typeof originalRender === "function") {
       window.invRenderInventory = function() {
