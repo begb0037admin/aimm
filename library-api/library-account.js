@@ -458,6 +458,26 @@
     }
     return requestPluginHubLaunch(args);
   };
+  window.aimmListAccountShares = async () => {
+    if (!APPROVED_AUTH_ORIGINS.has(location.origin)) throw new Error("Share links are not available from this preview origin.");
+    await ensureSession();
+    return api("/v1/shares");
+  };
+  window.aimmCreateAccountShare = async (args = {}) => {
+    if (!APPROVED_AUTH_ORIGINS.has(location.origin)) throw new Error("Share links are not available from this preview origin.");
+    await ensureSession();
+    return api("/v1/shares", { method: "POST", body: {
+      label: String(args.label || "").slice(0, 80),
+      expiry_hours: Number(args.expiry_hours),
+      rows: Array.isArray(args.rows) ? args.rows : []
+    } });
+  };
+  window.aimmRevokeAccountShare = async (args = {}) => {
+    if (!APPROVED_AUTH_ORIGINS.has(location.origin)) throw new Error("Share links are not available from this preview origin.");
+    await ensureSession();
+    if (typeof args.share_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.share_id)) throw new Error("Choose an active share to revoke.");
+    return api("/v1/shares/" + encodeURIComponent(args.share_id), { method: "DELETE" });
+  };
   window.aimmReadAccountPluginAction = async (args = {}) => {
     if (!APPROVED_AUTH_ORIGINS.has(location.origin)) {
       throw new Error("Action results are not available from this preview origin.");
