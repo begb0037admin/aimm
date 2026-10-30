@@ -1,6 +1,6 @@
 ## Active PluginHub continuation — downloader contract traced — 2026-10-30
 
-Visual acceptance items 1–6 are complete. Item 6 source commit 2b3675ab100319df9c5e6ca248eaa8970fe05388 (`index.html` blob 21d19ac5a4fc036780f56b5d7b7ca7c8074c3de2) is available in [synthetic preview 4023a4d5](https://4023a4d5.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). VST2/VST3 chips are blue, CLAP brown, AU green; status dots and format filters are unchanged. Jules passed exact source and desktop/390px visuals; cards retain breathing room and narrow chips wrap without overflow.
+Visual items 1–5 are complete. Item 6’s prior implementation was reviewed at source commit `2b3675ab100319df9c5e6ca248eaa8970fe05388` (`index.html` blob `21d19ac5a4fc036780f56b5d7b7ca7c8074c3de2`) and preview [4023a4d5](https://4023a4d5.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), but Kevin’s latest screenshot shows CLAP blue and VST2 brown. The format-color item is reopened; expected VST2/VST3 blue, CLAP brown, AU green, with status dots unchanged. After the current installer staging contract review, reconcile this mapping and obtain fresh exact-source/desktop/390px review before proceeding to the synthetic Install Manager UI slice. Preserve breathing room. See the user parity register for the queued details.
 
 The read-only status/Install Manager contract review and exact Companion installer staging trace are complete. The account API provides generation-bound per-format status, but the Library still renders the synthetic fixture; AU component-to-bundle identity and product roll-up are unresolved. The local verified-DMG helper returns a file receipt, not an install result; no trusted digest is configured and the desktop app does not invoke it. Manager queue/progress/cancellation and app receipt flow remain open. No live status, vendor page, installer, inventory, folder scan, Worker or D1 was used or changed.
 
@@ -8,7 +8,7 @@ Next one item: build a synthetic PluginHub-style Install Manager UI slice using 
 
 - Installer trace: [contract report](../governance/evidence/PHASE_PLUGINHUB_INSTALLER_STAGING_CONTRACT_TRACE_20261030.md), blob `fb5f16bf6017c0fec974607a94d233390d7e205c`.
 - Previous audit: [status and Install Manager contract review](../governance/evidence/PHASE_PLUGINHUB_STATUS_INSTALL_CONTRACT_REVIEW_20261030.md), blob `c01b711768a38320964aac4c358b6a459d5319ed`.
-- Synchronized pins: STATUS `82a509da5dfe654f73d4d34e43779731a9406459`; ROADMAP `4ccf3eff4a2a97f4cdda68d7b5c558f29d20be30`; tool contract matrix `1963220b349c406666d2d7d08a040a1c989779dc`; user parity register `22b6ea8a866fcb138886c3e900c8647d5dbbfbc5`. HANDOVER does not self-pin.
+- Synchronized pins: STATUS `82a509da5dfe654f73d4d34e43779731a9406459`; ROADMAP `4ccf3eff4a2a97f4cdda68d7b5c558f29d20be30`; tool contract matrix `1963220b349c406666d2d7d08a040a1c989779dc`; user parity register `1f37853cb62aa806c888be9057b093c7a2928ee4`. HANDOVER does not self-pin.
 
 ## Historical continuation — initial per-format version placement (superseded) — 2026-10-30
 
