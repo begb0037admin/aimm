@@ -44,3 +44,10 @@ The menu still lacks the source-backed date line. Filesystem actions and disconn
 4. Keep URL dispatch open: the isolated Companion is packaged and visually reviewed, but Launch Services dispatch remains unverified. Do not install it or change the default handler for this verification.
 
 Foundation remains **NOT MET**; Stage 6 remains gated pending fresh complete exit evidence and independent acceptance. The development Worker passkey RP fix is still a surgical patch, not a reproducible build from branch source.
+
+
+## AIMM View menu update — 2026-10-30
+
+The branch now groups the supported Layout, Sort, and Cards-only Collapse/Expand controls in one View disclosure menu. Source commit `fec3cf8c2482b1dd9aa105723ffe106b1038a33d`, `index.html` blob `d8c019b92ad3edee72384bc067211f53697bd3cc`; Jules passed source and final visual/interaction review at preview deployment `1915928d` on desktop, 390px and 320px. The menu closes on selection, Escape and outside pointerdown; focus returns on keyboard close/selection. At 320px the menu clamps to 224px and remains inside the viewport. The document’s 434px scrollWidth is unchanged whether the menu is open or closed, so the horizontal overflow comes from existing page content outside this menu. See [View menu evidence](PHASE_PLUGINHUB_VIEW_MENU_20261030.md).
+
+The menu does not yet reproduce PluginHub’s appearance, navigation, display preferences, Collections or timestamp-based vendor sorts. Foundation remains **NOT MET**; Stage 6 gated; Worker RP fix surgical.

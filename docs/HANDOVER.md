@@ -1,3 +1,17 @@
+## Latest continuation — PluginHub View menu grouping — 2026-10-30
+
+Branch source commit `fec3cf8c2482b1dd9aa105723ffe106b1038a33d` groups AIMM’s existing Layout (Cards/List/Ledger), Sort (Vendor/Product/Format/Version), and Cards-only Collapse/Expand controls in one View popover. Jules passed source and desktop/390/320 visual/interaction review at [development preview deployment 1915928d](https://1915928d.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). Layout/sort selection closes the menu and returns focus; Escape/outside close correctly. At 320px the menu clamps to 224px and remains within the viewport. Existing unrelated page content has 434px document scrollWidth both with and without the menu; the menu adds no overflow.
+
+Current preview deployment `1915928d-7ef2-40cd-9a24-0de6a2a871e7` is tied to exact source commit `fec3cf8...`, preview environment; production deployments are disabled. Only the in-memory synthetic sample was shown. No scan, row action, real inventory, credential access, Worker/production deployment or other gated action occurred.
+
+The View menu now matches the supported grouping only. Appearance/brightness/text size, sidebar/top-tab navigation, display preferences, Collections and timestamp-based vendor sorts remain incomplete. The 320px page-wide overflow comes from existing content outside the panel and is not addressed in this slice.
+
+See [View menu review](../governance/evidence/PHASE_PLUGINHUB_VIEW_MENU_20261030.md), [tool matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), and [reference sweep](../governance/evidence/PHASE_PLUGINHUB_REFERENCE_SWEEP_20261030.md).
+
+Synchronized pins: `index.html` blob `d8c019b92ad3edee72384bc067211f53697bd3cc`; Dashboard `DASHBOARD.html` blob `d945db81a64b8e2732bcb34de02e81d93be7033e`; Status `docs/STATUS.md` blob `fcd142f039f140d9abf659e04b2a3448f9286580`; Roadmap `docs/ROADMAP.md` blob `3204969e7393a074e7b10a5d64d575bf6e3de0bc`; cold-start handover blob `80fe13a7817e658e0cb86bdb77d08443475769e5`; tool matrix blob `7460319857a75fc0b1ce64230e72ef717cc47fc1`; reference sweep blob `26c6fc24e76b7c92d0fe902c92b14ae7d1ba9e1f`; Compatibility surface report blob `a3f15ec8a8f78c77414f42ce5f1f73b05dc31dee`; View menu report blob `f61f346e0bf92477d0eff62bb33a022b79b52892`. This root handover does not self-pin.
+
+Next: continue the manual-driven View settings that can be supported cleanly, then prioritize the source-backed per-record timestamp and compatibility data contracts. Preserve synthetic-only preview scope; keep Foundation **NOT MET**, Stage 6 gated, and the surgical Worker RP fix limitation visible.
+
 ## Latest continuation — Compatibility destination parity slice — 2026-10-30
 
 Branch head `be00a701f185a5446568881ab1f89724560eec79` adds the Plugin Compatibility entry to the Library sidebar immediately after All Plugins. It matches the observed destination placement but is native-disabled: AIMM has no source-backed architecture/build metadata or current vendor evidence, so there is no compatibility page/result yet. Jules passed source and final visual review at [development preview deployment 1b47232f](https://1b47232f.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). Desktop shows a muted 40px row with the reason; at 390px the existing 64px collapsed sidebar shows only its dim icon, while the accessible name/title retain the reason. This small-screen discoverability limitation is recorded.
