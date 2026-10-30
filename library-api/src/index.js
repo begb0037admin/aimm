@@ -2598,9 +2598,15 @@ async function handle(request, env, requestId, origin) {
     return json({ pairing_id: pairingApproval[1], approved: true, approved_at: approvedAt }, 200, requestId, origin, env);
   }
 
+  const shareDelete = /^\/v1\/shares\/([0-9a-f-]{36})$/.exec(url.pathname);
+  if ((url.pathname === "/v1/shares" && request.method === "POST") || (shareDelete && request.method === "DELETE")) {
+    if (account.authMode === "cookie") {
+      const csrfError = await requireCsrf(request, env, account, requestId, origin);
+      if (csrfError) return csrfError;
+    }
+  }
   if (url.pathname === "/v1/shares" && request.method === "GET") return readShareList(env, account, requestId, origin);
   if (url.pathname === "/v1/shares" && request.method === "POST") return createShareLink(request, env, account, requestId, origin);
-  const shareDelete = /^\/v1\/shares\/([0-9a-f-]{36})$/.exec(url.pathname);
   if (shareDelete && request.method === "DELETE") return revokeShareLink(env, account, requestId, origin, shareDelete[1]);
 
   if (url.pathname === "/v1/me" && request.method === "GET") {
