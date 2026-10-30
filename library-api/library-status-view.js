@@ -356,7 +356,7 @@
     liveInstallState.overlay.querySelector("[data-live-im-done]")?.focus();
   }
   function bindLiveInstallManager() {
-    if (synthetic()) return;
+    if (new URLSearchParams(window.location.search).get("pluginhub-preview") === "synthetic") return;
     const button = document.querySelector("[data-inv-install-manager]");
     if (!button) return;
     if (button.__aimmLiveInstallManager) { button.disabled = false; return; }
@@ -512,7 +512,7 @@
     const trigger = event.target.closest("button");
     if (trigger && trigger.textContent.trim() === "Library") setTimeout(() => { install(); bindLiveInstallManager(); },0);
   },true);
-  if (!synthetic()) {
+  if (new URLSearchParams(window.location.search).get("pluginhub-preview") !== "synthetic") {
     let attempts = 0;
     const bindTimer = setInterval(() => {
       attempts += 1;
