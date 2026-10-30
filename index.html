@@ -6038,7 +6038,7 @@ function invRenderSidebar(groups,stageMap){
   const visibleGroups=groups.filter(group=>INV_SHOW_HIDDEN||invGetProductActions(group.vendor,group.name).hidden!==true);
   const statusFor=group=>["updates","up-to-date","manual-check","unchecked"].includes(group.status)?group.status:"unchecked";
   const statusCounts={"updates":0,"up-to-date":0,"manual-check":0,"unchecked":0};
-  visibleGroups.forEach(group=>statusCounts[statusFor(group)]++);
+  visibleGroups.forEach(group=>{statusCounts[statusFor(group)]+=Number.isFinite(group.records)?group.records:1;});
   const uncheckedCount=statusCounts.unchecked;
   const categoryCounts=new Map();groups.forEach(group=>{const category=invResolvedBrowseCategory(group,stageMap);if(Object.keys(INV_CATEGORY_STAGES).includes(category))categoryCounts.set(category,(categoryCounts.get(category)||0)+1);});
   sidebar.querySelectorAll("[data-inv-category]").forEach(button=>{let count=button.querySelector(".inv-side-count");if(!count){count=document.createElement("span");count.className="inv-side-count";button.appendChild(count);}count.textContent=(categoryCounts.get(button.getAttribute("data-inv-category"))||0).toLocaleString();});
@@ -6049,7 +6049,7 @@ function invRenderSidebar(groups,stageMap){
   const hasConnectedStatuses=groups.some(group=>["updates","up-to-date","manual-check","unchecked"].includes(group.status));
   [["updates","Updates available"],["up-to-date","Up to date"],["manual-check","Manual check"],["unchecked","Unchecked"]].forEach(([scope,label])=>{
     const button=sidebar.querySelector('[data-inv-scope="'+scope+'"]');
-    if(button)button.setAttribute("aria-label",label+": "+statusCounts[scope].toLocaleString()+(hasConnectedStatuses?"":" — no vendor status observations are connected"));
+    if(button)button.setAttribute("aria-label",label+": "+statusCounts[scope].toLocaleString()+" format records"+(hasConnectedStatuses?"":" — no vendor status observations are connected"));
   });
   const uncheckedButton=sidebar.querySelector('[data-inv-scope="unchecked"]');if(uncheckedButton){uncheckedButton.classList.toggle("active",INV_SCOPE==="unchecked"&&!INV_CATEGORIES.size);uncheckedButton.setAttribute("aria-pressed",String(INV_SCOPE==="unchecked"));const count=uncheckedButton.querySelector(".inv-side-count");if(count)count.textContent=uncheckedCount.toLocaleString();}
   const allStatusButton=sidebar.querySelector('[data-inv-scope="all"]');if(allStatusButton){const active=INV_SCOPE==="all"&&!INV_CATEGORIES.size&&INV_VIEW!=="all";allStatusButton.classList.toggle("active",active);allStatusButton.setAttribute("aria-pressed",String(active));}
