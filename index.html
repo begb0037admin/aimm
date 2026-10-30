@@ -3342,6 +3342,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #invNoteOverlay button.primary{border-color:#537dc1;background:#315b9b;color:#fff}
     #invNoteOverlay button.danger{margin-right:auto;border-color:#743b43;color:#e6a8b0}
     
+    #library .inv-synthetic-preview{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:12px 0;padding:11px 14px;border:1px solid #5c4b80;border-radius:8px;background:#211a2b;color:#d8c8f5;font-size:12px}#library .inv-synthetic-preview[hidden]{display:none}#library .inv-synthetic-preview span{color:#b4a8c9}
     #library .inv-empty{border:1px dashed #394149;border-radius:9px;padding:28px;text-align:center;color:#87919b;font-size:12px;margin-top:12px}
     #library .inv-small{color:#75808a;font-size:10px}
     #library .inv-sidebar.is-collapsed{padding-left:8px;padding-right:8px}
@@ -3392,6 +3393,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <main class="inv-content">
         <div class="inv-top"><div><h2 class="inv-title">Plugin inventory</h2><div class="inv-subtitle">Find, group and compare the plug-ins installed on this Mac.</div></div></div>
         <div class="inv-note">AIMM scans plug-in bundle names and Info.plist metadata in folders you choose. It does not read plug-in binaries, audio, presets, licences or other files. The scan stays in this browser.</div>
+        <div id="invSyntheticPreviewNotice" class="inv-synthetic-preview" hidden><strong>Synthetic sample inventory</strong><span>Synthetic products are generated in memory. No saved inventory/favourites/tags are read; folder access is blocked.</span></div>
         <div class="inv-controls"><button class="inv-btn primary" type="button" id="invAddRootBtn">Manage plug-in folders</button><button class="inv-btn" type="button" id="invScanBtn" disabled>Scan connected folders</button><span class="inv-small" id="invLastScan">No scan configured</span></div>
         <div class="inv-roots" id="invRoots" aria-label="Connected plug-in folders"></div>
         <div class="inv-status" id="invScanStatus" role="status">Connect the Audio/Plug-Ins folder and, if needed, Avid/Audio/Plug-Ins. You can add more folders later.</div>
@@ -5455,14 +5457,43 @@ function applyCollapsedStatic(){
 const COLLAPSE_CHEV_SVG = '<span class="collapse-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg></span>';
 
 // ========== LOCAL PLUGIN INVENTORY SCAN ==========
+const INV_SYNTHETIC_PREVIEW=(()=>{
+  try{
+    const host=window.location.hostname.toLowerCase();
+    const isDevPages=host==="aimm-pluginhub-foundation-dev.pages.dev"||host.endsWith(".aimm-pluginhub-foundation-dev.pages.dev");
+    return isDevPages&&new URLSearchParams(window.location.search).get("pluginhub-preview")==="synthetic";
+  }catch(_){return false;}
+})();
+const INV_SYNTHETIC_ROWS=[
+  {name:"Halo Equalizer",vendor:"Northstar Sample Audio",format:"AU",version:"1.4.2",bundleId:"dev.aimm.sample.northstar.halo.au",rootId:"synthetic-preview",category:"Effect",bundleName:"Halo Equalizer.component"},
+  {name:"Halo Equalizer",vendor:"Northstar Sample Audio",format:"VST3",version:"1.4.2",bundleId:"dev.aimm.sample.northstar.halo.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Halo Equalizer.vst3"},
+  {name:"Comet Dynamics",vendor:"Northstar Sample Audio",format:"VST3",version:"2.0.1",bundleId:"dev.aimm.sample.northstar.comet.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Comet Dynamics.vst3"},
+  {name:"Drift Reverb",vendor:"Northstar Sample Audio",format:"AU",version:"1.2.0",bundleId:"dev.aimm.sample.northstar.drift.au",rootId:"synthetic-preview",category:"Effect",bundleName:"Drift Reverb.component"},
+  {name:"Tapeform",vendor:"Copperline Sample DSP",format:"CLAP",version:"3.1.0",bundleId:"dev.aimm.sample.copperline.tapeform.clap",rootId:"synthetic-preview",category:"Effect",bundleName:"Tapeform.clap"},
+  {name:"Tapeform",vendor:"Copperline Sample DSP",format:"VST3",version:"3.1.0",bundleId:"dev.aimm.sample.copperline.tapeform.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Tapeform.vst3"},
+  {name:"Meter Bloom",vendor:"Copperline Sample DSP",format:"VST3",version:"1.0.4",bundleId:"dev.aimm.sample.copperline.meter.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Meter Bloom.vst3"},
+  {name:"Phase Garden",vendor:"Copperline Sample DSP",format:"AU",version:"1.7.0",bundleId:"dev.aimm.sample.copperline.phase.au",rootId:"synthetic-preview",category:"Effect",bundleName:"Phase Garden.component"},
+  {name:"Mono Scope",vendor:"Lantern Field Tools",format:"VST2",version:"2.3.0",bundleId:"dev.aimm.sample.lantern.scope.vst2",rootId:"synthetic-preview",category:"Effect",bundleName:"Mono Scope.vst"},
+  {name:"Amber Delay",vendor:"Lantern Field Tools",format:"CLAP",version:"1.3.6",bundleId:"dev.aimm.sample.lantern.delay.clap",rootId:"synthetic-preview",category:"Effect",bundleName:"Amber Delay.clap"},
+  {name:"Poly Bloom",vendor:"Lantern Field Tools",format:"VST3",version:"1.1.0",bundleId:"dev.aimm.sample.lantern.bloom.vst3",rootId:"synthetic-preview",category:"Instrument",bundleName:"Poly Bloom.vst3"},
+  {name:"Soft Clip",vendor:"Orchard Signal Lab",format:"VST2",version:"1.8.2",bundleId:"dev.aimm.sample.orchard.softclip.vst2",rootId:"synthetic-preview",category:"Effect",bundleName:"Soft Clip.vst"},
+  {name:"Stereo Lantern",vendor:"Orchard Signal Lab",format:"VST3",version:"2.2.1",bundleId:"dev.aimm.sample.orchard.stereo.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Stereo Lantern.vst3"},
+  {name:"Keynote Piano",vendor:"Orchard Signal Lab",format:"AU",version:"1.0.0",bundleId:"dev.aimm.sample.orchard.piano.au",rootId:"synthetic-preview",category:"Instrument",bundleName:"Keynote Piano.component"}
+];
+const INV_SYNTHETIC_FAVORITES=new Set();
+function invIsFavorite(name){return INV_SYNTHETIC_PREVIEW?INV_SYNTHETIC_FAVORITES.has(name):(typeof isFav==="function"&&isFav(name));}
+function invToggleFavorite(name){
+  if(INV_SYNTHETIC_PREVIEW){if(INV_SYNTHETIC_FAVORITES.has(name))INV_SYNTHETIC_FAVORITES.delete(name);else INV_SYNTHETIC_FAVORITES.add(name);invRenderInventory();return;}
+  toggleFav(name);
+}
 const INV_DB_NAME = "aimmPluginScanFolders_v1";
 const INV_ROWS_KEY = "aimmPluginInventoryRows_v1";
 const INV_SCAN_KEY = "aimmPluginInventoryScan_v1";
 const INV_SIDEBAR_KEY = "aimmPluginInventorySidebarCollapsed_v1";
 const INV_VIEW_KEY="aimmPluginInventoryView_v1",INV_SORT_KEY="aimmPluginInventorySort_v1";
 function invReadChoice(key,choices,fallback){try{const value=localStorage.getItem(key);return choices.includes(value)?value:fallback;}catch(_){return fallback;}}
-let INV_VIEW = invReadChoice(INV_VIEW_KEY,["cards","list","ledger","all"],"cards");
-let INV_SORT = invReadChoice(INV_SORT_KEY,["vendor","product","format","version"],"vendor");
+let INV_VIEW = INV_SYNTHETIC_PREVIEW?"cards":invReadChoice(INV_VIEW_KEY,["cards","list","ledger","all"],"cards");
+let INV_SORT = INV_SYNTHETIC_PREVIEW?"vendor":invReadChoice(INV_SORT_KEY,["vendor","product","format","version"],"vendor");
 let INV_FORMATS = new Set();
 let INV_SEARCH = "";
 let INV_SCOPE = "all";
@@ -5473,8 +5504,8 @@ let INV_ROOTS_REVISION=0,INV_SCAN_ACTIVE=false,INV_SCAN_QUEUED=false;
 const INV_EXPANDED_VENDORS=new Set(),INV_COLLAPSED_VENDORS=new Set();
 let INV_CATEGORIES=new Set();
 let INV_TAG_FILTERS=new Set();
-let INV_SCAN_ROWS = (() => { try { const rows=JSON.parse(localStorage.getItem(INV_ROWS_KEY)||"[]");if(!Array.isArray(rows))return [];const allowed=rows.filter(row=>row&&["AU","VST2","VST3","CLAP"].includes(String(row.format||"").toUpperCase()));if(allowed.length!==rows.length)localStorage.setItem(INV_ROWS_KEY,JSON.stringify(allowed));return allowed; } catch (_) { return []; } })();
-let INV_SCAN_INFO = (() => { try { const info=JSON.parse(localStorage.getItem(INV_SCAN_KEY)||"{}");return info&&typeof info==="object"&&!Array.isArray(info)?info:{}; } catch (_) { return {}; } })();
+let INV_SCAN_ROWS = INV_SYNTHETIC_PREVIEW?INV_SYNTHETIC_ROWS.map(row=>({...row})): (() => { try { const rows=JSON.parse(localStorage.getItem(INV_ROWS_KEY)||"[]");if(!Array.isArray(rows))return [];const allowed=rows.filter(row=>row&&["AU","VST2","VST3","CLAP"].includes(String(row.format||"").toUpperCase()));if(allowed.length!==rows.length)localStorage.setItem(INV_ROWS_KEY,JSON.stringify(allowed));return allowed; } catch (_) { return []; } })();
+let INV_SCAN_INFO = INV_SYNTHETIC_PREVIEW?{generatedAt:"synthetic-preview",bundles:INV_SYNTHETIC_ROWS.length,folders:0,unreadable:0,truncated:false,partial:false,needsRefresh:false,rootIds:[],configuredRootIds:[],synthetic:true}:(() => { try { const info=JSON.parse(localStorage.getItem(INV_SCAN_KEY)||"{}");return info&&typeof info==="object"&&!Array.isArray(info)?info:{}; } catch (_) { return {}; } })();
 const INV_EXT_FORMAT = {".component":"AU",".vst":"VST2",".vst3":"VST3",".clap":"CLAP"};
 const INV_FORMAT_DIRS = new Set(["components","vst","vst3","clap","plug-ins"]);
 const INV_CATEGORY_STAGES = {
@@ -5608,6 +5639,7 @@ function invRenderRoots(){
   invRenderSidebar(invBuildGroups(INV_SCAN_ROWS),invStageMap());
 }
 function invSaveScan(){
+  if(INV_SYNTHETIC_PREVIEW)return true;
   try{
     localStorage.setItem(INV_ROWS_KEY,JSON.stringify(INV_SCAN_ROWS));
     localStorage.setItem(INV_SCAN_KEY,JSON.stringify(INV_SCAN_INFO));
@@ -5619,6 +5651,7 @@ function invSaveScan(){
   }
 }
 async function invAddRoot(){
+  if(INV_SYNTHETIC_PREVIEW){invStatus("Folder management is disabled in the synthetic sample preview.");return;}
   if(!INV_ROOTS_LOADED){
     try{
       const loaded=await invDbRequest("readonly","getAll");
@@ -5955,7 +5988,7 @@ function invRenderSidebar(groups,stageMap){
   const layout=document.getElementById("invLayout");
   if(!sidebar||!layout)return;
   const allCount=groups.length;
-  const favCount=groups.filter(group=>typeof isFav==="function"&&isFav(group.name)).length;
+  const favCount=groups.filter(group=>invIsFavorite(group.name)).length;
   const tagCount=groups.filter(group=>{const state=invGetProductActions(group.vendor,group.name);return Array.isArray(state.tags)&&state.tags.length>0}).length;
   invRenderTagFilter(groups);
   const hiddenCount=groups.filter(group=>invGetProductActions(group.vendor,group.name).hidden===true).length;
@@ -6063,9 +6096,10 @@ const INV_PRODUCT_ACTIONS_KEY="aimm.pluginInventory.productActions.v1";
 let invProductMenu=null,invProductMenuTrigger=null;
 function invActionKey(vendor,name){return invNorm(vendor)+"|"+invNorm(name);}
 function invReadProductActions(){
+  if(INV_SYNTHETIC_PREVIEW)return {};
   try{const value=JSON.parse(localStorage.getItem(INV_PRODUCT_ACTIONS_KEY)||"{}");return value&&typeof value==="object"?value:{}}catch(_){return {}}
 }
-function invWriteProductActions(value){try{localStorage.setItem(INV_PRODUCT_ACTIONS_KEY,JSON.stringify(value));return true}catch(_){return false}}
+function invWriteProductActions(value){if(INV_SYNTHETIC_PREVIEW){invStatus("Product edits are disabled in the synthetic sample preview.");return false;}try{localStorage.setItem(INV_PRODUCT_ACTIONS_KEY,JSON.stringify(value));return true}catch(_){return false}}
 function invGetProductActions(vendor,name){
   const all=invReadProductActions(),value=all[invActionKey(vendor,name)];
   return value&&typeof value==="object"?value:{};
@@ -6209,11 +6243,12 @@ function invOpenProductCategory(vendor,name,currentCategory){
   overlay.querySelector("[data-meta-close]").addEventListener("click",()=>overlay.remove());
 }
 const INV_PRODUCT_TAGS_KEY="aimm.pluginInventory.userTags.v1";
-function invReadUserTags(){try{const tags=JSON.parse(localStorage.getItem(INV_PRODUCT_TAGS_KEY)||"[]");return Array.isArray(tags)?tags.filter(tag=>typeof tag==="string"):[]}catch(_){return []}}
+function invReadUserTags(){if(INV_SYNTHETIC_PREVIEW)return [];try{const tags=JSON.parse(localStorage.getItem(INV_PRODUCT_TAGS_KEY)||"[]");return Array.isArray(tags)?tags.filter(tag=>typeof tag==="string"):[]}catch(_){return []}}
 const INV_TAG_COLORS_KEY="aimm.pluginInventory.userTagColors.v1";
-function invReadTagColors(){try{const value=JSON.parse(localStorage.getItem(INV_TAG_COLORS_KEY)||"{}");return value&&typeof value==="object"&&!Array.isArray(value)?value:{}}catch(_){return {}}}
+function invReadTagColors(){if(INV_SYNTHETIC_PREVIEW)return {};try{const value=JSON.parse(localStorage.getItem(INV_TAG_COLORS_KEY)||"{}");return value&&typeof value==="object"&&!Array.isArray(value)?value:{}}catch(_){return {}}}
 function invTagGroups(){return invBuildGroups(Array.isArray(INV_SCAN_ROWS)?INV_SCAN_ROWS:[]).sort((a,b)=>invNorm(a.vendor).localeCompare(invNorm(b.vendor))||invNorm(a.name).localeCompare(invNorm(b.name)))}
 function invTagCommit(tags,actions,colors){
+  if(INV_SYNTHETIC_PREVIEW){invStatus("Tag editing is disabled in the synthetic sample preview.");return false;}
   const keys={tags:INV_PRODUCT_TAGS_KEY,actions:INV_PRODUCT_ACTIONS_KEY,colors:INV_TAG_COLORS_KEY},before={};
   try{Object.keys(keys).forEach(key=>{before[key]=localStorage.getItem(keys[key]);});}
   catch(_){invStatus("The browser tag data could not be read; nothing was saved.","error");return false;}
@@ -6239,6 +6274,7 @@ function invTagMembershipBatch(groups,tag,add){
   return invTagCommit(invReadUserTags(),actions,invReadTagColors());
 }
 function invOpenTagManager(){
+  if(INV_SYNTHETIC_PREVIEW){invStatus("Tag editing is disabled in the synthetic sample preview.");return;}
   if(document.getElementById("invTagManagerOverlay"))return;
   const overlay=document.createElement("div");overlay.id="invTagManagerOverlay";
   overlay.innerHTML='<div class="inv-tag-manager" role="dialog" aria-modal="true" aria-labelledby="invTagManagerTitle"><header class="inv-tag-manager-head"><div><h2 id="invTagManagerTitle">Plugin Tag Manager</h2><p>Manage tags and plug-in membership in this browser.</p></div><button type="button" class="inv-tag-done" data-tag-done>Done</button></header><div class="inv-tag-manager-body"><aside class="inv-tag-manager-left"><h3>Your tags</h3><div class="inv-tag-list" data-tag-list></div><form class="inv-tag-new" data-tag-new-form><input type="text" maxlength="32" aria-label="New tag name" placeholder="New tag…"><button type="submit" class="inv-tag-action">Add</button></form></aside><section class="inv-tag-manager-right"><div class="inv-tag-manager-right-head"><strong data-tag-selected>Choose a tag</strong><span data-tag-summary>Select a tag to manage its plug-ins.</span><button type="button" class="inv-tag-action" data-tag-clear hidden>Clear tag</button></div><input class="inv-tag-search" data-tag-search type="search" aria-label="Search plug-ins or vendors" placeholder="Search plug-ins or vendors…" disabled><div class="inv-tag-plugin-groups" data-tag-plugin-groups><div class="inv-tag-empty">Create or choose a tag to begin.</div></div><div class="inv-tag-help">Add marks a plug-in with this tag; Added removes it. Add all applies the selected tag to every visible plug-in from that vendor. Changes are stored in this browser.</div></section></div></div>';
@@ -6389,6 +6425,7 @@ function invOpenProductTags(vendor,name){
       const text=document.createElement("span");text.textContent=tag;
       const remove=document.createElement("button");remove.type="button";remove.className="inv-product-tag-remove";remove.textContent="×";remove.setAttribute("aria-label","Delete tag "+tag);
       remove.addEventListener("click",()=>{
+        if(INV_SYNTHETIC_PREVIEW){invStatus("Tag editing is disabled in the synthetic sample preview.");return;}
         const original=JSON.stringify(invReadProductActions());
         try{
           const allActions=JSON.parse(original);Object.keys(allActions).forEach(actionKey=>{const record=allActions[actionKey];if(record&&Array.isArray(record.tags)){record.tags=record.tags.filter(value=>value!==tag);if(!record.tags.length)delete record.tags;}});
@@ -6402,6 +6439,7 @@ function invOpenProductTags(vendor,name){
     });
   };
   overlay.querySelector("[data-tag-add]").addEventListener("click",()=>{
+    if(INV_SYNTHETIC_PREVIEW){invStatus("Tag editing is disabled in the synthetic sample preview.");return;}
     const value=input.value.trim().replace(/\s+/g," ");
     if(!value)return;
     const tags=invReadUserTags();if(!tags.some(tag=>tag.toLowerCase()===value.toLowerCase()))tags.push(value);
@@ -6502,7 +6540,7 @@ function invRenderInventory(){
   };
   Object.keys(values).forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=values[id];});
   const last=document.getElementById("invLastScan");
-  if(last)last.textContent=INV_SCAN_INFO.needsRefresh?"Rescan needed — connected folders changed":INV_SCAN_INFO.generatedAt?"Last scan "+new Date(INV_SCAN_INFO.generatedAt).toLocaleString():"No scan yet";
+  if(last)last.textContent=INV_SYNTHETIC_PREVIEW?"Synthetic preview · no folders scanned":INV_SCAN_INFO.needsRefresh?"Rescan needed — connected folders changed":INV_SCAN_INFO.generatedAt?"Last scan "+new Date(INV_SCAN_INFO.generatedAt).toLocaleString():"No scan yet";
   document.querySelectorAll("[data-inv-format]").forEach(button=>{
     const format=button.getAttribute("data-inv-format"),selected=format==="All"?!INV_FORMATS.size:INV_FORMATS.has(format);
     button.classList.toggle("on",selected);button.setAttribute("aria-pressed",String(selected));
@@ -6519,7 +6557,7 @@ function invRenderInventory(){
     const searchOK=!query||invNorm([group.name,group.vendor,invDisplayCategory(group),Array.from(group.versions).join(" "),Array.from(group.formats).join(" ")].join(" ")).includes(query);
     const actionState=invGetProductActions(group.vendor,group.name);
     const hidden=actionState.hidden===true;
-    const scopeOK=INV_SCOPE==="favorites"?(typeof isFav==="function"&&isFav(group.name)):INV_SCOPE==="tags"?(Array.isArray(actionState.tags)&&actionState.tags.length>0):INV_SCOPE==="hidden"?hidden:!hidden;
+    const scopeOK=INV_SCOPE==="favorites"?(invIsFavorite(group.name)):INV_SCOPE==="tags"?(Array.isArray(actionState.tags)&&actionState.tags.length>0):INV_SCOPE==="hidden"?hidden:!hidden;
     const categoryOK=!INV_CATEGORIES.size||INV_CATEGORIES.has(invDisplayCategory(group));
     const tagOK=!INV_TAG_FILTERS.size||(Array.isArray(actionState.tags)&&actionState.tags.some(tag=>INV_TAG_FILTERS.has(tag)));
     return formatOK&&searchOK&&scopeOK&&categoryOK&&tagOK;
@@ -6678,12 +6716,12 @@ function invRenderInventory(){
       const hubUrl=installerHubs[normalized.replace(/[^a-z0-9]/g,"")]||"",websiteUrl=vendorHomepages[normalized.replace(/[^a-z0-9]/g,"")]||(domain?"https://www."+domain+"/":"");
       const category=invDisplayCategory(group),formats=Array.from(group.formats).sort(),versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const chips=formats.map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
-      const fav=typeof isFav==="function"&&isFav(group.name),meta=invProductUserMetaHTML(vendor,group.name);
+      const fav=invIsFavorite(group.name),meta=invProductUserMetaHTML(vendor,group.name);
       const action=invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}));
       return '<div class="inv-list-row" role="row"><span class="inv-list-vendor" role="cell">'+invEsc(vendor)+'</span><span class="inv-list-product" role="cell"><span class="inv-list-name">'+invEsc(group.name)+'</span></span>'+(ledger?'<span class="inv-list-meta ledger-only" role="cell">'+invEsc(category)+'</span>':'')+'<span class="inv-list-meta" role="cell">'+invEsc(versions)+'</span><span class="inv-list-formats" data-col="format" role="cell">'+chips+'</span>'+(ledger?'':'<span class="inv-list-meta" data-col="category" role="cell">'+invEsc(category)+'</span>')+(ledger?'<span class="inv-list-meta ledger-only" role="cell">'+(meta||"—")+'</span>':'')+'<span class="inv-list-actions" role="cell"><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+action+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></span></div>';
     }).join("");
     host.innerHTML='<div class="inv-table inv-view-'+(ledger?"ledger":"list")+'" role="table" aria-label="Installed plug-ins"><div class="inv-list-head" role="row">'+columns+'</div>'+rowsHTML+'</div>';
-    host.querySelectorAll("[data-inv-fav]").forEach(button=>button.addEventListener("click",()=>toggleFav(button.getAttribute("data-inv-fav"))));
+    host.querySelectorAll("[data-inv-fav]").forEach(button=>button.addEventListener("click",()=>invToggleFavorite(button.getAttribute("data-inv-fav"))));
     host.querySelectorAll("[data-inv-product-action]").forEach(button=>button.addEventListener("click",()=>invOpenProductActionMenu(button)));
     return;
   }
@@ -6704,14 +6742,14 @@ function invRenderInventory(){
       const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=invDisplayCategory(group);
-      const fav=typeof isFav==="function"&&isFav(group.name);
+      const fav=invIsFavorite(group.name);
       return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const hidden=items.slice(4).map(group=>{
       const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=invDisplayCategory(group);
-      const fav=typeof isFav==="function"&&isFav(group.name);
+      const fav=invIsFavorite(group.name);
       return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const more=items.length>4?'<button class="inv-more" type="button" data-inv-more aria-expanded="'+String(expanded)+'">'+(expanded?"Show fewer plug-ins":"＋ "+(items.length-4)+" more plug-ins")+'</button>':"";
@@ -6719,7 +6757,7 @@ function invRenderInventory(){
   }).join("")+'</div>';
   host.querySelectorAll("[data-inv-fav]").forEach(button=>button.addEventListener("click",()=>{
     const name=button.getAttribute("data-inv-fav");
-    toggleFav(name);
+    invToggleFavorite(name);
     const replacement=Array.from(host.querySelectorAll("[data-inv-fav]")).find(item=>item.getAttribute("data-inv-fav")===name);
     if(replacement)replacement.focus();
   }));
@@ -6764,6 +6802,7 @@ async function invFindOverlappingRoots(roots){
   return null;
 }
 async function invScanNow(options={}){
+  if(INV_SYNTHETIC_PREVIEW){invStatus("Scanning is disabled in the synthetic sample preview.");return;}
   const allowPrompt=options.allowPrompt===true;
   if(INV_SCAN_ACTIVE)return;
   if(!INV_ROOTS.length){invStatus("Add at least one plug-in folder before scanning.","error");return;}
@@ -6828,17 +6867,17 @@ function invInit(){
   if(scan)scan.addEventListener("click",()=>invScanNow({allowPrompt:true}));
   const sidebar=document.getElementById("invSidebar");
   const sidebarToggle=document.getElementById("invSidebarToggle");
-  try{INV_SIDEBAR_COLLAPSED=localStorage.getItem(INV_SIDEBAR_KEY)==="true";}catch(_){}
+  if(!INV_SYNTHETIC_PREVIEW)try{INV_SIDEBAR_COLLAPSED=localStorage.getItem(INV_SIDEBAR_KEY)==="true";}catch(_){}
   if(sidebarToggle)sidebarToggle.addEventListener("click",()=>{
     INV_SIDEBAR_COLLAPSED=!INV_SIDEBAR_COLLAPSED;
-    try{localStorage.setItem(INV_SIDEBAR_KEY,String(INV_SIDEBAR_COLLAPSED));}catch(_){}
+    if(!INV_SYNTHETIC_PREVIEW)try{localStorage.setItem(INV_SIDEBAR_KEY,String(INV_SIDEBAR_COLLAPSED));}catch(_){}
     invRenderInventory();
   });
   if(sidebar)sidebar.addEventListener("click",event=>{
     const managerButton=event.target.closest("[data-inv-tag-manager]");if(managerButton){invOpenTagManager();return;}
     const button=event.target.closest("[data-inv-scope],[data-inv-category],[data-inv-open-all-plugins]");
     if(!button||button.disabled)return;
-    if(button.hasAttribute("data-inv-open-all-plugins")){INV_VIEW="all";try{localStorage.setItem(INV_VIEW_KEY,INV_VIEW);}catch(_){}invRenderInventory();return;}
+    if(button.hasAttribute("data-inv-open-all-plugins")){INV_VIEW="all";if(!INV_SYNTHETIC_PREVIEW)try{localStorage.setItem(INV_VIEW_KEY,INV_VIEW);}catch(_){}invRenderInventory();return;}
     if(button.hasAttribute("data-inv-scope")){INV_SCOPE=button.getAttribute("data-inv-scope")||"all";INV_CATEGORIES.clear();INV_TAG_FILTERS.clear();}
     else {const category=button.getAttribute("data-inv-category")||"";if(event.shiftKey){if(INV_CATEGORIES.has(category))INV_CATEGORIES.delete(category);else INV_CATEGORIES.add(category);}else{INV_CATEGORIES.clear();INV_CATEGORIES.add(category);}INV_SCOPE="all";}
     invRenderInventory();
@@ -6867,13 +6906,13 @@ function invInit(){
   if(view)view.addEventListener("change",()=>{
     const value=view.value;
     if(!["cards","list","ledger"].includes(value))return;
-    INV_VIEW=value;try{localStorage.setItem(INV_VIEW_KEY,INV_VIEW);}catch(_){}
+    INV_VIEW=value;if(!INV_SYNTHETIC_PREVIEW)try{localStorage.setItem(INV_VIEW_KEY,INV_VIEW);}catch(_){}
     invRenderInventory();
   });
   if(sort)sort.addEventListener("change",()=>{
     const value=sort.value;
     if(!["vendor","product","format","version"].includes(value))return;
-    INV_SORT=value;try{localStorage.setItem(INV_SORT_KEY,INV_SORT);}catch(_){}
+    INV_SORT=value;if(!INV_SYNTHETIC_PREVIEW)try{localStorage.setItem(INV_SORT_KEY,INV_SORT);}catch(_){}
     invRenderInventory();
   });
   const collapseAll=document.querySelector("[data-inv-collapse-all]"),expandAll=document.querySelector("[data-inv-expand-all]");
@@ -6927,7 +6966,14 @@ function invInit(){
     const vstMenu=document.getElementById("invVstFilter"),returnVstFocus=Boolean(vstMenu&&vstMenu.contains(document.activeElement));if(vstMenu)vstMenu.open=false;
     invRenderInventory();if(returnVstFocus)vstMenu.querySelector("summary")?.focus();
   });
-  invLoadRoots();
+  if(INV_SYNTHETIC_PREVIEW){
+    const notice=document.getElementById("invSyntheticPreviewNotice");if(notice)notice.hidden=false;
+    const add=document.getElementById("invAddRootBtn"),scan=document.getElementById("invScanBtn");
+    if(add){add.disabled=true;add.title="Disabled for the synthetic sample preview";}
+    if(scan){scan.disabled=true;scan.title="Disabled for the synthetic sample preview";}
+    INV_ROOTS=[];INV_ROOTS_LOADED=true;invRenderRoots();
+    invStatus("Synthetic sample loaded. No plug-in folders were read.","good");
+  }else invLoadRoots();
   invRenderLibrary();
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",invInit,{once:true});
