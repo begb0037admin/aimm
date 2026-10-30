@@ -715,4 +715,101 @@
       if ((document.readyState === "complete" && button?.__aimmLiveInstallManager) || attempts >= 60) clearInterval(bindTimer);
     },250);
   }
+
+  const shareCss=document.createElement("style");
+  shareCss.textContent="#aimmLocalShareOverlay{position:fixed;inset:0;z-index:20020;display:grid;place-items:center;padding:20px;background:rgba(5,7,11,.78)}#aimmLocalShareOverlay[hidden]{display:none}#aimmLocalShareOverlay section{width:min(900px,96vw);max-height:88vh;overflow:auto;display:grid;gap:16px;padding:22px;border:1px solid #3b4653;border-radius:14px;background:#1b2026;color:#e8edf2;box-shadow:0 20px 70px #0009}#aimmLocalShareOverlay h2,#aimmLocalShareOverlay p{margin:0}#aimmLocalShareOverlay p,#aimmLocalShareOverlay small{color:#aeb8c4}#aimmLocalShareOverlay .share-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}#aimmLocalShareOverlay label{display:grid;gap:6px;color:#d7dde5}#aimmLocalShareOverlay input,#aimmLocalShareOverlay select{min-height:38px;padding:8px 10px;border:1px solid #414a55;border-radius:7px;background:#11151a;color:#e8edf2;font:inherit}#aimmLocalShareOverlay .share-vendors{display:flex;flex-wrap:wrap;gap:8px}#aimmLocalShareOverlay .share-vendors label,#aimmLocalShareOverlay .share-check{display:flex;align-items:center;gap:7px;padding:7px 9px;border:1px solid #343b45;border-radius:7px}#aimmLocalShareOverlay .share-vendors input,#aimmLocalShareOverlay .share-check input{min-height:auto}#aimmLocalShareOverlay .share-preview{max-height:250px;overflow:auto;border:1px solid #343b45;border-radius:8px}#aimmLocalShareOverlay table{width:100%;border-collapse:collapse;font-size:13px}#aimmLocalShareOverlay th,#aimmLocalShareOverlay td{padding:8px 10px;border-bottom:1px solid #303741;text-align:left}#aimmLocalShareOverlay th{position:sticky;top:0;background:#222831;color:#c8d2de}#aimmLocalShareOverlay .share-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:9px}#aimmLocalShareOverlay button{min-height:38px;padding:8px 12px;border:1px solid #414a55;border-radius:7px;background:#252a31;color:#dfe6ed;font:inherit;cursor:pointer}#aimmLocalShareOverlay button.primary{border-color:#3289b7;background:#146082}#aimmLocalShareOverlay [role=status]{min-height:1.4em;color:#42c995}@media(max-width:600px){#aimmLocalShareOverlay .share-grid{grid-template-columns:1fr}}";
+  document.head.appendChild(shareCss);
+  function shareInventoryRows(){
+    return Array.from(document.querySelectorAll("#invInventory .inv-product")).filter((product)=>{
+      const vendor=product.closest(".inv-vendor");
+      return !product.hidden&&(!vendor||(!vendor.hidden&&vendor.style.display!=="none"&&!vendor.classList.contains("inv-filtered")));
+    }).map((product)=>{
+      const action=product.querySelector("[data-inv-product-action]");
+      let meta={};try{meta=JSON.parse(action?.dataset.invProductAction||"{}");}catch{}
+      const formats=Array.from(product.querySelectorAll(".inv-format-state")).map((node)=>{
+        const format=node.querySelector(".inv-chip")?.textContent.trim()||"";
+        const status=node.querySelector(".inv-format-status")?.getAttribute("aria-label")||"";
+        return {format,status:status.replace(/^.*?·\\s*/,"").trim()};
+      }).filter((item)=>item.format);
+      const versionRows=Array.from(product.querySelectorAll(".inv-version-row")).map((node)=>{
+        const format=node.querySelector("b")?.textContent.trim()||"";
+        const version=node.querySelector(".inv-version-values")?.textContent.trim()||"";
+        return format&&version?format+" "+version:"";
+      }).filter(Boolean);
+      return {vendor:product.closest(".inv-vendor")?.querySelector(".inv-vendor-name strong")?.textContent.trim()||meta.vendor||"Unknown publisher",
+        name:product.querySelector(".inv-name")?.textContent.trim()||meta.name||"Unnamed plug-in",
+        category:product.querySelector(".inv-category-label")?.textContent.trim()||meta.category||"",
+        formats,versions:versionRows};
+    });
+  }
+  function csvCell(value){return '"'+String(value??"").replace(/"/g,'""')+'"';}
+  function openLocalShare(){
+    document.getElementById("aimmLocalShareOverlay")?.remove();
+    const rows=shareInventoryRows(),vendors=Array.from(new Set(rows.map((row)=>row.vendor))).sort();
+    const overlay=document.createElement("div");overlay.id="aimmLocalShareOverlay";
+    overlay.innerHTML='<section role="dialog" aria-modal="true" aria-labelledby="aimmLocalShareTitle"><header><h2 id="aimmLocalShareTitle">Share Plugin List</h2><p>Create a share-ready export from the plug-ins currently shown in this Library view.</p></header><p><strong>Local export only.</strong> Nothing is sent from AIMM. Expiring public links and passkey protection are not connected yet. Review the fields before you copy or download.</p><div class="share-grid"><label>List name<input type="text" data-share-label maxlength="80" placeholder="My plug-in list"></label><label>Format scope<select data-share-format><option value="">All formats</option><option>AU</option><option>VST2</option><option>VST3</option><option>CLAP</option></select></label></div><div><strong>Exclude publishers</strong><div class="share-vendors">'+vendors.map((vendor,index)=>'<label><input type="checkbox" data-share-vendor value="'+esc(vendor)+'"> '+esc(vendor)+'</label>').join("")+'</div></div><div class="share-grid"><label class="share-check"><input type="checkbox" data-share-versions checked> Include versions</label><label class="share-check"><input type="checkbox" data-share-categories checked> Include categories</label></div><div class="share-preview" data-share-preview></div><small data-share-count></small><div role="status" data-share-status></div><footer class="share-actions"><button type="button" data-share-close>Close</button><button type="button" data-share-copy class="primary">Copy for Sheets</button><button type="button" data-share-download>Download CSV</button></footer></section>';
+    document.body.appendChild(overlay);
+    const query=(selector)=>overlay.querySelector(selector);
+    const output=query("[data-share-preview]"),count=query("[data-share-count]"),status=query("[data-share-status]");
+    function selectedRows(){
+      const format=query("[data-share-format]").value;
+      const excluded=new Set(Array.from(overlay.querySelectorAll("[data-share-vendor]:checked")).map((input)=>input.value));
+      return rows.filter((row)=>!excluded.has(row.vendor)&&(!format||row.formats.some((item)=>item.format===format))).map((row)=>{
+        const activeFormats=format?row.formats.filter((item)=>item.format===format):row.formats;
+        const versions=query("[data-share-versions]").checked?row.versions.filter((item)=>!format||item.startsWith(format+" ")).join("; "):"";
+        return {name:row.name,publisher:row.vendor,category:query("[data-share-categories]").checked?row.category:"",formats:activeFormats.map((item)=>item.format).join(", "),versions};
+      });
+    }
+    function draw(){
+      const selected=selectedRows(),columns=["Plug-in","Publisher"];
+      if(query("[data-share-categories]").checked)columns.push("Category");
+      columns.push("Formats");if(query("[data-share-versions]").checked)columns.push("Versions");
+      output.innerHTML=selected.length?'<table><thead><tr>'+columns.map((col)=>"<th>"+esc(col)+"</th>").join("")+'</tr></thead><tbody>'+selected.map((row)=>'<tr><td>'+esc(row.name)+'</td><td>'+esc(row.publisher)+'</td>'+(query("[data-share-categories]").checked?'<td>'+esc(row.category)+'</td>':"")+'<td>'+esc(row.formats)+'</td>'+(query("[data-share-versions]").checked?'<td>'+esc(row.versions)+'</td>':"")+'</tr>').join("")+'</tbody></table>':'<p style="padding:14px">No matching plug-ins are shown. Change the format or publisher exclusions.</p>';
+      count.textContent=selected.length+" plug-in"+(selected.length===1?"":"s")+" in this export.";
+      status.textContent="";
+    }
+    overlay.querySelectorAll("select,input").forEach((control)=>control.addEventListener("change",draw));
+    query("[data-share-label]").addEventListener("input",draw);
+    query("[data-share-close]").addEventListener("click",()=>overlay.remove());
+    overlay.addEventListener("click",(event)=>{if(event.target===overlay)overlay.remove();});
+    function lines(tsv=false){
+      const selected=selectedRows(),columns=["Plug-in","Publisher"];
+      if(query("[data-share-categories]").checked)columns.push("Category");columns.push("Formats");if(query("[data-share-versions]").checked)columns.push("Versions");
+      const keyMap={"Plug-in":"name","Publisher":"publisher","Category":"category","Formats":"formats","Versions":"versions"};
+      const separator=tsv?"\\t":",";
+      const listName=query("[data-share-label]").value.trim();
+      const header=listName?[[csvCell("List"),csvCell(listName)].join(separator),""]: [];
+      return header.concat([columns.map((col)=>csvCell(col)).join(separator),...selected.map((row)=>columns.map((col)=>csvCell(row[keyMap[col]]||"")).join(separator))]).join("\\n");
+    }
+    query("[data-share-copy]").addEventListener("click",async()=>{
+      if(!selectedRows().length){status.textContent="There are no plug-ins to copy.";return;}
+      try{await navigator.clipboard.writeText(lines(true));status.textContent="Copied "+selectedRows().length+" plug-ins as tab-separated values.";}
+      catch{status.textContent="Clipboard access was unavailable. Use Download CSV instead.";}
+    });
+    query("[data-share-download]").addEventListener("click",()=>{
+      if(!selectedRows().length){status.textContent="There are no plug-ins to download.";return;}
+      const blob=new Blob(["\\ufeff"+lines(false)],{type:"text/csv;charset=utf-8"});
+      const url=URL.createObjectURL(blob),a=document.createElement("a");
+      a.href=url;a.download=(query("[data-share-label]").value.trim()||"aimm-plugin-list").replace(/[^a-z0-9-_]+/gi,"-")+".csv";
+      a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);status.textContent="CSV export created on this device.";
+    });
+    draw();query("[data-share-label]").focus();
+  }
+  function installLocalShareTool(){
+    const button=Array.from(document.querySelectorAll("#invSidebar button")).find((node)=>node.getAttribute("aria-label")?.startsWith("Share Plugin List"));
+    if(!button)return false;
+    button.disabled=false;button.removeAttribute("aria-disabled");
+    button.setAttribute("aria-label","Share Plugin List — create a local CSV or spreadsheet export");
+    button.title="Create a local share-ready export; nothing is sent";
+    if(!button.__aimmLocalShareBound){button.__aimmLocalShareBound=true;button.addEventListener("click",(event)=>{event.preventDefault();openLocalShare();});}
+    const note=document.querySelector("#invSidebar .inv-tools-note,#invSidebar .inv-small-note");
+    if(note&&/Other tools are disabled/.test(note.textContent))note.textContent="Install Manager uses your account and paired Companion; Share Plugin List creates a local export. No public link or passkey share is connected yet.";
+    const synthetic=document.querySelector("#invSyntheticPreviewNotice");
+    const syntheticText=synthetic?.querySelector("span");
+    if(syntheticText)syntheticText.textContent="All products and status states here are synthetic and generated in memory; no vendor checks ran. Dots: red = Updates, green = Up to date, amber = Manual check, grey = Unchecked. No saved inventory/favourites/tags are read; folder access is blocked.";
+    return true;
+  }
+
+  const shareObserver=new MutationObserver(()=>{if(installLocalShareTool())shareObserver.disconnect();});
+  if(!installLocalShareTool())shareObserver.observe(document.documentElement,{childList:true,subtree:true});
 })();
