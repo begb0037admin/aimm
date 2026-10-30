@@ -3249,6 +3249,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-vendor-name{min-width:0;display:block}
     #library .inv-vendor-name strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(var(--inv-text-scale, 1) * 13px);color:#edf1f4}
     #library .inv-vendor-name small{display:block;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(var(--inv-text-scale, 1) * 9px);color:#818c99}
+    @media(max-width:760px){#library .inv-vendor-name{flex:1 1 auto}#library .inv-vendor-name strong{overflow:visible;text-overflow:clip;white-space:normal;overflow-wrap:anywhere;line-height:1.2}}
     #library .inv-vendor-count{margin-left:auto;flex:none;padding:3px 6px;border-radius:5px;background:#28313c;color:#dce5ef;font: calc(var(--inv-text-scale, 1) * 10px) ui-monospace,Menlo,monospace}
     #library .inv-vendor-toggle{border:0;background:transparent;color:#87919b;font-size:calc(var(--inv-text-scale, 1) * 15px);cursor:pointer;padding:3px 2px}
     #library .inv-vendor.collapsed .inv-products,#library .inv-vendor.collapsed .inv-more{display:none}
