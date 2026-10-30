@@ -602,6 +602,7 @@
   }
   function syntheticManagerClick(event){
     if(event.target===syntheticManager.overlay){closeSyntheticManager();return;}
+    if(event.type==="change"&&event.target.matches("[data-sim-vendor]")){syntheticManager.vendor=event.target.value;syntheticManager.message="Showing "+event.target.value+".";renderSyntheticManager();return;}
     const target=event.target.closest("button");if(!target)return;
     if(target.hasAttribute("data-sim-done")){closeSyntheticManager();return;}
     if(target.hasAttribute("data-sim-folder")){syntheticManager.message="This browser preview cannot choose or access a local download folder. No folder was opened.";renderSyntheticManager();return;}
