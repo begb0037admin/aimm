@@ -404,7 +404,10 @@ public final class LibraryAPIClient: @unchecked Sendable {
                 "bundleIdentifier": record.bundleIdentifier as Any? ?? NSNull(),
                 "version": record.version as Any? ?? NSNull(),
                 "format": record.format.rawValue,
-                "metadataSource": record.metadataSource.rawValue
+                "metadataSource": record.metadataSource.rawValue,
+                "publisherName": record.publisherName as Any? ?? NSNull(),
+                "publisherSource": record.publisherSource?.rawValue as Any? ?? NSNull(),
+                "canonicalProductId": record.canonicalProductId as Any? ?? NSNull()
             ] as [String: Any]
         }
         let chunks = stride(from: 0, to: allRecords.count, by: 100).map {

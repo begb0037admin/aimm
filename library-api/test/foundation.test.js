@@ -68,7 +68,8 @@ function d1() {
     "../migrations/0018_move_to_unused_action.sql",
     "../migrations/0019_snooze_reason.sql",
     "../migrations/0020_version_bound_marks.sql",
-    "../migrations/0021_restore_actions.sql"
+    "../migrations/0021_restore_actions.sql",
+    "../migrations/0022_publisher_identity.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -521,7 +522,7 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   const startedAt = new Date().toISOString();
   const chunkPath = `/v1/devices/${deviceId}/inventory/${generationId}/chunks/0`;
   const chunkBody = { schema_version: 1, started_at: startedAt, root_count: 1, records: [
-    { id: crypto.randomUUID(), name: "Synth", bundleIdentifier: "com.example.synth", version: "1.2", format: "AU", metadataSource: "infoPlist" },
+    { id: crypto.randomUUID(), name: "Synth", bundleIdentifier: "com.example.synth", version: "1.2", format: "AU", metadataSource: "infoPlist", publisherName: "Copperline Sample DSP", publisherSource: "infoPlistManufacturer", canonicalProductId: null },
     { id: crypto.randomUUID(), name: "Utility", bundleIdentifier: "com.example.utility", version: "2.0", format: "VST3", metadataSource: "infoPlist" }
   ] };
   const upload = () => call(env, chunkPath, {
@@ -542,6 +543,26 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   });
   assert.equal(injection.status, 400);
   assert.doesNotMatch(DB.raw("SELECT records_json FROM inventory_chunks")[0].records_json, /localPath|\/private\/secret/);
+  const badPublisher = await call(env, `/v1/devices/${deviceId}/inventory/${crypto.randomUUID()}/chunks/0`, {
+    method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { ...chunkBody, records: [{ ...chunkBody.records[0], publisherName: "Copperline Sample DSP", publisherSource: "guessedFromFolder" }] }
+  });
+  assert.equal(badPublisher.status, 400);
+  const unsupportedPublisherSource = await call(env, `/v1/devices/${deviceId}/inventory/${crypto.randomUUID()}/chunks/0`, {
+    method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { ...chunkBody, records: [{ ...chunkBody.records[0], publisherSource: "reviewedMapping" }] }
+  });
+  assert.equal(unsupportedPublisherSource.status, 400);
+  const publisherWithoutPlist = await call(env, `/v1/devices/${deviceId}/inventory/${crypto.randomUUID()}/chunks/0`, {
+    method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { ...chunkBody, records: [{ ...chunkBody.records[0], metadataSource: "filenameOnly" }] }
+  });
+  assert.equal(publisherWithoutPlist.status, 400);
+  const guessedCanonicalProduct = await call(env, `/v1/devices/${deviceId}/inventory/${crypto.randomUUID()}/chunks/0`, {
+    method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { ...chunkBody, records: [{ ...chunkBody.records[0], canonicalProductId: "com.example.unreviewed-product" }] }
+  });
+  assert.equal(guessedCanonicalProduct.status, 400);
 
   const completedAt = new Date(Date.now() + 1000).toISOString();
   const incomplete = await call(env, `/v1/devices/${deviceId}/inventory/${generationId}/finalize`, {
@@ -560,6 +581,10 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal(visible.generation.generation_id, generationId);
   assert.equal(visible.records.length, 2);
   assert.equal("localPath" in visible.records[0], false);
+  const visibleSynth = visible.records.find((record) => record.name === "Synth");
+  assert.equal(visibleSynth.publisherName, "Copperline Sample DSP");
+  assert.equal(visibleSynth.publisherSource, "infoPlistManufacturer");
+  assert.equal(visibleSynth.canonicalProductId, null);
   const firstPageResponse = await call(env, "/v1/library?limit=1", { headers: ownerHeaders });
   assert.equal(firstPageResponse.status, 200);
   const firstPage = await firstPageResponse.json();
@@ -596,6 +621,10 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal(beforeSummary.records[0].status, "update");
   assert.equal(beforeSummary.counts.free_update, 1);
   assert.equal(beforeSummary.counts.actionable_update, 1);
+  const statusSynth = beforeSummary.records.find((record) => record.record_id === recordId);
+  assert.equal(statusSynth.publisher_name, "Copperline Sample DSP");
+  assert.equal(statusSynth.publisher_source, "infoPlistManufacturer");
+  assert.equal(statusSynth.canonical_product_id, null);
   assert.equal(beforeSummary.records[0].comparison_reason, "numeric_version_newer");
   const unobservedVersionMark = await call(env, "/v1/preferences/marks", {
     method: "PUT", headers: { ...ownerHeaders, "content-type": "application/json" },

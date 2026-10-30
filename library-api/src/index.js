@@ -870,27 +870,58 @@ async function requireDeviceCredential(request, env, deviceId) {
 
 const INVENTORY_FORMATS = new Set(["AU", "VST2", "VST3", "CLAP"]);
 const INVENTORY_SOURCES = new Set(["infoPlist", "filenameOnly"]);
+const PUBLISHER_SOURCES = new Set([
+  "infoPlistManufacturer", "infoPlistVendor"
+]);
+
+function optionalInventoryMetadataText(value, maximumBytes) {
+  if (value === null || value === undefined) return null;
+  if (typeof value !== "string") throw new Error("invalid_inventory");
+  const normalized = value.trim();
+  const bytes = new TextEncoder().encode(normalized).byteLength;
+  if (!normalized || bytes > maximumBytes || /[\u0000-\u001f\u007f]/.test(normalized)) {
+    throw new Error("invalid_inventory");
+  }
+  return normalized;
+}
 
 function normalizeInventoryRecords(records) {
   if (!Array.isArray(records) || records.length > 250) throw new Error("invalid_inventory");
   const ids = new Set();
   return records.map((record) => {
     if (!record || typeof record !== "object" || Array.isArray(record)) throw new Error("invalid_inventory");
-    const allowed = new Set(["id", "name", "bundleIdentifier", "version", "format", "metadataSource"]);
+    const allowed = new Set([
+      "id", "name", "bundleIdentifier", "version", "format", "metadataSource",
+      "publisherName", "publisherSource", "canonicalProductId"
+    ]);
     if (Object.keys(record).some((key) => !allowed.has(key))) throw new Error("invalid_inventory");
-    const { id, name, bundleIdentifier, version, format, metadataSource } = record;
+    const {
+      id, name, bundleIdentifier, version, format, metadataSource,
+      publisherName, publisherSource, canonicalProductId
+    } = record;
+    const normalizedPublisherName = optionalInventoryMetadataText(publisherName, 120);
+    const normalizedCanonicalProductId = optionalInventoryMetadataText(canonicalProductId, 255);
+    if (normalizedCanonicalProductId !== null) throw new Error("invalid_inventory");
+    const normalizedPublisherSource = publisherSource === null || publisherSource === undefined
+      ? null : publisherSource;
     if (typeof id !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id) ||
         typeof name !== "string" || name.trim().length < 1 || name.length > 256 ||
         !INVENTORY_FORMATS.has(format) || !INVENTORY_SOURCES.has(metadataSource) ||
         (bundleIdentifier !== null && bundleIdentifier !== undefined && (typeof bundleIdentifier !== "string" || bundleIdentifier.length > 255)) ||
-        (version !== null && version !== undefined && (typeof version !== "string" || version.length > 128))) {
+        (version !== null && version !== undefined && (typeof version !== "string" || version.length > 128)) ||
+        ((normalizedPublisherName === null) !== (normalizedPublisherSource === null)) ||
+        (normalizedPublisherSource !== null && !PUBLISHER_SOURCES.has(normalizedPublisherSource)) ||
+        (normalizedPublisherName !== null && metadataSource !== "infoPlist")) {
       throw new Error("invalid_inventory");
     }
     if (ids.has(id)) throw new Error("invalid_inventory");
     ids.add(id);
     return {
       id, name: name.trim(), bundleIdentifier: bundleIdentifier || null,
-      version: version || null, format, metadataSource
+      version: version || null, format, metadataSource,
+      publisherName: normalizedPublisherName,
+      publisherSource: normalizedPublisherSource,
+      canonicalProductId: normalizedCanonicalProductId
     };
   });
 }
@@ -1014,7 +1045,7 @@ async function finalizeInventory(request, env, requestId, origin, deviceId, gene
       env.DB.prepare("UPDATE scan_generations SET completed_at = ?1, record_count = ?2, chunk_count = ?3, state = ?4 WHERE device_id = ?5 AND generation_id = ?6 AND state = 'staging'")
         .bind(completedAt, recordCount, chunkCount, state, deviceId, generationId),
       ...(partial ? [] : [
-        env.DB.prepare("INSERT INTO published_inventory_records (device_id, generation_id, record_id, name, bundle_identifier, version, format, metadata_source) SELECT chunks.device_id, chunks.generation_id, json_extract(items.value, '$.id'), json_extract(items.value, '$.name'), json_extract(items.value, '$.bundleIdentifier'), json_extract(items.value, '$.version'), json_extract(items.value, '$.format'), json_extract(items.value, '$.metadataSource') FROM inventory_chunks chunks, json_each(chunks.records_json) items WHERE chunks.device_id = ?1 AND chunks.generation_id = ?2")
+        env.DB.prepare("INSERT INTO published_inventory_records (device_id, generation_id, record_id, name, bundle_identifier, version, format, metadata_source, publisher_name, publisher_source, canonical_product_id) SELECT chunks.device_id, chunks.generation_id, json_extract(items.value, '$.id'), json_extract(items.value, '$.name'), json_extract(items.value, '$.bundleIdentifier'), json_extract(items.value, '$.version'), json_extract(items.value, '$.format'), json_extract(items.value, '$.metadataSource'), json_extract(items.value, '$.publisherName'), json_extract(items.value, '$.publisherSource'), json_extract(items.value, '$.canonicalProductId') FROM inventory_chunks chunks, json_each(chunks.records_json) items WHERE chunks.device_id = ?1 AND chunks.generation_id = ?2")
           .bind(deviceId, generationId),
         env.DB.prepare("INSERT INTO device_inventory_heads (device_id, generation_id, updated_at) VALUES (?1, ?2, ?3) ON CONFLICT(device_id) DO UPDATE SET generation_id = excluded.generation_id, updated_at = excluded.updated_at")
           .bind(deviceId, generationId, completedAt)
@@ -1057,10 +1088,10 @@ async function readLibrary(request, env, account, requestId, origin) {
   if (!head) return json({ device: null, generation: null, records: [], next_cursor: null }, 200, requestId, origin, env);
   const result = after
     ? await env.DB.prepare(
-      "SELECT record_id AS id, name, bundle_identifier AS bundleIdentifier, version, format, metadata_source AS metadataSource FROM published_inventory_records WHERE device_id = ?1 AND generation_id = ?2 AND (name > ?3 OR (name = ?3 AND format > ?4) OR (name = ?3 AND format = ?4 AND record_id > ?5)) ORDER BY name, format, record_id LIMIT ?6"
+      "SELECT record_id AS id, name, bundle_identifier AS bundleIdentifier, version, format, metadata_source AS metadataSource, publisher_name AS publisherName, publisher_source AS publisherSource, canonical_product_id AS canonicalProductId FROM published_inventory_records WHERE device_id = ?1 AND generation_id = ?2 AND (name > ?3 OR (name = ?3 AND format > ?4) OR (name = ?3 AND format = ?4 AND record_id > ?5)) ORDER BY name, format, record_id LIMIT ?6"
     ).bind(head.device_id, head.generation_id, after.name, after.format, after.id, limit + 1).all()
     : await env.DB.prepare(
-      "SELECT record_id AS id, name, bundle_identifier AS bundleIdentifier, version, format, metadata_source AS metadataSource FROM published_inventory_records WHERE device_id = ?1 AND generation_id = ?2 ORDER BY name, format, record_id LIMIT ?3"
+      "SELECT record_id AS id, name, bundle_identifier AS bundleIdentifier, version, format, metadata_source AS metadataSource, publisher_name AS publisherName, publisher_source AS publisherSource, canonical_product_id AS canonicalProductId FROM published_inventory_records WHERE device_id = ?1 AND generation_id = ?2 ORDER BY name, format, record_id LIMIT ?3"
     ).bind(head.device_id, head.generation_id, limit + 1).all();
   const page = result.results || [];
   const hasMore = page.length > limit;
@@ -1926,7 +1957,7 @@ async function readStatusSummary(request, env, account, requestId, origin) {
   const deviceId = new URL(request.url).searchParams.get("device_id");
   const now = Date.now();
   const rows = await env.DB.prepare(
-    "SELECT d.device_id, d.display_name, g.generation_id, g.completed_at AS observed_at, r.record_id, r.name, r.bundle_identifier, r.version AS installed_version, r.format, c.result AS raw_result, c.checked_at, c.latest_version, c.source_type, c.last_good_at, c.error_code, c.route, c.paid_upgrade, c.comparison_reason, good.latest_version AS last_good_latest_version, good.checked_at AS last_good_checked_at FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id JOIN published_inventory_records r ON r.device_id = d.device_id AND r.generation_id = g.generation_id LEFT JOIN (SELECT * FROM (SELECT checks.*, ROW_NUMBER() OVER (PARTITION BY device_id, generation_id, record_id ORDER BY checked_at DESC, observation_id DESC) AS rn FROM check_observations checks WHERE account_id = ?1 AND expires_at > ?2) WHERE rn = 1) c ON c.device_id = d.device_id AND c.generation_id = g.generation_id AND c.record_id = r.record_id LEFT JOIN (SELECT * FROM (SELECT checks.*, ROW_NUMBER() OVER (PARTITION BY device_id, generation_id, record_id ORDER BY checked_at DESC, observation_id DESC) AS rn FROM check_observations checks WHERE account_id = ?1 AND expires_at > ?2 AND result IN ('update', 'up_to_date')) WHERE rn = 1) good ON good.device_id = d.device_id AND good.generation_id = g.generation_id AND good.record_id = r.record_id WHERE d.account_id = ?1 AND d.revoked_at IS NULL AND (?3 IS NULL OR d.device_id = ?3) ORDER BY d.device_id, r.name"
+    "SELECT d.device_id, d.display_name, g.generation_id, g.completed_at AS observed_at, r.record_id, r.name, r.bundle_identifier, r.publisher_name, r.publisher_source, r.canonical_product_id, r.version AS installed_version, r.format, c.result AS raw_result, c.checked_at, c.latest_version, c.source_type, c.last_good_at, c.error_code, c.route, c.paid_upgrade, c.comparison_reason, good.latest_version AS last_good_latest_version, good.checked_at AS last_good_checked_at FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id JOIN published_inventory_records r ON r.device_id = d.device_id AND r.generation_id = g.generation_id LEFT JOIN (SELECT * FROM (SELECT checks.*, ROW_NUMBER() OVER (PARTITION BY device_id, generation_id, record_id ORDER BY checked_at DESC, observation_id DESC) AS rn FROM check_observations checks WHERE account_id = ?1 AND expires_at > ?2) WHERE rn = 1) c ON c.device_id = d.device_id AND c.generation_id = g.generation_id AND c.record_id = r.record_id LEFT JOIN (SELECT * FROM (SELECT checks.*, ROW_NUMBER() OVER (PARTITION BY device_id, generation_id, record_id ORDER BY checked_at DESC, observation_id DESC) AS rn FROM check_observations checks WHERE account_id = ?1 AND expires_at > ?2 AND result IN ('update', 'up_to_date')) WHERE rn = 1) good ON good.device_id = d.device_id AND good.generation_id = g.generation_id AND good.record_id = r.record_id WHERE d.account_id = ?1 AND d.revoked_at IS NULL AND (?3 IS NULL OR d.device_id = ?3) ORDER BY d.device_id, r.name"
   ).bind(account.account_id, new Date(now).toISOString(), deviceId).all();
   const marksResult = await env.DB.prepare("SELECT scope, target_key, favorite, pinned, hidden, snooze_until, snooze_reason, marked_latest_version, marked_at FROM library_marks WHERE account_id = ?1").bind(account.account_id).all();
   const marks = new Map((marksResult.results || []).map((mark) => [`${mark.scope}:${mark.target_key}`, mark]));
@@ -1967,7 +1998,9 @@ async function readStatusSummary(request, env, account, requestId, origin) {
     return {
       device_id: row.device_id, device_name: row.display_name,
       generation_id: row.generation_id, observed_at: row.observed_at,
-      record_id: row.record_id, name: row.name, bundle_identifier: row.bundle_identifier || null, format: row.format,
+      record_id: row.record_id, name: row.name, bundle_identifier: row.bundle_identifier || null,
+      publisher_name: row.publisher_name || null, publisher_source: row.publisher_source || null,
+      canonical_product_id: row.canonical_product_id || null, format: row.format,
       installed_version: row.installed_version,
       latest_version: effectiveLatestVersion,
       raw_status: row.raw_result || "unchecked", status: bucket,

@@ -10,6 +10,10 @@ This directory is an isolated Cloudflare Worker for the approved Plugin Library 
 
 The account preview loads a full inventory snapshot and rejects a missing, changing, or inconsistent generation record count before showing parity results. Inventory and status observations are displayed in bounded 100-row pages with search and filters; the account status page can reach observations beyond the first page. Hope's status tool response remains capped at 100 rows unless the account UI explicitly requests its full display snapshot.
 
+## Publisher identity fields — 2026-10-30
+
+Migration `0022_publisher_identity.sql` adds nullable publisher name/source and canonical product ID fields to each published format record. The Companion reads only explicit `Manufacturer` or `Vendor` values from the bundle Info.plist; it does not derive publisher from paths, filenames or bundle-ID segments. The API accepts a closed publisher-source enum, bounds UTF-8 lengths, rejects control characters, and returns these fields from both the inventory and status projections. Local paths remain excluded. Existing generations keep null values, and canonical product IDs remain null until a reviewed mapping establishes cross-format identity. This schema/source slice does not connect the visible Library page to the authenticated status API or apply a D1 migration remotely.
+
 ## Included
 
 - Version 1 D1 migration for OIDC account mappings, device records and hashed device credentials.

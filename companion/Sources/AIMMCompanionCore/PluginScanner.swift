@@ -12,20 +12,33 @@ public enum MetadataSource: String, Codable, Sendable {
     case filenameOnly
 }
 
+public enum PublisherSource: String, Codable, Sendable {
+    case infoPlistManufacturer
+    case infoPlistVendor
+}
+
 public struct PluginRecord: Codable, Equatable, Sendable {
     public let id: String
     public let name: String
     public let bundleIdentifier: String?
+    public let publisherName: String?
+    public let publisherSource: PublisherSource?
+    public let canonicalProductId: String?
     public let version: String?
     public let format: PluginFormat
     public let metadataSource: MetadataSource
     public let localPath: String
 
     public init(id: String, name: String, bundleIdentifier: String?, version: String?,
-                format: PluginFormat, metadataSource: MetadataSource, localPath: String) {
+                format: PluginFormat, metadataSource: MetadataSource, localPath: String,
+                publisherName: String? = nil, publisherSource: PublisherSource? = nil,
+                canonicalProductId: String? = nil) {
         self.id = id
         self.name = name
         self.bundleIdentifier = bundleIdentifier
+        self.publisherName = publisherName
+        self.publisherSource = publisherSource
+        self.canonicalProductId = canonicalProductId
         self.version = version
         self.format = format
         self.metadataSource = metadataSource
@@ -126,6 +139,11 @@ public struct PluginScanner {
     private func record(at url: URL, format: PluginFormat) -> PluginRecord {
         let plist = readInfoPlist(in: url)
         let bundleIdentifier = boundedString(plist?["CFBundleIdentifier"], maximum: 255)
+        let manufacturer = boundedPublisherString(plist?["Manufacturer"], maximum: 120)
+        let vendor = boundedPublisherString(plist?["Vendor"], maximum: 120)
+        let publisherName = manufacturer ?? vendor
+        let publisherSource: PublisherSource? = manufacturer != nil ? .infoPlistManufacturer
+            : (vendor != nil ? .infoPlistVendor : nil)
         let displayName = boundedString(plist?["CFBundleDisplayName"], maximum: 200)
             ?? boundedString(plist?["CFBundleName"], maximum: 200)
         let version = boundedString(plist?["CFBundleShortVersionString"], maximum: 100)
@@ -139,7 +157,10 @@ public struct PluginScanner {
             version: version,
             format: format,
             metadataSource: plist == nil ? .filenameOnly : .infoPlist,
-            localPath: path
+            localPath: path,
+            publisherName: publisherName,
+            publisherSource: publisherSource,
+            canonicalProductId: nil
         )
     }
 
@@ -160,6 +181,12 @@ public struct PluginScanner {
             return dictionary
         }
         return nil
+    }
+
+    private func boundedPublisherString(_ value: Any?, maximum: Int) -> String? {
+        guard let result = boundedString(value, maximum: maximum),
+              !result.unicodeScalars.contains(where: { $0.value <= 0x1f || $0.value == 0x7f }) else { return nil }
+        return result
     }
 
     private func boundedString(_ value: Any?, maximum: Int) -> String? {
