@@ -47,6 +47,7 @@
     #library .inv-fav{font-size:16px;padding:1px 3px}
     #library .inv-more{padding:9px 14px;font-size:10px}
     #library .inv-cards-quick{min-height:36px;padding:7px 14px;font-size:12px;font-weight:700;white-space:nowrap}
+    #library .inv-view-menu.inv-view-open-up .inv-view-panel{top:calc(100% + 8px)!important;bottom:auto!important;max-height:min(560px,calc(100vh - 660px))!important}
     #library .inv-product-line{grid-template-columns:minmax(0,1fr) 24px 20px!important;align-items:start!important;column-gap:9px!important;row-gap:7px!important}
     #library .inv-name{grid-column:1!important;grid-row:1!important;font-size:15px!important;line-height:1.35!important;font-weight:700!important;overflow-wrap:anywhere!important}
     #library .inv-version{grid-column:1/-1!important;grid-row:2!important;width:100%!important;max-width:none!important;margin:0!important;align-self:start!important;font-size:11px!important;line-height:1.45!important}
@@ -105,11 +106,14 @@
   function aimmSyncCardsShortcut() {
     const button = document.getElementById("invCardsQuickBtn");
     if (!button) return;
-    const selected = button.classList.contains("active");
-    button.textContent = selected ? "Cards" : "Back to Cards";
+    const selected = button.getAttribute("aria-pressed") === "true" || button.classList.contains("active");
+    const label = selected ? "Cards" : "Back to Cards";
+    if (button.textContent.trim() !== label) button.textContent = label;
     button.setAttribute("aria-label", selected ? "Cards view selected. Choose another layout in View options." : "Return to Cards view.");
     button.title = selected ? "Cards view selected" : "Return to the publisher card tiles";
   }
+  const cardsStateObserver = new MutationObserver(() => aimmSyncCardsShortcut());
+  cardsStateObserver.observe(document.documentElement, {childList:true,subtree:true,attributes:true,attributeFilter:["class","aria-pressed"]});
   function aimmInstallCardsShortcut() {
     const original = window.invRenderInventory;
     if (typeof original !== "function" || original.__aimmCardsShortcutWrapped) return false;
