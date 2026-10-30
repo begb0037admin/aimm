@@ -1,8 +1,8 @@
 ## 2026-10-30 PluginHub parity — Unchecked status scope
 
-The Library > All Plugins destination opens the existing List row table and preserves filters; Cards remains the default. An enabled Unchecked scope counts visible, non-hidden installed product groups because no vendor status result is connected to this Library. Updates available, Up to date and Manual check remain disabled. Jules passed source and visual review for `index.html` blob 50ca42b79ea8cb9b4c2e6d0fc515e5c0102af2f2 at https://bbc7a291.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic (deployment bbc7a291-1940-4853-9b22-cf158f65f9d6). Four vendor-card columns and the All Plugins table fit with 14 synthetic format rows / 12 products; Unchecked shows 12. No real folders were read or scanned. Real inventory rows and generation-backed statuses remain unassessed.
+The Library > All Plugins destination opens the existing List row table and preserves filters; Cards remains the default. An enabled Unchecked scope counts visible, non-hidden installed product groups because no vendor status result is connected to this Library. Updates available, Up to date and Manual check remain disabled. Jules passed source and visual review for `index.html` blob 8cc326ffbf691a39c749d855265b49d8d6f6d94a at https://8700637a.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic (deployment 8700637a-ece1-42b7-a428-fe37e2eaab9a). The All Plugins status cell is readable at desktop, 600px and 390px; the narrow table scrolls horizontally. Cards, ordinary List and Ledger remain unchanged. The 14-row/12-product/4-format synthetic sample shows Unchecked 12. No real folders were read or scanned; generation-backed results remain unassessed.
 
-Next: use the populated sample to complete the PluginHub flat-table status semantics and connect only actual generation-bound observations; the current Unchecked state means no result is connected, not that a check ran. See [the tool and browse matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob bb356311c9faa70bed71fd35ca32f189b353e70b.
+Next: use the populated sample to complete the PluginHub flat-table status semantics and connect only actual generation-bound observations; the current Unchecked state means no result is connected, not that a check ran. See [the tool and browse matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob fa3e94396352ea4c637a3cfd0a8762fd39288495.
 
 No inventory scan/upload, automated tests, Worker or production deployment, file operation, or share occurred. Foundation remains **NOT MET**; Stage 6 gated. The Worker RP fix remains a surgical patch, not reproducible from branch source. Synthetic non-production data only.
 ## Historical checkpoint — 2026-10-30 PluginHub tool-surface correction
@@ -11,11 +11,11 @@ Source/manual comparison against installed PluginHub 2.0.12 is recorded in [the 
 
 No real scan/upload, automated tests, Worker deployment, production action or file action occurred. Foundation remains **NOT MET**; Stage 6 gated. The Worker RP fix remains a surgical patch, not a reproducible branch-source build. Synthetic non-production data only.
 
-## 2026-10-30 PluginHub parity continuation — VST control passed
+## Historical checkpoint — VST control passed (2026-10-30; superseded by the current Unchecked/status-column checkpoint above)
 
 Source commit `f550878fa1e29910c81881534d8c8b6a2bbb97ac` is active on the development Pages preview at [deployment ce77fbf0](https://ce77fbf0.aimm-pluginhub-foundation-dev.pages.dev/). Jules passed source and final visual review. The VST popover is readable, keyboard-operable and supports PluginHub-style cycling, replacement and Shift-click combination/removal while retaining AIMM’s supported formats and AAX exclusion. Playwright’s computed role/name lookup finds the option names; the CUA snapshot omits them, which does not establish what a native screen reader announces. The preview has zero products and connected folders. See [VST and tool-sweep evidence](../governance/evidence/PHASE_PLUGINHUB_VST_AND_TOOL_SWEEP_20261030.md).
 
-Next sequence:
+Historical next sequence at the VST-control checkpoint (superseded by the current status-column checkpoint):
 
 1. Map the manual’s whole-library tools to reviewed AIMM owners and existing backend contracts. Start with the Companion’s read-only duplicate analysis; paths remain local and the analysis grants no file-action authority.
 2. Add tool navigation and each tool surface only when a reviewed backend is connected. Batch management, installer cleanup, vault, share, profile and entitlement are not verified in the current preview.
@@ -25,11 +25,11 @@ Next sequence:
 
 No real inventory scan/upload, automated tests, Worker deployment or production action occurred. Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP fix remains surgical, not reproducible from branch source. Use synthetic non-production data only.
 
-## 2026-10-29 PluginHub parity continuation — filters reviewed
+## Historical checkpoint — filters reviewed (2026-10-29; superseded by later VST-control and current All Plugins status checkpoints)
 
 Source `ad1e460dea5009dbf7e88eba6cd5c16d5941ba54` is active on development Pages at [deployment 1a5f0a2b](https://1a5f0a2b.aimm-pluginhub-foundation-dev.pages.dev/). Jules passed source and visual review of the My Tags chevron correction: one chevron points down while closed and flips up while open. Browse-tag and format interactions were previously verified on source `80dd8012a19f8b3cd662ee2125aa1c30e94b4ae6` at deployment `415a8b76-f53c-4c0e-82d5-20f7dd4eeb23`. Details and data limits are in [filter evidence](../governance/evidence/PHASE_PLUGINHUB_FILTERS_20261029.md).
 
-Next sequence:
+Historical next sequence at the filter-review checkpoint (superseded):
 
 1. Align PluginHub's VST cycling control while preserving AIMM's supported AU, VST2, VST3 and CLAP scanner formats and AAX exclusion.
 2. Add Intel-only and snoozed/status controls only when architecture metadata and live vendor-check observations support them.

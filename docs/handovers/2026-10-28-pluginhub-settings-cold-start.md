@@ -1,6 +1,6 @@
 # Current continuation checkpoint — Unchecked status scope — 2026-10-30
 
-The Library > All Plugins destination opens the existing List row table and preserves filters; Cards remains default. The enabled Unchecked scope counts visible, non-hidden product groups because no vendor result is connected to this Library; Updates available, Up to date and Manual check remain disabled. Jules passed source and visual review for `index.html` blob 50ca42b79ea8cb9b4c2e6d0fc515e5c0102af2f2 at https://bbc7a291.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic (deployment bbc7a291-1940-4853-9b22-cf158f65f9d6). Four vendor-card columns and the All Plugins table fit with 14 synthetic format rows / 12 products; Unchecked shows 12. No real folders were read or scanned. Real rows and generation-backed statuses remain unassessed. Full manual/source comparison: [tool and browse matrix](../../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob bb356311c9faa70bed71fd35ca32f189b353e70b.
+The Library > All Plugins destination opens the existing List row table and preserves filters; Cards remains default. The enabled Unchecked scope counts visible, non-hidden product groups because no vendor result is connected to this Library; Updates available, Up to date and Manual check remain disabled. Jules passed source and visual review for `index.html` blob 8cc326ffbf691a39c749d855265b49d8d6f6d94a at https://8700637a.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic (deployment 8700637a-ece1-42b7-a428-fe37e2eaab9a). The Unchecked column remains readable at desktop, 600px and 390px; the narrow table scrolls horizontally. Cards remain four columns; ordinary List/Ledger are unchanged. The 14-row/12-product/4-format sample shows Unchecked 12. No real folders were read or scanned; actual generation-backed statuses remain unassessed. Full manual/source comparison: [tool and browse matrix](../../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob fa3e94396352ea4c637a3cfd0a8762fd39288495.
 
 No plug-in folders were scanned or uploaded. Foundation remains **NOT MET**; Stage 6 remains gated. The Worker RP fix remains a surgical patch, not a reproducible build from branch source. Synthetic non-production data only.
 # Historical checkpoint — 2026-10-30, tool contract correction
@@ -9,7 +9,7 @@ Source/manual comparison against installed PluginHub 2.0.12 is recorded in [the 
 
 Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP fix remains a surgical patch, not a reproducible build from branch source. Synthetic non-production data only.
 
-# Current continuation checkpoint — 2026-10-30
+# Historical continuation checkpoint — VST control, 2026-10-30 (superseded by the current Unchecked/status-column checkpoint above)
 
 VST filter source commit `f550878fa1e29910c81881534d8c8b6a2bbb97ac` is live on development Pages at https://ce77fbf0.aimm-pluginhub-foundation-dev.pages.dev/. Jules passed source and final visual review. Mouse replacement/Shift-click combinations, tilde cycling, arrow selection and Escape focus return were verified on the empty preview; it is left on All formats. Playwright’s computed role/name lookup resolves the names while the CUA snapshot omits them; this points to a snapshot-bridge limitation, not a confirmed native screen-reader issue. See [VST and tool-sweep evidence](../../governance/evidence/PHASE_PLUGINHUB_VST_AND_TOOL_SWEEP_20261030.md).
 
@@ -17,7 +17,7 @@ Continue with a contract-first sweep of PluginHub’s whole-library tools and ro
 
 The preview contains zero products and connected folders. No real scan/upload, automated tests, Worker deployment or production action occurred. Foundation remains **NOT MET**; Stage 6 remains gated. The Worker passkey RP fix remains a surgical patch, not a reproducible branch-source build. Use synthetic non-production data only.
 
-# Current continuation checkpoint — 2026-10-29
+# Historical continuation checkpoint — 2026-10-29 (superseded; the current checkpoint is the Unchecked/status-column section above)
 
 The Library browse-filter slice is complete and Jules-reviewed. Branch source `ad1e460dea5009dbf7e88eba6cd5c16d5941ba54` is active at development Pages deployment `1a5f0a2b-b78f-493f-8532-0d57ce2540e5`: https://1a5f0a2b.aimm-pluginhub-foundation-dev.pages.dev/. The final visual fix removes a duplicate My Tags arrow; Jules confirmed one chevron points down while closed and up while open. Prior source `80dd8012a19f8b3cd662ee2125aa1c30e94b4ae6` at deployment `415a8b76-f53c-4c0e-82d5-20f7dd4eeb23` carries the reviewed tag/format interactions. Evidence: [filter parity](../../governance/evidence/PHASE_PLUGINHUB_FILTERS_20261029.md) and [manual parity sweep](../../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md).
 
@@ -35,7 +35,7 @@ Kevin reports successful development passkey enrollment; do not repeat setup or 
 
 The latest synchronized documentation is based on verified branch head `c271b240494322f6cb1655af274fe412e3187b92`; check GitHub for the current branch head before continuing. The clean branch-source build proves repeatable bundling only; it does not change live Worker provenance or Foundation status. See the root handover for synchronized record pins.
 
-## Current continuation — 2026-10-28
+## Historical continuation — 2026-10-28 (superseded; the 1,642/1,641 request mismatch is not active)
 
 Branch head before this checkpoint: `8e394b89499b7f9d5e2de9b7bf9f5042f793ef56`. Owner reports the development passkey enrollment succeeded; do not repeat setup or verification.
 
