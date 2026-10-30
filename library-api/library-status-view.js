@@ -357,15 +357,17 @@
   }
   function bindLiveInstallManager() {
     window.__aimmInstallBindAttempt = (window.__aimmInstallBindAttempt || 0) + 1;
-    if (new URLSearchParams(window.location.search).get("pluginhub-preview") === "synthetic") { window.__aimmInstallBindResult = "synthetic"; return; }
+    document.documentElement.setAttribute("data-aimm-install-bind-attempt",String(window.__aimmInstallBindAttempt));
+    if (new URLSearchParams(window.location.search).get("pluginhub-preview") === "synthetic") { document.documentElement.setAttribute("data-aimm-install-bind-result","synthetic"); window.__aimmInstallBindResult = "synthetic"; return; }
     const button = document.querySelector("[data-inv-install-manager]");
-    if (!button) { window.__aimmInstallBindResult = "no-button"; return; }
+    if (!button) { document.documentElement.setAttribute("data-aimm-install-bind-result","no-button"); window.__aimmInstallBindResult = "no-button"; return; }
     if (button.__aimmLiveInstallManager) { button.disabled = false; window.__aimmInstallBindResult = "already-bound"; return; }
     button.disabled = false;
     button.title = "Open the account-backed Install Manager. Fresh updates are shown; vendor pages require local Companion confirmation.";
     button.setAttribute("aria-label","Install Manager — account-backed update records and vendor page requests");
     button.__aimmLiveInstallManager = true;
     window.__aimmInstallBindResult = "bound";
+    document.documentElement.setAttribute("data-aimm-install-bind-result","bound");
     button.addEventListener("click",(event) => {
       event.preventDefault();
       event.stopImmediatePropagation();
