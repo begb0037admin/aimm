@@ -1,12 +1,18 @@
 # PluginHub View menu parity slice — 2026-10-30
 
+## Latest update — Category and note/rating display — 2026-10-30
+
+The View menu has since gained **Show category labels** and **Show notes and ratings**, implemented in source commit `e86c9b1787b3289a66eaa2f83f5f21260bc25a43`, Library `index.html` blob `b56aad4f068d531a1cb930394073c72eef9f537d`. Jules passed source and visual/interaction review on synthetic preview deployment `52913ac6-09bb-4dde-9034-6ee29299ed0d` at desktop and 390px. The new controls work across Cards/List/Ledger; note/rating rendering is separate from tags/local marks. The sample has no saved notes or ratings, so populated badge styling is not reviewed. Preferences are memory-only in synthetic mode.
+
+See [View display options parity slice](PHASE_PLUGINHUB_VIEW_DISPLAY_OPTIONS_20261030.md), which records exact evidence and remaining gaps.
+
 ## Change
 
 Branch commit `fec3cf8c2482b1dd9aa105723ffe106b1038a33d`, `index.html` blob `d8c019b92ad3edee72384bc067211f53697bd3cc`, groups AIMM’s existing layout selector, sort selector, and Collapse/Expand vendor controls in a single **View** disclosure menu, matching the reference app’s toolbar grouping. Existing layout and sort values are unchanged: Cards/List/Ledger and Vendor/Product/Format/Version. The vendor buttons remain available only when Cards is selected.
 
 The menu uses native `<details>/<summary>`, exposes a stable “View options” accessible name and synchronized expanded state, closes after layout/sort selection, on Escape, or outside pointerdown, and returns focus to View after keyboard close/selection. The menu has a 280px maximum and clamps its width for compact viewports.
 
-This implements the supported grouping, not the full PluginHub View menu. Appearance/brightness/text size, sidebar/top-tab switching, category/note/key display preferences, Hidden, and Collections remain separate or incomplete. Vendor “newest/oldest” sorting still needs source-backed per-record timestamps.
+This implements the supported grouping plus category-label and note/rating visibility, not the full PluginHub View menu. Appearance/brightness/text size, sidebar/top-tab navigation, key display preferences, Hidden and Collections remain incomplete. Vendor “newest/oldest” sorting still needs source-backed per-record timestamps.
 
 ## Development preview and Jules review
 

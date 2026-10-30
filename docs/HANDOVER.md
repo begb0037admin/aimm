@@ -1,10 +1,24 @@
-## Latest continuation — PluginHub View menu grouping — 2026-10-30
+## Latest continuation — PluginHub View display preferences — 2026-10-30
+
+Branch source commit `e86c9b1787b3289a66eaa2f83f5f21260bc25a43`, Library `index.html` blob `b56aad4f068d531a1cb930394073c72eef9f537d`, adds category-label and note/rating visibility controls to the View menu. Jules passed source review and desktop/390px visual/interaction review on [synthetic preview deployment 52913ac6](https://52913ac6.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), ID `52913ac6-09bb-4dde-9034-6ee29299ed0d`. Both controls work in Cards/List/Ledger; List/Ledger category headings and cells stay in sync. Notes/rating metadata is distinct from tags and local up-to-date/keep marks and now appears in List as well as Cards/Ledger. In the synthetic preview, preference state is memory-only; it does not read or write browser local storage.
+
+The current synthetic fixture contains 12 products/14 format bundles but no saved notes, ratings, tags or local marks, so populated badge styling could not be checked. At 390px the panel remains inside the viewport; an existing 44px document overflow comes from outside the panel. Jules left Cards and both preferences on. No automated tests were run, no folders were connected/scanned, and no real inventory, credentials or row actions were used.
+
+The installed PluginHub manual confirms remaining View-menu options: Light/Dark/System appearance and colorblind status colours, brightness, text size, sidebar/top-tab navigation, key marks, Hidden and Collections. Keep options that depend on missing status or timestamp evidence unavailable; do not substitute scan time for plugin install/update time. The Library’s Plugin Compatibility entry also remains disabled until architecture/build and vendor evidence contracts exist.
+
+See [View display-options evidence](../governance/evidence/PHASE_PLUGINHUB_VIEW_DISPLAY_OPTIONS_20261030.md), [View menu evidence](../governance/evidence/PHASE_PLUGINHUB_VIEW_MENU_20261030.md), [manual/reference sweep](../governance/evidence/PHASE_PLUGINHUB_REFERENCE_SWEEP_20261030.md), and [tool matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md).
+
+Synchronized blob pins: Dashboard `12665f1986689b0dd1ec19408ed705cf2f92869a`; Status `13bcfb22769789359f3aca9ae42ea50a2f5ac1752`; Roadmap `7e867a1d1be80b34af9cd23b8e961c682143e3c63`; cold-start handover `e52eda7d3274bda1cadb2b2f85aa8b09362324ae5`; tool matrix `be11a8cff6559acf858773f6705f177cb97824bd6`; reference sweep `dda65d0a71919cba2d1ef682d770598b4c5a6fb77`; View menu report `274391db0d01fc07fec1af5d02d9b466a4b0f3c7`; View display-options report `aeadb6781fc637721ea24bc79277c8e64b430a6b`. (Root handover does not self-pin.)
+
+Foundation remains **NOT MET**; Stage 6 remains gated pending complete fresh exit evidence and fresh independent acceptance. The development Worker passkey RP fix remains a surgical patch rather than a reproducible build from branch source. Do not repeat passkey setup/confirmation.
+
+## Historical continuation — PluginHub View menu grouping — 2026-10-30 (source commit fec3cf8c2482b1dd9aa105723ffe106b1038a33d)
 
 Branch source commit `fec3cf8c2482b1dd9aa105723ffe106b1038a33d` groups AIMM’s existing Layout (Cards/List/Ledger), Sort (Vendor/Product/Format/Version), and Cards-only Collapse/Expand controls in one View popover. Jules passed source and desktop/390/320 visual/interaction review at [development preview deployment 1915928d](https://1915928d.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). Layout/sort selection closes the menu and returns focus; Escape/outside close correctly. At 320px the menu clamps to 224px and remains within the viewport. Existing unrelated page content has 434px document scrollWidth both with and without the menu; the menu adds no overflow.
 
 Current preview deployment `1915928d-7ef2-40cd-9a24-0de6a2a871e7` is tied to exact source commit `fec3cf8...`, preview environment; production deployments are disabled. Only the in-memory synthetic sample was shown. No scan, row action, real inventory, credential access, Worker/production deployment or other gated action occurred.
 
-The View menu now matches the supported grouping only. Appearance/brightness/text size, sidebar/top-tab navigation, display preferences, Collections and timestamp-based vendor sorts remain incomplete. The 320px page-wide overflow comes from existing content outside the panel and is not addressed in this slice.
+At that checkpoint, the View menu grouped only the already-supported layout, sort and Cards-only collapse/expand controls. Category and note/rating display were added later (see the latest checkpoint above). Appearance/brightness/text size, sidebar/top-tab navigation, key display preferences, Hidden/Collections and timestamp-based vendor sorts remain incomplete. The 320px page-wide overflow came from existing content outside the panel.
 
 See [View menu review](../governance/evidence/PHASE_PLUGINHUB_VIEW_MENU_20261030.md), [tool matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), and [reference sweep](../governance/evidence/PHASE_PLUGINHUB_REFERENCE_SWEEP_20261030.md).
 

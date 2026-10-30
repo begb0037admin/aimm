@@ -2,9 +2,15 @@
 
 ## Scope
 
-Read-only inspection of the already-open PluginHub 2.0.12 app and its installed manual/source at `/Applications/PluginHub.app/Contents/Resources/`, compared with AIMM branch `codex/pluginhub-foundation` at `fe70cc4d6378aff346ac553e3deff7bdd73e5d89`. The app’s View menu and one plugin row action menu were opened for reference. No tool workflow, filesystem action, scan, export, installer, share or vault operation was started. The app’s accessibility view included its current local vendor/plugin names and counts; none were copied into the branch, reports or development preview.
+Read-only inspection of the already-open PluginHub 2.0.12 app and its installed manual/source at `/Applications/PluginHub.app/Contents/Resources/`, compared with AIMM branch `codex/pluginhub-foundation` at `e86c9b1787b3289a66eaa2f83f5f21260bc25a43`. The app’s View menu and one plugin row action menu were opened for reference. No tool workflow, filesystem action, scan, export, installer, share or vault operation was started. The app’s accessibility view included its current local vendor/plugin names and counts; none were copied into the branch, reports or development preview.
 
 AIMM visual evidence uses only the opt-in synthetic development preview. No real inventory was uploaded or used for the visual pass.
+
+## Latest View display preferences — 2026-10-30
+
+AIMM’s View menu now includes **Show category labels** and **Show notes and ratings**. Jules passed source and visual/interaction review on the synthetic preview at desktop and 390×844. Category headings and cells hide/show consistently in Cards, List and Ledger. Note/rating metadata is visible in all three layouts and the toggle leaves tags/local marks visible. In synthetic mode preferences are held in memory and no local storage is read or written.
+
+The 12-product/14-bundle fixture contains no notes, ratings, tags or local marks, so populated note/rating appearance was not visually checked. The menu fits at 390px; existing document overflow remains outside the panel. Exact deployment, source and limitations are in [View display options parity slice](PHASE_PLUGINHUB_VIEW_DISPLAY_OPTIONS_20261030.md).
 
 ## What the reference app exposes
 

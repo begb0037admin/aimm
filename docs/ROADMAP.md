@@ -1,10 +1,16 @@
-## Latest PluginHub roadmap checkpoint — View menu grouping — 2026-10-30
+## Latest PluginHub roadmap checkpoint — View display preferences — 2026-10-30
+
+Branch source [`e86c9b1787b3289a66eaa2f83f5f21260bc25a43`](https://github.com/begb0037admin/aimm/commit/e86c9b1787b3289a66eaa2f83f5f21260bc25a43), Library `index.html` blob `b56aad4f068d531a1cb930394073c72eef9f537d`, now supports category labels and note/rating visibility across Cards/List/Ledger. Jules passed source and desktop/390px visual interaction review on synthetic preview deployment 52913ac6. Populated note/rating styling is not verified because the synthetic fixture contains none. See [display-options evidence](../governance/evidence/PHASE_PLUGINHUB_VIEW_DISPLAY_OPTIONS_20261030.md).
+
+Next: continue manual-driven View settings with existing display/data paths, then the source-backed per-record timestamp and compatibility contracts. Foundation remains **NOT MET**, Stage 6 gated, and the Worker RP fix remains surgical.
+
+## Historical checkpoint — View menu grouping — 2026-10-30 (source commit fec3cf8c2482b1dd9aa105723ffe106b1038a33d)
 
 Branch commit [`fec3cf8c2482b1dd9aa105723ffe106b1038a33d`](https://github.com/begb0037admin/aimm/commit/fec3cf8c2482b1dd9aa105723ffe106b1038a33d), `index.html` blob `d8c019b92ad3edee72384bc067211f53697bd3cc`, groups the existing layout, sort and Cards-only vendor collapse/expand controls in a single View menu. Jules passed source and final visual/interaction review at [development preview deployment 1915928d](https://1915928d.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) on desktop, 390px and 320px. Selecting List and Product updated the existing controls/table, closed the popover and returned focus; Escape and outside click also close it. At 320px the panel clamps to 224px and remains within the viewport; existing page content still produces 434px document scrollWidth with the panel open or closed. The menu did not add overflow.
 
 See [View menu review](../governance/evidence/PHASE_PLUGINHUB_VIEW_MENU_20261030.md), blob `f61f346e0bf92477d0eff62bb33a022b79b52892`; [updated tool matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob `7460319857a75fc0b1ce64230e72ef717cc47fc1`; [updated reference sweep](../governance/evidence/PHASE_PLUGINHUB_REFERENCE_SWEEP_20261030.md), blob `26c6fc24e76b7c92d0fe902c92b14ae7d1ba9e1f`. Only the in-memory synthetic sample was used. No scans, row actions, real inventory, credentials, Worker deployment or production action occurred.
 
-The wider PluginHub View menu remains only partly replicated: appearance/brightness/text size, sidebar/top-tab navigation, category/note/key display settings, Collections, and timestamp-based newest/oldest sorts remain incomplete.
+The remaining View-menu gaps are appearance/brightness/text size, sidebar/top-tab navigation, key display settings, Hidden/Collections, and timestamp-based newest/oldest sorts.
 
 Foundation remains **NOT MET**; Stage 6 remains gated pending fresh complete exit evidence and independent acceptance. The development Worker passkey RP fix remains a surgical patch, not a reproducible branch-source build. No Worker or production deployment occurred.
 
