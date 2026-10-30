@@ -3366,6 +3366,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         </nav>
         <div class="inv-sidebar-section">LIBRARY</div>
         <nav class="inv-sidebar-nav" aria-label="Saved plug-ins">
+          <button class="inv-side-button" type="button" data-inv-open-all-plugins aria-label="All Plugins" title="Show every installed plug-in in a flat list" aria-pressed="false"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></span><span class="inv-side-label">All Plugins</span><span class="inv-side-count" id="invLibraryAllCount">—</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="favorites" aria-label="Favorites" title="Favorites"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg></span><span class="inv-side-label">Favorites</span><span class="inv-side-count" id="invSidebarFavCount">0</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="tags" aria-label="My tags" title="Show plug-ins with saved tags"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m20 13-7 7-9-9V4h7l9 9Z"/><circle cx="8.5" cy="8.5" r=".8"/></svg></span><span class="inv-side-label">My tags</span></button>
           <button class="inv-side-button" type="button" data-inv-tag-manager aria-label="Plugin Tag Manager" title="Manage tags on this browser"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 13 11 22l-9-9V3h10l8 10Z"/><circle cx="7" cy="7" r="1"/></svg></span><span class="inv-side-label">Tag Manager</span></button>
@@ -5459,7 +5460,7 @@ const INV_SCAN_KEY = "aimmPluginInventoryScan_v1";
 const INV_SIDEBAR_KEY = "aimmPluginInventorySidebarCollapsed_v1";
 const INV_VIEW_KEY="aimmPluginInventoryView_v1",INV_SORT_KEY="aimmPluginInventorySort_v1";
 function invReadChoice(key,choices,fallback){try{const value=localStorage.getItem(key);return choices.includes(value)?value:fallback;}catch(_){return fallback;}}
-let INV_VIEW = invReadChoice(INV_VIEW_KEY,["cards","list","ledger"],"cards");
+let INV_VIEW = invReadChoice(INV_VIEW_KEY,["cards","list","ledger","all"],"cards");
 let INV_SORT = invReadChoice(INV_SORT_KEY,["vendor","product","format","version"],"vendor");
 let INV_FORMATS = new Set();
 let INV_SEARCH = "";
@@ -5962,8 +5963,13 @@ function invRenderSidebar(groups,stageMap){
   const hiddenButton=sidebar.querySelector('[data-inv-scope="hidden"]');if(hiddenButton){hiddenButton.classList.toggle("active",INV_SCOPE==="hidden"&&!INV_CATEGORIES.size);hiddenButton.setAttribute("aria-pressed",String(INV_SCOPE==="hidden"));const count=hiddenButton.querySelector(".inv-side-count");if(count)count.textContent=hiddenCount.toLocaleString();}
   const tagButton=sidebar.querySelector('[data-inv-scope="tags"]');if(tagButton){tagButton.classList.toggle("active",INV_SCOPE==="tags");tagButton.setAttribute("aria-pressed",String(INV_SCOPE==="tags"));let count=tagButton.querySelector(".inv-side-count");if(!count){count=document.createElement("span");count.className="inv-side-count";tagButton.appendChild(count);}count.textContent=tagCount.toLocaleString();}
   const allLabel=document.getElementById("invSidebarAllCount");
+  const libraryAllLabel=document.getElementById("invLibraryAllCount");
+  const allPluginsButton=sidebar.querySelector("[data-inv-open-all-plugins]");
+  const allPluginsActive=INV_VIEW==="all";
+  if(allPluginsButton){allPluginsButton.classList.toggle("active",allPluginsActive);allPluginsButton.setAttribute("aria-pressed",String(allPluginsActive));}
   const favLabel=document.getElementById("invSidebarFavCount");
   if(allLabel)allLabel.textContent=allCount.toLocaleString();
+  if(libraryAllLabel)libraryAllLabel.textContent=allCount.toLocaleString();
   if(favLabel)favLabel.textContent=favCount.toLocaleString();
   const folder=document.getElementById("invSidebarFolderMeta");
   if(folder)folder.textContent=INV_ROOTS.length+" connected · "+(INV_SCAN_INFO.bundles||0).toLocaleString()+" bundles inspected";
@@ -5976,7 +5982,7 @@ function invRenderSidebar(groups,stageMap){
     toggle.setAttribute("aria-expanded",String(!INV_SIDEBAR_COLLAPSED));
     toggle.title=INV_SIDEBAR_COLLAPSED?"Expand filters":"Collapse filters";
   }
-  sidebar.querySelectorAll("[data-inv-scope]").forEach(button=>button.classList.toggle("active",!INV_CATEGORIES.size&&button.getAttribute("data-inv-scope")===INV_SCOPE));
+  sidebar.querySelectorAll("[data-inv-scope]").forEach(button=>button.classList.toggle("active",!INV_CATEGORIES.size&&!(INV_VIEW==="all"&&button.getAttribute("data-inv-scope")==="all")&&button.getAttribute("data-inv-scope")===INV_SCOPE));
   sidebar.querySelectorAll("[data-inv-category]").forEach(button=>{const active=INV_CATEGORIES.has(button.getAttribute("data-inv-category"));button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active));button.title="Click to filter this category; Shift-click to combine categories.";button.setAttribute("aria-description","Shift-click to combine this category with other categories.");});
 }
 var invTileResizeObserver=null,invTileIntersectionObserver=null,invTileRAF=0,invTileForce=false;
@@ -6518,7 +6524,7 @@ function invRenderInventory(){
   const sortValue=group=>INV_SORT==="product"?group.name:INV_SORT==="format"?Array.from(group.formats).sort().join(", "):INV_SORT==="version"?Array.from(group.versions).sort().join(", "):group.vendor;
   filtered.sort((a,b)=>collator.compare(sortValue(a),sortValue(b))||collator.compare(a.vendor,b.vendor)||collator.compare(a.name,b.name));
   const viewControl=document.getElementById("invView"),sortControl=document.getElementById("invSort");
-  if(viewControl)viewControl.value=INV_VIEW;
+  if(viewControl)viewControl.value=INV_VIEW==="all"?"list":INV_VIEW;
   if(sortControl)sortControl.value=INV_SORT;
   const cardControls=[document.querySelector("[data-inv-collapse-all]"),document.querySelector("[data-inv-expand-all]")];cardControls.forEach(button=>{if(button)button.hidden=INV_VIEW!=="cards";});
   if(!rows.length){
@@ -6826,8 +6832,9 @@ function invInit(){
   });
   if(sidebar)sidebar.addEventListener("click",event=>{
     const managerButton=event.target.closest("[data-inv-tag-manager]");if(managerButton){invOpenTagManager();return;}
-    const button=event.target.closest("[data-inv-scope],[data-inv-category]");
+    const button=event.target.closest("[data-inv-scope],[data-inv-category],[data-inv-open-all-plugins]");
     if(!button||button.disabled)return;
+    if(button.hasAttribute("data-inv-open-all-plugins")){INV_VIEW="all";try{localStorage.setItem(INV_VIEW_KEY,INV_VIEW);}catch(_){}invRenderInventory();return;}
     if(button.hasAttribute("data-inv-scope")){INV_SCOPE=button.getAttribute("data-inv-scope")||"all";INV_CATEGORIES.clear();INV_TAG_FILTERS.clear();}
     else {const category=button.getAttribute("data-inv-category")||"";if(event.shiftKey){if(INV_CATEGORIES.has(category))INV_CATEGORIES.delete(category);else INV_CATEGORIES.add(category);}else{INV_CATEGORIES.clear();INV_CATEGORIES.add(category);}INV_SCOPE="all";}
     invRenderInventory();
