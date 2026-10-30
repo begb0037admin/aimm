@@ -1,9 +1,12 @@
-## Active visual acceptance queue — item 6: format chip colors
+## Active PluginHub continuation — visual checklist complete — 2026-10-30
 
-Standing criterion: “room to breathe” applies to every visual change. Kevin wants a clear completion confirmation and preview link when each checklist item is ready to review; continue to the next item after sending it. Visual items 1–5 are complete. Current item 6 changes VST format chips to blue and CLAP chips to brown, matching Kevin’s 2026-10-30 reference screenshot. Review at desktop and narrow widths, keep text readable, and preserve the existing spacing.
-The completed status-scope preview [`0e055bcd`](https://0e055bcd.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) is for source commit `936515e41936148da11a7b784a523a7e0a323406`, `index.html` blob `de37138bb5df71f1e0fccfbff8514c9ece3d7ef7`. All four scopes were reviewed at desktop and 390px; no live calls ran. The visual register is [here](../governance/evidence/PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md), current blob `75fcd41c61d25e5b6ce287aee6697462e9339621`.
-Synchronized pins: `docs/STATUS.md` `b03fc0df7532a091b6bd9b1ee0491227c324b645`; `docs/ROADMAP.md` `8da70418b4ea86dcf4f51b35a31afd43597df8f8`; synthetic status UI evidence `e3fba9a700d0353317e893c664df9369b7e9e028`; user parity register `75fcd41c61d25e5b6ce287aee6697462e9339621`.
-After item 6, next broader item: read-only review of generation-bound status projection and Install Manager contracts using synthetic UI values only. Do not connect live status/account/folder/vendor sources. Remaining Tools stay open. Foundation remains NOT MET and Stage 6 gated. HANDOVER does not self-pin.
+Standing criterion: “room to breathe” applies to every visual change. Kevin wants a clear completion confirmation and preview link when each checklist item is ready to review; continue to the next item after sending it. Visual checklist items 1–6 are complete.
+
+Item 6 source commit [`2b3675ab`](https://github.com/begb0037admin/aimm/commit/2b3675ab100319df9c5e6ca248eaa8970fe05388), `index.html` blob `21d19ac5a4fc036780f56b5d7b7ca7c8074c3de2`, is deployed to [synthetic preview 4023a4d5](https://4023a4d5.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), deployment `4023a4d5-649c-4da3-9c58-782d0eb4d6dc`. VST2/VST3 product chips are blue, CLAP brown, AU green. The distinct status dots and format filter controls remain unchanged. Jules passed exact-source and desktop/390px visual review: four even Cards columns at desktop; narrow chips wrap within cards with no horizontal overflow. No scans/actions occurred; the preview remains synthetic.
+
+The visual parity register is [here](../governance/evidence/PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md), blob `5fad00f1c13bd7fb4dc2bec6ea8ff8b14e453d27`. Synchronized pins: `docs/STATUS.md` `1918c1cb903e1fd2cc43bb032ccdf0bb1406dcde`; `docs/ROADMAP.md` `d860ab6de59ee8a603a34502ce4b2d2c669ee03c`; synthetic status UI evidence `e6febab179ab215f6ce843df42715c7d56f785fa`. HANDOVER does not self-pin.
+
+Next: read-only review of the generation-bound status projection and Install Manager contracts, using synthetic UI values only; no live status, folders, account or vendor calls. Then proceed through remaining AIMM Tools one at a time. Foundation remains NOT MET; Stage 6 gated. The Worker passkey RP fix remains a surgical patch and not a reproducible branch build.
 
 ## Historical continuation — initial per-format version placement (superseded) — 2026-10-30
 
