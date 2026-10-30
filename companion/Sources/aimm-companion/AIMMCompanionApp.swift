@@ -5,8 +5,13 @@ import AIMMCompanionCore
 
 @main
 struct AIMMCompanionApp: App {
-    @StateObject private var model = CompanionModel()
+    @StateObject private var model: CompanionModel
     @Environment(\.openWindow) private var openWindow
+
+    init() {
+        let isolatedPreview = ProcessInfo.processInfo.arguments.contains("--isolated-preview")
+        _model = StateObject(wrappedValue: CompanionModel(isolatedPreview: isolatedPreview))
+    }
 
     var body: some Scene {
         WindowGroup("AIMM Companion", id: "main") {
@@ -30,8 +35,10 @@ final class CompanionModel: ObservableObject {
     @Published var generation: ScanGenerationSummary?
     @Published var status = "Choose a folder to scan. Nothing is scanned automatically."
     @Published var isScanning = false
-    @Published var apiBaseURL = UserDefaults.standard.string(forKey: "aimmLibraryAPIBaseURL") ?? "" {
-        didSet { UserDefaults.standard.set(apiBaseURL, forKey: "aimmLibraryAPIBaseURL") }
+    private let defaults: UserDefaults
+    private let isolatedPreview: Bool
+    @Published var apiBaseURL: String {
+        didSet { defaults.set(apiBaseURL, forKey: "aimmLibraryAPIBaseURL") }
     }
     @Published var pairingStatus = "Not paired. Scans stay on this Mac."
     @Published var pairingPhrase: String?
@@ -51,32 +58,53 @@ final class CompanionModel: ObservableObject {
     private let apiClient = LibraryAPIClient()
     private var pairedCredential: StoredDeviceCredential?
 
-    init() {
-        if let saved = try? DeviceCredentialStore.load() {
-            pairedCredential = saved
-            apiBaseURL = saved.apiBaseURL
-            pairingStatus = "Paired device \(saved.deviceID)."
-        }
-        var openedJournal: ScanJournal?
-        do {
-            let opened = try ScanJournal.applicationDefault()
-            openedJournal = opened
-            if let latest = try opened.latestCompleteGeneration() {
-                generation = latest.summary
-                records = latest.records
-                status = "Loaded the last complete local scan."
+    init(isolatedPreview: Bool = false) {
+        self.isolatedPreview = isolatedPreview
+        let defaults: UserDefaults
+        if isolatedPreview {
+            guard let isolatedDefaults = UserDefaults(suiteName: "com.aimixmasters.companion.isolated-preview") else {
+                fatalError("Could not create isolated preview preferences.")
             }
-        } catch {
-            status = "Local journal unavailable: \(error.localizedDescription)"
+            defaults = isolatedDefaults
+        } else {
+            defaults = .standard
+        }
+        self.defaults = defaults
+        _apiBaseURL = Published(initialValue: defaults.string(forKey: "aimmLibraryAPIBaseURL") ?? "")
+
+        var openedJournal: ScanJournal?
+        if isolatedPreview {
+            status = "Isolated preview is active. No saved scan, folders, or credentials were read."
+        } else {
+            if let saved = try? DeviceCredentialStore.load() {
+                pairedCredential = saved
+                apiBaseURL = saved.apiBaseURL
+                pairingStatus = "Paired device \(saved.deviceID)."
+            }
+            do {
+                let opened = try ScanJournal.applicationDefault()
+                openedJournal = opened
+                if let latest = try opened.latestCompleteGeneration() {
+                    generation = latest.summary
+                    records = latest.records
+                    status = "Loaded the last complete local scan."
+                }
+            } catch {
+                status = "Local journal unavailable: \(error.localizedDescription)"
+            }
         }
         self.journal = openedJournal
-        let savedBookmarkCount = PluginRootBookmarkStore.count()
+        let savedBookmarkCount = PluginRootBookmarkStore.count(defaults: defaults)
         customFolderStatus = savedBookmarkCount == 0
             ? "No saved custom folders."
             : "\(savedBookmarkCount) custom folder bookmark(s) saved on this Mac."
     }
 
     func scan(selectedRoots: [URL], rememberCustomRoots: Bool = false) {
+        guard !isolatedPreview else {
+            status = "Scanning is disabled in isolated preview mode."
+            return
+        }
         guard !selectedRoots.isEmpty else { return }
         guard let journal else {
             status = "Cannot scan: local journal is unavailable."
@@ -84,7 +112,7 @@ final class CompanionModel: ObservableObject {
         }
         if rememberCustomRoots {
             do {
-                let count = try PluginRootBookmarkStore.save(selectedRoots)
+                let count = try PluginRootBookmarkStore.save(selectedRoots, defaults: defaults)
                 customFolderStatus = "\(count) custom folder bookmark(s) saved locally on this Mac."
             } catch {
                 status = "The selected folders could not be saved for future scans. No scan was started. \(error.localizedDescription)"
@@ -126,6 +154,10 @@ final class CompanionModel: ObservableObject {
     }
 
     func scanStandardPluginFolders() {
+        guard !isolatedPreview else {
+            status = "Scanning is disabled in isolated preview mode."
+            return
+        }
         let roots = PluginScanner.standardRoots()
         guard !roots.isEmpty else {
             status = "No standard plug-in folders were found. Choose a custom folder to scan."
@@ -135,11 +167,15 @@ final class CompanionModel: ObservableObject {
     }
 
     func scanSavedCustomFolders() {
-        guard PluginRootBookmarkStore.count() > 0 else {
+        guard !isolatedPreview else {
+            status = "Scanning is disabled in isolated preview mode."
+            return
+        }
+        guard PluginRootBookmarkStore.count(defaults: defaults) > 0 else {
             customFolderStatus = "No saved custom folders. Choose folders to add them."
             return
         }
-        let resolution = PluginRootBookmarkStore.resolve()
+        let resolution = PluginRootBookmarkStore.resolve(defaults: defaults)
         customFolderStatus = resolution.unavailableCount == 0
             ? "Resolved all \(resolution.roots.count) saved custom folder(s)."
             : "\(resolution.unavailableCount) saved folder grant(s) are stale or unavailable; reselect those folders to restore access."
@@ -335,11 +371,15 @@ final class CompanionModel: ObservableObject {
     }
 
     func forgetCustomFolders() {
-        PluginRootBookmarkStore.forget()
+        PluginRootBookmarkStore.forget(defaults: defaults)
         customFolderStatus = "Saved custom folder bookmarks removed from this Mac."
     }
 
     func beginPairing() {
+        guard !isolatedPreview else {
+            pairingStatus = "Pairing is disabled in isolated preview mode."
+            return
+        }
         guard !isPairing else { return }
         isPairing = true
         pairingPhrase = nil
@@ -845,7 +885,7 @@ final class CompanionModel: ObservableObject {
     }
 
     private func knownPluginRoots() -> (roots: [URL], unavailableCount: Int) {
-        let saved = PluginRootBookmarkStore.resolve()
+        let saved = PluginRootBookmarkStore.resolve(defaults: defaults)
         var unique: [String: URL] = [:]
         for root in PluginScanner.standardRoots() + saved.roots {
             let normalized = root.standardizedFileURL

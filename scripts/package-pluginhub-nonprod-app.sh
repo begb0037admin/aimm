@@ -5,6 +5,7 @@ ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 PACKAGE_DIR="$ROOT/companion"
 DESTINATION=${1:?Usage: sh scripts/package-pluginhub-nonprod-app.sh <new-output-directory>}
 APP_NAME="AIMM Companion Preview.app"
+BUNDLE_IDENTIFIER=${AIMM_COMPANION_PREVIEW_BUNDLE_ID:-com.aimixmasters.companion.preview.isolated}
 APP_PATH="$DESTINATION/$APP_NAME"
 
 if [ -e "$APP_PATH" ]; then
@@ -14,7 +15,11 @@ fi
 
 (
   cd "$PACKAGE_DIR"
-  swift build --product aimm-companion
+  if [ "${AIMM_DISABLE_SWIFTPM_SANDBOX:-0}" = "1" ]; then
+    swift build --disable-sandbox --product aimm-companion
+  else
+    swift build --product aimm-companion
+  fi
 )
 BIN_DIR=$(cd "$PACKAGE_DIR" && swift build --show-bin-path)
 
@@ -57,6 +62,7 @@ cat > "$APP_PATH/Contents/Info.plist" <<'PLIST'
 </dict>
 </plist>
 PLIST
+plutil -replace CFBundleIdentifier -string "$BUNDLE_IDENTIFIER" "$APP_PATH/Contents/Info.plist"
 plutil -lint "$APP_PATH/Contents/Info.plist"
 # Ad-hoc signing makes the local preview bundle verifiable and easier to
 # exercise on this Mac without creating or using a distribution credential.
