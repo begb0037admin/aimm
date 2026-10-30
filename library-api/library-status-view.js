@@ -197,6 +197,7 @@
     const nav = document.querySelector('#library nav[aria-label="Inventory status"]');
     const unchecked = nav?.querySelector('[data-inv-scope="unchecked"]');
     if (nav && unchecked) {
+      let scopeAnchor = unchecked;
       const addScope = (scope, label, icon, title) => {
         if (nav.querySelector('[data-inv-scope="' + scope + '"]')) return;
         const button = document.createElement("button");
@@ -206,10 +207,11 @@
         button.title = title;
         button.setAttribute("aria-label", label);
         button.innerHTML = '<span class="inv-side-icon" aria-hidden="true">' + icon + '</span><span class="inv-side-label">' + label + '</span><span class="inv-side-count" id="invSidebar' + (scope === "stale" ? "Stale" : "Error") + 'Count">0</span>';
-        unchecked.insertAdjacentElement("afterend", button);
+        scopeAnchor.insertAdjacentElement("afterend", button);
+        scopeAnchor = button;
       };
-      addScope("error","Check errors",'<svg viewBox="0 0 24 24"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v5M12 17h.01"/></svg>',"The latest status check returned an error");
       addScope("stale","Stale results",'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',"Last known observations are older than the freshness window");
+      addScope("error","Check errors",'<svg viewBox="0 0 24 24"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v5M12 17h.01"/></svg>',"The latest status check returned an error");
     }
     const scan = document.getElementById("invScanBtn");
     if (scan?.parentElement && !document.getElementById("invLoadAccountStatusBtn")) {
