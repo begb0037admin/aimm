@@ -436,7 +436,7 @@
   async function liveInstallRequest(row,id,kind = "open_vendor_site") {
     if (liveInstallState.busy) return;
     liveInstallState.busy = true;
-    liveInstallState.actions.set(id,{message:"Requesting vendor page…"});
+    liveInstallState.actions.set(id,{message:kind === "launch_hub" ? "Requesting vendor app…" : "Requesting vendor page…"});
     liveInstallRender();
     try {
       const bridge = kind === "launch_hub" ? window.aimmRequestAccountHubLaunch : window.aimmRequestAccountVendorPage;
@@ -448,7 +448,7 @@
         : "The paired Companion must receive it and ask for local confirmation.";
       liveInstallState.actions.set(id,{operation_id:result.operation_id,state:result.state,kind,message:"Request " + (result.state || "queued") + ". " + nextStep});
     } catch (error) {
-      liveInstallState.actions.set(id,{message:error?.message || "The vendor-page request failed."});
+      liveInstallState.actions.set(id,{message:error?.message || (kind === "launch_hub" ? "The vendor-app request failed." : "The vendor-page request failed.")});
     } finally { liveInstallState.busy = false; liveInstallRender(); }
   }
   async function liveInstallRefresh(id,operationID) {
