@@ -1,10 +1,18 @@
 # PluginHub status-scope UI connection gap — 2026-10-30
 
+## Latest account-backed status checkpoint — ready for review
+
+Source commit [aa4c38cbc0e380283dd6f613b438bdd15f27a631](https://github.com/begb0037admin/aimm/commit/aa4c38cbc0e380283dd6f613b438bdd15f27a631) connects the visible Library scopes to the authenticated, read-only `GET /v1/status-summary` projection and clarifies empty scopes and help text. The latest Pages deployment [062ec0f2](https://062ec0f2.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) succeeded. The signed-in review route is the [branch preview](https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/?review=aa4c38c).
+
+During review, the endpoint returned 3,285 format records across three devices/generations: 0 Updates, 0 Up to date, 0 Manual check, 1,644 Unchecked, 1,641 Stale, and 0 Errors. Counts are disjoint for this snapshot. Empty Updates copy now explicitly says that zero update observations do not mean everything is current. The saved observations were read only; no vendor check ran. Records retain device, generation and record identity and are not joined to browser folder scans. Full notes are in [account status evidence](PHASE_PLUGINHUB_ACCOUNT_STATUS_SCOPES_20261030.md).
+
+The visual status UI clarity gap is closed for the synthetic preview. Live status scopes are now connected and ready for Kevin's review; actual fresh vendor observations and active status-check workflows remain open.
+
 ## Latest synthetic UI checkpoint — version emphasis and status guidance
 
 Source commit [`762aeb81737a29b896a95097001c849b26d1911a`](https://github.com/begb0037admin/aimm/commit/762aeb81737a29b896a95097001c849b26d1911a), UI blob `83b0df4f3222b3daa110e0ddea8cf6ed7615f0dc`, and Pages deployment [`c0215f2e`](https://c0215f2e.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) add per-format installed → sample latest version rows to the synthetic status cards. The newer sample version is red, installed remains muted, and the coloured format dots remain beside each format chip. All four status filters retain explicit guidance; the mobile banner stacks at ≤680px. Jules passed source review and final visual checks at 1920×1052 and 390×844. See [current evidence](PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
 
-The UI clarity gap for the synthetic preview is closed. The live Library connection gap below remains open: no authenticated status snapshot, freshness, error/stale state or vendor-backed observation is connected to the visible Library.
+The synthetic UI clarity gap is closed. The authenticated status projection is now connected to the visible Library as described above. The snapshot currently contains unchecked and stale observations; it does not contain fresh vendor-backed results.
 
 ## Historical synthetic preview checkpoint — counts and markers
 
@@ -16,7 +24,7 @@ The live Library connection gap below remains open.
 
 The Library API exposes authenticated `GET /v1/status-summary`. It reads the selected account/device’s current complete inventory generation, applies freshness rules to generation-bound check observations, and returns counts and per-format records for update, up-to-date, manual, unchecked, error and stale states. `library-api/library-account.js` uses this endpoint for Hope’s `get_plugin_status` tool.
 
-The visible Library page in `index.html` does not call that endpoint. Its `INV_SCAN_ROWS` come from the browser’s local scan cache and have no API generation/record-ID join. Source commit `178b6e82d18f63dca2f9849c3cf80b25a9a87cd8` first made the four scopes selectable and showed 0/0/0/14 in its then-current synthetic fixture. Follow-up source commit `1018be83b451b8db6429ba5bf3b869f223fed40b` now gives the opt-in fixture explicit statuses: 3/4/3/4 format records, and filters groups by whether any format row matches. These are synthetic fixture counts, not vendor observations. The four scopes still do not filter authenticated status rows.
+The visible Library now reads account status through the isolated read-only bridge in `library-api/library-status-view.js`; it does not join account records to browser `INV_SCAN_ROWS`. The exact API device/generation/record identity remains attached to each format row. Earlier synthetic source commits `178b6e82d18f63dca2f9849c3cf80b25a9a87cd8` and `1018be83b451b8db6429ba5bf3b869f223fed40b` remain UI fixtures only; they are not vendor observations.
 
 ## Completed source groundwork
 
@@ -34,11 +42,11 @@ The API reports status at format-record level. Product totals and any product-le
 
 1. **Source groundwork complete:** bounded publisher provenance and nullable canonical identity fields are in the Companion/API contract. Canonical IDs remain null and are rejected on ingestion until reviewed mapping is implemented.
 2. **API projection complete; mapping/roll-up remains:** publisher provenance is returned in inventory and status rows. Define reviewed canonical identity and product/format count semantics before product-level status roll-up.
-3. **UI connection open:** connect the four already-selectable scopes and counts to the authenticated generation-bound status snapshot. Match the same complete generation and record identity; preserve stale/error, freshness and per-format counts. Do not show synthetic values as live.
+3. **UI connection implemented; ready for review:** the status scopes and counts use the authenticated generation-bound snapshot. Device/generation/record identity, freshness, stale/error and per-format states are preserved. Synthetic mode remains isolated and never appears as live status.
 4. **Tools open:** implement Install Manager on verified vendor observations and existing Companion installer/action contracts, with per-item progress and receipts. Complete every remaining Tool through real workflows; do not expose no-op buttons.
 
 ## Verification and limits
 
 Focused checks against the exact GitHub source passed: `node --check` for the Worker, foundation test file and `library-account.js`; extracted publisher-normalization cases for valid provenance, null publisher, unsupported source, filename-only provenance and non-null canonical-ID rejection; and migration 0022 plus its source constraint against an in-memory SQLite fixture. The synthetic API assertions were added to `foundation.test.js`, but the full `npm test` suite was **not run**: an isolated Git clone failed because this environment could not resolve GitHub. The dirty local checkout was left untouched.
 
-No status endpoint was called, no account rows or real inventory were read, no folders were scanned, no remote migration was applied, and no Worker was deployed. The development Pages preview remains [synthetic deployment 623f8c93](https://623f8c93.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP fix remains a surgical patch, not a reproducible branch build.
+The current review called the authenticated status-summary endpoint read-only and read account rows; it did not scan folders or trigger vendor checks. The successful development Pages preview is [062ec0f2](https://062ec0f2.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), with the signed-in [branch review route](https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/?review=aa4c38c). No remote migration or Worker deployment was applied. Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP fix remains a surgical patch, not a reproducible branch build.
