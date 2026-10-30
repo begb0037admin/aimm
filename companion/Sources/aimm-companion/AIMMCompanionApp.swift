@@ -9,7 +9,10 @@ struct AIMMCompanionApp: App {
     @Environment(\.openWindow) private var openWindow
 
     init() {
-        let isolatedPreview = ProcessInfo.processInfo.arguments.contains("--isolated-preview") || Bundle.main.bundleIdentifier == "com.aimixmasters.companion.preview.isolated"
+        let isolatedMarker = Bundle.main.object(forInfoDictionaryKey: "AIMMIsolatedPreview") as? Bool == true
+        let isolatedPreview = ProcessInfo.processInfo.arguments.contains("--isolated-preview")
+            || isolatedMarker
+            || Bundle.main.bundleIdentifier == "com.aimixmasters.companion.preview.isolated"
         _model = StateObject(wrappedValue: CompanionModel(isolatedPreview: isolatedPreview))
     }
 

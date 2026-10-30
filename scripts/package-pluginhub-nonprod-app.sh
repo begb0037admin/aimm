@@ -63,6 +63,7 @@ cat > "$APP_PATH/Contents/Info.plist" <<'PLIST'
 </plist>
 PLIST
 plutil -replace CFBundleIdentifier -string "$BUNDLE_IDENTIFIER" "$APP_PATH/Contents/Info.plist"
+plutil -replace AIMMIsolatedPreview -bool true "$APP_PATH/Contents/Info.plist"
 plutil -lint "$APP_PATH/Contents/Info.plist"
 # Ad-hoc signing makes the local preview bundle verifiable and easier to
 # exercise on this Mac without creating or using a distribution credential.
