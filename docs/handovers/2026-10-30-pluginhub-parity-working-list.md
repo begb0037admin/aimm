@@ -39,6 +39,16 @@ Activate and review each tool as an individual slice. A control is complete only
 
 - [x] **PluginHub License.** Replaced the disabled control with an accessible information panel explaining that PluginHub app activation is separate from audio plug-in vendor keys, and linking to PluginHub’s official licence page. Verified open/close and destination in the deployed synthetic preview on 2026-10-30; the link opens only when the user chooses it.
 
+## Manual and official-source sweep (2026-10-30)
+
+The official Windows manual was reviewed for the shared dashboard, statuses, Install Manager, Share Plugin List, and Plugin Compatibility workflows; the official FAQ was cross-checked for Mac update/status behavior. Kevin's supplied macOS screenshots remain the visual source of truth for the Mac UI. References: [PluginHub Windows manual](https://www.pluginhubapp.com/manual-windows), [PluginHub FAQ](https://www.pluginhubapp.com/faq), and [PluginHub product page](https://www.pluginhubapp.com/).
+
+- Status views must behave as separate queues with live counts and clear interpretation. Updates Available shows installed and current versions side by side; Up to Date means the checker confirmed current; Manual Check requires the person to visit the vendor/installer hub or mark their own check; Unchecked means no checker is available. Keep status-colored figures and dots: red, green, amber, grey.
+- Install Manager’s reference workflow is row download/install or multi-select queue, vendor grouping, queue all, visible batch progress, and a receipt. It only offers openly published vendor installers; login-gated, vendor-app-only, and demo builds are excluded. Nothing should run without the user's action. AIMM's sample manager is an interactive simulation; the real verified-download and local installer hand-off is still open.
+- Share Plugin List’s reference workflow accepts the whole inventory or supported DAW session files, requires a list name, offers expiry and optional passkey, format/vendor/version filters, and exports as CSV, PDF, or a spreadsheet. AIMM has local CSV/TSV export and a guarded account-link panel; account sharing remains open until backend routes are deployed and passkey protection is implemented.
+- Plugin Compatibility must report scoped evidence, not a vague “compatible” claim. The PluginHub Windows manual describes a target operating system, plug-in build information and community observations, with Ready / Check first / Unknown buckets. The Mac reference additionally calls out Intel-only builds and Rosetta readiness. AIMM currently compares declared formats only; source-backed plug-in architecture, target OS, host/version and reliable evidence are still open. Do not imply that format overlap certifies a plug-in loads.
+- The optional PluginHub License sidebar item is a link/information destination about the PluginHub app licence. It is distinct from vendor plug-in keys. The user excluded License Key Vault from AIMM scope.
+
 ## Explicitly out of scope (per Kevin)
 
 - Batch Plugin Management
