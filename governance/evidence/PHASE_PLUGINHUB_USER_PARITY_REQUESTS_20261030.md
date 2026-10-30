@@ -17,6 +17,7 @@ Work through these one at a time. “Room to breathe” is a standing acceptance
 
 Build one synthetic Install Manager UI slice with in-memory rows and explicitly simulated outcomes. Keep actual downloads separate until the trusted digest and progress/cancellation contract are ready. Continue the Library status join only after AU component/record identity is resolved. Keep Foundation NOT MET and Stage 6 gated until all exit evidence is complete and fresh independent review accepts it.
 7. **Format screenshot mismatch triage — COMPLETE:** the screenshot showing blue CLAP/brown VST2 came from the older `972fa6fc` preview; current source and [4023a4d5](https://4023a4d5.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) show VST2/VST3 blue, CLAP brown and AU green. Jules confirmed desktop and 390px. No code change was required. Next: implement the synthetic Install Manager UI slice.
+8. **Install Manager format chip colors — QUEUED after the current Install Manager review:** carry the accepted palette into the manager rows as well: VST2/VST3 blue, CLAP brown, AU green. The current manager screenshot shows the CLAP badge in blue, so the color treatment is not yet consistent across surfaces. Keep the existing Library palette and status dots; verify desktop and mobile, with breathing room.
 
 ## Completed visual items
 
