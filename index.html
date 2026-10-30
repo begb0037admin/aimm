@@ -2328,8 +2328,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
  #invInstallManagerOverlay .im-body{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(230px,1fr) minmax(180px,.8fr)}
  #invInstallManagerOverlay .im-vendors{border-right:0;border-bottom:1px solid #343b45}
  #invInstallManagerOverlay .im-kicker{padding:7px 10px 4px}
- #invInstallManagerOverlay .im-vendor-list{display:flex;gap:5px;overflow-x:auto;overflow-y:hidden;padding:0 8px 8px}
- #invInstallManagerOverlay .im-vendor{flex:0 0 auto;max-width:70vw;padding:6px 8px}
+ #invInstallManagerOverlay .im-vendor-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;overflow:auto;padding:0 8px 7px}
+ #invInstallManagerOverlay .im-vendor{width:100%;min-width:0;max-width:none;padding:6px 8px}
  #invInstallManagerOverlay .im-center{min-height:0}
  #invInstallManagerOverlay .im-center-head{align-items:flex-start;flex-direction:column;padding:8px}
  #invInstallManagerOverlay .im-bulk{justify-content:flex-start}
@@ -2339,8 +2339,11 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
  #invInstallManagerOverlay .im-format{grid-column:2;grid-row:1}
  #invInstallManagerOverlay .im-size{grid-column:1;grid-row:2;text-align:left}
  #invInstallManagerOverlay .im-actions{grid-column:2;grid-row:2}
- #invInstallManagerOverlay .im-queue{border-left:0;border-top:1px solid #4777a5}
- #invInstallManagerOverlay .im-guide{margin:8px 10px}
+ #invInstallManagerOverlay .im-queue{overflow-y:auto;border-left:0;border-top:1px solid #4777a5}
+ #invInstallManagerOverlay .im-queue-list{flex:1 1 auto}
+ #invInstallManagerOverlay .im-guide{flex:0 0 auto;margin:6px 8px;padding:8px;font-size:10px;line-height:1.35}
+ #invInstallManagerOverlay .im-guide p{margin:3px 0 0}
+ #invInstallManagerOverlay .im-queue>[data-im-batch]{flex:0 0 auto;margin:0 8px 8px!important}
 }
 </style>
 </head>
