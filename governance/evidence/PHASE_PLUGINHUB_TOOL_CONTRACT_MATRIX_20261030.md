@@ -1,6 +1,12 @@
 # PluginHub tool and browse contract matrix — 2026-10-30
 
-## Latest synthetic status/version UI checkpoint
+## Latest read-only contract review — status projection and Install Manager
+
+The Library API returns account-authenticated, current-generation status per format record with freshness, last-good, stale/error, paid-upgrade and mark fields. The visible UI remains an in-memory synthetic fixture and has no /v1/status-summary call or generation/record join. AU component-to-bundle identity and product roll-up are unresolved; migration 0022 is not applied. The Install Manager entry remains disabled, and the account API has no download/queue/install workflow. The reviewed local Companion downloader is groundwork only. See [contract review](PHASE_PLUGINHUB_STATUS_INSTALL_CONTRACT_REVIEW_20261030.md).
+
+Next: trace the local Companion downloader and receipt contract without downloading an installer, then build one synthetic Install Manager slice. Keep Library live status disconnected until exact generation/record and AU component mapping is resolved. No live account/vendor calls or real inventory were used.
+
+## Historical synthetic status/version UI checkpoint
 
 Source `762aeb81737a29b896a95097001c849b26d1911a` (Library blob `83b0df4f3222b3daa110e0ddea8cf6ed7615f0dc`) and preview [`c0215f2e`](https://c0215f2e.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) place format-specific installed → sample latest versions immediately below tile names/actions; sample latest is red, and status dots remain supplemental. Scope guidance and the ≤680px stacked banner passed Jules review at desktop and 390px. This remains synthetic UI only; the live API status join and functional installation workflows remain open. Full evidence: [synthetic status/version display](PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
 
