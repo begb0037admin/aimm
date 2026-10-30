@@ -4,10 +4,10 @@
 
 The Library status scope connection is implemented on `codex/pluginhub-foundation`.
 
-- Latest source commit: [aa4c38cbc0e380283dd6f613b438bdd15f27a631](https://github.com/begb0037admin/aimm/commit/aa4c38cbc0e380283dd6f613b438bdd15f27a631)
+- Latest source commit: [1ae49e9c45655a4215bdc71ae0568befd1c118a7](https://github.com/begb0037admin/aimm/commit/1ae49e9c45655a4215bdc71ae0568befd1c118a7)
 - Relevant source: `library-api/library-status-view.js`, `library-api/library-account.js`, and `index.html`
-- Successful Cloudflare Pages preview: [062ec0f2](https://062ec0f2.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic)
-- Signed-in account review route: [Library status view](https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/?review=aa4c38c)
+- Successful Cloudflare Pages preview: [1c85825a](https://1c85825a.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic)
+- Signed-in account review route: [Library status view](https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/?review=1ae49e9)
 
 The synthetic preview remains sample-only. The signed-in review route reads the authenticated status summary and keeps it separate from browser folder scans.
 
@@ -36,7 +36,7 @@ The counts are disjoint in this snapshot. The zero update and up-to-date counts 
 
 - Manually opened each synthetic scope and confirmed the 3/4/3/4 sample records and per-format colors remained visible.
 - In the signed-in view, confirmed account counts, the selected Updates scope, and the empty-state guidance. Confirmed the Stale scope returns its 1,641 matching records without displaying account rows in this evidence.
-- Cloudflare Pages deployment for commit `aa4c38cbc0e380283dd6f613b438bdd15f27a631` completed successfully as preview `062ec0f2`.
+- Cloudflare Pages deployment for commit `1ae49e9c45655a4215bdc71ae0568befd1c118a7` completed successfully as preview `1c85825a`.
 - No automated tests were run.
 - No production site, Worker, D1 migration, or vendor check was changed or triggered.
 
