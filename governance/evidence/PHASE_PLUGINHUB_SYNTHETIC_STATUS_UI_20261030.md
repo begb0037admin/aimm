@@ -1,12 +1,12 @@
 # PluginHub synthetic status tiles and version comparison — 2026-10-30
 
-## Latest tile row correction — aligned, readable, responsive — 2026-10-30
+## Tile row correction — historical checkpoint — 2026-10-30
 
 Branch source commit [`2ff28aa61f341c44f86cee69c6327024c5fc17cb`](https://github.com/begb0037admin/aimm/commit/2ff28aa61f341c44f86cee69c6327024c5fc17cb), `index.html` blob `122a1903af9f619430b6f908baf0fa633f2983c7`, is deployed to preview [`f9f142fe`](https://f9f142fe.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), deployment `f9f142fe-7996-4a12-9df1-46c8b3805007`. The 34% version area cap keeps each plug-in name visible beside per-format versions at desktop widths; multi-format comparisons wrap within the version area. At widths ≤680px, the version rows move below name/actions. Format chips and red/green/amber/grey status dots remain on their own lower row. Names use 13px type and tile padding/gaps are increased.
 
 Jules independently passed source and final visual review. At 1920px all 12 product names, including Tapeform and Halo Equalizer, fit without ellipsis. At 390×844 names remain untruncated; version text wraps beneath name/actions; chips/dots remain below; document and body scroll widths both equal 390. All four synthetic status views matched their scope guidance and counts: Updates 3 records/3 products; Up to date 4/4; Manual check 3/3; Unchecked 4/4. No real folders, inventory, account status endpoint or vendor checks were used.
 
-This completes visual acceptance checklist item 1 only. Item 2 (status count colors) is next; count-column alignment and the broader breathing-room sweep remain open.
+This records the successful tile-row review for checklist item 1. Later sections in this evidence file record subsequent completed visual items and supersede the queue position stated here.
 
 
 ## Historical source and review — version placement superseded
@@ -61,3 +61,16 @@ Branch source commit [`936515e41936148da11a7b784a523a7e0a323406`](https://github
 Jules passed the exact source and final visuals at 390px and 1920px. At 390px, “Northstar Sample Audio” fits on two lines in a 240px card; its heading is 31px high and the full header is 65.7px. The count badge and collapse control do not overlap, product rows remain separated, and document/body scrollWidth equal 390px. At 1920px, the four-column layout and one-line publisher heading remain unchanged. No scan or plug-in row actions were used.
 
 This completes visual acceptance checklist item 4. Item 5 (status-scope clarity) is next.
+
+## Latest status-scope clarity review — 2026-10-30
+
+The current synthetic development preview [`0e055bcd`](https://0e055bcd.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) uses source commit [`936515e41936148da11a7b784a523a7e0a323406`](https://github.com/begb0037admin/aimm/commit/936515e41936148da11a7b784a523a7e0a323406), `index.html` blob `de37138bb5df71f1e0fccfbff8514c9ece3d7ef7`. Each status scope selects the expected format records and displays the status name, matching record/product totals, explanatory guidance and relevant version/status context:
+
+- Updates: Tapeform CLAP, Comet Dynamics VST3 and Halo Equalizer AU — 3 matching formats across 3 products; red installed→sample-latest versions are visible.
+- Up to date: Phase Garden AU, Tapeform VST3, Poly Bloom VST3 and Halo Equalizer VST3 — 4/4.
+- Manual check: Mono Scope VST2, Drift Reverb AU and Stereo Lantern VST3 — 3/3, with per-row vendor-check guidance.
+- Unchecked: Meter Bloom VST3, Amber Delay CLAP, Keynote Piano AU and Soft Clip VST2 — 4/4, with explicit no-vendor-result detail.
+
+Products with mixed formats remain in each applicable scope and keep the other format’s contrasting status dot/version visible. The persistent sample notice says records are generated in memory and no vendor checks ran. Jules passed exact preview visuals at desktop and 390×844; at 390px all four scope banners wrap within the 268px content column and document/body widths remain 390px. No scans, account/API calls or row actions were made.
+
+This completes visual acceptance checklist item 5. All five ordered visual items are complete; broader source/status/tool work remains open.

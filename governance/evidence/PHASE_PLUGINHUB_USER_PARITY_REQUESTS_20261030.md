@@ -4,7 +4,7 @@
 
 This register records Kevin’s user-provided PluginHub 2.0.12 comparisons on 2026-10-30. The reference screenshots show UI structure and behavior. Do not copy vendor/plugin rows, counts, paths or update records into AIMM; use the opt-in synthetic fixture for UI work. Production and real-inventory actions remain outside this work.
 
-## Kevin’s visual acceptance checklist — ordered, items 1–4 complete — 2026-10-30
+## Kevin’s visual acceptance checklist — items 1–5 complete; item 6 current — 2026-10-30
 
 Work through these one at a time. “Room to breathe” is a standing acceptance requirement on every visual change: preserve clear gaps and padding, don’t squeeze names, versions, chips, counts, icons or controls, and wrap content when it cannot fit. Do not mark an item complete until the preview has been checked and Jules has reviewed the exact source and final visuals. Values and records in the preview remain synthetic. Kevin wants a clear confirmation and preview link when each item is complete and ready to review; proceed to the next item after sending that confirmation.
 
@@ -12,10 +12,10 @@ Work through these one at a time. “Room to breathe” is a standing acceptance
 2. **Status counts — COMPLETE:** source commit `87f7a23af6be9fd240d6f2ec2fc5413ba4b347a7`, preview deployment [`30958416`](https://30958416.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). Counts are red for Updates, green for Up to date, amber for Manual check, grey for Unchecked; selected count has a readable dark badge over the active gradient. Jules passed desktop and 390px visuals. Synthetic values 3/4/3/4. See [evidence](PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
 3. **Sidebar count alignment — COMPLETE:** source commit `3866a84ff28d474fc6fae87f1824910f57d766b5`, preview deployment [`972fa6fc`](https://972fa6fc.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). Status, Library and all 11 Category counts align in a visible right-hand column; long category labels stay within the sidebar. Jules passed desktop and 390px review. Synthetic values only. See [evidence](PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
 4. **Breathing room across the Library — COMPLETE:** source commit `936515e41936148da11a7b784a523a7e0a323406`, preview deployment [`0e055bcd`](https://0e055bcd.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). Desktop four-column cards remain balanced; narrow publisher names wrap fully without crowding count/collapse controls. Jules passed 1920px and 390px with no horizontal overflow. See [evidence](PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
-5. **Status scope clarity — CURRENT ITEM:** ensure each status view clearly identifies its scope and shows the matching items and version context; distinguish synthetic sample values from any future live observations.
+5. **Status scope clarity — COMPLETE:** the four filters show their matching records, counts, version/status context and scope explanations; mixed-format records retain other-format status. Jules passed desktop and 390px. Synthetic-only notice remains visible and no live calls ran. See [evidence](PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
+6. **Format chip colors — CURRENT ITEM:** change VST format chips to blue and CLAP chips to brown, matching Kevin’s 2026-10-30 reference screenshot. Preserve clear text contrast and spacing; check all formats using VST (VST2/VST3) and CLAP chips.
 
-After those visual items, continue the broader open parity work already listed below: source-backed status integration, Install Manager and the remaining AIMM tools. Keep Foundation NOT MET and Stage 6 gated until all exit evidence is complete and fresh independent review accepts it.
-
+After item 6, inspect the existing generation-bound status projection and Install Manager contracts read-only, keeping the preview synthetic and avoiding live status, folder, account or vendor calls. Then proceed through the remaining AIMM Tools one at a time. Keep Foundation NOT MET and Stage 6 gated until all exit evidence is complete and fresh independent review accepts it.
 ## Completed visual items
 
 - **Publisher and plug-in names:** AIMM labels were smaller than PluginHub. Source commit `75655b4b2f327e3fff6d52c30f8512c34d1ffc9c` introduced the typography change, raising vendor names to 13px and plug-in names to 12px across Cards/List/Ledger. Jules passed desktop and 390px review; four columns remain balanced. See [typography evidence](PHASE_PLUGINHUB_VISUAL_PARITY_NAMES_20261030.md).

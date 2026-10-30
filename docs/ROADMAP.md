@@ -1,8 +1,8 @@
-## Latest PluginHub roadmap checkpoint — Library breathing room — 2026-10-30
+## Latest PluginHub roadmap checkpoint — status scope clarity — 2026-10-30
 
-Source commit [`936515e41936148da11a7b784a523a7e0a323406`](https://github.com/begb0037admin/aimm/commit/936515e41936148da11a7b784a523a7e0a323406) and development preview [`0e055bcd`](https://0e055bcd.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) complete visual checklist item 4. Desktop publisher cards stay in four balanced columns. On narrow screens, publisher names wrap within card headers while count/collapse controls remain aligned; the cards grow naturally without horizontal overflow. Jules passed 390px and 1920px visual review. The preview remains synthetic. See [status UI evidence](../governance/evidence/PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
+The synthetic Library preview [`0e055bcd`](https://0e055bcd.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) completes visual checklist item 5. Updates, Up to date, Manual check and Unchecked each show the matching format records, counts, versions/status markers, per-row context and a scope explanation. Mixed-format products retain their other format status; the sample notice states that no vendor checks ran. Jules passed desktop and 390px review. See [status UI evidence](../governance/evidence/PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
 
-Items 1–4 are complete. Current visual item 5 is status-scope clarity: make each filtered view's scope and version context obvious. Keep “room to breathe” in every change. Live status integration, Install Manager and remaining Tools are still open.
+Visual items 1–5 are complete. Current visual item 6 changes VST chips to blue and CLAP chips to brown, matching Kevin’s reference screenshot. After that, read-only review the generation-bound status projection and Install Manager contracts; keep synthetic UI values and do not connect live status/folder/vendor data. Remaining Tools are still open. Keep “room to breathe” across every change.
 
 Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP correction is a surgical patch, not reproducible from source. All current UI values remain synthetic.
 
