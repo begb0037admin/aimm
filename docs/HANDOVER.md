@@ -2,15 +2,15 @@
 
 Latest Library preview [1473c768](https://1473c768.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) uses source commit `4b93b3caabc0689e1066e952dd59b0b15c3257d6`. Per-format version rows now share a fixed format-label column and a single version/status column. Tapeform CLAP/VST3 and Halo Equalizer AU/VST3 align at desktop and mobile widths. Static JavaScript parsing passed and the deployed preview was visually checked at desktop and 390px. Jules review remains pending, so this slice is ready for review but not marked complete.
 
-Kevin re-emphasized that “room to breathe” is mandatory throughout: retain clear gaps and padding; wrap rather than squeeze names, versions, chips, counts, icons or controls. His latest 17:56–17:59 feedback is captured in the [user parity register](../governance/evidence/PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md): restore full plug-in names in four-column Cards, make Cards view easy to return to after opening Library/All Plugins, give the selected All plugins count the same dark high-contrast badge as selected status counts, and correct the tile/card alignment shown in the latest screenshots. These items are queued only. Queue new screenshots and feedback before starting another item.
+Kevin re-emphasized that “room to breathe” is mandatory throughout: retain clear gaps and padding; wrap rather than squeeze names, versions, chips, counts, icons or controls. His latest 17:56–18:00 feedback is captured in the [user parity register](../governance/evidence/PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md): restore full plug-in names in four-column Cards, make Cards view easy to return to after opening Library/All Plugins, give the selected All plugins count the same dark high-contrast badge as selected status counts, and correct tile/card alignment. Finish queued visual items first; Kevin then wants AIMM-owned Tools activated one at a time. Queue new screenshots and feedback before starting another item.
 
 The synthetic Install Manager remains at preview [7b811d9c](https://7b811d9c.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), source commit `568db596827ac18812ce910cdbd7b09677da69e5`. It uses VST blue, CLAP brown and AU green; queue/download outcomes are simulated only. Real downloads/installations and the independent review remain open.
 
-After the queued tile-name fix, continue generation-bound account status projection. Do not merge Companion bundle records with browser-expanded AU components using guessed names or bundle keys. Migration 0022 is in source but not applied remotely. Keep Foundation NOT MET and Stage 6 gated.
+After all queued visual items are reviewed, continue generation-bound account status projection, then activate the AIMM-owned Tools one at a time. Do not merge Companion bundle records with browser-expanded AU components using guessed names or bundle keys. Migration 0022 is in source but not applied remotely. Keep Foundation NOT MET and Stage 6 gated.
 
 - Installer trace: [contract report](../governance/evidence/PHASE_PLUGINHUB_INSTALLER_STAGING_CONTRACT_TRACE_20261030.md), blob `6dcfb821e41150e70558d741dacfabd8250909d2`.
 - Status/Install Manager review: [contract review](../governance/evidence/PHASE_PLUGINHUB_STATUS_INSTALL_CONTRACT_REVIEW_20261030.md), blob `c01b711768a38320964aac4c358b6a459d5319ed`.
-- User parity register blob: `4ff835f8bf8290cfb40717cb83c6d91b584ef2af`. HANDOVER does not self-pin.
+- User parity register blob: `04d49139d21b30a37ee7114b768fb56f46e03008`. HANDOVER does not self-pin.
 
 ## Historical continuation — initial per-format version placement (superseded) — 2026-10-30
 
