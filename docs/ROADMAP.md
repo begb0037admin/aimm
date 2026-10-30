@@ -1,3 +1,17 @@
+## 2026-10-30 PluginHub parity continuation — VST control passed
+
+Source commit `f550878fa1e29910c81881534d8c8b6a2bbb97ac` is active on the development Pages preview at [deployment ce77fbf0](https://ce77fbf0.aimm-pluginhub-foundation-dev.pages.dev/). Jules passed source and final visual review. The VST popover is readable, keyboard-operable and supports PluginHub-style cycling, replacement and Shift-click combination/removal while retaining AIMM’s supported formats and AAX exclusion. Playwright’s computed role/name lookup finds the option names; the CUA snapshot omits them, which does not establish what a native screen reader announces. The preview has zero products and connected folders. See [VST and tool-sweep evidence](../governance/evidence/PHASE_PLUGINHUB_VST_AND_TOOL_SWEEP_20261030.md).
+
+Next sequence:
+
+1. Map the manual’s whole-library tools to reviewed AIMM owners and existing backend contracts. Start with the Companion’s read-only duplicate analysis; paths remain local and the analysis grants no file-action authority.
+2. Add tool navigation and each tool surface only when a reviewed backend is connected. Batch management, installer cleanup, vault, share, profile and entitlement are not verified in the current preview.
+3. Complete the row-menu, vendor-action, Cards/List/Ledger, folder, sort, status and compatibility manual walk.
+4. Add Intel-only and snooze/status controls only when architecture metadata and page-consumed vendor observations support them.
+5. Keep file changes behind exact preview, owner confirmation and receipt; obtain fresh independent acceptance before any Foundation or Stage 6 gate change.
+
+No real inventory scan/upload, automated tests, Worker deployment or production action occurred. Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP fix remains surgical, not reproducible from branch source. Use synthetic non-production data only.
+
 ## 2026-10-29 PluginHub parity continuation — filters reviewed
 
 Source `ad1e460dea5009dbf7e88eba6cd5c16d5941ba54` is active on development Pages at [deployment 1a5f0a2b](https://1a5f0a2b.aimm-pluginhub-foundation-dev.pages.dev/). Jules passed source and visual review of the My Tags chevron correction: one chevron points down while closed and flips up while open. Browse-tag and format interactions were previously verified on source `80dd8012a19f8b3cd662ee2125aa1c30e94b4ae6` at deployment `415a8b76-f53c-4c0e-82d5-20f7dd4eeb23`. Details and data limits are in [filter evidence](../governance/evidence/PHASE_PLUGINHUB_FILTERS_20261029.md).

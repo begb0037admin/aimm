@@ -1,3 +1,11 @@
+# Current continuation checkpoint — 2026-10-30
+
+VST filter source commit `f550878fa1e29910c81881534d8c8b6a2bbb97ac` is live on development Pages at https://ce77fbf0.aimm-pluginhub-foundation-dev.pages.dev/. Jules passed source and final visual review. Mouse replacement/Shift-click combinations, tilde cycling, arrow selection and Escape focus return were verified on the empty preview; it is left on All formats. Playwright’s computed role/name lookup resolves the names while the CUA snapshot omits them; this points to a snapshot-bridge limitation, not a confirmed native screen-reader issue. See [VST and tool-sweep evidence](../../governance/evidence/PHASE_PLUGINHUB_VST_AND_TOOL_SWEEP_20261030.md).
+
+Continue with a contract-first sweep of PluginHub’s whole-library tools and row/vendor actions. The Companion has read-only local duplicate analysis and a verified installer-download component, but these are not complete Library tool surfaces. Keep file operations behind exact preview, owner confirmation and receipt. Intel-only and update/snooze controls remain dependent on metadata/observations. The full manual tool inventory and current gaps are recorded in the evidence report.
+
+The preview contains zero products and connected folders. No real scan/upload, automated tests, Worker deployment or production action occurred. Foundation remains **NOT MET**; Stage 6 remains gated. The Worker passkey RP fix remains a surgical patch, not a reproducible branch-source build. Use synthetic non-production data only.
+
 # Current continuation checkpoint — 2026-10-29
 
 The Library browse-filter slice is complete and Jules-reviewed. Branch source `ad1e460dea5009dbf7e88eba6cd5c16d5941ba54` is active at development Pages deployment `1a5f0a2b-b78f-493f-8532-0d57ce2540e5`: https://1a5f0a2b.aimm-pluginhub-foundation-dev.pages.dev/. The final visual fix removes a duplicate My Tags arrow; Jules confirmed one chevron points down while closed and up while open. Prior source `80dd8012a19f8b3cd662ee2125aa1c30e94b4ae6` at deployment `415a8b76-f53c-4c0e-82d5-20f7dd4eeb23` carries the reviewed tag/format interactions. Evidence: [filter parity](../../governance/evidence/PHASE_PLUGINHUB_FILTERS_20261029.md) and [manual parity sweep](../../governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md).
