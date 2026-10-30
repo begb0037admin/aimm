@@ -1,4 +1,18 @@
-## Latest continuation — All Plugins status column and mobile review — 2026-10-30
+## Latest continuation — PluginHub Tools Duplicate Review hand-off — 2026-10-30
+
+Companion follow-up source checkpoint is `7b117fa3b98df4dfbd06d2fbc73a4bf28c38dfd8`. Library Tools > Duplicate Review uses the fixed local-only route `aimm-companion://duplicates`; the Companion sheet shows duplicate groups from its last saved local generation and does not start scans or change files. The synthetic-only development preview removes the URL, visibly disables the item and explains that no local inventory is connected.
+
+Jules passed source and visual review at the [synthetic development preview](https://15c23fd2.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), Pages deployment `15c23fd2-9ee5-4ea6-a84f-25d95ed676af`. Desktop and 390px show the disabled Tools entry and notice; Cards remain four columns and All Plugins retains its 12 synthetic products and neutral Unchecked cells. No real local inventory was accessed.
+
+The Companion branch source compiled in an isolated tree with `swift build --disable-sandbox --product aimm-companion`; the normal sandboxed invocation was denied by the managed environment. No `.app` bundle was packaged, installed or launched, so macOS URL dispatch remains to be confirmed from a fresh non-production package. The saved local scan was not read.
+
+Evidence: [Duplicate Review hand-off report](../governance/evidence/PHASE_PLUGINHUB_DUPLICATE_REVIEW_ENTRY_20261030.md), blob `c516e5974492f9ad8df2cfc9f93a1a8d33038c04`; [tool and browse matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob `fe215eaf6345655034c8a1dba426017f257fb724`.
+
+Synchronized pins: UI source `index.html` blob `5cc44ace7943d6ecb050bc301c16cf339e0995d0`; Companion app source blob `4ff206ecc6c06e041d19e269ca381612619d9e83`; preview packaging script blob `bb97dfd2578f5768760603961fa15b5ea147cbcd`; Companion README blob `71b007dc4db717e80974c94e5fe61de277eaaa69`; Dashboard `02a26e7dd155de08002f2d20eb68a3a0152bba07`; Status `359be23038c4322dc8e6e5476f78d783b6b2359a`; Roadmap `401e461ee91b33a33fe298ce364c0f3cc2a4fa13`; cold-start handover `47809cbfa1f2e7bcd73f0f0073e5f776a3aa293f`; tool/browse matrix `fe215eaf6345655034c8a1dba426017f257fb724`; Duplicate Review report `c516e5974492f9ad8df2cfc9f93a1a8d33038c04`. The handover does not self-pin.
+
+No real folder scan/upload, automated tests, Companion package/install/launch, Worker or production deployment, file action or share occurred. Foundation remains **NOT MET**; Stage 6 remains gated pending fresh exit evidence and independent acceptance. The development Worker passkey RP fix remains a surgical patch, not a reproducible build from branch source. Synthetic non-production data only.
+
+## Historical continuation — All Plugins status column and mobile review — 2026-10-30
 
 Branch parent `3a88e41434fa949a3a8d142b199b94844afbc78f` was verified before this record update. Library source `index.html` blob `8cc326ffbf691a39c749d855265b49d8d6f6d94a` adds a neutral Unchecked cell to Library > All Plugins and a narrow-screen horizontal scroll region. The cell says no vendor result is connected; it does not imply a check ran. The opt-in synthetic mode remains limited to development Pages and keeps sample data in memory.
 
