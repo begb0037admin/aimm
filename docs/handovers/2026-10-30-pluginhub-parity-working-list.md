@@ -12,10 +12,10 @@ This is the running checklist for the user’s screenshot-led reverse engineerin
 ## Remaining design work
 
 - [ ] Match PluginHub’s clearer status scopes: make the selected status unmistakable, keep each count visible and color it by status, and make Updates / Up to Date / Manual Check / Unchecked explain what the user is seeing and the next action.
-- [ ] In update rows, foreground the installed → available version pair. Available versions must be red; confirmed current versions green; manual-check versions amber. Keep the status dots as a secondary cue.
-- [ ] Increase publisher and plug-in name size to match the PluginHub comparison.
-- [ ] Align summary tiles, filter controls, counts, and the cards beneath them at common grid edges. Add consistent breathing room between chips, dots, versions, rows, cards, and sidebar groups.
-- [ ] Use the requested format colours consistently: VST blue, CLAP brown. Keep AU/VST2 distinctions and the status dots separate from format chips.
+- [x] In update rows, foreground the installed → available version pair. Available versions are red; confirmed current versions green; manual-check versions amber. Status dots remain as a secondary cue. Verified in the synthetic card preview.
+- [x] Increase publisher and plug-in name size to match the PluginHub comparison. Verified in the synthetic card preview.
+- [x] Align summary tiles, filter controls, counts, and cards at common grid edges; add breathing room to the inventory cards and format/version rows. Sidebar group spacing remains queued under the sidebar item.
+- [x] Use the requested format colours consistently: VST blue, CLAP brown. AU/VST2 distinctions and status dots remain separate from format chips. Verified in the synthetic card preview.
 - [ ] Keep card and table views reachable after selecting a library/category/status scope. Provide an obvious way back to the tile view.
 - [ ] Align sidebar categories and count figures, retain count visibility for selected rows, and preserve breathing room throughout the sidebar.
 
