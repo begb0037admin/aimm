@@ -24,6 +24,9 @@ The user-provided comparison shows AIMM’s publisher/product labels materially 
 
 Kevin also requires the four status groups to become active with truthful live counts and all AIMM Tools to be active with complete workflows. In the current Library, only Unchecked is active; most Tools are disabled. The Install Manager comparison shows vendor update counts/filters, per-row download, queue all/download all, batch-install panel and folder/queue controls. Status must use generation-linked vendor observations. Install Manager must use verified vendor artifacts and local Companion receipts. See [user-directed parity requests](PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md) and the [tool contract matrix](PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md).
 
+
+The status API trace shows `/v1/status-summary` already reads the current complete generation and is used by Hope, but not by the visible Library UI. Its current rows do not include publisher identity and its totals count format records. See [status UI connection gap](PHASE_PLUGINHUB_STATUS_UI_GAP_20261030.md).
+
 ## What the reference app exposes
 
 The View menu groups appearance, brightness and text size; Icon, Ledger and List layouts; sidebar or top-tab navigation; vendor sorting; category labels; note/rating badges; license-key marks; Hidden; and saved Collections. The manual describes Icon as vendor cards, List as full-width vendor blocks with multiple plugins per line, and Ledger as one row per vendor with status and format counts. Ledger headings sort their own columns and selecting a vendor expands its plugins.

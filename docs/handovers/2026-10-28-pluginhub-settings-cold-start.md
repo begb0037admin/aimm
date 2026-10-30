@@ -4,6 +4,8 @@ Current source commit 75655b4b2f327e3fff6d52c30f8512c34d1ffc9c, Library blob f98
 
 Kevin’s new comparison requirements: all four status scopes should display live counts, and all AIMM Tools should be active with complete functionality. The Install Manager reference includes update counts by vendor, per-row download, queue all/download all, a batch install pane, and controls for Download folder, Clear installed & failed, Start over and Done. AIMM currently has only an Unchecked scope active and most Tools inactive. The source-backed vendor status projection and reviewed local installer action contract are dependencies; keep counts and buttons honest until connected. See [user-directed parity requests](../../governance/evidence/PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md).
 
+Read-only source trace: the generation-bound `/v1/status-summary` endpoint exists and is used by Hope, but the visible Library UI does not call it. The browser’s local scan cache is not joined to the account generation, and the summary lacks publisher attribution for PluginHub-style vendor grouping. See [status UI connection gap](../../governance/evidence/PHASE_PLUGINHUB_STATUS_UI_GAP_20261030.md).
+
 Foundation remains **NOT MET**, Stage 6 remains gated; the Worker RP fix remains surgical and non-reproducible from branch source.
 
 ## Historical continuation checkpoint — View brightness and text size — 2026-10-30 (source commit 82c886d690eaaf41560af83cff4155a769cc553d)
