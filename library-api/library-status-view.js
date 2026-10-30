@@ -277,14 +277,16 @@
     }).join("");
     const content = rows.length
       ? grouped
-      : '<div class="aimm-live-im-empty"><strong>No fresh update records are available.</strong><p>' +
+      : !snapshot
+        ? '<div class="aimm-live-im-empty"><strong>Account status has not loaded.</strong><p>Load account status from the Library before reviewing updates. No vendor check has run in this manager.</p></div>'
+        : '<div class="aimm-live-im-empty"><strong>No fresh update records are available.</strong><p>' +
           counts.stale.toLocaleString() + ' observations are stale and ' + counts.unchecked.toLocaleString() +
           ' are unchecked. Zero updates does not mean everything is current. Review those scopes for the next status check.</p></div>';
     overlay.innerHTML = '<section class="aimm-live-im-shell" role="dialog" aria-modal="true" aria-labelledby="aimmLiveIMTitle"><header class="aimm-live-im-head"><div><h2 id="aimmLiveIMTitle">Install Manager</h2><p>' +
       (snapshot ? rows.length.toLocaleString() + ' fresh update records · account snapshot' : 'Account status is not loaded') +
       '</p></div><div class="aimm-live-im-tools"><button type="button" data-live-im-queue-all' + (!rows.length ? ' disabled' : '') + '>Queue all</button><button type="button" data-live-im-clear' + (!queueRows.length ? ' disabled' : '') + '>Clear queue</button><button type="button" class="primary" data-live-im-done>Done</button></div></header>' +
       '<div class="aimm-live-im-notice"><strong>Vendor pages open through your paired Companion and wait for its local confirmation.</strong><span>Download and install actions are not connected. No file is downloaded or opened by this manager.</span></div>' +
-      '<div class="aimm-live-im-summary"><div><small>Updates</small><strong class="updates">' + counts.updates.toLocaleString() + '</strong></div><div><small>Up to date</small><strong class="current">' + counts["up-to-date"].toLocaleString() + '</strong></div><div><small>Manual check</small><strong class="manual">' + counts["manual-check"].toLocaleString() + '</strong></div><div><small>Stale / unchecked</small><strong>' + counts.stale.toLocaleString() + ' / ' + counts.unchecked.toLocaleString() + '</strong></div></div>' +
+      '<div class="aimm-live-im-summary"><div><small>Updates</small><strong class="updates">' + (snapshot ? counts.updates.toLocaleString() : '—') + '</strong></div><div><small>Up to date</small><strong class="current">' + (snapshot ? counts["up-to-date"].toLocaleString() : '—') + '</strong></div><div><small>Manual check</small><strong class="manual">' + (snapshot ? counts["manual-check"].toLocaleString() : '—') + '</strong></div><div><small>Stale / unchecked</small><strong>' + (snapshot ? counts.stale.toLocaleString() + ' / ' + counts.unchecked.toLocaleString() : '—') + '</strong></div></div>' +
       (message ? '<p class="aimm-live-im-message" role="status">' + esc(message) + '</p>' : '') +
       '<div class="aimm-live-im-body"><main class="aimm-live-im-list">' + content + '</main><aside class="aimm-live-im-queue"><h3>VENDOR PAGE QUEUE <span>' + queueRows.length.toLocaleString() + '</span></h3>' +
       (queueRows.length ? '<ol>' + queueRows.map((row) => '<li>' + esc(row.name || "Unnamed plug-in") + ' · ' + esc(row.publisher_name || "Publisher not identified") + '<button type="button" data-live-im-remove="' + esc([row.device_id,row.generation_id,row.record_id].join("|")) + '" aria-label="Remove from queue">×</button></li>').join("") + '</ol><button type="button" class="primary" data-live-im-next' + (liveInstallState.busy ? ' disabled' : '') + '>Request next vendor page</button>' : '<p>No vendor pages are queued.</p>') +
@@ -356,18 +358,19 @@
     liveInstallState.overlay.querySelector("[data-live-im-done]")?.focus();
   }
   function bindLiveInstallManager() {
-    window.__aimmInstallBindAttempt = (window.__aimmInstallBindAttempt || 0) + 1;
-    document.documentElement.setAttribute("data-aimm-install-bind-attempt",String(window.__aimmInstallBindAttempt));
-    if (new URLSearchParams(window.location.search).get("pluginhub-preview") === "synthetic") { document.documentElement.setAttribute("data-aimm-install-bind-result","synthetic"); window.__aimmInstallBindResult = "synthetic"; return; }
+    if (new URLSearchParams(window.location.search).get("pluginhub-preview") === "synthetic") return;
     const button = document.querySelector("[data-inv-install-manager]");
-    if (!button) { document.documentElement.setAttribute("data-aimm-install-bind-result","no-button"); window.__aimmInstallBindResult = "no-button"; return; }
-    if (button.__aimmLiveInstallManager) { button.disabled = false; window.__aimmInstallBindResult = "already-bound"; return; }
+    if (!button) return;
+    if (button.__aimmLiveInstallManager) {
+      button.disabled = false;
+      button.title = "Open the account-backed Install Manager. Fresh updates are shown; vendor pages require local Companion confirmation.";
+      button.setAttribute("aria-label","Install Manager — account-backed update records and vendor page requests");
+      return;
+    }
     button.disabled = false;
     button.title = "Open the account-backed Install Manager. Fresh updates are shown; vendor pages require local Companion confirmation.";
     button.setAttribute("aria-label","Install Manager — account-backed update records and vendor page requests");
     button.__aimmLiveInstallManager = true;
-    window.__aimmInstallBindResult = "bound";
-    document.documentElement.setAttribute("data-aimm-install-bind-result","bound");
     button.addEventListener("click",(event) => {
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -512,7 +515,7 @@
   }
   function safeBootLibraryBridge() {
     try { bootLibraryBridge(); }
-    catch (error) { window.__aimmLibraryBridgeError = String(error?.message || error); }
+    catch (error) { console.error("AIMM status view failed to initialize", error); }
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded",safeBootLibraryBridge,{once:true});
   else safeBootLibraryBridge();
