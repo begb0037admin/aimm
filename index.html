@@ -3244,13 +3244,13 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-vendor-count{margin-left:auto;flex:none;padding:3px 6px;border-radius:5px;background:#28313c;color:#dce5ef;font: calc(var(--inv-text-scale, 1) * 10px) ui-monospace,Menlo,monospace}
     #library .inv-vendor-toggle{border:0;background:transparent;color:#87919b;font-size:calc(var(--inv-text-scale, 1) * 15px);cursor:pointer;padding:3px 2px}
     #library .inv-vendor.collapsed .inv-products,#library .inv-vendor.collapsed .inv-more{display:none}
-    #library .inv-product{padding:8px 10px;border-bottom:1px solid #292e35;min-width:0}
+    #library .inv-product{padding:10px 12px;border-bottom:1px solid #292e35;min-width:0}
     #library .inv-product:last-child{border-bottom:0}
     #library .inv-vendor:not(.expanded) .inv-product.extra{display:none}
-    #library .inv-product-line{display:flex;align-items:center;gap:6px;min-width:0}
-    #library .inv-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(var(--inv-text-scale, 1) * 12px);font-weight:650;color:#edf1f4}
-    #library .inv-version{margin-left:auto;min-width:0;max-width:62%;flex:0 1 auto;color:#8f99a5;font:calc(var(--inv-text-scale, 1) * 10px) ui-monospace,Menlo,monospace}
-    #library .inv-version-status{display:flex;align-items:center;justify-content:flex-end;gap:2px 8px;flex-wrap:wrap;line-height:1.35}
+    #library .inv-product-line{display:flex;align-items:center;gap:8px;min-width:0}
+    #library .inv-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(var(--inv-text-scale, 1) * 13px);font-weight:650;color:#edf1f4}
+    #library .inv-version{margin-left:auto;min-width:0;max-width:52%;flex:0 1 auto;color:#8f99a5;font:calc(var(--inv-text-scale, 1) * 9px) ui-monospace,Menlo,monospace}
+    #library .inv-version-status{display:flex;align-items:center;justify-content:flex-end;gap:4px 10px;flex-wrap:wrap;line-height:1.35}
     #library .inv-version-row{white-space:normal;overflow-wrap:anywhere}
     #library .inv-version-row b{color:#9ba5b0;font-weight:600}
     #library .inv-version-row.updates .inv-version-current{color:#a0a8b1}
@@ -3258,11 +3258,11 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-version-row .inv-version-warning{color:#ff6b70;font-weight:700}
     #library .inv-version-row.up-to-date .inv-version-current{color:#42c995;font-weight:700}
     #library .inv-version-row.manual-check .inv-version-current{color:#e8b45a;font-weight:700}
-    #library .inv-version-row.manual-check span:last-child{color:#e8b45a}
-    #library .inv-version-row.unchecked .inv-version-current,#library .inv-version-row.unchecked span:last-child{color:#a0a8b1}
+    #library .inv-version-row.unchecked .inv-version-current{color:#a0a8b1}
+    @media(max-width:680px){#library .inv-product-line{flex-wrap:wrap;row-gap:3px}#library .inv-name{flex:1 1 auto}#library .inv-version{order:3;flex:1 0 100%;max-width:100%;margin:0}#library .inv-version-status{justify-content:flex-start}}
     #library .inv-meta{margin-top:3px;color:#87919b;font-size:calc(var(--inv-text-scale, 1) * 9px)}#library .inv-hidden-badge{display:inline-flex;align-items:center;margin-left:5px;padding:1px 5px;border:1px solid #8a6a35;border-radius:999px;color:#f2c879;font-size:calc(var(--inv-text-scale, 1) * 8px);line-height:1.35;vertical-align:middle}
-    #library .inv-formats{display:flex;gap:6px 9px;flex-wrap:wrap;margin-top:5px}
-    #library .inv-format-state{display:inline-flex;align-items:center;gap:5px}
+    #library .inv-formats{display:flex;gap:8px 10px;flex-wrap:wrap;margin-top:7px}
+    #library .inv-format-state{display:inline-flex;align-items:center;gap:6px}
     #library .inv-format-status{display:inline-block;width:8px;height:8px;flex:0 0 8px;border-radius:2px;background:#68727d}
     #library .inv-format-status.updates{background:#ee7777}
     #library .inv-format-status.up-to-date{background:#42c995}
@@ -6036,24 +6036,18 @@ function invProductTileHeaderVersion(group,versions){
 function invProductTileVersionHTML(group,versions){
   if(!INV_SYNTHETIC_PREVIEW)return invEsc(versions);
   const rows=[];
+  const multipleFormats=group.formatRows.size>1;
   Array.from(group.formatRows.entries()).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([format,formatRows])=>formatRows.forEach(row=>{
     const current=invEsc(row.version||"unknown");
-    let content="";
+    let content='<span class="inv-version-current">v'+current+'</span>';
     if(row.status==="updates"&&row.latestVersion){
-      content='<span class="inv-version-current">v'+current+'</span> <span aria-hidden="true">→</span> <span class="inv-version-latest" aria-label="sample latest version">v'+invEsc(row.latestVersion)+'</span>';
-    }else if(row.status==="up-to-date"){
-      content='<span class="inv-version-current">v'+current+'</span>';
+      content+='<span aria-hidden="true">→</span><span class="inv-version-latest">v'+invEsc(row.latestVersion)+'</span>';
     }else if(row.status==="updates"){
-      content='<span class="inv-version-current">v'+current+'</span> <span class="inv-version-warning">comparison unavailable</span>';
-    }else if(row.status==="manual-check"){
-      content='<span class="inv-version-current">v'+current+'</span> <span>check</span>';
-    }else{
-      content='<span class="inv-version-current">v'+current+'</span> <span>unchecked</span>';
+      content+='<span class="inv-version-warning">update check needed</span>';
     }
     const label=format+": "+(row.status==="updates"?(row.latestVersion?"installed version "+(row.version||"unknown")+", sample latest version "+row.latestVersion:"update indicated; version comparison unavailable"):invStatusLabel(row.status));
-    const accessibleLatest=row.latestVersion?' aria-label="Sample latest version '+invEsc(row.latestVersion)+'"':"";
-    content=content.replace('aria-label="sample latest version"',accessibleLatest);
-    rows.push('<span class="inv-version-row '+row.status+'" title="'+invEsc(label)+'"><b>'+invEsc(format)+'</b> '+content+'</span>');
+    const formatLabel=multipleFormats?'<b>'+invEsc(format)+'</b> ':"";
+    rows.push('<span class="inv-version-row '+row.status+'" title="'+invEsc(label)+'" aria-label="'+invEsc(format+": "+label)+'">'+formatLabel+content+'</span>');
   }));
   return rows.length?'<span class="inv-version-status" title="Synthetic per-format versions. No live vendor check was performed.">'+rows.join("")+'</span>':invEsc(versions);
 }
