@@ -1,4 +1,10 @@
-## Latest PluginHub checkpoint — View display preferences — 2026-10-30
+## Latest PluginHub checkpoint — View brightness and text size — 2026-10-30
+
+Branch commit [`82c886d690eaaf41560af83cff4155a769cc553d`](https://github.com/begb0037admin/aimm/commit/82c886d690eaaf41560af83cff4155a769cc553d), Library `index.html` blob `a535b0a5830ad3449e1f27f14238c6f4685f5997`, adds Brightness and typography-only Text size to the View menu. Jules passed source and visual/interaction review at synthetic preview deployment 72b0770b on desktop and 390px. Text scales from 8px to 12px; product/vendor widths and SVG icon dimensions remain fixed while row heights reflow with text. The panel flips/scrolls inside the available viewport. The existing 44px page overflow at 390px remains outside the panel. See [brightness/text-size evidence](../governance/evidence/PHASE_PLUGINHUB_VIEW_BRIGHTNESS_TEXT_20261030.md).
+
+Synthetic only; no folders, scans, real inventory, credentials or row actions. Foundation remains **NOT MET**, Stage 6 gated; the Worker RP fix remains a surgical patch.
+
+## Historical checkpoint — View display preferences — 2026-10-30 (source commit e86c9b1787b3289a66eaa2f83f5f21260bc25a43)
 
 Branch commit [`e86c9b1787b3289a66eaa2f83f5f21260bc25a43`](https://github.com/begb0037admin/aimm/commit/e86c9b1787b3289a66eaa2f83f5f21260bc25a43), Library `index.html` blob `b56aad4f068d531a1cb930394073c72eef9f537d`, adds category-label and note/rating visibility controls to View. They work in Cards, List and Ledger; tags and local marks stay visible. Synthetic preview preferences remain in memory only. Jules passed source and desktop/390px preview review at deployment 52913ac6. The synthetic fixture has no populated user notes/ratings, so their populated appearance remains unreviewed; the existing 44px page overflow at 390px remains outside the View panel. See [View display options evidence](../governance/evidence/PHASE_PLUGINHUB_VIEW_DISPLAY_OPTIONS_20261030.md).
 

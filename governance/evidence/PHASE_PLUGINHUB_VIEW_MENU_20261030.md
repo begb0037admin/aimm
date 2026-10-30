@@ -1,6 +1,10 @@
 # PluginHub View menu parity slice — 2026-10-30
 
-## Latest update — Category and note/rating display — 2026-10-30
+## Latest update — Brightness and typography size — 2026-10-30
+
+The View menu now supports Brightness and typography-only Text size, source commit `82c886d690eaaf41560af83cff4155a769cc553d`, Library blob `a535b0a5830ad3449e1f27f14238c6f4685f5997`. Jules passed source and visual/interaction review at synthetic preview deployment `72b0770b-8718-47b7-8d03-b61b54752ea0`, desktop and 390px. Text changes to 8/10/12px across 80/100/120%; product/vendor widths and SVG icons stay fixed while row heights reflow; the panel flips/scrolls within available viewport space. See [brightness/text-size parity evidence](PHASE_PLUGINHUB_VIEW_BRIGHTNESS_TEXT_20261030.md).
+
+## Historical update — Category and note/rating display — 2026-10-30
 
 The View menu has since gained **Show category labels** and **Show notes and ratings**, implemented in source commit `e86c9b1787b3289a66eaa2f83f5f21260bc25a43`, Library `index.html` blob `b56aad4f068d531a1cb930394073c72eef9f537d`. Jules passed source and visual/interaction review on synthetic preview deployment `52913ac6-09bb-4dde-9034-6ee29299ed0d` at desktop and 390px. The new controls work across Cards/List/Ledger; note/rating rendering is separate from tags/local marks. The sample has no saved notes or ratings, so populated badge styling is not reviewed. Preferences are memory-only in synthetic mode.
 
@@ -12,7 +16,7 @@ Branch commit `fec3cf8c2482b1dd9aa105723ffe106b1038a33d`, `index.html` blob `d8c
 
 The menu uses native `<details>/<summary>`, exposes a stable “View options” accessible name and synchronized expanded state, closes after layout/sort selection, on Escape, or outside pointerdown, and returns focus to View after keyboard close/selection. The menu has a 280px maximum and clamps its width for compact viewports.
 
-This implements the supported grouping plus category-label and note/rating visibility, not the full PluginHub View menu. Appearance/brightness/text size, sidebar/top-tab navigation, key display preferences, Hidden and Collections remain incomplete. Vendor “newest/oldest” sorting still needs source-backed per-record timestamps.
+This implements the supported grouping, category/note visibility, Brightness and typography-only Text size, not the full PluginHub View menu. Light/Dark/System appearance and colorblind status colors, sidebar/top-tab navigation, key display preferences, Hidden and Collections remain incomplete. Vendor “newest/oldest” sorting still needs source-backed per-record timestamps.
 
 ## Development preview and Jules review
 
