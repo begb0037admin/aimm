@@ -6141,7 +6141,6 @@ function invProductTileHeaderVersion(group,versions){
 function invProductTileVersionHTML(group,versions){
   if(!INV_SYNTHETIC_PREVIEW)return invEsc(versions);
   const rows=[];
-  const multipleFormats=group.formatRows.size>1;
   Array.from(group.formatRows.entries()).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([format,formatRows])=>formatRows.forEach(row=>{
     const current=invEsc(row.version||"unknown");
     let content='<span class="inv-version-current">v'+current+'</span>';
