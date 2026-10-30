@@ -19,7 +19,7 @@ The visible browser scanner has a second identity mismatch with the Companion sn
 
 ### Proposed field bounds and privacy
 
-Use a closed `publisher_source` enum: `infoPlistManufacturer`, `infoPlistVendor`, `audioComponentManufacturerName`, `audioComponentNamePrefix`, or `reviewedMapping`; store `null` source and publisher when unresolved. Store no raw plist data and transmit no local path. A canonical product ID may be a stable opaque value derived by the reviewed mapping; keep it nullable where the evidence does not support a cross-format identity. Publisher names and canonical product IDs still reveal installed-software metadata, so keep them inside the existing consented, account/device/generation-scoped retention and deletion model.
+Use a closed `publisher_source` enum: `infoPlistManufacturer`, `infoPlistVendor`, `audioComponentManufacturerName`, or `reviewedMapping`; store `null` source and publisher when unresolved. Store no raw plist data and transmit no local path. A canonical product ID may be a stable opaque value derived by the reviewed mapping; keep it nullable where the evidence does not support a cross-format identity. Publisher names and canonical product IDs still reveal installed-software metadata, so keep them inside the existing consented, account/device/generation-scoped retention and deletion model.
 
 ## Scope and limits
 
