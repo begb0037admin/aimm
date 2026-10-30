@@ -748,13 +748,14 @@
     document.getElementById("aimmLocalShareOverlay")?.remove();
     const rows=shareInventoryRows(),vendors=Array.from(new Set(rows.map((row)=>row.vendor))).sort();
     const overlay=document.createElement("div");overlay.id="aimmLocalShareOverlay";
-    overlay.innerHTML='<section role="dialog" aria-modal="true" aria-labelledby="aimmLocalShareTitle"><header><h2 id="aimmLocalShareTitle">Share Plugin List</h2><p>Create a share-ready export from the plug-ins currently shown in this Library view.</p></header><p><strong>Local export only.</strong> Nothing is sent from AIMM. Expiring public links and passkey protection are not connected yet. Review the fields before you copy or download.</p><div class="share-grid"><label>List name<input type="text" data-share-label maxlength="80" placeholder="My plug-in list"></label><label>Format scope<select data-share-format><option value="">All formats</option><option>AU</option><option>VST2</option><option>VST3</option><option>CLAP</option></select></label></div><div><strong>Exclude publishers</strong><div class="share-vendors">'+vendors.map((vendor,index)=>'<label><input type="checkbox" data-share-vendor value="'+esc(vendor)+'"> '+esc(vendor)+'</label>').join("")+'</div></div><div class="share-grid"><label class="share-check"><input type="checkbox" data-share-versions checked> Include versions</label><label class="share-check"><input type="checkbox" data-share-categories checked> Include categories</label></div><div class="share-preview" data-share-preview></div><small data-share-count></small><div role="status" data-share-status></div><footer class="share-actions"><button type="button" data-share-close>Close</button><button type="button" data-share-copy class="primary">Copy for Sheets</button><button type="button" data-share-download>Download CSV</button></footer></section>';
+    overlay.innerHTML='<section role="dialog" aria-modal="true" aria-labelledby="aimmLocalShareTitle"><header><h2 id="aimmLocalShareTitle">Share Plugin List</h2><p>Create a share-ready export from the plug-ins currently shown in this Library view.</p></header><p><strong>Local export only.</strong> Nothing is sent from AIMM. Synthetic previews can only export locally. Account links are available from the approved signed-in account view; anyone with a link can view it, and passkey protection is not available yet. Review the fields before you copy or download.</p><div class="share-grid"><label>List name<input type="text" data-share-label maxlength="80" placeholder="My plug-in list"></label><label>Format scope<select data-share-format><option value="">All formats</option><option>AU</option><option>VST2</option><option>VST3</option><option>CLAP</option></select></label></div><div><strong>Exclude publishers</strong><div class="share-vendors">'+vendors.map((vendor,index)=>'<label><input type="checkbox" data-share-vendor value="'+esc(vendor)+'"> '+esc(vendor)+'</label>').join("")+'</div></div><div class="share-grid"><label class="share-check"><input type="checkbox" data-share-versions checked> Include versions</label><label class="share-check"><input type="checkbox" data-share-categories checked> Include categories</label></div><div class="share-preview" data-share-preview></div><small data-share-count></small><div role="status" data-share-status></div><footer class="share-actions"><button type="button" data-share-close>Close</button><button type="button" data-share-copy class="primary">Copy for Sheets</button><button type="button" data-share-download>Download CSV</button></footer></section>';
     document.body.appendChild(overlay);
     let accountSharePanel=null;
-    if(!synthetic()){
+    {
       accountSharePanel=document.createElement("section");
       accountSharePanel.className="account-share-panel";
       accountSharePanel.innerHTML='<h3>Create an expiring link</h3><p>Anyone with the link can view this list until it expires. AIMM does not currently add passkey protection to shared links. Create only a list you are comfortable sharing.</p><div class="share-grid"><label>Link expires<select data-share-expiry><option value="24">In 24 hours</option><option value="72">In 3 days</option><option value="168" selected>In 7 days</option><option value="336">In 14 days</option><option value="720">In 30 days</option></select></label><label class="share-check"><input type="checkbox" data-share-public-confirm> I understand anyone with this link can view it</label></div><div class="share-actions"><button type="button" data-share-create class="primary">Create expiring link</button><button type="button" data-share-load>Load active links</button></div><div role="status" data-share-account-status></div><div data-share-created></div><div data-share-active></div>';
+      if(synthetic()){accountSharePanel.querySelectorAll("[data-share-create],[data-share-load]").forEach((button)=>{button.disabled=true;});accountSharePanel.querySelector("p").textContent="Synthetic preview only: these sample plug-ins cannot be published. On the approved signed-in account view, anyone with the link can view it until expiry. Passkey protection is not available yet.";accountSharePanel.querySelector("[data-share-account-status]").textContent="No account request has been made."; }
       overlay.querySelector("header").insertAdjacentElement("afterend",accountSharePanel);
     }
     const query=(selector)=>overlay.querySelector(selector);
@@ -819,13 +820,15 @@
         activeHost.append(list);
       };
       accountSharePanel.querySelector("[data-share-load]").addEventListener("click",async(event)=>{
-        const button=event.currentTarget;button.disabled=true;setAccountStatus("Loading active links…");
+        const button=event.currentTarget;
+        if(synthetic()){setAccountStatus("Synthetic preview: no account request was made.");return;}button.disabled=true;setAccountStatus("Loading active links…");
         try{renderActiveShares(await window.aimmListAccountShares());setAccountStatus("Active links loaded.");}
         catch(error){setAccountStatus(error.message);}
         finally{button.disabled=false;}
       });
       accountSharePanel.querySelector("[data-share-create]").addEventListener("click",async(event)=>{
         const button=event.currentTarget;
+        if(synthetic()){setAccountStatus("Synthetic preview: sample plug-ins cannot be published.");return;}
         if(!query("[data-share-public-confirm]").checked){setAccountStatus("Confirm that anyone with the link can view it before creating a link.");query("[data-share-public-confirm]").focus();return;}
         const selected=selectedRows();
         if(!selected.length){setAccountStatus("There are no plug-ins in this selection to share.");return;}
