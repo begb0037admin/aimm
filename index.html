@@ -3249,15 +3249,17 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-vendor:not(.expanded) .inv-product.extra{display:none}
     #library .inv-product-line{display:flex;align-items:center;gap:6px;min-width:0}
     #library .inv-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(var(--inv-text-scale, 1) * 12px);font-weight:650;color:#edf1f4}
-    #library .inv-version{margin-left:auto;flex:none;color:#8f99a5;font: calc(var(--inv-text-scale, 1) * 9px) ui-monospace,Menlo,monospace}
-    #library .inv-tile-version-summary{margin:3px 0 5px;padding:5px 7px;border-left:2px solid #ee7777;border-radius:0 5px 5px 0;background:#171a1e;min-width:0}
-    #library .inv-version-status{display:grid;gap:2px;color:#9ba5b0;font:calc(var(--inv-text-scale, 1) * 9px) ui-monospace,Menlo,monospace;line-height:1.35}
+    #library .inv-version{margin-left:auto;min-width:0;max-width:62%;flex:0 1 auto;color:#8f99a5;font:calc(var(--inv-text-scale, 1) * 10px) ui-monospace,Menlo,monospace}
+    #library .inv-version-status{display:flex;align-items:center;justify-content:flex-end;gap:2px 8px;flex-wrap:wrap;line-height:1.35}
     #library .inv-version-row{white-space:normal;overflow-wrap:anywhere}
+    #library .inv-version-row b{color:#9ba5b0;font-weight:600}
+    #library .inv-version-row.updates .inv-version-current{color:#a0a8b1}
     #library .inv-version-row .inv-version-latest{color:#ff6b70;font-weight:800}
     #library .inv-version-row .inv-version-warning{color:#ff6b70;font-weight:700}
     #library .inv-version-row.up-to-date .inv-version-current{color:#42c995;font-weight:700}
     #library .inv-version-row.manual-check .inv-version-current{color:#e8b45a;font-weight:700}
-    #library .inv-version-row.unchecked .inv-version-current{color:#a0a8b1}
+    #library .inv-version-row.manual-check span:last-child{color:#e8b45a}
+    #library .inv-version-row.unchecked .inv-version-current,#library .inv-version-row.unchecked span:last-child{color:#a0a8b1}
     #library .inv-meta{margin-top:3px;color:#87919b;font-size:calc(var(--inv-text-scale, 1) * 9px)}#library .inv-hidden-badge{display:inline-flex;align-items:center;margin-left:5px;padding:1px 5px;border:1px solid #8a6a35;border-radius:999px;color:#f2c879;font-size:calc(var(--inv-text-scale, 1) * 8px);line-height:1.35;vertical-align:middle}
     #library .inv-formats{display:flex;gap:6px 9px;flex-wrap:wrap;margin-top:5px}
     #library .inv-format-state{display:inline-flex;align-items:center;gap:5px}
@@ -6028,17 +6030,17 @@ function invProductStatusDetailHTML(group){
   }));
   return details.length?'<span class="inv-status-detail">'+details.join("")+'</span>':"";
 }
-function invProductTileHeaderVersion(versions){
-  return INV_SYNTHETIC_PREVIEW&&invStatusScope()?"":invEsc(versions);
+function invProductTileHeaderVersion(group,versions){
+  return INV_SYNTHETIC_PREVIEW?invProductTileVersionHTML(group,versions):invEsc(versions);
 }
 function invProductTileVersionHTML(group,versions){
-  if(!INV_SYNTHETIC_PREVIEW||!invStatusScope())return invEsc(versions);
+  if(!INV_SYNTHETIC_PREVIEW)return invEsc(versions);
   const rows=[];
   Array.from(group.formatRows.entries()).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([format,formatRows])=>formatRows.forEach(row=>{
     const current=invEsc(row.version||"unknown");
     let content="";
     if(row.status==="updates"&&row.latestVersion){
-      content='<span class="inv-version-current">v'+current+'</span> <span aria-hidden="true">→</span> <span class="inv-version-latest" aria-label="sample latest version">sample v'+invEsc(row.latestVersion)+'</span>';
+      content='<span class="inv-version-current">v'+current+'</span> <span aria-hidden="true">→</span> <span class="inv-version-latest" aria-label="sample latest version">v'+invEsc(row.latestVersion)+'</span>';
     }else if(row.status==="up-to-date"){
       content='<span class="inv-version-current">v'+current+'</span>';
     }else if(row.status==="updates"){
@@ -6067,7 +6069,7 @@ function invRenderScopeBanner(groups){
   if(title)title.textContent=invStatusLabel(INV_SCOPE);
   if(count)count.textContent=records.toLocaleString()+" matching format "+(records===1?"record":"records")+" across "+groups.length.toLocaleString()+" "+(groups.length===1?"product":"products");
   const messages={
-    updates:INV_SYNTHETIC_PREVIEW?"Red dots mark formats with a newer sample version. Each product lists its installed → sample latest version below. Use a vendor's Installer Hub to update a real plug-in; these sample products have no live vendor links.":"Red dots mark formats with a newer vendor version. Review the installed and available versions, then use the vendor's Installer Hub.",
+    updates:INV_SYNTHETIC_PREVIEW?"Red version numbers show installed → sample latest where an update is available; red dots identify the affected formats. Green, amber and grey dots show the other format statuses. Use a vendor's Installer Hub to update a real plug-in; these sample products have no live vendor links.":"Red dots mark formats with a newer vendor version. Review the installed and available versions, then use the vendor's Installer Hub.",
     "up-to-date":INV_SYNTHETIC_PREVIEW?"Green dots mark formats with no update needed in this sample. A product can also have another format with a different status; its dot and version stay visible. This does not confirm real plug-ins are current.":"Green dots mark formats with a current vendor observation. A product may have another format with a different status.",
     "manual-check":INV_SYNTHETIC_PREVIEW?"Amber dots mark formats to compare with the vendor's release page. Product details say what to check. Another format of the same product can have a different status.":"Amber dots mark formats that need a manual vendor check.",
     unchecked:INV_SYNTHETIC_PREVIEW?"Grey dots mean no check was made. These sample formats have no vendor result; do not assume they are current. Other formats of the same product may have a status.":"Grey dots mean no vendor status is connected for these formats yet."
@@ -6923,14 +6925,14 @@ function invRenderInventory(){
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=invDisplayCategory(group);
       const fav=invIsFavorite(group.name);
-      return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span>'+(invGetProductActions(vendor,group.name).hidden===true?'<span class="inv-hidden-badge" aria-label="Hidden from the main library">Hidden</span>':"")+'<span class="inv-version">'+invProductTileHeaderVersion(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div>'+((INV_SYNTHETIC_PREVIEW&&invStatusScope())?'<div class="inv-tile-version-summary">'+invProductTileVersionHTML(group,versions)+'</div>':'')+'<div class="inv-meta inv-category-label">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+invProductStatusDetailHTML(group)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
+      return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span>'+(invGetProductActions(vendor,group.name).hidden===true?'<span class="inv-hidden-badge" aria-label="Hidden from the main library">Hidden</span>':"")+'<span class="inv-version">'+invProductTileHeaderVersion(group,versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div>'+''+'<div class="inv-meta inv-category-label">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+invProductStatusDetailHTML(group)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const hidden=items.slice(4).map(group=>{
       const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-format-state"><span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>'+invFormatStatusDots(group,format)+'</span>').join("");
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=invDisplayCategory(group);
       const fav=invIsFavorite(group.name);
-      return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span>'+(invGetProductActions(vendor,group.name).hidden===true?'<span class="inv-hidden-badge" aria-label="Hidden from the main library">Hidden</span>':"")+'<span class="inv-version">'+invProductTileHeaderVersion(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div>'+((INV_SYNTHETIC_PREVIEW&&invStatusScope())?'<div class="inv-tile-version-summary">'+invProductTileVersionHTML(group,versions)+'</div>':'')+'<div class="inv-meta inv-category-label">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
+      return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span>'+(invGetProductActions(vendor,group.name).hidden===true?'<span class="inv-hidden-badge" aria-label="Hidden from the main library">Hidden</span>':"")+'<span class="inv-version">'+invProductTileHeaderVersion(group,versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div>'+''+'<div class="inv-meta inv-category-label">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const more=items.length>4?'<button class="inv-more" type="button" data-inv-more aria-expanded="'+String(expanded)+'">'+(expanded?"Show fewer plug-ins":"＋ "+(items.length-4)+" more plug-ins")+'</button>':"";
     return '<section class="inv-vendor'+(expanded?" expanded":"")+(collapsed?" collapsed":"")+'" data-inv-vendor="'+invEsc(vendorKey)+'"><div class="inv-vendor-head"><span class="inv-logo '+tone+'"><span>'+invEsc(initials)+'</span>'+logo+'</span><span class="inv-vendor-name"><strong>'+invEsc(vendor)+'</strong><small>'+(domain?invEsc(domain)+' · ':'')+items.length+' '+(items.length===1?'plug-in':'plug-ins')+'</small></span><span class="inv-vendor-count">'+items.length+'</span><button type="button" class="inv-vendor-toggle" data-inv-toggle aria-label="Toggle '+invEsc(vendor)+' card" aria-expanded="'+String(!collapsed)+'" title="'+(collapsed?"Expand":"Collapse")+' publisher">'+(collapsed?"›":"⌃")+'</button></div><div class="inv-products">'+visible+hidden+'</div>'+more+actionsHTML+'</section>';
