@@ -31,3 +31,12 @@ The async byte stream has no progress callback or cancellation API. There is no 
 The current color mapping has been confirmed against the current preview; the conflicting screenshot came from an older preview. Next, build one synthetic PluginHub-style Install Manager UI slice for review: vendor filters/totals, per-row download controls, queue-all/download-all, a batch panel, and Download folder/Clear installed & failed/Start over/Done affordances. Use in-memory rows, label outcomes as simulated, and do not claim a file was downloaded or installed. Actual download hookup remains separate until trusted digest and progress/cancellation contracts are available.
 
 This trace completes the read-only Companion downloader/receipt review. Foundation remains **NOT MET** and Stage 6 gated.
+
+
+## Continuation — synthetic Install Manager preview — 2026-10-30
+
+Added the bounded UI slice requested above on branch commit \`dd3574b4c4280bac2da51bab9b5168c0af8d39a1\`, with vendor-filter event handling in \`50305f5d9b2260e6e347521b2537f499bf76b093\`.
+
+The preview uses three in-memory records matching the sample status scope (Tapeform CLAP, Comet Dynamics VST3, Halo Equalizer AU). Vendor filtering, row queueing, per-vendor queue-all, global queue-all, removal, simulated single/batch result receipts, clear results, start over, and Done are wired to temporary in-page state. “Download folder” explains that the browser preview cannot open a local folder. Every displayed completion explicitly says no installer was downloaded or installed. No local plug-in folder, real account inventory, vendor URL, file or Companion action was accessed.
+
+Branch Pages built and deployed successfully at \`https://233c2587.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic\`. Visual review confirmed the panel has inset spacing and aligned controls. Accessibility state confirmed the sample count, queue count and receipts update. Queue all (3), simulated batch completion (3), Clear installed & failed, the folder explanation and Start over were exercised. This closes the synthetic manager interaction preview only. Actual verified download/install remains open pending a trusted digest/signature source, Companion progress/cancel and receipt UI integration, local folder access, and dev Worker deployment. Foundation remains **NOT MET**; Stage 6 remains gated.
