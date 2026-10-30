@@ -1,4 +1,12 @@
-# PluginHub synthetic status tiles and version comparison — 2026-10-30
+## Latest format chip colors — 2026-10-30
+
+Branch source commit [`2b3675ab100319df9c5e6ca248eaa8970fe05388`](https://github.com/begb0037admin/aimm/commit/2b3675ab100319df9c5e6ca248eaa8970fe05388), `index.html` blob `21d19ac5a4fc036780f56b5d7b7ca7c8074c3de2`, is deployed to [synthetic development preview 4023a4d5](https://4023a4d5.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), Pages deployment `4023a4d5-649c-4da3-9c58-782d0eb4d6dc`. VST2/VST3 chips use blue, CLAP uses brown, and AU remains green. The change is scoped to product format chips; status dots and toolbar format filters are unchanged.
+
+Jules passed exact-source review and final deployed visuals at desktop and 390px. Desktop shows four even Cards columns with breathing room. At 390px the library remains within the viewport; format chips wrap inside cards, stay legible, and status dots remain a separate cue. The reviewer restored All plugins, Cards and desktop. No scan, account/vendor request or row action occurred.
+
+The sample and all displayed inventory/status values remain synthetic and in memory. This completes visual acceptance checklist item 6. The next queued work is a read-only review of generation-bound status projection and Install Manager contracts; no live status, folder, account or vendor calls are part of that review. Foundation remains NOT MET and Stage 6 gated.
+
+## Tile row correction — historical checkpoint — 2026-10-30
 
 ## Tile row correction — historical checkpoint — 2026-10-30
 
