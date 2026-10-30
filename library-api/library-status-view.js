@@ -743,8 +743,9 @@
     pruneOutOfScopeTools();
     bindInstallManager();
     bindPluginHubLicenseTool();
+    bindCompatibilityTool();
     if (!pluginHubLicenseObserver && document.getElementById("invSidebar")) {
-      pluginHubLicenseObserver = new MutationObserver(() => { pruneOutOfScopeTools(); bindPluginHubLicenseTool(); });
+      pluginHubLicenseObserver = new MutationObserver(() => { pruneOutOfScopeTools(); bindPluginHubLicenseTool(); bindCompatibilityTool(); });
       pluginHubLicenseObserver.observe(document.getElementById("invSidebar"),{childList:true,subtree:true});
     }
     if (!liveManagerObserver && document.body) {
@@ -836,6 +837,56 @@
         category:product.querySelector(".inv-category-label")?.textContent.trim()||meta.category||"",
         formats,versions:versionRows};
     });
+  }
+
+  const compatibilityCss=document.createElement("style");
+  compatibilityCss.textContent="#aimmCompatibilityOverlay{position:fixed;inset:0;z-index:20018;display:grid;place-items:center;padding:20px;background:rgba(5,7,11,.82)}#aimmCompatibilityOverlay[hidden]{display:none}#aimmCompatibilityOverlay,#aimmCompatibilityOverlay *{box-sizing:border-box}#aimmCompatibilityOverlay>section{display:grid;gap:16px;width:min(1040px,calc(100vw - 40px));max-height:88vh;overflow:auto;padding:22px;border:1px solid #3b4653;border-radius:14px;background:#1b2026;color:#e8edf2;box-shadow:0 20px 70px #0009}#aimmCompatibilityOverlay h2,#aimmCompatibilityOverlay h3,#aimmCompatibilityOverlay p{margin:0}#aimmCompatibilityOverlay p,#aimmCompatibilityOverlay small{color:#aeb8c4;line-height:1.5}#aimmCompatibilityOverlay header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}#aimmCompatibilityOverlay header button,#aimmCompatibilityOverlay button{min-height:36px;padding:8px 12px;border:1px solid #414a55;border-radius:7px;background:#252a31;color:#dfe6ed;font:inherit;cursor:pointer}#aimmCompatibilityOverlay button.primary{border-color:#3289b7;background:#146082}#aimmCompatibilityOverlay .compat-warning{padding:13px 15px;border:1px solid #84612e;border-radius:9px;background:#241f17;color:#f0d19b}#aimmCompatibilityOverlay .compat-form{display:grid;grid-template-columns:minmax(0,1fr) minmax(140px,.5fr);gap:14px}#aimmCompatibilityOverlay .compat-form>label{display:grid;gap:6px;color:#d7dde5}#aimmCompatibilityOverlay input[type=text]{min-height:38px;min-width:0;padding:8px 10px;border:1px solid #414a55;border-radius:7px;background:#11151a;color:#e8edf2;font:inherit}#aimmCompatibilityOverlay .compat-formats{display:flex;flex-wrap:wrap;gap:9px}#aimmCompatibilityOverlay .compat-formats label{display:flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid #343b45;border-radius:8px;background:#15191e;color:#d7dde5}#aimmCompatibilityOverlay .compat-formats input{width:auto;margin:0}#aimmCompatibilityOverlay .compat-actions{display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap}#aimmCompatibilityOverlay [role=status]{min-height:1.4em;color:#42c995}#aimmCompatibilityOverlay .compat-results{max-height:36vh;overflow:auto;border:1px solid #343b45;border-radius:9px}#aimmCompatibilityOverlay table{width:100%;border-collapse:collapse;font-size:13px}#aimmCompatibilityOverlay th,#aimmCompatibilityOverlay td{padding:10px 12px;border-bottom:1px solid #303741;text-align:left;vertical-align:top}#aimmCompatibilityOverlay th{position:sticky;top:0;background:#222831;color:#c8d2de}#aimmCompatibilityOverlay .compat-match{color:#42c995;font-weight:700}#aimmCompatibilityOverlay .compat-none{color:#aeb8c4}@media(max-width:620px){#aimmCompatibilityOverlay{padding:8px}#aimmCompatibilityOverlay>section{width:100%;max-height:96vh;padding:16px}#aimmCompatibilityOverlay .compat-form{grid-template-columns:1fr}}";
+  document.head.appendChild(compatibilityCss);
+  function closeCompatibility(){
+    const overlay=document.getElementById("aimmCompatibilityOverlay");if(!overlay)return;
+    const previous=overlay.__compatRestoreFocus;
+    overlay.remove();
+    if(previous?.isConnected)previous.focus();
+  }
+  function openCompatibility(){
+    document.getElementById("aimmCompatibilityOverlay")?.remove();
+    const rows=shareInventoryRows();
+    const previous=document.activeElement;
+    const overlay=document.createElement("div");overlay.id="aimmCompatibilityOverlay";overlay.__compatRestoreFocus=previous;
+    overlay.innerHTML='<section role="dialog" aria-modal="true" aria-labelledby="aimmCompatibilityTitle"><header><div><h2 id="aimmCompatibilityTitle">Plugin Compatibility</h2><p>Compare a DAW’s declared plug-in formats with the formats shown in this Library view.</p></div><button type="button" data-compat-close aria-label="Close">×</button></header><div class="compat-warning"><strong>Format overlap only — not a compatibility certification.</strong><br><small>This comparison does not verify the DAW version, CPU architecture, plug-in binary, vendor statement, or whether a plug-in loads successfully. Sample preview rows are synthetic.</small></div><div class="compat-form"><label>Host / DAW name<input type="text" data-compat-host maxlength="80" placeholder="e.g. My DAW"></label><label>Version (optional)<input type="text" data-compat-version maxlength="40" placeholder="Version"></label></div><div><strong>Formats supported by this host</strong><p>Select the formats you have confirmed for this DAW and version.</p><div class="compat-formats">'+["AU","VST2","VST3","CLAP"].map((format)=>'<label><input type="checkbox" data-compat-format value="'+format+'">'+format+'</label>').join("")+'</div></div><div class="compat-actions"><small>'+rows.length+' visible plug-ins · local comparison only</small><button type="button" data-compat-clear>Clear</button><button type="button" class="primary" data-compat-compare>Compare formats</button></div><div role="status" data-compat-status>Choose a host and at least one supported format to compare.</div><div class="compat-results" data-compat-results hidden></div><footer><button type="button" data-compat-close>Done</button></footer></section>';
+    overlay.addEventListener("click",(event)=>{
+      if(event.target===overlay||event.target.closest("[data-compat-close]")){closeCompatibility();return;}
+      const target=event.target.closest("button");if(!target)return;
+      if(target.hasAttribute("data-compat-clear")){overlay.querySelectorAll("[data-compat-format]").forEach((input)=>input.checked=false);overlay.querySelector("[data-compat-results]").hidden=true;overlay.querySelector("[data-compat-results]").innerHTML="";overlay.querySelector("[data-compat-status]").textContent="Cleared the selected host formats.";return;}
+      if(!target.hasAttribute("data-compat-compare"))return;
+      const host=overlay.querySelector("[data-compat-host]").value.trim();
+      const version=overlay.querySelector("[data-compat-version]").value.trim();
+      const formats=new Set(Array.from(overlay.querySelectorAll("[data-compat-format]:checked")).map((input)=>input.value));
+      const status=overlay.querySelector("[data-compat-status]"),results=overlay.querySelector("[data-compat-results]");
+      if(!host){status.textContent="Enter the host or DAW name first.";overlay.querySelector("[data-compat-host]").focus();return;}
+      if(!formats.size){status.textContent="Select at least one format confirmed for this host.";return;}
+      const title=host+(version?" "+version:"");
+      results.innerHTML='<table><thead><tr><th>Plug-in</th><th>Publisher</th><th>Installed formats</th><th>Format overlap with '+esc(title)+'</th></tr></thead><tbody>'+rows.map((row)=>{
+        const installed=row.formats.map((item)=>item.format);
+        const matches=installed.filter((format)=>formats.has(format));
+        return '<tr><td>'+esc(row.name)+'</td><td>'+esc(row.vendor)+'</td><td>'+esc(installed.join(", ")||"Not recorded")+'</td><td class="'+(matches.length?"compat-match":"compat-none")+'">'+(matches.length?"Format match: "+esc(matches.join(", ")):"No shared format")+'</td></tr>';
+      }).join("")+'</tbody></table>';
+      results.hidden=false;
+      status.textContent="Compared "+rows.length+" visible plug-ins with the formats you entered for "+title+". This is format overlap only; host/architecture/vendor compatibility remains unverified.";
+    });
+    overlay.addEventListener("keydown",(event)=>{if(event.key==="Escape"){event.preventDefault();closeCompatibility();}});
+    document.body.appendChild(overlay);overlay.querySelector("[data-compat-host]")?.focus();
+  }
+  function bindCompatibilityTool(){
+    const sidebar=document.getElementById("invSidebar");if(!sidebar)return;
+    const button=Array.from(sidebar.querySelectorAll("button")).find((item)=>/Plugin Compatibility/i.test(item.textContent||item.getAttribute("aria-label")||""));
+    if(!button)return;
+    button.disabled=false;button.removeAttribute("aria-disabled");
+    button.title="Compare visible plug-in formats with formats you declare for a DAW. This does not verify host or architecture compatibility.";
+    button.setAttribute("aria-label","Plugin Compatibility — compare declared DAW formats with visible plug-in formats");
+    if(button.__aimmCompatibilityTool)return;
+    button.__aimmCompatibilityTool=true;
+    button.addEventListener("click",(event)=>{event.preventDefault();event.stopImmediatePropagation();openCompatibility();},true);
   }
   function csvCell(value){return '"'+String(value??"").replace(/"/g,'""')+'"';}
   function openLocalShare(){
