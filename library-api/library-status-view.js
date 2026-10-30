@@ -26,6 +26,26 @@
     #library .inv-account-status-badge.error{background:rgba(238,119,119,.18);color:#ff8b91}
     #library .inv-account-generation{font:10px ui-monospace,SFMono-Regular,Menlo,monospace;color:#707b88}
     #library .inv-account-status-notice.error{border-color:#70434a;color:#ef999e}
+    #library .inv-cards{gap:16px;margin-top:14px}
+    #library .inv-vendor{border-radius:12px}
+    #library .inv-vendor-head{gap:10px;padding:12px 14px}
+    #library .inv-logo{width:32px;height:32px;border-radius:7px;font-size:12px}
+    #library .inv-logo img{inset:5px;width:22px;height:22px}
+    #library .inv-vendor-name strong{font-size:14px;line-height:1.3;font-weight:700}
+    #library .inv-vendor-name small{margin-top:3px;font-size:11px;line-height:1.35}
+    #library .inv-vendor-count{min-width:28px;padding:4px 7px;text-align:center;font-size:11px}
+    #library .inv-vendor-toggle{padding:4px 3px}
+    #library .inv-product{padding:12px 14px}
+    #library .inv-product-line{gap:9px}
+    #library .inv-name{font-size:14px;line-height:1.35;font-weight:700}
+    #library .inv-version{font-size:11px}
+    #library .inv-meta{margin-top:5px;font-size:11px;line-height:1.4}
+    #library .inv-formats{gap:7px;margin-top:8px;align-items:center}
+    #library .inv-chip{padding:3px 7px;border-radius:5px;font-size:10px}
+    #library .inv-chip.vst{border-color:#2d76a6;background:#1f5f86}
+    #library .inv-chip.clap{border-color:#80602b;background:#62461c}
+    #library .inv-fav{font-size:16px;padding:1px 3px}
+    #library .inv-more{padding:9px 14px;font-size:10px}
     @media(max-width:900px){#library .inv-account-status-card{grid-template-columns:minmax(0,1fr) minmax(100px,.5fr);gap:12px}}
     @media(max-width:560px){#library .inv-account-status-card{grid-template-columns:minmax(0,1fr);gap:10px;padding:15px}}
   `;
