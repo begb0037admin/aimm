@@ -2,6 +2,9 @@
 
 **Status (2026-10-25):** Phase 2 architecture approved as design; non-production implementation is authorized and in progress. The companion, account API, and account-backed preview exist in partial local form. Foundation remains NOT MET; Stages 2–5 are in progress; Stage 6 is gated. See the latest handover and closeout for verified implementation status.
 
+
+**Implementation checkpoint (2026-10-30):** Branch source `8101fdaf364524407a4bc0432f1d1f90bc2773f0` adds bounded Info.plist publisher provenance to Companion/API inventory records and status projections. Only explicit `Manufacturer`/`Vendor` sources are accepted; canonical product identity remains null until a reviewed mapping. Jules passed source review. Automated tests were not run against this exact commit, no remote migration/deployment occurred, and the UI status connection/tools remain incomplete. Foundation remains **NOT MET**; Stage 6 is gated. See [publisher provenance evidence](../governance/evidence/PHASE_PLUGINHUB_PUBLISHER_IDENTITY_20261030.md).
+
 ## Approved outcome and scope
 
 Design one AIMM-owned plugin library for aimixmasters.com, its Workbench, Hope and a Mac companion. Cover the 31 Phase 1 parity rows with explicit owners and data contracts. The companion must work without PluginHub installed or running. AU, VST2, VST3 and CLAP are included; AAX and Pro Tools are excluded. This document is an architecture work product, not a build or deployment approval.
