@@ -36,3 +36,12 @@ Foundation remains **NOT MET** and Stage 6 remains gated until all exit evidence
 - Browser: Updates filter rendered 3 products; mixed-format Tapeform and Halo retained separate format versions/states.
 - Jules source review: PASS.
 - Jules visual review of deployment `c0215f2e`: PASS at desktop 1920×1052 and narrow 390×844; all four status scopes and their counts/copy were checked on desktop.
+
+
+## Latest status count colors — 2026-10-30
+
+Branch source commit [`87f7a23af6be9fd240d6f2ec2fc5413ba4b347a7`](https://github.com/begb0037admin/aimm/commit/87f7a23af6be9fd240d6f2ec2fc5413ba4b347a7), `index.html` blob `69292c3bc90c97ff07a82a0f985734aed534c8e6`, is deployed to [development preview `30958416`](https://30958416.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), deployment `30958416-183a-463a-9989-9e3013cb1f64`. Sidebar status count colors now match the reference: red Updates, green Up to date, amber Manual check, and grey Unchecked. Selected count values use a padded dark badge over the blue-purple active gradient.
+
+Jules passed source review and final visuals. Desktop shows the four correct count hues and a readable active count badge; synthetic counts remain 3/4/3/4. At 390px the sidebar collapses to an icon rail; the selected count remains visible and legible while inactive labels/counts are hidden. All other counts and status filters are unchanged. No real inventory, folder, account status API, or vendor checks were used.
+
+This completes visual acceptance checklist item 2. Item 3 (align Status, Library and Categories count columns) is next.

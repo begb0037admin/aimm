@@ -1,8 +1,8 @@
-## Latest PluginHub roadmap checkpoint — readable tile names and versions — 2026-10-30
+## Latest PluginHub roadmap checkpoint — status count colors — 2026-10-30
 
-Source commit [`2ff28aa61f341c44f86cee69c6327024c5fc17cb`](https://github.com/begb0037admin/aimm/commit/2ff28aa61f341c44f86cee69c6327024c5fc17cb) and development preview [`f9f142fe`](https://f9f142fe.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) complete visual checklist item 1: all 12 synthetic product names are readable at 1920px and 390×844; versions sit beside names on desktop and wrap below name/actions on narrow screens; format chips/dots remain below. Jules passed both sizes and all four sample status scopes. See [updated status UI evidence](../governance/evidence/PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
+Source commit [`87f7a23af6be9fd240d6f2ec2fc5413ba4b347a7`](https://github.com/begb0037admin/aimm/commit/87f7a23af6be9fd240d6f2ec2fc5413ba4b347a7) and development preview [`30958416`](https://30958416.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) complete visual checklist item 2. Status count colors match PluginHub: red Updates, green Up to date, amber Manual check and grey Unchecked. Selected counts use a dark badge for readability over the active gradient. Jules passed desktop and narrow (390px) visual review. Sample counts remain synthetic at 3/4/3/4; no live inventory/status was read. See [status UI evidence](../governance/evidence/PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
 
-Next, color the sidebar status counts red, green, amber and grey; then align the Status, Library and Categories count column. Keep the standing room-to-breathe requirement in every change. The visual queue is recorded one item at a time in the user parity register. Live account generation/record status, functional Install Manager and remaining Tools are still open.
+Items 1 and 2 are complete. Next, align the Status, Library and Categories counts in one right-hand column. Keep “room to breathe” in every change. Broader spacing, status data integration, Install Manager and remaining Tools are still open.
 
 Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP correction is a surgical patch, not reproducible from source. All current UI values remain synthetic.
 
