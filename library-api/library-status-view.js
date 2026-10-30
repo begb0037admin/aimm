@@ -423,6 +423,7 @@
   `;
   document.head.append(liveManagerStyle);
 
+  let libraryInstallObserver = null;
   function install() {
     const nav = document.querySelector('#library nav[aria-label="Inventory status"]');
     const unchecked = nav?.querySelector('[data-inv-scope="unchecked"]');
@@ -484,6 +485,19 @@
       if (button && statusScope(button.dataset.invScope) && !synthetic() && !snapshot && !loading) setTimeout(loadStatus,0);
     },true);
   }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded",install,{once:true});
-  else install();
+  function bootLibraryBridge() {
+    const ready = document.getElementById("invSidebar") && document.getElementById("invScanBtn");
+    if (ready) { install(); return; }
+    if (libraryInstallObserver || !document.body) return;
+    libraryInstallObserver = new MutationObserver(() => {
+      if (document.getElementById("invSidebar") && document.getElementById("invScanBtn")) {
+        libraryInstallObserver.disconnect();
+        libraryInstallObserver = null;
+        install();
+      }
+    });
+    libraryInstallObserver.observe(document.body,{childList:true,subtree:true});
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded",bootLibraryBridge,{once:true});
+  else bootLibraryBridge();
 })();
