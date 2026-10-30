@@ -50,6 +50,14 @@
     #library .inv-sidebar-nav{gap:8px!important}
     #library .inv-sidebar-nav[aria-label="Plug-in categories"]{gap:8px!important}
     #library .inv-side-button{min-height:44px!important;padding-inline:12px!important;gap:12px!important}
+    #aimmPluginHubLicenseOverlay{position:fixed;inset:0;z-index:20010;display:grid;place-items:center;padding:20px;background:rgba(5,7,11,.78)}
+    #aimmPluginHubLicenseOverlay section{display:grid;gap:14px;width:min(560px,calc(100vw - 40px));padding:22px;border:1px solid #3b4653;border-radius:14px;background:#1b2026;color:#e8edf2;box-shadow:0 20px 70px rgba(0,0,0,.55);line-height:1.55}
+    #aimmPluginHubLicenseOverlay header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+    #aimmPluginHubLicenseOverlay h2,#aimmPluginHubLicenseOverlay p{margin:0}
+    #aimmPluginHubLicenseOverlay h2{font-size:20px}
+    #aimmPluginHubLicenseOverlay p{color:#aeb8c4}
+    #aimmPluginHubLicenseOverlay a{justify-self:start;padding:9px 12px;border:1px solid #3e83b4;border-radius:8px;color:#a8d9ff;text-decoration:none}
+    #aimmPluginHubLicenseOverlay button{min-width:34px;min-height:34px;border:1px solid #414a55;border-radius:7px;background:#252a31;color:#dfe6ed;font:inherit;cursor:pointer}
     #library .inv-sidebar-section{margin:20px 0 10px!important}
     #library .inv-view-menu.inv-view-open-up .inv-view-panel{top:calc(100% + 8px)!important;bottom:auto!important;max-height:min(560px,calc(100vh - 660px))!important}
     #library .inv-product-line{grid-template-columns:minmax(0,1fr) 24px 20px!important;align-items:start!important;column-gap:9px!important;row-gap:7px!important}
@@ -537,6 +545,39 @@
 
   let libraryInstallObserver = null;
   let liveManagerObserver = null;
+  let pluginHubLicenseObserver = null;
+  function openPluginHubLicenseInfo() {
+    if (document.getElementById("aimmPluginHubLicenseOverlay")) return;
+    const previous = document.activeElement;
+    const overlay = document.createElement("div");
+    overlay.id = "aimmPluginHubLicenseOverlay";
+    overlay.innerHTML = '<section role="dialog" aria-modal="true" aria-labelledby="aimmPluginHubLicenseTitle"><header><h2 id="aimmPluginHubLicenseTitle">PluginHub License</h2><button type="button" data-license-close aria-label="Close">×</button></header><p>This is the licence for the PluginHub app itself, including its device activations.</p><p>It is separate from the licences and serial numbers for your audio plug-ins. AIMM does not manage or receive your PluginHub licence details. The AIMM License Key Vault is a separate tool for plug-in vendor keys.</p><a href="https://www.pluginhubapp.com/license" target="_blank" rel="noopener noreferrer">Open PluginHub licence page ↗</a></section>';
+    const close = () => { overlay.remove(); if (previous?.isConnected) previous.focus(); };
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay || event.target.closest("[data-license-close]")) close();
+    });
+    overlay.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") { event.preventDefault(); close(); }
+    });
+    document.body.append(overlay);
+    overlay.querySelector("[data-license-close]")?.focus();
+  }
+  function bindPluginHubLicenseTool() {
+    const button = Array.from(document.querySelectorAll("#invSidebar button")).find((item) =>
+      /PluginHub License/i.test(item.textContent || item.getAttribute("aria-label") || ""));
+    if (!button) return;
+    button.disabled = false;
+    button.removeAttribute("aria-disabled");
+    button.title = "About the separate PluginHub app licence and open its licence page.";
+    button.setAttribute("aria-label","PluginHub License — view licensing information and open the PluginHub licence page");
+    if (button.__aimmPluginHubLicense) return;
+    button.__aimmPluginHubLicense = true;
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      openPluginHubLicenseInfo();
+    }, true);
+  }
   function install() {
     const nav = document.querySelector('#library nav[aria-label="Inventory status"]');
     const unchecked = nav?.querySelector('[data-inv-scope="unchecked"]');
@@ -575,6 +616,11 @@
       button.insertAdjacentElement("afterend",note);
     }
     bindLiveInstallManager();
+    bindPluginHubLicenseTool();
+    if (!pluginHubLicenseObserver && document.getElementById("invSidebar")) {
+      pluginHubLicenseObserver = new MutationObserver(bindPluginHubLicenseTool);
+      pluginHubLicenseObserver.observe(document.getElementById("invSidebar"),{childList:true,subtree:true});
+    }
     if (!liveManagerObserver && document.body) {
       liveManagerObserver = new MutationObserver(() => {
         if (document.querySelector("[data-inv-install-manager]")) bindLiveInstallManager();
