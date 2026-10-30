@@ -1,10 +1,10 @@
-## Latest PluginHub roadmap checkpoint — status scope clarity — 2026-10-30
+## Latest PluginHub roadmap checkpoint — format chip colors — 2026-10-30
 
-The synthetic Library preview [`0e055bcd`](https://0e055bcd.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) completes visual checklist item 5. Updates, Up to date, Manual check and Unchecked each show the matching format records, counts, versions/status markers, per-row context and a scope explanation. Mixed-format products retain their other format status; the sample notice states that no vendor checks ran. Jules passed desktop and 390px review. See [status UI evidence](../governance/evidence/PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
+Visual checklist item 6 is complete on source commit [`2b3675ab100319df9c5e6ca248eaa8970fe05388`](https://github.com/begb0037admin/aimm/commit/2b3675ab100319df9c5e6ca248eaa8970fe05388), `index.html` blob `21d19ac5a4fc036780f56b5d7b7ca7c8074c3de2`, with [synthetic preview deployment 4023a4d5](https://4023a4d5.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). VST2/VST3 chips are blue, CLAP chips brown, AU stays green, and red/green/amber/grey status dots retain their separate meanings. Jules passed exact-source review and deployed review at desktop and 390px. Four even desktop Cards columns retain breathing room; narrow chips wrap with no horizontal overflow. Filters and status dots are unchanged. See [status UI evidence](../governance/evidence/PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
 
-Visual items 1–5 are complete. Current visual item 6 changes VST chips to blue and CLAP chips to brown, matching Kevin’s reference screenshot. After that, read-only review the generation-bound status projection and Install Manager contracts; keep synthetic UI values and do not connect live status/folder/vendor data. Remaining Tools are still open. Keep “room to breathe” across every change.
+Visual items 1–6 are complete. Next: read-only review of the generation-bound status projection and Install Manager contracts. Keep the preview synthetic; do not connect live status, folders, accounts or vendor sources. Then continue through the remaining AIMM Tools one at a time. Keep “room to breathe” across every change.
 
-Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP correction is a surgical patch, not reproducible from source. All current UI values remain synthetic.
+Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP correction is a surgical patch, not reproducible from source. All current preview UI values remain synthetic.
 
 ## Historical roadmap checkpoint — synthetic status preview — 2026-10-30
 
