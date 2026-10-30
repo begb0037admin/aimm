@@ -461,6 +461,10 @@
       button.insertAdjacentElement("afterend",note);
     }
     bindLiveInstallManager();
+    // The inline prototype registers its DOMContentLoaded initializer before
+    // this deferred bridge runs. Reapply the live state after that initializer
+    // so it cannot disable the live manager again.
+    if (document.readyState === "interactive") document.addEventListener("DOMContentLoaded",bindLiveInstallManager,{once:true});
     const managerHost = document.getElementById("invSidebar");
     if (managerHost && !managerHost.__aimmManagerObserver) {
       const observer = new MutationObserver(() => bindLiveInstallManager());
