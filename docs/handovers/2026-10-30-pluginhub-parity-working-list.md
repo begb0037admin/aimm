@@ -12,7 +12,7 @@ This is the running checklist for the user’s screenshot-led reverse engineerin
 
 ## Remaining design work
 
-- [ ] Match PluginHub’s clearer status scopes: make the selected status unmistakable, keep each count visible and color it by status, and make Updates / Up to Date / Manual Check / Unchecked explain what the user is seeing and the next action.
+- [x] **Match PluginHub’s clearer status scopes and colour the counts.** Selected status is unmistakable; Updates (red), Up to Date (green), Manual Check (amber), and Unchecked (grey) counts remain visible in their status colours. Each scope has a matching colour banner with its count and next-step/interpretation guidance. Verified Updates, Up to Date, Manual Check, and Unchecked separately in the synthetic preview on 2026-10-30. Mixed-format products retain per-format versions and status dots; sample data is clearly identified and never presented as live vendor status.
 - [x] In update rows, foreground the installed → available version pair. Available versions are red; confirmed current versions green; manual-check versions amber. Status dots remain as a secondary cue. Verified in the synthetic card preview.
 - [x] Increase publisher and plug-in name size to match the PluginHub comparison. Verified in the synthetic card preview.
 - [x] Align summary tiles, filter controls, counts, and cards at common grid edges; add breathing room to the inventory cards and format/version rows. Sidebar group spacing remains queued under the sidebar item.
