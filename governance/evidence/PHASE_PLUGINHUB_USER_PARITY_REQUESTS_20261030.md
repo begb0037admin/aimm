@@ -6,7 +6,7 @@ This register records Kevin’s user-provided PluginHub 2.0.12 comparisons on 20
 
 ## Completed visual items
 
-- **Publisher and plug-in names:** AIMM labels were smaller than PluginHub. Current source commit `75655b4b2f327e3fff6d52c30f8512c34d1ffc9c` raises vendor names to 13px and plug-in names to 12px across Cards/List/Ledger. Jules passed desktop and 390px review; four columns remain balanced. See [typography evidence](PHASE_PLUGINHUB_VISUAL_PARITY_NAMES_20261030.md).
+- **Publisher and plug-in names:** AIMM labels were smaller than PluginHub. Source commit `75655b4b2f327e3fff6d52c30f8512c34d1ffc9c` introduced the typography change, raising vendor names to 13px and plug-in names to 12px across Cards/List/Ledger. Jules passed desktop and 390px review; four columns remain balanced. See [typography evidence](PHASE_PLUGINHUB_VISUAL_PARITY_NAMES_20261030.md).
 - **Hidden visibility:** View now includes Show hidden plug-ins, with clear badges and a hidden-only scope. Jules passed synthetic hide/reveal and filter composition. See [Hidden View evidence](PHASE_PLUGINHUB_VIEW_HIDDEN_20261030.md).
 
 ## Open requirements
@@ -18,7 +18,7 @@ This register records Kevin’s user-provided PluginHub 2.0.12 comparisons on 20
 
 ## Latest visual correction — responsive alignment and active controls
 
-The 2026-10-30 screenshots at approximately 1508px captured width showed horizontal clipping and misalignment between summary cards, format controls, and vendor cards. The previous four-column visual pass used a wider 1920px view and missed the available-width issue. Source commit `178b6e82d18f63dca2f9849c3cf80b25a9a87cd8` now gives the Library content a width-aware container, applies a shared 14px inset to summary and format controls so they align with the card grid, and moves status-summary columns to one/two/three columns based on available content width. Jules passed source review. The synthetic development build is `82a306e6`; independent visual review at the screenshot-sized and narrow widths is in progress.
+The 2026-10-30 screenshots at approximately 1508px captured width showed horizontal clipping and misalignment between summary cards, format controls, and vendor cards. The previous four-column visual pass used a wider 1920px view and missed the available-width issue. Source commit `178b6e82d18f63dca2f9849c3cf80b25a9a87cd8` now gives the Library content a width-aware container, applies a shared 14px inset to summary and format controls so they align with the card grid, and moves status-summary columns to one/two/three columns based on available content width. Jules passed source review. The synthetic development build is `82a306e6`; Jules completed independent visual review at 1920px, 1508px available width, and 390px narrow width, including all four status scopes; the Library content aligned and fit at each width.
 
 Status controls now display 0 Updates / 0 Up to date / 0 Manual check / 14 Unchecked format records in the synthetic fixture. They are clickable and filter the same local fixture; empty categories explain that vendor observations are not connected. This is a truthful UI correction, not completion of the generation-bound status integration. Most AIMM Tools remain inactive because their actual Companion/API workflows and receipts are not connected.
 ## Order and acceptance
