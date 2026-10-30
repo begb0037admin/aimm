@@ -507,4 +507,8 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded",bootLibraryBridge,{once:true});
   else bootLibraryBridge();
+  document.body?.addEventListener("click",(event) => {
+    const trigger = event.target.closest("button");
+    if (trigger && trigger.textContent.trim() === "Library") setTimeout(() => { install(); bindLiveInstallManager(); },0);
+  },true);
 })();
