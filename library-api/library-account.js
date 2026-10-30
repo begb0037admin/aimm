@@ -443,6 +443,21 @@
     return getPluginStatus({ ...args, full_snapshot: true });
   };
 
+  // The Install Manager can request one official vendor-page action at a time.
+  // The paired Companion still enforces the local owner confirmation.
+  window.aimmRequestAccountVendorPage = async (args = {}) => {
+    if (!APPROVED_AUTH_ORIGINS.has(location.origin)) {
+      throw new Error("Vendor-page requests are not available from this preview origin.");
+    }
+    return requestPluginVendorSite(args);
+  };
+  window.aimmReadAccountPluginAction = async (args = {}) => {
+    if (!APPROVED_AUTH_ORIGINS.has(location.origin)) {
+      throw new Error("Action results are not available from this preview origin.");
+    }
+    return getPluginActionResult(args);
+  };
+
   async function requestPluginReveal(args = {}) {
     await ensureSession();
     if (typeof args.device_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.device_id) ||
