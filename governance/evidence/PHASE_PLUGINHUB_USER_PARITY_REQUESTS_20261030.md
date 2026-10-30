@@ -22,6 +22,7 @@ Build one synthetic Install Manager UI slice with in-memory rows and explicitly 
 10. **Four-column plug-in name fit — QUEUED from the 17:56 review:** with the current version column and the Hope rail open, several names are ellipsized in the four-column layout (for example Phase Garden, Comet Dynamics and Halo Equalizer). Restore readable names while preserving the version/status columns and required breathing room. Capture desktop and mobile before marking complete.
 11. **Return to Cards view — QUEUED from the 17:58 screenshot:** after opening Library/All Plugins, the page remains in the non-card list layout and the user cannot find a clear way back to tile Cards. Keep the View control visible and make Cards selectable from each Library scope; preserve the choice when changing between Library and Plugins. Check desktop and mobile with breathing room.
 12. **Selected All plugins count contrast — QUEUED from the 17:59 screenshot:** the count on the selected All plugins gradient blends into the background. Give it the same dark, high-contrast count badge used by a selected status option such as Updates available. Keep the active gradient and global room-to-breathe spacing.
+13. **Tile/card alignment — QUEUED from the 17:59 screenshots:** Kevin reports the tile alignment is out. Recheck shared left/right edges and spacing for the status banner, summary cards, format controls and plug-in cards at the shown viewport; ensure the layout does not clip horizontally. Keep room to breathe throughout.
 
 ## Completed visual items
 
