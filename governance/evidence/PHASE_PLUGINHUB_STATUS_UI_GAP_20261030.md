@@ -1,10 +1,16 @@
 # PluginHub status-scope UI connection gap — 2026-10-30
 
+## Current synthetic preview checkpoint
+
+Source commit [`1018be83b451b8db6429ba5bf3b869f223fed40b`](https://github.com/begb0037admin/aimm/commit/1018be83b451b8db6429ba5bf3b869f223fed40b) now demonstrates record-level status display and filtering in the opt-in synthetic fixture: 3 Updates, 4 Up to date, 3 Manual check and 4 Unchecked across 14 format records. Deployment `1a442d22-c05b-4fbd-a3c4-6cfcccd72288` is the current development Pages preview. These values are generated in memory and do not come from vendor observations or the authenticated account status endpoint. Jules passed source review and deployed visual review at 1920×815. At 390×844, layout metrics confirm one column and no horizontal overflow; the sidebar is an icon rail and the lower page was not visually captured.
+
+The live Library connection gap below remains open.
+
 ## Current source trace
 
 The Library API exposes authenticated `GET /v1/status-summary`. It reads the selected account/device’s current complete inventory generation, applies freshness rules to generation-bound check observations, and returns counts and per-format records for update, up-to-date, manual, unchecked, error and stale states. `library-api/library-account.js` uses this endpoint for Hope’s `get_plugin_status` tool.
 
-The visible Library page in `index.html` does not call that endpoint. Its `INV_SCAN_ROWS` come from the browser’s local scan cache and have no API generation/record-ID join. Source commit `178b6e82d18f63dca2f9849c3cf80b25a9a87cd8` made Updates Available, Up to Date, Manual Check and Unchecked selectable and displayed per-format-record counts. The synthetic fixture therefore shows 0/0/0/14. Those are fixture counts, not vendor observations. The four scopes are active UI filters but do not yet filter authenticated status rows.
+The visible Library page in `index.html` does not call that endpoint. Its `INV_SCAN_ROWS` come from the browser’s local scan cache and have no API generation/record-ID join. Source commit `178b6e82d18f63dca2f9849c3cf80b25a9a87cd8` first made the four scopes selectable and showed 0/0/0/14 in its then-current synthetic fixture. Follow-up source commit `1018be83b451b8db6429ba5bf3b869f223fed40b` now gives the opt-in fixture explicit statuses: 3/4/3/4 format records, and filters groups by whether any format row matches. These are synthetic fixture counts, not vendor observations. The four scopes still do not filter authenticated status rows.
 
 ## Completed source groundwork
 

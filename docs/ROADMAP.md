@@ -1,4 +1,10 @@
-## Latest PluginHub roadmap checkpoint — explicit publisher provenance — 2026-10-30
+## Latest PluginHub roadmap checkpoint — synthetic status preview — 2026-10-30
+
+Source commit [`1018be83b451b8db6429ba5bf3b869f223fed40b`](https://github.com/begb0037admin/aimm/commit/1018be83b451b8db6429ba5bf3b869f223fed40b) and development Pages deployment [`1a442d22`](https://1a442d22.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) show active synthetic per-format statuses and status filters (3 Updates, 4 Up to date, 3 Manual check, 4 Unchecked). Jules passed source review; Jules passed deployed review at 1920×815. At 390×844, one-column cards and no horizontal overflow were verified by metrics; the sidebar collapses to icons and no lower-page screenshot was available. See [preview evidence](../governance/evidence/PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
+
+Next: connect authenticated status by joining generation/record IDs into the Library UI, render freshness/error states, then implement each inactive Tool as a real reviewed workflow. Synthetic counts do not meet live status evidence. Foundation remains **NOT MET**; Stage 6 gated. The development Worker passkey RP correction is still a surgical patch, not reproducible from source.
+
+## Historical roadmap checkpoint — explicit publisher provenance — 2026-10-30
 
 Branch source commit `8101fdaf364524407a4bc0432f1d1f90bc2773f0` carries bounded Info.plist `Manufacturer`/`Vendor` provenance through the Companion, published inventory, Library paging and status summary. The API rejects unsupported source claims, mismatched/missing publisher pairs, filename-only provenance, and non-null canonical IDs until a reviewed mapping exists. Jules passed exact-source review. Synthetic assertions were added; automated tests were not run because the available checkout is dirty and at a different commit. See [publisher provenance review](../governance/evidence/PHASE_PLUGINHUB_PUBLISHER_IDENTITY_20261030.md).
 

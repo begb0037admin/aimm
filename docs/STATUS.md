@@ -1,8 +1,14 @@
-## Latest PluginHub checkpoint — publisher provenance contract — 2026-10-30
+## Latest PluginHub checkpoint — visible synthetic status preview — 2026-10-30
+
+Source commit [`1018be83b451b8db6429ba5bf3b869f223fed40b`](https://github.com/begb0037admin/aimm/commit/1018be83b451b8db6429ba5bf3b869f223fed40b) displays active synthetic status counts 3/4/3/4 across 14 format records, with per-format dots and functional status filters for mixed groups. Cloudflare Pages development deployment [`1a442d22`](https://1a442d22.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) is successful. Jules passed source review; Jules passed deployed review at 1920×815; at 390×844, one-column cards, 240px widths and no horizontal overflow were verified by metrics, with the sidebar collapsing to icons and no lower-page screenshot available. Evidence: [synthetic status display](../governance/evidence/PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
+
+The values are generated in memory only. The visible Library still does not consume authenticated generation/record status or vendor observations; most Tools remain inactive. Foundation remains **NOT MET** and Stage 6 gated. The development Worker passkey RP fix remains a surgical patch, not a reproducible branch build.
+
+## Historical checkpoint — publisher provenance contract — 2026-10-30
 
 Branch source commit `8101fdaf364524407a4bc0432f1d1f90bc2773f0` carries explicit, bounded Info.plist `Manufacturer`/`Vendor` provenance through Companion inventory, Library API pages, and `/v1/status-summary`. Unsupported source claims and non-null canonical IDs are rejected until a reviewed mapping exists. Jules passed source review; synthetic API assertions were added but automated tests were not run because the available checkout is dirty and at another commit. See [publisher provenance evidence](../governance/evidence/PHASE_PLUGINHUB_PUBLISHER_IDENTITY_20261030.md).
 
-The Library UI still does not consume the authenticated status snapshot. Its 0/0/0/14 values remain synthetic; no real inventory or folders were used. Remote migration and deployment remain gated. Most Tools remain inactive until their real workflows are implemented. Foundation remains **NOT MET** and Stage 6 gated; the Worker passkey RP fix remains a surgical patch, not a reproducible branch build.
+The Library UI still does not consume the authenticated status snapshot. The earlier 0/0/0/14 values were synthetic; the current synthetic preview shows 3/4/3/4. No real inventory or folders were used. Remote migration and deployment remain gated. Most Tools remain inactive until their real workflows are implemented. Foundation remains **NOT MET** and Stage 6 gated; the Worker passkey RP fix remains a surgical patch, not a reproducible branch build.
 
 ## Historical checkpoint — View brightness and text size — 2026-10-30 (source commit 82c886d690eaaf41560af83cff4155a769cc553d)
 
