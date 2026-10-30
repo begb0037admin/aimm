@@ -1,6 +1,14 @@
 # PluginHub View menu parity slice — 2026-10-30
 
-## Latest update — Collections — 2026-10-30
+## Latest update — Larger publisher and plug-in names — 2026-10-30
+
+Source commit `75655b4b2f327e3fff6d52c30f8512c34d1ffc9c`, Library blob `f9868f5392be7633e12da8520f05b05ed0c66071`, raises vendor headings from 11px to 13px and plug-in names from 10px to 12px across Cards/List/Ledger, still following the Text size setting. Jules passed source and visual review on [synthetic deployment aed2938c](https://aed2938c.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), desktop and 390×844. Four balanced columns remain at desktop; narrow cards stack to one column with names readable and action/version controls aligned. The page retains 44px shell overflow outside the card grid. See [typography evidence](PHASE_PLUGINHUB_VISUAL_PARITY_NAMES_20261030.md).
+
+## Historical update — Hidden visibility — 2026-10-30
+
+The View menu now includes Show hidden plug-ins, which adds locally hidden rows to the current scope and filters, shows a Hidden badge, and leaves Hidden scope hidden-only. Normal preferences persist locally; synthetic hide/show is memory-only and limited to the hidden field. Jules passed source and synthetic desktop interaction on deployment 6b55072b: hidden rows disappeared, reappeared with badges and showed alone in Hidden scope. Search, VST3 and category filters composed correctly. Tags were unavailable in the fixture. See [Hidden View evidence](PHASE_PLUGINHUB_VIEW_HIDDEN_20261030.md).
+
+## Historical update — Collections — 2026-10-30
 
 The View menu now supports named category/tag Collections, source commit `e4edbd07746529486af730fcfd40e0853ab15549`, Library blob `439450e31aa71e37daf7623436f533ff793f60c3`. Jules passed source and interaction review at synthetic preview deployment `7a099e45-4e28-4c40-9e5f-c4322c251df2`, desktop and 390px. Save/apply/placeholder/remove work, including confirmation, feedback and focus return. Synthetic state is in memory only; the temporary collection was removed. See [Collections parity evidence](PHASE_PLUGINHUB_VIEW_COLLECTIONS_20261030.md).
 
@@ -20,7 +28,7 @@ Branch commit `fec3cf8c2482b1dd9aa105723ffe106b1038a33d`, `index.html` blob `d8c
 
 The menu uses native `<details>/<summary>`, exposes a stable “View options” accessible name and synchronized expanded state, closes after layout/sort selection, on Escape, or outside pointerdown, and returns focus to View after keyboard close/selection. The menu has a 280px maximum and clamps its width for compact viewports.
 
-This implements the supported grouping, category/note visibility, Brightness and typography-only Text size, not the full PluginHub View menu. Light/Dark/System appearance and colorblind status colors, sidebar/top-tab navigation, key display preferences and Hidden remain incomplete. Vendor “newest/oldest” sorting still needs source-backed per-record timestamps.
+This implements Layout, Sort, category/note visibility, Brightness, typography-only Text size, Collections and Hidden visibility. Light/Dark/System appearance, colorblind status colors, sidebar/top-tab navigation and license-key marks remain incomplete. PluginHub-specific List/Ledger semantics and newest/oldest sorting still need source-backed status/format metadata and per-record timestamps.
 
 ## Development preview and Jules review
 

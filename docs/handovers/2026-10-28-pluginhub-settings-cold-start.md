@@ -1,6 +1,10 @@
-## Latest continuation checkpoint — View Collections — 2026-10-30
+## Latest continuation checkpoint — Typography and active-tool parity — 2026-10-30
 
-Branch commit [`e4edbd07746529486af730fcfd40e0853ab15549`](https://github.com/begb0037admin/aimm/commit/e4edbd07746529486af730fcfd40e0853ab15549), Library `index.html` blob `439450e31aa71e37daf7623436f533ff793f60c3`, adds saved category/tag Collections to View. Users can save, apply and remove a named selection; duplicate names are rejected, storage failures roll back, and focus returns to visible controls. Collections are local in normal mode and in-memory only in synthetic preview. Jules passed source and desktop/390px interaction review on preview deployment 7a099e45; the temporary synthetic sample was removed. See [Collections evidence](../governance/evidence/PHASE_PLUGINHUB_VIEW_COLLECTIONS_20261030.md).
+Current source commit 75655b4b2f327e3fff6d52c30f8512c34d1ffc9c, Library blob f9868f5392be7633e12da8520f05b05ed0c66071, increases vendor/product names to 13/12px and retains four balanced Cards columns; Jules passed visual review on [synthetic deployment aed2938c](https://aed2938c.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), desktop and 390×844. Hidden View behavior also passed on this source. See [typography evidence](../../governance/evidence/PHASE_PLUGINHUB_VISUAL_PARITY_NAMES_20261030.md) and [Hidden View evidence](../../governance/evidence/PHASE_PLUGINHUB_VIEW_HIDDEN_20261030.md).
+
+Kevin’s new comparison requirements: all four status scopes should display live counts, and all AIMM Tools should be active with complete functionality. The Install Manager reference includes update counts by vendor, per-row download, queue all/download all, a batch install pane, and controls for Download folder, Clear installed & failed, Start over and Done. AIMM currently has only an Unchecked scope active and most Tools inactive. The source-backed vendor status projection and reviewed local installer action contract are dependencies; keep counts and buttons honest until connected. See [user-directed parity requests](../../governance/evidence/PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md).
+
+Foundation remains **NOT MET**, Stage 6 remains gated; the Worker RP fix remains surgical and non-reproducible from branch source.
 
 ## Historical continuation checkpoint — View brightness and text size — 2026-10-30 (source commit 82c886d690eaaf41560af83cff4155a769cc553d)
 

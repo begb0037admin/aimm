@@ -1,6 +1,10 @@
-## Latest PluginHub roadmap checkpoint — View Collections — 2026-10-30
+## Latest PluginHub roadmap checkpoint — View typography, Hidden, and requested status/tool parity — 2026-10-30
 
-Branch commit [`e4edbd07746529486af730fcfd40e0853ab15549`](https://github.com/begb0037admin/aimm/commit/e4edbd07746529486af730fcfd40e0853ab15549), Library `index.html` blob `439450e31aa71e37daf7623436f533ff793f60c3`, adds saved category/tag Collections to View. Users can save, apply and remove a named selection; duplicate names are rejected, storage failures roll back, and focus returns to visible controls. Collections are local in normal mode and in-memory only in synthetic preview. Jules passed source and desktop/390px interaction review on preview deployment 7a099e45; the temporary synthetic sample was removed. See [Collections evidence](../governance/evidence/PHASE_PLUGINHUB_VIEW_COLLECTIONS_20261030.md).
+Source commit 75655b4b2f327e3fff6d52c30f8512c34d1ffc9c, Library blob f9868f5392be7633e12da8520f05b05ed0c66071, increases vendor and product names while preserving four-column cards; Jules passed desktop/390px typography and Hide/Show visual review on [synthetic deployment aed2938c](https://aed2938c.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). Hidden visibility remains active and memory-only in the synthetic fixture. See [visual typography evidence](../governance/evidence/PHASE_PLUGINHUB_VISUAL_PARITY_NAMES_20261030.md).
+
+Kevin’s latest screenshots add required parity work: activate the Updates Available, Up to Date, Manual Check and Unchecked groups with truthful counts, and make all AIMM Tools active with complete workflows. The current Library has only Unchecked active and most tools are disabled. Prioritize generation-linked vendor results and the full Install Manager workflow; do not fabricate counts or enable no-op actions. See [user-directed parity requests](../governance/evidence/PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md).
+
+Foundation remains **NOT MET**; Stage 6 gated; Worker RP fix remains surgical.
 
 ## Historical roadmap checkpoint — View brightness and text size — 2026-10-30 (source commit 82c886d690eaaf41560af83cff4155a769cc553d)
 

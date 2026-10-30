@@ -1,6 +1,16 @@
-## Latest PluginHub checkpoint — View Collections — 2026-10-30
+## Latest PluginHub checkpoint — View typography and Hidden visibility — 2026-10-30
 
-Branch commit [`e4edbd07746529486af730fcfd40e0853ab15549`](https://github.com/begb0037admin/aimm/commit/e4edbd07746529486af730fcfd40e0853ab15549), Library `index.html` blob `439450e31aa71e37daf7623436f533ff793f60c3`, adds saved category/tag Collections to View. Users can save, apply and remove a named selection; duplicate names are rejected, storage failures roll back, and focus returns to visible controls. Collections are local in normal mode and in-memory only in synthetic preview. Jules passed source and desktop/390px interaction review on preview deployment 7a099e45; the temporary synthetic sample was removed. See [Collections evidence](../governance/evidence/PHASE_PLUGINHUB_VIEW_COLLECTIONS_20261030.md).
+Branch commit [75655b4b2f327e3fff6d52c30f8512c34d1ffc9c](https://github.com/begb0037admin/aimm/commit/75655b4b2f327e3fff6d52c30f8512c34d1ffc9c), Library index.html blob f9868f5392be7633e12da8520f05b05ed0c66071, raises vendor headings to 13px and plug-in names to 12px in Cards, List and Ledger; the values continue to follow Text size. The four-column Cards grid is retained. Hidden visibility is included from preceding change 6d32e6a870497e913e12662d3a50ad4009f868bf (blob 7b3104e459d2e9d985bfb503c2aef8ccb41512af).
+
+Jules passed source and visual review on [synthetic preview deployment aed2938c](https://aed2938c.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), deployment ID aed2938c-9752-4fac-97fd-ca91eb174768. At 1920×815 the grid remains four balanced columns. At 390×844 Cards stacks to one column; names fit, vendor names ellipsize, and version/favorite/action controls stay aligned. Hide/Show remains functional. The existing 44px page-shell horizontal overflow at 390px is outside the card grid.
+
+No real inventory, storage, folders, scans or credentials. No automated tests. See [visual typography evidence](../governance/evidence/PHASE_PLUGINHUB_VISUAL_PARITY_NAMES_20261030.md) and [Hidden View evidence](../governance/evidence/PHASE_PLUGINHUB_VIEW_HIDDEN_20261030.md).
+
+## Current parity items requested by Kevin
+
+The latest PluginHub screenshots show active counts for Updates Available, Up to Date, Manual Check and Unchecked, plus a functional Install Manager. AIMM currently enables only its Unchecked scope; the other three status scopes and most Tools entries are disabled or incomplete. Kevin’s target is that all AIMM tools are active when their reviewed workflows are implemented. Track generation-linked status counts and the full Install Manager flow as high-priority parity work. Do not display placeholder counts or claim a tool works without its matching backend and action receipts. See [user-directed parity requests](../governance/evidence/PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md).
+
+Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP fix remains a surgical patch, not a reproducible branch build.
 
 ## Historical checkpoint — View brightness and text size — 2026-10-30 (source commit 82c886d690eaaf41560af83cff4155a769cc553d)
 

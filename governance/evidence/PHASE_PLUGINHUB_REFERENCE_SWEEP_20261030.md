@@ -2,7 +2,7 @@
 
 ## Scope
 
-Read-only inspection of the already-open PluginHub 2.0.12 app and its installed manual/source at `/Applications/PluginHub.app/Contents/Resources/`, compared with AIMM branch `codex/pluginhub-foundation` at `e4edbd07746529486af730fcfd40e0853ab15549`. The app’s View menu and one plugin row action menu were opened for reference. No tool workflow, filesystem action, scan, export, installer, share or vault operation was started. The app’s accessibility view included its current local vendor/plugin names and counts; none were copied into the branch, reports or development preview.
+Read-only inspection of the already-open PluginHub 2.0.12 app and its installed manual/source at `/Applications/PluginHub.app/Contents/Resources/`, compared with AIMM branch `codex/pluginhub-foundation` at `75655b4b2f327e3fff6d52c30f8512c34d1ffc9c`. The app’s View menu and one plugin row action menu were opened for reference. No tool workflow, filesystem action, scan, export, installer, share or vault operation was started. The app’s accessibility view included its current local vendor/plugin names and counts; none were copied into the branch, reports or development preview.
 
 AIMM visual evidence uses only the opt-in synthetic development preview. No real inventory was uploaded or used for the visual pass.
 
@@ -17,6 +17,12 @@ The 12-product/14-bundle fixture contains no notes, ratings, tags or local marks
 ## Latest View Collections — 2026-10-30
 
 The View menu now saves, applies and removes named category/tag selections. The source contract uses only the existing category and tag filters; normal-mode state is local to the browser, and synthetic mode never accesses localStorage. Jules passed source and interaction review at desktop and 390×844 on [synthetic preview deployment 7a099e45](https://7a099e45.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). The save/apply/placeholder/remove flow and focus feedback worked. The two-product synthetic category fixture was removed and default view restored. At 390px the 294px-wide panel scrolls internally within the viewport; existing 44px page overflow is outside it. See [Collections evidence](PHASE_PLUGINHUB_VIEW_COLLECTIONS_20261030.md).
+
+## Latest user-directed visual and tool requirements — 2026-10-30
+
+The user-provided comparison shows AIMM’s publisher/product labels materially smaller than PluginHub. Branch source `75655b4b2f327e3fff6d52c30f8512c34d1ffc9c`, Library blob `f9868f5392be7633e12da8520f05b05ed0c66071`, raises them to 13px/12px; Jules passed desktop four-column and 390px layout review on [synthetic deployment aed2938c](https://aed2938c.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). Hidden visibility also passed. See [typography evidence](PHASE_PLUGINHUB_VISUAL_PARITY_NAMES_20261030.md).
+
+Kevin also requires the four status groups to become active with truthful live counts and all AIMM Tools to be active with complete workflows. In the current Library, only Unchecked is active; most Tools are disabled. The Install Manager comparison shows vendor update counts/filters, per-row download, queue all/download all, batch-install panel and folder/queue controls. Status must use generation-linked vendor observations. Install Manager must use verified vendor artifacts and local Companion receipts. See [user-directed parity requests](PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md) and the [tool contract matrix](PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md).
 
 ## What the reference app exposes
 
