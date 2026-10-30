@@ -24,10 +24,7 @@ This is the running checklist for the user’s screenshot-led reverse engineerin
 
 Activate and review each tool as an individual slice. A control is complete only when its user-visible action works and its limits are clear.
 
-- [ ] **Install Manager:** connect a verified local installer-download workflow and receipt UI before offering download/install actions. The present status and vendor-page queue slice is review-ready; do not claim installer actions work.
-
-
-
+- [ ] **Install Manager — direct installer flow:** add a verified local installer-download route and receipt UI before offering download/install actions. The status and vendor-page queue slice is review-ready: it shows fresh account update rows, queues vendor-page requests, and sends them one at a time for local Companion confirmation. Source audit on 2026-10-30 found the direct route is not connected: the account API action allowlist has no `download_installer` action, the Companion action journal has no installer handler, and `VerifiedInstallerDownload` is unused by the app and requires a trusted SHA-256 release digest. The current FabFilter adapter can parse an official macOS DMG URL but supplies no trusted digest. Keep direct downloads/install unavailable until a vendor-authenticated or reviewed signer-derived verification route, Companion action, and receipt are implemented and verified.
 
 - [ ] **Share Plugin List:** implement reviewed, user-controlled sharing and recipient/expiry choices.
 
