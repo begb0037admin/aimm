@@ -433,6 +433,16 @@
     };
   }
 
+  // Read-only page bridge for the inventory status scopes. It returns API
+  // records with their device, generation and record IDs intact; it never
+  // joins account observations to browser-scanned rows.
+  window.aimmReadAccountPluginStatus = async (args = {}) => {
+    if (!APPROVED_AUTH_ORIGINS.has(location.origin)) {
+      throw new Error("Account status is not available from this preview origin. Open AIMM on an approved account page.");
+    }
+    return getPluginStatus({ ...args, full_snapshot: true });
+  };
+
   async function requestPluginReveal(args = {}) {
     await ensureSession();
     if (typeof args.device_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.device_id) ||
