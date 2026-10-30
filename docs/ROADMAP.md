@@ -1,10 +1,10 @@
-## Latest PluginHub roadmap checkpoint — status and Install Manager contract review — 2026-10-30
+## Latest PluginHub roadmap checkpoint — Companion installer staging contract traced — 2026-10-30
 
-Read-only review found the account API already returns authenticated current-generation status at per-format record level, including freshness, stale/error and last-good details; the Library UI still renders only its in-memory synthetic fixture. The browser AU-component versus Companion bundle-level identity mismatch, canonical product mapping and unapplied migration 0022 prevent a safe live join or product-level roll-up. The Install Manager is disabled, with no API queue/download/install workflow. A Companion download component is noted in the existing contract matrix, but manager-level progress, batch outcomes and install receipts remain open.
+The reviewed Companion helper can stage a verified DMG into an explicitly selected local directory, with a strict host/redirect, size, structure and SHA-256 check, atomic publication and file-identity receipt. The current catalog only resolves FabFilter Pro-Q 4 and provides no trusted digest; the app does not call the helper. There is no queue, progress/cancellation UI, or install receipt. Downloading a DMG would not prove installation.
 
-See [contract review evidence](../governance/evidence/PHASE_PLUGINHUB_STATUS_INSTALL_CONTRACT_REVIEW_20261030.md). No live account/status calls, folders, vendor calls, downloads, Worker or D1 changes occurred.
+See [installer staging contract trace](../governance/evidence/PHASE_PLUGINHUB_INSTALLER_STAGING_CONTRACT_TRACE_20261030.md). This was read-only; no vendor page or installer was accessed.
 
-Next, trace the local Companion downloader and receipt contract from source, without initiating a download. Then build one synthetic Install Manager slice against that contract. Keep download and installation outcomes distinct. Address the Library status join separately after exact generation/record and AU component mapping are resolved. Foundation remains NOT MET; Stage 6 remains gated.
+Next: build one synthetic PluginHub-style Install Manager UI slice with in-memory update rows, queue controls, and batch outcomes explicitly marked as simulated. Actual download hookup remains separate until the trusted digest and progress/cancellation contracts are ready. Preserve breathing room and synthetic data. Foundation remains **NOT MET**; Stage 6 gated.
 
 ## Historical roadmap checkpoint — synthetic status preview — 2026-10-30
 
