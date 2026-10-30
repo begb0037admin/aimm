@@ -6,7 +6,7 @@ The next read-only audit is complete. The API has an authenticated, generation-b
 
 Next one item: trace the exact local Companion downloader and receipt contract from branch source, without starting a download. Then build one synthetic Install Manager slice against that local contract; preserve the distinction between downloaded and installed. Keep the Library status join separate until exact generation/record and AU component mapping are resolved. “Room to breathe” remains required. Foundation is NOT MET; Stage 6 remains gated.
 
-Audit: [status and Install Manager contract review](../governance/evidence/PHASE_PLUGINHUB_STATUS_INSTALL_CONTRACT_REVIEW_20261030.md), blob `cdf8299f766f39d77840cde92f72f2fc3b295099`.
+Audit: [status and Install Manager contract review](../governance/evidence/PHASE_PLUGINHUB_STATUS_INSTALL_CONTRACT_REVIEW_20261030.md), blob `c01b711768a38320964aac4c358b6a459d5319ed`.
 Synchronized pins: STATUS `822b4343edfda343b462ed0df1ef877f939a2efc`; ROADMAP `0afeb87282ee072ef13963bb103cac202b99d422`; tool contract matrix `e64b6fcbef256624ddeded7f4d585c30bfe908eb`; user parity register `2b047841e0c2a77215e25c90855e2b84b5049f52`. HANDOVER does not self-pin.
 
 ## Historical continuation — initial per-format version placement (superseded) — 2026-10-30
