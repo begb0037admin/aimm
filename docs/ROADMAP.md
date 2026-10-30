@@ -1,4 +1,16 @@
-## Latest PluginHub roadmap checkpoint — Duplicate Review hand-off — 2026-10-30
+## Latest PluginHub roadmap checkpoint — Tools sidebar parity — 2026-10-30
+
+Branch UI commit `bfa4227125660d59a919ad4e0033fea9da68bac0` adds PluginHub's observed Tools sidebar order to Library navigation: Install Manager, Batch Plugin Management, Remove Old Installers, Check for Duplicates, License Key Vault, Share Plugin List, Compare Plugin Profiles and PluginHub License. Check for Duplicates retains the fixed local `aimm-companion://duplicates` hand-off; all unavailable workflows are visibly disabled with an explanation, and PluginHub licensing is labeled outside AIMM. The synthetic preview suppresses the local route and explains that no local inventory is connected.
+
+Jules passed source review and desktop visual review at [the synthetic development preview](https://38bed09a.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), Pages deployment `38bed09a-58cd-4830-9460-bdb93582afd8`. Labels/order, spacing and disabled state passed; Cards and All Plugins table remain intact. Narrow/mobile spacing was not verified because the review session could not resize its viewport.
+
+Evidence: [PluginHub Tools sidebar parity report](../governance/evidence/PHASE_PLUGINHUB_TOOLS_SIDEBAR_20261030.md), blob `83271809980516658f171031776e78f9eeb24fe5`; [manual/tool contract matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob `68cffd05c1f6d9bc0b55da52e6ab8712eabf4c7a`. Source `index.html` blob `60d03fdfb2585c3359f8bcee59dbeb2327ab738c`.
+
+No real plug-in folders, saved scans, local paths or inventory were read. No tool action, automated test, production deployment or external share occurred. Companion URL dispatch remains unverified from a packaged/installed app. Foundation remains **NOT MET**; Stage 6 remains gated pending complete fresh exit evidence and independent acceptance. The development Worker passkey RP fix remains a surgical patch, not a reproducible build from branch source. Synthetic non-production data only.
+
+Next: package the Companion preview and confirm the read-only local hand-off without starting a scan. Then continue the manual sweep with generation-bound status and the next local Tools contracts. Keep filesystem changes behind exact preview, explicit confirmation and receipt; keep remote share/profile behind isolation and recovery review. Foundation remains **NOT MET**; Stage 6 remains gated.
+
+## Historical PluginHub roadmap checkpoint — Duplicate Review hand-off — 2026-10-30
 
 Library Tools > Duplicate Review now has a fixed local Companion route; the synthetic preview visibly disables it because no local inventory is connected. Jules passed source and desktop/390px visual review at https://15c23fd2.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic (deployment 15c23fd2-9ee5-4ea6-a84f-25d95ed676af). Cards remain four columns; All Plugins retains its 12-product synthetic sample and neutral Unchecked cells. Companion source build succeeded in an isolated tree with the explicit sandbox bypass; no app bundle was packaged, installed or launched.
 
