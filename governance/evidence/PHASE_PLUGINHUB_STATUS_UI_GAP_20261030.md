@@ -17,6 +17,10 @@ The visible browser scanner has a second identity mismatch with the Companion sn
 3. Connect the visible Library UI to the authenticated status snapshot, activate all four user-requested scopes, and make filters/counts operate on that same generation. Keep Unchecked distinct from Manual Check.
 4. Build the Install Manager on the verified vendor update observations and existing Companion installer/action contracts, with per-item progress and receipts. Do not expose no-op buttons.
 
+### Proposed field bounds and privacy
+
+Use a closed `publisher_source` enum: `infoPlistManufacturer`, `infoPlistVendor`, `audioComponentManufacturerName`, `audioComponentNamePrefix`, or `reviewedMapping`; store `null` source and publisher when unresolved. Store no raw plist data and transmit no local path. A canonical product ID may be a stable opaque value derived by the reviewed mapping; keep it nullable where the evidence does not support a cross-format identity. Publisher names and canonical product IDs still reveal installed-software metadata, so keep them inside the existing consented, account/device/generation-scoped retention and deletion model.
+
 ## Scope and limits
 
 This was a branch-source/documentation inspection only. No API endpoint was called, no account rows or real inventory were read, no local folders were scanned, and no tests ran. Use the synthetic preview for UI work. Real-inventory validation and separately gated external actions remain under existing authorization requirements.
