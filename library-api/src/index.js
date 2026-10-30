@@ -587,7 +587,7 @@ async function renderPublicShare(env, requestId, token) {
 function requiredScopeFor(method, pathname) {
   if ((method === "GET" && ["/v1/me", "/v1/devices", "/v1/library", "/v1/actions/restorable", "/v1/checks", "/v1/status-summary", "/v1/preferences", "/v1/shares"].includes(pathname))) return "read:library";
   if (method === "POST" && pathname === "/v1/shares") return "read:library";
-  if (method === "DELETE" && /^\\/v1\\/shares\\/[0-9a-f-]{36}$/.test(pathname)) return "read:library";
+  if (method === "DELETE" && /^\/v1\/shares\/[0-9a-f-]{36}$/.test(pathname)) return "read:library";
   if (method === "GET" && pathname === "/v1/webauthn/credentials") return "read:library";
   if (method === "POST" && ["/v1/webauthn/registration/options", "/v1/webauthn/registration/verify", "/v1/webauthn/authentication/options", "/v1/webauthn/authentication/verify"].includes(pathname)) return "read:library";
   if (method === "GET" && pathname === "/v1/actions/preview") return "read:library";
@@ -1999,7 +1999,7 @@ async function updateMark(request, env, account, requestId, origin) {
   catch { return errorResponse("invalid_request", "A small JSON mark update is required.", 400, requestId, origin, env); }
   const { scope, target_key: targetKey, favorite = false, pinned = false, hidden = false, tags = [], snooze_until: snoozeUntil = null, snooze_reason: snoozeReason = null, marked_latest_version: markedLatestVersion = null, expected_revision: expected } = body;
   if (!new Set(["vendor", "product"]).has(scope) || typeof targetKey !== "string" || targetKey.length < 1 || targetKey.length > 255 ||
-      /[\\/\u0000-\u001f]/.test(targetKey) || typeof favorite !== "boolean" || typeof pinned !== "boolean" || typeof hidden !== "boolean" ||
+      /[\/\u0000-\u001f]/.test(targetKey) || typeof favorite !== "boolean" || typeof pinned !== "boolean" || typeof hidden !== "boolean" ||
       !Array.isArray(tags) || tags.length > 20 || tags.some((tag) => typeof tag !== "string" || tag.length > 48 || /[\u0000-\u001f]/.test(tag)) ||
       (snoozeUntil !== null && (typeof snoozeUntil !== "string" || Number.isNaN(Date.parse(snoozeUntil)) || Date.parse(snoozeUntil) > Date.now() + 90 * 24 * 60 * 60 * 1000)) ||
       (snoozeReason !== null && (!snoozeUntil || typeof snoozeReason !== "string" || snoozeReason.length > 240 || /[\u0000-\u001f]/.test(snoozeReason))) ||
@@ -2216,7 +2216,7 @@ async function pollPairing(request, env, requestId, origin, pairingId) {
 
 async function handle(request, env, requestId, origin) {
   const url = new URL(request.url);
-  const publicShare = /^\\/s\\/([A-Za-z0-9_-]{40,64})$/.exec(url.pathname);
+  const publicShare = /^\/s\/([A-Za-z0-9_-]{40,64})$/.exec(url.pathname);
   if (publicShare && request.method === "GET") return renderPublicShare(env, requestId, publicShare[1]);
   if (url.pathname === "/pairing-preview" && request.method === "GET") {
     return pairingPreviewResponse(env, requestId);
@@ -2600,7 +2600,7 @@ async function handle(request, env, requestId, origin) {
 
   if (url.pathname === "/v1/shares" && request.method === "GET") return readShareList(env, account, requestId, origin);
   if (url.pathname === "/v1/shares" && request.method === "POST") return createShareLink(request, env, account, requestId, origin);
-  const shareDelete = /^\\/v1\\/shares\\/([0-9a-f-]{36})$/.exec(url.pathname);
+  const shareDelete = /^\/v1\/shares\/([0-9a-f-]{36})$/.exec(url.pathname);
   if (shareDelete && request.method === "DELETE") return revokeShareLink(env, account, requestId, origin, shareDelete[1]);
 
   if (url.pathname === "/v1/me" && request.method === "GET") {
