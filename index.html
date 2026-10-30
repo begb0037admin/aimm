@@ -3159,10 +3159,10 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #library .inv-vst-filter>summary::-webkit-details-marker{display:none}
     #library .inv-vst-filter>summary::after{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin:0 2px 3px}
     #library .inv-vst-filter[open]>summary::after{transform:rotate(225deg);margin:4px 2px 0}
-    #library .inv-vst-filter-menu{position:absolute;top:calc(100% + 7px);left:0;z-index:120;min-width:160px;padding:7px;border:1px solid #3a414b;border-radius:9px;background:#202329;box-shadow:0 14px 34px #000a}
-    #library .inv-vst-option{display:block;width:100%;padding:7px 9px;border:1px solid transparent;border-radius:6px;background:transparent;color:#d5dbe2;text-align:left;font:500 11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;white-space:nowrap;cursor:pointer}
-    #library .inv-vst-option:hover{background:#292d34;border-color:#424955}
-    #library .inv-vst-option[aria-pressed="true"]{background:rgba(47,161,230,.12);border-color:#4484aa;color:#fff}
+    #library .inv-vst-filter-menu{position:absolute;top:calc(100% + 7px);left:0;z-index:120;min-width:160px;margin:0;padding:7px;border:1px solid #3a414b;border-radius:9px;background:#202329;box-shadow:0 14px 34px #000a}
+    #library .inv-vst-option{display:flex;align-items:center;gap:8px;width:100%;padding:7px 9px;border:1px solid transparent;border-radius:6px;background:transparent;color:#d5dbe2;text-align:left;font:500 11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;white-space:nowrap;cursor:pointer}
+    #library .inv-vst-option:hover,#library .inv-vst-option:focus-visible{background:#292d34;border-color:#424955;outline:none}
+    #library .inv-vst-option[aria-checked="true"]{background:rgba(47,161,230,.12);border-color:#4484aa;color:#fff}
     #library .inv-tag-filter{position:relative;flex:none}
     #library .inv-tag-filter>summary{display:flex;align-items:center;gap:7px;list-style:none;user-select:none;white-space:nowrap}
     #library .inv-tag-filter>summary::-webkit-details-marker{display:none}
@@ -3389,7 +3389,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <div class="inv-roots" id="invRoots" aria-label="Connected plug-in folders"></div>
         <div class="inv-status" id="invScanStatus" role="status">Connect the Audio/Plug-Ins folder and, if needed, Avid/Audio/Plug-Ins. You can add more folders later.</div>
         <div class="inv-stats"><div class="inv-stat"><span>Installed products</span><strong id="invProductCount">—</strong><small>grouped by name and publisher</small></div><div class="inv-stat"><span>Format bundles</span><strong id="invBundleCount">—</strong><small>one plug-in may have several formats</small></div><div class="inv-stat"><span>Formats found</span><strong id="invFormatCount">—</strong><small>AU · VST2 · VST3 · CLAP</small></div></div>
-        <div class="inv-controls"><div class="inv-filters" id="invFormatFilters"><button class="inv-format on" type="button" data-inv-format="All">All formats</button><button class="inv-format" type="button" data-inv-format="AU">AU</button><details class="inv-vst-filter" id="invVstFilter"><summary class="inv-format" aria-label="VST format filter" title="Choose VST, VST3 or VST2. Press ~ to cycle supported format filters."><span id="invVstFilterLabel">VST</span></summary><div class="inv-vst-filter-menu" role="group" aria-label="VST formats"><button class="inv-vst-option" type="button" aria-label="VST, all formats" data-inv-vst-format="VST">VST (all formats)</button><button class="inv-vst-option" type="button" aria-label="VST3 only" data-inv-vst-format="VST3">VST3</button><button class="inv-vst-option" type="button" aria-label="VST2 only" data-inv-vst-format="VST2">VST2</button></div></details><button class="inv-format" type="button" data-inv-format="CLAP">CLAP</button></div><details class="inv-tag-filter" id="invTagFilter"><summary class="inv-btn" aria-label="Filter by your tags">My Tags <span id="invTagFilterCount">0</span></summary><div class="inv-tag-filter-menu"><div class="inv-tag-filter-options" data-inv-tag-filter-options></div><div class="inv-tag-filter-actions"><button class="inv-btn" type="button" data-inv-new-tag>New tag</button><button class="inv-btn" type="button" data-inv-open-tag-manager>Plugin Tag Manager</button></div></div></details><div class="inv-active-tag-filters" id="invActiveTagFilters" hidden></div><label class="inv-search"><span class="inv-small">Find</span><input id="invSearch" type="search" placeholder="Plug-in or publisher…" autocomplete="off"></label><div class="inv-view-tools"><label>View<select id="invView" aria-label="Inventory view"><option value="cards">Cards</option><option value="list">List</option><option value="ledger">Ledger</option></select></label><label>Sort<select id="invSort" aria-label="Sort inventory"><option value="vendor">Vendor</option><option value="product">Product</option><option value="format">Format</option><option value="version">Version</option></select></label></div><button class="inv-btn" type="button" data-inv-collapse-all title="Collapse every publisher card">Collapse vendors</button><button class="inv-btn" type="button" data-inv-expand-all title="Expand every publisher card">Expand vendors</button></div>
+        <div class="inv-controls"><div class="inv-filters" id="invFormatFilters"><button class="inv-format on" type="button" data-inv-format="All">All formats</button><button class="inv-format" type="button" data-inv-format="AU">AU</button><details class="inv-vst-filter" id="invVstFilter"><summary class="inv-format" aria-label="VST format filter" title="Choose VST, VST3 or VST2. Press ~ to cycle supported format filters."><span id="invVstFilterLabel">VST</span></summary><div class="inv-vst-filter-menu" role="radiogroup" aria-label="VST format"><button class="inv-vst-option" type="button" role="radio" aria-checked="false" tabindex="0" data-inv-vst-format="VST">VST (all formats)</button><button class="inv-vst-option" type="button" role="radio" aria-checked="false" tabindex="-1" data-inv-vst-format="VST3">VST3</button><button class="inv-vst-option" type="button" role="radio" aria-checked="false" tabindex="-1" data-inv-vst-format="VST2">VST2</button></div></details><button class="inv-format" type="button" data-inv-format="CLAP">CLAP</button></div><details class="inv-tag-filter" id="invTagFilter"><summary class="inv-btn" aria-label="Filter by your tags">My Tags <span id="invTagFilterCount">0</span></summary><div class="inv-tag-filter-menu"><div class="inv-tag-filter-options" data-inv-tag-filter-options></div><div class="inv-tag-filter-actions"><button class="inv-btn" type="button" data-inv-new-tag>New tag</button><button class="inv-btn" type="button" data-inv-open-tag-manager>Plugin Tag Manager</button></div></div></details><div class="inv-active-tag-filters" id="invActiveTagFilters" hidden></div><label class="inv-search"><span class="inv-small">Find</span><input id="invSearch" type="search" placeholder="Plug-in or publisher…" autocomplete="off"></label><div class="inv-view-tools"><label>View<select id="invView" aria-label="Inventory view"><option value="cards">Cards</option><option value="list">List</option><option value="ledger">Ledger</option></select></label><label>Sort<select id="invSort" aria-label="Sort inventory"><option value="vendor">Vendor</option><option value="product">Product</option><option value="format">Format</option><option value="version">Version</option></select></label></div><button class="inv-btn" type="button" data-inv-collapse-all title="Collapse every publisher card">Collapse vendors</button><button class="inv-btn" type="button" data-inv-expand-all title="Expand every publisher card">Expand vendors</button></div>
         <div id="invInventory" aria-live="polite"></div>
       </main>
     </div>
@@ -6497,7 +6497,7 @@ function invRenderInventory(){
   const vstFilter=document.getElementById("invVstFilter"),vstLabel=document.getElementById("invVstFilterLabel");
   if(vstFilter){vstFilter.classList.toggle("on",Boolean(vstMode));const summary=vstFilter.querySelector("summary");if(summary){summary.setAttribute("aria-label",vstMode?`VST format filter, ${vstMode==="VST"?"both VST formats selected":vstMode+" selected"}`:"VST format filter, no VST format selected");summary.setAttribute("aria-expanded",String(vstFilter.open));}}
   if(vstLabel)vstLabel.textContent=vstMode||"VST";
-  document.querySelectorAll("[data-inv-vst-format]").forEach(button=>button.setAttribute("aria-pressed",String(button.getAttribute("data-inv-vst-format")===vstMode)));
+  document.querySelectorAll("[data-inv-vst-format]").forEach((option,index)=>{const selected=option.getAttribute("data-inv-vst-format")===vstMode;option.setAttribute("aria-checked",String(selected));option.tabIndex=selected||(!vstMode&&index===0)?0:-1;});
   const query=invNorm(INV_SEARCH);
   let filtered=groups.filter(group=>{
     const formatOK=!INV_FORMATS.size||Array.from(INV_FORMATS).some(format=>group.formats.has(format));
@@ -6883,6 +6883,16 @@ function invInit(){
       else{INV_FORMATS.clear();formats.forEach(format=>INV_FORMATS.add(format));}
       vstFilter.open=false;invRenderInventory();
     });
+    vstFilter.addEventListener("keydown",event=>{
+      if(event.key==="Escape"&&vstFilter.open){event.preventDefault();vstFilter.open=false;vstFilter.querySelector("summary")?.focus();return;}
+      const current=event.target.closest("[data-inv-vst-format]");if(!current)return;
+      const options=Array.from(vstFilter.querySelectorAll("[data-inv-vst-format]"));
+      const direction=(event.key==="ArrowDown"||event.key==="ArrowRight")?1:(event.key==="ArrowUp"||event.key==="ArrowLeft")?-1:0;
+      if(!direction)return;
+      event.preventDefault();const index=options.indexOf(current),next=options[(index+direction+options.length)%options.length];
+      const mode=next.getAttribute("data-inv-vst-format"),formats=mode==="VST"?["VST2","VST3"]:[mode];
+      INV_FORMATS.clear();formats.forEach(format=>INV_FORMATS.add(format));invRenderInventory();next.focus();
+    });
   }
   document.addEventListener("keydown",event=>{
     const tilde=event.key==="~"||(event.code==="Backquote"&&event.shiftKey);
@@ -6896,8 +6906,8 @@ function invInit(){
     const current=cycle.findIndex(formats=>same(INV_FORMATS,formats));
     const next=cycle[(current+1+cycle.length)%cycle.length];
     event.preventDefault();INV_FORMATS.clear();next.forEach(format=>INV_FORMATS.add(format));
-    const vstMenu=document.getElementById("invVstFilter");if(vstMenu)vstMenu.open=false;
-    invRenderInventory();
+    const vstMenu=document.getElementById("invVstFilter"),returnVstFocus=Boolean(vstMenu&&vstMenu.contains(document.activeElement));if(vstMenu)vstMenu.open=false;
+    invRenderInventory();if(returnVstFocus)vstMenu.querySelector("summary")?.focus();
   });
   invLoadRoots();
   invRenderLibrary();
