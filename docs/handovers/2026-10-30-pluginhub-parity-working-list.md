@@ -7,6 +7,8 @@ This is the running checklist for the user’s screenshot-led reverse engineerin
 
 ## Review-ready
 
+- [x] **Remove excluded tools from the sidebar.** Removed Batch Plugin Management, Remove Old Installers, Check for Duplicates, License Key Vault, and Compare Plugin Profiles, plus the stale note claiming Duplicate Review had the only connected hand-off. Confirmed the synthetic preview shows only the in-scope Install Manager, Share Plugin List, and PluginHub License tools. Preview: `https://4460cb34.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic` (2026-10-30).
+
 - [x] **Return to publisher cards from List view.** Corrected View panel placement so Layout is visible rather than clipped under the top bar. Verified List → “Back to Cards” → publisher tiles in the synthetic preview on 2026-10-30.
 - [x] **Status scopes and Install Manager entry point — first slice.** The Updates scope shows its heading, count, and next-step guidance; empty results explain that no update observations does not mean everything is current. Status counts use red for updates, green for up-to-date, amber for manual check, and grey for unchecked. The sidebar Install Manager opens an account-backed status view with totals and a vendor-page queue. Verified in the approved branch preview on 2026-10-30. The actual snapshot shown had no update rows; stale/unchecked totals were presented. Download/install remain explicitly unavailable because the connected local verified-download flow is not yet wired to the app. Review this item before calling the manager complete.
 
