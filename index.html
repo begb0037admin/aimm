@@ -2298,6 +2298,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #invInstallManagerOverlay .im-version-line{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:3px;color:#89939f;font-size:10px;font-variant-numeric:tabular-nums}
 #invInstallManagerOverlay .im-version-line .im-latest{color:#f27474}
 #invInstallManagerOverlay .im-format{justify-self:start;padding:2px 5px;border:1px solid #367ba8;border-radius:4px;background:#1d5b80;color:#fff;font-size:9px;font-weight:700}
+#invInstallManagerOverlay .im-format.clap{border-color:#80602b;background:#62461c}
+#invInstallManagerOverlay .im-format.au{border-color:#2f805f;background:#205c45}
 #invInstallManagerOverlay .im-size{color:#89939f;text-align:right;font-size:10px;font-variant-numeric:tabular-nums}
 #invInstallManagerOverlay .im-actions{display:flex;align-items:center;justify-content:flex-end;gap:5px}
 #invInstallManagerOverlay .im-row-status{color:#58d6a2;font-size:10px}
@@ -22962,6 +22964,7 @@ csInit('csPlatform');
     overlay.querySelector("[data-im-done]").focus();
   }
   function filteredRows(){return state.vendor==="All vendors"?rows:rows.filter(row=>row.vendor===state.vendor);}
+  function formatClass(format){return format==="CLAP"?"clap":format==="AU"?"au":"vst";}
   function countFor(vendor){return vendor==="All vendors"?rows.length:rows.filter(row=>row.vendor===vendor).length;}
   function render(){
     if(!overlay||!state)return;
@@ -22979,7 +22982,7 @@ csInit('csPlatform');
       const collapsed=state.collapsed.has(vendor);
       return '<section class="im-group"><header class="im-group-head"><button type="button" class="im-btn" data-im-collapse="'+esc(vendor)+'" aria-expanded="'+String(!collapsed)+'">'+(collapsed?"+":"−")+'</button><div class="im-group-title"><span>'+esc(vendor)+'</span><span class="im-count">'+items.length+'</span></div><button type="button" class="im-btn" data-im-queue-vendor="'+esc(vendor)+'">+ Queue all '+items.length+'</button></header>'+(collapsed?"":'<div class="im-group-items">'+items.map(row=>{
         const queued=state.queue.has(row.key),outcome=state.outcomes.get(row.key)||"";
-        return '<article class="im-update-row"><div class="im-product"><strong>'+esc(row.name)+'</strong><div class="im-version-line"><span>'+esc(row.current)+'</span><span aria-hidden="true">→</span><span class="im-latest">'+esc(row.latest)+'</span><span>'+esc(row.format)+'</span></div></div><span class="im-format">'+esc(row.format)+'</span><span class="im-size">'+esc(row.size)+'</span><div class="im-actions">'+(outcome?'<span class="im-row-status">'+esc(outcome)+'</span>':'')+'<button type="button" class="im-btn" data-im-queue="'+esc(row.key)+'">'+(queued?"Queued":"Queue")+'</button><button type="button" class="im-btn green" data-im-download="'+esc(row.key)+'">Download</button></div></article>';
+        return '<article class="im-update-row"><div class="im-product"><strong>'+esc(row.name)+'</strong><div class="im-version-line"><span>'+esc(row.current)+'</span><span aria-hidden="true">→</span><span class="im-latest">'+esc(row.latest)+'</span><span>'+esc(row.format)+'</span></div></div><span class="im-format '+formatClass(row.format)+'">'+esc(row.format)+'</span><span class="im-size">'+esc(row.size)+'</span><div class="im-actions">'+(outcome?'<span class="im-row-status">'+esc(outcome)+'</span>':'')+'<button type="button" class="im-btn" data-im-queue="'+esc(row.key)+'">'+(queued?"Queued":"Queue")+'</button><button type="button" class="im-btn green" data-im-download="'+esc(row.key)+'">Download</button></div></article>';
       }).join("")+'</div>');
     }).join("");
     const queued=Array.from(state.queue).map(key=>rows.find(row=>row.key===key)).filter(Boolean);
