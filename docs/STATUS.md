@@ -1,10 +1,10 @@
-## Latest PluginHub checkpoint — status and Install Manager contract review — 2026-10-30
+## Latest PluginHub checkpoint — Companion installer staging contract traced — 2026-10-30
 
-The read-only source review confirms that authenticated GET /v1/status-summary provides current-generation, per-format record results with freshness and stale/error context, but the visible Library still renders its in-memory synthetic fixture and does not call that API. Record identity cannot safely join browser-expanded AU components to bundle-level Companion/API rows; canonical mapping and migration 0022 remain unresolved. The Install Manager entry is disabled. The account API has no download/queue/install workflow; a local Companion download component is recorded in the contract matrix, but does not form a complete manager or install receipt flow.
+The exact local Companion helper has a descriptor-anchored verified DMG staging flow and returns a receipt containing product/version, destination, byte count, SHA-256 and file identity. Its only current catalog route is FabFilter Pro-Q 4, but the catalog has no trusted digest configured. The helper is not called by the desktop app, and it has no queue/progress/cancellation, app-facing receipt flow, or install outcome. The current PluginHub-style Install Manager therefore remains unconnected.
 
-Audit evidence: [status and Install Manager contract review](../governance/evidence/PHASE_PLUGINHUB_STATUS_INSTALL_CONTRACT_REVIEW_20261030.md). No live status endpoint, account data, inventory, folders, vendors, downloads, Worker or D1 were used or changed. Current preview remains synthetic.
+Evidence: [Companion installer staging contract trace](../governance/evidence/PHASE_PLUGINHUB_INSTALLER_STAGING_CONTRACT_TRACE_20261030.md). No vendor page or installer was accessed; no download, install, live inventory or scan occurred.
 
-Next, trace the exact local Companion downloader and receipt contract read-only, then build one synthetic Install Manager slice against that verified local contract. Keep “downloaded” separate from “installed”. Treat Library status joining as its own item, preserve per-format semantics, and keep live sources disconnected until generation/record and AU component mapping are resolved. Visual checklist items 1–6 remain complete. Foundation remains NOT MET and Stage 6 gated.
+Next: build one synthetic Install Manager UI slice for review using in-memory sample rows. Include the PluginHub queue, vendor counts and batch-panel controls, and label outcomes as simulation. Keep download and installation claims separate. Actual hookup requires a trusted digest source and progress/cancellation contract. “Room to breathe” remains required. Foundation remains **NOT MET**; Stage 6 gated.
 
 ## Historical checkpoint — visible synthetic status preview — 2026-10-30
 
