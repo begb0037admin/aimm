@@ -382,7 +382,10 @@
         record_id: row.id,
         name: row.name, format: row.format, version: row.version || null,
         bundle_identifier: row.bundleIdentifier || row.bundle_identifier || null,
-        metadata_source: row.metadataSource
+        publisher_name: row.publisherName || row.publisher_name || null,
+        publisher_source: row.publisherSource || row.publisher_source || null,
+        canonical_product_id: row.canonicalProductId || row.canonical_product_id || null,
+        metadata_source: row.metadataSource || row.metadata_source || null
       })),
       truncated: args.count_only !== true && matches.length > 100,
       notice: "Installed inventory is from the last complete scan; this is not an update check."
@@ -397,15 +400,18 @@
     const payload = await api(`/v1/status-summary${params.size ? `?${params}` : ""}`);
     const query = String(args.search || "").trim().toLowerCase();
     const records = Array.isArray(payload.records) ? payload.records : [];
-    const matches = query ? records.filter((row) => `${row.name} ${row.format}`.toLowerCase().includes(query)) : records;
+    const matches = query ? records.filter((row) => `${row.name} ${row.format} ${row.publisher_name || ""} ${row.bundle_identifier || ""}`.toLowerCase().includes(query)) : records;
     return {
       rule_version: payload.rule_version,
       counts: payload.counts || {},
       raw_counts: payload.raw_counts || {},
       count: matches.length,
       records: (args.full_snapshot === true ? matches : matches.slice(0, 100)).map((row) => ({
+        device_id: row.device_id, generation_id: row.generation_id, record_id: row.record_id,
         device: row.device_name, name: row.name, format: row.format,
         bundle_identifier: row.bundle_identifier || null,
+        publisher_name: row.publisher_name || null, publisher_source: row.publisher_source || null,
+        canonical_product_id: row.canonical_product_id || null,
         status: row.status, raw_status: row.raw_status,
         installed_version: row.installed_version || null,
         latest_version: row.latest_version || null,
