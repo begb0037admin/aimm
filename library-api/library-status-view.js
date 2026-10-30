@@ -184,7 +184,7 @@
       const detail = scopeRows.length
         ? "No records in this status match the current search or format filters."
         : emptyCopy[scope] || "No records are available for this view.";
-      host.innerHTML = '<div class="inv-empty">' + esc(detail) + '<small>These are saved account observations; loading this view does not run a vendor check.</small></div>';
+      host.innerHTML = '<div class="inv-empty">' + esc(detail) + '<small style="display:block;margin-top:8px">These are saved account observations; loading this view does not run a vendor check.</small></div>';
       return true;
     }
     const cards = rows.map((row) => {
