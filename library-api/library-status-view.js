@@ -46,6 +46,7 @@
     #library .inv-chip.clap{border-color:#80602b;background:#62461c}
     #library .inv-fav{font-size:16px;padding:1px 3px}
     #library .inv-more{padding:9px 14px;font-size:10px}
+    #library .inv-cards-quick{min-height:36px;padding:7px 14px;font-size:12px;font-weight:700;white-space:nowrap}
     #library .inv-product-line{grid-template-columns:minmax(0,1fr) 24px 20px!important;align-items:start!important;column-gap:9px!important;row-gap:7px!important}
     #library .inv-name{grid-column:1!important;grid-row:1!important;font-size:15px!important;line-height:1.35!important;font-weight:700!important;overflow-wrap:anywhere!important}
     #library .inv-version{grid-column:1/-1!important;grid-row:2!important;width:100%!important;max-width:none!important;margin:0!important;align-self:start!important;font-size:11px!important;line-height:1.45!important}
@@ -99,6 +100,34 @@
   if (typeof window.invTileLayoutGrid === "function") {
     window.invTileLayoutGrid = aimmLayoutInventoryTiles;
     document.querySelectorAll("#invInventory .inv-cards").forEach((grid) => aimmLayoutInventoryTiles(grid, false));
+  }
+
+  function aimmSyncCardsShortcut() {
+    const button = document.getElementById("invCardsQuickBtn");
+    if (!button) return;
+    const selected = button.classList.contains("active");
+    button.textContent = selected ? "Cards" : "Back to Cards";
+    button.setAttribute("aria-label", selected ? "Cards view selected. Choose another layout in View options." : "Return to Cards view.");
+    button.title = selected ? "Cards view selected" : "Return to the publisher card tiles";
+  }
+  function aimmInstallCardsShortcut() {
+    const original = window.invRenderInventory;
+    if (typeof original !== "function" || original.__aimmCardsShortcutWrapped) return false;
+    const wrapped = function (...args) {
+      const result = original.apply(this, args);
+      aimmSyncCardsShortcut();
+      return result;
+    };
+    wrapped.__aimmCardsShortcutWrapped = true;
+    window.invRenderInventory = wrapped;
+    aimmSyncCardsShortcut();
+    return true;
+  }
+  if (!aimmInstallCardsShortcut()) {
+    const cardsShortcutObserver = new MutationObserver(() => {
+      if (aimmInstallCardsShortcut()) cardsShortcutObserver.disconnect();
+    });
+    cardsShortcutObserver.observe(document.documentElement, {childList:true,subtree:true});
   }
 
   let snapshot = null;
