@@ -7172,7 +7172,7 @@ function invInit(){
     const tag=option.dataset.invTagFilter,wasOnly=INV_TAG_FILTERS.size===1&&INV_TAG_FILTERS.has(tag);
     if(event.shiftKey){if(INV_TAG_FILTERS.has(tag))INV_TAG_FILTERS.delete(tag);else INV_TAG_FILTERS.add(tag);}
     else{INV_TAG_FILTERS.clear();if(!wasOnly)INV_TAG_FILTERS.add(tag);}
-    INV_SCOPE="all";invRenderInventory();
+    INV_LIBRARY_ALL=false;INV_SCOPE="all";invRenderInventory();
     const focus=Array.from(tagFilter.querySelectorAll("[data-inv-tag-filter]")).find(button=>button.dataset.invTagFilter===tag);
     if(focus)focus.focus();else tagFilter.querySelector("summary").focus();
   });
