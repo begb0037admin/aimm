@@ -6133,11 +6133,20 @@ function invLayoutTiles(host){
 const INV_PRODUCT_ACTIONS_KEY="aimm.pluginInventory.productActions.v1";
 let invProductMenu=null,invProductMenuTrigger=null;
 function invActionKey(vendor,name){return invNorm(vendor)+"|"+invNorm(name);}
+let INV_SYNTHETIC_PRODUCT_ACTIONS={};
 function invReadProductActions(){
-  if(INV_SYNTHETIC_PREVIEW)return {};
+  if(INV_SYNTHETIC_PREVIEW)return JSON.parse(JSON.stringify(INV_SYNTHETIC_PRODUCT_ACTIONS));
   try{const value=JSON.parse(localStorage.getItem(INV_PRODUCT_ACTIONS_KEY)||"{}");return value&&typeof value==="object"?value:{}}catch(_){return {}}
 }
-function invWriteProductActions(value){if(INV_SYNTHETIC_PREVIEW){invStatus("Product edits are disabled in the synthetic sample preview.");return false;}try{localStorage.setItem(INV_PRODUCT_ACTIONS_KEY,JSON.stringify(value));return true}catch(_){return false}}
+function invWriteProductActions(value,allowSyntheticHidden=false){
+  if(INV_SYNTHETIC_PREVIEW){
+    if(!allowSyntheticHidden){invStatus("Product edits are disabled in the synthetic sample preview.");return false;}
+    const next=value&&typeof value==="object"?value:{},keys=new Set([...Object.keys(INV_SYNTHETIC_PRODUCT_ACTIONS),...Object.keys(next)]);
+    for(const key of keys){const before=INV_SYNTHETIC_PRODUCT_ACTIONS[key]||{},after=next[key]||{},beforeOther={...before},afterOther={...after};delete beforeOther.hidden;delete afterOther.hidden;if(JSON.stringify(beforeOther)!==JSON.stringify(afterOther)){invStatus("Only temporary hide/show changes are enabled in the synthetic sample preview.");return false;}}
+    INV_SYNTHETIC_PRODUCT_ACTIONS=JSON.parse(JSON.stringify(next));return true;
+  }
+  try{localStorage.setItem(INV_PRODUCT_ACTIONS_KEY,JSON.stringify(value));return true}catch(_){return false}
+}
 function invGetProductActions(vendor,name){
   const all=invReadProductActions(),value=all[invActionKey(vendor,name)];
   return value&&typeof value==="object"?value:{};
@@ -6223,7 +6232,7 @@ function invOpenProductActionMenu(button){
     if(action==="category"){invCloseProductActionMenu();invOpenProductCategory(context.vendor,context.name,context.category||"");return;}
     if(action==="tags"){invCloseProductActionMenu();invOpenProductTags(context.vendor,context.name);return;}
     if(action==="hide"){
-      const trigger=invProductMenuTrigger,all=invReadProductActions(),current=all[key]||{};current.hidden=current.hidden!==true;all[key]=current;const saved=invWriteProductActions(all);invCloseProductActionMenu();if(!saved){if(trigger&&trigger.isConnected)trigger.focus();invStatus("Could not save the hidden setting for "+context.name+".","error");return;}INV_SCOPE=current.hidden?"hidden":"all";INV_CATEGORIES.clear();invRenderInventory();const focusTarget=document.querySelector(current.hidden?'[data-inv-scope="hidden"]':'[data-inv-scope="all"]');if(focusTarget)focusTarget.focus();invStatus(current.hidden?context.name+" is hidden from the main library.":context.name+" is visible in the main library.");return;
+      const trigger=invProductMenuTrigger,all=invReadProductActions(),current=all[key]||{};current.hidden=current.hidden!==true;all[key]=current;const saved=invWriteProductActions(all,true);invCloseProductActionMenu();if(!saved){if(trigger&&trigger.isConnected)trigger.focus();invStatus("Could not save the hidden setting for "+context.name+".","error");return;}INV_SCOPE=current.hidden?"hidden":"all";INV_CATEGORIES.clear();invRenderInventory();const focusTarget=document.querySelector(current.hidden?'[data-inv-scope="hidden"]':'[data-inv-scope="all"]');if(focusTarget)focusTarget.focus();invStatus(current.hidden?context.name+" is hidden from the main library.":context.name+" is visible in the main library.");return;
     }
     if(action==="copy"){
       const copy=async()=>{try{await navigator.clipboard.writeText(context.name);invStatus("Copied "+context.name+" to the clipboard.");}catch(_){invStatus("Clipboard access is unavailable in this browser.","error");}};
