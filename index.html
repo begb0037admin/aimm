@@ -6885,7 +6885,7 @@ function invInit(){
       if(combine){const fullySelected=formats.every(format=>INV_FORMATS.has(format));formats.forEach(format=>fullySelected?INV_FORMATS.delete(format):INV_FORMATS.add(format));}
       else if(select){INV_FORMATS.clear();formats.forEach(format=>INV_FORMATS.add(format));}
       else{formats.forEach(format=>INV_FORMATS.delete(format));}
-      queueMicrotask(invRenderInventory);
+      setTimeout(invRenderInventory,0);
     };
     vstFilter.addEventListener("click",event=>{
       const option=event.target.closest("label[data-inv-vst-format]");if(!option)return;
