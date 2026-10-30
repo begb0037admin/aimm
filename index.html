@@ -3139,6 +3139,11 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-side-button.active .inv-side-icon{color:#11131a}
     #library .inv-side-icon svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
     #library .inv-side-count{margin-left:auto;color:#8993a2;font: calc(var(--inv-text-scale, 1) * 11px) ui-monospace,Menlo,monospace}
+    #library .inv-side-button[data-inv-scope="updates"] .inv-side-count{color:#ee7777;font-weight:700}
+    #library .inv-side-button[data-inv-scope="up-to-date"] .inv-side-count{color:#42c995;font-weight:700}
+    #library .inv-side-button[data-inv-scope="manual-check"] .inv-side-count{color:#e8b45a;font-weight:700}
+    #library .inv-side-button[data-inv-scope="unchecked"] .inv-side-count{color:#a0a8b1;font-weight:700}
+    #library .inv-side-button.active[data-inv-scope="updates"] .inv-side-count,#library .inv-side-button.active[data-inv-scope="up-to-date"] .inv-side-count,#library .inv-side-button.active[data-inv-scope="manual-check"] .inv-side-count,#library .inv-side-button.active[data-inv-scope="unchecked"] .inv-side-count{display:inline-flex;align-items:center;justify-content:center;min-width:28px;min-height:22px;padding:1px 5px;border-radius:6px;background:rgba(9,11,15,.72);box-shadow:0 0 0 1px rgba(255,255,255,.08)}
     #library .inv-folder-summary{margin:18px 5px 0;padding:12px;border:1px solid #30353a;border-radius:9px;color:#9aa3ad;font-size:calc(var(--inv-text-scale, 1) * 11px);line-height:1.5}
     #library .inv-folder-summary strong{display:block;color:#dce2e8;font-size:calc(var(--inv-text-scale, 1) * 11px);letter-spacing:.06em;margin-bottom:4px}
     #library .inv-content{min-width:0;padding:22px 24px 32px;overflow:auto;container-type:inline-size}
