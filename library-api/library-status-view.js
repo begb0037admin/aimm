@@ -522,6 +522,16 @@
     #aimmLiveInstallManagerOverlay .aimm-live-im-summary .current{color:#42c995}
     #aimmLiveInstallManagerOverlay .aimm-live-im-summary .manual{color:#e8b45a}
     #aimmLiveInstallManagerOverlay .aimm-live-im-message{padding:10px 20px;color:#ef999e}
+
+    #aimmLiveInstallManagerOverlay .aimm-live-im-filter{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid #343b45;background:#171b20}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-filter label{font-size:10px;font-weight:700;letter-spacing:.12em;color:#8f9aa7}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-filter select{min-height:34px;max-width:220px;padding:6px 10px;border:1px solid #414a55;border-radius:7px;background:#22272e;color:#e8edf2;font:inherit}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-filter>strong{margin-left:auto;font-size:12px;color:#dce3ea}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-filter>strong span{margin-left:5px;color:#95a1ad;font-weight:400}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-vendor>header>div{display:grid;gap:4px}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-queue [data-sim-receipts]{margin:0;padding-top:8px;border-top:1px solid #343b45;color:#42c995;font-size:12px;line-height:1.5}
+    @media(max-width:680px){#aimmLiveInstallManagerOverlay .aimm-live-im-filter{padding:12px 14px}#aimmLiveInstallManagerOverlay .aimm-live-im-filter>strong{width:100%;margin:0}}
+
     #aimmLiveInstallManagerOverlay .aimm-live-im-body{display:grid;grid-template-columns:minmax(0,1fr) 330px;min-height:0}
     #aimmLiveInstallManagerOverlay .aimm-live-im-list{overflow:auto;display:grid;align-content:start;gap:12px;padding:18px 20px}
     #aimmLiveInstallManagerOverlay .aimm-live-im-vendor{border:1px solid #333c46;border-radius:11px;background:#1e2329;overflow:hidden}
@@ -552,6 +562,88 @@
   `;
   document.head.append(liveManagerStyle);
 
+
+  const syntheticManager = { overlay:null, queue:new Set(), receipts:new Map(), vendor:"All vendors", restoreFocus:null, message:"" };
+  const syntheticManagerRows = [
+    {id:"tapeform-clap",vendor:"Copperline Sample DSP",name:"Tapeform",format:"CLAP",installed:"3.1.0",available:"3.2.0"},
+    {id:"comet-vst3",vendor:"Northstar Sample Audio",name:"Comet Dynamics",format:"VST3",installed:"2.0.1",available:"2.0.2"},
+    {id:"halo-au",vendor:"Northstar Sample Audio",name:"Halo Equalizer",format:"AU",installed:"1.4.2",available:"1.5.0"}
+  ];
+  function closeSyntheticManager(){
+    if(!syntheticManager.overlay)return;
+    syntheticManager.overlay.removeEventListener("click",syntheticManagerClick);
+    syntheticManager.overlay.removeEventListener("keydown",syntheticManagerKey);
+    syntheticManager.overlay.remove();
+    syntheticManager.overlay=null;
+    syntheticManager.queue.clear();
+    syntheticManager.receipts.clear();
+    syntheticManager.message="";
+    if(syntheticManager.restoreFocus?.isConnected)syntheticManager.restoreFocus.focus();
+  }
+  function renderSyntheticManager(){
+    const overlay=syntheticManager.overlay;if(!overlay)return;
+    const vendors=["All vendors",...new Set(syntheticManagerRows.map((row)=>row.vendor))];
+    const rows=syntheticManagerRows.filter((row)=>syntheticManager.vendor==="All vendors"||row.vendor===syntheticManager.vendor);
+    const groups=Array.from(new Set(rows.map((row)=>row.vendor))).map((vendor)=>{
+      const items=rows.filter((row)=>row.vendor===vendor);
+      return '<section class="aimm-live-im-vendor"><header><div><strong>'+esc(vendor)+'</strong><span>'+items.length+' updates</span></div><button type="button" data-sim-queue-vendor="'+esc(vendor)+'">Queue all '+items.length+'</button></header>'+
+        items.map((row)=>'<article class="aimm-live-im-row"><div class="aimm-live-im-product"><strong>'+esc(row.name)+'</strong><span>Sample update · no local plug-in is read</span></div><div class="aimm-live-im-format"><small>Format</small><strong>'+esc(row.format)+'</strong></div><div class="aimm-live-im-version"><small>Installed → available</small><strong><span>v'+esc(row.installed)+'</span><b>→ v'+esc(row.available)+'</b></strong></div><div class="aimm-live-im-actions"><button type="button" data-sim-queue="'+row.id+'"'+(syntheticManager.queue.has(row.id)?' disabled':'')+'>'+ (syntheticManager.queue.has(row.id)?"Queued":"Queue") +'</button><button type="button" class="primary" data-sim-download="'+row.id+'">Simulate download</button><small role="status">'+esc(syntheticManager.receipts.get(row.id)||"Preview only — no file downloaded.")+'</small></div></article>').join("")+'</section>';
+    }).join("");
+    const queued=Array.from(syntheticManager.queue).map((id)=>syntheticManagerRows.find((row)=>row.id===id)).filter(Boolean);
+    const receipts=Array.from(syntheticManager.receipts.values());
+    overlay.innerHTML='<section class="aimm-live-im-shell" role="dialog" aria-modal="true" aria-labelledby="aimmSimInstallTitle"><header class="aimm-live-im-head"><div><h2 id="aimmSimInstallTitle">Install Manager</h2><p>Interactive sample · '+syntheticManagerRows.length+' update records</p></div><div class="aimm-live-im-tools"><button type="button" data-sim-folder>Download folder</button><button type="button" data-sim-clear'+(!receipts.length?' disabled':'')+'>Clear installed &amp; failed</button><button type="button" data-sim-reset>Start over</button><button type="button" class="primary" data-sim-done>Done</button></div></header>'+
+      '<div class="aimm-live-im-notice"><strong>Sample manager preview — actions below only change this temporary on-screen queue.</strong><span>No installer is downloaded, opened, or installed. Real downloads require an approved release digest and a verified local Companion receipt.</span></div>'+
+      '<div class="aimm-live-im-summary"><div><small>Updates</small><strong class="updates">3</strong></div><div><small>Vendors</small><strong>'+new Set(syntheticManagerRows.map((row)=>row.vendor)).size+'</strong></div><div><small>Queued</small><strong>'+syntheticManager.queue.size+'</strong></div><div><small>Preview results</small><strong>'+receipts.length+'</strong></div></div>'+
+      (syntheticManager.message?'<p class="aimm-live-im-message" role="status">'+esc(syntheticManager.message)+'</p>':'')+
+      '<div class="aimm-live-im-filter"><label for="aimmSimVendorFilter">VENDORS</label><select id="aimmSimVendorFilter" data-sim-vendor>'+vendors.map((vendor)=>'<option'+(vendor===syntheticManager.vendor?' selected':'')+'>'+esc(vendor)+'</option>').join("")+'</select><strong>All vendors <span>'+syntheticManagerRows.length+' updates</span></strong><button type="button" data-sim-queue-all>+ Queue all ('+syntheticManagerRows.length+')</button><button type="button" class="primary" data-sim-download-queued'+(!queued.length?' disabled':'')+'>Simulate queued ('+queued.length+')</button></div>'+
+      '<div class="aimm-live-im-body"><main class="aimm-live-im-list">'+(groups||'<div class="aimm-live-im-empty">No update records for this vendor.</div>')+'</main><aside class="aimm-live-im-queue"><h3>BATCH PREVIEW <span>'+queued.length+'</span></h3>'+
+      (queued.length?'<ol>'+queued.map((row)=>'<li>'+esc(row.name)+' · '+esc(row.vendor)+'<button type="button" data-sim-remove="'+row.id+'" aria-label="Remove '+esc(row.name)+' from queue">×</button></li>').join("")+'</ol><button type="button" class="primary" data-sim-download-queued>Simulate queued ('+queued.length+')</button>':'<p>No sample updates are queued.</p>')+
+      '<small>Queue controls work in this preview. “Simulate” records a temporary demonstration result only; it never reports a real download or installation.</small><p data-sim-receipts>'+ (receipts.length?receipts.map(esc).join("<br>"):"No preview actions completed.")+'</p></aside></div></section>';
+  }
+  function syntheticManagerClick(event){
+    if(event.target===syntheticManager.overlay){closeSyntheticManager();return;}
+    const target=event.target.closest("button");if(!target)return;
+    if(target.hasAttribute("data-sim-done")){closeSyntheticManager();return;}
+    if(target.hasAttribute("data-sim-folder")){syntheticManager.message="This browser preview cannot choose or access a local download folder. No folder was opened.";renderSyntheticManager();return;}
+    if(target.hasAttribute("data-sim-vendor")){syntheticManager.vendor=target.value;syntheticManager.message="Showing "+target.value+".";renderSyntheticManager();return;}
+    if(target.hasAttribute("data-sim-queue")){syntheticManager.queue.add(target.dataset.simQueue);syntheticManager.message="Added one sample update to the queue.";renderSyntheticManager();return;}
+    if(target.hasAttribute("data-sim-queue-vendor")){syntheticManagerRows.filter((row)=>row.vendor===target.dataset.simQueueVendor).forEach((row)=>syntheticManager.queue.add(row.id));syntheticManager.message="Queued all sample updates for "+target.dataset.simQueueVendor+".";renderSyntheticManager();return;}
+    if(target.hasAttribute("data-sim-queue-all")){syntheticManagerRows.forEach((row)=>syntheticManager.queue.add(row.id));syntheticManager.message="Queued all 3 sample updates.";renderSyntheticManager();return;}
+    if(target.hasAttribute("data-sim-remove")){syntheticManager.queue.delete(target.dataset.simRemove);syntheticManager.message="Removed one sample update from the queue.";renderSyntheticManager();return;}
+    if(target.hasAttribute("data-sim-download")||target.hasAttribute("data-sim-download-queued")){
+      const ids=target.hasAttribute("data-sim-download")?[target.dataset.simDownload]:Array.from(syntheticManager.queue);
+      if(!ids.length){syntheticManager.message="Queue a sample update first.";renderSyntheticManager();return;}
+      ids.forEach((id)=>syntheticManager.receipts.set(id,"Simulated preview only — no file downloaded or installed."));
+      ids.forEach((id)=>syntheticManager.queue.delete(id));
+      syntheticManager.message=ids.length+" sample result"+(ids.length===1?"":"s")+" shown. No files were downloaded.";
+      renderSyntheticManager();return;
+    }
+    if(target.hasAttribute("data-sim-clear")){syntheticManager.receipts.clear();syntheticManager.message="Cleared temporary preview results.";renderSyntheticManager();return;}
+    if(target.hasAttribute("data-sim-reset")){syntheticManager.queue.clear();syntheticManager.receipts.clear();syntheticManager.vendor="All vendors";syntheticManager.message="Preview queue and results reset.";renderSyntheticManager();}
+  }
+  function syntheticManagerKey(event){if(event.key==="Escape"){event.preventDefault();closeSyntheticManager();}}
+  function openSyntheticManager(){
+    if(syntheticManager.overlay)return;
+    syntheticManager.restoreFocus=document.activeElement;
+    syntheticManager.overlay=document.createElement("div");
+    syntheticManager.overlay.id="aimmLiveInstallManagerOverlay";
+    syntheticManager.overlay.addEventListener("click",syntheticManagerClick);
+    syntheticManager.overlay.addEventListener("change",syntheticManagerClick);
+    syntheticManager.overlay.addEventListener("keydown",syntheticManagerKey);
+    document.body.append(syntheticManager.overlay);
+    renderSyntheticManager();syntheticManager.overlay.querySelector("[data-sim-done]")?.focus();
+  }
+  function bindSyntheticInstallManager(){
+    if(!synthetic())return;
+    const button=document.querySelector("[data-inv-install-manager]");if(!button)return;
+    button.disabled=false;button.removeAttribute("aria-disabled");
+    button.title="Open the interactive Install Manager sample. Queue actions are temporary; no files are downloaded.";
+    button.setAttribute("aria-label","Install Manager — interactive sample queue, no files downloaded");
+    if(button.__aimmSyntheticInstallManager)return;
+    button.__aimmSyntheticInstallManager=true;
+    button.addEventListener("click",(event)=>{event.preventDefault();event.stopImmediatePropagation();openSyntheticManager();},true);
+  }
+  function bindInstallManager(){if(synthetic())bindSyntheticInstallManager();else bindLiveInstallManager();}
   let libraryInstallObserver = null;
   let liveManagerObserver = null;
   let pluginHubLicenseObserver = null;
@@ -648,7 +740,7 @@
       button.insertAdjacentElement("afterend",note);
     }
     pruneOutOfScopeTools();
-    bindLiveInstallManager();
+    bindInstallManager();
     bindPluginHubLicenseTool();
     if (!pluginHubLicenseObserver && document.getElementById("invSidebar")) {
       pluginHubLicenseObserver = new MutationObserver(() => { pruneOutOfScopeTools(); bindPluginHubLicenseTool(); });
@@ -656,7 +748,7 @@
     }
     if (!liveManagerObserver && document.body) {
       liveManagerObserver = new MutationObserver(() => {
-        if (document.querySelector("[data-inv-install-manager]")) bindLiveInstallManager();
+        if (document.querySelector("[data-inv-install-manager]")) bindInstallManager();
       });
       liveManagerObserver.observe(document.body,{childList:true,subtree:true});
     }
@@ -704,13 +796,13 @@
   else safeBootLibraryBridge();
   document.body?.addEventListener("click",(event) => {
     const trigger = event.target.closest("button");
-    if (trigger && trigger.textContent.trim() === "Library") setTimeout(() => { install(); bindLiveInstallManager(); },0);
+    if (trigger && trigger.textContent.trim() === "Library") setTimeout(() => { install(); bindInstallManager(); },0);
   },true);
   if (new URLSearchParams(window.location.search).get("pluginhub-preview") !== "synthetic") {
     let attempts = 0;
     const bindTimer = setInterval(() => {
       attempts += 1;
-      bindLiveInstallManager();
+      bindInstallManager();
       const button = document.querySelector("[data-inv-install-manager]");
       if ((document.readyState === "complete" && button?.__aimmLiveInstallManager) || attempts >= 60) clearInterval(bindTimer);
     },250);
