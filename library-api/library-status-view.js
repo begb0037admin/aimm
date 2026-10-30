@@ -38,6 +38,7 @@
   let loading = false;
   let message = "";
   let originalRender = null;
+  let savedStatContent = null;
   const esc = (value) => String(value ?? "").replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const norm = (value) => String(value ?? "").normalize("NFKC").trim().replace(/\s+/g, " ").toLowerCase();
   const synthetic = () => typeof INV_SYNTHETIC_PREVIEW !== "undefined" && INV_SYNTHETIC_PREVIEW;
@@ -107,15 +108,12 @@
     const stats = document.querySelectorAll("#library .inv-stats .inv-stat");
     if (stats.length < 3) return;
     if (!statusMode) {
-      stats[0].querySelector("span").textContent = "Installed products";
-      stats[0].querySelector("strong").textContent = document.getElementById("invProductCount")?.dataset.localValue || "—";
-      stats[0].querySelector("small").textContent = "grouped by name and publisher";
-      stats[1].querySelector("span").textContent = "Format bundles";
-      stats[1].querySelector("strong").textContent = document.getElementById("invBundleCount")?.dataset.localValue || "—";
-      stats[1].querySelector("small").textContent = "one plug-in may have several formats";
-      stats[2].querySelector("span").textContent = "Formats found";
-      stats[2].querySelector("strong").textContent = document.getElementById("invFormatCount")?.dataset.localValue || "—";
-      stats[2].querySelector("small").textContent = "AU · VST2 · VST3 · CLAP";
+      if (savedStatContent) stats.forEach((stat,index) => {
+        ["span","strong","small"].forEach((tag,part) => {
+          const node = stat.querySelector(tag);
+          if (node) node.textContent = savedStatContent[index][part];
+        });
+      });
       return;
     }
     const rows = snapshot?.records || [];
@@ -232,6 +230,8 @@
       if (button) button.hidden = true;
       if (note) note.textContent = "Synthetic sample · account status is not read";
     }
+    const statNodes = Array.from(document.querySelectorAll("#library .inv-stats .inv-stat"));
+    savedStatContent = statNodes.map((stat) => ["span","strong","small"].map((tag) => stat.querySelector(tag)?.textContent || ""));
     originalRender = window.invRenderInventory;
     if (typeof originalRender === "function") {
       window.invRenderInventory = function() {
