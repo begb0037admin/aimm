@@ -12,7 +12,7 @@ Reviewed source:
 
 ## Status projection findings
 
-The account API exposes authenticated GET /v1/status-summary (requires read:library). It reads each active device’s current inventory head and complete generation, then joins observations to that exact generation and opaque format-record ID. The response carries device/generation/record IDs; installed/latest versions; raw and freshness-bucket status; observed/checked/last-good timestamps; a two-hour freshness TTL; stale/error details; vendor route/source; paid-upgrade state; and local account marks. A failed refresh with a saved successful observation is surfaced as stale and keeps the last-good version. Counts are per format record, not per product.
+The account API exposes authenticated GET /v1/status-summary (requires read:library). It reads each active device’s current published inventory-head generation, then joins observations to that exact generation and opaque format-record ID. The response carries device/generation/record IDs; installed/latest versions; raw and freshness-bucket status; observed/checked/last-good timestamps; a two-hour freshness TTL; stale/error details; vendor route/source; paid-upgrade state; and local account marks. A failed refresh with a saved successful observation is surfaced as stale and keeps the last-good version. Counts are per format record, not per product.
 
 The visible Library source does not request this endpoint. Its INV_SCAN_ROWS and the current 3/4/3/4 status scopes come from the in-memory synthetic fixture; no generation or record-ID join is present. The counts and colored status cues are therefore useful presentation examples, not live account/vendor results.
 
