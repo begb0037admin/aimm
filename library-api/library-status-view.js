@@ -233,6 +233,195 @@
       refreshBridgeView();
     }
   }
+  const liveInstallState = { overlay:null, queue:new Set(), actions:new Map(), busy:false, restoreFocus:null };
+  function liveInstallRows() {
+    return (snapshot?.records || []).filter((row) => key(row) === "updates" && (INV_SHOW_HIDDEN || !row.hidden));
+  }
+  function liveInstallCounts() {
+    const counts = {updates:0,"up-to-date":0,"manual-check":0,unchecked:0,stale:0,error:0};
+    (snapshot?.records || []).forEach((row) => { if (INV_SHOW_HIDDEN || !row.hidden) counts[key(row)]++; });
+    return counts;
+  }
+  function liveInstallClose() {
+    if (!liveInstallState.overlay) return;
+    liveInstallState.overlay.removeEventListener("click",liveInstallClick);
+    liveInstallState.overlay.removeEventListener("keydown",liveInstallKey);
+    liveInstallState.overlay.remove();
+    liveInstallState.overlay = null;
+    liveInstallState.queue.clear();
+    liveInstallState.actions.clear();
+    if (liveInstallState.restoreFocus?.isConnected) liveInstallState.restoreFocus.focus();
+  }
+  function liveInstallRender(message = "") {
+    const overlay = liveInstallState.overlay;
+    if (!overlay) return;
+    const counts = liveInstallCounts();
+    const rows = liveInstallRows();
+    const vendors = Array.from(new Set(rows.map((row) => row.publisher_name || "Publisher not identified"))).sort();
+    const queueRows = Array.from(liveInstallState.queue).map((id) => rows.find((row) => [row.device_id,row.generation_id,row.record_id].join("|") === id)).filter(Boolean);
+    const grouped = vendors.map((vendor) => {
+      const items = rows.filter((row) => (row.publisher_name || "Publisher not identified") === vendor);
+      return '<section class="aimm-live-im-vendor"><header><strong>' + esc(vendor) + '</strong><span>' + items.length.toLocaleString() + ' update ' + (items.length === 1 ? 'record' : 'records') + '</span></header>' +
+        items.map((row) => {
+          const id = [row.device_id,row.generation_id,row.record_id].join("|");
+          const state = liveInstallState.actions.get(id);
+          const installed = row.installed_version ? "v" + row.installed_version : "Version unavailable";
+          const latest = row.latest_version ? "v" + row.latest_version : "Latest version unavailable";
+          const name = esc(row.name || "Unnamed plug-in");
+          const format = esc(row.format || "Unknown format");
+          const device = esc(row.device || "Unknown device");
+          const actionText = state ? esc(state.message) : "";
+          return '<article class="aimm-live-im-row"><div class="aimm-live-im-product"><strong>' + name + '</strong><span>' + device + '</span></div><div class="aimm-live-im-format"><small>Format</small><strong>' + format + '</strong></div><div class="aimm-live-im-version"><small>Installed → available</small><strong><span>' + esc(installed) + '</span> <b>→ ' + esc(latest) + '</b></strong>' + (row.paid_upgrade ? '<em>Paid upgrade</em>' : '') + '</div><div class="aimm-live-im-actions"><button type="button" data-live-im-queue="' + esc(id) + '"' + (liveInstallState.queue.has(id) ? ' disabled' : '') + '>Queue page</button><button type="button" class="primary" data-live-im-open="' + esc(id) + '"' + (liveInstallState.busy ? ' disabled' : '') + '>Open vendor page</button>' + (state?.operation_id ? '<button type="button" data-live-im-refresh="' + esc(id) + '">Refresh request</button>' : '') + (actionText ? '<small role="status">' + actionText + '</small>' : '') + '</div></article>';
+        }).join("") + '</section>';
+    }).join("");
+    const content = rows.length
+      ? grouped
+      : '<div class="aimm-live-im-empty"><strong>No fresh update records are available.</strong><p>' +
+          counts.stale.toLocaleString() + ' observations are stale and ' + counts.unchecked.toLocaleString() +
+          ' are unchecked. Zero updates does not mean everything is current. Review those scopes for the next status check.</p></div>';
+    overlay.innerHTML = '<section class="aimm-live-im-shell" role="dialog" aria-modal="true" aria-labelledby="aimmLiveIMTitle"><header class="aimm-live-im-head"><div><h2 id="aimmLiveIMTitle">Install Manager</h2><p>' +
+      (snapshot ? rows.length.toLocaleString() + ' fresh update records · account snapshot' : 'Account status is not loaded') +
+      '</p></div><div class="aimm-live-im-tools"><button type="button" data-live-im-queue-all' + (!rows.length ? ' disabled' : '') + '>Queue all</button><button type="button" data-live-im-clear' + (!queueRows.length ? ' disabled' : '') + '>Clear queue</button><button type="button" class="primary" data-live-im-done>Done</button></div></header>' +
+      '<div class="aimm-live-im-notice"><strong>Vendor pages open through your paired Companion and wait for its local confirmation.</strong><span>Download and install actions are not connected. No file is downloaded or opened by this manager.</span></div>' +
+      '<div class="aimm-live-im-summary"><div><small>Updates</small><strong class="updates">' + counts.updates.toLocaleString() + '</strong></div><div><small>Up to date</small><strong class="current">' + counts["up-to-date"].toLocaleString() + '</strong></div><div><small>Manual check</small><strong class="manual">' + counts["manual-check"].toLocaleString() + '</strong></div><div><small>Stale / unchecked</small><strong>' + counts.stale.toLocaleString() + ' / ' + counts.unchecked.toLocaleString() + '</strong></div></div>' +
+      (message ? '<p class="aimm-live-im-message" role="status">' + esc(message) + '</p>' : '') +
+      '<div class="aimm-live-im-body"><main class="aimm-live-im-list">' + content + '</main><aside class="aimm-live-im-queue"><h3>VENDOR PAGE QUEUE <span>' + queueRows.length.toLocaleString() + '</span></h3>' +
+      (queueRows.length ? '<ol>' + queueRows.map((row) => '<li>' + esc(row.name || "Unnamed plug-in") + ' · ' + esc(row.publisher_name || "Publisher not identified") + '<button type="button" data-live-im-remove="' + esc([row.device_id,row.generation_id,row.record_id].join("|")) + '" aria-label="Remove from queue">×</button></li>').join("") + '</ol><button type="button" class="primary" data-live-im-next' + (liveInstallState.busy ? ' disabled' : '') + '>Request next vendor page</button>' : '<p>No vendor pages are queued.</p>') +
+      '<small>Requests are sent one at a time. The paired Companion must be online to receive a request; it shows a local confirmation before opening the vendor page.</small></aside></div></section>';
+  }
+  function liveInstallClick(event) {
+    if (event.target === liveInstallState.overlay) { liveInstallClose(); return; }
+    const target = event.target.closest("button");
+    if (!target) return;
+    if (target.hasAttribute("data-live-im-done")) { liveInstallClose(); return; }
+    if (target.hasAttribute("data-live-im-clear")) { liveInstallState.queue.clear(); liveInstallRender(); return; }
+    if (target.hasAttribute("data-live-im-queue-all")) {
+      liveInstallRows().forEach((row) => liveInstallState.queue.add([row.device_id,row.generation_id,row.record_id].join("|")));
+      liveInstallRender(); return;
+    }
+    if (target.hasAttribute("data-live-im-remove")) { liveInstallState.queue.delete(target.dataset.liveImRemove); liveInstallRender(); return; }
+    const id = target.dataset.liveImQueue || target.dataset.liveImOpen || target.dataset.liveImRefresh;
+    if (target.hasAttribute("data-live-im-queue")) { liveInstallState.queue.add(id); liveInstallRender(); return; }
+    if (target.hasAttribute("data-live-im-open") || target.hasAttribute("data-live-im-next")) {
+      const selected = target.hasAttribute("data-live-im-next") ? Array.from(liveInstallState.queue)[0] : id;
+      const row = liveInstallRows().find((item) => [item.device_id,item.generation_id,item.record_id].join("|") === selected);
+      if (row) void liveInstallRequest(row,selected);
+      return;
+    }
+    if (target.hasAttribute("data-live-im-refresh")) {
+      const saved = liveInstallState.actions.get(id);
+      if (saved?.operation_id) void liveInstallRefresh(id,saved.operation_id);
+    }
+  }
+  async function liveInstallRequest(row,id) {
+    if (liveInstallState.busy) return;
+    liveInstallState.busy = true;
+    liveInstallState.actions.set(id,{message:"Requesting vendor page…"});
+    liveInstallRender();
+    try {
+      if (typeof window.aimmRequestAccountVendorPage !== "function") throw new Error("The account action bridge is unavailable. Reload AIMM and sign in.");
+      const result = await window.aimmRequestAccountVendorPage({device_id:row.device_id,record_id:row.record_id});
+      liveInstallState.queue.delete(id);
+      liveInstallState.actions.set(id,{operation_id:result.operation_id,state:result.state,message:"Request " + (result.state || "queued") + ". The paired Companion must receive it and ask for local confirmation."});
+    } catch (error) {
+      liveInstallState.actions.set(id,{message:error?.message || "The vendor-page request failed."});
+    } finally { liveInstallState.busy = false; liveInstallRender(); }
+  }
+  async function liveInstallRefresh(id,operationID) {
+    if (liveInstallState.busy) return;
+    liveInstallState.busy = true;
+    liveInstallState.actions.set(id,{operation_id:operationID,message:"Refreshing request…"});
+    liveInstallRender();
+    try {
+      if (typeof window.aimmReadAccountPluginAction !== "function") throw new Error("The account action bridge is unavailable.");
+      const result = await window.aimmReadAccountPluginAction({operation_id:operationID});
+      const action = result.action || result;
+      liveInstallState.actions.set(id,{operation_id:operationID,state:action.state,message:"Request " + (action.state || "status unavailable") + (action.receipt?.message ? " · " + action.receipt.message : "")});
+    } catch (error) {
+      liveInstallState.actions.set(id,{operation_id:operationID,message:error?.message || "Could not refresh the request."});
+    } finally { liveInstallState.busy = false; liveInstallRender(); }
+  }
+  function liveInstallKey(event) { if (event.key === "Escape") { event.preventDefault(); liveInstallClose(); } }
+  async function openLiveInstallManager() {
+    if (liveInstallState.overlay) return;
+    if (!snapshot) await loadStatus();
+    liveInstallState.restoreFocus = document.activeElement;
+    liveInstallState.overlay = document.createElement("div");
+    liveInstallState.overlay.id = "aimmLiveInstallManagerOverlay";
+    liveInstallState.overlay.addEventListener("click",liveInstallClick);
+    liveInstallState.overlay.addEventListener("keydown",liveInstallKey);
+    document.body.append(liveInstallState.overlay);
+    liveInstallRender(message || "");
+    liveInstallState.overlay.querySelector("[data-live-im-done]")?.focus();
+  }
+  function bindLiveInstallManager() {
+    if (synthetic()) return;
+    const button = document.querySelector("[data-inv-install-manager]");
+    if (!button || button.__aimmLiveInstallManager) return;
+    button.disabled = false;
+    button.title = "Open the account-backed Install Manager. Fresh updates are shown; vendor pages require local Companion confirmation.";
+    button.setAttribute("aria-label","Install Manager — account-backed update records and vendor page requests");
+    button.__aimmLiveInstallManager = true;
+    button.addEventListener("click",(event) => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      void openLiveInstallManager();
+    },true);
+  }
+  const liveManagerStyle = document.createElement("style");
+  liveManagerStyle.id = "aimm-live-install-manager-styles";
+  liveManagerStyle.textContent = `
+    #aimmLiveInstallManagerOverlay{position:fixed;inset:0;z-index:20004;display:grid;place-items:center;padding:20px;background:rgba(5,7,11,.84)}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-shell{display:grid;grid-template-rows:auto auto auto auto minmax(0,1fr);width:min(1420px,96vw);height:min(900px,92vh);overflow:hidden;border:1px solid #38404a;border-radius:14px;background:#191d22;color:#e8edf2;box-shadow:0 20px 70px rgba(0,0,0,.6)}
+    #aimmLiveInstallManagerOverlay h2,#aimmLiveInstallManagerOverlay h3,#aimmLiveInstallManagerOverlay p{margin:0}
+    #aimmLiveInstallManagerOverlay button{min-height:34px;padding:7px 11px;border:1px solid #414a55;border-radius:7px;background:#252a31;color:#dfe6ed;cursor:pointer;font:inherit;font-size:12px}
+    #aimmLiveInstallManagerOverlay button:hover:not(:disabled){border-color:#5aa4d5;background:#253342}
+    #aimmLiveInstallManagerOverlay button:disabled{opacity:.5;cursor:not-allowed}
+    #aimmLiveInstallManagerOverlay button.primary{border-color:#3187bd;background:#143b53;color:#eaf7ff}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-head{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:18px 20px;border-bottom:1px solid #343b45}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-head h2{font-size:20px}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-head p{margin-top:5px;color:#96a1ad;font-size:13px}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-tools{display:flex;gap:8px;flex-wrap:wrap}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-notice{display:grid;gap:5px;padding:14px 20px;border-bottom:1px solid #344454;background:#17232e;color:#d5e3ef;font-size:13px;line-height:1.45}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-notice span{color:#a9b7c5}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:16px 20px;border-bottom:1px solid #343b45}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-summary>div{display:grid;gap:6px;min-width:0;padding:14px 16px;border:1px solid #333b44;border-radius:10px;background:#1f242a}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-summary small{color:#98a3af;font-size:11px;letter-spacing:.03em}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-summary strong{font-size:22px;color:#aeb7c2}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-summary .updates{color:#ee7777}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-summary .current{color:#42c995}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-summary .manual{color:#e8b45a}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-message{padding:10px 20px;color:#ef999e}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-body{display:grid;grid-template-columns:minmax(0,1fr) 330px;min-height:0}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-list{overflow:auto;display:grid;align-content:start;gap:12px;padding:18px 20px}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-vendor{border:1px solid #333c46;border-radius:11px;background:#1e2329;overflow:hidden}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-vendor>header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid #323a44}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-vendor>header strong{font-size:15px}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-vendor>header span{color:#95a1ad;font-size:12px}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-row{display:grid;grid-template-columns:minmax(180px,1.3fr) minmax(110px,.55fr) minmax(190px,1fr) minmax(190px,1.1fr);gap:16px;align-items:center;padding:16px 18px;border-bottom:1px solid #323a44}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-row:last-child{border-bottom:0}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-product,#aimmLiveInstallManagerOverlay .aimm-live-im-format,#aimmLiveInstallManagerOverlay .aimm-live-im-version,#aimmLiveInstallManagerOverlay .aimm-live-im-actions{display:grid;gap:6px;min-width:0}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-product strong{font-size:15px;line-height:1.35;overflow-wrap:anywhere}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-product span,#aimmLiveInstallManagerOverlay .aimm-live-im-format small,#aimmLiveInstallManagerOverlay .aimm-live-im-version small,#aimmLiveInstallManagerOverlay .aimm-live-im-actions small{color:#96a1ad;font-size:12px;line-height:1.4;overflow-wrap:anywhere}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-format strong{font-size:13px}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-version strong{display:flex;flex-wrap:wrap;gap:5px;font:13px ui-monospace,SFMono-Regular,Menlo,monospace}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-version b{color:#f0787e}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-version em{color:#e8b45a;font-size:11px;font-style:normal}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-actions{grid-template-columns:1fr 1fr;gap:7px}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-actions small{grid-column:1/-1}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-queue{display:flex;flex-direction:column;gap:12px;min-width:0;padding:18px;border-left:1px solid #343b45;background:#15191e;overflow:auto}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-queue h3{display:flex;justify-content:space-between;font-size:12px;letter-spacing:.08em}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-queue ol{margin:0;padding-left:22px;color:#aeb8c2}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-queue li{padding:7px 0;line-height:1.45}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-queue li button{float:right;min-height:24px;padding:1px 7px}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-queue>small,#aimmLiveInstallManagerOverlay .aimm-live-im-queue>p{color:#9aa4af;font-size:12px;line-height:1.5}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-empty{display:grid;gap:8px;align-content:start;padding:22px;border:1px dashed #3a444f;border-radius:10px;color:#d6dde5}
+    #aimmLiveInstallManagerOverlay .aimm-live-im-empty p{color:#a4afba;font-size:13px;line-height:1.55}
+    @media(max-width:900px){#aimmLiveInstallManagerOverlay .aimm-live-im-summary{grid-template-columns:repeat(2,minmax(0,1fr))}#aimmLiveInstallManagerOverlay .aimm-live-im-row{grid-template-columns:minmax(0,1fr) minmax(110px,.6fr);gap:12px}}
+    @media(max-width:620px){#aimmLiveInstallManagerOverlay{padding:8px}#aimmLiveInstallManagerOverlay .aimm-live-im-shell{width:100%;height:96vh;grid-template-rows:auto auto auto auto minmax(0,1fr)}#aimmLiveInstallManagerOverlay .aimm-live-im-head{align-items:flex-start;flex-direction:column;padding:14px}#aimmLiveInstallManagerOverlay .aimm-live-im-notice{padding:12px 14px}#aimmLiveInstallManagerOverlay .aimm-live-im-summary{padding:12px 14px;gap:8px}#aimmLiveInstallManagerOverlay .aimm-live-im-body{grid-template-columns:minmax(0,1fr)}#aimmLiveInstallManagerOverlay .aimm-live-im-queue{border-left:0;border-top:1px solid #343b45}#aimmLiveInstallManagerOverlay .aimm-live-im-row{grid-template-columns:minmax(0,1fr);gap:10px;padding:14px}}
+  `;
+  document.head.append(liveManagerStyle);
+
   function install() {
     const nav = document.querySelector('#library nav[aria-label="Inventory status"]');
     const unchecked = nav?.querySelector('[data-inv-scope="unchecked"]');
@@ -270,6 +459,7 @@
       scan.insertAdjacentElement("afterend",button);
       button.insertAdjacentElement("afterend",note);
     }
+    bindLiveInstallManager();
     if (synthetic()) {
       const button = document.getElementById("invLoadAccountStatusBtn");
       const note = document.getElementById("invAccountStatusNotice");
