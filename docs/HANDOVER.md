@@ -1,4 +1,14 @@
-## Latest continuation — PluginHub All Plugins entry — 2026-10-30
+## Latest continuation — PluginHub Unchecked status scope — 2026-10-30
+
+Branch parent `f405c7c2f61c328364107015a3b3a9c87bd02634` was verified before preparing this update. Library source candidate `index.html` blob `1352c7cf7c88004915f9d1989352ace679c36f4f` adds an enabled Unchecked status scope. It counts visible, non-hidden installed product groups because no vendor status projection is connected to this Library. Updates available, Up to date and Manual check stay disabled; the labels do not imply a vendor check. Jules passed source review. Development Pages visual review is pending.
+
+The manual/source contract report is [PluginHub tool and browse matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob `382126621ac24be9e8498f0ad3784f1795990a1f`. The prior Library > All Plugins change remains in the branch and uses the existing List row mode.
+
+Synchronized pins for this record update: `index.html` blob `1352c7cf7c88004915f9d1989352ace679c36f4f`; Dashboard `DASHBOARD.html` blob `720b65ba8bf4191d294a1c04989f9497b5763bbf`; Status `docs/STATUS.md` blob `854a0232925ce7185cabeb49f50134c46abd86d1`; Roadmap `docs/ROADMAP.md` blob `3637dc8deb82aa35ff54f7d05ccaf7d5c05c6a6c`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `bd9a7df6a604bd0a7bc3114083d24a45f7665e2d`; VST/tool-sweep evidence `governance/evidence/PHASE_PLUGINHUB_VST_AND_TOOL_SWEEP_20261030.md` blob `a6f2f215740fba127c43fa863e9a7b91aea14abe`; tool/browse matrix `governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md` blob `382126621ac24be9e8498f0ad3784f1795990a1f`. This root handover does not self-pin.
+
+No folder scan/upload, automated tests, Worker or production deployment, file operation or share occurred. Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP fix remains a surgical patch, not a reproducible build from branch source. Synthetic non-production data only.
+
+## Historical PluginHub checkpoint — All Plugins navigation — 2026-10-30
 
 The branch was verified at `ebf9316968d4d7ec808d421c01d6ba96ee027c42` before this record update. Library source `index.html` blob `de438302c8791668549298893b3c3579cdf60cdc` now exposes a separate Library > All Plugins entry using the existing List row mode; Cards remains the default and current filters persist. Jules passed the immutable development preview [deployment 20379065](https://20379065.aimm-pluginhub-foundation-dev.pages.dev/): the entry fits and reads cleanly, switches View to List, and has distinct active state from Status > All plugins. The preview had zero products and connected folders, so populated rows were not assessed. This navigation slice does not finish PluginHub’s status column or full flat-table semantics.
 
@@ -7,6 +17,8 @@ The manual/source contract report is [PluginHub tool and browse matrix](../gover
 Synchronized pins for this record update: `index.html` blob `de438302c8791668549298893b3c3579cdf60cdc`; Dashboard `DASHBOARD.html` blob `bb8cf1e79dcd9a3217766516502ddecb4900d0a3`; Status `docs/STATUS.md` blob `d621b7d17b4a95b0e51a8cad36042cdb4de4ac0d`; Roadmap `docs/ROADMAP.md` blob `cff5f85279820fcd612895eb5de1c3d243b2fab2`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `a408c1a0db36c9fdd844293fb7c53716124761e0`; VST/tool-sweep evidence `governance/evidence/PHASE_PLUGINHUB_VST_AND_TOOL_SWEEP_20261030.md` blob `a6f2f215740fba127c43fa863e9a7b91aea14abe`; tool/browse matrix `governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md` blob `422baf86e2353df931604fb8db9feb311eb2fd37`. This root handover does not self-pin.
 
 No folder scan/upload, tests, Worker deployment, production action, file operation or share occurred. Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP fix remains a surgical patch, not a reproducible build from branch source. Synthetic non-production data only.
+
+
 
 ## Historical PluginHub checkpoint — initial tool and browse contract map — 2026-10-30
 

@@ -1,18 +1,15 @@
-## Latest PluginHub parity checkpoint — All Plugins navigation — 2026-10-30
+## Latest PluginHub parity checkpoint — Unchecked status scope — 2026-10-30
 
-The new Library > All Plugins button opens the existing List row table and preserves filters; Cards remains the default. Jules passed the exact development preview at https://20379065.aimm-pluginhub-foundation-dev.pages.dev/ (source ebf9316968d4d7ec808d421c01d6ba96ee027c42, deployment 20379065-736f-4171-a291-3dfbb568192d). The empty preview had zero products/folders, so populated row layout and status remain unreviewed. AIMM’s status/share/profile API routes and local Companion duplicate review exist, but most whole-library tools are not connected to this Library page.
+The Library > All Plugins destination opens the existing List row table and preserves filters; Cards remains the default. An enabled Unchecked scope counts visible, non-hidden installed product groups because no vendor status result is connected to this Library. Updates available, Up to date and Manual check remain disabled. Jules passed source review for `index.html` blob 1352c7cf7c88004915f9d1989352ace679c36f4f; the development preview and visual review are pending. The earlier preview was empty, so populated rows remain unassessed. See [the tool and browse contract matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob 382126621ac24be9e8498f0ad3784f1795990a1f.
 
-See [the tool and browse contract matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob `422baf86e2353df931604fb8db9feb311eb2fd37`, for exact manual/source mapping and remaining status, flat-table and whole-library-tool gaps. This change did not scan inventory, run automated tests, deploy a Worker, install/remove files, share data, or touch production.
-
-Foundation remains **NOT MET**; Stage 6 remains gated pending fresh exit evidence and independent acceptance. The development Worker passkey RP fix remains a surgical patch, not a reproducible build from branch source. Synthetic non-production data only.
-
+No inventory scan/upload, automated tests, Worker or production deployment, file operation, or share occurred. Foundation remains **NOT MET**; Stage 6 remains gated pending fresh exit evidence and independent acceptance. The development Worker passkey RP fix remains a surgical patch, not a reproducible build from branch source. Synthetic non-production data only.
 ## Historical PluginHub checkpoint — VST filter and initial tool sweep — 2026-10-30
 
 Source/manual comparison against installed PluginHub 2.0.12 is recorded in [the tool and browse contract matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob `e41e74f84fcb146f8471b80ee6d628b58ff4f262`. Corrections: AIMM already has Cards/List/Ledger selectors and Vendor/Product/Format/Version sort controls, while PluginHub has different sort semantics and a separate flat All Plugins table; the local Companion already renders Duplicate Review; API status/share/profile routes exist but are not complete surfaces connected to this Library page. Whole-library Tools navigation remains absent. No plug-in folders were scanned. Current UI source remains `f550878fa1e29910c81881534d8c8b6a2bbb97ac`; its empty development preview is https://ce77fbf0.aimm-pluginhub-foundation-dev.pages.dev/. Jules passed the VST control’s source and visual review. No tests, Worker or production deployment, install, deletion, share or external action occurred.
 
 Foundation remains **NOT MET**. Stage 6 remains gated pending fresh exit evidence and independent acceptance. The development Worker passkey RP fix remains a surgical patch, not a reproducible branch-source build. See the root handover for synchronized record pins.
 
-## Latest PluginHub checkpoint — VST filter passed; tool sweep mapped — 2026-10-30
+## Historical PluginHub checkpoint — VST filter passed; tool sweep mapped — 2026-10-30
 
 Source commit `f550878fa1e29910c81881534d8c8b6a2bbb97ac`, `index.html` blob `b35f0fd495954eb4c5c28565394801ccbe747445`, is live on development Pages at [deployment ce77fbf0](https://ce77fbf0.aimm-pluginhub-foundation-dev.pages.dev/). Jules passed source and final visual review. VST cycling, replacement, Shift-click combination/removal, arrow navigation and Escape focus return were verified on the empty preview. Playwright’s computed role/name lookup found the named controls; the CUA snapshot omits them. This appears to be a snapshot-bridge limitation and is not evidence that a native screen reader omits the names. The preview was left on All formats with zero products and folders.
 
@@ -20,7 +17,7 @@ The installed manual sweep found PluginHub’s Batch Plugin Management, Install 
 
 No real inventory scan/upload, automated tests, Worker deployment or production action occurred. The development Worker passkey RP fix remains a surgical patch, not a reproducible branch-source build. Foundation remains **NOT MET**; Stage 6 remains gated; use synthetic non-production data only.
 
-## Latest PluginHub filter and visual checkpoint — 2026-10-29
+## Historical PluginHub filter and visual checkpoint — 2026-10-29
 
 Source `ad1e460dea5009dbf7e88eba6cd5c16d5941ba54` is active on the development Pages preview: [deployment 1a5f0a2b](https://1a5f0a2b.aimm-pluginhub-foundation-dev.pages.dev/). Jules passed source and visual review: the My Tags dropdown now shows one chevron, which points down while closed and flips up while open. The filter implementation and earlier combined-format verification are recorded in [filter parity evidence](../governance/evidence/PHASE_PLUGINHUB_FILTERS_20261029.md); browser-local tag editing is in [Tag Manager evidence](../governance/evidence/PHASE_PLUGINHUB_TAG_MANAGER_20261029.md).
 
