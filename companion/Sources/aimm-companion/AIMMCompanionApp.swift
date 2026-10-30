@@ -189,7 +189,7 @@ final class CompanionModel: ObservableObject {
                 })
                 do {
                     let count = try await apiClient.submitCheckObservations(failed, generationID: generation.id, credential: credential)
-                    manualCheckStatus = "FabFilter source unavailable; recorded an error for \\(count) supported item(s). Other vendor statuses were preserved."
+                    manualCheckStatus = "FabFilter source unavailable; recorded an error for \(count) supported item(s). Other vendor statuses were preserved."
                 } catch {
                     manualCheckStatus = "No status was saved. The previous observations remain. \(error.localizedDescription)"
                 }
@@ -206,7 +206,7 @@ final class CompanionModel: ObservableObject {
             })
             do {
                 let count = try await apiClient.submitCheckObservations(observations, generationID: generation.id, credential: credential)
-                manualCheckStatus = "Checked \\(count) supported FabFilter item(s); \\(records.count - count) other item(s) remain Manual Check. No files were changed."
+                manualCheckStatus = "Checked \(count) supported FabFilter item(s); \(records.count - count) other item(s) remain Manual Check. No files were changed."
             } catch {
                 manualCheckStatus = "Status was not saved. The previous observations remain. \(error.localizedDescription)"
             }
@@ -234,7 +234,7 @@ final class CompanionModel: ObservableObject {
                 })
                 do {
                     let count = try await apiClient.submitCheckObservations(failed, generationID: generation.id, credential: credential)
-                    manualCheckStatus = "Voxengo source unavailable; recorded an error for \\(count) supported item(s). Other vendor statuses were preserved."
+                    manualCheckStatus = "Voxengo source unavailable; recorded an error for \(count) supported item(s). Other vendor statuses were preserved."
                 } catch {
                     manualCheckStatus = "No status was saved. The previous observations remain. \(error.localizedDescription)"
                 }
@@ -251,7 +251,7 @@ final class CompanionModel: ObservableObject {
             })
             do {
                 let count = try await apiClient.submitCheckObservations(observations, generationID: generation.id, credential: credential)
-                manualCheckStatus = "Checked \\(count) supported Voxengo item(s); \\(records.count - count) other item(s) remain Manual Check. No files were changed."
+                manualCheckStatus = "Checked \(count) supported Voxengo item(s); \(records.count - count) other item(s) remain Manual Check. No files were changed."
             } catch {
                 manualCheckStatus = "Voxengo observations could not be saved. Previous status remains. \(error.localizedDescription)"
             }
@@ -279,7 +279,7 @@ final class CompanionModel: ObservableObject {
                 })
                 do {
                     let count = try await apiClient.submitCheckObservations(failed, generationID: generation.id, credential: credential)
-                    manualCheckStatus = "u-he source unavailable; recorded an error for \\(count) supported item(s). Other vendor statuses were preserved."
+                    manualCheckStatus = "u-he source unavailable; recorded an error for \(count) supported item(s). Other vendor statuses were preserved."
                 } catch {
                     manualCheckStatus = "No status was saved. The previous observations remain. \(error.localizedDescription)"
                 }
@@ -296,7 +296,7 @@ final class CompanionModel: ObservableObject {
             })
             do {
                 let count = try await apiClient.submitCheckObservations(observations, generationID: generation.id, credential: credential)
-                manualCheckStatus = "Checked \\(count) supported u-he item(s); \\(records.count - count) other item(s) remain Manual Check. No files were changed."
+                manualCheckStatus = "Checked \(count) supported u-he item(s); \(records.count - count) other item(s) remain Manual Check. No files were changed."
             } catch {
                 manualCheckStatus = "u-he observations could not be saved. Previous status remains. \(error.localizedDescription)"
             }
@@ -327,7 +327,7 @@ final class CompanionModel: ObservableObject {
             })
             do {
                 let count = try await apiClient.submitCheckObservations(observations, generationID: generation.id, credential: credential)
-                manualCheckStatus = "Checked \\(count) supported Valhalla DSP item(s); \\(records.count - count) other item(s) remain Manual Check. No files were changed."
+                manualCheckStatus = "Checked \(count) supported Valhalla DSP item(s); \(records.count - count) other item(s) remain Manual Check. No files were changed."
             } catch {
                 manualCheckStatus = "Valhalla DSP observations could not be saved. Previous status remains. \(error.localizedDescription)"
             }
