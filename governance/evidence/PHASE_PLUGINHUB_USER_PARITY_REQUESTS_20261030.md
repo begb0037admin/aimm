@@ -4,14 +4,26 @@
 
 This register records Kevin’s user-provided PluginHub 2.0.12 comparisons on 2026-10-30. The reference screenshots show UI structure and behavior. Do not copy vendor/plugin rows, counts, paths or update records into AIMM; use the opt-in synthetic fixture for UI work. Production and real-inventory actions remain outside this work.
 
+## Kevin’s visual acceptance checklist — ordered, open — 2026-10-30
+
+Work through these one at a time. “Room to breathe” is a standing acceptance requirement on every visual change: preserve clear gaps and padding, don’t squeeze names, versions, chips, counts, icons or controls, and wrap content when it cannot fit. Do not mark an item complete until the preview has been checked and Jules has reviewed the exact source and final visuals. Values and records in the preview remain synthetic.
+
+1. **Tile row (current item):** plug-in name and version share a readable row; format chips and status dots sit below. Show installed/current and available sample versions with status-appropriate color. Keep the full plug-in name visible at desktop and mobile widths.
+2. **Status counts:** color Updates red, Up to date green, Manual check amber, and Unchecked grey.
+3. **Sidebar count alignment:** align counts in Status, Library and Categories to one right-hand column.
+4. **Breathing room across the Library:** retain consistent spacing around rows, labels, chips, dots and controls; do not compress content to force one-line fit.
+5. **Status scope clarity:** each status view shows the matching items and version context; distinguish synthetic sample values from any future live observations.
+
+After those visual items, continue the broader open parity work already listed below: source-backed status integration, Install Manager and the remaining AIMM tools. Keep Foundation NOT MET and Stage 6 gated until all exit evidence is complete and fresh independent review accepts it.
+
 ## Completed visual items
 
 - **Publisher and plug-in names:** AIMM labels were smaller than PluginHub. Source commit `75655b4b2f327e3fff6d52c30f8512c34d1ffc9c` introduced the typography change, raising vendor names to 13px and plug-in names to 12px across Cards/List/Ledger. Jules passed desktop and 390px review; four columns remain balanced. See [typography evidence](PHASE_PLUGINHUB_VISUAL_PARITY_NAMES_20261030.md).
 - **Hidden visibility:** View now includes Show hidden plug-ins, with clear badges and a hidden-only scope. Jules passed synthetic hide/reveal and filter composition. See [Hidden View evidence](PHASE_PLUGINHUB_VIEW_HIDDEN_20261030.md).
 
-## Completed status UI preview work
+## Historical status UI preview work — version placement superseded
 
-- **Tile-level version emphasis and status guidance:** source commit [`762aeb81737a29b896a95097001c849b26d1911a`](https://github.com/begb0037admin/aimm/commit/762aeb81737a29b896a95097001c849b26d1911a) places each format’s installed → sample latest version below the tile name/actions row, highlights the sample latest version red, and keeps the colored status dots as a supplemental cue. Each scope explains what the sample means; the mobile banner stacks at ≤680px. Jules passed desktop 1920×1052, narrow 390×844 and all four desktop scopes on preview [`c0215f2e`](https://c0215f2e.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). This closes the synthetic presentation gap only; live account/vendor status remains open. See [status/version evidence](PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
+- **Earlier tile version placement (superseded):** source commit [`762aeb81737a29b896a95097001c849b26d1911a`](https://github.com/begb0037admin/aimm/commit/762aeb81737a29b896a95097001c849b26d1911a) put per-format installed → sample latest versions below the name/actions row. Jules passed that earlier desktop/mobile preview, but Kevin clarified that the reference puts the version beside the plug-in name, with format chips and status dots below. The scope explanations and red/green/amber/grey status semantics remain accepted; version placement and name fit are open under checklist item 1. See [status/version evidence](PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
 
 - **Synthetic status counts and per-format markers:** source commit [`1018be83b451b8db6429ba5bf3b869f223fed40b`](https://github.com/begb0037admin/aimm/commit/1018be83b451b8db6429ba5bf3b869f223fed40b) displays active synthetic counts of 3 Updates, 4 Up to date, 3 Manual check and 4 Unchecked across 14 format records. Status filters handle mixed-status products. Preview deployment [`1a442d22`](https://1a442d22.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) is available for visual review. These are synthetic values only; live account/vendor status is still unconnected. See [synthetic status display evidence](PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
 
