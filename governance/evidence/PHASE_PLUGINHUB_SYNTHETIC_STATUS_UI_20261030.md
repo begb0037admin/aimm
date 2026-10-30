@@ -45,3 +45,11 @@ Branch source commit [`87f7a23af6be9fd240d6f2ec2fc5413ba4b347a7`](https://github
 Jules passed source review and final visuals. Desktop shows the four correct count hues and a readable active count badge; synthetic counts remain 3/4/3/4. At 390px the sidebar collapses to an icon rail; the selected count remains visible and legible while inactive labels/counts are hidden. All other counts and status filters are unchanged. No real inventory, folder, account status API, or vendor checks were used.
 
 This completes visual acceptance checklist item 2. Item 3 (align Status, Library and Categories count columns) is next.
+
+## Latest sidebar count alignment — 2026-10-30
+
+Branch source commit [`3866a84ff28d474fc6fae87f1824910f57d766b5`](https://github.com/begb0037admin/aimm/commit/3866a84ff28d474fc6fae87f1824910f57d766b5), `index.html` blob `c1f76cd65ca18f7c0693b2303daeb64e7d568f2d`, is deployed to [development preview `972fa6fc`](https://972fa6fc.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), deployment `972fa6fc-6e90-4b81-808f-c98c062e29e4`. A fixed 34px right-aligned count column is shared by Status, Library and all 11 Categories. The category nav uses a constrained single grid track; labels shrink and ellipsize within the available width so the counts remain visible.
+
+Jules passed exact source and final visual review. At desktop, all Status, Library and Category counts are visible with aligned right edges at x=247px. Synthetic values: Status All 12, Updates 3, Up to date 4, Manual check 3, Unchecked 4; Library All 12, Favorites/My tags/Hidden 0; categories all 0 except Instruments & MIDI 2. Existing status colors and the selected dark count badge remain intact. At 390px the collapsed icon rail hides labels and inactive counts; the active count badge remains visible, and document/body scrollWidth both equal the 390px viewport. Full accessible category labels remain available despite visual ellipses. No real status, folder, inventory or vendor calls were made.
+
+This completes visual acceptance checklist item 3. Item 4 (the Library-wide breathing-room sweep) is next.

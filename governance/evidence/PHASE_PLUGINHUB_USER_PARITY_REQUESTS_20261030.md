@@ -4,14 +4,14 @@
 
 This register records Kevin’s user-provided PluginHub 2.0.12 comparisons on 2026-10-30. The reference screenshots show UI structure and behavior. Do not copy vendor/plugin rows, counts, paths or update records into AIMM; use the opt-in synthetic fixture for UI work. Production and real-inventory actions remain outside this work.
 
-## Kevin’s visual acceptance checklist — ordered, items 1–2 complete — 2026-10-30
+## Kevin’s visual acceptance checklist — ordered, items 1–3 complete — 2026-10-30
 
 Work through these one at a time. “Room to breathe” is a standing acceptance requirement on every visual change: preserve clear gaps and padding, don’t squeeze names, versions, chips, counts, icons or controls, and wrap content when it cannot fit. Do not mark an item complete until the preview has been checked and Jules has reviewed the exact source and final visuals. Values and records in the preview remain synthetic. Kevin wants a clear confirmation and preview link when each item is complete and ready to review; proceed to the next item after sending that confirmation.
 
 1. **Tile row — COMPLETE:** source commit `2ff28aa61f341c44f86cee69c6327024c5fc17cb`, preview deployment [`f9f142fe`](https://f9f142fe.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). All 12 names remain readable with per-format versions at 1920px and 390×844; chips/dots sit below, narrow versions wrap, and Jules passed both sizes plus all four synthetic scopes. See [evidence](PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
 2. **Status counts — COMPLETE:** source commit `87f7a23af6be9fd240d6f2ec2fc5413ba4b347a7`, preview deployment [`30958416`](https://30958416.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). Counts are red for Updates, green for Up to date, amber for Manual check, grey for Unchecked; selected count has a readable dark badge over the active gradient. Jules passed desktop and 390px visuals. Synthetic values 3/4/3/4. See [evidence](PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
-3. **Sidebar count alignment — CURRENT ITEM:** align counts in Status, Library and Categories to one right-hand column.
-4. **Breathing room across the Library:** retain consistent spacing around rows, labels, chips, dots and controls; do not compress content to force one-line fit.
+3. **Sidebar count alignment — COMPLETE:** source commit `3866a84ff28d474fc6fae87f1824910f57d766b5`, preview deployment [`972fa6fc`](https://972fa6fc.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). Status, Library and all 11 Category counts align in a visible right-hand column; long category labels stay within the sidebar. Jules passed desktop and 390px review. Synthetic values only. See [evidence](PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
+4. **Breathing room across the Library — CURRENT ITEM:** review row spacing, labels, chips, dots, counts and controls across the Library; preserve clear gaps and padding, and wrap or ellipsize only within the available width without squeezing controls or names.
 5. **Status scope clarity:** each status view shows the matching items and version context; distinguish synthetic sample values from any future live observations.
 
 After those visual items, continue the broader open parity work already listed below: source-backed status integration, Install Manager and the remaining AIMM tools. Keep Foundation NOT MET and Stage 6 gated until all exit evidence is complete and fresh independent review accepts it.
