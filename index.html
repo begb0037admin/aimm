@@ -3251,7 +3251,13 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(var(--inv-text-scale, 1) * 12px);font-weight:650;color:#edf1f4}
     #library .inv-version{margin-left:auto;flex:none;color:#8f99a5;font: calc(var(--inv-text-scale, 1) * 9px) ui-monospace,Menlo,monospace}
     #library .inv-meta{margin-top:3px;color:#87919b;font-size:calc(var(--inv-text-scale, 1) * 9px)}#library .inv-hidden-badge{display:inline-flex;align-items:center;margin-left:5px;padding:1px 5px;border:1px solid #8a6a35;border-radius:999px;color:#f2c879;font-size:calc(var(--inv-text-scale, 1) * 8px);line-height:1.35;vertical-align:middle}
-    #library .inv-formats{display:flex;gap:3px;flex-wrap:wrap;margin-top:5px}
+    #library .inv-formats{display:flex;gap:6px 9px;flex-wrap:wrap;margin-top:5px}
+    #library .inv-format-state{display:inline-flex;align-items:center;gap:5px}
+    #library .inv-format-status{display:inline-block;width:8px;height:8px;flex:0 0 8px;border-radius:2px;background:#68727d}
+    #library .inv-format-status.updates{background:#ee7777}
+    #library .inv-format-status.up-to-date{background:#42c995}
+    #library .inv-format-status.manual-check{background:#e8b45a}
+    #library .inv-format-status.unchecked{background:#77818b}
     #library .inv-chip{font: calc(var(--inv-text-scale, 1) * 8px) ui-monospace,Menlo,monospace;color:#fff;border:1px solid #414955;background:#303741;border-radius:3px;padding:2px 4px}
     #library .inv-chip.au{border-color:#397255;background:#24553f}
     #library .inv-chip.vst{border-color:#80602b;background:#62461c}
@@ -3427,7 +3433,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
       <main class="inv-content">
         <div class="inv-top"><div><h2 class="inv-title">Plugin inventory</h2><div class="inv-subtitle">Find, group and compare the plug-ins installed on this Mac.</div></div></div>
         <div class="inv-note">AIMM scans plug-in bundle names and Info.plist metadata in folders you choose. It does not read plug-in binaries, audio, presets, licences or other files. The scan stays in this browser.</div>
-        <div id="invSyntheticPreviewNotice" class="inv-synthetic-preview" hidden><strong>Synthetic sample inventory</strong><span>Synthetic products are generated in memory. No saved inventory/favourites/tags are read; folder access is blocked. Check for Duplicates is disabled because no local inventory is connected. Other tools stay disabled until their matching workflows are ready.</span></div>
+        <div id="invSyntheticPreviewNotice" class="inv-synthetic-preview" hidden><strong>Synthetic sample inventory</strong><span>All products and status states here are synthetic and generated in memory; no vendor checks ran. Dots: red = Updates, green = Up to date, amber = Manual check, grey = Unchecked. No saved inventory/favourites/tags are read; folder access is blocked. Check for Duplicates is disabled because no local inventory is connected.</span></div>
         <div class="inv-controls"><button class="inv-btn primary" type="button" id="invAddRootBtn">Manage plug-in folders</button><button class="inv-btn" type="button" id="invScanBtn" disabled>Scan connected folders</button><span class="inv-small" id="invLastScan">No scan configured</span></div>
         <div class="inv-roots" id="invRoots" aria-label="Connected plug-in folders"></div>
         <div class="inv-status" id="invScanStatus" role="status">Connect the Audio/Plug-Ins folder and, if needed, Avid/Audio/Plug-Ins. You can add more folders later.</div>
@@ -5507,20 +5513,20 @@ if(INV_SYNTHETIC_PREVIEW){
   }
 }
 const INV_SYNTHETIC_ROWS=[
-  {name:"Halo Equalizer",vendor:"Northstar Sample Audio",format:"AU",version:"1.4.2",bundleId:"dev.aimm.sample.northstar.halo.au",rootId:"synthetic-preview",category:"Effect",bundleName:"Halo Equalizer.component"},
-  {name:"Halo Equalizer",vendor:"Northstar Sample Audio",format:"VST3",version:"1.4.2",bundleId:"dev.aimm.sample.northstar.halo.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Halo Equalizer.vst3"},
-  {name:"Comet Dynamics",vendor:"Northstar Sample Audio",format:"VST3",version:"2.0.1",bundleId:"dev.aimm.sample.northstar.comet.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Comet Dynamics.vst3"},
-  {name:"Drift Reverb",vendor:"Northstar Sample Audio",format:"AU",version:"1.2.0",bundleId:"dev.aimm.sample.northstar.drift.au",rootId:"synthetic-preview",category:"Effect",bundleName:"Drift Reverb.component"},
-  {name:"Tapeform",vendor:"Copperline Sample DSP",format:"CLAP",version:"3.1.0",bundleId:"dev.aimm.sample.copperline.tapeform.clap",rootId:"synthetic-preview",category:"Effect",bundleName:"Tapeform.clap"},
-  {name:"Tapeform",vendor:"Copperline Sample DSP",format:"VST3",version:"3.1.0",bundleId:"dev.aimm.sample.copperline.tapeform.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Tapeform.vst3"},
-  {name:"Meter Bloom",vendor:"Copperline Sample DSP",format:"VST3",version:"1.0.4",bundleId:"dev.aimm.sample.copperline.meter.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Meter Bloom.vst3"},
-  {name:"Phase Garden",vendor:"Copperline Sample DSP",format:"AU",version:"1.7.0",bundleId:"dev.aimm.sample.copperline.phase.au",rootId:"synthetic-preview",category:"Effect",bundleName:"Phase Garden.component"},
-  {name:"Mono Scope",vendor:"Lantern Field Tools",format:"VST2",version:"2.3.0",bundleId:"dev.aimm.sample.lantern.scope.vst2",rootId:"synthetic-preview",category:"Effect",bundleName:"Mono Scope.vst"},
-  {name:"Amber Delay",vendor:"Lantern Field Tools",format:"CLAP",version:"1.3.6",bundleId:"dev.aimm.sample.lantern.delay.clap",rootId:"synthetic-preview",category:"Effect",bundleName:"Amber Delay.clap"},
-  {name:"Poly Bloom",vendor:"Lantern Field Tools",format:"VST3",version:"1.1.0",bundleId:"dev.aimm.sample.lantern.bloom.vst3",rootId:"synthetic-preview",category:"Instrument",bundleName:"Poly Bloom.vst3"},
-  {name:"Soft Clip",vendor:"Orchard Signal Lab",format:"VST2",version:"1.8.2",bundleId:"dev.aimm.sample.orchard.softclip.vst2",rootId:"synthetic-preview",category:"Effect",bundleName:"Soft Clip.vst"},
-  {name:"Stereo Lantern",vendor:"Orchard Signal Lab",format:"VST3",version:"2.2.1",bundleId:"dev.aimm.sample.orchard.stereo.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Stereo Lantern.vst3"},
-  {name:"Keynote Piano",vendor:"Orchard Signal Lab",format:"AU",version:"1.0.0",bundleId:"dev.aimm.sample.orchard.piano.au",rootId:"synthetic-preview",category:"Instrument",bundleName:"Keynote Piano.component"}
+  {name:"Halo Equalizer",vendor:"Northstar Sample Audio",format:"AU",version:"1.4.2",bundleId:"dev.aimm.sample.northstar.halo.au",rootId:"synthetic-preview",category:"Effect",bundleName:"Halo Equalizer.component",status:"updates"},
+  {name:"Halo Equalizer",vendor:"Northstar Sample Audio",format:"VST3",version:"1.4.2",bundleId:"dev.aimm.sample.northstar.halo.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Halo Equalizer.vst3",status:"up-to-date"},
+  {name:"Comet Dynamics",vendor:"Northstar Sample Audio",format:"VST3",version:"2.0.1",bundleId:"dev.aimm.sample.northstar.comet.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Comet Dynamics.vst3",status:"updates"},
+  {name:"Drift Reverb",vendor:"Northstar Sample Audio",format:"AU",version:"1.2.0",bundleId:"dev.aimm.sample.northstar.drift.au",rootId:"synthetic-preview",category:"Effect",bundleName:"Drift Reverb.component",status:"manual-check"},
+  {name:"Tapeform",vendor:"Copperline Sample DSP",format:"CLAP",version:"3.1.0",bundleId:"dev.aimm.sample.copperline.tapeform.clap",rootId:"synthetic-preview",category:"Effect",bundleName:"Tapeform.clap",status:"updates"},
+  {name:"Tapeform",vendor:"Copperline Sample DSP",format:"VST3",version:"3.1.0",bundleId:"dev.aimm.sample.copperline.tapeform.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Tapeform.vst3",status:"up-to-date"},
+  {name:"Meter Bloom",vendor:"Copperline Sample DSP",format:"VST3",version:"1.0.4",bundleId:"dev.aimm.sample.copperline.meter.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Meter Bloom.vst3",status:"unchecked"},
+  {name:"Phase Garden",vendor:"Copperline Sample DSP",format:"AU",version:"1.7.0",bundleId:"dev.aimm.sample.copperline.phase.au",rootId:"synthetic-preview",category:"Effect",bundleName:"Phase Garden.component",status:"up-to-date"},
+  {name:"Mono Scope",vendor:"Lantern Field Tools",format:"VST2",version:"2.3.0",bundleId:"dev.aimm.sample.lantern.scope.vst2",rootId:"synthetic-preview",category:"Effect",bundleName:"Mono Scope.vst",status:"manual-check"},
+  {name:"Amber Delay",vendor:"Lantern Field Tools",format:"CLAP",version:"1.3.6",bundleId:"dev.aimm.sample.lantern.delay.clap",rootId:"synthetic-preview",category:"Effect",bundleName:"Amber Delay.clap",status:"unchecked"},
+  {name:"Poly Bloom",vendor:"Lantern Field Tools",format:"VST3",version:"1.1.0",bundleId:"dev.aimm.sample.lantern.bloom.vst3",rootId:"synthetic-preview",category:"Instrument",bundleName:"Poly Bloom.vst3",status:"up-to-date"},
+  {name:"Soft Clip",vendor:"Orchard Signal Lab",format:"VST2",version:"1.8.2",bundleId:"dev.aimm.sample.orchard.softclip.vst2",rootId:"synthetic-preview",category:"Effect",bundleName:"Soft Clip.vst",status:"unchecked"},
+  {name:"Stereo Lantern",vendor:"Orchard Signal Lab",format:"VST3",version:"2.2.1",bundleId:"dev.aimm.sample.orchard.stereo.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Stereo Lantern.vst3",status:"manual-check"},
+  {name:"Keynote Piano",vendor:"Orchard Signal Lab",format:"AU",version:"1.0.0",bundleId:"dev.aimm.sample.orchard.piano.au",rootId:"synthetic-preview",category:"Instrument",bundleName:"Keynote Piano.component",status:"unchecked"}
 ];
 const INV_SYNTHETIC_FAVORITES=new Set();
 function invIsFavorite(name){return INV_SYNTHETIC_PREVIEW?INV_SYNTHETIC_FAVORITES.has(name):(typeof isFav==="function"&&isFav(name));}
@@ -5961,17 +5967,38 @@ async function invScanRoot(root,allowPrompt=false,revision=INV_ROOTS_REVISION){
 }
 function invBuildGroups(rows){
   const groups=new Map();
+  const statusNames=["updates","up-to-date","manual-check","unchecked"];
   rows.forEach(row=>{
     const key=invNorm(row.vendor)+"|"+invNorm(row.name);
     let group=groups.get(key);
-    if(!group){group={name:row.name,vendor:row.vendor,formats:new Set(),versions:new Set(),records:0,bundleIds:new Set(),category:row.category||""};groups.set(key,group);}
+    if(!group){group={name:row.name,vendor:row.vendor,formats:new Set(),versions:new Set(),records:0,bundleIds:new Set(),category:row.category||"",statusCounts:{updates:0,"up-to-date":0,"manual-check":0,unchecked:0},formatStatusCounts:new Map()};groups.set(key,group);}
+    const status=statusNames.includes(row.status)?row.status:"unchecked";
+    group.statusCounts[status]++;
     group.formats.add(row.format);
+    if(!group.formatStatusCounts.has(row.format))group.formatStatusCounts.set(row.format,{updates:0,"up-to-date":0,"manual-check":0,unchecked:0});
+    group.formatStatusCounts.get(row.format)[status]++;
     if(row.version)group.versions.add(row.version);
     if(row.bundleId)group.bundleIds.add(row.bundleId);
     group.records++;
     if(!group.category && row.category)group.category=row.category;
   });
   return Array.from(groups.values());
+}
+function invStatusLabel(status){
+  return status==="updates"?"Updates available":status==="up-to-date"?"Up to date":status==="manual-check"?"Manual check":"Unchecked";
+}
+function invGroupStatusSummary(group){
+  const counts=group.statusCounts||{};
+  const states=["updates","up-to-date","manual-check","unchecked"].filter(status=>(counts[status]||0)>0);
+  const detail=states.map(status=>invStatusLabel(status)+(counts[status]>1?" ×"+counts[status]:"")).join(" · ")||"Unchecked";
+  return {label:states.length>1?"Mixed":invStatusLabel(states[0]||"unchecked"),detail:(INV_SYNTHETIC_PREVIEW?"Synthetic sample · ":"")+detail};
+}
+function invFormatStatusDots(group,format){
+  const counts=group.formatStatusCounts.get(format)||{};
+  return ["updates","up-to-date","manual-check","unchecked"].filter(status=>counts[status]>0&&(status!=="unchecked"||INV_SYNTHETIC_PREVIEW)).map(status=>{
+    const label=(INV_SYNTHETIC_PREVIEW?"Synthetic sample · ":"")+invStatusLabel(status);
+    return '<span class="inv-format-status '+status+'" role="img" aria-label="'+invEsc(label)+'" title="'+invEsc(label)+'"></span>';
+  }).join("");
 }
 function invStageMap(){
   const map=new Map();
@@ -6044,9 +6071,8 @@ function invRenderSidebar(groups,stageMap){
   invRenderTagFilter(groups);
   const hiddenCount=groups.filter(group=>invGetProductActions(group.vendor,group.name).hidden===true).length;
   const visibleGroups=groups.filter(group=>INV_SHOW_HIDDEN||invGetProductActions(group.vendor,group.name).hidden!==true);
-  const statusFor=group=>["updates","up-to-date","manual-check","unchecked"].includes(group.status)?group.status:"unchecked";
   const statusCounts={"updates":0,"up-to-date":0,"manual-check":0,"unchecked":0};
-  visibleGroups.forEach(group=>{statusCounts[statusFor(group)]+=Number.isFinite(group.records)?group.records:1;});
+  visibleGroups.forEach(group=>{Object.keys(statusCounts).forEach(status=>{statusCounts[status]+=group.statusCounts?.[status]||0;});});
   const uncheckedCount=statusCounts.unchecked;
   const categoryCounts=new Map();groups.forEach(group=>{const category=invResolvedBrowseCategory(group,stageMap);if(Object.keys(INV_CATEGORY_STAGES).includes(category))categoryCounts.set(category,(categoryCounts.get(category)||0)+1);});
   sidebar.querySelectorAll("[data-inv-category]").forEach(button=>{let count=button.querySelector(".inv-side-count");if(!count){count=document.createElement("span");count.className="inv-side-count";button.appendChild(count);}count.textContent=(categoryCounts.get(button.getAttribute("data-inv-category"))||0).toLocaleString();});
@@ -6054,10 +6080,11 @@ function invRenderSidebar(groups,stageMap){
   setStatusCount("invSidebarUpdatesCount",statusCounts.updates);
   setStatusCount("invSidebarUpToDateCount",statusCounts["up-to-date"]);
   setStatusCount("invSidebarManualCount",statusCounts["manual-check"]);
-  const hasConnectedStatuses=groups.some(group=>["updates","up-to-date","manual-check","unchecked"].includes(group.status));
+  const hasConnectedStatuses=groups.some(group=>["updates","up-to-date","manual-check"].some(status=>(group.statusCounts?.[status]||0)>0));
+  const statusNotice=INV_SYNTHETIC_PREVIEW?" — synthetic sample only; not live vendor status":hasConnectedStatuses?"":" — no vendor status observations are connected";
   [["updates","Updates available"],["up-to-date","Up to date"],["manual-check","Manual check"],["unchecked","Unchecked"]].forEach(([scope,label])=>{
     const button=sidebar.querySelector('[data-inv-scope="'+scope+'"]');
-    if(button)button.setAttribute("aria-label",label+": "+statusCounts[scope].toLocaleString()+" format records"+(hasConnectedStatuses?"":" — no vendor status observations are connected"));
+    if(button)button.setAttribute("aria-label",label+": "+statusCounts[scope].toLocaleString()+" format records"+statusNotice);
   });
   const uncheckedButton=sidebar.querySelector('[data-inv-scope="unchecked"]');if(uncheckedButton){uncheckedButton.classList.toggle("active",INV_SCOPE==="unchecked"&&!INV_CATEGORIES.size);uncheckedButton.setAttribute("aria-pressed",String(INV_SCOPE==="unchecked"));const count=uncheckedButton.querySelector(".inv-side-count");if(count)count.textContent=uncheckedCount.toLocaleString();}
   const allStatusButton=sidebar.querySelector('[data-inv-scope="all"]');if(allStatusButton){const active=INV_SCOPE==="all"&&!INV_CATEGORIES.size&&INV_VIEW!=="all";allStatusButton.classList.toggle("active",active);allStatusButton.setAttribute("aria-pressed",String(active));}
@@ -6633,7 +6660,7 @@ function invRenderInventory(){
     const searchOK=!query||invNorm([group.name,group.vendor,invDisplayCategory(group),Array.from(group.versions).join(" "),Array.from(group.formats).join(" ")].join(" ")).includes(query);
     const actionState=invGetProductActions(group.vendor,group.name);
     const hidden=actionState.hidden===true;
-    const hiddenOK=INV_SCOPE==="hidden"?hidden:(INV_SHOW_HIDDEN||!hidden);const scopeOK=hiddenOK&&(INV_SCOPE==="favorites"?invIsFavorite(group.name):INV_SCOPE==="tags"?(Array.isArray(actionState.tags)&&actionState.tags.length>0):["updates","up-to-date","manual-check","unchecked"].includes(INV_SCOPE)?(["updates","up-to-date","manual-check","unchecked"].includes(group.status)?group.status:"unchecked")===INV_SCOPE:true);
+    const hiddenOK=INV_SCOPE==="hidden"?hidden:(INV_SHOW_HIDDEN||!hidden);const statusScope=["updates","up-to-date","manual-check","unchecked"].includes(INV_SCOPE);const statusMatch=!statusScope||(group.statusCounts?.[INV_SCOPE]||0)>0;const scopeOK=hiddenOK&&(INV_SCOPE==="favorites"?invIsFavorite(group.name):INV_SCOPE==="tags"?(Array.isArray(actionState.tags)&&actionState.tags.length>0):statusMatch);
     const categoryOK=!INV_CATEGORIES.size||INV_CATEGORIES.has(invDisplayCategory(group));
     const tagOK=!INV_TAG_FILTERS.size||(Array.isArray(actionState.tags)&&actionState.tags.some(tag=>INV_TAG_FILTERS.has(tag)));
     return formatOK&&searchOK&&scopeOK&&categoryOK&&tagOK;
@@ -6791,10 +6818,10 @@ function invRenderInventory(){
       const vendor=group.vendor||"Unknown vendor",normalized=invNorm(vendor).replace(/ (inc|llc|ltd|limited|gmbh|corporation|corp)$/,""),domain=brandDomains[normalized]||"";
       const hubUrl=installerHubs[normalized.replace(/[^a-z0-9]/g,"")]||"",websiteUrl=vendorHomepages[normalized.replace(/[^a-z0-9]/g,"")]||(domain?"https://www."+domain+"/":"");
       const category=invDisplayCategory(group),formats=Array.from(group.formats).sort(),versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
-      const chips=formats.map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
+      const chips=formats.map(format=>'<span class="inv-format-state"><span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>'+invFormatStatusDots(group,format)+'</span>').join("");
       const fav=invIsFavorite(group.name),meta=invProductUserMetaHTML(vendor,group.name);
       const action=invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}));
-      return '<div class="inv-list-row" role="row"><span class="inv-list-vendor" role="cell">'+invEsc(vendor)+'</span><span class="inv-list-product" role="cell"><span class="inv-list-product-copy"><span class="inv-list-name">'+invEsc(group.name)+'</span>'+(invGetProductActions(vendor,group.name).hidden===true?'<span class="inv-hidden-badge" aria-label="Hidden from the main library">Hidden</span>':"")+meta+'</span></span>'+(ledger?'<span class="inv-list-meta inv-category-label ledger-only" role="cell">'+invEsc(category)+'</span>':'')+'<span class="inv-list-meta" role="cell">'+invEsc(versions)+'</span><span class="inv-list-formats" data-col="format" role="cell">'+chips+'</span>'+(ledger?'':'<span class="inv-list-meta inv-category-label" data-col="category" role="cell">'+invEsc(category)+'</span>')+(ledger?'<span class="inv-list-meta ledger-only" role="cell">'+(meta||"—")+'</span>':'')+(allPluginsFlat?'<span class="inv-status-pill" role="cell" aria-label="Unchecked — no vendor status result is connected to this Library" title="No vendor status result is connected to this Library">Unchecked</span>':'')+'<span class="inv-list-actions" role="cell"><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+action+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></span></div>';
+      return '<div class="inv-list-row" role="row"><span class="inv-list-vendor" role="cell">'+invEsc(vendor)+'</span><span class="inv-list-product" role="cell"><span class="inv-list-product-copy"><span class="inv-list-name">'+invEsc(group.name)+'</span>'+(invGetProductActions(vendor,group.name).hidden===true?'<span class="inv-hidden-badge" aria-label="Hidden from the main library">Hidden</span>':"")+meta+'</span></span>'+(ledger?'<span class="inv-list-meta inv-category-label ledger-only" role="cell">'+invEsc(category)+'</span>':'')+'<span class="inv-list-meta" role="cell">'+invEsc(versions)+'</span><span class="inv-list-formats" data-col="format" role="cell">'+chips+'</span>'+(ledger?'':'<span class="inv-list-meta inv-category-label" data-col="category" role="cell">'+invEsc(category)+'</span>')+(ledger?'<span class="inv-list-meta ledger-only" role="cell">'+(meta||"—")+'</span>':'')+(allPluginsFlat?'<span class="inv-status-pill" role="cell" aria-label="'+invEsc(invGroupStatusSummary(group).detail)+'" title="'+invEsc(invGroupStatusSummary(group).detail)+'">'+invEsc(invGroupStatusSummary(group).label)+'</span>':'')+'<span class="inv-list-actions" role="cell"><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+action+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></span></div>';
     }).join("");
     host.innerHTML='<div class="inv-table inv-view-'+(ledger?"ledger":"list")+(allPluginsFlat?" inv-view-all":"")+'" role="table"'+(allPluginsFlat?' tabindex="0" aria-label="Installed plug-ins; scroll horizontally on narrow screens to view all columns"':' aria-label="Installed plug-ins"')+'><div class="inv-list-head" role="row">'+columns+'</div>'+rowsHTML+'</div>';
     host.querySelectorAll("[data-inv-fav]").forEach(button=>button.addEventListener("click",()=>invToggleFavorite(button.getAttribute("data-inv-fav"))));
@@ -6815,14 +6842,14 @@ function invRenderInventory(){
     const logo=domain?'<img src="https://www.google.com/s2/favicons?domain='+domain+'&sz=64" alt="" loading="lazy" onerror="this.remove()">':"";
     const expanded=INV_EXPANDED_VENDORS.has(vendorKey),collapsed=INV_COLLAPSED_VENDORS.has(vendorKey);
     const visible=items.slice(0,4).map(group=>{
-      const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
+      const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-format-state"><span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>'+invFormatStatusDots(group,format)+'</span>').join("");
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=invDisplayCategory(group);
       const fav=invIsFavorite(group.name);
       return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span>'+(invGetProductActions(vendor,group.name).hidden===true?'<span class="inv-hidden-badge" aria-label="Hidden from the main library">Hidden</span>':"")+'<span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta inv-category-label">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const hidden=items.slice(4).map(group=>{
-      const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
+      const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-format-state"><span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>'+invFormatStatusDots(group,format)+'</span>').join("");
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=invDisplayCategory(group);
       const fav=invIsFavorite(group.name);
