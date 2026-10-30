@@ -4,7 +4,7 @@ Source commit 75655b4b2f327e3fff6d52c30f8512c34d1ffc9c, Library blob f9868f5392b
 
 Kevin’s latest screenshots add required parity work: activate the Updates Available, Up to Date, Manual Check and Unchecked groups with truthful counts, and make all AIMM Tools active with complete workflows. The current Library has only Unchecked active and most tools are disabled. Prioritize generation-linked vendor results and the full Install Manager workflow; do not fabricate counts or enable no-op actions. See [user-directed parity requests](../governance/evidence/PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md).
 
-Status implementation dependency from read-only source trace: connect the existing generation-bound `/v1/status-summary` to the Library UI and extend the inventory/status projection with publisher attribution and canonical product grouping. Current status counts are per format record; the page’s local scan cache has no generation join. See [status UI connection gap](../governance/evidence/PHASE_PLUGINHUB_STATUS_UI_GAP_20261030.md).
+Status implementation dependency: source commit `84e2e2a3a5c1ad2c2fd0355130e449a5cb03dff5` now returns nullable bundle identifiers in `/v1/status-summary`; connect the generation-bound endpoint to the Library UI and add source-backed publisher attribution/canonical product grouping. Counts remain per format record, and the page’s local scan cache has no generation join. See [status UI connection gap](../governance/evidence/PHASE_PLUGINHUB_STATUS_UI_GAP_20261030.md).
 
 Foundation remains **NOT MET**; Stage 6 gated; Worker RP fix remains surgical.
 

@@ -6,7 +6,7 @@ The Library API already exposes authenticated `GET /v1/status-summary`. It reads
 
 The visible Library page in `index.html` does not call that endpoint. Its `INV_SCAN_ROWS` come from the browser’s local scan cache and have no API generation/record-ID join. Only the local Unchecked scope is active; Updates Available, Up to Date and Manual Check remain disabled. The UI therefore cannot truthfully filter its current rows by the account API’s status observations.
 
-There is also a grouping contract gap. `PluginRecord` currently carries id, name, bundle identifier, version, format, metadata source and local path, but no vendor/publisher. `published_inventory_records` likewise stores no vendor field. The status-summary response includes name/format but omits bundle identifier and publisher in its returned row. Its counts are per format record, so they cannot be presented as distinct publisher/plugin totals without an explicit canonical grouping rule.
+There is also a grouping contract gap. `PluginRecord` currently carries id, name, bundle identifier, version, format, metadata source and local path, but no vendor/publisher. `published_inventory_records` likewise stores no vendor field. A reviewed additive source change now returns the selected `bundle_identifier` (or `null`) in each status row, commit `84e2e2a3a5c1ad2c2fd0355130e449a5cb03dff5`, `library-api/src/index.js` blob `6f04f7f8e042214eaf263f7103d6aa2fbc3fdc7b`. Publisher attribution and a canonical product identity remain absent. Counts remain per format record, so they cannot yet be presented as distinct publisher/plugin totals without an explicit grouping rule.
 
 ## Required implementation sequence
 
