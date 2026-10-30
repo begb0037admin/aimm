@@ -424,6 +424,7 @@
   document.head.append(liveManagerStyle);
 
   let libraryInstallObserver = null;
+  let liveManagerObserver = null;
   function install() {
     const nav = document.querySelector('#library nav[aria-label="Inventory status"]');
     const unchecked = nav?.querySelector('[data-inv-scope="unchecked"]');
@@ -462,6 +463,12 @@
       button.insertAdjacentElement("afterend",note);
     }
     bindLiveInstallManager();
+    if (!liveManagerObserver && document.body) {
+      liveManagerObserver = new MutationObserver(() => {
+        if (document.querySelector("[data-inv-install-manager]")) bindLiveInstallManager();
+      });
+      liveManagerObserver.observe(document.body,{childList:true,subtree:true});
+    }
     // The inline prototype registers its DOMContentLoaded initializer before
     // this deferred bridge runs. Reapply the live state after that initializer
     // so it cannot disable the live manager again.
