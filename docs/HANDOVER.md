@@ -6,11 +6,13 @@ The installed PluginHub 2.0.12 manual tool sweep is recorded in [VST and tool-su
 
 No real inventory scan/upload, automated test, Worker deployment or production action occurred in this slice. Foundation remains **NOT MET**. Stage 6 remains gated until every exit item has fresh evidence and independent acceptance. The development Worker passkey RP fix remains a surgical patch, not a reproducible build from branch source. Use synthetic non-production data only.
 
-## Current synchronized record pins — verified before this handover update at branch head `d334e0826f04c97321defa01d4d6d627247f5430`
+## Current synchronized record pins — verified before this handover update at branch head `c5ddbe376f5af4ff7abae9b6f90a2aacececcc35`
 
 Dashboard `DASHBOARD.html` blob `5bc38e99377d8d61c6c8990fcb00ec3defeaa695`; Roadmap `docs/ROADMAP.md` blob `1847091aa772cc870b236baf944a87425b038d37`; Status `docs/STATUS.md` blob `edac842a30de4fc37bfeaf5ca8c4c5bf44ad4ac9`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `a273aa90607f4e606711ab9825b113af7626a350`; VST/tool-sweep evidence `governance/evidence/PHASE_PLUGINHUB_VST_AND_TOOL_SWEEP_20261030.md` blob `a6f2f215740fba127c43fa863e9a7b91aea14abe`; parity sweep `governance/evidence/PHASE_PLUGINHUB_PARITY_SWEEP_20261029.md` blob `f41c4fe9114dce5e3f15f68c1fd39f4f4e6bb12a`; filter evidence `governance/evidence/PHASE_PLUGINHUB_FILTERS_20261029.md` blob `e7d65cab54167cf7b65f52c00da471697da84006`; Tag Manager evidence `governance/evidence/PHASE_PLUGINHUB_TAG_MANAGER_20261029.md` blob `41ecfc5183c403593bae6c9c388ff64e75f4d1e1`; parity update `governance/evidence/PHASE_PLUGINHUB_PARITY_UPDATE_20261029.md` blob `59e49550396f67962a62f48b346ef0ebc596c8ed`; Foundation closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` blob `a229f4ab25f931581bd9cdafef3e873da585f958`; Foundation evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md` blob `53857ed94a6246b5f27251653a55e17eb5b4ce32`; Stage 5 synthetic action/Worker report `governance/evidence/PHASE_PLUGINHUB_STAGE5_KEYCHAIN_AND_WORKER_ACCESS_20261029.md` blob `6c937dddc157429c0b6473c72f6c33612e2ae220`.
 
 This handover does not self-pin. The full evidence report is a parity checkpoint, not Foundation exit evidence.
+
+The 2026-10-29 checkpoint and its next-work list below are historical; follow this 2026-10-30 checkpoint.
 
 ## Latest PluginHub browse parity checkpoint — 2026-10-29
 
