@@ -3118,6 +3118,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-sidebar-head button{border:0;background:transparent;color:#aab2bd;cursor:pointer;padding:3px;font-size:calc(var(--inv-text-scale, 1) * 14px)}
     #library .inv-sidebar-head button:hover{color:#36a8ed}
     #library .inv-sidebar-section{margin:17px 0 8px;padding:0 10px;color:#7f8993;font: 700 calc(var(--inv-text-scale, 1) * 10px) ui-monospace,Menlo,monospace;letter-spacing:.18em}
+    #library .inv-status-note{margin:-4px 10px 8px;color:#79838e;font-size:calc(var(--inv-text-scale, 1) * 9px);line-height:1.3}
+    #library .inv-sidebar.is-collapsed .inv-status-note{display:none}
     #library .inv-sidebar-nav{display:grid;gap:4px}
     #library .inv-tools-note{margin:9px 8px 0;color:#8993a2;font-size:calc(var(--inv-text-scale, 1) * 10px);line-height:1.45}
     #library .inv-sidebar.is-collapsed .inv-tools-note{display:none}
@@ -3371,7 +3373,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     <div id="invLayout" class="inv-layout">
       <aside id="invSidebar" class="inv-sidebar" aria-label="Plug-in filters">
         <div class="inv-sidebar-head"><span>BROWSE</span><button id="invSidebarToggle" type="button" aria-label="Collapse filters" aria-expanded="true" title="Collapse filters">‹</button></div>
-        <div class="inv-sidebar-section">STATUS</div>
+        <div class="inv-sidebar-section">STATUS</div><div class="inv-status-note">Counts are format records</div>
         <nav class="inv-sidebar-nav" aria-label="Inventory status">
           <button class="inv-side-button active" type="button" data-inv-scope="all" aria-label="All plugins" title="All plugins"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></span><span class="inv-side-label">All plugins</span><span class="inv-side-count" id="invSidebarAllCount">—</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="updates" aria-label="Updates available" title="No vendor update observations are connected to this inventory yet"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 7v5h-5"/><path d="M20 12a8 8 0 1 1-2.3-5.7L20 9"/></svg></span><span class="inv-side-label">Updates available</span><span class="inv-side-count" id="invSidebarUpdatesCount">0</span></button>
