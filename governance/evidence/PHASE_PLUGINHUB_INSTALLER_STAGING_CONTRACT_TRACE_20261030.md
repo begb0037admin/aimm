@@ -28,6 +28,6 @@ The async byte stream has no progress callback or cancellation API. There is no 
 
 ## Next work
 
-Build one synthetic PluginHub-style Install Manager UI slice for review: vendor filters/totals, per-row download controls, queue-all/download-all, a batch panel, and Download folder/Clear installed & failed/Start over/Done affordances. Drive it only with in-memory sample rows and label the preview as simulated; do not claim a file was downloaded or installed. “Room to breathe” applies. Actual download hookup remains a separate task until a trusted digest source and progress/cancellation contract are available.
+After independent review of this trace, reconcile the reopened format badge colors against Kevin’s screenshot (VST2/VST3 blue, CLAP brown, AU green; status dots unchanged) and review the exact source plus desktop/390px preview with breathing room. Then build one synthetic PluginHub-style Install Manager UI slice for review: vendor filters/totals, per-row download controls, queue-all/download-all, a batch panel, and Download folder/Clear installed & failed/Start over/Done affordances. Use in-memory rows, label outcomes as simulated, and do not claim a file was downloaded or installed. Actual download hookup remains separate until trusted digest and progress/cancellation contracts are available.
 
 This trace completes the read-only Companion downloader/receipt review. Foundation remains **NOT MET** and Stage 6 gated.
