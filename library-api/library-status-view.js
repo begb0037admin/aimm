@@ -64,6 +64,43 @@
   style.textContent = css;
   document.head.appendChild(style);
 
+  function aimmLayoutInventoryTiles(grid, keepCols) {
+    if (!grid) return;
+    const GAP = 14, MIN = 268;
+    const css = getComputedStyle(grid);
+    const padL = parseFloat(css.paddingLeft) || 0, padR = parseFloat(css.paddingRight) || 0;
+    const padT = parseFloat(css.paddingTop) || 0, padB = parseFloat(css.paddingBottom) || 0;
+    const inner = grid.clientWidth - padL - padR;
+    if (inner <= 0) return;
+    const cols = Math.min(4, Math.max(1, Math.floor((inner + GAP) / (MIN + GAP))));
+    const colW = (inner - GAP * (cols - 1)) / cols;
+    if (grid._invTileCols !== cols || Math.abs((grid._invTileColW || 0) - colW) > 0.5) keepCols = false;
+    grid._invTileCols = cols;
+    grid._invTileColW = colW;
+    const cards = Array.from(grid.children).filter((card) => card.classList?.contains("inv-vendor"));
+    const hidden = (card) => card.style.display === "none" || card.classList.contains("inv-filtered") || getComputedStyle(card).display === "none";
+    const visKey = cards.map((card,index) => hidden(card) ? "" : index).filter((index) => index !== "").join(",");
+    if (grid._invTileVisKey !== visKey) { grid._invTileVisKey = visKey; keepCols = false; }
+    const heights = new Array(cols).fill(0);
+    cards.forEach((card) => {
+      if (hidden(card)) { card._invTileCol = -1; return; }
+      card.style.width = colW + "px";
+      let col = keepCols && Number.isInteger(card._invTileCol) && card._invTileCol >= 0 && card._invTileCol < cols ? card._invTileCol : -1;
+      if (col < 0) { col = 0; for (let n = 1; n < cols; n++) if (heights[n] < heights[col]) col = n; }
+      card._invTileCol = col;
+      card.style.left = (padL + col * (colW + GAP)) + "px";
+      card.style.top = (padT + heights[col]) + "px";
+      heights[col] += card.offsetHeight + GAP;
+    });
+    const tallest = Math.max(0, ...heights);
+    grid.style.height = (padT + Math.max(0, tallest - GAP) + padB) + "px";
+    grid.classList.remove("inv-tiles-unplaced");
+  }
+  if (typeof window.invTileLayoutGrid === "function") {
+    window.invTileLayoutGrid = aimmLayoutInventoryTiles;
+    document.querySelectorAll("#invInventory .inv-cards").forEach((grid) => aimmLayoutInventoryTiles(grid, false));
+  }
+
   let snapshot = null;
   let loading = false;
   let message = "";
