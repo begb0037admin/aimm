@@ -12,7 +12,7 @@ The API accepts only `infoPlistManufacturer` and `infoPlistVendor`, requires pub
 
 Jules reviewed the exact candidate `8101fdaf364524407a4bc0432f1d1f90bc2773f0` and returned **PASS**. Review confirmed the provenance boundary, API validation, migration and read projections, local-path exclusion, and unchanged opaque IDs. Synthetic API assertions cover accepted explicit provenance, unsupported source rejection, filename-only rejection, canonical-ID rejection, path exclusion, and inventory/status responses.
 
-Automated tests were **not run**. The available local checkout was dirty and at a different commit; Jules and I did not use it as a substitute for the reviewed source.
+Focused checks against the exact GitHub source passed: `node --check` for the Worker and foundation test files; extracted publisher-normalization cases for accepted provenance, null metadata, unsupported source, filename-only metadata and non-null canonical-ID rejection; and the migration plus publisher-source constraint against an in-memory SQLite fixture. The full `npm test` suite was **not run**: an isolated Git clone failed because this environment could not resolve GitHub, and the dirty local checkout was left untouched.
 
 ## Limits and next work
 
