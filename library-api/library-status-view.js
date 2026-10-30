@@ -47,6 +47,10 @@
     #library .inv-fav{font-size:16px;padding:1px 3px}
     #library .inv-more{padding:9px 14px;font-size:10px}
     #library .inv-cards-quick{min-height:36px;padding:7px 14px;font-size:12px;font-weight:700;white-space:nowrap}
+    #library .inv-sidebar-nav{gap:8px!important}
+    #library .inv-sidebar-nav[aria-label="Plug-in categories"]{gap:8px!important}
+    #library .inv-side-button{min-height:44px!important;padding-inline:12px!important;gap:12px!important}
+    #library .inv-sidebar-section{margin:20px 0 10px!important}
     #library .inv-view-menu.inv-view-open-up .inv-view-panel{top:calc(100% + 8px)!important;bottom:auto!important;max-height:min(560px,calc(100vh - 660px))!important}
     #library .inv-product-line{grid-template-columns:minmax(0,1fr) 24px 20px!important;align-items:start!important;column-gap:9px!important;row-gap:7px!important}
     #library .inv-name{grid-column:1!important;grid-row:1!important;font-size:15px!important;line-height:1.35!important;font-weight:700!important;overflow-wrap:anywhere!important}
