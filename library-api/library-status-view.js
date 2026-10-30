@@ -46,6 +46,16 @@
     #library .inv-chip.clap{border-color:#80602b;background:#62461c}
     #library .inv-fav{font-size:16px;padding:1px 3px}
     #library .inv-more{padding:9px 14px;font-size:10px}
+    #library .inv-product-line{grid-template-columns:minmax(68px,1fr) minmax(104px,1.35fr) 20px 18px!important;align-items:start!important;column-gap:6px!important;row-gap:5px!important}
+    #library .inv-name{grid-column:1!important;grid-row:1!important;font-size:15px!important;line-height:1.3!important;font-weight:700!important;overflow-wrap:anywhere!important}
+    #library .inv-version{grid-column:2!important;grid-row:1/span 2!important;width:auto!important;max-width:none!important;margin:0!important;align-self:start!important;font-size:10px!important;line-height:1.4!important}
+    #library .inv-version-status{gap:5px!important;line-height:1.4!important}
+    #library .inv-version-row{grid-template-columns:3.3em minmax(0,1fr)!important;column-gap:5px!important;align-items:baseline!important}
+    #library .inv-version-values{white-space:normal!important;overflow-wrap:anywhere!important}
+    #library .inv-fav{grid-column:3!important;grid-row:1!important;justify-self:center!important}
+    #library .inv-product-actions{grid-column:4!important;grid-row:1!important;justify-self:center!important}
+    #library .inv-hidden-badge{grid-column:1/-1!important;grid-row:2!important;justify-self:start!important}
+    @media(max-width:680px){#library .inv-product-line{grid-template-columns:minmax(0,1fr) auto auto!important;align-items:start!important}#library .inv-name{grid-column:1!important;grid-row:1!important}#library .inv-version{grid-column:1/-1!important;grid-row:2!important;width:100%!important}#library .inv-fav{grid-column:2!important;grid-row:1!important}#library .inv-product-actions{grid-column:3!important;grid-row:1!important}#library .inv-hidden-badge{grid-column:1/-1!important;grid-row:3!important}}
     @media(max-width:900px){#library .inv-account-status-card{grid-template-columns:minmax(0,1fr) minmax(100px,.5fr);gap:12px}}
     @media(max-width:560px){#library .inv-account-status-card{grid-template-columns:minmax(0,1fr);gap:10px;padding:15px}}
   `;
