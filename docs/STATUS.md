@@ -4,7 +4,7 @@ The exact local Companion helper has a descriptor-anchored verified DMG staging 
 
 Evidence: [Companion installer staging contract trace](../governance/evidence/PHASE_PLUGINHUB_INSTALLER_STAGING_CONTRACT_TRACE_20261030.md). No vendor page or installer was accessed; no download, install, live inventory or scan occurred.
 
-Next: build one synthetic Install Manager UI slice for review using in-memory sample rows. Include the PluginHub queue, vendor counts and batch-panel controls, and label outcomes as simulation. Keep download and installation claims separate. Actual hookup requires a trusted digest source and progress/cancellation contract. “Room to breathe” remains required. Foundation remains **NOT MET**; Stage 6 gated.
+Next: reconcile the reopened format badge colors against Kevin’s latest screenshot: VST2/VST3 blue, CLAP brown, AU green, status dots unchanged. Review exact source and desktop/390px preview with breathing room. Then build one synthetic Install Manager UI slice using in-memory sample rows, queue/vendor counts and simulated batch-panel outcomes. Keep real download/install claims separate pending trusted digest and progress/cancellation contracts. Foundation remains **NOT MET**; Stage 6 gated.
 
 ## Historical checkpoint — visible synthetic status preview — 2026-10-30
 
