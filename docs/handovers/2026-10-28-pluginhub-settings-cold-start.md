@@ -1,4 +1,8 @@
-## Latest continuation checkpoint — View brightness and text size — 2026-10-30
+## Latest continuation checkpoint — View Collections — 2026-10-30
+
+Branch commit [`e4edbd07746529486af730fcfd40e0853ab15549`](https://github.com/begb0037admin/aimm/commit/e4edbd07746529486af730fcfd40e0853ab15549), Library `index.html` blob `439450e31aa71e37daf7623436f533ff793f60c3`, adds saved category/tag Collections to View. Users can save, apply and remove a named selection; duplicate names are rejected, storage failures roll back, and focus returns to visible controls. Collections are local in normal mode and in-memory only in synthetic preview. Jules passed source and desktop/390px interaction review on preview deployment 7a099e45; the temporary synthetic sample was removed. See [Collections evidence](../governance/evidence/PHASE_PLUGINHUB_VIEW_COLLECTIONS_20261030.md).
+
+## Historical continuation checkpoint — View brightness and text size — 2026-10-30 (source commit 82c886d690eaaf41560af83cff4155a769cc553d)
 
 Branch commit [`82c886d690eaaf41560af83cff4155a769cc553d`](https://github.com/begb0037admin/aimm/commit/82c886d690eaaf41560af83cff4155a769cc553d), Library `index.html` blob `a535b0a5830ad3449e1f27f14238c6f4685f5997`, adds Brightness and typography-only Text size to the View menu. Jules passed source and visual/interaction review at synthetic preview deployment 72b0770b on desktop and 390px. Text scales from 8px to 12px; product/vendor widths and SVG icon dimensions remain fixed while row heights reflow with text. The panel flips/scrolls inside the available viewport. The existing 44px page overflow at 390px remains outside the panel. See [brightness/text-size evidence](../governance/evidence/PHASE_PLUGINHUB_VIEW_BRIGHTNESS_TEXT_20261030.md).
 

@@ -1,8 +1,12 @@
 # PluginHub View menu parity slice — 2026-10-30
 
-## Latest update — Brightness and typography size — 2026-10-30
+## Latest update — Collections — 2026-10-30
 
-The View menu now supports Brightness and typography-only Text size, source commit `82c886d690eaaf41560af83cff4155a769cc553d`, Library blob `a535b0a5830ad3449e1f27f14238c6f4685f5997`. Jules passed source and visual/interaction review at synthetic preview deployment `72b0770b-8718-47b7-8d03-b61b54752ea0`, desktop and 390px. Text changes to 8/10/12px across 80/100/120%; product/vendor widths and SVG icons stay fixed while row heights reflow; the panel flips/scrolls within available viewport space. See [brightness/text-size parity evidence](PHASE_PLUGINHUB_VIEW_BRIGHTNESS_TEXT_20261030.md).
+The View menu now supports named category/tag Collections, source commit `e4edbd07746529486af730fcfd40e0853ab15549`, Library blob `439450e31aa71e37daf7623436f533ff793f60c3`. Jules passed source and interaction review at synthetic preview deployment `7a099e45-4e28-4c40-9e5f-c4322c251df2`, desktop and 390px. Save/apply/placeholder/remove work, including confirmation, feedback and focus return. Synthetic state is in memory only; the temporary collection was removed. See [Collections parity evidence](PHASE_PLUGINHUB_VIEW_COLLECTIONS_20261030.md).
+
+## Brightness and typography size — 2026-10-30
+
+Brightness and typography-only Text size are supported in source commit `82c886d690eaaf41560af83cff4155a769cc553d`, Library blob `a535b0a5830ad3449e1f27f14238c6f4685f5997`. See [brightness/text-size parity evidence](PHASE_PLUGINHUB_VIEW_BRIGHTNESS_TEXT_20261030.md).
 
 ## Historical update — Category and note/rating display — 2026-10-30
 
@@ -16,7 +20,7 @@ Branch commit `fec3cf8c2482b1dd9aa105723ffe106b1038a33d`, `index.html` blob `d8c
 
 The menu uses native `<details>/<summary>`, exposes a stable “View options” accessible name and synchronized expanded state, closes after layout/sort selection, on Escape, or outside pointerdown, and returns focus to View after keyboard close/selection. The menu has a 280px maximum and clamps its width for compact viewports.
 
-This implements the supported grouping, category/note visibility, Brightness and typography-only Text size, not the full PluginHub View menu. Light/Dark/System appearance and colorblind status colors, sidebar/top-tab navigation, key display preferences, Hidden and Collections remain incomplete. Vendor “newest/oldest” sorting still needs source-backed per-record timestamps.
+This implements the supported grouping, category/note visibility, Brightness and typography-only Text size, not the full PluginHub View menu. Light/Dark/System appearance and colorblind status colors, sidebar/top-tab navigation, key display preferences and Hidden remain incomplete. Vendor “newest/oldest” sorting still needs source-backed per-record timestamps.
 
 ## Development preview and Jules review
 

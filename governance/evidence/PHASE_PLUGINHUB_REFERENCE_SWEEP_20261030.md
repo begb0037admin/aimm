@@ -2,17 +2,21 @@
 
 ## Scope
 
-Read-only inspection of the already-open PluginHub 2.0.12 app and its installed manual/source at `/Applications/PluginHub.app/Contents/Resources/`, compared with AIMM branch `codex/pluginhub-foundation` at `82c886d690eaaf41560af83cff4155a769cc553d`. The app’s View menu and one plugin row action menu were opened for reference. No tool workflow, filesystem action, scan, export, installer, share or vault operation was started. The app’s accessibility view included its current local vendor/plugin names and counts; none were copied into the branch, reports or development preview.
+Read-only inspection of the already-open PluginHub 2.0.12 app and its installed manual/source at `/Applications/PluginHub.app/Contents/Resources/`, compared with AIMM branch `codex/pluginhub-foundation` at `e4edbd07746529486af730fcfd40e0853ab15549`. The app’s View menu and one plugin row action menu were opened for reference. No tool workflow, filesystem action, scan, export, installer, share or vault operation was started. The app’s accessibility view included its current local vendor/plugin names and counts; none were copied into the branch, reports or development preview.
 
 AIMM visual evidence uses only the opt-in synthetic development preview. No real inventory was uploaded or used for the visual pass.
 
-## Latest View display preferences — 2026-10-30
+## View display preferences — 2026-10-30
 
 The View menu now includes Brightness and typography-only Text size in addition to category labels and note/rating visibility. Jules passed source and visual/interaction review at desktop and 390×844 in [synthetic preview deployment 72b0770b](https://72b0770b.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). At 80/100/120%, product text computes to 8/10/12px; product/vendor widths and SVG dimensions remain fixed while row heights reflow. Brightness works at 80/100/120%. The panel flips and scrolls within the available viewport. Synthetic-only; no saved browser preferences are read or written. See [brightness/text-size evidence](PHASE_PLUGINHUB_VIEW_BRIGHTNESS_TEXT_20261030.md).
 
 AIMM’s View menu now includes **Show category labels** and **Show notes and ratings**. Jules passed source and visual/interaction review on the synthetic preview at desktop and 390×844. Category headings and cells hide/show consistently in Cards, List and Ledger. Note/rating metadata is visible in all three layouts and the toggle leaves tags/local marks visible. In synthetic mode preferences are held in memory and no local storage is read or written.
 
 The 12-product/14-bundle fixture contains no notes, ratings, tags or local marks, so populated note/rating appearance was not visually checked. The menu fits at 390px; existing document overflow remains outside the panel. Exact deployment, source and limitations are in [View display options parity slice](PHASE_PLUGINHUB_VIEW_DISPLAY_OPTIONS_20261030.md).
+
+## Latest View Collections — 2026-10-30
+
+The View menu now saves, applies and removes named category/tag selections. The source contract uses only the existing category and tag filters; normal-mode state is local to the browser, and synthetic mode never accesses localStorage. Jules passed source and interaction review at desktop and 390×844 on [synthetic preview deployment 7a099e45](https://7a099e45.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). The save/apply/placeholder/remove flow and focus feedback worked. The two-product synthetic category fixture was removed and default view restored. At 390px the 294px-wide panel scrolls internally within the viewport; existing 44px page overflow is outside it. See [Collections evidence](PHASE_PLUGINHUB_VIEW_COLLECTIONS_20261030.md).
 
 ## What the reference app exposes
 
