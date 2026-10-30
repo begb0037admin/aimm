@@ -76,7 +76,13 @@
       const node = document.getElementById(id);
       if (node) node.textContent = counts[scope].toLocaleString();
       const button = document.querySelector('[data-inv-scope="' + scope + '"]');
-      if (button) button.setAttribute("aria-label", labels[scope] + ": " + counts[scope].toLocaleString() + " account format records");
+      if (button) {
+        const count = counts[scope].toLocaleString();
+        button.setAttribute("aria-label", labels[scope] + ": " + count + " account format records");
+        button.title = counts[scope]
+          ? count + " matching format records in the loaded account snapshot."
+          : "No " + labels[scope].toLowerCase() + " records in the loaded account snapshot.";
+      }
     });
   }
   function updateBanner() {
