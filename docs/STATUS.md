@@ -1,4 +1,10 @@
-## Latest PluginHub checkpoint — visible synthetic status preview — 2026-10-30
+## Latest PluginHub checkpoint — per-format version emphasis — 2026-10-30
+
+Source commit [`762aeb81737a29b896a95097001c849b26d1911a`](https://github.com/begb0037admin/aimm/commit/762aeb81737a29b896a95097001c849b26d1911a) and development preview [`c0215f2e`](https://c0215f2e.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) make sample update versions visible on each status-filtered card, with the latest sample version red and installed version muted. Colored format dots remain supplemental. Updates, Up to date, Manual check and Unchecked each have scope-specific guidance; the 3/4/3/4 totals remain synthetic only. Jules passed source review and desktop, narrow and all-scope visual checks. Evidence: [tile version and status review](../governance/evidence/PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md) (blob `bd7b9a8e02991169a854d3297ceaf4f713e6d8e8`).
+
+The responsive banner fix is verified at 390×844 with no horizontal overflow. The visible Library still does not consume authenticated generation/record status or real vendor observations; installation/update tools remain unconnected. Foundation remains **NOT MET** and Stage 6 gated. The development Worker passkey RP fix remains a surgical patch, not a reproducible branch build.
+
+## Historical checkpoint — visible synthetic status preview — 2026-10-30
 
 Source commit [`1018be83b451b8db6429ba5bf3b869f223fed40b`](https://github.com/begb0037admin/aimm/commit/1018be83b451b8db6429ba5bf3b869f223fed40b) displays active synthetic status counts 3/4/3/4 across 14 format records, with per-format dots and functional status filters for mixed groups. Cloudflare Pages development deployment [`1a442d22`](https://1a442d22.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) is successful. Jules passed source review; Jules passed deployed review at 1920×815; at 390×844, one-column cards, 240px widths and no horizontal overflow were verified by metrics, with the sidebar collapsing to icons and no lower-page screenshot available. Evidence: [synthetic status display](../governance/evidence/PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
 

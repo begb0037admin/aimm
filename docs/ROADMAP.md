@@ -1,4 +1,12 @@
-## Latest PluginHub roadmap checkpoint — synthetic status preview — 2026-10-30
+## Latest PluginHub roadmap checkpoint — readable synthetic status versions — 2026-10-30
+
+Source commit [`762aeb81737a29b896a95097001c849b26d1911a`](https://github.com/begb0037admin/aimm/commit/762aeb81737a29b896a95097001c849b26d1911a) and development Pages preview [`c0215f2e`](https://c0215f2e.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) now show the installed and sample latest version per format directly on status-filtered cards. Latest sample versions are red; per-format colored dots remain as supporting cues. All four scopes have matching sample counts/copy, and Jules passed desktop, narrow and scope review. See [status/version evidence](../governance/evidence/PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md) (blob `bd7b9a8e02991169a854d3297ceaf4f713e6d8e8`).
+
+Next: connect the authenticated generation/record status to the visible Library and preserve freshness/error states; implement functional Install Manager and the remaining tools through reviewed Companion/API workflows. Do not present synthetic sample values as live vendor status.
+
+Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP correction is still a surgical patch, not reproducible from source.
+
+## Historical roadmap checkpoint — synthetic status preview — 2026-10-30
 
 Source commit [`1018be83b451b8db6429ba5bf3b869f223fed40b`](https://github.com/begb0037admin/aimm/commit/1018be83b451b8db6429ba5bf3b869f223fed40b) and development Pages deployment [`1a442d22`](https://1a442d22.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) show active synthetic per-format statuses and status filters (3 Updates, 4 Up to date, 3 Manual check, 4 Unchecked). Jules passed source review; Jules passed deployed review at 1920×815. At 390×844, one-column cards and no horizontal overflow were verified by metrics; the sidebar collapses to icons and no lower-page screenshot was available. See [preview evidence](../governance/evidence/PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
 

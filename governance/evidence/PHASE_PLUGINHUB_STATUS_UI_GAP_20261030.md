@@ -1,8 +1,14 @@
 # PluginHub status-scope UI connection gap — 2026-10-30
 
-## Current synthetic preview checkpoint
+## Latest synthetic UI checkpoint — version emphasis and status guidance
 
-Source commit [`1018be83b451b8db6429ba5bf3b869f223fed40b`](https://github.com/begb0037admin/aimm/commit/1018be83b451b8db6429ba5bf3b869f223fed40b) now demonstrates record-level status display and filtering in the opt-in synthetic fixture: 3 Updates, 4 Up to date, 3 Manual check and 4 Unchecked across 14 format records. Deployment `1a442d22-c05b-4fbd-a3c4-6cfcccd72288` is the current development Pages preview. These values are generated in memory and do not come from vendor observations or the authenticated account status endpoint. Jules passed source review and deployed visual review at 1920×815. At 390×844, layout metrics confirm one column and no horizontal overflow; the sidebar is an icon rail and the lower page was not visually captured.
+Source commit [`762aeb81737a29b896a95097001c849b26d1911a`](https://github.com/begb0037admin/aimm/commit/762aeb81737a29b896a95097001c849b26d1911a), UI blob `83b0df4f3222b3daa110e0ddea8cf6ed7615f0dc`, and Pages deployment [`c0215f2e`](https://c0215f2e.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) add per-format installed → sample latest version rows to the synthetic status cards. The newer sample version is red, installed remains muted, and the coloured format dots remain beside each format chip. All four status filters retain explicit guidance; the mobile banner stacks at ≤680px. Jules passed source review and final visual checks at 1920×1052 and 390×844. See [current evidence](PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
+
+The UI clarity gap for the synthetic preview is closed. The live Library connection gap below remains open: no authenticated status snapshot, freshness, error/stale state or vendor-backed observation is connected to the visible Library.
+
+## Historical synthetic preview checkpoint — counts and markers
+
+Source commit [`1018be83b451b8db6429ba5bf3b869f223fed40b`](https://github.com/begb0037admin/aimm/commit/1018be83b451b8db6429ba5bf3b869f223fed40b) now demonstrates record-level status display and filtering in the opt-in synthetic fixture: 3 Updates, 4 Up to date, 3 Manual check and 4 Unchecked across 14 format records. Deployment `1a442d22-c05b-4fbd-a3c4-6cfcccd72288` was the current development Pages preview at that checkpoint. These values are generated in memory and do not come from vendor observations or the authenticated account status endpoint. Jules passed source review and deployed visual review at 1920×815. At 390×844, layout metrics confirm one column and no horizontal overflow; the sidebar is an icon rail and the lower page was not visually captured.
 
 The live Library connection gap below remains open.
 
