@@ -1967,7 +1967,7 @@ async function readStatusSummary(request, env, account, requestId, origin) {
     return {
       device_id: row.device_id, device_name: row.display_name,
       generation_id: row.generation_id, observed_at: row.observed_at,
-      record_id: row.record_id, name: row.name, format: row.format,
+      record_id: row.record_id, name: row.name, bundle_identifier: row.bundle_identifier || null, format: row.format,
       installed_version: row.installed_version,
       latest_version: effectiveLatestVersion,
       raw_status: row.raw_result || "unchecked", status: bucket,
