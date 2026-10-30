@@ -358,7 +358,8 @@
   function bindLiveInstallManager() {
     if (synthetic()) return;
     const button = document.querySelector("[data-inv-install-manager]");
-    if (!button || button.__aimmLiveInstallManager) return;
+    if (!button) return;
+    if (button.__aimmLiveInstallManager) { button.disabled = false; return; }
     button.disabled = false;
     button.title = "Open the account-backed Install Manager. Fresh updates are shown; vendor pages require local Companion confirmation.";
     button.setAttribute("aria-label","Install Manager — account-backed update records and vendor page requests");
@@ -511,4 +512,13 @@
     const trigger = event.target.closest("button");
     if (trigger && trigger.textContent.trim() === "Library") setTimeout(() => { install(); bindLiveInstallManager(); },0);
   },true);
+  if (!synthetic()) {
+    let attempts = 0;
+    const bindTimer = setInterval(() => {
+      attempts += 1;
+      bindLiveInstallManager();
+      const button = document.querySelector("[data-inv-install-manager]");
+      if ((document.readyState === "complete" && button?.__aimmLiveInstallManager) || attempts >= 60) clearInterval(bindTimer);
+    },250);
+  }
 })();
