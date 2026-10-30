@@ -3250,6 +3250,14 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-product-line{display:flex;align-items:center;gap:6px;min-width:0}
     #library .inv-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(var(--inv-text-scale, 1) * 12px);font-weight:650;color:#edf1f4}
     #library .inv-version{margin-left:auto;flex:none;color:#8f99a5;font: calc(var(--inv-text-scale, 1) * 9px) ui-monospace,Menlo,monospace}
+    #library .inv-tile-version-summary{margin:3px 0 5px;padding:5px 7px;border-left:2px solid #ee7777;border-radius:0 5px 5px 0;background:#171a1e;min-width:0}
+    #library .inv-version-status{display:grid;gap:2px;color:#9ba5b0;font:calc(var(--inv-text-scale, 1) * 9px) ui-monospace,Menlo,monospace;line-height:1.35}
+    #library .inv-version-row{white-space:normal;overflow-wrap:anywhere}
+    #library .inv-version-row .inv-version-latest{color:#ff6b70;font-weight:800}
+    #library .inv-version-row .inv-version-warning{color:#ff6b70;font-weight:700}
+    #library .inv-version-row.up-to-date .inv-version-current{color:#42c995;font-weight:700}
+    #library .inv-version-row.manual-check .inv-version-current{color:#e8b45a;font-weight:700}
+    #library .inv-version-row.unchecked .inv-version-current{color:#a0a8b1}
     #library .inv-meta{margin-top:3px;color:#87919b;font-size:calc(var(--inv-text-scale, 1) * 9px)}#library .inv-hidden-badge{display:inline-flex;align-items:center;margin-left:5px;padding:1px 5px;border:1px solid #8a6a35;border-radius:999px;color:#f2c879;font-size:calc(var(--inv-text-scale, 1) * 8px);line-height:1.35;vertical-align:middle}
     #library .inv-formats{display:flex;gap:6px 9px;flex-wrap:wrap;margin-top:5px}
     #library .inv-format-state{display:inline-flex;align-items:center;gap:5px}
@@ -3369,7 +3377,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #invNoteOverlay button.primary{border-color:#537dc1;background:#315b9b;color:#fff}
     #invNoteOverlay button.danger{margin-right:auto;border-color:#743b43;color:#e6a8b0}
     
-    #library .inv-synthetic-preview{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:12px 0;padding:11px 14px;border:1px solid #5c4b80;border-radius:8px;background:#211a2b;color:#d8c8f5;font-size:calc(var(--inv-text-scale, 1) * 12px)}#library .inv-synthetic-preview[hidden]{display:none}#library .inv-synthetic-preview span{color:#b4a8c9}
+    #library .inv-scope-banner{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:8px 14px;margin:12px 0;padding:12px 15px;border:1px solid #45515d;border-left:4px solid #77818b;border-radius:8px;background:#171b20;color:#d5dbe1;font-size:calc(var(--inv-text-scale, 1) * 12px);line-height:1.5}#library .inv-scope-banner[hidden]{display:none}#library .inv-scope-banner strong{font-size:calc(var(--inv-text-scale, 1) * 15px);letter-spacing:.02em}#library .inv-scope-count{font-weight:650;color:#a9b2bc}#library .inv-scope-banner.updates{border-color:#754347;border-left-color:#ef7478;background:#211719}#library .inv-scope-banner.updates strong{color:#ff888c}#library .inv-scope-banner.up-to-date{border-color:#315e4d;border-left-color:#42c995;background:#142019}#library .inv-scope-banner.up-to-date strong{color:#58d7a1}#library .inv-scope-banner.manual-check{border-color:#745b34;border-left-color:#e8b45a;background:#211d16}#library .inv-scope-banner.manual-check strong{color:#f0c16c}#library .inv-scope-banner.unchecked{border-color:#46505a;border-left-color:#929ca8;background:#181c20}#library .inv-scope-banner.unchecked strong{color:#b2bbc5}#library .inv-status-detail{display:grid;gap:3px;margin-top:5px;font-size:calc(var(--inv-text-scale, 1) * 10px);line-height:1.45;color:#929ca6}#library .inv-status-detail-row{display:block}#library .inv-status-detail-row b{color:#b3bdc7;font-weight:650}#library .inv-status-detail-row strong{color:#ff888c;font-weight:700}#library .inv-status-detail-row.up-to-date{color:#58c995}#library .inv-status-detail-row.manual-check{color:#e8b45a}#library .inv-status-detail-row.unchecked{color:#a1aab4}#library .inv-synthetic-preview{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:12px 0;padding:11px 14px;border:1px solid #5c4b80;border-radius:8px;background:#211a2b;color:#d8c8f5;font-size:calc(var(--inv-text-scale, 1) * 12px)}#library .inv-synthetic-preview[hidden]{display:none}#library .inv-synthetic-preview span{color:#b4a8c9}
     #library .inv-empty{border:1px dashed #394149;border-radius:9px;padding:28px;text-align:center;color:#87919b;font-size:calc(var(--inv-text-scale, 1) * 12px);margin-top:12px}
     #library .inv-small{color:#75808a;font-size:calc(var(--inv-text-scale, 1) * 10px)}
     #library .inv-sidebar.is-collapsed{padding-left:8px;padding-right:8px}
@@ -3433,6 +3441,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
       <main class="inv-content">
         <div class="inv-top"><div><h2 class="inv-title">Plugin inventory</h2><div class="inv-subtitle">Find, group and compare the plug-ins installed on this Mac.</div></div></div>
         <div class="inv-note">AIMM scans plug-in bundle names and Info.plist metadata in folders you choose. It does not read plug-in binaries, audio, presets, licences or other files. The scan stays in this browser.</div>
+        <div id="invStatusScopeBanner" class="inv-scope-banner" role="status" aria-live="polite" hidden><strong data-inv-scope-title></strong><span class="inv-scope-count" data-inv-scope-count></span><span data-inv-scope-copy></span></div>
         <div id="invSyntheticPreviewNotice" class="inv-synthetic-preview" hidden><strong>Synthetic sample inventory</strong><span>All products and status states here are synthetic and generated in memory; no vendor checks ran. Dots: red = Updates, green = Up to date, amber = Manual check, grey = Unchecked. No saved inventory/favourites/tags are read; folder access is blocked. Check for Duplicates is disabled because no local inventory is connected.</span></div>
         <div class="inv-controls"><button class="inv-btn primary" type="button" id="invAddRootBtn">Manage plug-in folders</button><button class="inv-btn" type="button" id="invScanBtn" disabled>Scan connected folders</button><span class="inv-small" id="invLastScan">No scan configured</span></div>
         <div class="inv-roots" id="invRoots" aria-label="Connected plug-in folders"></div>
@@ -5513,19 +5522,19 @@ if(INV_SYNTHETIC_PREVIEW){
   }
 }
 const INV_SYNTHETIC_ROWS=[
-  {name:"Halo Equalizer",vendor:"Northstar Sample Audio",format:"AU",version:"1.4.2",bundleId:"dev.aimm.sample.northstar.halo.au",rootId:"synthetic-preview",category:"Effect",bundleName:"Halo Equalizer.component",status:"updates"},
+  {name:"Halo Equalizer",vendor:"Northstar Sample Audio",format:"AU",version:"1.4.2",bundleId:"dev.aimm.sample.northstar.halo.au",rootId:"synthetic-preview",category:"Effect",bundleName:"Halo Equalizer.component",status:"updates",latestVersion:"1.5.0"},
   {name:"Halo Equalizer",vendor:"Northstar Sample Audio",format:"VST3",version:"1.4.2",bundleId:"dev.aimm.sample.northstar.halo.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Halo Equalizer.vst3",status:"up-to-date"},
-  {name:"Comet Dynamics",vendor:"Northstar Sample Audio",format:"VST3",version:"2.0.1",bundleId:"dev.aimm.sample.northstar.comet.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Comet Dynamics.vst3",status:"updates"},
-  {name:"Drift Reverb",vendor:"Northstar Sample Audio",format:"AU",version:"1.2.0",bundleId:"dev.aimm.sample.northstar.drift.au",rootId:"synthetic-preview",category:"Effect",bundleName:"Drift Reverb.component",status:"manual-check"},
-  {name:"Tapeform",vendor:"Copperline Sample DSP",format:"CLAP",version:"3.1.0",bundleId:"dev.aimm.sample.copperline.tapeform.clap",rootId:"synthetic-preview",category:"Effect",bundleName:"Tapeform.clap",status:"updates"},
+  {name:"Comet Dynamics",vendor:"Northstar Sample Audio",format:"VST3",version:"2.0.1",bundleId:"dev.aimm.sample.northstar.comet.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Comet Dynamics.vst3",status:"updates",latestVersion:"2.1.0"},
+  {name:"Drift Reverb",vendor:"Northstar Sample Audio",format:"AU",version:"1.2.0",bundleId:"dev.aimm.sample.northstar.drift.au",rootId:"synthetic-preview",category:"Effect",bundleName:"Drift Reverb.component",status:"manual-check",manualReason:"Check vendor release notes for this sample plug-in."},
+  {name:"Tapeform",vendor:"Copperline Sample DSP",format:"CLAP",version:"3.1.0",bundleId:"dev.aimm.sample.copperline.tapeform.clap",rootId:"synthetic-preview",category:"Effect",bundleName:"Tapeform.clap",status:"updates",latestVersion:"3.2.0"},
   {name:"Tapeform",vendor:"Copperline Sample DSP",format:"VST3",version:"3.1.0",bundleId:"dev.aimm.sample.copperline.tapeform.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Tapeform.vst3",status:"up-to-date"},
   {name:"Meter Bloom",vendor:"Copperline Sample DSP",format:"VST3",version:"1.0.4",bundleId:"dev.aimm.sample.copperline.meter.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Meter Bloom.vst3",status:"unchecked"},
   {name:"Phase Garden",vendor:"Copperline Sample DSP",format:"AU",version:"1.7.0",bundleId:"dev.aimm.sample.copperline.phase.au",rootId:"synthetic-preview",category:"Effect",bundleName:"Phase Garden.component",status:"up-to-date"},
-  {name:"Mono Scope",vendor:"Lantern Field Tools",format:"VST2",version:"2.3.0",bundleId:"dev.aimm.sample.lantern.scope.vst2",rootId:"synthetic-preview",category:"Effect",bundleName:"Mono Scope.vst",status:"manual-check"},
+  {name:"Mono Scope",vendor:"Lantern Field Tools",format:"VST2",version:"2.3.0",bundleId:"dev.aimm.sample.lantern.scope.vst2",rootId:"synthetic-preview",category:"Effect",bundleName:"Mono Scope.vst",status:"manual-check",manualReason:"Vendor version could not be confirmed in this sample."},
   {name:"Amber Delay",vendor:"Lantern Field Tools",format:"CLAP",version:"1.3.6",bundleId:"dev.aimm.sample.lantern.delay.clap",rootId:"synthetic-preview",category:"Effect",bundleName:"Amber Delay.clap",status:"unchecked"},
   {name:"Poly Bloom",vendor:"Lantern Field Tools",format:"VST3",version:"1.1.0",bundleId:"dev.aimm.sample.lantern.bloom.vst3",rootId:"synthetic-preview",category:"Instrument",bundleName:"Poly Bloom.vst3",status:"up-to-date"},
   {name:"Soft Clip",vendor:"Orchard Signal Lab",format:"VST2",version:"1.8.2",bundleId:"dev.aimm.sample.orchard.softclip.vst2",rootId:"synthetic-preview",category:"Effect",bundleName:"Soft Clip.vst",status:"unchecked"},
-  {name:"Stereo Lantern",vendor:"Orchard Signal Lab",format:"VST3",version:"2.2.1",bundleId:"dev.aimm.sample.orchard.stereo.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Stereo Lantern.vst3",status:"manual-check"},
+  {name:"Stereo Lantern",vendor:"Orchard Signal Lab",format:"VST3",version:"2.2.1",bundleId:"dev.aimm.sample.orchard.stereo.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Stereo Lantern.vst3",status:"manual-check",manualReason:"Compare the vendor page before updating this sample."},
   {name:"Keynote Piano",vendor:"Orchard Signal Lab",format:"AU",version:"1.0.0",bundleId:"dev.aimm.sample.orchard.piano.au",rootId:"synthetic-preview",category:"Instrument",bundleName:"Keynote Piano.component",status:"unchecked"}
 ];
 const INV_SYNTHETIC_FAVORITES=new Set();
@@ -5971,12 +5980,14 @@ function invBuildGroups(rows){
   rows.forEach(row=>{
     const key=invNorm(row.vendor)+"|"+invNorm(row.name);
     let group=groups.get(key);
-    if(!group){group={name:row.name,vendor:row.vendor,formats:new Set(),versions:new Set(),records:0,bundleIds:new Set(),category:row.category||"",statusCounts:{updates:0,"up-to-date":0,"manual-check":0,unchecked:0},formatStatusCounts:new Map()};groups.set(key,group);}
+    if(!group){group={name:row.name,vendor:row.vendor,formats:new Set(),versions:new Set(),records:0,bundleIds:new Set(),category:row.category||"",formatRows:new Map(),statusCounts:{updates:0,"up-to-date":0,"manual-check":0,unchecked:0},formatStatusCounts:new Map()};groups.set(key,group);}
     const status=statusNames.includes(row.status)?row.status:"unchecked";
     group.statusCounts[status]++;
     group.formats.add(row.format);
     if(!group.formatStatusCounts.has(row.format))group.formatStatusCounts.set(row.format,{updates:0,"up-to-date":0,"manual-check":0,unchecked:0});
     group.formatStatusCounts.get(row.format)[status]++;
+    if(!group.formatRows.has(row.format))group.formatRows.set(row.format,[]);
+    group.formatRows.get(row.format).push(row);
     if(row.version)group.versions.add(row.version);
     if(row.bundleId)group.bundleIds.add(row.bundleId);
     group.records++;
@@ -5999,6 +6010,70 @@ function invFormatStatusDots(group,format){
     const label=(INV_SYNTHETIC_PREVIEW?"Synthetic sample · ":"")+invStatusLabel(status);
     return '<span class="inv-format-status '+status+'" role="img" aria-label="'+invEsc(label)+'" title="'+invEsc(label)+'"></span>';
   }).join("");
+}
+function invStatusScope(){return ["updates","up-to-date","manual-check","unchecked"].includes(INV_SCOPE);}
+function invProductStatusDetailHTML(group){
+  if(!INV_SYNTHETIC_PREVIEW||!invStatusScope())return "";
+  const details=[];
+  Array.from(group.formatRows.entries()).forEach(([format,rows])=>rows.forEach(row=>{
+    if(row.status==="updates"||row.status==="up-to-date")return;
+    let detail="";
+    if(row.status==="updates"&&row.latestVersion)detail="Installed v"+invEsc(row.version||"unknown")+' <span aria-hidden="true">→</span> <strong>Sample latest v'+invEsc(row.latestVersion)+"</strong>";
+    else if(row.status==="updates")detail="Newer sample version available; comparison not provided";
+    else if(row.status==="up-to-date")detail="v"+invEsc(row.version||"unknown")+" — Up to date in this sample";
+    else if(row.status==="manual-check")detail="v"+invEsc(row.version||"unknown")+" — "+invEsc(row.manualReason||"Check the vendor release page before updating.");
+    else detail="v"+invEsc(row.version||"unknown")+" — Not checked; no vendor result is recorded";
+    details.push('<span class="inv-status-detail-row '+row.status+'"><b>'+invEsc(format)+':</b> '+detail+'</span>');
+  }));
+  return details.length?'<span class="inv-status-detail">'+details.join("")+'</span>':"";
+}
+function invProductTileHeaderVersion(versions){
+  return INV_SYNTHETIC_PREVIEW&&invStatusScope()?"":invEsc(versions);
+}
+function invProductTileVersionHTML(group,versions){
+  if(!INV_SYNTHETIC_PREVIEW||!invStatusScope())return invEsc(versions);
+  const rows=[];
+  Array.from(group.formatRows.entries()).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([format,formatRows])=>formatRows.forEach(row=>{
+    const current=invEsc(row.version||"unknown");
+    let content="";
+    if(row.status==="updates"&&row.latestVersion){
+      content='<span class="inv-version-current">v'+current+'</span> <span aria-hidden="true">→</span> <span class="inv-version-latest" aria-label="sample latest version">sample v'+invEsc(row.latestVersion)+'</span>';
+    }else if(row.status==="up-to-date"){
+      content='<span class="inv-version-current">v'+current+'</span>';
+    }else if(row.status==="updates"){
+      content='<span class="inv-version-current">v'+current+'</span> <span class="inv-version-warning">comparison unavailable</span>';
+    }else if(row.status==="manual-check"){
+      content='<span class="inv-version-current">v'+current+'</span> <span>check</span>';
+    }else{
+      content='<span class="inv-version-current">v'+current+'</span> <span>unchecked</span>';
+    }
+    const label=format+": "+(row.status==="updates"?(row.latestVersion?"installed version "+(row.version||"unknown")+", sample latest version "+row.latestVersion:"update indicated; version comparison unavailable"):invStatusLabel(row.status));
+    const accessibleLatest=row.latestVersion?' aria-label="Sample latest version '+invEsc(row.latestVersion)+'"':"";
+    content=content.replace('aria-label="sample latest version"',accessibleLatest);
+    rows.push('<span class="inv-version-row '+row.status+'" title="'+invEsc(label)+'"><b>'+invEsc(format)+'</b> '+content+'</span>');
+  }));
+  return rows.length?'<span class="inv-version-status" title="Synthetic per-format versions. No live vendor check was performed.">'+rows.join("")+'</span>':invEsc(versions);
+}
+function invRenderScopeBanner(groups){
+  const banner=document.getElementById("invStatusScopeBanner");
+  if(!banner)return;
+  if(!invStatusScope()){banner.hidden=true;banner.className="inv-scope-banner";return;}
+  const title=banner.querySelector("[data-inv-scope-title]");
+  const copy=banner.querySelector("[data-inv-scope-copy]");
+  const count=banner.querySelector("[data-inv-scope-count]");
+  let records=0;
+  groups.forEach(group=>records+=group.statusCounts?.[INV_SCOPE]||0);
+  if(title)title.textContent=invStatusLabel(INV_SCOPE);
+  if(count)count.textContent=records.toLocaleString()+" matching format "+(records===1?"record":"records")+" across "+groups.length.toLocaleString()+" "+(groups.length===1?"product":"products");
+  const messages={
+    updates:INV_SYNTHETIC_PREVIEW?"Red dots mark formats with a newer sample version. Each product lists its installed → sample latest version below. Use a vendor's Installer Hub to update a real plug-in; these sample products have no live vendor links.":"Red dots mark formats with a newer vendor version. Review the installed and available versions, then use the vendor's Installer Hub.",
+    "up-to-date":INV_SYNTHETIC_PREVIEW?"Green dots mark formats with no update needed in this sample. A product can also have another format with a different status; its dot and version stay visible. This does not confirm real plug-ins are current.":"Green dots mark formats with a current vendor observation. A product may have another format with a different status.",
+    "manual-check":INV_SYNTHETIC_PREVIEW?"Amber dots mark formats to compare with the vendor's release page. Product details say what to check. Another format of the same product can have a different status.":"Amber dots mark formats that need a manual vendor check.",
+    unchecked:INV_SYNTHETIC_PREVIEW?"Grey dots mean no check was made. These sample formats have no vendor result; do not assume they are current. Other formats of the same product may have a status.":"Grey dots mean no vendor status is connected for these formats yet."
+  };
+  if(copy)copy.textContent=messages[INV_SCOPE];
+  banner.className="inv-scope-banner "+INV_SCOPE;
+  banner.hidden=false;
 }
 function invStageMap(){
   const map=new Map();
@@ -6668,6 +6743,7 @@ function invRenderInventory(){
   const collator=new Intl.Collator(undefined,{sensitivity:"base",numeric:true});
   const sortValue=group=>INV_SORT==="product"?group.name:INV_SORT==="format"?Array.from(group.formats).sort().join(", "):INV_SORT==="version"?Array.from(group.versions).sort().join(", "):group.vendor;
   filtered.sort((a,b)=>collator.compare(sortValue(a),sortValue(b))||collator.compare(a.vendor,b.vendor)||collator.compare(a.name,b.name));
+  invRenderScopeBanner(filtered);
   const viewControl=document.getElementById("invView"),sortControl=document.getElementById("invSort");
   if(viewControl)viewControl.value=INV_VIEW==="all"?"list":INV_VIEW;
   if(sortControl)sortControl.value=INV_SORT;
@@ -6821,7 +6897,7 @@ function invRenderInventory(){
       const chips=formats.map(format=>'<span class="inv-format-state"><span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>'+invFormatStatusDots(group,format)+'</span>').join("");
       const fav=invIsFavorite(group.name),meta=invProductUserMetaHTML(vendor,group.name);
       const action=invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}));
-      return '<div class="inv-list-row" role="row"><span class="inv-list-vendor" role="cell">'+invEsc(vendor)+'</span><span class="inv-list-product" role="cell"><span class="inv-list-product-copy"><span class="inv-list-name">'+invEsc(group.name)+'</span>'+(invGetProductActions(vendor,group.name).hidden===true?'<span class="inv-hidden-badge" aria-label="Hidden from the main library">Hidden</span>':"")+meta+'</span></span>'+(ledger?'<span class="inv-list-meta inv-category-label ledger-only" role="cell">'+invEsc(category)+'</span>':'')+'<span class="inv-list-meta" role="cell">'+invEsc(versions)+'</span><span class="inv-list-formats" data-col="format" role="cell">'+chips+'</span>'+(ledger?'':'<span class="inv-list-meta inv-category-label" data-col="category" role="cell">'+invEsc(category)+'</span>')+(ledger?'<span class="inv-list-meta ledger-only" role="cell">'+(meta||"—")+'</span>':'')+(allPluginsFlat?'<span class="inv-status-pill" role="cell" aria-label="'+invEsc(invGroupStatusSummary(group).detail)+'" title="'+invEsc(invGroupStatusSummary(group).detail)+'">'+invEsc(invGroupStatusSummary(group).label)+'</span>':'')+'<span class="inv-list-actions" role="cell"><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+action+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></span></div>';
+      return '<div class="inv-list-row" role="row"><span class="inv-list-vendor" role="cell">'+invEsc(vendor)+'</span><span class="inv-list-product" role="cell"><span class="inv-list-product-copy"><span class="inv-list-name">'+invEsc(group.name)+'</span>'+(invGetProductActions(vendor,group.name).hidden===true?'<span class="inv-hidden-badge" aria-label="Hidden from the main library">Hidden</span>':"")+meta+invProductStatusDetailHTML(group)+'</span></span>'+(ledger?'<span class="inv-list-meta inv-category-label ledger-only" role="cell">'+invEsc(category)+'</span>':'')+'<span class="inv-list-meta" role="cell">'+invEsc(versions)+'</span><span class="inv-list-formats" data-col="format" role="cell">'+chips+'</span>'+(ledger?'':'<span class="inv-list-meta inv-category-label" data-col="category" role="cell">'+invEsc(category)+'</span>')+(ledger?'<span class="inv-list-meta ledger-only" role="cell">'+(meta||"—")+'</span>':'')+(allPluginsFlat?'<span class="inv-status-pill" role="cell" aria-label="'+invEsc(invGroupStatusSummary(group).detail)+'" title="'+invEsc(invGroupStatusSummary(group).detail)+'">'+invEsc(invGroupStatusSummary(group).label)+'</span>':'')+'<span class="inv-list-actions" role="cell"><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+action+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></span></div>';
     }).join("");
     host.innerHTML='<div class="inv-table inv-view-'+(ledger?"ledger":"list")+(allPluginsFlat?" inv-view-all":"")+'" role="table"'+(allPluginsFlat?' tabindex="0" aria-label="Installed plug-ins; scroll horizontally on narrow screens to view all columns"':' aria-label="Installed plug-ins"')+'><div class="inv-list-head" role="row">'+columns+'</div>'+rowsHTML+'</div>';
     host.querySelectorAll("[data-inv-fav]").forEach(button=>button.addEventListener("click",()=>invToggleFavorite(button.getAttribute("data-inv-fav"))));
@@ -6846,14 +6922,14 @@ function invRenderInventory(){
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=invDisplayCategory(group);
       const fav=invIsFavorite(group.name);
-      return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span>'+(invGetProductActions(vendor,group.name).hidden===true?'<span class="inv-hidden-badge" aria-label="Hidden from the main library">Hidden</span>':"")+'<span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta inv-category-label">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
+      return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span>'+(invGetProductActions(vendor,group.name).hidden===true?'<span class="inv-hidden-badge" aria-label="Hidden from the main library">Hidden</span>':"")+'<span class="inv-version">'+invProductTileHeaderVersion(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div>'+((INV_SYNTHETIC_PREVIEW&&invStatusScope())?'<div class="inv-tile-version-summary">'+invProductTileVersionHTML(group,versions)+'</div>':'')+'<div class="inv-meta inv-category-label">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+invProductStatusDetailHTML(group)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const hidden=items.slice(4).map(group=>{
       const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-format-state"><span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>'+invFormatStatusDots(group,format)+'</span>').join("");
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=invDisplayCategory(group);
       const fav=invIsFavorite(group.name);
-      return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span>'+(invGetProductActions(vendor,group.name).hidden===true?'<span class="inv-hidden-badge" aria-label="Hidden from the main library">Hidden</span>':"")+'<span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div><div class="inv-meta inv-category-label">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
+      return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span>'+(invGetProductActions(vendor,group.name).hidden===true?'<span class="inv-hidden-badge" aria-label="Hidden from the main library">Hidden</span>':"")+'<span class="inv-version">'+invProductTileHeaderVersion(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button><button type="button" class="inv-product-actions" data-inv-product-action="'+invEsc(JSON.stringify({vendor,name:group.name,category,hubUrl,websiteUrl,versions:Array.from(group.versions).sort(),version:Array.from(group.versions).length===1?Array.from(group.versions)[0]:""}))+'" aria-haspopup="menu" aria-expanded="false" aria-label="Plugin actions for '+invEsc(group.name)+'" title="Plugin actions">⋮</button></div>'+((INV_SYNTHETIC_PREVIEW&&invStatusScope())?'<div class="inv-tile-version-summary">'+invProductTileVersionHTML(group,versions)+'</div>':'')+'<div class="inv-meta inv-category-label">'+invEsc(category)+'</div>'+invProductUserMetaHTML(vendor,group.name)+'<div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const more=items.length>4?'<button class="inv-more" type="button" data-inv-more aria-expanded="'+String(expanded)+'">'+(expanded?"Show fewer plug-ins":"＋ "+(items.length-4)+" more plug-ins")+'</button>':"";
     return '<section class="inv-vendor'+(expanded?" expanded":"")+(collapsed?" collapsed":"")+'" data-inv-vendor="'+invEsc(vendorKey)+'"><div class="inv-vendor-head"><span class="inv-logo '+tone+'"><span>'+invEsc(initials)+'</span>'+logo+'</span><span class="inv-vendor-name"><strong>'+invEsc(vendor)+'</strong><small>'+(domain?invEsc(domain)+' · ':'')+items.length+' '+(items.length===1?'plug-in':'plug-ins')+'</small></span><span class="inv-vendor-count">'+items.length+'</span><button type="button" class="inv-vendor-toggle" data-inv-toggle aria-label="Toggle '+invEsc(vendor)+' card" aria-expanded="'+String(!collapsed)+'" title="'+(collapsed?"Expand":"Collapse")+' publisher">'+(collapsed?"›":"⌃")+'</button></div><div class="inv-products">'+visible+hidden+'</div>'+more+actionsHTML+'</section>';
