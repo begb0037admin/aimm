@@ -451,6 +451,13 @@
     }
     return requestPluginVendorSite(args);
   };
+  // The paired Companion asks the Mac user to choose and confirm the local vendor app.
+  window.aimmRequestAccountHubLaunch = async (args = {}) => {
+    if (!APPROVED_AUTH_ORIGINS.has(location.origin)) {
+      throw new Error("Vendor-app requests are not available from this preview origin.");
+    }
+    return requestPluginHubLaunch(args);
+  };
   window.aimmReadAccountPluginAction = async (args = {}) => {
     if (!APPROVED_AUTH_ORIGINS.has(location.origin)) {
       throw new Error("Action results are not available from this preview origin.");
