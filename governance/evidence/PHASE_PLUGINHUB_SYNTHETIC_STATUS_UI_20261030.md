@@ -53,3 +53,11 @@ Branch source commit [`3866a84ff28d474fc6fae87f1824910f57d766b5`](https://github
 Jules passed exact source and final visual review. At desktop, all Status, Library and Category counts are visible with aligned right edges at x=247px. Synthetic values: Status All 12, Updates 3, Up to date 4, Manual check 3, Unchecked 4; Library All 12, Favorites/My tags/Hidden 0; categories all 0 except Instruments & MIDI 2. Existing status colors and the selected dark count badge remain intact. At 390px the collapsed icon rail hides labels and inactive counts; the active count badge remains visible, and document/body scrollWidth both equal the 390px viewport. Full accessible category labels remain available despite visual ellipses. No real status, folder, inventory or vendor calls were made.
 
 This completes visual acceptance checklist item 3. Item 4 (the Library-wide breathing-room sweep) is next.
+
+## Latest Library breathing-room review — 2026-10-30
+
+Branch source commit [`936515e41936148da11a7b784a523a7e0a323406`](https://github.com/begb0037admin/aimm/commit/936515e41936148da11a7b784a523a7e0a323406), `index.html` blob `de37138bb5df71f1e0fccfbff8514c9ece3d7ef7`, is deployed to [development preview `0e055bcd`](https://0e055bcd.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), deployment `0e055bcd-00ac-423b-a5ed-0284aa1ab766`. The desktop four-card publisher layout is unchanged. At widths ≤760px, publisher names wrap in the card heading and the header grows to fit; count and collapse controls retain their right column.
+
+Jules passed the exact source and final visuals at 390px and 1920px. At 390px, “Northstar Sample Audio” fits on two lines in a 240px card; its heading is 31px high and the full header is 65.7px. The count badge and collapse control do not overlap, product rows remain separated, and document/body scrollWidth equal 390px. At 1920px, the four-column layout and one-line publisher heading remain unchanged. No scan or plug-in row actions were used.
+
+This completes visual acceptance checklist item 4. Item 5 (status-scope clarity) is next.
