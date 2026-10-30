@@ -2,9 +2,9 @@
 
 ## Scope and source basis
 
-This manual-to-source comparison uses the installed PluginHub manual at `/Applications/PluginHub.app/Contents/Resources/manual.html` (PluginHub 2.0.12) and AIMM branch `codex/pluginhub-foundation`, checked at `0803f2fe44a74a08a829df094de464aea19fdbe3`. AIMM Library source is `index.html`, blob `b35f0fd495954eb4c5c28565394801ccbe747445`; the VST filter is at the development-only [preview](https://ce77fbf0.aimm-pluginhub-foundation-dev.pages.dev/). This is a source/manual inspection; controls beyond those explicitly listed in the companion VST evidence were not runtime-tested here.
+This manual-to-source comparison uses the installed PluginHub manual at `/Applications/PluginHub.app/Contents/Resources/manual.html` (PluginHub 2.0.12) and AIMM branch `codex/pluginhub-foundation`, now at `ebf9316968d4d7ec808d421c01d6ba96ee027c42`. AIMM Library source is `index.html`, blob `de438302c8791668549298893b3c3579cdf60cdc`. The new All Plugins destination was Jules-reviewed on the development-only [preview](https://20379065.aimm-pluginhub-foundation-dev.pages.dev/); Pages deployment `20379065-736f-4171-a291-3dfbb568192d` succeeded. The earlier VST control remains in its separately reviewed [preview](https://ce77fbf0.aimm-pluginhub-foundation-dev.pages.dev/).
 
-PluginHub’s sidebar has four status groups, optional Pinned, seven named Tools plus PluginHub License, Library entries, categories and counts. The manual describes Cards/List/Ledger layouts; vendor sort A→Z, newest install/update first and oldest first; sortable Ledger headings; and a separate flat All Plugins table.
+PluginHub’s sidebar has four Status groups, optional Pinned, six Tools plus PluginHub License, Library entries for All Plugins, Plugin Compatibility and Tag Manager, categories and counts. The manual also covers Check for Duplicates as a separate menu-bar tool. It describes Cards/List/Ledger layouts; vendor sort A→Z, newest install/update first and oldest first; sortable Ledger headings; and a separate flat All Plugins table.
 
 ## Browse and row-action mapping
 
@@ -13,7 +13,8 @@ PluginHub’s sidebar has four status groups, optional Pinned, seven named Tools
 | Four-column vendor cards | Present; cards are grouped by vendor, with an adaptive grid up to four columns. | Compare density, alignment, and card actions against a populated synthetic-only fixture. The current preview remains empty. |
 | Cards, List and Ledger | The current Library source has all three selectors. The older parity checkpoint saying List/Ledger were wholly missing is stale. | Compare exact grouping, columns and interactions with the manual; a selector alone does not establish full parity. |
 | Sort | AIMM offers Vendor, Product, Format and Version. PluginHub offers vendor A→Z, newest install/update first and oldest first; Ledger columns are independently sortable. | Add only when install/update timestamps exist; adapt Ledger to meaningful, sortable status/format columns. Current options differ from PluginHub’s semantics. |
-| All Plugins | The manual describes a separate flat table with name, vendor, formats, installed version, status and row actions. Current source renders inventory in vendor groups; equivalence to that flat view is not established. | Implement the flat projection from the same inventory generation and reuse row actions. |
+| All Plugins | A separate Library > All Plugins button now opens the existing List row-table mode; it preserves current filters and leaves Cards as default. Jules visually passed the navigation on the exact empty preview. The rows are product-grouped, and the manual’s status semantics/column are still absent, so full flat-table parity is not met. | Complete the row projection with generation-backed status and manual columns/behavior. The reviewed preview had zero products/folders, so populated row appearance remains unreviewed. |
+| Plugin Compatibility | Present in the user-provided PluginHub sidebar reference. No matching Plugin Compatibility page or navigation entry was found in current AIMM `index.html`. | Inspect the actual PluginHub compatibility view and its supported host/format data before implementing. Do not invent compatibility rules. |
 | Status | AIMM sidebar shows Updates Available, Up to Date and Manual Check disabled; Unchecked is absent. The Companion has Manual Check fallback and selected vendor checks. The Library API supports status observations, but this Library page does not consume a complete generation-bound status projection. | Connect displayed observations and preferences to the same inventory generation, compute matching counts, and distinguish Unchecked from Manual Check. Never fabricate counts. |
 | Categories, tags, Note & rating | Category, tag and note actions are browser-local in the Library. | Preserve their local scope unless a separately reviewed account-sync contract is used. |
 | Mark up to date, Keep, Hide, Rescan, Copy name | Local mark/keep/hide, selected-root rescan and copy-name actions are present. A local mark is not vendor verification. | Keep marks version-bound and label them local. |
@@ -36,7 +37,7 @@ PluginHub’s sidebar has four status groups, optional Pinned, seven named Tools
 
 ## Safe implementation order
 
-1. Correct the parity record: Cards/List/Ledger and four AIMM sort selectors exist; their grouping and sort semantics differ or remain unverified. Flat All Plugins parity is open.
+1. The Library > All Plugins destination is now visible and switches to List while preserving filters. Complete its row/status semantics and compare populated layout against PluginHub; the reviewed preview was empty. Cards/List/Ledger and AIMM’s four sort selectors exist, but grouping and sort semantics remain different or unverified.
 2. Connect the Library status sidebar to the existing generation-bound API observations and preferences. Include an honest Unchecked state and reconciled counts.
 3. Add a Library entry point to the Companion’s already-present local Duplicate Review; preserve path locality and informational-only results.
 4. Build batch local actions and installer/cleanup surfaces through Companion exact-preview and receipt flows.
@@ -44,8 +45,9 @@ PluginHub’s sidebar has four status groups, optional Pinned, seven named Tools
 
 ## Evidence and limits
 
-- The installed 2.0.12 manual says Tools appear in the default sidebar and menu bar; the old top-tab layout has a Tools button/window. AIMM currently has no equivalent whole-library Tools navigation in this Library page.
+- The installed 2.0.12 manual says Tools appear in the default sidebar and menu bar; the old top-tab layout has a Tools button/window. AIMM currently has no equivalent whole-library Tools navigation in this Library page. Plugin Compatibility is an additional missing Library destination visible in the user-provided PluginHub screenshot.
 - Current branch API README and source contain status, share and profile routes. This does not establish those features as usable from the current PluginHub-style Library page or as remotely validated.
-- No plug-in folders were scanned and none of their metadata was uploaded. The dedicated development preview remains empty; synthetic non-production data only.
+- Jules passed the new All Plugins navigation visually at deployment `20379065` from source `ebf9316968d4d7ec808d421c01d6ba96ee027c42`; it fits the sidebar, has distinct active styling, and leaves Cards as the initial layout. The preview showed zero products and zero folders, so populated rows were not assessed.
+- No plug-in folders were scanned and none of their metadata was uploaded. Synthetic non-production data only.
 - No automated tests, Worker deployment, production deployment, install, deletion, share or external action occurred in this slice.
 - Foundation remains **NOT MET**. Stage 6 remains gated pending fresh exit evidence and independent acceptance. The development Worker passkey RP fix remains a surgical patch, not a reproducible build from branch source.

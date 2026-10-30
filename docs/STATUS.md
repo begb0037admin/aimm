@@ -1,4 +1,12 @@
-## Latest PluginHub parity checkpoint — 2026-10-30
+## Latest PluginHub parity checkpoint — All Plugins navigation — 2026-10-30
+
+The new Library > All Plugins button opens the existing List row table and preserves filters; Cards remains the default. Jules passed the exact development preview at https://20379065.aimm-pluginhub-foundation-dev.pages.dev/ (source ebf9316968d4d7ec808d421c01d6ba96ee027c42, deployment 20379065-736f-4171-a291-3dfbb568192d). The empty preview had zero products/folders, so populated row layout and status remain unreviewed. AIMM’s status/share/profile API routes and local Companion duplicate review exist, but most whole-library tools are not connected to this Library page.
+
+See [the tool and browse contract matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob `422baf86e2353df931604fb8db9feb311eb2fd37`, for exact manual/source mapping and remaining status, flat-table and whole-library-tool gaps. This change did not scan inventory, run automated tests, deploy a Worker, install/remove files, share data, or touch production.
+
+Foundation remains **NOT MET**; Stage 6 remains gated pending fresh exit evidence and independent acceptance. The development Worker passkey RP fix remains a surgical patch, not a reproducible build from branch source. Synthetic non-production data only.
+
+## Historical PluginHub checkpoint — VST filter and initial tool sweep — 2026-10-30
 
 Source/manual comparison against installed PluginHub 2.0.12 is recorded in [the tool and browse contract matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob `e41e74f84fcb146f8471b80ee6d628b58ff4f262`. Corrections: AIMM already has Cards/List/Ledger selectors and Vendor/Product/Format/Version sort controls, while PluginHub has different sort semantics and a separate flat All Plugins table; the local Companion already renders Duplicate Review; API status/share/profile routes exist but are not complete surfaces connected to this Library page. Whole-library Tools navigation remains absent. No plug-in folders were scanned. Current UI source remains `f550878fa1e29910c81881534d8c8b6a2bbb97ac`; its empty development preview is https://ce77fbf0.aimm-pluginhub-foundation-dev.pages.dev/. Jules passed the VST control’s source and visual review. No tests, Worker or production deployment, install, deletion, share or external action occurred.
 

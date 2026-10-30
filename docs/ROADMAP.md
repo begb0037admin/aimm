@@ -1,4 +1,12 @@
-## 2026-10-30 PluginHub tool-surface correction
+## 2026-10-30 PluginHub parity — All Plugins navigation
+
+The new Library > All Plugins button opens the existing List row table and preserves filters; Cards remains the default. Jules passed the exact development preview at https://20379065.aimm-pluginhub-foundation-dev.pages.dev/ (source ebf9316968d4d7ec808d421c01d6ba96ee027c42, deployment 20379065-736f-4171-a291-3dfbb568192d). The empty preview had zero products/folders, so populated row layout and status remain unreviewed. AIMM’s status/share/profile API routes and local Companion duplicate review exist, but most whole-library tools are not connected to this Library page.
+
+Next: compare the populated table with a safe synthetic fixture, then complete status semantics only from generation-bound observations. Keep the Companion duplicate review local; connect whole-library tools only through the existing reviewed owners/contracts. See [the tool and browse matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob `422baf86e2353df931604fb8db9feb311eb2fd37`.
+
+No inventory scan/upload, automated tests, Worker or production deployment, file operation, or share occurred. Foundation remains **NOT MET**; Stage 6 gated. The Worker RP fix remains a surgical patch, not reproducible from branch source. Synthetic non-production data only.
+
+## Historical checkpoint — 2026-10-30 PluginHub tool-surface correction
 
 Source/manual comparison against installed PluginHub 2.0.12 is recorded in [the tool and browse contract matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob `e41e74f84fcb146f8471b80ee6d628b58ff4f262`. Corrections: AIMM already has Cards/List/Ledger selectors and Vendor/Product/Format/Version sort controls, while PluginHub has different sort semantics and a separate flat All Plugins table; the local Companion already renders Duplicate Review; API status/share/profile routes exist but are not complete surfaces connected to this Library page. Whole-library Tools navigation remains absent. No plug-in folders were scanned. Use the matrix’s safe order for the next implementation: connect generation-bound status observations to the Library, add an explicit hand-off to the Companion’s already-present local duplicate review, then extend local tools only through reviewed preview/confirmation/receipt flows. Keep API share/profile UI behind the existing remote isolation and recovery gates.
 

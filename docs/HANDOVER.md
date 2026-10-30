@@ -1,4 +1,14 @@
-## Latest continuation — PluginHub tool and browse contract map — 2026-10-30
+## Latest continuation — PluginHub All Plugins entry — 2026-10-30
+
+The branch was verified at `ebf9316968d4d7ec808d421c01d6ba96ee027c42` before this record update. Library source `index.html` blob `de438302c8791668549298893b3c3579cdf60cdc` now exposes a separate Library > All Plugins entry using the existing List row mode; Cards remains the default and current filters persist. Jules passed the immutable development preview [deployment 20379065](https://20379065.aimm-pluginhub-foundation-dev.pages.dev/): the entry fits and reads cleanly, switches View to List, and has distinct active state from Status > All plugins. The preview had zero products and connected folders, so populated rows were not assessed. This navigation slice does not finish PluginHub’s status column or full flat-table semantics.
+
+The manual/source contract report is [PluginHub tool and browse matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob `422baf86e2353df931604fb8db9feb311eb2fd37`. It records remaining status mapping, whole-library tool wiring and existing Companion/API owners. The earlier handover checkpoint with tool gaps has been superseded by this correction.
+
+Synchronized pins for this record update: `index.html` blob `de438302c8791668549298893b3c3579cdf60cdc`; Dashboard `DASHBOARD.html` blob `bb8cf1e79dcd9a3217766516502ddecb4900d0a3`; Status `docs/STATUS.md` blob `d621b7d17b4a95b0e51a8cad36042cdb4de4ac0d`; Roadmap `docs/ROADMAP.md` blob `cff5f85279820fcd612895eb5de1c3d243b2fab2`; cold-start handover `docs/handovers/2026-10-28-pluginhub-settings-cold-start.md` blob `a408c1a0db36c9fdd844293fb7c53716124761e0`; VST/tool-sweep evidence `governance/evidence/PHASE_PLUGINHUB_VST_AND_TOOL_SWEEP_20261030.md` blob `a6f2f215740fba127c43fa863e9a7b91aea14abe`; tool/browse matrix `governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md` blob `422baf86e2353df931604fb8db9feb311eb2fd37`. This root handover does not self-pin.
+
+No folder scan/upload, tests, Worker deployment, production action, file operation or share occurred. Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP fix remains a surgical patch, not a reproducible build from branch source. Synthetic non-production data only.
+
+## Historical PluginHub checkpoint — initial tool and browse contract map — 2026-10-30
 
 The branch was checked at `0803f2fe44a74a08a829df094de464aea19fdbe3` before this record update. The exact installed-manual/source comparison is [the PluginHub tool and browse contract matrix](../governance/evidence/PHASE_PLUGINHUB_TOOL_CONTRACT_MATRIX_20261030.md), blob `e41e74f84fcb146f8471b80ee6d628b58ff4f262`. It corrects stale parity language: AIMM has Cards/List/Ledger and Vendor/Product/Format/Version selectors, but not confirmed PluginHub layout/sort semantics or the separate flat All Plugins view. The Companion already renders local read-only Duplicate Review. Library API status/share/profile routes exist, though complete PluginHub-style Library UI is not connected; account isolation/recovery gates still apply. The Library sidebar has no equivalent Tools navigation. See the matrix for exact present/missing surfaces and safe next order.
 
@@ -6,7 +16,7 @@ Synchronized pins for this record update: UI source `index.html` blob `b35f0fd49
 
 No plug-in folder scan/upload, tests, Worker deployment, production action, install, deletion, share or other external action occurred. Foundation remains **NOT MET**; Stage 6 gated. The development Worker passkey RP fix remains a surgical patch, not a reproducible branch-source build. Synthetic non-production data only.
 
-## Latest PluginHub parity checkpoint — VST control and tool sweep — 2026-10-30
+## Historical PluginHub parity checkpoint — VST control and initial tool sweep — 2026-10-30
 
 The VST filter source is commit `f550878fa1e29910c81881534d8c8b6a2bbb97ac`; `index.html` blob `b35f0fd495954eb4c5c28565394801ccbe747445`. Development Pages deployment `ce77fbf0-8908-41ac-a758-c502c003ac4e` succeeded at https://ce77fbf0.aimm-pluginhub-foundation-dev.pages.dev/. Jules passed the exact source and final visual review. On the empty preview, the tilde cycle, normal replacement, Shift-click combination/removal, arrow navigation and Escape focus return were manually verified. Playwright’s computed role/name lookup resolves the option names; the CUA snapshot omits them. This points to a snapshot-bridge limitation and is not evidence about a native screen reader. The preview was left at All formats with zero installed products and zero connected folders.
 
