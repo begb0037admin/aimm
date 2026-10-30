@@ -2,7 +2,7 @@
 
 Latest Library preview [1473c768](https://1473c768.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) uses source commit `4b93b3caabc0689e1066e952dd59b0b15c3257d6`. Per-format version rows now share a fixed format-label column and a single version/status column. Tapeform CLAP/VST3 and Halo Equalizer AU/VST3 align at desktop and mobile widths. Static JavaScript parsing passed and the deployed preview was visually checked at desktop and 390px. Jules review remains pending, so this slice is ready for review but not marked complete.
 
-Kevin re-emphasized that “room to breathe” is mandatory throughout: retain clear gaps and padding; wrap rather than squeeze names, versions, chips, counts, icons or controls. His latest 17:56–17:58 feedback is captured in the [user parity register](../governance/evidence/PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md): restore full plug-in names in four-column Cards and make Cards view easy to return to after opening Library/All Plugins. These items are queued only. Queue new screenshots and feedback before starting another item.
+Kevin re-emphasized that “room to breathe” is mandatory throughout: retain clear gaps and padding; wrap rather than squeeze names, versions, chips, counts, icons or controls. His latest 17:56–17:59 feedback is captured in the [user parity register](../governance/evidence/PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md): restore full plug-in names in four-column Cards, make Cards view easy to return to after opening Library/All Plugins, and give the selected All plugins count the same dark high-contrast badge as selected status counts. These items are queued only. Queue new screenshots and feedback before starting another item.
 
 The synthetic Install Manager remains at preview [7b811d9c](https://7b811d9c.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), source commit `568db596827ac18812ce910cdbd7b09677da69e5`. It uses VST blue, CLAP brown and AU green; queue/download outcomes are simulated only. Real downloads/installations and the independent review remain open.
 
@@ -10,7 +10,7 @@ After the queued tile-name fix, continue generation-bound account status project
 
 - Installer trace: [contract report](../governance/evidence/PHASE_PLUGINHUB_INSTALLER_STAGING_CONTRACT_TRACE_20261030.md), blob `6dcfb821e41150e70558d741dacfabd8250909d2`.
 - Status/Install Manager review: [contract review](../governance/evidence/PHASE_PLUGINHUB_STATUS_INSTALL_CONTRACT_REVIEW_20261030.md), blob `c01b711768a38320964aac4c358b6a459d5319ed`.
-- User parity register blob: `4c744cabf516439f1482588450e98ad89bc38ff3`. HANDOVER does not self-pin.
+- User parity register blob: `387b7965fcfa8a707f7a6b8aa4b475751d94b67a`. HANDOVER does not self-pin.
 
 ## Historical continuation — initial per-format version placement (superseded) — 2026-10-30
 
