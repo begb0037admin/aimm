@@ -562,6 +562,29 @@
     document.body.append(overlay);
     overlay.querySelector("[data-license-close]")?.focus();
   }
+  const OUT_OF_SCOPE_TOOL_LABELS = new Set([
+    "Batch Plugin Management",
+    "Remove Old Installers",
+    "Check for Duplicates",
+    "License Key Vault",
+    "Compare Plugin Profiles"
+  ]);
+  function pruneOutOfScopeTools() {
+    const sidebar = document.getElementById("invSidebar");
+    if (!sidebar) return;
+    for (const item of Array.from(sidebar.querySelectorAll("button, a, [role='button'], [role='link'], [aria-label]"))) {
+      const label = (item.getAttribute("aria-label") || item.innerText || item.textContent || "").trim();
+      const excluded = Array.from(OUT_OF_SCOPE_TOOL_LABELS).some((name) =>
+        label === name || label.startsWith(name + " —") || label.startsWith(name + " — "));
+      if (!excluded) continue;
+      const row = item.closest(".inv-side-button, .inv-tool-item, li") || item;
+      row.remove();
+    }
+    for (const note of Array.from(sidebar.querySelectorAll("p, small, div"))) {
+      const text = (note.innerText || note.textContent || "").trim();
+      if (text.startsWith("Only Check for Duplicates has a connected hand-off")) note.remove();
+    }
+  }
   function bindPluginHubLicenseTool() {
     const button = Array.from(document.querySelectorAll("#invSidebar button")).find((item) =>
       /PluginHub License/i.test(item.textContent || item.getAttribute("aria-label") || ""));
@@ -615,10 +638,11 @@
       scan.insertAdjacentElement("afterend",button);
       button.insertAdjacentElement("afterend",note);
     }
+    pruneOutOfScopeTools();
     bindLiveInstallManager();
     bindPluginHubLicenseTool();
     if (!pluginHubLicenseObserver && document.getElementById("invSidebar")) {
-      pluginHubLicenseObserver = new MutationObserver(bindPluginHubLicenseTool);
+      pluginHubLicenseObserver = new MutationObserver(() => { pruneOutOfScopeTools(); bindPluginHubLicenseTool(); });
       pluginHubLicenseObserver.observe(document.getElementById("invSidebar"),{childList:true,subtree:true});
     }
     if (!liveManagerObserver && document.body) {
