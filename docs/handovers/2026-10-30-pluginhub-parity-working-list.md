@@ -31,7 +31,7 @@ Activate and review each tool as an individual slice. A control is complete only
 - [ ] **License Key Vault:** implement local protected key storage and its user flow.
 - [ ] **Share Plugin List:** implement reviewed, user-controlled sharing and recipient/expiry choices.
 - [ ] **Compare Plugin Profiles:** implement profile selection and readable differences.
-- [ ] **PluginHub License:** replace the dead control with a clear, working AIMM explanation or destination; do not imply AIMM owns PluginHub licensing.
+- [x] **PluginHub License.** Replaced the disabled control with an accessible information panel explaining that PluginHub app activation is separate from audio plug-in vendor keys, and linking to PluginHub’s official licence page. Verified open/close and destination in the deployed synthetic preview on 2026-10-30; the link opens only when the user chooses it.
 
 ## Review protocol
 
