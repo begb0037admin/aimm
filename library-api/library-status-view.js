@@ -506,8 +506,12 @@
     });
     libraryInstallObserver.observe(document.body,{childList:true,subtree:true});
   }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded",bootLibraryBridge,{once:true});
-  else bootLibraryBridge();
+  function safeBootLibraryBridge() {
+    try { bootLibraryBridge(); }
+    catch (error) { window.__aimmLibraryBridgeError = String(error?.message || error); }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded",safeBootLibraryBridge,{once:true});
+  else safeBootLibraryBridge();
   document.body?.addEventListener("click",(event) => {
     const trigger = event.target.closest("button");
     if (trigger && trigger.textContent.trim() === "Library") setTimeout(() => { install(); bindLiveInstallManager(); },0);
