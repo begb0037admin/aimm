@@ -7,6 +7,7 @@ This is the running checklist for the user’s screenshot-led reverse engineerin
 
 ## Review-ready
 
+- [x] **Return to publisher cards from List view.** Corrected View panel placement so Layout is visible rather than clipped under the top bar. Verified List → “Back to Cards” → publisher tiles in the synthetic preview on 2026-10-30.
 - [x] **Status scopes and Install Manager entry point — first slice.** The Updates scope shows its heading, count, and next-step guidance; empty results explain that no update observations does not mean everything is current. Status counts use red for updates, green for up-to-date, amber for manual check, and grey for unchecked. The sidebar Install Manager opens an account-backed status view with totals and a vendor-page queue. Verified in the approved branch preview on 2026-10-30. The actual snapshot shown had no update rows; stale/unchecked totals were presented. Download/install remain explicitly unavailable because the connected local verified-download flow is not yet wired to the app. Review this item before calling the manager complete.
 
 ## Remaining design work
@@ -16,7 +17,7 @@ This is the running checklist for the user’s screenshot-led reverse engineerin
 - [x] Increase publisher and plug-in name size to match the PluginHub comparison. Verified in the synthetic card preview.
 - [x] Align summary tiles, filter controls, counts, and cards at common grid edges; add breathing room to the inventory cards and format/version rows. Sidebar group spacing remains queued under the sidebar item.
 - [x] Use the requested format colours consistently: VST blue, CLAP brown. AU/VST2 distinctions and status dots remain separate from format chips. Verified in the synthetic card preview.
-- [ ] Keep card and table views reachable after selecting a library/category/status scope. Provide an obvious way back to the tile view.
+- [x] Keep card and table views reachable after selecting a library/category/status scope. The View panel opens below the control so Layout stays visible; List view changes the shortcut to “Back to Cards,” and activating it restores publisher tiles. Verified in the synthetic preview on 2026-10-30.
 - [ ] Align sidebar categories and count figures, retain count visibility for selected rows, and preserve breathing room throughout the sidebar.
 
 ## Tool activation — continue after the design review
