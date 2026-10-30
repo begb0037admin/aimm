@@ -1,3 +1,9 @@
+## Latest continuation — status controls and responsive correction — 2026-10-30
+
+The latest source commit 178b6e82d18f63dca2f9849c3cf80b25a9a87cd8 activates all four status scopes, shows per-format-record counts, and aligns the summary/format controls with the adaptive vendor grid. Jules passed source review. Synthetic Pages deployment [82a306e6](https://82a306e6.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) built successfully. The synthetic fixture shows 12 products / 14 format records and 0/0/0/14. Updates filtering was exercised; it shows that no vendor observations are connected. Jules passed source and synthetic-preview visual/interaction review for commit 178b6e82d18f63dca2f9849c3cf80b25a9a87cd8 at deployment 82a306e6 (ID 82a306e6-8a23-4776-b714-8f676a14b750). At 1920×815, the status unit note, summary, format controls and four-card grid align; counts show 12 products / 14 format records and 0/0/0/14 status. At 1508×815 the cards adapt to two aligned columns. At 390×844 the sidebar collapses and inventory content fits; the status note wraps legibly. Jules tested all four scopes: the three empty vendor-result filters show a clear no-observation message, and Unchecked shows the 14 format records. AX names include counts, units and the missing-observation explanation. All review state was restored to All plugins / Cards and default viewport. No folders or scan controls were touched. No actual plug-in data or folders were used.
+
+The full status integration remains open: Library does not yet use the generation-bound API snapshot, and publisher/canonical product identity is missing. Most Tools, including Install Manager, remain inactive until complete source-backed Companion/API workflows exist. Foundation remains NOT MET; Stage 6 gated; Worker passkey RP fix remains surgical and not reproducible from branch source.
+
 # PluginHub reference-app and manual sweep — 2026-10-30
 
 ## Scope
