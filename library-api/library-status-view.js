@@ -145,6 +145,7 @@
     originalRender = current;
     const wrapped = function() {
       originalRender.apply(this,arguments);
+      if (typeof bindLiveInstallManager === "function") bindLiveInstallManager();
       if (snapshot) updateSidebar();
       syncStats();
       renderStatusView();
@@ -460,6 +461,12 @@
       button.insertAdjacentElement("afterend",note);
     }
     bindLiveInstallManager();
+    const managerHost = document.getElementById("invSidebar");
+    if (managerHost && !managerHost.__aimmManagerObserver) {
+      const observer = new MutationObserver(() => bindLiveInstallManager());
+      observer.observe(managerHost,{childList:true,subtree:true});
+      managerHost.__aimmManagerObserver = observer;
+    }
     if (synthetic()) {
       const button = document.getElementById("invLoadAccountStatusBtn");
       const note = document.getElementById("invAccountStatusNotice");
