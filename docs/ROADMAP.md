@@ -1,10 +1,10 @@
-## Latest PluginHub roadmap checkpoint — format chip colors — 2026-10-30
+## Latest PluginHub roadmap checkpoint — status and Install Manager contract review — 2026-10-30
 
-Visual checklist item 6 is complete on source commit [`2b3675ab100319df9c5e6ca248eaa8970fe05388`](https://github.com/begb0037admin/aimm/commit/2b3675ab100319df9c5e6ca248eaa8970fe05388), `index.html` blob `21d19ac5a4fc036780f56b5d7b7ca7c8074c3de2`, with [synthetic preview deployment 4023a4d5](https://4023a4d5.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). VST2/VST3 chips are blue, CLAP chips brown, AU stays green, and red/green/amber/grey status dots retain their separate meanings. Jules passed exact-source review and deployed review at desktop and 390px. Four even desktop Cards columns retain breathing room; narrow chips wrap with no horizontal overflow. Filters and status dots are unchanged. See [status UI evidence](../governance/evidence/PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
+Read-only review found the account API already returns authenticated current-generation status at per-format record level, including freshness, stale/error and last-good details; the Library UI still renders only its in-memory synthetic fixture. The browser AU-component versus Companion bundle-level identity mismatch, canonical product mapping and unapplied migration 0022 prevent a safe live join or product-level roll-up. The Install Manager is disabled, with no API queue/download/install workflow. A Companion download component is noted in the existing contract matrix, but manager-level progress, batch outcomes and install receipts remain open.
 
-Visual items 1–6 are complete. Next: read-only review of the generation-bound status projection and Install Manager contracts. Keep the preview synthetic; do not connect live status, folders, accounts or vendor sources. Then continue through the remaining AIMM Tools one at a time. Keep “room to breathe” across every change.
+See [contract review evidence](../governance/evidence/PHASE_PLUGINHUB_STATUS_INSTALL_CONTRACT_REVIEW_20261030.md). No live account/status calls, folders, vendor calls, downloads, Worker or D1 changes occurred.
 
-Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP correction is a surgical patch, not reproducible from source. All current preview UI values remain synthetic.
+Next, trace the local Companion downloader and receipt contract from source, without initiating a download. Then build one synthetic Install Manager slice against that contract. Keep download and installation outcomes distinct. Address the Library status join separately after exact generation/record and AU component mapping are resolved. Foundation remains NOT MET; Stage 6 remains gated.
 
 ## Historical roadmap checkpoint — synthetic status preview — 2026-10-30
 
