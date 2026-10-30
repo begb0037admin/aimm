@@ -164,7 +164,21 @@
     }
     const rows = filteredRows();
     if (!rows.length) {
-      host.innerHTML = '<div class="inv-empty">No format records match this status and filter.<small>Use the status list on the left to see another result group.</small></div>';
+      const scope = currentScope();
+      const visible = snapshot.records.filter((row) => INV_SHOW_HIDDEN || !row.hidden);
+      const scopeRows = visible.filter((row) => key(row) === scope);
+      const emptyCopy = {
+        updates: "No update-available observations are recorded in this snapshot. This does not mean everything is current; review Unchecked and Stale results.",
+        "up-to-date": "No fresh up-to-date observations are recorded in this snapshot. Unchecked and Stale results still need checking.",
+        "manual-check": "No records are flagged for a manual vendor comparison in this snapshot.",
+        unchecked: "No records are unchecked in this snapshot.",
+        stale: "No stale observations are recorded in this snapshot.",
+        error: "No failed status checks are recorded in this snapshot."
+      };
+      const detail = scopeRows.length
+        ? "No records in this status match the current search or format filters."
+        : emptyCopy[scope] || "No records are available for this view.";
+      host.innerHTML = '<div class="inv-empty">' + esc(detail) + '<small>These are saved account observations; loading this view does not run a vendor check.</small></div>';
       return true;
     }
     const cards = rows.map((row) => {
