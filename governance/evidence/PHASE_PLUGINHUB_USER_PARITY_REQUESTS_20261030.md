@@ -4,12 +4,12 @@
 
 This register records Kevin’s user-provided PluginHub 2.0.12 comparisons on 2026-10-30. The reference screenshots show UI structure and behavior. Do not copy vendor/plugin rows, counts, paths or update records into AIMM; use the opt-in synthetic fixture for UI work. Production and real-inventory actions remain outside this work.
 
-## Kevin’s visual acceptance checklist — ordered, open — 2026-10-30
+## Kevin’s visual acceptance checklist — ordered, item 1 complete — 2026-10-30
 
 Work through these one at a time. “Room to breathe” is a standing acceptance requirement on every visual change: preserve clear gaps and padding, don’t squeeze names, versions, chips, counts, icons or controls, and wrap content when it cannot fit. Do not mark an item complete until the preview has been checked and Jules has reviewed the exact source and final visuals. Values and records in the preview remain synthetic.
 
-1. **Tile row (current item):** plug-in name and version share a readable row; format chips and status dots sit below. Show installed/current and available sample versions with status-appropriate color. Keep the full plug-in name visible at desktop and mobile widths.
-2. **Status counts:** color Updates red, Up to date green, Manual check amber, and Unchecked grey.
+1. **Tile row — COMPLETE:** source commit `2ff28aa61f341c44f86cee69c6327024c5fc17cb`, preview deployment [`f9f142fe`](https://f9f142fe.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). All 12 names remain readable with per-format versions at 1920px and 390×844; chips/dots sit below, narrow versions wrap, and Jules passed both sizes plus all four synthetic scopes. See [evidence](PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
+2. **Status counts — CURRENT ITEM:** color Updates red, Up to date green, Manual check amber, and Unchecked grey.
 3. **Sidebar count alignment:** align counts in Status, Library and Categories to one right-hand column.
 4. **Breathing room across the Library:** retain consistent spacing around rows, labels, chips, dots and controls; do not compress content to force one-line fit.
 5. **Status scope clarity:** each status view shows the matching items and version context; distinguish synthetic sample values from any future live observations.

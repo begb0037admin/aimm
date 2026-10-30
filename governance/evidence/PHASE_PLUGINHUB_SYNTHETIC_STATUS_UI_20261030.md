@@ -1,6 +1,15 @@
 # PluginHub synthetic status tiles and version comparison — 2026-10-30
 
-## Source and review
+## Latest tile row correction — aligned, readable, responsive — 2026-10-30
+
+Branch source commit [`2ff28aa61f341c44f86cee69c6327024c5fc17cb`](https://github.com/begb0037admin/aimm/commit/2ff28aa61f341c44f86cee69c6327024c5fc17cb), `index.html` blob `122a1903af9f619430b6f908baf0fa633f2983c7`, is deployed to preview [`f9f142fe`](https://f9f142fe.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), deployment `f9f142fe-7996-4a12-9df1-46c8b3805007`. The 34% version area cap keeps each plug-in name visible beside per-format versions at desktop widths; multi-format comparisons wrap within the version area. At widths ≤680px, the version rows move below name/actions. Format chips and red/green/amber/grey status dots remain on their own lower row. Names use 13px type and tile padding/gaps are increased.
+
+Jules independently passed source and final visual review. At 1920px all 12 product names, including Tapeform and Halo Equalizer, fit without ellipsis. At 390×844 names remain untruncated; version text wraps beneath name/actions; chips/dots remain below; document and body scroll widths both equal 390. All four synthetic status views matched their scope guidance and counts: Updates 3 records/3 products; Up to date 4/4; Manual check 3/3; Unchecked 4/4. No real folders, inventory, account status endpoint or vendor checks were used.
+
+This completes visual acceptance checklist item 1 only. Item 2 (status count colors) is next; count-column alignment and the broader breathing-room sweep remain open.
+
+
+## Historical source and review — version placement superseded
 
 Branch source commit [`762aeb81737a29b896a95097001c849b26d1911a`](https://github.com/begb0037admin/aimm/commit/762aeb81737a29b896a95097001c849b26d1911a) updates `index.html` (blob `83b0df4f3222b3daa110e0ddea8cf6ed7615f0dc`). It retains the synthetic status counts and per-format status dots and adds a prominent, per-format version-comparison row directly below each card’s name/actions line in status views. For Updates, installed versions remain muted and the available sample version is red, following PluginHub’s visible old → new convention. Up-to-date rows are green; Manual check and Unchecked rows are distinguished. Missing update comparisons say “comparison unavailable,” not “unchecked.” The original colored dots remain beside each format chip as a supplemental signal.
 

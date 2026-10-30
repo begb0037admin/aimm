@@ -1,10 +1,10 @@
-## Latest PluginHub roadmap checkpoint — readable synthetic status versions — 2026-10-30
+## Latest PluginHub roadmap checkpoint — readable tile names and versions — 2026-10-30
 
-Source commit [`762aeb81737a29b896a95097001c849b26d1911a`](https://github.com/begb0037admin/aimm/commit/762aeb81737a29b896a95097001c849b26d1911a) and development Pages preview [`c0215f2e`](https://c0215f2e.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) now show the installed and sample latest version per format directly on status-filtered cards. Latest sample versions are red; per-format colored dots remain as supporting cues. All four scopes have matching sample counts/copy, and Jules passed desktop, narrow and scope review. See [status/version evidence](../governance/evidence/PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md) (blob `bd7b9a8e02991169a854d3297ceaf4f713e6d8e8`).
+Source commit [`2ff28aa61f341c44f86cee69c6327024c5fc17cb`](https://github.com/begb0037admin/aimm/commit/2ff28aa61f341c44f86cee69c6327024c5fc17cb) and development preview [`f9f142fe`](https://f9f142fe.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) complete visual checklist item 1: all 12 synthetic product names are readable at 1920px and 390×844; versions sit beside names on desktop and wrap below name/actions on narrow screens; format chips/dots remain below. Jules passed both sizes and all four sample status scopes. See [updated status UI evidence](../governance/evidence/PHASE_PLUGINHUB_SYNTHETIC_STATUS_UI_20261030.md).
 
-Next: connect the authenticated generation/record status to the visible Library and preserve freshness/error states; implement functional Install Manager and the remaining tools through reviewed Companion/API workflows. Do not present synthetic sample values as live vendor status.
+Next, color the sidebar status counts red, green, amber and grey; then align the Status, Library and Categories count column. Keep the standing room-to-breathe requirement in every change. The visual queue is recorded one item at a time in the user parity register. Live account generation/record status, functional Install Manager and remaining Tools are still open.
 
-Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP correction is still a surgical patch, not reproducible from source.
+Foundation remains **NOT MET**; Stage 6 remains gated. The development Worker passkey RP correction is a surgical patch, not reproducible from source. All current UI values remain synthetic.
 
 ## Historical roadmap checkpoint — synthetic status preview — 2026-10-30
 

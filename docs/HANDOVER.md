@@ -1,6 +1,7 @@
 ## Active visual acceptance queue — one item at a time
 
-The user requires “room to breathe” as a standing visual acceptance criterion throughout PluginHub parity work. The ordered open checklist is in [the user parity register](../governance/evidence/PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md), current blob `27c8b1652782bb2563ce81850f76fb300c545ff4`. Current item 1 is the plug-in tile row; keep the name readable beside the version, with chips/status dots below. Do not start the next visual item until Jules has reviewed the current deployed preview. Counts and versions remain synthetic; no real inventory or account status is being read.
+Standing criterion: “room to breathe” applies to every visual change. Item 1 (tile names/versions/chips/dots) is complete: source commit `2ff28aa61f341c44f86cee69c6327024c5fc17cb`, preview deployment `f9f142fe-7996-4a12-9df1-46c8b3805007`; Jules passed desktop 1920px and 390×844. Current item 2 is color-coding sidebar status counts (red/green/amber/grey). The ordered checklist is in [the user parity register](../governance/evidence/PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md), current blob `b6689669b446b5b9815455b92689b13e26ba519e`. Counts and versions remain synthetic; no real inventory or account status is being read.
+Current synchronized record pins for item 1: `docs/STATUS.md` `551ce1118cf9545f865b5b21e32f6535a964357f`; `docs/ROADMAP.md` `a8c5f1b3d1d0aa4b797de9eba11248916531f624`; synthetic status UI evidence `292d1ad20d3b1af327da8a41b4e1103e75bb1458`; user parity register `b6689669b446b5b9815455b92689b13e26ba519e`. HANDOVER does not self-pin.
 
 ## Historical continuation — initial per-format version placement (superseded) — 2026-10-30
 
