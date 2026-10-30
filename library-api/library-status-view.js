@@ -133,6 +133,26 @@
     stats[2].querySelector("strong").textContent = snapshot ? foundFormats.size.toLocaleString() : "—";
     stats[2].querySelector("small").textContent = Array.from(foundFormats).join(" · ") || "No account records loaded";
   }
+  function bindRenderer() {
+    const current = window.invRenderInventory;
+    if (typeof current !== "function" || current.__aimmStatusBridge) return;
+    originalRender = current;
+    const wrapped = function() {
+      originalRender.apply(this,arguments);
+      if (snapshot) updateSidebar();
+      syncStats();
+      renderStatusView();
+    };
+    wrapped.__aimmStatusBridge = true;
+    window.invRenderInventory = wrapped;
+  }
+  function refreshBridgeView() {
+    bindRenderer();
+    if (typeof originalRender === "function") originalRender();
+    updateSidebar();
+    syncStats();
+    renderStatusView();
+  }
   function renderStatusView() {
     if (synthetic() || !statusScope(currentScope())) return false;
     const host = document.getElementById("invInventory");
@@ -173,12 +193,12 @@
     if (loading) return;
     if (typeof window.aimmReadAccountPluginStatus !== "function") {
       message = "Account status connection is unavailable. Reload AIMM and sign in under Settings → Account Library.";
-      if (originalRender) originalRender();
+      refreshBridgeView();
       return;
     }
     loading = true;
     message = "Loading generation-bound account status records…";
-    if (originalRender) originalRender();
+    refreshBridgeView();
     try {
       const result = await window.aimmReadAccountPluginStatus({});
       snapshot = {records:Array.isArray(result.records) ? result.records : [], ruleVersion:result.rule_version || null, loadedAt:new Date().toISOString()};
@@ -190,7 +210,7 @@
       message = (error?.message || "The account status request failed.") + " Sign in under Settings → Account Library, then load account status again.";
     } finally {
       loading = false;
-      if (originalRender) originalRender();
+      refreshBridgeView();
     }
   }
   function install() {
@@ -236,15 +256,7 @@
       if (button) button.hidden = true;
       if (note) note.textContent = "Synthetic sample · account status is not read";
     }
-    originalRender = window.invRenderInventory;
-    if (typeof originalRender === "function") {
-      window.invRenderInventory = function() {
-        originalRender.apply(this,arguments);
-        if (snapshot) updateSidebar();
-        syncStats();
-        renderStatusView();
-      };
-    }
+    bindRenderer();
     const sidebar = document.getElementById("invSidebar");
     sidebar?.addEventListener("click",(event) => {
       const button = event.target.closest("[data-inv-scope]");
