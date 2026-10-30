@@ -43,6 +43,17 @@ cat > "$APP_PATH/Contents/Info.plist" <<'PLIST'
   <string>13.0</string>
   <key>NSPrincipalClass</key>
   <string>NSApplication</string>
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleURLName</key>
+      <string>com.aimixmasters.companion.preview.duplicate-review</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>aimm-companion</string>
+      </array>
+    </dict>
+  </array>
 </dict>
 </plist>
 PLIST

@@ -981,6 +981,7 @@ struct CompanionWindow: View {
     @EnvironmentObject private var model: CompanionModel
     @State private var choosingFolders = false
     @State private var confirmingPairing = false
+    @State private var showingDuplicateReview = false
 
     private var formatCounts: [(PluginFormat, Int)] {
         PluginFormat.allCases.map { format in
@@ -1247,6 +1248,16 @@ struct CompanionWindow: View {
             .foregroundStyle(.secondary)
         }
         .padding(20)
+        .onOpenURL { url in
+            guard url.scheme == "aimm-companion",
+                  url.host == "duplicates",
+                  url.path.isEmpty, url.query == nil, url.fragment == nil,
+                  url.user == nil, url.password == nil, url.port == nil else { return }
+            showingDuplicateReview = true
+        }
+        .sheet(isPresented: $showingDuplicateReview) {
+            DuplicateReviewSheet(groups: duplicateGroups, hasSavedScan: model.generation != nil)
+        }
         .confirmationDialog(
             "Review Mac pairing and inventory sync",
             isPresented: $confirmingPairing,
@@ -1267,5 +1278,69 @@ struct CompanionWindow: View {
             case .failure(let error): model.status = "Folder selection cancelled or failed: \(error.localizedDescription)"
             }
         }
+    }
+}
+
+private struct DuplicateReviewSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    let groups: [DuplicateGroup]
+    let hasSavedScan: Bool
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if !hasSavedScan {
+                    VStack(spacing: 10) {
+                        Image(systemName: "doc.text.magnifyingglass")
+                            .font(.largeTitle)
+                            .foregroundStyle(.secondary)
+                        Text("No saved scan yet")
+                            .font(.headline)
+                        Text("Choose a scan in AIMM Companion to create a local duplicate review. Opening this view never starts a scan.")
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: 420)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if groups.isEmpty {
+                    VStack(spacing: 10) {
+                        Image(systemName: "checkmark.circle")
+                            .font(.largeTitle)
+                            .foregroundStyle(.secondary)
+                        Text("No duplicates identified")
+                            .font(.headline)
+                        Text("The saved local scan has no matching bundle IDs and formats at multiple paths.")
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: 420)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    List(groups) { group in
+                        VStack(alignment: .leading, spacing: 7) {
+                            Text("\(group.productName) · \(group.format.rawValue)")
+                                .font(.headline)
+                            Text("Possible extra copy · review only · no file has been changed")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            ForEach(group.extraCopies, id: \.id) { record in
+                                Text(record.localPath)
+                                    .font(.caption2.monospaced())
+                                    .textSelection(.enabled)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+            }
+            .navigationTitle("Duplicate Review")
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+        .frame(minWidth: 520, minHeight: 360)
     }
 }

@@ -3397,7 +3397,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <main class="inv-content">
         <div class="inv-top"><div><h2 class="inv-title">Plugin inventory</h2><div class="inv-subtitle">Find, group and compare the plug-ins installed on this Mac.</div></div></div>
         <div class="inv-note">AIMM scans plug-in bundle names and Info.plist metadata in folders you choose. It does not read plug-in binaries, audio, presets, licences or other files. The scan stays in this browser.</div>
-        <div id="invSyntheticPreviewNotice" class="inv-synthetic-preview" hidden><strong>Synthetic sample inventory</strong><span>Synthetic products are generated in memory. No saved inventory/favourites/tags are read; folder access is blocked.</span></div>
+        <div id="invSyntheticPreviewNotice" class="inv-synthetic-preview" hidden><strong>Synthetic sample inventory</strong><span>Synthetic products are generated in memory. No saved inventory/favourites/tags are read; folder access is blocked. Duplicate Review is unavailable because no local inventory is connected.</span></div>
         <div class="inv-controls"><button class="inv-btn primary" type="button" id="invAddRootBtn">Manage plug-in folders</button><button class="inv-btn" type="button" id="invScanBtn" disabled>Scan connected folders</button><span class="inv-small" id="invLastScan">No scan configured</span></div>
         <div class="inv-roots" id="invRoots" aria-label="Connected plug-in folders"></div>
         <div class="inv-status" id="invScanStatus" role="status">Connect the Audio/Plug-Ins folder and, if needed, Avid/Audio/Plug-Ins. You can add more folders later.</div>
@@ -5468,6 +5468,14 @@ const INV_SYNTHETIC_PREVIEW=(()=>{
     return isDevPages&&new URLSearchParams(window.location.search).get("pluginhub-preview")==="synthetic";
   }catch(_){return false;}
 })();
+if(INV_SYNTHETIC_PREVIEW){
+  const duplicateReviewLink=document.querySelector('[data-inv-duplicate-review]');
+  if(duplicateReviewLink){
+    duplicateReviewLink.removeAttribute("href");
+    duplicateReviewLink.setAttribute("aria-disabled","true");
+    duplicateReviewLink.title="Unavailable in the synthetic sample preview. No local inventory is connected.";
+  }
+}
 const INV_SYNTHETIC_ROWS=[
   {name:"Halo Equalizer",vendor:"Northstar Sample Audio",format:"AU",version:"1.4.2",bundleId:"dev.aimm.sample.northstar.halo.au",rootId:"synthetic-preview",category:"Effect",bundleName:"Halo Equalizer.component"},
   {name:"Halo Equalizer",vendor:"Northstar Sample Audio",format:"VST3",version:"1.4.2",bundleId:"dev.aimm.sample.northstar.halo.vst3",rootId:"synthetic-preview",category:"Effect",bundleName:"Halo Equalizer.vst3"},
