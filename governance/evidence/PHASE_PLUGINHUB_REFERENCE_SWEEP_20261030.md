@@ -16,6 +16,14 @@ The row menu is version-aware and contains category/tag/note-rating, status mark
 
 The manual’s whole-library tool contracts are richer than their labels: batch management builds a multi-vendor selection and reports per-item outcomes; Install Manager downloads from vendor sources and opens vendor installers, with a batch queue and receipt; Remove Old Installers limits review to Downloads and moves selected items to Trash; duplicate review distinguishes active and (Unused) copies; list sharing has field/format scope and expiry; profile comparison has five difference buckets; License Key Vault is local Keychain storage with user presence. AIMM’s current matrix remains authoritative for which API/Companion contracts and UI surfaces exist.
 
+
+
+## Plugin Compatibility reference view
+
+The Library’s Plugin Compatibility page was opened read-only in the local app and then closed back to the dashboard. Its visible contract includes a target-OS selector, a plain-language explanation, summary filters for all plugins, Ready, Check first, Intel only, No word yet and Unknown, plus vendor ordering and expandable vendor detail with statement links. The page explains that its conclusions combine plugin build/architecture evidence, vendor-published statements, other users’ anonymous reports, and update state; it also displays the age of the selected OS and the last vendor-statement check.
+
+AIMM’s current branch has no Plugin Compatibility destination in the Library. This page cannot be replicated honestly from plugin names and formats alone: it needs source-backed binary architecture/build metadata, an AIMM-owned vendor statement store with freshness, account/cohort observations with consent, and precise bucket rules. The isolated synthetic preview does not provide those data sources. Keep the destination visibly unavailable until the evidence contract exists; never infer readiness from version text or unrelated check status. No compatibility filter, target or vendor row was changed, and no values from the local inventory were retained or copied.
+
 ## Installed/updated date finding
 
 PluginHub’s installed scanner source derives the menu date from filesystem metadata for the matching plugin. It takes the maximum of `mtime` and `ctime` across the bundle directory, `Contents/Info.plist`, and files in `Contents/MacOS`. It separately uses `mtime` only for a content-change signal because metadata/signature touches can move `ctime` without a true update. The menu displays the per-plugin date only when it finds a matching plugin; it does not borrow a vendor-level date.
