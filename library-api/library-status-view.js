@@ -718,6 +718,7 @@
 
   const shareCss=document.createElement("style");
   shareCss.textContent="#aimmLocalShareOverlay{position:fixed;inset:0;z-index:20020;display:grid;place-items:center;padding:20px;background:rgba(5,7,11,.78)}#aimmLocalShareOverlay[hidden]{display:none}#aimmLocalShareOverlay section{width:min(900px,96vw);max-height:88vh;overflow:auto;display:grid;gap:16px;padding:22px;border:1px solid #3b4653;border-radius:14px;background:#1b2026;color:#e8edf2;box-shadow:0 20px 70px #0009}#aimmLocalShareOverlay h2,#aimmLocalShareOverlay p{margin:0}#aimmLocalShareOverlay p,#aimmLocalShareOverlay small{color:#aeb8c4}#aimmLocalShareOverlay .share-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}#aimmLocalShareOverlay label{display:grid;gap:6px;color:#d7dde5}#aimmLocalShareOverlay input,#aimmLocalShareOverlay select{min-height:38px;padding:8px 10px;border:1px solid #414a55;border-radius:7px;background:#11151a;color:#e8edf2;font:inherit}#aimmLocalShareOverlay .share-vendors{display:flex;flex-wrap:wrap;gap:8px}#aimmLocalShareOverlay .share-vendors label,#aimmLocalShareOverlay .share-check{display:flex;align-items:center;gap:7px;padding:7px 9px;border:1px solid #343b45;border-radius:7px}#aimmLocalShareOverlay .share-vendors input,#aimmLocalShareOverlay .share-check input{min-height:auto}#aimmLocalShareOverlay .share-preview{max-height:250px;overflow:auto;border:1px solid #343b45;border-radius:8px}#aimmLocalShareOverlay table{width:100%;border-collapse:collapse;font-size:13px}#aimmLocalShareOverlay th,#aimmLocalShareOverlay td{padding:8px 10px;border-bottom:1px solid #303741;text-align:left}#aimmLocalShareOverlay th{position:sticky;top:0;background:#222831;color:#c8d2de}#aimmLocalShareOverlay .share-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:9px}#aimmLocalShareOverlay button{min-height:38px;padding:8px 12px;border:1px solid #414a55;border-radius:7px;background:#252a31;color:#dfe6ed;font:inherit;cursor:pointer}#aimmLocalShareOverlay button.primary{border-color:#3289b7;background:#146082}#aimmLocalShareOverlay [role=status]{min-height:1.4em;color:#42c995}@media(max-width:600px){#aimmLocalShareOverlay .share-grid{grid-template-columns:1fr}}";
+  shareCss.textContent += "#aimmLocalShareOverlay .account-share-panel{margin:16px 0;padding:16px;border:1px solid #3979a6;border-radius:10px;background:#171c22}#aimmLocalShareOverlay .account-share-panel h3{margin:0 0 8px}#aimmLocalShareOverlay .account-share-panel p{line-height:1.5}#aimmLocalShareOverlay .share-active-list{padding-left:20px}#aimmLocalShareOverlay .share-active-list li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0}#aimmLocalShareOverlay [data-share-created] code{display:block;overflow-wrap:anywhere;padding:10px;background:#101316;border-radius:6px}";
   document.head.appendChild(shareCss);
   function shareInventoryRows(){
     return Array.from(document.querySelectorAll("#invInventory .inv-product")).filter((product)=>{
@@ -749,6 +750,13 @@
     const overlay=document.createElement("div");overlay.id="aimmLocalShareOverlay";
     overlay.innerHTML='<section role="dialog" aria-modal="true" aria-labelledby="aimmLocalShareTitle"><header><h2 id="aimmLocalShareTitle">Share Plugin List</h2><p>Create a share-ready export from the plug-ins currently shown in this Library view.</p></header><p><strong>Local export only.</strong> Nothing is sent from AIMM. Expiring public links and passkey protection are not connected yet. Review the fields before you copy or download.</p><div class="share-grid"><label>List name<input type="text" data-share-label maxlength="80" placeholder="My plug-in list"></label><label>Format scope<select data-share-format><option value="">All formats</option><option>AU</option><option>VST2</option><option>VST3</option><option>CLAP</option></select></label></div><div><strong>Exclude publishers</strong><div class="share-vendors">'+vendors.map((vendor,index)=>'<label><input type="checkbox" data-share-vendor value="'+esc(vendor)+'"> '+esc(vendor)+'</label>').join("")+'</div></div><div class="share-grid"><label class="share-check"><input type="checkbox" data-share-versions checked> Include versions</label><label class="share-check"><input type="checkbox" data-share-categories checked> Include categories</label></div><div class="share-preview" data-share-preview></div><small data-share-count></small><div role="status" data-share-status></div><footer class="share-actions"><button type="button" data-share-close>Close</button><button type="button" data-share-copy class="primary">Copy for Sheets</button><button type="button" data-share-download>Download CSV</button></footer></section>';
     document.body.appendChild(overlay);
+    let accountSharePanel=null;
+    if(!synthetic()){
+      accountSharePanel=document.createElement("section");
+      accountSharePanel.className="account-share-panel";
+      accountSharePanel.innerHTML='<h3>Create an expiring link</h3><p>Anyone with the link can view this list until it expires. AIMM does not currently add passkey protection to shared links. Create only a list you are comfortable sharing.</p><div class="share-grid"><label>Link expires<select data-share-expiry><option value="24">In 24 hours</option><option value="72">In 3 days</option><option value="168" selected>In 7 days</option><option value="336">In 14 days</option><option value="720">In 30 days</option></select></label><label class="share-check"><input type="checkbox" data-share-public-confirm> I understand anyone with this link can view it</label></div><div class="share-actions"><button type="button" data-share-create class="primary">Create expiring link</button><button type="button" data-share-load>Load active links</button></div><div role="status" data-share-account-status></div><div data-share-created></div><div data-share-active></div>';
+      overlay.querySelector("header").insertAdjacentElement("afterend",accountSharePanel);
+    }
     const query=(selector)=>overlay.querySelector(selector);
     const output=query("[data-share-preview]"),count=query("[data-share-count]"),status=query("[data-share-status]");
     function selectedRows(){
@@ -786,6 +794,58 @@
       try{await navigator.clipboard.writeText(lines(true));status.textContent="Copied "+selectedRows().length+" plug-ins as tab-separated values.";}
       catch{status.textContent="Clipboard access was unavailable. Use Download CSV instead.";}
     });
+    if(accountSharePanel){
+      const accountStatus=accountSharePanel.querySelector("[data-share-account-status]");
+      const createdHost=accountSharePanel.querySelector("[data-share-created]");
+      const activeHost=accountSharePanel.querySelector("[data-share-active]");
+      const setAccountStatus=(message)=>{accountStatus.textContent=message;};
+      const renderActiveShares=(payload)=>{
+        activeHost.replaceChildren();
+        const shares=Array.isArray(payload?.shares)?payload.shares:[];
+        const heading=document.createElement("h4");heading.textContent="Active links";activeHost.append(heading);
+        if(!shares.length){const empty=document.createElement("p");empty.textContent="There are no active links.";activeHost.append(empty);return;}
+        const list=document.createElement("ul");list.className="share-active-list";
+        for(const item of shares){
+          const row=document.createElement("li"),detail=document.createElement("span");
+          detail.textContent=(item.label||"Plug-in list")+" · expires "+new Date(item.expires_at).toLocaleString();
+          const revoke=document.createElement("button");revoke.type="button";revoke.textContent="Revoke";
+          revoke.addEventListener("click",async()=>{
+            revoke.disabled=true;setAccountStatus("Revoking link…");
+            try{await window.aimmRevokeAccountShare({share_id:item.share_id});row.remove();setAccountStatus("Link revoked. It can no longer be opened.");}
+            catch(error){setAccountStatus(error.message);revoke.disabled=false;}
+          });
+          row.append(detail,revoke);list.append(row);
+        }
+        activeHost.append(list);
+      };
+      accountSharePanel.querySelector("[data-share-load]").addEventListener("click",async(event)=>{
+        const button=event.currentTarget;button.disabled=true;setAccountStatus("Loading active links…");
+        try{renderActiveShares(await window.aimmListAccountShares());setAccountStatus("Active links loaded.");}
+        catch(error){setAccountStatus(error.message);}
+        finally{button.disabled=false;}
+      });
+      accountSharePanel.querySelector("[data-share-create]").addEventListener("click",async(event)=>{
+        const button=event.currentTarget;
+        if(!query("[data-share-public-confirm]").checked){setAccountStatus("Confirm that anyone with the link can view it before creating a link.");query("[data-share-public-confirm]").focus();return;}
+        const selected=selectedRows();
+        if(!selected.length){setAccountStatus("There are no plug-ins in this selection to share.");return;}
+        button.disabled=true;createdHost.replaceChildren();setAccountStatus("Creating expiring link…");
+        try{
+          const result=await window.aimmCreateAccountShare({label:query("[data-share-label]").value.trim(),expiry_hours:Number(query("[data-share-expiry]").value),rows:selected});
+          const link=new URL(result.share_url);
+          if(link.protocol!=="https:")throw new Error("The share service returned an insecure link. No link was shown.");
+          const textLine=document.createElement("p");textLine.textContent="Link (anyone who receives it can view):";
+          const value=document.createElement("code");value.textContent=link.toString();
+          const copy=document.createElement("button");copy.type="button";copy.textContent="Copy link";
+          copy.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(link.toString());setAccountStatus("Link copied.");}catch{setAccountStatus("Clipboard access is unavailable. Select and copy the link above.");}});
+          const expires=document.createElement("p");expires.textContent="Expires "+new Date(result.expires_at).toLocaleString()+". Revoke it from Active links at any time.";
+          createdHost.append(textLine,value,copy,expires);
+          setAccountStatus("Share link created. Keep it private and revoke it when it is no longer needed.");
+          renderActiveShares(await window.aimmListAccountShares());
+        }catch(error){setAccountStatus(error.message);}
+        finally{button.disabled=false;}
+      });
+    }
     query("[data-share-download]").addEventListener("click",()=>{
       if(!selectedRows().length){status.textContent="There are no plug-ins to download.";return;}
       const blob=new Blob(["\ufeff"+lines(false)],{type:"text/csv;charset=utf-8"});
