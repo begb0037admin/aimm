@@ -4,7 +4,7 @@ The reviewed Companion helper can stage a verified DMG into an explicitly select
 
 See [installer staging contract trace](../governance/evidence/PHASE_PLUGINHUB_INSTALLER_STAGING_CONTRACT_TRACE_20261030.md). This was read-only; no vendor page or installer was accessed.
 
-Next: reconcile the reopened format badge colors against Kevin’s latest screenshot: VST2/VST3 blue, CLAP brown, AU green, status dots unchanged. Review exact source and desktop/390px preview with breathing room. Then build one synthetic PluginHub-style Install Manager UI slice with in-memory update rows, queue controls, and batch outcomes explicitly marked as simulated. Actual download hookup remains separate until the trusted digest and progress/cancellation contracts are ready. Preserve breathing room and synthetic data. Foundation remains **NOT MET**; Stage 6 gated.
+Next: build one synthetic PluginHub-style Install Manager UI slice with in-memory update rows, queue controls, and batch outcomes explicitly marked as simulated. Actual download hookup remains separate until the trusted digest and progress/cancellation contracts are ready. Preserve breathing room and synthetic data. Foundation remains **NOT MET**; Stage 6 gated.
 
 ## Historical roadmap checkpoint — synthetic status preview — 2026-10-30
 
