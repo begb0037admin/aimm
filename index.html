@@ -3163,7 +3163,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #library .inv-vst-filter-menu{min-inline-size:0}
     #library .inv-vst-filter-legend{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
     #library .inv-vst-option{display:flex;align-items:center;gap:8px;width:100%;padding:7px 9px;border:1px solid transparent;border-radius:6px;background:transparent;color:#d5dbe2;text-align:left;font:500 11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;white-space:nowrap;cursor:pointer}
-    #library .inv-vst-option input{width:14px;height:14px;margin:0;flex:0 0 auto;accent-color:#8b5cf6}
+    #library .inv-vst-option-state{margin-left:auto;padding-left:8px;font-size:10px;color:#87909a}
+    #library .inv-vst-option.on .inv-vst-option-state{color:#cfb6ff}
     #library .inv-vst-option:hover,#library .inv-vst-option:focus-visible{background:#292d34;border-color:#424955;outline:none}
     #library .inv-vst-option input{width:14px;height:14px;margin:0;flex:0 0 auto;accent-color:#8b5cf6}
     #library .inv-vst-option.on{background:rgba(47,161,230,.12);border-color:#4484aa;color:#fff}
@@ -3393,7 +3394,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <div class="inv-roots" id="invRoots" aria-label="Connected plug-in folders"></div>
         <div class="inv-status" id="invScanStatus" role="status">Connect the Audio/Plug-Ins folder and, if needed, Avid/Audio/Plug-Ins. You can add more folders later.</div>
         <div class="inv-stats"><div class="inv-stat"><span>Installed products</span><strong id="invProductCount">—</strong><small>grouped by name and publisher</small></div><div class="inv-stat"><span>Format bundles</span><strong id="invBundleCount">—</strong><small>one plug-in may have several formats</small></div><div class="inv-stat"><span>Formats found</span><strong id="invFormatCount">—</strong><small>AU · VST2 · VST3 · CLAP</small></div></div>
-        <div class="inv-controls"><div class="inv-filters" id="invFormatFilters"><button class="inv-format on" type="button" data-inv-format="All">All formats</button><button class="inv-format" type="button" data-inv-format="AU">AU</button><details class="inv-vst-filter" id="invVstFilter"><summary class="inv-format" aria-label="VST format filter" title="Choose VST, VST3 or VST2. Press ~ to cycle supported format filters."><span id="invVstFilterLabel">VST</span></summary><fieldset class="inv-vst-filter-menu"><legend class="inv-vst-filter-legend">VST format</legend><label class="inv-vst-option" data-inv-vst-format="VST" title="VST, all formats"><input type="checkbox" aria-label="VST, all formats"><span>VST (all formats)</span></label><label class="inv-vst-option" data-inv-vst-format="VST3" title="VST3 only"><input type="checkbox" aria-label="VST3 only"><span>VST3</span></label><label class="inv-vst-option" data-inv-vst-format="VST2" title="VST2 only"><input type="checkbox" aria-label="VST2 only"><span>VST2</span></label></fieldset></details><button class="inv-format" type="button" data-inv-format="CLAP">CLAP</button></div><details class="inv-tag-filter" id="invTagFilter"><summary class="inv-btn" aria-label="Filter by your tags">My Tags <span id="invTagFilterCount">0</span></summary><div class="inv-tag-filter-menu"><div class="inv-tag-filter-options" data-inv-tag-filter-options></div><div class="inv-tag-filter-actions"><button class="inv-btn" type="button" data-inv-new-tag>New tag</button><button class="inv-btn" type="button" data-inv-open-tag-manager>Plugin Tag Manager</button></div></div></details><div class="inv-active-tag-filters" id="invActiveTagFilters" hidden></div><label class="inv-search"><span class="inv-small">Find</span><input id="invSearch" type="search" placeholder="Plug-in or publisher…" autocomplete="off"></label><div class="inv-view-tools"><label>View<select id="invView" aria-label="Inventory view"><option value="cards">Cards</option><option value="list">List</option><option value="ledger">Ledger</option></select></label><label>Sort<select id="invSort" aria-label="Sort inventory"><option value="vendor">Vendor</option><option value="product">Product</option><option value="format">Format</option><option value="version">Version</option></select></label></div><button class="inv-btn" type="button" data-inv-collapse-all title="Collapse every publisher card">Collapse vendors</button><button class="inv-btn" type="button" data-inv-expand-all title="Expand every publisher card">Expand vendors</button></div>
+        <div class="inv-controls"><div class="inv-filters" id="invFormatFilters"><button class="inv-format on" type="button" data-inv-format="All">All formats</button><button class="inv-format" type="button" data-inv-format="AU">AU</button><details class="inv-vst-filter" id="invVstFilter"><summary class="inv-format" aria-label="VST format filter" title="Choose VST, VST3 or VST2. Press ~ to cycle supported format filters."><span id="invVstFilterLabel">VST</span></summary><div class="inv-vst-filter-menu" role="group" aria-label="VST format"><button class="inv-vst-option" type="button" data-inv-vst-format="VST" title="VST, all formats"><span>VST (all formats)</span><span class="inv-vst-option-state">Not selected</span></button><button class="inv-vst-option" type="button" data-inv-vst-format="VST3" title="VST3 only"><span>VST3</span><span class="inv-vst-option-state">Not selected</span></button><button class="inv-vst-option" type="button" data-inv-vst-format="VST2" title="VST2 only"><span>VST2</span><span class="inv-vst-option-state">Not selected</span></button></div></details><button class="inv-format" type="button" data-inv-format="CLAP">CLAP</button></div><details class="inv-tag-filter" id="invTagFilter"><summary class="inv-btn" aria-label="Filter by your tags">My Tags <span id="invTagFilterCount">0</span></summary><div class="inv-tag-filter-menu"><div class="inv-tag-filter-options" data-inv-tag-filter-options></div><div class="inv-tag-filter-actions"><button class="inv-btn" type="button" data-inv-new-tag>New tag</button><button class="inv-btn" type="button" data-inv-open-tag-manager>Plugin Tag Manager</button></div></div></details><div class="inv-active-tag-filters" id="invActiveTagFilters" hidden></div><label class="inv-search"><span class="inv-small">Find</span><input id="invSearch" type="search" placeholder="Plug-in or publisher…" autocomplete="off"></label><div class="inv-view-tools"><label>View<select id="invView" aria-label="Inventory view"><option value="cards">Cards</option><option value="list">List</option><option value="ledger">Ledger</option></select></label><label>Sort<select id="invSort" aria-label="Sort inventory"><option value="vendor">Vendor</option><option value="product">Product</option><option value="format">Format</option><option value="version">Version</option></select></label></div><button class="inv-btn" type="button" data-inv-collapse-all title="Collapse every publisher card">Collapse vendors</button><button class="inv-btn" type="button" data-inv-expand-all title="Expand every publisher card">Expand vendors</button></div>
         <div id="invInventory" aria-live="polite"></div>
       </main>
     </div>
@@ -6501,7 +6502,7 @@ function invRenderInventory(){
   const vstFilter=document.getElementById("invVstFilter"),vstLabel=document.getElementById("invVstFilterLabel");
   if(vstFilter){vstFilter.classList.toggle("on",Boolean(vstMode));const summary=vstFilter.querySelector("summary");if(summary){summary.setAttribute("aria-label",vstMode?`VST format filter, ${vstMode==="VST"?"both VST formats selected":vstMode+" selected"}`:"VST format filter, no VST format selected");summary.setAttribute("aria-expanded",String(vstFilter.open));}}
   if(vstLabel)vstLabel.textContent=vstMode||"VST";
-  document.querySelectorAll(".inv-vst-option[data-inv-vst-format]").forEach(option=>{const mode=option.getAttribute("data-inv-vst-format"),input=option.querySelector("input"),selected=mode==="VST"?vst2&&vst3:INV_FORMATS.has(mode);if(input){input.checked=selected;input.indeterminate=mode==="VST"&&vst2!==vst3;}option.classList.toggle("on",selected);});
+  document.querySelectorAll("button.inv-vst-option[data-inv-vst-format]").forEach((option,index)=>{const mode=option.getAttribute("data-inv-vst-format"),selected=mode==="VST"?vst2&&vst3:INV_FORMATS.has(mode),partial=mode==="VST"&&vst2!==vst3,state=partial?"Partly selected":selected?"Selected":"Not selected",name=mode==="VST"?"VST, all formats":mode+" only";option.setAttribute("aria-label",`${name}, ${state.toLowerCase()}`);option.querySelector(".inv-vst-option-state").textContent=state;option.classList.toggle("on",selected||partial);option.tabIndex=mode===vstMode||(!vstMode&&index===0)?0:-1;});
   const query=invNorm(INV_SEARCH);
   let filtered=groups.filter(group=>{
     const formatOK=!INV_FORMATS.size||Array.from(INV_FORMATS).some(format=>group.formats.has(format));
@@ -6880,27 +6881,24 @@ function invInit(){
   const vstFilter=document.getElementById("invVstFilter");
   if(vstFilter){
     vstFilter.addEventListener("toggle",()=>{const summary=vstFilter.querySelector("summary");if(summary)summary.setAttribute("aria-expanded",String(vstFilter.open));});
-    const applyVstMode=(option,combine=false,select=true)=>{
+    const applyVstMode=(option,combine=false)=>{
       const mode=option.getAttribute("data-inv-vst-format"),formats=mode==="VST"?["VST2","VST3"]:[mode];
       if(combine){const fullySelected=formats.every(format=>INV_FORMATS.has(format));formats.forEach(format=>fullySelected?INV_FORMATS.delete(format):INV_FORMATS.add(format));}
-      else if(select){INV_FORMATS.clear();formats.forEach(format=>INV_FORMATS.add(format));}
-      else{formats.forEach(format=>INV_FORMATS.delete(format));}
-      setTimeout(invRenderInventory,0);
+      else{INV_FORMATS.clear();formats.forEach(format=>INV_FORMATS.add(format));}
+      invRenderInventory();
     };
     vstFilter.addEventListener("click",event=>{
-      const option=event.target.closest("label[data-inv-vst-format]");if(!option)return;
-      const input=option.querySelector("input"),select=event.target===input?input.checked:input.indeterminate||!input.checked;
-      event.preventDefault();applyVstMode(option,event.shiftKey,select);
+      const option=event.target.closest("button[data-inv-vst-format]");if(!option)return;
+      applyVstMode(option,event.shiftKey);
       vstFilter.open=false;vstFilter.querySelector("summary")?.focus();
     });
     vstFilter.addEventListener("keydown",event=>{
       if(event.key==="Escape"&&vstFilter.open){event.preventDefault();vstFilter.open=false;vstFilter.querySelector("summary")?.focus();return;}
-      const current=event.target.closest("input"),currentOption=current?.closest("label[data-inv-vst-format]");if(!currentOption)return;
-      if(event.key===" "&&event.shiftKey){event.preventDefault();applyVstMode(currentOption,true);vstFilter.open=false;vstFilter.querySelector("summary")?.focus();return;}
-      const options=Array.from(vstFilter.querySelectorAll("label[data-inv-vst-format]"));
+      const current=event.target.closest("button[data-inv-vst-format]");if(!current)return;
+      const options=Array.from(vstFilter.querySelectorAll("button[data-inv-vst-format]"));
       const direction=(event.key==="ArrowDown"||event.key==="ArrowRight")?1:(event.key==="ArrowUp"||event.key==="ArrowLeft")?-1:0;
       if(!direction)return;
-      event.preventDefault();const index=options.indexOf(currentOption),next=options[(index+direction+options.length)%options.length];applyVstMode(next);next.querySelector("input")?.focus();
+      event.preventDefault();const index=options.indexOf(current),next=options[(index+direction+options.length)%options.length];applyVstMode(next);next.focus();
     });
   }
   document.addEventListener("keydown",event=>{
