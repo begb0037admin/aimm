@@ -517,8 +517,77 @@ async function getOrCreateAccount(db, identity) {
   }
 }
 
+
+async function readShareList(env, account, requestId, origin) {
+  try {
+    const result = await env.DB.prepare("SELECT share_id, projection_json, created_at, expires_at FROM shares WHERE account_id = ?1 AND revoked_at IS NULL AND expires_at > ?2 ORDER BY created_at DESC").bind(account.account_id, new Date().toISOString()).all();
+    const shares = (result?.results || []).map((item) => {
+      let projection = {};
+      try { projection = JSON.parse(item.projection_json); } catch {}
+      return { share_id: item.share_id, label: projection.label || "Plug-in list", created_at: item.created_at, expires_at: item.expires_at };
+    });
+    return json({ shares }, 200, requestId, origin, env);
+  } catch { return errorResponse("database_unavailable", "Share links could not be loaded.", 503, requestId, origin, env); }
+}
+async function createShareLink(request, env, account, requestId, origin) {
+  let input;
+  try { input = await parseJsonBody(request, 1_048_576); }
+  catch (error) {
+    const tooLarge = error.message === "request_too_large";
+    return errorResponse(tooLarge ? "request_too_large" : "invalid_request", tooLarge ? "This list is too large to share." : "Review the share details and try again.", tooLarge ? 413 : 400, requestId, origin, env);
+  }
+  if (!Number.isInteger(input?.expiry_hours) || !new Set([24,72,168,336,720]).has(input.expiry_hours) ||
+      typeof input?.label !== "string" || input.label.length > 80 ||
+      !Array.isArray(input?.rows) || input.rows.length < 1 || input.rows.length > 5000) {
+    return errorResponse("invalid_share", "Choose a name, expiry and a non-empty plug-in list.", 400, requestId, origin, env);
+  }
+  const cleanText = (value, max) => typeof value === "string" ? value.trim().slice(0,max) : "";
+  const rows = [];
+  for (const row of input.rows) {
+    if (!row || typeof row !== "object" || Array.isArray(row)) return errorResponse("invalid_share", "One of the plug-in rows is not valid.", 400, requestId, origin, env);
+    const clean = { name:cleanText(row.name,180), publisher:cleanText(row.publisher,180), category:cleanText(row.category,100), formats:cleanText(row.formats,100), versions:cleanText(row.versions,240) };
+    if (!clean.name || !clean.publisher) return errorResponse("invalid_share", "Every row needs a plug-in and publisher name.", 400, requestId, origin, env);
+    rows.push(clean);
+  }
+  const label = cleanText(input.label,80) || "Plug-in list";
+  const now = new Date(), createdAt = now.toISOString(), expiresAt = new Date(now.getTime()+input.expiry_hours*3600000).toISOString();
+  const shareID = crypto.randomUUID(), token = randomToken();
+  try {
+    await env.DB.prepare("INSERT INTO shares (share_id, account_id, token_hash, projection_json, created_at, expires_at, revoked_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, NULL)")
+      .bind(shareID, account.account_id, await sha256Hex(token), JSON.stringify({label,rows}), createdAt, expiresAt).run();
+  } catch { return errorResponse("database_unavailable", "The share link could not be created.", 503, requestId, origin, env); }
+  return json({share_id:shareID,label,share_url:new URL("/s/"+token,request.url).toString(),created_at:createdAt,expires_at:expiresAt},201,requestId,origin,env);
+}
+async function revokeShareLink(env, account, requestId, origin, shareID) {
+  const revokedAt=new Date().toISOString();
+  try {
+    const result=await env.DB.prepare("UPDATE shares SET revoked_at = ?1 WHERE share_id = ?2 AND account_id = ?3 AND revoked_at IS NULL").bind(revokedAt,shareID,account.account_id).run();
+    if(result?.meta?.changes!==1)return errorResponse("not_found","This share link is no longer active.",404,requestId,origin,env);
+    return json({share_id:shareID,revoked:true,revoked_at:revokedAt},200,requestId,origin,env);
+  } catch { return errorResponse("database_unavailable","The share link could not be revoked.",503,requestId,origin,env); }
+}
+function escapeShareHTML(value) {
+  return String(value??"").replace(/[&<>"']/g,(character)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[character]);
+}
+async function renderPublicShare(env, requestId, token) {
+  const headers={"content-type":"text/html; charset=utf-8","cache-control":"no-store","referrer-policy":"no-referrer","x-content-type-options":"nosniff","content-security-policy":"default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'","x-request-id":requestId};
+  if(!/^[A-Za-z0-9_-]{40,64}$/.test(token))return new Response("Share unavailable or expired.",{status:404,headers});
+  let row;
+  try { row=await env.DB.prepare("SELECT projection_json, expires_at FROM shares WHERE token_hash = ?1 AND revoked_at IS NULL AND expires_at > ?2").bind(await sha256Hex(token),new Date().toISOString()).first(); }
+  catch { return new Response("Share is temporarily unavailable.",{status:503,headers}); }
+  if(!row)return new Response("Share unavailable or expired.",{status:404,headers});
+  let projection;try{projection=JSON.parse(row.projection_json);}catch{return new Response("Share unavailable or expired.",{status:404,headers});}
+  const rows=Array.isArray(projection.rows)?projection.rows:[];
+  const body=rows.map(item=>"<tr><td>"+escapeShareHTML(item.name)+"</td><td>"+escapeShareHTML(item.publisher)+"</td><td>"+escapeShareHTML(item.category)+"</td><td>"+escapeShareHTML(item.formats)+"</td><td>"+escapeShareHTML(item.versions)+"</td></tr>").join("");
+  const label=escapeShareHTML(projection.label||"Plug-in list");
+  const html="<!doctype html><html lang=\\"en\\"><head><meta charset=\\"utf-8\\"><meta name=\\"viewport\\" content=\\"width=device-width,initial-scale=1\\"><meta name=\\"referrer\\" content=\\"no-referrer\\"><title>"+label+"</title><style>*{box-sizing:border-box}body{margin:0;background:#101316;color:#e8edf2;font:15px/1.5 system-ui,sans-serif}main{max-width:1100px;margin:6vh auto;padding:24px}h1{margin:0 0 8px}p{color:#aeb8c4}.notice{padding:12px 14px;border:1px solid #3c4652;border-radius:9px;background:#191e24}div{overflow:auto;margin-top:20px;border:1px solid #303741;border-radius:9px}table{width:100%;border-collapse:collapse;min-width:680px}th,td{text-align:left;padding:10px 12px;border-bottom:1px solid #303741}th{background:#1d232a;color:#c9d2dc}tr:last-child td{border-bottom:0}</style></head><body><main><h1>"+label+"</h1><p>"+rows.length.toLocaleString()+" plug-ins in this list.</p><p class=\\"notice\\">Anyone with this link can view the list until "+escapeShareHTML(row.expires_at)+". Do not forward it beyond the intended audience.</p><div><table><thead><tr><th>Plug-in</th><th>Publisher</th><th>Category</th><th>Formats</th><th>Versions</th></tr></thead><tbody>"+body+"</tbody></table></div></main></body></html>";
+  return new Response(html,{status:200,headers});
+}
+
 function requiredScopeFor(method, pathname) {
-  if ((method === "GET" && ["/v1/me", "/v1/devices", "/v1/library", "/v1/actions/restorable", "/v1/checks", "/v1/status-summary", "/v1/preferences"].includes(pathname))) return "read:library";
+  if ((method === "GET" && ["/v1/me", "/v1/devices", "/v1/library", "/v1/actions/restorable", "/v1/checks", "/v1/status-summary", "/v1/preferences", "/v1/shares"].includes(pathname))) return "read:library";
+  if (method === "POST" && pathname === "/v1/shares") return "read:library";
+  if (method === "DELETE" && /^\\/v1\\/shares\\/[0-9a-f-]{36}$/.test(pathname)) return "read:library";
   if (method === "GET" && pathname === "/v1/webauthn/credentials") return "read:library";
   if (method === "POST" && ["/v1/webauthn/registration/options", "/v1/webauthn/registration/verify", "/v1/webauthn/authentication/options", "/v1/webauthn/authentication/verify"].includes(pathname)) return "read:library";
   if (method === "GET" && pathname === "/v1/actions/preview") return "read:library";
@@ -2147,6 +2216,8 @@ async function pollPairing(request, env, requestId, origin, pairingId) {
 
 async function handle(request, env, requestId, origin) {
   const url = new URL(request.url);
+  const publicShare = /^\\/s\\/([A-Za-z0-9_-]{40,64})$/.exec(url.pathname);
+  if (publicShare && request.method === "GET") return renderPublicShare(env, requestId, publicShare[1]);
   if (url.pathname === "/pairing-preview" && request.method === "GET") {
     return pairingPreviewResponse(env, requestId);
   }
@@ -2526,6 +2597,11 @@ async function handle(request, env, requestId, origin) {
     }
     return json({ pairing_id: pairingApproval[1], approved: true, approved_at: approvedAt }, 200, requestId, origin, env);
   }
+
+  if (url.pathname === "/v1/shares" && request.method === "GET") return readShareList(env, account, requestId, origin);
+  if (url.pathname === "/v1/shares" && request.method === "POST") return createShareLink(request, env, account, requestId, origin);
+  const shareDelete = /^\\/v1\\/shares\\/([0-9a-f-]{36})$/.exec(url.pathname);
+  if (shareDelete && request.method === "DELETE") return revokeShareLink(env, account, requestId, origin, shareDelete[1]);
 
   if (url.pathname === "/v1/me" && request.method === "GET") {
     return json({
