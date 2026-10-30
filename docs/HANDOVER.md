@@ -1,14 +1,16 @@
-## Active PluginHub continuation — synthetic Install Manager preview ready — 2026-10-30
+## Active PluginHub continuation — tile alignment review — 2026-10-30
 
-Latest app source commit `568db596827ac18812ce910cdbd7b09677da69e5` is deployed to [synthetic preview 7b811d9c](https://7b811d9c.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic). The Install Manager prototype has vendor filters and counts, per-row Queue/Download, queue-all/download-all, an in-memory batch panel, and Download folder / Clear installed & failed / Start over / Done controls. Every outcome is labelled simulated; no vendor request, file download, installer or installation occurs.
+Latest Library preview [1473c768](https://1473c768.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic) uses source commit `4b93b3caabc0689e1066e952dd59b0b15c3257d6`. Per-format version rows now share a fixed format-label column and a single version/status column. Tapeform CLAP/VST3 and Halo Equalizer AU/VST3 align at desktop and mobile widths. Static JavaScript parsing passed and the deployed preview was visually checked at desktop and 390px. Jules review remains pending, so this slice is ready for review but not marked complete.
 
-The format palette is consistent: VST2/VST3 blue, CLAP brown, AU green. During review, long mobile vendor names were found clipped and fixed to wrap. Desktop preview shows all three chip colors; mobile review shows the full vendor names and the brown CLAP chip. Queue/batch controls were manually exercised. The independent review required by the parity checklist is still pending; keep this slice ready for review, not marked complete. “Room to breathe” remains a standing requirement.
+Kevin re-emphasized that “room to breathe” is mandatory throughout: retain clear gaps and padding; wrap rather than squeeze names, versions, chips, counts, icons or controls. His latest 17:56 feedback is captured in the [user parity register](../governance/evidence/PHASE_PLUGINHUB_USER_PARITY_REQUESTS_20261030.md). The next visual item is queued only: restore full plug-in names in the four-column layout when the Hope rail is open. Queue new screenshots and feedback before starting another item.
 
-Next: work the generation-bound status projection. The account endpoint already returns exact device/generation/record IDs and per-format freshness/error states, but the visible Library does not consume it. The browser scanner splits AU AudioComponents while Companion publishes bundle-level records, and Companion record IDs are path-keyed opaque IDs; do not merge those local rows by a guessed name or bundle key. Migration 0022 exists on the branch but is not applied remotely. Keep the preview synthetic until the identity boundary and required backend state are resolved. Foundation remains NOT MET; Stage 6 gated.
+The synthetic Install Manager remains at preview [7b811d9c](https://7b811d9c.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic), source commit `568db596827ac18812ce910cdbd7b09677da69e5`. It uses VST blue, CLAP brown and AU green; queue/download outcomes are simulated only. Real downloads/installations and the independent review remain open.
+
+After the queued tile-name fix, continue generation-bound account status projection. Do not merge Companion bundle records with browser-expanded AU components using guessed names or bundle keys. Migration 0022 is in source but not applied remotely. Keep Foundation NOT MET and Stage 6 gated.
 
 - Installer trace: [contract report](../governance/evidence/PHASE_PLUGINHUB_INSTALLER_STAGING_CONTRACT_TRACE_20261030.md), blob `6dcfb821e41150e70558d741dacfabd8250909d2`.
 - Status/Install Manager review: [contract review](../governance/evidence/PHASE_PLUGINHUB_STATUS_INSTALL_CONTRACT_REVIEW_20261030.md), blob `c01b711768a38320964aac4c358b6a459d5319ed`.
-- Synchronized pins: STATUS `bb9cd5ac22cdeb15dc39af50313bc559e60a222c`; ROADMAP `4ccf3eff4a2a97f4cdda68d7b5c558f29d20be30`; tool contract matrix `07540fc7f94dc3644f74af4407ba4ed572cf34`; user parity register `0be23e2d154231c0fc6b6dda72f0cf4c7903cf87`. HANDOVER does not self-pin.
+- User parity register blob: `e9b9a3d877d9dc7a957f885f3f0fb1e74d0a449b`. HANDOVER does not self-pin.
 
 ## Historical continuation — initial per-format version placement (superseded) — 2026-10-30
 
