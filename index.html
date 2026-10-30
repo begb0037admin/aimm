@@ -3353,7 +3353,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-product:last-child{border-bottom:0}
     #library .inv-vendor:not(.expanded) .inv-product.extra{display:none}
     #library .inv-product-line{display:flex;align-items:center;gap:8px;min-width:0}
-    #library .inv-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(var(--inv-text-scale, 1) * 13px);font-weight:650;color:#edf1f4}
+    #library .inv-name{min-width:0;overflow:visible;text-overflow:clip;white-space:normal;overflow-wrap:anywhere;line-height:1.2;font-size:calc(var(--inv-text-scale, 1) * 13px);font-weight:650;color:#edf1f4}
     #library .inv-version{margin-left:auto;min-width:0;max-width:42%;flex:0 1 42%;color:#8f99a5;font:calc(var(--inv-text-scale, 1) * 9px) ui-monospace,Menlo,monospace}
     #library .inv-version-status{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:2px;line-height:1.35}
     #library .inv-version-row{display:grid;grid-template-columns:3.8em minmax(0,1fr);align-items:baseline;column-gap:4px;width:100%;white-space:normal;overflow-wrap:anywhere}
