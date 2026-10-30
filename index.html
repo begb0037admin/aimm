@@ -3354,10 +3354,10 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-vendor:not(.expanded) .inv-product.extra{display:none}
     #library .inv-product-line{display:flex;align-items:center;gap:8px;min-width:0}
     #library .inv-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(var(--inv-text-scale, 1) * 13px);font-weight:650;color:#edf1f4}
-    #library .inv-version{margin-left:auto;min-width:0;max-width:34%;flex:0 1 auto;color:#8f99a5;font:calc(var(--inv-text-scale, 1) * 9px) ui-monospace,Menlo,monospace}
-    #library .inv-version-status{display:flex;align-items:center;justify-content:flex-end;gap:4px 10px;flex-wrap:wrap;line-height:1.35}
-    #library .inv-version-row{white-space:normal;overflow-wrap:anywhere}
-    #library .inv-version-row b{color:#9ba5b0;font-weight:600}
+    #library .inv-version{margin-left:auto;min-width:0;max-width:42%;flex:0 1 42%;color:#8f99a5;font:calc(var(--inv-text-scale, 1) * 9px) ui-monospace,Menlo,monospace}
+    #library .inv-version-status{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:2px;line-height:1.35}
+    #library .inv-version-row{display:grid;grid-template-columns:3.8em minmax(0,1fr);align-items:baseline;column-gap:4px;width:100%;white-space:normal;overflow-wrap:anywhere}
+    #library .inv-version-row b{color:#9ba5b0;font-weight:600}#library .inv-version-values{min-width:0;white-space:nowrap}
     #library .inv-version-row.updates .inv-version-current{color:#a0a8b1}
     #library .inv-version-row .inv-version-latest{color:#ff6b70;font-weight:800}
     #library .inv-version-row .inv-version-warning{color:#ff6b70;font-weight:700}
@@ -6151,8 +6151,8 @@ function invProductTileVersionHTML(group,versions){
       content+='<span class="inv-version-warning">update check needed</span>';
     }
     const label=format+": "+(row.status==="updates"?(row.latestVersion?"installed version "+(row.version||"unknown")+", sample latest version "+row.latestVersion:"update indicated; version comparison unavailable"):invStatusLabel(row.status));
-    const formatLabel=multipleFormats?'<b>'+invEsc(format)+'</b> ':"";
-    rows.push('<span class="inv-version-row '+row.status+'" title="'+invEsc(label)+'" aria-label="'+invEsc(format+": "+label)+'">'+formatLabel+content+'</span>');
+    const formatLabel='<b>'+invEsc(format)+'</b>';
+    rows.push('<span class="inv-version-row '+row.status+'" title="'+invEsc(label)+'" aria-label="'+invEsc(format+": "+label)+'">'+formatLabel+'<span class="inv-version-values">'+content+'</span></span>');
   }));
   return rows.length?'<span class="inv-version-status" title="Synthetic per-format versions. No live vendor check was performed.">'+rows.join("")+'</span>':invEsc(versions);
 }
