@@ -25,13 +25,21 @@ This is the running checklist for the user’s screenshot-led reverse engineerin
 Activate and review each tool as an individual slice. A control is complete only when its user-visible action works and its limits are clear.
 
 - [ ] **Install Manager:** connect a verified local installer-download workflow and receipt UI before offering download/install actions. The present status and vendor-page queue slice is review-ready; do not claim installer actions work.
-- [ ] **Batch Plugin Management:** provide working selection and batch actions with per-item results.
-- [ ] **Remove Old Installers:** provide a reviewed local preview, confirmation and recoverable receipt flow.
-- [ ] **Check for Duplicates:** verify and clearly present the existing read-only Companion hand-off.
-- [ ] **License Key Vault:** implement local protected key storage and its user flow.
+
+
+
+
 - [ ] **Share Plugin List:** implement reviewed, user-controlled sharing and recipient/expiry choices.
-- [ ] **Compare Plugin Profiles:** implement profile selection and readable differences.
+
 - [x] **PluginHub License.** Replaced the disabled control with an accessible information panel explaining that PluginHub app activation is separate from audio plug-in vendor keys, and linking to PluginHub’s official licence page. Verified open/close and destination in the deployed synthetic preview on 2026-10-30; the link opens only when the user chooses it.
+
+## Explicitly out of scope (per Kevin)
+
+- Batch Plugin Management
+- Remove Old Installers
+- Check for Duplicates
+- License Key Vault
+- Compare Plugin Profiles
 
 ## Review protocol
 
