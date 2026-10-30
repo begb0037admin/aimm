@@ -40,6 +40,7 @@ final class CompanionModel: ObservableObject {
     @Published var isScanning = false
     private let defaults: UserDefaults
     private let isolatedPreview: Bool
+    var isIsolatedPreview: Bool { isolatedPreview }
     @Published var apiBaseURL: String {
         didSet { defaults.set(apiBaseURL, forKey: "aimmLibraryAPIBaseURL") }
     }
@@ -1059,20 +1060,20 @@ struct CompanionWindow: View {
                 } label: {
                     Label("Scan standard folders", systemImage: "folder.badge.gearshape")
                 }
-                .disabled(model.isScanning)
+                .disabled(model.isScanning || model.isIsolatedPreview)
                 Button {
                     choosingFolders = true
                 } label: {
                     Label("Choose folders and scan", systemImage: "folder.badge.plus")
                 }
-                .disabled(model.isScanning)
+                .disabled(model.isScanning || model.isIsolatedPreview)
             }
 
             HStack {
                 Button("Scan saved custom folders") { model.scanSavedCustomFolders() }
-                    .disabled(model.isScanning)
+                    .disabled(model.isScanning || model.isIsolatedPreview)
                 Button("Forget saved folders") { model.forgetCustomFolders() }
-                    .disabled(model.isScanning)
+                    .disabled(model.isScanning || model.isIsolatedPreview)
                 Text(model.customFolderStatus)
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -1138,7 +1139,7 @@ struct CompanionWindow: View {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Button("Check for requests") { model.refreshPendingActions() }
-                            .disabled(model.isPairing || model.isScanning)
+                            .disabled(model.isPairing || model.isScanning || model.isIsolatedPreview)
                         Text(model.actionStatus)
                             .font(.caption)
                             .foregroundStyle(.secondary)
