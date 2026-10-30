@@ -2252,6 +2252,97 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 @media(max-width:900px){.settings-guide-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.settings-guide summary{align-items:flex-start;padding:13px 14px}.settings-guide-heading small{max-width:28ch}.settings-guide-grid{grid-template-columns:1fr;padding:0 12px 12px}}
 </style>
+<style id="invInstallManagerStyles">
+#invInstallManagerOverlay{position:fixed;inset:0;z-index:20003;display:grid;place-items:center;background:#05070bd9;padding:16px}
+#invInstallManagerOverlay[hidden]{display:none}
+#invInstallManagerOverlay .im-shell{width:min(1420px,98vw);height:min(900px,94vh);display:grid;grid-template-rows:auto auto minmax(0,1fr);overflow:hidden;border:1px solid #3a414b;border-radius:12px;background:#1b1e23;color:#e6e9ed;box-shadow:0 20px 60px #000b}
+#invInstallManagerOverlay button{font:inherit;color:inherit}
+#invInstallManagerOverlay button:focus-visible{outline:2px solid #60a5fa;outline-offset:2px}
+#invInstallManagerOverlay .im-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 18px;border-bottom:1px solid #343b45}
+#invInstallManagerOverlay .im-title{min-width:0}
+#invInstallManagerOverlay .im-title h2{margin:0;font-size:18px;line-height:1.2}
+#invInstallManagerOverlay .im-title p{margin:4px 0 0;color:#929ba6;font-size:12px}
+#invInstallManagerOverlay .im-toolbar{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+#invInstallManagerOverlay .im-btn{min-height:34px;padding:7px 10px;border:1px solid #424955;border-radius:7px;background:#292d34;color:#e6e9ed;cursor:pointer;font-size:12px}
+#invInstallManagerOverlay .im-btn:hover:not(:disabled){border-color:#679de0;background:#252f3c}
+#invInstallManagerOverlay .im-btn:disabled{opacity:.48;cursor:not-allowed}
+#invInstallManagerOverlay .im-btn.primary{border-color:#367fc3;background:#173d5d;color:#e7f3ff}
+#invInstallManagerOverlay .im-btn.green{border-color:#27845f;background:#173b2d;color:#9ae6c2}
+#invInstallManagerOverlay .im-notice{display:flex;align-items:flex-start;gap:10px;padding:10px 18px;border-bottom:1px solid #3c4a58;background:#142330;color:#c9d9e9;font-size:12px}
+#invInstallManagerOverlay .im-notice strong{display:block;color:#e5f1ff}
+#invInstallManagerOverlay .im-notice p{margin:2px 0 0;color:#aab9c8}
+#invInstallManagerOverlay .im-body{display:grid;grid-template-columns:205px minmax(0,1fr) 300px;min-height:0}
+#invInstallManagerOverlay .im-vendors{display:flex;flex-direction:column;min-width:0;min-height:0;border-right:1px solid #343b45}
+#invInstallManagerOverlay .im-kicker{padding:13px 14px 8px;color:#8e98a4;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+#invInstallManagerOverlay .im-vendor-list{display:grid;align-content:start;gap:4px;overflow:auto;padding:0 8px 12px}
+#invInstallManagerOverlay .im-vendor{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;padding:9px 10px;border:1px solid transparent;border-radius:7px;background:transparent;color:#b9c0c9;text-align:left;cursor:pointer;font-size:12px}
+#invInstallManagerOverlay .im-vendor:hover{background:#242830}
+#invInstallManagerOverlay .im-vendor.selected{border-color:#314457;background:#202d39;color:#dbeafe}
+#invInstallManagerOverlay .im-vendor-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#invInstallManagerOverlay .im-count{min-width:22px;padding:2px 6px;border-radius:12px;background:#303741;color:#aeb8c4;text-align:center;font-variant-numeric:tabular-nums}
+#invInstallManagerOverlay .im-center{display:grid;grid-template-rows:auto minmax(0,1fr);min-width:0;min-height:0}
+#invInstallManagerOverlay .im-center-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border-bottom:1px solid #343b45}
+#invInstallManagerOverlay .im-center-summary{min-width:0}
+#invInstallManagerOverlay .im-center-summary strong{display:block;font-size:13px}
+#invInstallManagerOverlay .im-center-summary span{display:block;margin-top:2px;color:#8f99a5;font-size:11px}
+#invInstallManagerOverlay .im-bulk{display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+#invInstallManagerOverlay .im-list{min-width:0;min-height:0;overflow:auto;padding:8px 10px 14px}
+#invInstallManagerOverlay .im-group{margin:0 0 9px;border:1px solid #303640;border-radius:8px;overflow:hidden;background:#1d2026}
+#invInstallManagerOverlay .im-group-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 9px;background:#252930}
+#invInstallManagerOverlay .im-group-title{display:flex;align-items:center;gap:7px;min-width:0;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+#invInstallManagerOverlay .im-group-title span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#invInstallManagerOverlay .im-group-items{display:grid}
+#invInstallManagerOverlay .im-update-row{display:grid;grid-template-columns:minmax(0,1fr) 62px 58px auto;align-items:center;gap:8px;padding:9px;border-top:1px solid #303640}
+#invInstallManagerOverlay .im-product{min-width:0}
+#invInstallManagerOverlay .im-product strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:600}
+#invInstallManagerOverlay .im-version-line{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:3px;color:#89939f;font-size:10px;font-variant-numeric:tabular-nums}
+#invInstallManagerOverlay .im-version-line .im-latest{color:#f27474}
+#invInstallManagerOverlay .im-format{justify-self:start;padding:2px 5px;border:1px solid #367ba8;border-radius:4px;background:#1d5b80;color:#fff;font-size:9px;font-weight:700}
+#invInstallManagerOverlay .im-size{color:#89939f;text-align:right;font-size:10px;font-variant-numeric:tabular-nums}
+#invInstallManagerOverlay .im-actions{display:flex;align-items:center;justify-content:flex-end;gap:5px}
+#invInstallManagerOverlay .im-row-status{color:#58d6a2;font-size:10px}
+#invInstallManagerOverlay .im-empty{padding:30px 14px;color:#929ba6;text-align:center;font-size:12px}
+#invInstallManagerOverlay .im-queue{display:flex;flex-direction:column;min-width:0;min-height:0;border-left:1px solid #4777a5;background:#1d222b}
+#invInstallManagerOverlay .im-queue-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;border-bottom:1px solid #3b4c60;background:#222c39}
+#invInstallManagerOverlay .im-queue-head strong{font-size:12px;letter-spacing:.12em}
+#invInstallManagerOverlay .im-queue-head span{color:#a5b2c0;font-size:11px}
+#invInstallManagerOverlay .im-queue-list{display:grid;align-content:start;gap:7px;min-height:0;overflow:auto;padding:10px}
+#invInstallManagerOverlay .im-queue-item{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;padding:9px;border:1px solid #39424f;border-radius:7px;background:#202630}
+#invInstallManagerOverlay .im-queue-item strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+#invInstallManagerOverlay .im-queue-item small{display:block;margin-top:2px;color:#9ba5b0;font-size:10px}
+#invInstallManagerOverlay .im-queue-item .im-state{color:#85c4ff}
+#invInstallManagerOverlay .im-remove{border:0;background:transparent;color:#9ba5b0;cursor:pointer;font-size:16px}
+#invInstallManagerOverlay .im-guide{margin:auto 10px 10px;padding:11px;border:1px solid #384352;border-radius:7px;color:#a9b3bf;font-size:11px;line-height:1.5}
+#invInstallManagerOverlay .im-guide strong{color:#e3e8ee}
+#invInstallManagerOverlay .im-guide p{margin:5px 0 0}
+#invInstallManagerOverlay .im-demo-path{display:none;margin:0 10px 10px;padding:8px;border:1px dashed #526274;border-radius:6px;color:#b6c7d7;font-size:10px}
+#invInstallManagerOverlay .im-demo-path.visible{display:block}
+#invInstallManagerOverlay .im-live{color:#7edbb1}
+#invInstallManagerOverlay .im-simulated{color:#ffcf8a}
+@media(max-width:820px){
+ #invInstallManagerOverlay{padding:5px}
+ #invInstallManagerOverlay .im-shell{width:100%;height:96vh;border-radius:9px}
+ #invInstallManagerOverlay .im-head{align-items:flex-start;flex-direction:column;gap:9px;padding:10px}
+ #invInstallManagerOverlay .im-toolbar{justify-content:flex-start}
+ #invInstallManagerOverlay .im-notice{padding:8px 10px}
+ #invInstallManagerOverlay .im-body{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(230px,1fr) minmax(180px,.8fr)}
+ #invInstallManagerOverlay .im-vendors{border-right:0;border-bottom:1px solid #343b45}
+ #invInstallManagerOverlay .im-kicker{padding:7px 10px 4px}
+ #invInstallManagerOverlay .im-vendor-list{display:flex;gap:5px;overflow-x:auto;overflow-y:hidden;padding:0 8px 8px}
+ #invInstallManagerOverlay .im-vendor{flex:0 0 auto;max-width:70vw;padding:6px 8px}
+ #invInstallManagerOverlay .im-center{min-height:0}
+ #invInstallManagerOverlay .im-center-head{align-items:flex-start;flex-direction:column;padding:8px}
+ #invInstallManagerOverlay .im-bulk{justify-content:flex-start}
+ #invInstallManagerOverlay .im-list{padding:7px}
+ #invInstallManagerOverlay .im-update-row{grid-template-columns:minmax(0,1fr) auto;gap:5px;padding:8px}
+ #invInstallManagerOverlay .im-product{grid-column:1}
+ #invInstallManagerOverlay .im-format{grid-column:2;grid-row:1}
+ #invInstallManagerOverlay .im-size{grid-column:1;grid-row:2;text-align:left}
+ #invInstallManagerOverlay .im-actions{grid-column:2;grid-row:2}
+ #invInstallManagerOverlay .im-queue{border-left:0;border-top:1px solid #4777a5}
+ #invInstallManagerOverlay .im-guide{margin:8px 10px}
+}
+</style>
 </head>
 <body>
 <div class="container">
@@ -3415,7 +3506,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         </nav>
         <div class="inv-sidebar-section">TOOLS</div>
         <nav class="inv-sidebar-nav" aria-label="Plug-in tools">
-          <button class="inv-side-button" type="button" disabled aria-label="Install Manager — disabled, the local install queue is not connected" title="The local download, install queue and receipt flow are not connected."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v11"/><path d="m8 10 4 4 4-4"/><path d="M5 16v4h14v-4"/></svg></span><span class="inv-side-label">Install Manager</span></button>
+          <button class="inv-side-button" type="button" data-inv-install-manager aria-label="Install Manager — simulated sample only" title="Opens a simulated sample. No file is downloaded or installed."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v11"/><path d="m8 10 4 4 4-4"/><path d="M5 16v4h14v-4"/></svg></span><span class="inv-side-label">Install Manager</span></button>
           <button class="inv-side-button" type="button" disabled aria-label="Batch Plugin Management — disabled, batch actions are not connected" title="Batch selection and per-item action receipts are not connected."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg></span><span class="inv-side-label">Batch Plugin Management</span></button>
           <button class="inv-side-button" type="button" disabled aria-label="Remove Old Installers — disabled, cleanup flow is not connected" title="Installer cleanup is unavailable until a reviewed local preview and receipt flow is connected."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="m6 7 1 13h10l1-13"/><path d="M10 11v5M14 11v5"/></svg></span><span class="inv-side-label">Remove Old Installers</span></button>
           <a class="inv-side-button" data-inv-duplicate-review href="aimm-companion://duplicates" aria-label="Check for Duplicates — opens read-only local Duplicate Review in AIMM Companion" title="Opens the local read-only Duplicate Review in AIMM Companion. Does not start a scan."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="13" height="15" rx="2"/><rect x="8" y="3" width="12" height="15" rx="2"/><path d="M11 8h6M11 11h6"/></svg></span><span class="inv-side-label">Check for Duplicates</span></a>
@@ -22823,6 +22914,118 @@ csInit('csPlatform');
     else { setTimeout(boot, 60); }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+</script>
+<script>
+(function(){
+  const sizes={"Tapeform|CLAP":"29 MB","Comet Dynamics|VST3":"62 MB","Halo Equalizer|AU":"54 MB"};
+  const esc=value=>String(value??"").replace(/[&<>"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[char]));
+  const formatVersion=value=>String(value||"—");
+  let overlay=null,state=null,rows=[],vendors=[],restoreFocus=null;
+  function init(){
+    const button=document.querySelector("[data-inv-install-manager]");
+    const note=document.querySelector(".inv-tools-note");
+    if(!button)return;
+    const synthetic=typeof INV_SYNTHETIC_PREVIEW!=="undefined"&&INV_SYNTHETIC_PREVIEW===true;
+    button.disabled=!synthetic;
+    button.title=synthetic?"Opens the simulated Install Manager. No file is downloaded or installed.":"The local download and install workflow is not connected.";
+    button.setAttribute("aria-label",synthetic?"Install Manager — simulated sample only":"Install Manager — disabled, the local install workflow is not connected");
+    if(note&&synthetic)note.textContent="Install Manager is a simulation here; no files are downloaded or installed. Other tools are disabled until their matching workflows are ready.";
+    button.addEventListener("click",open);
+  }
+  function getRows(){
+    const source=typeof INV_SYNTHETIC_ROWS!=="undefined"?INV_SYNTHETIC_ROWS:[];
+    return source.filter(row=>row&&row.status==="updates").map(row=>({
+      key:String(row.bundleId||row.name+"|"+row.format),
+      name:String(row.name||"Plug-in"),
+      vendor:String(row.vendor||"Sample publisher"),
+      format:String(row.format||"VST3"),
+      current:String(row.version||"—"),
+      latest:String(row.latestVersion||row.version||"—"),
+      size:sizes[String(row.name||"")+"|"+String(row.format||"")]||"Sample size"
+    }));
+  }
+  function open(){
+    if(!rows.length)rows=getRows();
+    state={vendor:"All vendors",queue:new Set(),outcomes:new Map(),collapsed:new Set(),folder:false};
+    restoreFocus=document.activeElement;
+    overlay=document.createElement("div");
+    overlay.id="invInstallManagerOverlay";
+    overlay.innerHTML='<section class="im-shell" role="dialog" aria-modal="true" aria-labelledby="imTitle"><header class="im-head"><div class="im-title"><h2 id="imTitle">Install Manager</h2><p><span data-im-count>0</span> synthetic updates available · sample data only</p></div><div class="im-toolbar"><button class="im-btn" type="button" data-im-folder>Download folder</button><button class="im-btn" type="button" data-im-clear>Clear installed &amp; failed</button><button class="im-btn" type="button" data-im-reset>Start over</button><button class="im-btn primary" type="button" data-im-done>Done</button></div></header><div class="im-notice"><span aria-hidden="true">ⓘ</span><div><strong>Simulation — no downloads or installations happen here.</strong><p>These sample updates and outcomes are generated in memory. Real vendor checks, files and installers are not connected.</p></div></div><div class="im-body"><aside class="im-vendors"><div class="im-kicker">Vendors</div><div class="im-vendor-list" data-im-vendors></div><div class="im-demo-path" data-im-path>Sample Downloads folder · simulation only · no files are written</div></aside><section class="im-center"><div class="im-center-head"><div class="im-center-summary"><strong data-im-scope>All vendors</strong><span><span data-im-count>0</span> sample updates · no vendor requests</span></div><div class="im-bulk"><button class="im-btn" type="button" data-im-queue-all>+ Queue all</button><button class="im-btn green" type="button" data-im-download-all>Download all ↓</button></div></div><div class="im-list" data-im-list></div></section><aside class="im-queue"><div class="im-queue-head"><strong>BATCH INSTALL</strong><span data-im-queue-count>nothing queued</span></div><div class="im-queue-list" data-im-queue-list></div><div class="im-guide"><strong>Two sample actions</strong><p><b>One at a time:</b> choose Queue or Download on a row. Download changes only its simulated outcome.</p><p><b>As a batch:</b> queue updates and use Simulate batch below. No installer is opened or run.</p></div><button class="im-btn primary" type="button" data-im-batch style="margin:0 10px 10px">Simulate batch</button></aside></div></section>';
+    document.body.appendChild(overlay);
+    render();
+    overlay.addEventListener("click",onClick);
+    overlay.addEventListener("keydown",onKey);
+    overlay.querySelector("[data-im-done]").focus();
+  }
+  function filteredRows(){return state.vendor==="All vendors"?rows:rows.filter(row=>row.vendor===state.vendor);}
+  function countFor(vendor){return vendor==="All vendors"?rows.length:rows.filter(row=>row.vendor===vendor).length;}
+  function render(){
+    if(!overlay||!state)return;
+    const visible=filteredRows();
+    const vendorNames=Array.from(new Set(rows.map(row=>row.vendor)));
+    const vendorsElement=overlay.querySelector("[data-im-vendors]");
+    vendorsElement.innerHTML=["All vendors",...vendorNames].map(vendor=>'<button type="button" class="im-vendor '+(state.vendor===vendor?"selected":"")+'" data-im-vendor="'+esc(vendor)+'"><span class="im-vendor-name">'+esc(vendor)+'</span><span class="im-count">'+countFor(vendor)+'</span></button>').join("");
+    overlay.querySelectorAll("[data-im-count]").forEach(node=>node.textContent=String(visible.length));
+    overlay.querySelector("[data-im-scope]").textContent=state.vendor;
+    const grouped=new Map();
+    visible.forEach(row=>{if(!grouped.has(row.vendor))grouped.set(row.vendor,[]);grouped.get(row.vendor).push(row);});
+    const list=overlay.querySelector("[data-im-list]");
+    if(!visible.length){list.innerHTML='<div class="im-empty">No sample updates for this vendor.</div>';}
+    else list.innerHTML=Array.from(grouped.entries()).map(([vendor,items])=>{
+      const collapsed=state.collapsed.has(vendor);
+      return '<section class="im-group"><header class="im-group-head"><button type="button" class="im-btn" data-im-collapse="'+esc(vendor)+'" aria-expanded="'+String(!collapsed)+'">'+(collapsed?"+":"−")+'</button><div class="im-group-title"><span>'+esc(vendor)+'</span><span class="im-count">'+items.length+'</span></div><button type="button" class="im-btn" data-im-queue-vendor="'+esc(vendor)+'">+ Queue all '+items.length+'</button></header>'+(collapsed?"":'<div class="im-group-items">'+items.map(row=>{
+        const queued=state.queue.has(row.key),outcome=state.outcomes.get(row.key)||"";
+        return '<article class="im-update-row"><div class="im-product"><strong>'+esc(row.name)+'</strong><div class="im-version-line"><span>'+esc(row.current)+'</span><span aria-hidden="true">→</span><span class="im-latest">'+esc(row.latest)+'</span><span>'+esc(row.format)+'</span></div></div><span class="im-format">'+esc(row.format)+'</span><span class="im-size">'+esc(row.size)+'</span><div class="im-actions">'+(outcome?'<span class="im-row-status">'+esc(outcome)+'</span>':'')+'<button type="button" class="im-btn" data-im-queue="'+esc(row.key)+'">'+(queued?"Queued":"Queue")+'</button><button type="button" class="im-btn green" data-im-download="'+esc(row.key)+'">Download</button></div></article>';
+      }).join("")+'</div>');
+    }).join("");
+    const queued=Array.from(state.queue).map(key=>rows.find(row=>row.key===key)).filter(Boolean);
+    const queueList=overlay.querySelector("[data-im-queue-list]");
+    overlay.querySelector("[data-im-queue-count]").textContent=queued.length?queued.length+" queued":"nothing queued";
+    queueList.innerHTML=queued.length?queued.map(row=>'<div class="im-queue-item"><div><strong>'+esc(row.name)+'</strong><small>'+esc(row.vendor)+' · '+esc(row.current)+' → '+esc(row.latest)+' · <span class="im-state">Queued (sample)</span></small></div><button class="im-remove" type="button" data-im-remove="'+esc(row.key)+'" aria-label="Remove '+esc(row.name)+' from sample queue">×</button></div>').join(""):'<div class="im-empty">Nothing queued yet. Queue one row or queue a vendor to preview the batch panel.</div>';
+    overlay.querySelector("[data-im-batch]").disabled=!queued.length;
+    overlay.querySelector("[data-im-queue-all]").textContent="+ Queue all ("+visible.length+")";
+    overlay.querySelector("[data-im-download-all]").textContent="Download all ↓ ("+visible.length+")";
+    overlay.querySelector("[data-im-download-all]").disabled=!visible.length;
+    overlay.querySelector("[data-im-queue-all]").disabled=!visible.length;
+    overlay.querySelector("[data-im-path]").classList.toggle("visible",state.folder);
+  }
+  function simulateDownload(row){
+    state.queue.delete(row.key);
+    state.outcomes.set(row.key,"Simulated");
+  }
+  function onClick(event){
+    if(event.target===overlay){close();return;}
+    const target=event.target.closest("button");if(!target)return;
+    if(target.hasAttribute("data-im-done")){close();return;}
+    if(target.hasAttribute("data-im-vendor")){state.vendor=target.dataset.imVendor;render();return;}
+    if(target.hasAttribute("data-im-collapse")){const vendor=target.dataset.imCollapse;if(state.collapsed.has(vendor))state.collapsed.delete(vendor);else state.collapsed.add(vendor);render();return;}
+    if(target.hasAttribute("data-im-queue")){state.queue.add(target.dataset.imQueue);render();return;}
+    if(target.hasAttribute("data-im-queue-vendor")){rows.filter(row=>row.vendor===target.dataset.imQueueVendor).forEach(row=>state.queue.add(row.key));render();return;}
+    if(target.hasAttribute("data-im-queue-all")){filteredRows().forEach(row=>state.queue.add(row.key));render();return;}
+    if(target.hasAttribute("data-im-download")){const row=rows.find(item=>item.key===target.dataset.imDownload);if(row)simulateDownload(row);render();return;}
+    if(target.hasAttribute("data-im-download-all")){filteredRows().forEach(simulateDownload);render();return;}
+    if(target.hasAttribute("data-im-remove")){state.queue.delete(target.dataset.imRemove);render();return;}
+    if(target.hasAttribute("data-im-batch")){Array.from(state.queue).map(key=>rows.find(row=>row.key===key)).filter(Boolean).forEach(simulateDownload);render();return;}
+    if(target.hasAttribute("data-im-folder")){state.folder=!state.folder;render();return;}
+    if(target.hasAttribute("data-im-clear")){state.outcomes.clear();render();return;}
+    if(target.hasAttribute("data-im-reset")){state.vendor="All vendors";state.queue.clear();state.outcomes.clear();state.collapsed.clear();state.folder=false;render();return;}
+  }
+  function onKey(event){
+    if(event.key==="Escape"){event.preventDefault();close();return;}
+    if(event.key!=="Tab")return;
+    const focusable=Array.from(overlay.querySelectorAll("button:not(:disabled)"));
+    if(!focusable.length)return;
+    const first=focusable[0],last=focusable[focusable.length-1];
+    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  }
+  function close(){
+    if(!overlay)return;
+    overlay.removeEventListener("click",onClick);overlay.removeEventListener("keydown",onKey);overlay.remove();overlay=null;state=null;
+    if(restoreFocus&&restoreFocus.isConnected)restoreFocus.focus();
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
 })();
 </script>
 <script src="/library-api/library-account.js" defer></script>
