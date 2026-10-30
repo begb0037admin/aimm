@@ -8,7 +8,7 @@ Next one item: build a synthetic PluginHub-style Install Manager UI slice using 
 
 - Installer trace: [contract report](../governance/evidence/PHASE_PLUGINHUB_INSTALLER_STAGING_CONTRACT_TRACE_20261030.md), blob `fb5f16bf6017c0fec974607a94d233390d7e205c`.
 - Previous audit: [status and Install Manager contract review](../governance/evidence/PHASE_PLUGINHUB_STATUS_INSTALL_CONTRACT_REVIEW_20261030.md), blob `c01b711768a38320964aac4c358b6a459d5319ed`.
-- Synchronized pins: STATUS `82a509da5dfe654f73d4d34e43779731a9406459`; ROADMAP `4ccf3eff4a2a97f4cdda68d7b5c558f29d20be30`; tool contract matrix `1963220b349c406666d2d7d08a040a1c989779dc`; user parity register `1f37853cb62aa806c888be9057b093c7a2928ee4`. HANDOVER does not self-pin.
+- Synchronized pins: STATUS `82a509da5dfe654f73d4d34e43779731a9406459`; ROADMAP `00bd523246bbe2fae1b4117ddfa1d6c6ebb16c50`; tool contract matrix `33f6710b5b119ae86dd7f95a77e9d4bd35f8fc4e`; user parity register `1f37853cb62aa806c888be9057b093c7a2928ee4`. HANDOVER does not self-pin.
 
 ## Historical continuation — initial per-format version placement (superseded) — 2026-10-30
 
