@@ -50,6 +50,7 @@
     #library .inv-sidebar-nav{gap:8px!important}
     #library .inv-sidebar-nav[aria-label="Plug-in categories"]{gap:8px!important}
     #library .inv-side-button{min-height:44px!important;padding-inline:12px!important;gap:12px!important}
+    #invSidebar a[data-aimm-ilok-tool]{text-decoration:none!important}
     #aimmPluginHubLicenseOverlay{position:fixed;inset:0;z-index:20010;display:grid;place-items:center;padding:20px;background:rgba(5,7,11,.78)}
     #aimmPluginHubLicenseOverlay section{display:grid;gap:14px;width:min(560px,calc(100vw - 40px));padding:22px;border:1px solid #3b4653;border-radius:14px;background:#1b2026;color:#e8edf2;box-shadow:0 20px 70px rgba(0,0,0,.55);line-height:1.55}
     #aimmPluginHubLicenseOverlay header{display:flex;align-items:center;justify-content:space-between;gap:16px}
