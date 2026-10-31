@@ -3616,11 +3616,10 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 <div class="panel" id="settings">
   <div class="section-head">
     <h2>⚙ Settings</h2>
-    <span class="blurb">Manage Library account access, Hope’s voice routes and agents, provider access, research model, and session safeguards.</span>
+    <span class="blurb">Manage Hope’s voice routes and agents, provider access, research model, and session safeguards.</span>
   </div>
   <nav class="settings-nav" aria-label="Settings sections">
-    <a href="#aimm-account-preview">Library account</a>
-    <a href="#settingsKeys">API keys &amp; agents</a>
+        <a href="#settingsKeys">API keys &amp; agents</a>
     <a href="#settingsModels">Models</a>
     <a href="#settingsSafety">Session safety</a>
     <a href="#settingsNotes">Voice routes</a>
@@ -3633,12 +3632,11 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
       <span class="settings-guide-toggle" aria-hidden="true"></span>
     </summary>
     <div class="settings-guide-grid">
-      <article><h4>Library account</h4><p>Connect to the development Library account service to view your account snapshot and preferences. Nothing is read until you open these settings and sign in. This preview does not change files or run plug-in actions on your Mac.</p></article>
       <article><h4>API keys &amp; Agent access</h4><p>Manage optional provider access and the two ElevenLabs Agent IDs. The preferred Agent is tried first; the backup is retried once only after a clear quota or credit error. “Update tools” changes both Agents at ElevenLabs.</p></article>
       <article><h4>Models</h4><p>The model selected here is for optional Anthropic research. Auto uses the model configured on its ElevenLabs Agent. Deepgram uses GPT-6 Luna through the Worker.</p></article>
       <article><h4>Session safety</h4><p>Choose when Hope reminds you about an idle Auto call and whether an unattended Auto call ends after two minutes. These safeguards do not affect the separate Deepgram route.</p></article>
       <article><h4>Voice routes</h4><p>Auto uses an ElevenLabs Live Agent, with one backup attempt for clear quota or credit exhaustion. Deepgram is separate: Flux transcribes, GPT-6 Luna replies, then ElevenLabs Flash speaks.</p></article>
-      <article><h4>Reset</h4><p>Reset clears this browser’s workbench chain, meters, symptom flags, favourites, and custom plug-ins. It keeps provider access, Hope settings, and Library account settings.</p></article>
+      <article><h4>Reset</h4><p>Reset clears this browser’s workbench chain, meters, symptom flags, favourites, and custom plug-ins. It keeps provider access and Hope settings.</p></article>
     </div>
   </details>
   <div class="settings-section" id="settingsKeys">
@@ -3841,7 +3839,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   </div>
   <div class="settings-section" id="settingsReset">
     <h3>Reset</h3>
-    <div class="tip-box warn" style="margin-bottom:14px;">Reset clears this browser’s workbench chain, meters, symptom flags, favourites, and custom plugins. It does not clear provider access, Hope’s settings, or Library account settings. This cannot be undone.</div>
+    <div class="tip-box warn" style="margin-bottom:14px;">Reset clears this browser’s workbench chain, meters, symptom flags, favourites, and custom plugins. It does not clear provider access or Hope’s settings. This cannot be undone.</div>
     <button class="btn secondary sm" id="resetBtn">Reset workbench</button>
   </div>
 </div>
@@ -4091,7 +4089,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-31.7';
+const AIMM_BUILD = '2026-10-31.9';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -9259,7 +9257,7 @@ function resetTopPicks(){
 document.getElementById('reviewStarsBtn').onclick = rerankTopPicksWithClaude;
 document.getElementById('resetStarsBtn').onclick = resetTopPicks;
 
-document.getElementById('resetBtn').onclick=()=>{if(!confirm('Reset this browser’s workbench chain, meters, symptom flags, favourites, and custom plugins? Provider access, Hope settings, and Library account settings will remain.'))return;BUSES.forEach(b=>STATE.chain[b.id]=[]);STATE.meters={};STATE.symptoms.clear();STATE.favorites.clear();STATE.customPlugins=[];renderChain();renderMeters();renderSymptoms();renderLibrary();saveState();toast('Reset');};
+document.getElementById('resetBtn').onclick=()=>{if(!confirm('Reset this browser’s workbench chain, meters, symptom flags, favourites, and custom plugins? Provider access and Hope settings will remain.'))return;BUSES.forEach(b=>STATE.chain[b.id]=[]);STATE.meters={};STATE.symptoms.clear();STATE.favorites.clear();STATE.customPlugins=[];renderChain();renderMeters();renderSymptoms();renderLibrary();saveState();toast('Reset');};
 
 // ========== TIME-AWARE GREETING POOL ==========
 // 3 moods × 3 time slots × 10 lines each = 90 unique combinations.
@@ -23520,7 +23518,6 @@ csInit('csPlatform');
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
 })();
 </script>
-<script src="/library-api/library-account.js" defer></script>
 <script src="/library-api/library-status-view.js" defer></script>
 </body>
 </html>

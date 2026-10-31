@@ -1,5 +1,7 @@
 (() => {
   "use strict";
+  // Account status requires an API route that is not part of this production release.
+  const ACCOUNT_STATUS_API_READY = false;
   const css = `
     #library .inv-side-button[data-inv-scope="stale"] .inv-side-count{color:#e8b45a;font-weight:700}
     #library .inv-side-button[data-inv-scope="error"] .inv-side-count{color:#ee7777;font-weight:700}
@@ -217,7 +219,7 @@
       stale:"These last known observations are older than their freshness window. Check the plug-in with its vendor again.",
       error:"These status checks failed. Review the error shown on each format record and retry the check."
     };
-    if (copy) copy.textContent = snapshot ? guidance[scope] : (message || "Load account status to see the signed-in account's generation-bound observations.");
+    if (copy) copy.textContent = snapshot ? guidance[scope] : (message || "Vendor status observations are not connected on this release. No status check has run, so zero updates does not mean the plug-ins are current.");
     banner.className = "inv-scope-banner " + scope;
     banner.hidden = false;
   }
@@ -279,7 +281,7 @@
     if (!host) return true;
     updateBanner();
     if (!snapshot) {
-      host.innerHTML = '<div class="inv-empty">' + esc(loading ? "Loading generation-bound account status records…" : message || "Choose Load account status to read the signed-in account snapshot.") + '</div>';
+      host.innerHTML = '<div class="inv-empty">' + esc(loading ? "Loading generation-bound account status records…" : message || "Vendor status observations are not connected on this release. No check has run yet; zero updates does not mean plug-ins are current.") + '</div>';
       return true;
     }
     const rows = filteredRows();
@@ -326,7 +328,7 @@
     if (synthetic()) { message = "This synthetic preview uses sample records; it does not read account status."; return; }
     if (loading) return;
     if (typeof window.aimmReadAccountPluginStatus !== "function") {
-      message = "Account status connection is unavailable. Reload AIMM and sign in under Settings → Account Library.";
+      message = "Account status is unavailable in this release. Use the local inventory and check each vendor until an approved status source is connected.";
       refreshBridgeView();
       return;
     }
@@ -341,7 +343,7 @@
         : "No account status records were returned. Pair a device and complete an inventory scan, then load status again.";
     } catch (error) {
       snapshot = null;
-      message = (error?.message || "The account status request failed.") + " Sign in under Settings → Account Library, then load account status again.";
+      message = (error?.message || "The account status request failed.") + " An approved account status source is not connected on this release.";
     } finally {
       loading = false;
       refreshBridgeView();
@@ -391,7 +393,7 @@
     const content = rows.length
       ? grouped
       : !snapshot
-        ? '<div class="aimm-live-im-empty"><strong>Account status has not loaded.</strong><p>Load account status from the Library before reviewing updates. No vendor check has run in this manager.</p></div>'
+        ? '<div class="aimm-live-im-empty"><strong>No account status source is connected.</strong><p>Local scanning reads plug-in metadata only. Check each vendor for current versions until an approved status source is connected.</p></div>'
         : '<div class="aimm-live-im-empty"><strong>No fresh update records are available.</strong><p>' +
           counts.stale.toLocaleString() + ' observations are stale and ' + counts.unchecked.toLocaleString() +
           ' are unchecked. Zero updates does not mean everything is current. Review those scopes for the next status check.</p></div>';
@@ -740,7 +742,7 @@
       addScope("error","Check errors",'<svg viewBox="0 0 24 24"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v5M12 17h.01"/></svg>',"The latest status check returned an error");
     }
     const scan = document.getElementById("invScanBtn");
-    if (scan?.parentElement && !document.getElementById("invLoadAccountStatusBtn")) {
+    if (ACCOUNT_STATUS_API_READY && scan?.parentElement && !document.getElementById("invLoadAccountStatusBtn")) {
       const button = document.createElement("button");
       button.id = "invLoadAccountStatusBtn";
       button.type = "button";
