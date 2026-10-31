@@ -3351,7 +3351,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-vendor-count{margin-left:auto;flex:none;padding:3px 6px;border-radius:5px;background:#28313c;color:#dce5ef;font: calc(var(--inv-text-scale, 1) * 10px) ui-monospace,Menlo,monospace}
     #library .inv-vendor-toggle{border:0;background:transparent;color:#87919b;font-size:calc(var(--inv-text-scale, 1) * 15px);cursor:pointer;padding:3px 2px}
     /* Shared inventory chevrons: one visible 9px mark with a 2px stroke. */
-    #library .inv-shell{--inv-chevron-size:9px;--inv-chevron-stroke:2px}
+    #library .inv-shell{--inv-chevron-size:11px;--inv-chevron-stroke:2px}
     #library .inv-sidebar-head button{display:inline-flex;align-items:center;justify-content:center;flex:none;width:30px;height:30px;box-sizing:border-box;border:0;border-radius:6px;background:transparent;color:#aab2bd;cursor:pointer;padding:0;font-size:0;line-height:0}
     #library .inv-sidebar-head button::before{content:"";width:var(--inv-chevron-size);height:var(--inv-chevron-size);box-sizing:border-box;border-right:var(--inv-chevron-stroke) solid currentColor;border-bottom:var(--inv-chevron-stroke) solid currentColor;transform:rotate(-45deg);margin-left:-3px}
     #library .inv-sidebar-head button[aria-expanded="true"]::before{transform:rotate(135deg);margin-left:0}
@@ -4033,7 +4033,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-31.4';
+const AIMM_BUILD = '2026-10-31.5';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
