@@ -21,6 +21,7 @@ This is the running checklist for the user’s screenshot-led reverse engineerin
 - [x] Use the requested format colours consistently: VST blue, CLAP brown. AU/VST2 distinctions and status dots remain separate from format chips. Verified in the synthetic card preview.
 - [x] Keep card and table views reachable after selecting a library/category/status scope. The View panel opens below the control so Layout stays visible; List view changes the shortcut to “Back to Cards,” and activating it restores publisher tiles. Verified in the synthetic preview on 2026-10-30.
 - [x] **Align sidebar categories and counts, preserve breathing room.** Added consistent row spacing and minimum row height; count figures use a fixed, right-aligned column and remain visible on selected rows. Verified the full category list in the synthetic preview on 2026-10-30.
+- [ ] **Unify sidebar count badges.** Match the selected “Updates available” count pill shown in Kevin’s 2026-10-31 screenshot for every sidebar numeric value across Status, Library and Categories, including zero counts. Keep the figure’s status/category colour and make the pill readable on both selected and unselected rows; preserve row alignment and breathing room.
 
 ## Tool activation — continue after the design review
 
