@@ -4016,7 +4016,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-29.1';
+const AIMM_BUILD = '2026-10-31.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -18683,7 +18683,10 @@ window.addEventListener('keydown', e=>{
     elEnd();
     return;
   }
-  if (isTypingTarget(e.target)) return;
+  // The empty composer can start the selected voice route; spaces in text remain typing.
+  const emptyComposerSpaceStart = e.target?.id==='aiChatInput'
+    && !String(e.target.value||'').trim();
+  if (isTypingTarget(e.target) && !emptyComposerSpaceStart) return;
   e.preventDefault();
   RT.spaceHeld = true;
   const tab = activeTabId();
