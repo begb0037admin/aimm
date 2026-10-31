@@ -39,6 +39,8 @@ Activate and review each tool as an individual slice. A control is complete only
 
 - [x] **PluginHub License.** Replaced the disabled control with an accessible information panel explaining that PluginHub app activation is separate from audio plug-in vendor keys, and linking to PluginHub’s official licence page. Verified open/close and destination in the deployed synthetic preview on 2026-10-30; the link opens only when the user chooses it.
 
+- [ ] **iLok License Manager desktop link.** Add a Tools entry that opens the locally installed iLok License Manager through its registered `ilm://` URL scheme. Local read-only inspection confirmed `/Applications/iLok License Manager.app` registers the `ilm` and `mylicenses` schemes. Verify the deployed preview exposes the correct link without activating it during review.
+
 ## Manual and official-source sweep (2026-10-30)
 
 The official Windows manual was reviewed for the shared dashboard, statuses, Install Manager, Share Plugin List, and Plugin Compatibility workflows; the official FAQ was cross-checked for Mac update/status behavior. Kevin's supplied macOS screenshots remain the visual source of truth for the Mac UI. References: [PluginHub Windows manual](https://www.pluginhubapp.com/manual-windows), [PluginHub FAQ](https://www.pluginhubapp.com/faq), and [PluginHub product page](https://www.pluginhubapp.com/).
