@@ -3350,6 +3350,19 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     @media(max-width:760px){#library .inv-vendor-name{flex:1 1 auto}#library .inv-vendor-name strong{overflow:visible;text-overflow:clip;white-space:normal;overflow-wrap:anywhere;line-height:1.2}}
     #library .inv-vendor-count{margin-left:auto;flex:none;padding:3px 6px;border-radius:5px;background:#28313c;color:#dce5ef;font: calc(var(--inv-text-scale, 1) * 10px) ui-monospace,Menlo,monospace}
     #library .inv-vendor-toggle{border:0;background:transparent;color:#87919b;font-size:calc(var(--inv-text-scale, 1) * 15px);cursor:pointer;padding:3px 2px}
+    /* Shared inventory chevrons: one visible 9px mark with a 2px stroke. */
+    #library .inv-shell{--inv-chevron-size:9px;--inv-chevron-stroke:2px}
+    #library .inv-sidebar-head button{display:inline-flex;align-items:center;justify-content:center;flex:none;width:30px;height:30px;box-sizing:border-box;border:0;border-radius:6px;background:transparent;color:#aab2bd;cursor:pointer;padding:0;font-size:0;line-height:0}
+    #library .inv-sidebar-head button::before{content:"";width:var(--inv-chevron-size);height:var(--inv-chevron-size);box-sizing:border-box;border-right:var(--inv-chevron-stroke) solid currentColor;border-bottom:var(--inv-chevron-stroke) solid currentColor;transform:rotate(-45deg);margin-left:-3px}
+    #library .inv-sidebar-head button[aria-expanded="true"]::before{transform:rotate(135deg);margin-left:0}
+    #library .inv-vst-filter>summary::after,#library .inv-tag-filter>summary::after{width:var(--inv-chevron-size);height:var(--inv-chevron-size);border-right:var(--inv-chevron-stroke) solid currentColor;border-bottom:var(--inv-chevron-stroke) solid currentColor;box-sizing:border-box}
+    #library .inv-view-menu>summary{gap:10px}
+    #library .inv-view-menu>summary>span[aria-hidden="true"]{display:inline-flex;align-items:center;justify-content:center;flex:none;width:18px;height:18px;box-sizing:border-box;font-size:0;line-height:0}
+    #library .inv-view-menu>summary>span[aria-hidden="true"]::before{content:"";width:var(--inv-chevron-size);height:var(--inv-chevron-size);box-sizing:border-box;border-right:var(--inv-chevron-stroke) solid currentColor;border-bottom:var(--inv-chevron-stroke) solid currentColor;transform:rotate(45deg);margin:0 0 4px}
+    #library .inv-view-menu[open]>summary>span[aria-hidden="true"]::before{transform:rotate(225deg);margin:4px 0 0}
+    #library .inv-vendor-toggle{display:inline-flex;align-items:center;justify-content:center;flex:none;width:32px;height:32px;box-sizing:border-box;border:0;border-radius:6px;background:transparent;color:#87919b;font-size:0;line-height:0;cursor:pointer;padding:0}
+    #library .inv-vendor-toggle::before{content:"";width:var(--inv-chevron-size);height:var(--inv-chevron-size);box-sizing:border-box;border-right:var(--inv-chevron-stroke) solid currentColor;border-bottom:var(--inv-chevron-stroke) solid currentColor;transform:rotate(45deg);margin:0 0 4px}
+    #library .inv-vendor-toggle[aria-expanded="true"]::before{transform:rotate(225deg);margin:4px 0 0}
     #library .inv-vendor.collapsed .inv-products,#library .inv-vendor.collapsed .inv-more{display:none}
     #library .inv-product{padding:10px 12px;border-bottom:1px solid #292e35;min-width:0}
     #library .inv-product:last-child{border-bottom:0}
@@ -4020,7 +4033,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-31.3';
+const AIMM_BUILD = '2026-10-31.4';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
