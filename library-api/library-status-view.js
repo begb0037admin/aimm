@@ -703,6 +703,21 @@
       openPluginHubLicenseInfo();
     }, true);
   }
+  function bindILokLicenseManagerTool() {
+    const sidebar = document.getElementById("invSidebar");
+    if (!sidebar || sidebar.querySelector("[data-aimm-ilok-tool]")) return;
+    const licenseButton = Array.from(sidebar.querySelectorAll("button")).find((item) =>
+      /PluginHub License/i.test(item.textContent || item.getAttribute("aria-label") || ""));
+    if (!licenseButton) return;
+    const link = document.createElement("a");
+    link.href = "ilm://";
+    link.className = licenseButton.className;
+    link.dataset.aimmIlokTool = "true";
+    link.title = "Open iLok License Manager on this Mac.";
+    link.setAttribute("aria-label", "Open iLok License Manager on this Mac");
+    link.innerHTML = '<span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14 3h7v7"/><path d="M21 3 11 13"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></span><span class="inv-side-label">iLok License Manager</span>';
+    licenseButton.insertAdjacentElement("afterend", link);
+  }
   function install() {
     const nav = document.querySelector('#library nav[aria-label="Inventory status"]');
     const unchecked = nav?.querySelector('[data-inv-scope="unchecked"]');
@@ -743,9 +758,10 @@
     pruneOutOfScopeTools();
     bindInstallManager();
     bindPluginHubLicenseTool();
+    bindILokLicenseManagerTool();
     bindCompatibilityTool();
     if (!pluginHubLicenseObserver && document.getElementById("invSidebar")) {
-      pluginHubLicenseObserver = new MutationObserver(() => { pruneOutOfScopeTools(); bindPluginHubLicenseTool(); bindCompatibilityTool(); });
+      pluginHubLicenseObserver = new MutationObserver(() => { pruneOutOfScopeTools(); bindPluginHubLicenseTool(); bindILokLicenseManagerTool(); bindCompatibilityTool(); });
       pluginHubLicenseObserver.observe(document.getElementById("invSidebar"),{childList:true,subtree:true});
     }
     if (!liveManagerObserver && document.body) {
