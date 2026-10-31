@@ -39,7 +39,7 @@ Activate and review each tool as an individual slice. A control is complete only
 
 - [x] **PluginHub License.** Replaced the disabled control with an accessible information panel explaining that PluginHub app activation is separate from audio plug-in vendor keys, and linking to PluginHub’s official licence page. Verified open/close and destination in the deployed synthetic preview on 2026-10-30; the link opens only when the user chooses it.
 
-- [ ] **iLok License Manager desktop link.** Add a Tools entry that opens the locally installed iLok License Manager through its registered `ilm://` URL scheme. Local read-only inspection confirmed `/Applications/iLok License Manager.app` registers the `ilm` and `mylicenses` schemes. Verify the deployed preview exposes the correct link without activating it during review.
+- [x] **iLok License Manager desktop link.** Added an active Tools entry using the app’s registered `ilm://` URL scheme. Local read-only inspection confirmed `/Applications/iLok License Manager.app` registers the `ilm` and `mylicenses` schemes. Verified the deployed synthetic preview exposes the link as “iLok License Manager” with destination `ilm://`; I did not activate it during review, so it remains a user-initiated launch. Preview: `https://88d0b115.aimm-pluginhub-foundation-dev.pages.dev/?pluginhub-preview=synthetic` (2026-10-31).
 
 ## Manual and official-source sweep (2026-10-30)
 
