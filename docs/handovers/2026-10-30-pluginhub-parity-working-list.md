@@ -22,6 +22,7 @@ This is the running checklist for the user’s screenshot-led reverse engineerin
 - [x] Keep card and table views reachable after selecting a library/category/status scope. The View panel opens below the control so Layout stays visible; List view changes the shortcut to “Back to Cards,” and activating it restores publisher tiles. Verified in the synthetic preview on 2026-10-30.
 - [x] **Align sidebar categories and counts, preserve breathing room.** Added consistent row spacing and minimum row height; count figures use a fixed, right-aligned column and remain visible on selected rows. Verified the full category list in the synthetic preview on 2026-10-30.
 - [ ] **Unify sidebar count badges.** Match the selected “Updates available” count pill shown in Kevin’s 2026-10-31 screenshot for every sidebar numeric value across Status, Library and Categories, including zero counts. Keep the figure’s status/category colour and make the pill readable on both selected and unselected rows; preserve row alignment and breathing room.
+- [ ] **Fix collapsed-sidebar selection clipping.** Kevin’s 2026-10-31 screenshot shows the selected status-row highlight cut off at the sidebar’s right edge in collapsed/icon-only mode. Correct the collapsed layout so selected/focus styling fits fully inside the sidebar, with clear active-state recognition and no clipping; check the count-badge treatment in this mode as well.
 
 ## Tool activation — continue after the design review
 
