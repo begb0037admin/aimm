@@ -12,6 +12,10 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
+## Spotify target names and source labels corrected — build 2026-11-03.134
+
+Spotify captures are bound to a selected Spotify track; capture save resolves the track title and artist before storing the target. AIMM Companion describes how audio was captured, not its source, so Spotify-linked targets remain labelled Spotify. Legacy companion-captured targets migrate to Spotify; “AIMM capture” is reserved for imported stem targets. Shipped to `aimixmasters.com` on 2026-11-03.
+
 ## Stem spectral comparison restored and synchronized — build 2026-11-03.133
 
 Solo and mute playback now switches the spectral view to the audible stem set. The blue trace follows the audible stem(s), the orange trace follows the unselected remainder, and the white live-output trace uses the same 0.4-second smoothing time constant as the blue trace. Shipped to `aimixmasters.com` on 2026-11-03.

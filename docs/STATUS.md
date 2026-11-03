@@ -1,3 +1,5 @@
+**2026-11-03 update — Spotify target names and source labels corrected, build 2026-11-03.134.** Captures now require a selected Spotify track and resolve its title and artist before saving. AIMM Companion is retained as capture-method metadata; Spotify targets display Spotify. Legacy AIMM Companion targets are migrated, and “AIMM capture” is reserved for imported stem targets. Live on `aimixmasters.com`.
+
 **2026-11-03 update — Stem spectral comparison restored and synchronized, build 2026-11-03.133.** Solo and mute playback now drives the spectral view even without selecting an analysis row. Blue shows the audible stem(s), orange shows the remaining stems, and the white live-output trace uses the same 0.4-second smoothing time constant. Live on `aimixmasters.com`.
 
 **2026-11-03 update — Saved Spotify target names and removal, build 2026-11-03.132.** Spotify references now save with the selected track title and artist. Legacy artist-only names are refreshed from stored Spotify IDs when connected; custom names remain. Each target can be removed individually with confirmation. Live on `aimixmasters.com`.

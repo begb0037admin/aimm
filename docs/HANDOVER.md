@@ -1,3 +1,7 @@
+## Active checkpoint — Spotify target names and source labels corrected, build 2026-11-03.134
+
+Spotify reference captures now require a selected track ID and resolve its metadata before saving. Targets display the actual Spotify title and artist. AIMM Companion is retained as the audio-capture method, not the target source. Legacy targets created by Spotify’s companion capture flow migrate from “AIMM capture” to Spotify. The AIMM capture label is reserved for imported stem targets. Live at `aimixmasters.com`; Wrangler configuration remains unchanged.
+
 ## Active checkpoint — Hope waveform follows ElevenLabs speech on Deepgram, build 2026-10-28.8
 
 The Deepgram listening route plays Hope replies through ElevenLabs TTS on `#aiChatTtsAudio`. `HOPE_TTS_TAP` samples that element with the pinned `@elevenlabs/client@0.1.7` volume reduction (mean byte-frequency bin divided by 255). The existing Hope waveform renderer and display settings are unchanged. ElevenLabs Live continues to use `Conversation.getOutputVolume()`. The AudioContext is prepared on the route-start gesture and attempts recovery if suspended. No voice, model, or TTS settings changed.
