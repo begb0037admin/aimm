@@ -12,6 +12,10 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
+## Saved Spotify target names and removal — build 2026-11-03.132
+
+Saved Spotify references now use `Track title · Artist` by default. Existing artist-only names can be corrected from their stored Spotify track IDs when Spotify is connected. Each saved target has its own confirmed Remove action; manual names remain intact. Shipped to `aimixmasters.com` on 2026-11-03.
+
 ## Spacebar starts the selected Hope route from the empty composer — build 2026-10-29.2
 
 Spacebar starts either ElevenLabs or Luna/Deepgram even if the empty Hope composer has focus; once text is present, Space still types normally. The screenshot's audio-check error says the browser-local Hope usage token is missing, so that browser needs the token saved in Settings → API Keys before Deepgram can open the microphone. The separately tracked Luna delay/cut-off issue remains unresolved.

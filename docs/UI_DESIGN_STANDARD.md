@@ -17,6 +17,7 @@ Mix Check is the visual template for the other tabs. Keep its established page s
 - Metric labels such as “Key” use the existing 13px, weight 500 style. Do not add a redundant standalone “Mix” label beneath Audio Specs; the Mix source control remains.
 - Audio Specs uses “LUFS” and “LUFS short-term” as the loudness labels, with bare numeric readings so the unit is not repeated. Keep colored status dots hidden throughout Audio Specs.
 - “DR” is the app’s PLR reading: true peak minus integrated LUFS, shown in dB.
+- Spotify saved targets display the track title and artist by default. Keep a separate, clearly labelled Remove action on each target, and preserve a user’s manual rename.
 
 ## Alignment and spacing
 

@@ -18,6 +18,10 @@ GitHub `main` commit `1078d45c9ef2149d363928c53d9d91babc98da15` updates `index.h
 
 # HANDOVER.md — AIMM
 
+## Active checkpoint — saved Spotify target names and removal, build 2026-11-03.132
+
+Saved Spotify references now default to `Track title · Artist` using the selected Spotify metadata. Older artist-only labels can be hydrated from their stored Spotify track IDs when Spotify is connected. Every saved reference has an individual confirmed Remove action; a manual rename is preserved on recapture and during metadata hydration. These targets remain in browser local storage. The release is live on `aimixmasters.com`; Wrangler configuration and Worker scaffolding are unchanged.
+
 ## Active checkpoint — all Fix Queue questions and displays aligned, build `.76` prepared, 2026-10-21
 
 The main full-mix Fix Queue omits a frequency strip for broadband findings and shows an orange
