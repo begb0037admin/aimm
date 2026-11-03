@@ -12,10 +12,6 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Spotify targets require and display a specific song — build 2026-11-03.138
-
-Spotify references are saved only after the track ID, title and artist have resolved. Existing artist-only names are corrected when stored metadata or the Spotify ID identifies the song; deliberate custom names remain. Shipped to `aimixmasters.com` on 2026-11-03.
-
 ## Spotify reference capture taskbar redesigned — build 2026-11-03.137
 
 The taskbar remains visible before capture, shows the selected Spotify track, and advances through track selection, audio capture, analysis and target saving. Its elapsed timer is retained; the progress fill represents workflow stages rather than an audio percentage. Shipped to `aimixmasters.com` on 2026-11-03.

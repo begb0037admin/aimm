@@ -1,7 +1,3 @@
-## Active checkpoint — Spotify targets require and display a specific song, build 2026-11-03.138
-
-Spotify captures require a real Spotify track ID, title and artist before saving. Existing artist-only rows are canonicalized when their stored Spotify metadata or ID resolves to a specific song; explicit custom target names remain. Captures with no identified song stop with a clear message instead of saving the search text as the target name. Live at `aimixmasters.com`; Wrangler configuration is unchanged.
-
 ## Active checkpoint — Spotify reference capture taskbar redesigned, build 2026-11-03.137
 
 The Spotify status bar stays visible before capture and maps the selection, capture, analysis and saving phases to a four-step display. The elapsed capture timer remains. Its progress fill represents the current workflow stage, not an audio percentage. Live at `aimixmasters.com`; Wrangler configuration is unchanged.
