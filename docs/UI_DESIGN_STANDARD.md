@@ -15,6 +15,8 @@ Mix Check is the visual template for the other tabs. Keep its established page s
 - Panel headings such as “Audio Specs” and “Spectral Balance” use the same face, weight, line height, tracking, and colour at a slightly smaller size: 28px desktop and 22px narrow layout.
 - Supporting descriptions stay subordinate and muted. The Spectral Balance subtitle uses 14px text with 1.45 line height.
 - Metric labels such as “Key” use the existing 13px, weight 500 style. Do not add a redundant standalone “Mix” label beneath Audio Specs; the Mix source control remains.
+- Audio Specs uses “LUFS” and “LUFS short-term” as the loudness labels, with bare numeric readings so the unit is not repeated. Keep colored status dots hidden throughout Audio Specs.
+- “DR” is the app’s PLR reading: true peak minus integrated LUFS, shown in dB.
 
 ## Alignment and spacing
 

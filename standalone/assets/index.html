@@ -2552,6 +2552,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck #mcSpecs .mc-measure-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;min-height:50px;padding:10px 0;border-bottom:1px solid #2c3034}
 #eq.oz-mixcheck #mcSpecs .mc-measure-value.mc-muted{color:#f1f4f8!important}
 #eq.oz-mixcheck #mcSpecs .mc-hidden-data{display:none!important}
+#eq.oz-mixcheck #mcSpecs .mc-d{display:none!important}
 #eq.oz-mixcheck #mcSpecs .mc-tiles,#eq.oz-mixcheck #mcSpecs .mc-rows,#eq.oz-mixcheck #mcSpecs .mc-cls,#eq.oz-mixcheck #mcSpecs .mc-sw{display:none!important}
 @media(max-width:1023px){#eq.oz-mixcheck #mcSpecs{padding:var(--aimm-panel-card-inset) var(--aimm-panel-mobile-inline-inset) var(--aimm-panel-mobile-bottom-inset)}#eq.oz-mixcheck #mcSpecs .mc-core-row{min-height:48px;padding:9px 0}#eq.oz-mixcheck #mcSpecs .mc-core-value,#eq.oz-mixcheck #mcSpecs .mc-measure-value{font-size:calc(var(--inv-text-scale, 1) * 13px)}}
 
@@ -3193,7 +3194,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         <div class="mc-specs-source" role="group" aria-label="Audio Specs source"><button type="button" id="mcSpecsMix" aria-pressed="true">Mix</button><button type="button" id="mcSpecsSpotify" aria-pressed="false" disabled>Spotify</button></div>
       </div>
       <div class="mc-core-specs" aria-label="Key audio measurements">
-        <div class="mc-core-row"><span class="mc-core-label">Loudness</span><span class="mc-tile-v mc-core-value" id="mcTileLoudV"><span id="refLufsInt">– –</span></span></div>
+        <div class="mc-core-row"><span class="mc-core-label">LUFS</span><span class="mc-tile-v mc-core-value" id="mcTileLoudV"><span id="refLufsInt">– –</span></span></div>
         <div class="mc-core-row"><span class="mc-core-label">True peak</span><span class="mc-tile-v mc-core-value" id="mcTilePeakV"><span id="refTruePeak">– –</span></span></div>
         <div class="mc-core-row"><span class="mc-core-label">DR</span><span class="mc-tile-v mc-core-value" id="mcTileDrV"><span id="refDynRange">– –</span></span></div>
         <div class="mc-core-row"><span class="mc-core-label">Stereo width</span><span class="mc-core-value" id="mcWidth">– –</span></div>
@@ -4455,7 +4456,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-03.130';
+const AIMM_BUILD = '2026-11-03.131';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -22652,10 +22653,10 @@ csInit('csPlatform');
 
     function populateMeasured(r){
       if(!r)return;
-      set('refLufsInt',has(r.li)?r.li.toFixed(1)+' LUFS':'– –');
+      set('refLufsInt',has(r.li)?r.li.toFixed(1):'– –');
       set('refTruePeak',has(r.tp)?r.tp.toFixed(1)+' dBTP':'– –');
       set('refDynRange',has(r.dr)?r.dr.toFixed(1)+' dB':'– –');
-      set('refLufsSt',has(r.lst)?r.lst.toFixed(1)+' LUFS':'– –');
+      set('refLufsSt',has(r.lst)?r.lst.toFixed(1):'– –');
       set('refLufsIntSub','LUFS · integrated'+(activeSource==='spotify'?' · captured':' · measured'));
       set('refTruePeakSub','dBTP · true peak');
       set('refDynRangeSub','PLR · true peak − integrated');
