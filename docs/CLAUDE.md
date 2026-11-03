@@ -53,6 +53,9 @@ After the split phase completes, the app will be:
 
 Until the split is complete, `index.html` remains the single-file monolith.
 
+## UI design standard (Kevin, 2026-11-03)
+- Read [`docs/UI_DESIGN_STANDARD.md`](./UI_DESIGN_STANDARD.md) before styling any tab. It is Kevin's canonical, approved Mix Check reference, and the shared `--aimm-*` custom properties in `standalone/assets/index.html` are its implementation. Use it as the review checklist; preserve the existing page scaffold, feature wiring, Wrangler configuration, and established layout tokens.
+
 ## Seat map
 - Seat A (Reasoning): Claude Code — plans, designs, routes
 - Seat B (Human): Kev — approval authority, browser tasks (Cloudflare, ElevenLabs dashboard)
