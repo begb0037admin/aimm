@@ -1,3 +1,5 @@
+**2026-11-03 update — Spotify targets require and display a specific song, build 2026-11-03.138.** Spotify saves now require the track ID, title and artist; existing artist-only names are corrected when stored Spotify metadata can identify the song. Explicit custom names remain. Live on `aimixmasters.com`.
+
 **2026-11-03 update — Spotify reference capture taskbar redesigned, build 2026-11-03.137.** The taskbar stays visible before capture and tracks selection, capture, analysis and saving with stage indicators and a stage-based progress fill. The elapsed timer remains. Live on `aimixmasters.com`.
 
 **2026-11-03 update — Spotify Top tracks capture restored, build 2026-11-03.136.** Capture can start without preselecting a song. It attaches title and artist when Spotify identifies the first playing track; a preselected track remains locked to the capture. Live on `aimixmasters.com`.

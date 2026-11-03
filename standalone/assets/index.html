@@ -4472,7 +4472,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-03.137';
+const AIMM_BUILD = '2026-11-03.138';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21534,13 +21534,15 @@ csInit('csPlatform');
   }
   function refSaveSpotifyTarget(name,durationSeconds,capture,captureTrack=mcSpotifyCaptureTrack||mcSpotifySelectedTrack){
     if(durationSeconds<8){const s=document.getElementById('mcSpotifyRefStatus');if(s)s.textContent='Capture at least 8 seconds of playback for a useful reference, then stop to save it.';return false;}
+    const trackId=String(captureTrack&&captureTrack.id||'').trim(),trackTitle=String(captureTrack&&captureTrack.name||'').trim(),trackArtists=Array.isArray(captureTrack&&captureTrack.artists)?captureTrack.artists.map(artist=>String(artist&&artist.name||'').trim()).filter(Boolean):[];
+    if(!/^[A-Za-z0-9]{10,32}$/.test(trackId)||!trackTitle||trackTitle==='Spotify track'||!trackArtists.length){const s=document.getElementById('mcSpotifyRefStatus');if(s)s.textContent='Spotify has not identified a specific song yet. Play a track in Spotify Top tracks and wait for its title and artist to appear before stopping to save the reference.';return false;}
     const profile=capture&&capture.profile;
     const points=(profile&&Array.isArray(profile.points)&&profile.points.length?profile.points:(capture&&capture.points))||refSpotifyTargetPointsFromCapture();if(!points){const s=document.getElementById('mcSpotifyRefStatus');if(s)s.textContent='No usable spectrum was captured. Play the selected Spotify track and try again.';return false;}
     const analysis=capture&&capture.analysis?Object.fromEntries(['li','lst','tp','dr','sb','ob','correlation','subRatio','airRatio','sampleRate','rms','rmsLin','rmsDb','peakSampleLin','peakDb','crestDb','lra','noiseFloorDb','stereoWidthPct','sideMidDb','tempoBpm'].filter(k=>typeof capture.analysis[k]==='number'&&isFinite(capture.analysis[k])).map(k=>[k,capture.analysis[k]])):null;
     if(analysis&&capture.analysis&&typeof capture.analysis.keyName==='string'&&capture.analysis.keyName)analysis.keyName=capture.analysis.keyName;
     const previousTargets=refTrackTargets.slice();
     const existing=refTrackTargets.findIndex(x=>captureTrack&&x.spotifyTrackId===String(captureTrack.id)),previous=existing>=0?refTrackTargets[existing]:null;
-    const capturedTitle=String(captureTrack&&captureTrack.name||'').trim(),capturedArtists=Array.isArray(captureTrack&&captureTrack.artists)?captureTrack.artists.map(artist=>String(artist&&artist.name||'').trim()).filter(Boolean):[],trackTitle=capturedTitle&&capturedArtists.length?capturedTitle:String(previous&&previous.spotifyTrackTitle||'').trim(),trackArtists=capturedArtists.length?capturedArtists:(Array.isArray(previous&&previous.spotifyTrackArtists)?previous.spotifyTrackArtists:[]),spotifyName=trackTitle&&trackArtists.length?(trackTitle+' · '+trackArtists.join(', ')).slice(0,100):'',previousName=String(previous&&previous.name||'').trim().toLocaleLowerCase(),isArtistOnlyName=trackArtists.some(artist=>artist.toLocaleLowerCase()===previousName),isCanonicalName=spotifyName&&spotifyName.toLocaleLowerCase()===previousName,preserveCustomName=!!(previous&&(previous.nameAuto===false||(!spotifyName&&previous.nameAuto===true)||(previous.nameAuto!==true&&!isArtistOnlyName&&!isCanonicalName))),targetName=preserveCustomName?previous.name:(spotifyName||((previous&&previous.name)||name||'Spotify track reference')).slice(0,100);
+    const capturedTitle=trackTitle,capturedArtists=trackArtists,spotifyName=(capturedTitle+' · '+capturedArtists.join(', ')).slice(0,100),previousName=String(previous&&previous.name||'').trim().toLocaleLowerCase(),isArtistOnlyName=capturedArtists.some(artist=>artist.toLocaleLowerCase()===previousName),isCanonicalName=spotifyName.toLocaleLowerCase()===previousName,preserveCustomName=!!(previous&&((previous.nameAuto===false&&!isArtistOnlyName)||(!spotifyName&&previous.nameAuto===true)||(previous.nameAuto!==true&&!isArtistOnlyName&&!isCanonicalName))),targetName=preserveCustomName?previous.name:spotifyName;
     const item={id:previous?previous.id:'sr-'+Date.now().toString(36),name:targetName,nameAuto:spotifyName?!preserveCustomName:!!(previous&&previous.nameAuto),spotifyTrackId:captureTrack&&captureTrack.id?String(captureTrack.id):'',spotifyTrackTitle:trackTitle,spotifyTrackArtists:trackArtists,points,toleranceDb:MC_TRACK_TARGET_TOLERANCE_DB,capturedAt:new Date().toISOString(),durationSeconds:Number(durationSeconds.toFixed(1)),analysis};
     if(profile&&Array.isArray(profile.frequencies)&&Array.isArray(profile.magnitudesSmoothed)){
       item.referenceSource='Spotify';item.referenceCaptureMethod='AIMM Companion';
@@ -21651,7 +21653,7 @@ csInit('csPlatform');
       await new Promise(resolve=>requestAnimationFrame(resolve));
       const saved=refSaveSpotifyTarget(referenceName,captured.duration,payload,linkedTrack);
       if(saved){MC_SPECS.setSpotify(analysis,captured,referenceName);mcSpotifyCaptureSetState('saved','REFERENCE SAVED',captured.duration.toFixed(0)+' seconds analysed · purple target and Audio Specs updated.');toast('Spotify reference saved and active as the spectral target');}
-      else if(status)status.textContent='The capture could not be saved. Play at least eight seconds, then capture again.';
+      else{const message=status&&status.textContent||'The capture could not be saved. Play at least eight seconds, then capture again.';mcSpotifyCaptureSetState('error','REFERENCE NOT SAVED',message);}
     }catch(error){
       const message='AIMM Companion reference could not be saved: '+(error&&error.message||'unknown error');if(status)status.textContent=message;mcSpotifyCaptureSetState('error','REFERENCE NOT SAVED',message);
     }
@@ -21722,6 +21724,14 @@ csInit('csPlatform');
   }
   let mcSpotifySavedNameRefreshPromise=null;
   async function mcSpotifyRefreshSavedTargetNames(){
+    let localNameChanged=false;
+    for(const item of refTrackTargets){
+      const title=String(item.spotifyTrackTitle||'').trim(),artists=Array.isArray(item.spotifyTrackArtists)?item.spotifyTrackArtists.map(name=>String(name||'').trim()).filter(Boolean):[];
+      if(!title||!artists.length)continue;
+      const oldName=String(item.name||'').trim().toLocaleLowerCase(),isArtistOnly=artists.some(artist=>artist.toLocaleLowerCase()===oldName);
+      if(isArtistOnly||item.nameAuto===true){const canonical=(title+' · '+artists.join(', ')).slice(0,100);if(item.name!==canonical){item.name=canonical;localNameChanged=true;}item.nameAuto=true;}
+    }
+    if(localNameChanged){const select=document.getElementById('refCurveTarget'),active=refTrackTargetByKey(select&&select.value);if(!refSaveTrackTargets())console.warn('[Spotify saved target] canonical names could not be persisted in this browser');refRefreshTrackTargets(active&&active.id);}
     const stale=refTrackTargets.filter(item=>item.spotifyTrackId&&!item.spotifyTrackTitle&&/^[A-Za-z0-9]{10,32}$/.test(item.spotifyTrackId));
     if(!stale.length||!mcSpotifyTokens||!mcSpotifyTokens.access_token||mcSpotifySavedNameRefreshPromise)return mcSpotifySavedNameRefreshPromise;
     mcSpotifySavedNameRefreshPromise=(async()=>{
@@ -21736,7 +21746,7 @@ csInit('csPlatform');
             const track=await response.json();if(!response.ok||!track||!track.name||!Array.isArray(track.artists)||!track.artists.length)continue;
             const title=String(track.name).trim(),artists=track.artists.map(artist=>String(artist&&artist.name||'').trim()).filter(Boolean),canonical=(title+' · '+artists.join(', ')).slice(0,100),oldName=String(item.name||'').trim().toLocaleLowerCase(),isArtistOnly=artists.some(artist=>artist.toLocaleLowerCase()===oldName),isCanonical=canonical.toLocaleLowerCase()===oldName;
             item.spotifyTrackTitle=title;item.spotifyTrackArtists=artists;
-            if(item.nameAuto===true||(item.nameAuto!==false&&(isArtistOnly||isCanonical))){item.name=canonical;item.nameAuto=true;}else if(item.nameAuto==null)item.nameAuto=false;
+            if(item.nameAuto===true||isArtistOnly||isCanonical){item.name=canonical;item.nameAuto=true;}else if(item.nameAuto==null)item.nameAuto=false;
             changed=true;
           }catch(error){console.warn('[Spotify saved target] track details unavailable',item.spotifyTrackId,error);}
         }
@@ -23948,7 +23958,7 @@ csInit('csPlatform');
       LIVE.referencePowerSum=null;LIVE.referenceFrameCount=0;LIVE.referenceChunks=[];LIVE.referenceSamples=0;
       LIVE.referenceOnly=false;LIVE.referenceLabel='';
       if(saved){mcSpotifyCaptureSetState('saved','REFERENCE SAVED',capturedAnalysis.durationSeconds.toFixed(0)+' seconds analysed · purple target and Audio Specs updated.');toast('Spotify reference saved and active as the spectral target');}
-      else{const message=analysisError?'Spotify could not resolve the selected track title and artist. '+analysisError:capturedAnalysis?'Capture at least 8 seconds while Spotify is playing, then select a track and capture again.':'No active playback was captured. Start the selected Spotify track and try again.';const s=document.getElementById('mcSpotifyRefStatus');if(s)s.textContent=message;mcSpotifyCaptureSetState('error','REFERENCE NOT SAVED',message);}
+      else{const hasTrackMetadata=!!(captureTrack&&/^[A-Za-z0-9]{10,32}$/.test(String(captureTrack.id||''))&&String(captureTrack.name||'').trim()&&captureTrack.name!=='Spotify track'&&Array.isArray(captureTrack.artists)&&captureTrack.artists.some(artist=>String(artist&&artist.name||'').trim()),message=!hasTrackMetadata?'Spotify has not identified a specific song yet. Play a track in Spotify Top tracks and wait for its title and artist to appear before stopping to save the reference.':analysisError?'Spotify could not resolve the selected track title and artist. '+analysisError:capturedAnalysis?'Capture at least 8 seconds while Spotify is playing, then select a track and capture again.':'No active playback was captured. Start the selected Spotify track and try again.';const s=document.getElementById('mcSpotifyRefStatus');if(s)s.textContent=message;mcSpotifyCaptureSetState('error','REFERENCE NOT SAVED',message);}
     }
     const b=document.getElementById('refLiveBtn');if(b){const lbl=b.querySelector('.oz-live-label');if(lbl)lbl.textContent='Listen to input (live)';else b.textContent='Listen to input';}
     refSetEl('refLiveStatus',li>-69?'locked: '+li.toFixed(1)+' LUFS · '+tp.toFixed(1)+' dBTP':'stopped — nothing captured');
