@@ -2611,6 +2611,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spectrum-legend{display:flex;align-items:center;gap:22px;min-height:34px;margin:0 0 9px;padding:0 2px;color:#d2dce7;font-size:calc(var(--inv-text-scale, 1) * 13px);font-weight:550}
 #eq.oz-mixcheck .mc-spectrum-legend>span{display:inline-flex;align-items:center;gap:9px;white-space:nowrap}
 #eq.oz-mixcheck .mc-spectrum-legend i{display:block;width:22px;height:4px;border-radius:4px;background:#f2f4f7}
+#eq.oz-mixcheck .mc-spectrum-legend i.mc-spectrum-stems{background:#60c4f8}
+#eq.oz-mixcheck .mc-spectrum-legend i.mc-spectrum-muted{height:3px;background:repeating-linear-gradient(90deg,#f2a65a 0 7px,transparent 7px 10px)}
 #eq.oz-mixcheck .mc-spectrum-legend i.mc-spectrum-target{background:#a557f4}
 #eq.oz-mixcheck .mc-spectrum-legend .mc-spectrum-units{margin-left:auto;color:#9eabb9;font-size:calc(var(--inv-text-scale, 1) * 12px)}
 @media(max-width:1100px){#eq.oz-mixcheck .mc-spotify-reference{grid-template-columns:minmax(0,1fr);gap:14px}#eq.oz-mixcheck .mc-spotify-ref-controls{grid-template-columns:minmax(0,1fr) auto auto auto}}
@@ -3413,7 +3415,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         <div class="mc-spotify-ref-status" id="mcSpotifyRefStatus" role="status" aria-live="polite"></div>
       </div>
       <div class="mc-spectrum-legend" aria-label="Chart legend">
-        <span><i class="mc-spectrum-live" aria-hidden="true"></i>Live mix</span><span><i class="mc-spectrum-target" aria-hidden="true"></i>Saved target</span><span class="mc-spectrum-units">dB relative</span>
+        <span><i class="mc-spectrum-live" aria-hidden="true"></i>Live mix</span><span><i class="mc-spectrum-stems" aria-hidden="true"></i>Stems</span><span><i class="mc-spectrum-muted" aria-hidden="true"></i>Muted stems</span><span><i class="mc-spectrum-target" aria-hidden="true"></i>Saved target</span><span class="mc-spectrum-units">dB relative</span>
       </div>
       <div class="oz-spec-canvas-wrap" id="refSpecWrap">
         <canvas id="specCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
@@ -4459,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-03.134';
+const AIMM_BUILD = '2026-11-03.135';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21013,7 +21015,7 @@ csInit('csPlatform');
   // LTAS plus the exact corridor currently selected in the UI.
   window.mcSpectrumContext=function(){
     const corr=refActiveCorridor();
-    return {status:refSpecPoints&&refSpecPoints.length?'ready':'unavailable',playback_status:refPlaying?'playing':'paused',basis:'full-file average spectrum; 64 log-spaced frequency points; the live canvas trace may move during playback and is not represented by this static analysis snapshot',spectrum:refSpecPoints?refSpecPoints.map(p=>p.slice()):null,target_corridor:corr?{label:corr.label,points:corr.pts.map(p=>p.slice()),curve_points:Array.from({length:64},(_,i)=>{const f=20*Math.pow(1000,i/63),b=corridorAt(corr,f);return[Number(f.toFixed(2)),Number(b[0].toFixed(3)),Number(b[1].toFixed(3))];})}:null,chart_legend:[{name:(refPlaying?'Live mix spectrum':'Full mix spectrum'),color:'#60c4f8 (blue glow #2fa1e6)',line_style:'solid'},{name:'Spotify reference: '+(corr&&corr.label||'select or capture a match'),color:'translucent purple (#9442dc–#d0a4f2)',line_style:'soft filled band; no outline'}]};
+    return {status:refSpecPoints&&refSpecPoints.length?'ready':'unavailable',playback_status:refPlaying?'playing':'paused',basis:'full-file average spectrum; 64 log-spaced frequency points; the live canvas trace may move during playback and is not represented by this static analysis snapshot',spectrum:refSpecPoints?refSpecPoints.map(p=>p.slice()):null,target_corridor:corr?{label:corr.label,points:corr.pts.map(p=>p.slice()),curve_points:Array.from({length:64},(_,i)=>{const f=20*Math.pow(1000,i/63),b=corridorAt(corr,f);return[Number(f.toFixed(2)),Number(b[0].toFixed(3)),Number(b[1].toFixed(3))];})}:null,chart_legend:[{name:'Live mix',color:'#f2f4f7 (white)',line_style:'solid'},{name:'Audible stems',color:'#60c4f8 (blue)',line_style:'solid'},{name:'Muted stems / remainder',color:'#f2a65a (orange)',line_style:'dashed'},{name:'Saved target: '+(corr&&corr.label||'select or capture a match'),color:'translucent purple (#9442dc–#d0a4f2)',line_style:'soft filled band; no outline'}]};
   };
   function smoothPath(ctx,xy){
     // quadratic through midpoints — TBC-smooth, no kinks

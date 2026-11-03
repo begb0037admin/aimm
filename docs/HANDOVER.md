@@ -1,3 +1,7 @@
+## Active checkpoint — stem trace legend, build 2026-11-03.135
+
+The chart legend now explains the blue audible-stem line and dashed orange muted-stem/remainder line. The white Live mix and purple Saved target entries remain. Live at `aimixmasters.com`; Wrangler configuration is unchanged.
+
 ## Active checkpoint — Spotify target names and source labels corrected, build 2026-11-03.134
 
 Spotify reference captures now require a selected track ID and resolve its metadata before saving. Targets display the actual Spotify title and artist. AIMM Companion is retained as the audio-capture method, not the target source. Legacy targets created by Spotify’s companion capture flow migrate from “AIMM capture” to Spotify. The AIMM capture label is reserved for imported stem targets. Live at `aimixmasters.com`; Wrangler configuration remains unchanged.
