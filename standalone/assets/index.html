@@ -1611,29 +1611,34 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop:hover{background:#35483b}
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop[hidden]{display:none}
 #eq.oz-mixcheck .mc-spotify-ref-status{color:#8f9b93;font-size:calc(var(--inv-text-scale, 1) * 10px);line-height:1.4}
-#eq.oz-mixcheck .mc-spotify-capture-state{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px 10px;padding:9px 11px;border:1px solid #344038;border-radius:8px;background:#171d19}
+#eq.oz-mixcheck .mc-spotify-capture-state{--capture-stage-progress:0%;display:grid;grid-template-columns:10px minmax(0,1fr) auto;align-items:start;gap:11px 12px;padding:14px 16px;border:1px solid #344038;border-radius:12px;background:#111b21}
 #eq.oz-mixcheck .mc-spotify-capture-state[hidden]{display:none}
-#eq.oz-mixcheck .mc-spotify-capture-dot{width:9px;height:9px;border-radius:50%;background:#89928c;grid-row:1}
+#eq.oz-mixcheck .mc-spotify-capture-dot{width:10px;height:10px;margin-top:4px;border-radius:50%;background:#89928c;grid-row:1}
 #eq.oz-mixcheck .mc-spotify-capture-copy{display:grid;gap:2px;min-width:0}
-#eq.oz-mixcheck .mc-spotify-capture-copy strong{font-size:calc(var(--inv-text-scale, 1) * 10px);letter-spacing:.06em;color:#e8efea}
-#eq.oz-mixcheck .mc-spotify-capture-copy span{font-size:calc(var(--inv-text-scale, 1) * 10px);line-height:1.35;color:#a8b3aa}
-#eq.oz-mixcheck .mc-spotify-capture-state time{font:700 calc(var(--inv-text-scale, 1) * 12px) ui-monospace,SFMono-Regular,monospace;color:#e8efea;white-space:nowrap}
-#eq.oz-mixcheck .mc-spotify-capture-track{grid-column:1/-1;height:3px;overflow:hidden;border-radius:3px;background:#292f2b}
-#eq.oz-mixcheck .mc-spotify-capture-track i{display:block;width:24%;height:100%;border-radius:inherit;background:#f34b62}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="starting"]{border-color:#65502d;background:#211d15}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="starting"] .mc-spotify-capture-dot{background:#f0b84c}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"]{border-color:#713543;background:#211619}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"] .mc-spotify-capture-dot{background:#fa526a;animation:mcSpotifyCapturePulse 1.15s ease-in-out infinite}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"] .mc-spotify-capture-track i{animation:mcSpotifyCaptureSweep 1.5s ease-in-out infinite}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"]{border-color:#31556a;background:#141c22}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"] .mc-spotify-capture-dot{background:#4fb9ed;animation:mcSpotifyCapturePulse 1.15s ease-in-out infinite}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"] .mc-spotify-capture-track i{background:#4fb9ed;animation:mcSpotifyCaptureSweep 1.5s ease-in-out infinite}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"]{border-color:#65502d;background:#211d15}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"] .mc-spotify-capture-dot{background:#f0b84c}
+#eq.oz-mixcheck .mc-spotify-capture-copy strong{font-size:calc(var(--inv-text-scale, 1) * 11px);letter-spacing:.08em;color:#e8f0f5}
+#eq.oz-mixcheck .mc-spotify-capture-copy span{font-size:calc(var(--inv-text-scale, 1) * 12px);line-height:1.4;color:#a8b6c4}
+#eq.oz-mixcheck .mc-spotify-capture-state time{font:700 calc(var(--inv-text-scale, 1) * 13px) ui-monospace,SFMono-Regular,monospace;color:#e8f0f5;white-space:nowrap}
+#eq.oz-mixcheck .mc-spotify-capture-steps{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:2px 0 0;padding:0;list-style:none}
+#eq.oz-mixcheck .mc-spotify-capture-step{display:flex;align-items:center;gap:8px;min-width:0;color:#7e8c99;font-size:calc(var(--inv-text-scale, 1) * 11px);font-weight:600;line-height:1.25}
+#eq.oz-mixcheck .mc-spotify-capture-step i{display:grid;place-items:center;width:19px;height:19px;flex:0 0 19px;border:1px solid #44515c;border-radius:50%;background:#1c2730;color:transparent;font-style:normal;font-size:11px}
+#eq.oz-mixcheck .mc-spotify-capture-step[data-step-state="active"]{color:#e7f1f6}
+#eq.oz-mixcheck .mc-spotify-capture-step[data-step-state="active"] i{border:2px solid #67d8ed;background:#15323b;box-shadow:0 0 0 4px rgba(82,211,235,.12);animation:mcSpotifyCapturePulse 1.5s ease-in-out infinite}
+#eq.oz-mixcheck .mc-spotify-capture-step[data-step-state="complete"]{color:#83d8b5}
+#eq.oz-mixcheck .mc-spotify-capture-step[data-step-state="complete"] i{border-color:#4dc891;background:#1a4637;color:#d7fff0}
+#eq.oz-mixcheck .mc-spotify-capture-track{grid-column:1/-1;height:5px;overflow:hidden;border-radius:5px;background:#202b34}
+#eq.oz-mixcheck .mc-spotify-capture-track i{display:block;width:var(--capture-stage-progress);height:100%;border-radius:inherit;background:linear-gradient(90deg,#66d9f3,#79e6bd);transition:width .35s ease}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="ready"],#eq.oz-mixcheck .mc-spotify-capture-state[data-state="starting"],#eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"],#eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"],#eq.oz-mixcheck .mc-spotify-capture-state[data-state="saving"]{border-color:#285163;background:#101b23}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="ready"] .mc-spotify-capture-dot,#eq.oz-mixcheck .mc-spotify-capture-state[data-state="starting"] .mc-spotify-capture-dot,#eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"] .mc-spotify-capture-dot{background:#62d6ee}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"] .mc-spotify-capture-dot{background:#60dfb1;animation:mcSpotifyCapturePulse 1.15s ease-in-out infinite}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="starting"] .mc-spotify-capture-track i,#eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"] .mc-spotify-capture-track i,#eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"] .mc-spotify-capture-track i,#eq.oz-mixcheck .mc-spotify-capture-state[data-state="saving"] .mc-spotify-capture-track i{box-shadow:0 0 12px rgba(100,216,238,.38)}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"],#eq.oz-mixcheck .mc-spotify-capture-state[data-state="error"],#eq.oz-mixcheck .mc-spotify-capture-state[data-state="notice"]{border-color:#65502d;background:#211d15}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"] .mc-spotify-capture-dot,#eq.oz-mixcheck .mc-spotify-capture-state[data-state="error"] .mc-spotify-capture-dot,#eq.oz-mixcheck .mc-spotify-capture-state[data-state="notice"] .mc-spotify-capture-dot{background:#f0b84c}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"] .mc-spotify-capture-step[data-step-state="active"] i,#eq.oz-mixcheck .mc-spotify-capture-state[data-state="error"] .mc-spotify-capture-step[data-step-state="active"] i{border-color:#f0b84c;background:#382d18;box-shadow:0 0 0 4px rgba(240,184,76,.12)}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="saved"]{border-color:#2c6843;background:#142018}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="saved"] .mc-spotify-capture-dot{background:#46d58a}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="error"],#eq.oz-mixcheck .mc-spotify-capture-state[data-state="notice"]{border-color:#65502d;background:#211d15}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="error"] .mc-spotify-capture-dot{background:#f0b84c}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="saved"] .mc-spotify-capture-track i{background:linear-gradient(90deg,#4acb93,#9af0c3)}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="error"] .mc-spotify-capture-track i,#eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"] .mc-spotify-capture-track i{background:#f0b84c}
+@media(max-width:720px){#eq.oz-mixcheck .mc-spotify-capture-state{grid-template-columns:10px minmax(0,1fr) auto;padding:12px}#eq.oz-mixcheck .mc-spotify-capture-steps{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 8px}#eq.oz-mixcheck .mc-spotify-capture-step{font-size:calc(var(--inv-text-scale, 1) * 10px)}}
 @keyframes mcSpotifyCapturePulse{50%{opacity:.38;transform:scale(.76)}}
 @keyframes mcSpotifyCaptureSweep{0%{transform:translateX(-120%)}100%{transform:translateX(430%)}}
 #eq.oz-mixcheck .mc-spotify-results[hidden]{display:none}
@@ -3409,6 +3414,12 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <span class="mc-spotify-capture-dot" aria-hidden="true"></span>
           <div class="mc-spotify-capture-copy"><strong id="mcSpotifyCaptureTitle">CAPTURE READY</strong><span id="mcSpotifyCaptureDetail"></span></div>
           <time id="mcSpotifyCaptureElapsed">00:00</time>
+          <ol class="mc-spotify-capture-steps" aria-label="Spotify reference capture progress">
+            <li class="mc-spotify-capture-step" data-capture-step="track" data-step-state="pending"><i aria-hidden="true"></i><span>Select track</span></li>
+            <li class="mc-spotify-capture-step" data-capture-step="capture" data-step-state="pending"><i aria-hidden="true"></i><span>Capture audio</span></li>
+            <li class="mc-spotify-capture-step" data-capture-step="analyze" data-step-state="pending"><i aria-hidden="true"></i><span>Analyze</span></li>
+            <li class="mc-spotify-capture-step" data-capture-step="save" data-step-state="pending"><i aria-hidden="true"></i><span>Save target</span></li>
+          </ol>
           <div class="mc-spotify-capture-track" aria-hidden="true"><i></i></div>
         </div>
         <div class="mc-spotify-results" id="mcSpotifyResults" hidden></div>
@@ -4461,7 +4472,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-03.136';
+const AIMM_BUILD = '2026-11-03.137';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21423,8 +21434,30 @@ csInit('csPlatform');
     const elapsed=mcSpotifyCaptureUiStartedAt?Math.max(mcSpotifyCaptureUiElapsed,(Date.now()-mcSpotifyCaptureUiStartedAt)/1000):mcSpotifyCaptureUiElapsed;
     time.textContent=String(Math.floor(elapsed/60)).padStart(2,'0')+':'+String(Math.floor(elapsed%60)).padStart(2,'0');
   }
+  function mcSpotifyCaptureUpdateProgress(state,previousState=''){
+    const panel=document.getElementById('mcSpotifyCaptureState');if(!panel)return;
+    const track=mcSpotifyCaptureTrack||mcSpotifySelectedTrack,hasTrack=!!(track&&track.id);
+    const stageFor=value=>{
+      if(value==='saved')return 4;
+      if(value==='processing')return 2;
+      if(value==='saving')return 3;
+      if(value==='ready')return 1;
+      if(value==='starting'||value==='capturing'||value==='no-audio')return hasTrack?1:0;
+      return 0;
+    };
+    const active=state==='error'?stageFor(previousState):stageFor(state),complete=state==='saved'?4:active;
+    panel.querySelectorAll('.mc-spotify-capture-step').forEach((step,index)=>{
+      const stepState=index<complete?'complete':index===active&&active<4?'active':'pending';
+      step.dataset.stepState=stepState;
+      const marker=step.querySelector('i');if(marker)marker.textContent=stepState==='complete'?'✓':'';
+      if(stepState==='active')step.setAttribute('aria-current','step');else step.removeAttribute('aria-current');
+    });
+    const progress=state==='saved'?100:Math.round((active+0.5)*25);
+    panel.style.setProperty('--capture-stage-progress',progress+'%');
+  }
   function mcSpotifyCaptureSetState(state,title,detail){
     const panel=document.getElementById('mcSpotifyCaptureState'),heading=document.getElementById('mcSpotifyCaptureTitle'),copy=document.getElementById('mcSpotifyCaptureDetail');if(!panel)return;
+    const previousState=panel.dataset.state||'';
     if(state==='starting'||state==='notice'){clearInterval(mcSpotifyCaptureUiTimer);mcSpotifyCaptureUiTimer=null;mcSpotifyCaptureUiStartedAt=0;mcSpotifyCaptureUiElapsed=0;}
     if(state==='capturing'){
       if(!mcSpotifyCaptureUiStartedAt)mcSpotifyCaptureUiStartedAt=Date.now()-mcSpotifyCaptureUiElapsed*1000;
@@ -21434,9 +21467,13 @@ csInit('csPlatform');
       mcSpotifyCaptureUiStartedAt=0;clearInterval(mcSpotifyCaptureUiTimer);mcSpotifyCaptureUiTimer=null;
     }
     panel.hidden=state==='idle';panel.dataset.state=state;
-    if(heading)heading.textContent=title||'';if(copy)copy.textContent=detail||'';mcSpotifyCaptureClock();
+    if(heading)heading.textContent=title||'';if(copy)copy.textContent=detail||'';mcSpotifyCaptureClock();mcSpotifyCaptureUpdateProgress(state,previousState);
   }
-  function mcSpotifyCaptureSetDetail(detail,state){const copy=document.getElementById('mcSpotifyCaptureDetail'),panel=document.getElementById('mcSpotifyCaptureState');if(copy)copy.textContent=detail||'';if(panel&&state)panel.dataset.state=state;}
+  function mcSpotifyCaptureSetDetail(detail,state){
+    const copy=document.getElementById('mcSpotifyCaptureDetail'),panel=document.getElementById('mcSpotifyCaptureState');
+    if(copy)copy.textContent=detail||'';
+    if(panel&&state){const previousState=panel.dataset.state||'';panel.dataset.state=state;mcSpotifyCaptureUpdateProgress(state,previousState);}
+  }
   function mcSpotifyNewSessionId(){
     const bytes=new Uint8Array(16);
     if(window.crypto&&typeof window.crypto.getRandomValues==='function')window.crypto.getRandomValues(bytes);else for(let i=0;i<bytes.length;i++)bytes[i]=Math.floor(Math.random()*256);
@@ -21610,6 +21647,8 @@ csInit('csPlatform');
       const payload={analysis,buffer:captured,points,profile,durationSeconds};
       // Keep the captured audio attached to the Spotify ID frozen at start.
       const referenceName=mcSpotifyTrackLabel(linkedTrack);
+      mcSpotifyCaptureSetState('saving','SAVING REFERENCE','Adding the Spotify track to Saved Targets…');
+      await new Promise(resolve=>requestAnimationFrame(resolve));
       const saved=refSaveSpotifyTarget(referenceName,captured.duration,payload,linkedTrack);
       if(saved){MC_SPECS.setSpotify(analysis,captured,referenceName);mcSpotifyCaptureSetState('saved','REFERENCE SAVED',captured.duration.toFixed(0)+' seconds analysed · purple target and Audio Specs updated.');toast('Spotify reference saved and active as the spectral target');}
       else if(status)status.textContent='The capture could not be saved. Play at least eight seconds, then capture again.';
@@ -21638,6 +21677,8 @@ csInit('csPlatform');
     if((mcSpotifyUsingCompanion||(LIVE.active&&LIVE.referenceOnly))&&mcSpotifySelectedTrack&&String(mcSpotifySelectedTrack.id)!==String(track.id)){mcSpotifyStatus('Stop the current capture before selecting another Spotify track.');return;}
     mcSpotifySelectedTrack=track;const captureActive=mcSpotifyUsingCompanion||LIVE.active&&LIVE.referenceOnly;if(captureActive&&mcSpotifyCaptureTrack&&(!mcSpotifyCaptureTrack.id||String(mcSpotifyCaptureTrack.id)===String(track.id)))mcSpotifyCaptureTrack={...track,artists:Array.isArray(track.artists)?track.artists.map(artist=>({...artist})):[]};const label=mcSpotifyTrackLabel(track),input=document.getElementById('mcSpotifyRefName'),capture=document.getElementById('mcSpotifyCapture');
     if(LIVE.active&&LIVE.referenceOnly)LIVE.referenceLabel=label;
+    if(captureActive)mcSpotifyCaptureUpdateProgress('capturing');
+    else mcSpotifyCaptureSetState('ready','TRACK SELECTED',label+' · ready to capture.');
     if(input)input.value=label;if(capture){capture.hidden=false;capture.textContent='Capture reference';}
     const saved=refTrackTargets.find(item=>item.spotifyTrackId&&item.spotifyTrackId===String(track.id)),targetSelect=document.getElementById('refCurveTarget');
     if(targetSelect){targetSelect.value=saved?'trackref:'+saved.id:'';window.refTargetChanged();}else refRenderSavedTargets();
@@ -21801,7 +21842,7 @@ csInit('csPlatform');
     if(LIVE.active&&LIVE.referenceOnly){mcSpotifyStatus('Stop the current reference capture before searching for another Spotify track.');return;}
     const input=document.getElementById('mcSpotifyRefName'),q=(input&&input.value||'').trim();if(!q)return mcSpotifyStatus('Enter a track or artist name to search Spotify.');
     if(mcSpotifyArtistController){try{mcSpotifyArtistController.destroy();}catch(_){}mcSpotifyArtistController=null;}mcSpotifyArtistSourceActive=false;
-    mcSpotifySelectedTrack=null;mcSpotifyNextSearchUrl=null;const capture=document.getElementById('mcSpotifyCapture');if(capture)capture.hidden=true;
+    mcSpotifySelectedTrack=null;mcSpotifyNextSearchUrl=null;mcSpotifyCaptureSetState('notice','SELECT A SPOTIFY TRACK','Select a track from Spotify, or play one in Spotify Top tracks and wait for its title to appear.');const capture=document.getElementById('mcSpotifyCapture');if(capture)capture.hidden=true;
     mcSpotifySearchBusy=true;mcSpotifyRenderConnection();mcSpotifyStatus('Searching Spotify…');
     try{const token=await mcSpotifyAccessToken();let url;if(/^https?:\/\/(?:open\.)?spotify\.com\/(?:intl-[^/]+\/)?track\/([A-Za-z0-9]+)/i.test(q)){const id=q.match(/\/track\/([A-Za-z0-9]+)/i)[1];url='https://api.spotify.com/v1/tracks/'+encodeURIComponent(id);}else url='https://api.spotify.com/v1/search?'+new URLSearchParams({q,type:'track,artist',limit:'10',offset:'0'}).toString();
       const response=await fetch(url,{headers:{Authorization:'Bearer '+token}}),data=await response.json();if(!response.ok)throw new Error((data.error&&data.error.message)||'Spotify search failed');const tracks=data&&data.tracks&&Array.isArray(data.tracks.items)?data.tracks.items:(data&&data.id?[data]:[]),artists=data&&data.artists&&Array.isArray(data.artists.items)?data.artists.items:[];const exactArtist=artists.find(artist=>String(artist.name||'').trim().toLocaleLowerCase()===q.toLocaleLowerCase());
@@ -21827,11 +21868,13 @@ csInit('csPlatform');
     if(!start||!stop){setTimeout(wireSpotifyReference,50);return;}
     const connect=document.getElementById('mcSpotifyConnect'),capture=document.getElementById('mcSpotifyCapture'),input=document.getElementById('mcSpotifyRefName');
     if(connect)connect.addEventListener('click',()=>{if(connect.dataset.connected==='true'){mcSpotifyTokens=null;try{localStorage.removeItem(MC_SPOTIFY_TOKEN_KEY);}catch(_){}mcSpotifyRenderConnection();mcSpotifyStatus('Spotify disconnected.');}else mcSpotifyBeginConnect();});
-    start.addEventListener('click',mcSpotifySearch);if(input){input.addEventListener('input',()=>{if(mcSpotifyUsingCompanion||LIVE.active&&LIVE.referenceOnly){input.value=mcSpotifyTrackLabel(mcSpotifyCaptureTrack||mcSpotifySelectedTrack);mcSpotifyStatus('The selected Spotify track is locked until this reference capture finishes.');return;}if(mcSpotifySelectedTrack&&input.value.trim()!==mcSpotifyTrackLabel(mcSpotifySelectedTrack)){mcSpotifySelectedTrack=null;const capture=document.getElementById('mcSpotifyCapture');if(capture){capture.hidden=!(mcSpotifyTokens&&mcSpotifyTokens.access_token);capture.textContent='Capture reference';}}});input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();mcSpotifySearch();}});}
+    start.addEventListener('click',mcSpotifySearch);if(input){input.addEventListener('input',()=>{if(mcSpotifyUsingCompanion||LIVE.active&&LIVE.referenceOnly){input.value=mcSpotifyTrackLabel(mcSpotifyCaptureTrack||mcSpotifySelectedTrack);mcSpotifyStatus('The selected Spotify track is locked until this reference capture finishes.');return;}if(mcSpotifySelectedTrack&&input.value.trim()!==mcSpotifyTrackLabel(mcSpotifySelectedTrack)){mcSpotifySelectedTrack=null;mcSpotifyCaptureSetState('notice','SELECT A SPOTIFY TRACK','Select a track from Spotify, or play one in Spotify Top tracks and wait for its title to appear.');const capture=document.getElementById('mcSpotifyCapture');if(capture){capture.hidden=!(mcSpotifyTokens&&mcSpotifyTokens.access_token);capture.textContent='Capture reference';}}});input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();mcSpotifySearch();}});}
     if(capture)capture.addEventListener('click',mcSpotifyCaptureSelected);stop.addEventListener('click',refSpotifyCaptureStop);
     const companionConnect=document.getElementById('mcSpotifyCompanionConnect');if(companionConnect)companionConnect.addEventListener('click',mcSpotifyConnectCompanion);
     const spotifyAuthCallback=new URLSearchParams(location.search).has('code');
-    mcSpotifyRenderConnection();mcSpotifyExchangeCode();if(!spotifyAuthCallback)mcSpotifyRefreshSavedTargetNames();mcSpotifyRefreshLoopbackPermission();
+    mcSpotifyRenderConnection();
+    mcSpotifyCaptureSetState('notice','SELECT A SPOTIFY TRACK','Select a track from Spotify, or play one in Spotify Top tracks and wait for its title to appear.');
+    mcSpotifyExchangeCode();if(!spotifyAuthCallback)mcSpotifyRefreshSavedTargetNames();mcSpotifyRefreshLoopbackPermission();
   }
   wireSpotifyReference();
 
@@ -23895,6 +23938,8 @@ csInit('csPlatform');
         }
       }catch(error){analysisError=error&&error.message||'Spotify track details could not be resolved.';console.warn('[Spotify reference] audio spec analysis failed',error);}
       const resolvedName=mcSpotifyTrackLabel(captureTrack)||referenceName;
+      mcSpotifyCaptureSetState('saving','SAVING REFERENCE','Adding the Spotify track to Saved Targets…');
+      await new Promise(resolve=>requestAnimationFrame(resolve));
       const saved=!!capturedAnalysis&&!!captureTrack&&refSaveSpotifyTarget(resolvedName,capturedAnalysis.durationSeconds,capturedAnalysis,captureTrack);
       if(saved)MC_SPECS.setSpotify(capturedAnalysis.analysis,capturedAnalysis.buffer,resolvedName);
       const capture=document.getElementById('mcSpotifyCapture'),stop=document.getElementById('mcSpotifyRefStop');

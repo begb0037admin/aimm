@@ -12,6 +12,10 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
+## Spotify reference capture taskbar redesigned — build 2026-11-03.137
+
+The taskbar remains visible before capture, shows the selected Spotify track, and advances through track selection, audio capture, analysis and target saving. Its elapsed timer is retained; the progress fill represents workflow stages rather than an audio percentage. Shipped to `aimixmasters.com` on 2026-11-03.
+
 ## Spotify Top tracks capture restored — build 2026-11-03.136
 
 Capture can start before a track has been selected. The selected track ID is locked at capture start when available; otherwise, the first Spotify track identified during recording supplies the title, artist and ID. Shipped to `aimixmasters.com` on 2026-11-03.

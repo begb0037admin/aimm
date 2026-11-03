@@ -1,3 +1,5 @@
+**2026-11-03 update — Spotify reference capture taskbar redesigned, build 2026-11-03.137.** The taskbar stays visible before capture and tracks selection, capture, analysis and saving with stage indicators and a stage-based progress fill. The elapsed timer remains. Live on `aimixmasters.com`.
+
 **2026-11-03 update — Spotify Top tracks capture restored, build 2026-11-03.136.** Capture can start without preselecting a song. It attaches title and artist when Spotify identifies the first playing track; a preselected track remains locked to the capture. Live on `aimixmasters.com`.
 
 **2026-11-03 update — Stem trace legend, build 2026-11-03.135.** The spectral chart now labels the blue audible-stem line and dashed orange muted-stem/remainder line, alongside Live mix and Saved target. Live on `aimixmasters.com`.
