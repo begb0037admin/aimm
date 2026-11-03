@@ -1,7 +1,3 @@
-## Active checkpoint — Spotify reference capture taskbar redesigned, build 2026-11-03.137
-
-The Spotify status bar stays visible before capture and maps the selection, capture, analysis and saving phases to a four-step display. The elapsed capture timer remains. Its progress fill represents the current workflow stage, not an audio percentage. Live at `aimixmasters.com`; Wrangler configuration is unchanged.
-
 ## Active checkpoint — Spotify Top tracks capture restored, build 2026-11-03.136
 
 Capture can begin before a track is selected. An initial Spotify selection stays locked; when capture begins unlinked, the first Spotify track identified during recording supplies its ID, title and artist. The service capture session remains associated with its original session ID, even when metadata arrives later. Live at `aimixmasters.com`; Wrangler configuration remains unchanged.
