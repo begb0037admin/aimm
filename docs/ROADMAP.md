@@ -12,6 +12,10 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
+## Stem spectral comparison restored and synchronized — build 2026-11-03.133
+
+Solo and mute playback now switches the spectral view to the audible stem set. The blue trace follows the audible stem(s), the orange trace follows the unselected remainder, and the white live-output trace uses the same 0.4-second smoothing time constant as the blue trace. Shipped to `aimixmasters.com` on 2026-11-03.
+
 ## Saved Spotify target names and removal — build 2026-11-03.132
 
 Saved Spotify references now use `Track title · Artist` by default. Existing artist-only names can be corrected from their stored Spotify track IDs when Spotify is connected. Each saved target has its own confirmed Remove action; manual names remain intact. Shipped to `aimixmasters.com` on 2026-11-03.
