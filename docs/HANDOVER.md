@@ -1,3 +1,7 @@
+## Active checkpoint — Spotify Top tracks capture restored, build 2026-11-03.136
+
+Capture can begin before a track is selected. An initial Spotify selection stays locked; when capture begins unlinked, the first Spotify track identified during recording supplies its ID, title and artist. The service capture session remains associated with its original session ID, even when metadata arrives later. Live at `aimixmasters.com`; Wrangler configuration remains unchanged.
+
 ## Active checkpoint — stem trace legend, build 2026-11-03.135
 
 The chart legend now explains the blue audible-stem line and dashed orange muted-stem/remainder line. The white Live mix and purple Saved target entries remain. Live at `aimixmasters.com`; Wrangler configuration is unchanged.

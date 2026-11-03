@@ -12,6 +12,10 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
+## Spotify Top tracks capture restored — build 2026-11-03.136
+
+Capture can start before a track has been selected. The selected track ID is locked at capture start when available; otherwise, the first Spotify track identified during recording supplies the title, artist and ID. Shipped to `aimixmasters.com` on 2026-11-03.
+
 ## Stem trace legend — build 2026-11-03.135
 
 The spectral chart legend now identifies the blue audible-stem trace and dashed orange muted-stem/remainder trace alongside Live mix and Saved target. Shipped to `aimixmasters.com` on 2026-11-03.
