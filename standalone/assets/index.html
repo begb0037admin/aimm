@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.158';
+const AIMM_BUILD = '2026-11-04.159';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21613,22 +21613,26 @@ csInit('csPlatform');
     const input=document.getElementById('mcSpotifyRefName');if(input)input.value=item.name;
     return true;
   }
+  let mcNowPlayingReport='';
   async function mcSpotifyNowPlayingTrack(){
     try{
       const token=await mcSpotifyAccessToken();
       const response=await fetch('https://api.spotify.com/v1/me/player/currently-playing',{headers:{Authorization:'Bearer '+token}});
-      if(!response.ok)return null;
+      if(response.status===204){mcNowPlayingReport='Spotify reports nothing playing (HTTP 204).';return null;}
+      if(!response.ok){const body=await response.text().catch(()=>'');mcNowPlayingReport='Spotify returned HTTP '+response.status+': '+body.slice(0,160);return null;}
       const data=await response.json().catch(()=>null);
       const item=data&&data.item;
-      if(!item||!item.id)return null;
+      if(!item||!item.id){mcNowPlayingReport='Spotify returned no track item (currently playing type: '+(data&&data.currently_playing_type||'unknown')+').';return null;}
+      mcNowPlayingReport='';
       return{id:String(item.id),name:String(item.name||''),artists:(item.artists||[]).map(a=>({name:String(a.name||'')}))};
-    }catch(_){return null;}
+    }catch(error){mcNowPlayingReport='Could not ask Spotify: '+(error&&error.message||'unknown error');return null;}
   }
   async function refSpotifyCaptureStart(){
     const input=document.getElementById('mcSpotifyRefName'),status=document.getElementById('mcSpotifyRefStatus'),start=document.getElementById('mcSpotifyCapture'),stop=document.getElementById('mcSpotifyRefStop');
     const selected=mcSpotifySelectedTrack&&mcSpotifySelectedTrack.id?{...mcSpotifySelectedTrack,artists:Array.isArray(mcSpotifySelectedTrack.artists)?mcSpotifySelectedTrack.artists.map(artist=>({...artist})):[]}:null;
     if(mcSpotifyUsingCompanion){mcSpotifyStatus('A reference capture is already in progress. Stop it before starting another.');return;}
     const detected=selected?null:await mcSpotifyNowPlayingTrack();
+    if(!selected&&!detected){const st=document.getElementById('mcSpotifyRefStatus');if(st)st.textContent='Track not identified. '+mcNowPlayingReport;}
     const chosen=selected||detected;
     const name=mcSpotifyTrackLabel(chosen)||'Spotify track (identifying…)';
     if(input)input.value=name;
