@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.159';
+const AIMM_BUILD = '2026-11-04.160';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21632,7 +21632,7 @@ csInit('csPlatform');
     const selected=mcSpotifySelectedTrack&&mcSpotifySelectedTrack.id?{...mcSpotifySelectedTrack,artists:Array.isArray(mcSpotifySelectedTrack.artists)?mcSpotifySelectedTrack.artists.map(artist=>({...artist})):[]}:null;
     if(mcSpotifyUsingCompanion){mcSpotifyStatus('A reference capture is already in progress. Stop it before starting another.');return;}
     const detected=selected?null:await mcSpotifyNowPlayingTrack();
-    if(!selected&&!detected){const st=document.getElementById('mcSpotifyRefStatus');if(st)st.textContent='Track not identified. '+mcNowPlayingReport;}
+    const unidentifiedReason=(!selected&&!detected)?'Track not identified. '+mcNowPlayingReport:'';
     const chosen=selected||detected;
     const name=mcSpotifyTrackLabel(chosen)||'Spotify track (identifying…)';
     if(input)input.value=name;
@@ -21643,7 +21643,7 @@ csInit('csPlatform');
     // the first track identified by Spotify during capture can fill it in.
     mcSpotifyUsingCompanion=true; // lock this Spotify track before any bridge request can yield
     mcSpotifyCaptureSetState('starting','STARTING REFERENCE CAPTURE','Connecting to AIMM Audio Reference Companion…');
-    if(status)status.textContent='Starting system audio capture…';
+    if(status)status.textContent=unidentifiedReason||'Starting system audio capture…';
     try{
       mcSpotifyCaptureSessionId=mcSpotifyNewSessionId();
       const started=await mcSpotifyCompanionFetch('/capture/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,spotifyTrackId:String(mcSpotifyCaptureTrack.id||''),sessionId:mcSpotifyCaptureSessionId}),cache:'no-store'});
