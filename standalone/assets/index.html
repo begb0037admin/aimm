@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.146';
+const AIMM_BUILD = '2026-11-04.147';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -20969,7 +20969,8 @@ csInit('csPlatform');
     if(mcSpotifyUsingCompanion){
       if(mcSpotifyCompanionPoints&&mcSpotifyCompanionPoints.length){
         const tolerance=MC_TRACK_TARGET_TOLERANCE_DB;
-        return{label:'AIMM capture · '+((document.getElementById('mcSpotifyRefName')||{}).value||'capturing'),pts:mcSpotifyCompanionPoints.map(([f,db])=>[f,db-tolerance,db+tolerance]),liveAverage:true};
+        // One line only: no tolerance band around the captured line.
+        return{label:'AIMM capture · '+((document.getElementById('mcSpotifyRefName')||{}).value||'capturing'),pts:mcSpotifyCompanionPoints.map(([f,db])=>[f,db,db]),liveAverage:true};
       }
       return null;
     }
@@ -21661,8 +21662,8 @@ csInit('csPlatform');
         profile.points=pts;
         profile.frequencies=mcCaptureAccum.freqs;
         profile.magnitudesSmoothed=avg;
-        profile.magnitudesLow=avg.map(v=>v-3);
-        profile.magnitudesHigh=avg.map(v=>v+3);
+        profile.magnitudesLow=avg.slice();
+        profile.magnitudesHigh=avg.slice();
         profile.analyzer='AIMM live white line (averaged over capture)';
       }
       if(!linkedTrack.id&&profile.spotifyTrackID)linkedTrack=await mcSpotifyResolveCaptureTrack({id:String(profile.spotifyTrackID),name:'Spotify track',artists:[]});
