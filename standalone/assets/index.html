@@ -2592,10 +2592,14 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-saved-target-rename-controls button{min-height:42px;padding:0 14px;border:1px solid #565d64;border-radius:8px;background:#2a2d30;color:#f1f3f5;font-size:calc(var(--inv-text-scale, 1) * 12px);font-weight:700;cursor:pointer}
 #eq.oz-mixcheck .mc-saved-target-rename-controls button:disabled{opacity:.45;cursor:not-allowed}
 #eq.oz-mixcheck #mcSavedTargetFeedback{min-height:16px;color:#9fabb9;font-size:calc(var(--inv-text-scale, 1) * 11px)}
-#eq.oz-mixcheck .mc-spotify-reference{display:grid;grid-template-columns:minmax(190px,.34fr) minmax(0,1.66fr);align-items:center;gap:16px 22px;margin:0 0 12px;padding:20px 22px;border:1px solid #17623b;border-radius:10px;background:linear-gradient(105deg,#10291d,#0b1b13)}
+#eq.oz-mixcheck .mc-spotify-reference{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(190px,.34fr) minmax(0,1.66fr);align-items:center;gap:16px 22px;margin:0 0 12px;padding:20px 22px;border:0;border-radius:22px;background:radial-gradient(ellipse 60% 55% at 45% 0%,rgba(74,124,140,.55),transparent 70%),linear-gradient(180deg,#22323c 0%,#171f27 60%,#101418 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);transition:box-shadow 220ms ease-out}
+#eq.oz-mixcheck .mc-spotify-reference::before{content:"";position:absolute;inset:0;padding:1.5px;border-radius:inherit;background:linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%);opacity:.75;pointer-events:none;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;transition:opacity 220ms ease-out}
+#eq.oz-mixcheck .mc-spotify-reference:hover,#eq.oz-mixcheck .mc-spotify-reference:focus-within{box-shadow:0 0 22px rgba(79,195,232,.25),0 0 30px rgba(201,161,90,.18)}
+#eq.oz-mixcheck .mc-spotify-reference:hover::before,#eq.oz-mixcheck .mc-spotify-reference:focus-within::before{opacity:1}
+@media(prefers-reduced-motion:reduce){#eq.oz-mixcheck .mc-spotify-reference,#eq.oz-mixcheck .mc-spotify-reference::before{transition:none}}
 #eq.oz-mixcheck .mc-spotify-identity{display:flex;align-items:center;gap:14px;min-width:0}
-#eq.oz-mixcheck .mc-spotify-mark{width:58px;height:58px;flex:0 0 58px;display:grid;place-items:center;border-radius:50%;background:#1ed760;color:#07150c}
-#eq.oz-mixcheck .mc-spotify-mark svg{width:38px;height:38px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round}
+#eq.oz-mixcheck .mc-spotify-mark{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border-radius:50%;background:#1db954;color:#0b1a10;box-shadow:0 0 0 2px rgba(79,195,232,.5),0 0 14px rgba(79,195,232,.35)}
+#eq.oz-mixcheck .mc-spotify-mark svg{width:22px;height:22px;fill:none;stroke:#0b1a10;stroke-width:2.4;stroke-linecap:round}
 #eq.oz-mixcheck .mc-spotify-brand{display:grid;gap:5px;min-width:0}
 #eq.oz-mixcheck .mc-spotify-brand strong{color:#f2f8f4;font-size:calc(var(--inv-text-scale, 1) * 18px);font-weight:750;line-height:1.15}
 #eq.oz-mixcheck .mc-spotify-brand>span{color:#8fc6a5;font-size:calc(var(--inv-text-scale, 1) * 14px);font-weight:550}
@@ -2611,6 +2615,10 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-capture-state,#eq.oz-mixcheck .mc-spotify-results,#eq.oz-mixcheck .mc-spotify-ref-status{grid-column:1/-1}
 #eq.oz-mixcheck .mc-spotify-ref-status{display:none;color:#afc1b4;font-size:calc(var(--inv-text-scale, 1) * 12px);line-height:1.5;white-space:pre-line}
 #eq.oz-mixcheck .mc-spotify-ref-status:not(:empty){display:block;margin-top:2px}
+#eq.oz-mixcheck .mc-spotify-saved-status{grid-column:1/-1;color:#7ee2a8;font-size:11px;font-weight:600;line-height:1.4}
+#eq.oz-mixcheck .mc-spotify-saved-status[hidden]{display:none}
+#eq.oz-mixcheck .mc-spotify-saved-status span{display:block}
+#eq.oz-mixcheck .mc-spotify-saved-status .mc-spotify-saved-reason{font-weight:400}
 #eq.oz-mixcheck .mc-spectrum-legend{display:flex;align-items:center;gap:22px;min-height:34px;margin:0 0 9px;padding:0 2px;color:#d2dce7;font-size:calc(var(--inv-text-scale, 1) * 13px);font-weight:550}
 #eq.oz-mixcheck .mc-spectrum-legend>span{display:inline-flex;align-items:center;gap:9px;white-space:nowrap}
 #eq.oz-mixcheck .mc-spectrum-legend i{display:block;width:22px;height:4px;border-radius:4px;background:#f2f4f7}
@@ -2619,7 +2627,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spectrum-legend i.mc-spectrum-target{background:#a557f4}
 #eq.oz-mixcheck .mc-spectrum-legend .mc-spectrum-units{margin-left:auto;color:#9eabb9;font-size:calc(var(--inv-text-scale, 1) * 12px)}
 @media(max-width:1100px){#eq.oz-mixcheck .mc-spotify-reference{grid-template-columns:minmax(0,1fr);gap:14px}#eq.oz-mixcheck .mc-spotify-ref-controls{grid-template-columns:minmax(0,1fr) auto auto auto}}
-@media(max-width:720px){#eq.oz-mixcheck .oz-spec-card{padding:14px;border-radius:10px}#eq.oz-mixcheck .mc-saved-targets-toggle{grid-template-columns:minmax(0,1fr) 22px;gap:4px 10px;padding:13px 14px}#eq.oz-mixcheck .mc-saved-targets-label{grid-column:1;grid-row:1}#eq.oz-mixcheck .mc-saved-targets-active{grid-column:1;grid-row:2;text-align:left}#eq.oz-mixcheck .mc-saved-targets-plus{grid-column:2;grid-row:1 / span 2}#eq.oz-mixcheck .mc-spotify-reference{padding:16px;border-radius:10px}#eq.oz-mixcheck .mc-spotify-mark{width:50px;height:50px;flex-basis:50px}#eq.oz-mixcheck .mc-spotify-ref-controls{grid-template-columns:1fr 1fr;gap:8px}#eq.oz-mixcheck .mc-spotify-ref-controls input{grid-column:1/-1}#eq.oz-mixcheck .mc-spotify-ref-controls button{min-height:46px;padding:0 10px;white-space:normal}#eq.oz-mixcheck .mc-spectrum-legend{gap:12px;flex-wrap:wrap}#eq.oz-mixcheck .mc-spectrum-legend .mc-spectrum-units{margin-left:auto}}
+@media(max-width:720px){#eq.oz-mixcheck .oz-spec-card{padding:14px;border-radius:10px}#eq.oz-mixcheck .mc-saved-targets-toggle{grid-template-columns:minmax(0,1fr) 22px;gap:4px 10px;padding:13px 14px}#eq.oz-mixcheck .mc-saved-targets-label{grid-column:1;grid-row:1}#eq.oz-mixcheck .mc-saved-targets-active{grid-column:1;grid-row:2;text-align:left}#eq.oz-mixcheck .mc-saved-targets-plus{grid-column:2;grid-row:1 / span 2}#eq.oz-mixcheck .mc-spotify-reference{padding:16px}#eq.oz-mixcheck .mc-spotify-ref-controls{grid-template-columns:1fr 1fr;gap:8px}#eq.oz-mixcheck .mc-spotify-ref-controls input{grid-column:1/-1}#eq.oz-mixcheck .mc-spotify-ref-controls button{min-height:46px;padding:0 10px;white-space:normal}#eq.oz-mixcheck .mc-spectrum-legend{gap:12px;flex-wrap:wrap}#eq.oz-mixcheck .mc-spectrum-legend .mc-spectrum-units{margin-left:auto}}
 @media(max-width:460px){#eq.oz-mixcheck .mc-saved-target-option{grid-template-columns:minmax(0,1fr);gap:3px}#eq.oz-mixcheck .mc-saved-target-option-source{text-align:left}#eq.oz-mixcheck .mc-saved-target-delete{min-width:68px;padding:0 8px}#eq.oz-mixcheck .mc-saved-target-rename-controls{grid-template-columns:minmax(0,1fr)}#eq.oz-mixcheck .mc-spotify-ref-controls button{font-size:calc(var(--inv-text-scale, 1) * 12px)}}
 
 /* AIMM coach identity: the supplied wordmark colours, with Hope retained as
@@ -3417,6 +3425,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         </div>
         <div class="mc-spotify-results" id="mcSpotifyResults" hidden></div>
         <div class="mc-spotify-ref-status" id="mcSpotifyRefStatus" role="status" aria-live="polite"></div>
+        <div class="mc-spotify-saved-status" id="mcSpotifySavedStatus" role="status" aria-live="polite" aria-atomic="true" hidden><span id="mcSpotifySavedStatusLabel"></span><span class="mc-spotify-saved-reason" id="mcSpotifySavedStatusReason" hidden></span></div>
       </div>
       <div class="mc-spectrum-legend" aria-label="Chart legend">
         <span><i class="mc-spectrum-live" aria-hidden="true"></i>Live mix</span><span><i class="mc-spectrum-stems" aria-hidden="true"></i>Stems</span><span><i class="mc-spectrum-muted" aria-hidden="true"></i>Muted stems</span><span><i class="mc-spectrum-target" aria-hidden="true"></i>Saved target</span><span class="mc-spectrum-units">dB relative</span>
@@ -4465,7 +4474,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.164';
+const AIMM_BUILD = '2026-11-04.165';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21119,9 +21128,11 @@ csInit('csPlatform');
       if(!xy)return;
       ctx.save();ctx.beginPath();ctx.rect(x0,top,x1-x0,bottom-top);ctx.clip();
       ctx.lineCap='round';ctx.lineJoin='round';
-      ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(222,204,255,.5)';ctx.lineWidth=7;ctx.filter='blur(5px)';ctx.stroke();ctx.filter='none';
-      ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(247,241,255,.98)';ctx.lineWidth=3;ctx.stroke();
-      ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(185,112,255,.98)';ctx.lineWidth=1.5;ctx.stroke();
+      [{w:70,b:28,a:.07},{w:52,b:22,a:.09},{w:38,b:16,a:.12},{w:26,b:10,a:.18},{w:16,b:5,a:.26}].forEach(layer=>{
+        ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(165,105,255,'+layer.a+')';ctx.lineWidth=layer.w;ctx.filter='blur('+layer.b+'px)';ctx.stroke();ctx.filter='none';
+      });
+      ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(247,241,255,.55)';ctx.lineWidth=2.4;ctx.stroke();
+      ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(185,112,255,.95)';ctx.lineWidth=1.6;ctx.stroke();
       ctx.restore();
       ctx.save();ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(247,241,255,.86)';ctx.fillText('LIVE AUDIO',x1,14);ctx.restore();
     };
@@ -21624,7 +21635,12 @@ csInit('csPlatform');
     const input=document.getElementById('mcSpotifyRefName');if(input)input.value=item.name;
     return true;
   }
-  let mcNowPlayingReport='',mcSpotifyCaptureIdentityReason='',mcSpotifyCaptureStartedAt=0,mcSpotifyCaptureStartRequest=null,mcSpotifyCaptureCancelled=false,mcSpotifyCaptureStatusTrail=[];
+  let mcNowPlayingReport='',mcSpotifyCaptureIdentityReason='',mcSpotifyCaptureStartedAt=0,mcSpotifyCaptureStartRequest=null,mcSpotifyCaptureCancelled=false,mcSpotifyCaptureStatusTrail=[],mcSpotifySavedStatusTimer=0;
+  function mcSpotifyClearSavedStatus(){
+    if(mcSpotifySavedStatusTimer){clearTimeout(mcSpotifySavedStatusTimer);mcSpotifySavedStatusTimer=0;}
+    const savedStatus=document.getElementById('mcSpotifySavedStatus'),label=document.getElementById('mcSpotifySavedStatusLabel'),reason=document.getElementById('mcSpotifySavedStatusReason');
+    if(savedStatus)savedStatus.hidden=true;if(label)label.textContent='';if(reason){reason.textContent='';reason.hidden=true;}
+  }
   function mcSpotifyCaptureTrailSet(key,message){
     const index=mcSpotifyCaptureStatusTrail.findIndex(item=>item.key===key),entry={key,message};
     if(index>=0)mcSpotifyCaptureStatusTrail[index]=entry;else mcSpotifyCaptureStatusTrail.push(entry);
@@ -21651,7 +21667,7 @@ csInit('csPlatform');
     const input=document.getElementById('mcSpotifyRefName'),status=document.getElementById('mcSpotifyRefStatus'),start=document.getElementById('mcSpotifyCapture'),stop=document.getElementById('mcSpotifyRefStop');
     const selected=mcSpotifySelectedTrack&&mcSpotifySelectedTrack.id?{...mcSpotifySelectedTrack,artists:Array.isArray(mcSpotifySelectedTrack.artists)?mcSpotifySelectedTrack.artists.map(artist=>({...artist})):[]}:null;
     if(mcSpotifyUsingCompanion){mcSpotifyStatus('A reference capture is already in progress. Stop it before starting another.');return;}
-    mcSpotifyCaptureStatusTrail=[];mcSpotifyCaptureStartedAt=Date.now();mcSpotifyCaptureCancelled=false;
+    mcSpotifyClearSavedStatus();mcSpotifyCaptureStatusTrail=[];mcSpotifyCaptureStartedAt=Date.now();mcSpotifyCaptureCancelled=false;
     mcSpotifyCaptureSetState('starting','STARTING REFERENCE CAPTURE','Connecting to AIMM Audio Reference Companion…');
     if(status)status.textContent='Connecting to AIMM Audio Reference Companion…';
     const embedIdAtStart=mcSpotifyArtistPlayingId;
@@ -21799,7 +21815,7 @@ csInit('csPlatform');
       // Keep the captured audio attached to the Spotify ID frozen at start.
       const referenceName=mcSpotifyTrackLabel(linkedTrack)||('Unidentified capture · '+new Date(mcSpotifyCaptureStartedAt||Date.now()).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false}));
       const saved=refSaveSpotifyTarget(referenceName,captured.duration,payload,linkedTrack);
-      if(saved){MC_SPECS.setSpotify(analysis,captured,referenceName);mcSpotifyCaptureSavedLabel(linkedTrack);mcSpotifyCaptureTrailRender();toast('Spotify reference saved and active as the spectral target');}
+      if(saved){MC_SPECS.setSpotify(analysis,captured,referenceName);mcSpotifyCaptureSavedLabel(linkedTrack);mcSpotifyCaptureTrailRender();}
       else if(status)status.textContent='The capture could not be saved. Play at least eight seconds, then capture again.';
     }catch(error){
       const reason=error&&error.message||'unknown error',message=/eight seconds|at least 8 seconds|minimum duration/i.test(reason)?'Capture at least 8 seconds of playback for a useful reference, then stop to save it.':'AIMM Companion reference could not be saved: '+reason;if(status)status.textContent=message;
@@ -21992,6 +22008,9 @@ csInit('csPlatform');
     const name=mcSpotifyTrackLabel(track),artists=track&&Array.isArray(track.artists)?track.artists.map(artist=>String(artist&&artist.name||'').trim()).filter(Boolean):[];
     const identified=!!(track&&track.id&&name&&track.name!=='Spotify track'&&artists.length);
     const label=identified?name:'Unidentified capture · '+new Date(mcSpotifyCaptureStartedAt||Date.now()).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false});
+    mcSpotifyClearSavedStatus();
+    const savedStatus=document.getElementById('mcSpotifySavedStatus'),savedLabel=document.getElementById('mcSpotifySavedStatusLabel'),savedReason=document.getElementById('mcSpotifySavedStatusReason');
+    if(savedStatus&&savedLabel){savedLabel.textContent='Reference saved · '+label;savedStatus.hidden=false;if(!identified&&savedReason){savedReason.textContent=mcSpotifyCaptureIdentityReason||'Spotify could not identify the playing track.';savedReason.hidden=false;}mcSpotifySavedStatusTimer=setTimeout(mcSpotifyClearSavedStatus,3000);}
     mcSpotifyCaptureTrailSet('save','Saved label: "'+label+'" — '+(identified?'resolved from Spotify track metadata.':mcSpotifyCaptureIdentityReason||'track metadata was unavailable.'));
     return label;
   }
@@ -24126,7 +24145,7 @@ csInit('csPlatform');
       LIVE.referencePowerSum=null;LIVE.referenceFrameCount=0;LIVE.referenceChunks=[];LIVE.referenceSamples=0;
       LIVE.referenceOnly=false;LIVE.referenceLabel='';
       const status=document.getElementById('mcSpotifyRefStatus');
-      if(saved){if(captureTrack&&captureTrack.id)mcSpotifyCaptureSavedLabel(captureTrack);else mcSpotifyCaptureSavedLabel(null);mcSpotifyCaptureTrailRender();toast('Spotify reference saved and active as the spectral target');}
+      if(saved){if(captureTrack&&captureTrack.id)mcSpotifyCaptureSavedLabel(captureTrack);else mcSpotifyCaptureSavedLabel(null);mcSpotifyCaptureTrailRender();}
       else{const message=analysisError?'Spotify could not resolve the selected track title and artist. '+analysisError:capturedAnalysis?'Capture at least 8 seconds of playback for a useful reference, then stop to save it.':'No active playback was captured. Start the selected Spotify track and try again.';if(status)status.textContent=message;}
       mcSpotifyCaptureReturnToIdle();mcSpotifyCaptureIdentityReason='';mcSpotifyCaptureStartedAt=0;
     }
