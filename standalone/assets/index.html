@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.155';
+const AIMM_BUILD = '2026-11-04.156';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -20825,8 +20825,18 @@ csInit('csPlatform');
   const MC_TRACK_TARGETS_KEY='aimm_mc_spotify_reference_targets_v1',MC_TRACK_TARGET_TOLERANCE_DB=3,MC_TRACK_TARGET_SELECTED_KEY='aimm_mc_spotify_reference_selected_v1';
   let mcSpotifyBrowserFallbackNext=false;
   let mcSpotifySourceMigrationPending=false;
+  // One-time cleanup (approved): remove old saved captures that have the +/-3 dB band or more than 240 points.
+  const MC_TARGET_CLEANUP_KEY='aimm_mc_target_cleanup_v155';
+  function mcTargetIsOld(x){const c=x&&x.referenceCurve;if(!c||!Array.isArray(c.frequencies))return false;if(c.frequencies.length>240)return true;const lo=c.magnitudesLow||[],hi=c.magnitudesHigh||[],sm=c.magnitudesSmoothed||[];return lo.length!==sm.length||hi.length!==sm.length||lo.some((v,i)=>Math.abs(v-sm[i])>1e-9)||hi.some((v,i)=>Math.abs(v-sm[i])>1e-9);}
   let refTrackTargets=(function(){try{const a=JSON.parse(localStorage.getItem(MC_TRACK_TARGETS_KEY)||'[]');return Array.isArray(a)?a.filter(x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&Array.isArray(x.points)).slice(-20).map(item=>{if(item.referenceSource==='AIMM Companion'){mcSpotifySourceMigrationPending=true;return {...item,referenceSource:'Spotify',referenceCaptureMethod:item.referenceCaptureMethod||'AIMM Companion'};}return item;}):[];}catch(_){return[];}})();
   function refSaveTrackTargets(){try{localStorage.setItem(MC_TRACK_TARGETS_KEY,JSON.stringify(refTrackTargets.slice(-20)));return true;}catch(_){return false;}}
+  // Run the approved cleanup once per browser.
+  if(!(function(){try{return localStorage.getItem(MC_TARGET_CLEANUP_KEY)==='1';}catch(_){return true;}})()){
+    const before=refTrackTargets.length;
+    refTrackTargets=refTrackTargets.filter(x=>!mcTargetIsOld(x));
+    try{localStorage.setItem(MC_TARGET_CLEANUP_KEY,'1');}catch(_){}
+    if(refTrackTargets.length!==before)refSaveTrackTargets();
+  }
   if(mcSpotifySourceMigrationPending)refSaveTrackTargets();
   function refPersistSpotifyDerived(targetId,key,value){
     if(!targetId||value==null)return false;
