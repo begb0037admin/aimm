@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.140';
+const AIMM_BUILD = '2026-11-04.141';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21571,7 +21571,7 @@ csInit('csPlatform');
     const input=document.getElementById('mcSpotifyRefName'),status=document.getElementById('mcSpotifyRefStatus'),start=document.getElementById('mcSpotifyCapture'),stop=document.getElementById('mcSpotifyRefStop');
     const selected=mcSpotifySelectedTrack&&mcSpotifySelectedTrack.id?{...mcSpotifySelectedTrack,artists:Array.isArray(mcSpotifySelectedTrack.artists)?mcSpotifySelectedTrack.artists.map(artist=>({...artist})):[]}:null;
     if(mcSpotifyUsingCompanion){mcSpotifyStatus('A reference capture is already in progress. Stop it before starting another.');return;}
-    const name=mcSpotifyTrackLabel(selected)||String(input&&input.value||'').trim()||'Spotify playback reference';
+    const name=mcSpotifyTrackLabel(selected)||'Spotify track (identifying…)';
     if(input)input.value=name;
     mcSpotifyCaptureTrack=selected||{id:'',name,artists:[]};
     mcSpotifyCaptureSessionTrackId=String(mcSpotifyCaptureTrack.id||'');
