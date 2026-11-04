@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.147';
+const AIMM_BUILD = '2026-11-04.148';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -20970,7 +20970,7 @@ csInit('csPlatform');
       if(mcSpotifyCompanionPoints&&mcSpotifyCompanionPoints.length){
         const tolerance=MC_TRACK_TARGET_TOLERANCE_DB;
         // One line only: no tolerance band around the captured line.
-        return{label:'AIMM capture · '+((document.getElementById('mcSpotifyRefName')||{}).value||'capturing'),pts:mcSpotifyCompanionPoints.map(([f,db])=>[f,db,db]),liveAverage:true};
+        return{label:'AIMM capture · '+((document.getElementById('mcSpotifyRefName')||{}).value||'capturing'),pts:mcSpotifyCompanionPoints.map(([f,db])=>[f,db,db]),liveAverage:true,fromCapture:true,rawLive:mcSpotifyCompanionPoints};
       }
       return null;
     }
@@ -21037,7 +21037,7 @@ csInit('csPlatform');
   // flat floor trimmed at both ends, edges eased onto the plot edges, 240-point grid,
   // vertical centring, and 30% easing per redraw. Display only; the DSP is the companion's.
   const refLiveDisplayStates=new Map();
-  function refLiveDisplayCurve(points,mapY,x0,x1,top,bottom){
+  function refLiveDisplayCurve(points,mapY,x0,x1,top,bottom,tag=''){
     const LOW=20,PER_OCT=12,BANDS=Math.ceil(Math.log2(1000)*PER_OCT),GRID=240;
     const centre=b=>LOW*Math.pow(2,(b+0.5)/PER_OCT);
     const vals=new Array(BANDS).fill(null);
@@ -21058,7 +21058,7 @@ csInit('csPlatform');
     const active=measured.filter(b=>smooth[b]>floor+1);
     const first=active.length?active[0]:measured[0];
     const last=active.length?active[active.length-1]:measured[measured.length-1];
-    const key=x0+'|'+x1+'|'+top+'|'+bottom;
+    const key=x0+'|'+x1+'|'+top+'|'+bottom+'|'+tag;
     const st=refLiveDisplayStates.get(key)||{first:null,last:null,ys:null};
     refLiveDisplayStates.set(key,st);
     const ease=(before,target)=>before===null?target:before*Math.pow(target/before,0.7);
@@ -21106,7 +21106,12 @@ csInit('csPlatform');
     const drawReferenceLiveAverage=(corr,mapX,mapY,x0,x1,top,bottom)=>{
       if(!corr||!corr.liveAverage)return;
       const points=[];
-      for(let i=0;i<96;i++){
+      if(corr.fromCapture&&corr.rawLive){
+        // While capturing, the purple is the white line itself: identical processing, so they overlap.
+        const xy=refLiveDisplayCurve(corr.rawLive,mapY,x0,x1,top,bottom,'capture');
+        if(xy)points.push(...xy);
+      }
+      if(!corr.fromCapture)for(let i=0;i<96;i++){
         const f=20*Math.pow(1000,i/95),bounds=corridorAt(corr,f);
         points.push([mapX(f),mapY((bounds[0]+bounds[1])*0.5)]);
       }
