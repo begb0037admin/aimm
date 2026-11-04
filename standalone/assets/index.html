@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.149';
+const AIMM_BUILD = '2026-11-04.150';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21582,13 +21582,26 @@ csInit('csPlatform');
     const input=document.getElementById('mcSpotifyRefName');if(input)input.value=item.name;
     return true;
   }
+  async function mcSpotifyNowPlayingTrack(){
+    try{
+      const token=await mcSpotifyAccessToken();
+      const response=await fetch('https://api.spotify.com/v1/me/player/currently-playing',{headers:{Authorization:'Bearer '+token}});
+      if(!response.ok)return null;
+      const data=await response.json().catch(()=>null);
+      const item=data&&data.item;
+      if(!item||!item.id)return null;
+      return{id:String(item.id),name:String(item.name||''),artists:(item.artists||[]).map(a=>({name:String(a.name||'')}))};
+    }catch(_){return null;}
+  }
   async function refSpotifyCaptureStart(){
     const input=document.getElementById('mcSpotifyRefName'),status=document.getElementById('mcSpotifyRefStatus'),start=document.getElementById('mcSpotifyCapture'),stop=document.getElementById('mcSpotifyRefStop');
     const selected=mcSpotifySelectedTrack&&mcSpotifySelectedTrack.id?{...mcSpotifySelectedTrack,artists:Array.isArray(mcSpotifySelectedTrack.artists)?mcSpotifySelectedTrack.artists.map(artist=>({...artist})):[]}:null;
     if(mcSpotifyUsingCompanion){mcSpotifyStatus('A reference capture is already in progress. Stop it before starting another.');return;}
-    const name=mcSpotifyTrackLabel(selected)||'Spotify track (identifying…)';
+    const detected=selected?null:await mcSpotifyNowPlayingTrack();
+    const chosen=selected||detected;
+    const name=mcSpotifyTrackLabel(chosen)||'Spotify track (identifying…)';
     if(input)input.value=name;
-    mcSpotifyCaptureTrack=selected||{id:'',name,artists:[]};
+    mcSpotifyCaptureTrack=chosen||{id:'',name,artists:[]};
     mcSpotifyCaptureSessionTrackId=String(mcSpotifyCaptureTrack.id||'');
     if(mcSpotifyBrowserFallbackNext){mcSpotifyBrowserFallbackNext=false;return refSpotifyCaptureStartBrowser(name);}
     // Lock any selected Spotify ID before yielding. If there is no ID yet,
@@ -21734,7 +21747,7 @@ csInit('csPlatform');
   }
   async function mcSpotifyBeginConnect(){
     try{const verifier=mcSpotifyRandom(32),state=mcSpotifyRandom(16),challenge=await mcSpotifyChallenge(verifier);sessionStorage.setItem('aimm_spotify_verifier',verifier);sessionStorage.setItem('aimm_spotify_state',state);
-      const params=new URLSearchParams({client_id:mcSpotifyClientId,response_type:'code',redirect_uri:mcSpotifyRedirectUri,code_challenge_method:'S256',code_challenge:challenge,state});
+      const params=new URLSearchParams({client_id:mcSpotifyClientId,response_type:'code',redirect_uri:mcSpotifyRedirectUri,code_challenge_method:'S256',code_challenge:challenge,state,scope:'user-read-currently-playing'});
       location.assign('https://accounts.spotify.com/authorize?'+params.toString());
     }catch(_){mcSpotifyStatus('Could not start Spotify sign-in. Use the secure AIMM site and try again.');}
   }
