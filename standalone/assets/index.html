@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.152';
+const AIMM_BUILD = '2026-11-04.153';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21688,6 +21688,11 @@ csInit('csPlatform');
       if(!Array.isArray(profile.points)||profile.points.length<2||!Array.isArray(profile.frequencies)||!Array.isArray(profile.magnitudesSmoothed))throw new Error('The companion did not return a usable reference spectrum.');
       if(profile.captureSessionID!==mcSpotifyCaptureSessionId||(mcSpotifyCaptureSessionTrackId&&String(profile.spotifyTrackID||'')!==mcSpotifyCaptureSessionTrackId))throw new Error('The captured audio belongs to a different Spotify track or AIMM tab.');
       // Saved target = average of the white live line over the capture (same analysis the purple line shows).
+      // Every saved capture target is a single line: no tolerance band, whatever the data path.
+      if(profile&&Array.isArray(profile.magnitudesSmoothed)){
+        profile.magnitudesLow=profile.magnitudesSmoothed.slice();
+        profile.magnitudesHigh=profile.magnitudesSmoothed.slice();
+      }
       if(mcCaptureAccum&&mcCaptureAccum.count>0){
         const avg=mcCaptureAccum.sum.map(v=>v/mcCaptureAccum.count);
         const pts=mcCaptureAccum.freqs.map((f,i)=>[f,avg[i]]);
