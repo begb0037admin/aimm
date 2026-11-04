@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.153';
+const AIMM_BUILD = '2026-11-04.154';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21583,6 +21583,12 @@ csInit('csPlatform');
     const existing=refTrackTargets.findIndex(x=>captureTrack&&x.spotifyTrackId===String(captureTrack.id)),previous=existing>=0?refTrackTargets[existing]:null;
     const capturedTitle=String(captureTrack&&captureTrack.name||'').trim(),capturedArtists=Array.isArray(captureTrack&&captureTrack.artists)?captureTrack.artists.map(artist=>String(artist&&artist.name||'').trim()).filter(Boolean):[],trackTitle=capturedTitle&&capturedArtists.length?capturedTitle:String(previous&&previous.spotifyTrackTitle||'').trim(),trackArtists=capturedArtists.length?capturedArtists:(Array.isArray(previous&&previous.spotifyTrackArtists)?previous.spotifyTrackArtists:[]),spotifyName=trackTitle&&trackArtists.length?(trackTitle+' · '+trackArtists.join(', ')).slice(0,100):'',previousName=String(previous&&previous.name||'').trim().toLocaleLowerCase(),isArtistOnlyName=trackArtists.some(artist=>artist.toLocaleLowerCase()===previousName),isCanonicalName=spotifyName&&spotifyName.toLocaleLowerCase()===previousName,preserveCustomName=!!(previous&&(previous.nameAuto===false||(!spotifyName&&previous.nameAuto===true)||(previous.nameAuto!==true&&!isArtistOnlyName&&!isCanonicalName))),targetName=preserveCustomName?previous.name:(spotifyName||((previous&&previous.name)||name||'Spotify track reference')).slice(0,100);
     const item={id:previous?previous.id:'sr-'+Date.now().toString(36),name:targetName,nameAuto:spotifyName?!preserveCustomName:!!(previous&&previous.nameAuto),spotifyTrackId:captureTrack&&captureTrack.id?String(captureTrack.id):'',spotifyTrackTitle:trackTitle,spotifyTrackArtists:trackArtists,points,toleranceDb:MC_TRACK_TARGET_TOLERANCE_DB,capturedAt:new Date().toISOString(),durationSeconds:Number(durationSeconds.toFixed(1)),analysis};
+    // Browser-fallback captures have no companion profile: store their own single-line curve (no tolerance band).
+    if(!(profile&&Array.isArray(profile.frequencies)&&Array.isArray(profile.magnitudesSmoothed))&&points.length>1){
+      const fr=points.map(p=>Number(p[0])),mag=points.map(p=>Number(p[1]));
+      item.referenceSource='Spotify';item.referenceCaptureMethod='AIMM browser capture';
+      item.referenceCurve={frequencies:fr,magnitudesRaw:mag.slice(),magnitudesSmoothed:mag.slice(),magnitudesLow:mag.slice(),magnitudesHigh:mag.slice(),analyzer:'AIMM browser capture',sampleRate:44100,windows:0,audioSeconds:Number(durationSeconds)||0};
+    }
     if(profile&&Array.isArray(profile.frequencies)&&Array.isArray(profile.magnitudesSmoothed)){
       item.referenceSource='Spotify';item.referenceCaptureMethod='AIMM Companion';
       item.referenceCurve={frequencies:profile.frequencies,magnitudesRaw:profile.magnitudesRaw||[],magnitudesSmoothed:profile.magnitudesSmoothed,magnitudesLow:profile.magnitudesLow||[],magnitudesHigh:profile.magnitudesHigh||[],analyzer:profile.analyzer||'AIMM Companion',sampleRate:Number(profile.sampleRate)||44100,windows:Number(profile.windows)||0,audioSeconds:Number(profile.audioSeconds)||durationSeconds};
