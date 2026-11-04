@@ -4465,7 +4465,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.161';
+const AIMM_BUILD = '2026-11-04.162';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21590,6 +21590,8 @@ csInit('csPlatform');
     clearTimeout(mcSpotifyCompanionPollTimer);
     mcSpotifyCompanionPollTimer=setTimeout(mcSpotifyPollCompanion,delay);
   }
+  // New saved-target IDs are checked against existing targets, so no two targets can share an ID.
+  function mcNewTargetId(){let id;do{id='sr-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);}while(refTrackTargets.some(x=>x.id===id));return id;}
   function refSaveSpotifyTarget(name,durationSeconds,capture,captureTrack=mcSpotifyCaptureTrack||mcSpotifySelectedTrack){
     if(durationSeconds<8){const s=document.getElementById('mcSpotifyRefStatus');if(s)s.textContent='Capture at least 8 seconds of playback for a useful reference, then stop to save it.';return false;}
     const profile=capture&&capture.profile;
@@ -21601,7 +21603,7 @@ csInit('csPlatform');
     if(analysis&&capture.analysis&&typeof capture.analysis.keyName==='string'&&capture.analysis.keyName)analysis.keyName=capture.analysis.keyName;
     const previousTargets=refTrackTargets.slice();
     const capturedTitle=String(captureTrack&&captureTrack.name||'').trim(),trackArtists=Array.isArray(captureTrack&&captureTrack.artists)?captureTrack.artists.map(artist=>String(artist&&artist.name||'').trim()).filter(Boolean):[],trackTitle=capturedTitle&&trackArtists.length?capturedTitle:'',spotifyName=trackTitle&&trackArtists.length?(trackTitle+' · '+trackArtists.join(', ')).slice(0,100):'',startedAt=mcSpotifyCaptureStartedAt||Date.now(),startedLabel=new Date(startedAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false}),targetName=(spotifyName||('Unidentified capture · '+startedLabel)).slice(0,100);
-    const item={id:'sr-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),name:targetName,nameAuto:!!spotifyName,spotifyTrackId:captureTrack&&captureTrack.id?String(captureTrack.id):'',spotifyTrackTitle:trackTitle,spotifyTrackArtists:trackArtists,points,capturedAt:new Date().toISOString(),durationSeconds:Number(durationSeconds.toFixed(1)),analysis};
+    const item={id:mcNewTargetId(),name:targetName,nameAuto:!!spotifyName,spotifyTrackId:captureTrack&&captureTrack.id?String(captureTrack.id):'',spotifyTrackTitle:trackTitle,spotifyTrackArtists:trackArtists,points,capturedAt:new Date().toISOString(),durationSeconds:Number(durationSeconds.toFixed(1)),analysis};
     // Browser-fallback captures have no companion profile: store their own single-line curve (no tolerance band).
     if(!(profile&&Array.isArray(profile.frequencies)&&Array.isArray(profile.magnitudesSmoothed))&&points.length>1){
       const fr=points.map(p=>Number(p[0])),mag=points.map(p=>Number(p[1]));
