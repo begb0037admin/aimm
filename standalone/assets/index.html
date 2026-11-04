@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.143';
+const AIMM_BUILD = '2026-11-04.144';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -20840,7 +20840,8 @@ csInit('csPlatform');
     group.replaceChildren();
     refTrackTargets.forEach(item=>{const option=document.createElement('option');option.value='trackref:'+item.id;option.textContent=item.name+' · '+refTargetSourceLabel(item);group.appendChild(option);});
     let persisted='';try{persisted=localStorage.getItem(MC_TRACK_TARGET_SELECTED_KEY)||'';}catch(_){}
-    const selectedId=selectId&&refTrackTargets.some(item=>item.id===selectId)?selectId:refTrackTargets.some(item=>item.id===previous)?previous:persisted==='__default__'?'':refTrackTargets.some(item=>item.id===persisted)?persisted:(refTrackTargets.length?refTrackTargets[refTrackTargets.length-1].id:'');
+    // No target is auto-selected on load: a saved target shows only when the user picks it (or the user's chosen one this session).
+    const selectedId=selectId&&refTrackTargets.some(item=>item.id===selectId)?selectId:refTrackTargets.some(item=>item.id===previous)?previous:'';
     select.value=selectedId?'trackref:'+selectedId:'';select.disabled=!refTrackTargets.length;
     try{if(selectedId)localStorage.setItem(MC_TRACK_TARGET_SELECTED_KEY,selectedId);else if(refTrackTargets.length||persisted==='__default__')localStorage.setItem(MC_TRACK_TARGET_SELECTED_KEY,'__default__');}catch(_){}
     refRenderSavedTargets();
