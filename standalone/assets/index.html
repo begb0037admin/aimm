@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.148';
+const AIMM_BUILD = '2026-11-04.149';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21281,7 +21281,8 @@ csInit('csPlatform');
     const smoothY=(A,passes)=>{for(let p=0;p<passes;p++){const B=A.slice();for(let i=1;i<A.length-1;i++)A[i]=(B[i-1]+2*B[i]+B[i+1])/4;}};
 
     // ── genre TARGET CORRIDOR -> feathered purple zone, no edge line ──
-    if(corr){
+    // While capturing, the bright purple line is the whole target: no corridor band.
+    if(corr&&!corr.fromCapture){
       const M=150,fx=[],hiY=[],loY=[];
       for(let i=0;i<M;i++){
         const f=20*Math.pow(1000,i/(M-1));
