@@ -2528,31 +2528,34 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck #refDzEmpty:focus-visible{outline:2px solid #63d6e4;outline-offset:4px}
 /* Audio Specs: clear values in a calm vertical hierarchy; colour no longer
    implies a quality judgement. The advanced readings stay available on demand. */
-#eq.oz-mixcheck #mcSpecs{padding:var(--aimm-panel-card-inset) var(--aimm-panel-inline-inset) var(--aimm-panel-bottom-inset);background:var(--card);border:1px solid var(--card-bd);border-radius:10px;overflow:auto;min-height:0}
+#eq.oz-mixcheck #mcSpecs{padding:var(--aimm-panel-card-inset) var(--aimm-panel-inline-inset) var(--aimm-panel-bottom-inset);background:radial-gradient(circle at 100% 0%, rgba(240,160,70,.14) 0%, rgba(240,160,70,0) 55%), linear-gradient(160deg,#171a1f 0%,#101216 100%);border:1px solid #2a3340;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.4);overflow:auto;min-height:0}
+#eq.oz-mixcheck #mcSpecs .mc-kick{color:#68d3e6;font-size:calc(var(--inv-text-scale, 1) * 9px);font-weight:700;letter-spacing:.16em;text-transform:uppercase}
 #eq.oz-mixcheck #mcSpecs .mc-kick.mc-specs-heading{display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin:0 0 12px;padding:0}
 #eq.oz-mixcheck #mcSpecs .mc-specs-heading-copy{display:grid;gap:var(--aimm-heading-stack-gap);min-width:0}
 #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) .mc-drop-title{color:var(--aimm-panel-heading-color);font:var(--aimm-heading-weight) var(--aimm-page-heading-size)/var(--aimm-heading-line-height) var(--aimm-font-display);letter-spacing:var(--aimm-heading-letter-spacing)}
 #eq.oz-mixcheck #mcSpecsTitle,#eq.oz-mixcheck .oz-spec-title{color:var(--aimm-panel-heading-color);font:var(--aimm-heading-weight) var(--aimm-panel-heading-size)/var(--aimm-heading-line-height) var(--aimm-font-display);letter-spacing:var(--aimm-heading-letter-spacing)}
+#eq.oz-mixcheck #mcSpecsTitle{color:#f1f4f8;font-weight:700}
 #eq.oz-mixcheck #mcSpecsTitle{text-transform:none}
 #eq.oz-mixcheck #mcSpecs .mc-specs-source{display:flex;gap:8px;flex-wrap:wrap}
 #eq.oz-mixcheck #mcSpecs .mc-specs-source button{min-height:38px;padding:7px 14px;border:1px solid var(--card-bd);border-radius:8px;background:var(--inset2);color:#aab6c4;font-size:calc(var(--inv-text-scale, 1) * 13px);font-weight:700;cursor:pointer}
-#eq.oz-mixcheck #mcSpecs #mcSpecsMix[aria-pressed="true"]{background:#a557f4;border-color:#bd83ff;color:#09070d}
+#eq.oz-mixcheck #mcSpecs #mcSpecsMix{background:#181b20;border:1px solid #2a3340;border-radius:999px}
+#eq.oz-mixcheck #mcSpecs #mcSpecsMix[aria-pressed="true"]{background:linear-gradient(90deg,#a557f4,#7f5bf0);border-color:#bd83ff;border-radius:999px;color:#09070d}
 #eq.oz-mixcheck #mcSpecs #mcSpecsSpotify[aria-pressed="true"]{background:#1db954;border-color:#49dc79;color:#061108}
 #eq.oz-mixcheck #mcSpecs .mc-specs-source button:disabled{opacity:.45;cursor:not-allowed}
 #eq.oz-mixcheck #mcSpecs .mc-core-specs{display:flex;flex-direction:column}
-#eq.oz-mixcheck #mcSpecs .mc-core-row{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:8px;min-height:58px;padding:13px 0;border-bottom:1px solid #2c3034}
+#eq.oz-mixcheck #mcSpecs .mc-core-row{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:8px;min-height:58px;padding:13px 0;border-bottom:1px solid #232a33}
 #eq.oz-mixcheck #mcSpecs .mc-core-label,#eq.oz-mixcheck #mcSpecs .mc-measure-label{color:#bdc7d4;font-size:calc(var(--inv-text-scale, 1) * 13px);font-weight:500;line-height:1.4}
 #eq.oz-mixcheck #mcSpecs .mc-core-value,#eq.oz-mixcheck #mcSpecs .mc-measure-value{color:#f1f4f8!important;font-family:var(--mono);font-size:calc(var(--inv-text-scale, 1) * 14px);font-weight:600;line-height:1.35;text-align:right;white-space:nowrap}
 #eq.oz-mixcheck #mcSpecs .mc-core-value.bad,#eq.oz-mixcheck #mcSpecs .mc-core-value.warn,#eq.oz-mixcheck #mcSpecs .mc-core-value.ok{color:#f1f4f8!important}
 #eq.oz-mixcheck #mcSpecs .mc-core-key{grid-template-rows:auto auto;row-gap:2px}
 #eq.oz-mixcheck #mcSpecs .mc-core-note{grid-column:2;grid-row:2;color:#788596;font-size:calc(var(--inv-text-scale, 1) * 10px);text-align:right}
-#eq.oz-mixcheck #mcSpecs .mc-more-measurements{margin-top:16px;border-top:1px solid #2c3034}
+#eq.oz-mixcheck #mcSpecs .mc-more-measurements{margin-top:16px;border-top:1px solid #232a33}
 #eq.oz-mixcheck #mcSpecs .mc-more-measurements summary{display:flex;align-items:center;justify-content:space-between;min-height:46px;color:#dce4ed;font-size:calc(var(--inv-text-scale, 1) * 13px);font-weight:650;cursor:pointer;list-style:none}
 #eq.oz-mixcheck #mcSpecs .mc-more-measurements summary::-webkit-details-marker{display:none}
 #eq.oz-mixcheck #mcSpecs .mc-more-measurements summary::after{content:"＋";color:#68d3e6;font-size:18px;line-height:1}
 #eq.oz-mixcheck #mcSpecs .mc-more-measurements[open] summary::after{content:"−"}
 #eq.oz-mixcheck #mcSpecs .mc-detail-specs{border-top:1px solid #2c3034}
-#eq.oz-mixcheck #mcSpecs .mc-measure-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;min-height:50px;padding:10px 0;border-bottom:1px solid #2c3034}
+#eq.oz-mixcheck #mcSpecs .mc-measure-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;min-height:50px;padding:10px 0;border-bottom:1px solid #232a33}
 #eq.oz-mixcheck #mcSpecs .mc-measure-value.mc-muted{color:#f1f4f8!important}
 #eq.oz-mixcheck #mcSpecs .mc-hidden-data{display:none!important}
 #eq.oz-mixcheck #mcSpecs .mc-d{display:none!important}
@@ -4474,7 +4477,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.166';
+const AIMM_BUILD = '2026-11-04.167';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
