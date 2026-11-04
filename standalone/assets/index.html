@@ -21028,7 +21028,56 @@ csInit('csPlatform');
   }
   const REFERENCE_LIVE_TRACE_SMOOTHING_MS=STEM_LIVE_SPECTRUM_SMOOTHING_SECONDS*1000;
   let refLiveTraceDisplayPoints=null,refLiveTraceDisplayAt=0;
-  function refResetLiveTraceDisplay(){refLiveTraceDisplayPoints=null;refLiveTraceDisplayAt=0;}
+  function refResetLiveTraceDisplay(){refLiveTraceDisplayPoints=null;refLiveTraceDisplayAt=0;refLiveDisplayStates.clear();}
+  // Locked display (matches the Friture live-line test): 12 bands/octave peaks, 5-band smoothing,
+  // flat floor trimmed at both ends, edges eased onto the plot edges, 240-point grid,
+  // vertical centring, and 30% easing per redraw. Display only; the DSP is the companion's.
+  const refLiveDisplayStates=new Map();
+  function refLiveDisplayCurve(points,mapY,x0,x1,top,bottom){
+    const LOW=20,PER_OCT=12,BANDS=Math.ceil(Math.log2(1000)*PER_OCT),GRID=240;
+    const centre=b=>LOW*Math.pow(2,(b+0.5)/PER_OCT);
+    const vals=new Array(BANDS).fill(null);
+    for(const [f,db] of points){
+      if(!(f>=LOW&&f<=20000))continue;
+      const b=Math.min(BANDS-1,Math.max(0,Math.floor(Math.log2(f/LOW)*PER_OCT)));
+      vals[b]=vals[b]===null?db:Math.max(vals[b],db);
+    }
+    const measured=[];for(let b=0;b<BANDS;b++)if(vals[b]!==null)measured.push(b);
+    if(measured.length<2)return null;
+    const filled=vals.slice();
+    let prev=null;for(let b=0;b<BANDS;b++){if(filled[b]!==null)prev=filled[b];else if(prev!==null)filled[b]=prev;}
+    let next=null;for(let b=BANDS-1;b>=0;b--){if(filled[b]!==null)next=filled[b];else if(next!==null)filled[b]=next;}
+    const smooth=filled.slice();
+    for(const b of measured){let sum=0,count=0;for(let k=Math.max(0,b-2);k<=Math.min(BANDS-1,b+2);k++){sum+=filled[k];count++;}smooth[b]=sum/count;}
+    const levels=measured.map(b=>smooth[b]);
+    const floor=Math.min(...levels);
+    const active=measured.filter(b=>smooth[b]>floor+1);
+    const first=active.length?active[0]:measured[0];
+    const last=active.length?active[active.length-1]:measured[measured.length-1];
+    const key=x0+'|'+x1+'|'+top+'|'+bottom;
+    const st=refLiveDisplayStates.get(key)||{first:null,last:null,ys:null};
+    refLiveDisplayStates.set(key,st);
+    const ease=(before,target)=>before===null?target:before*Math.pow(target/before,0.3);
+    st.first=ease(st.first,centre(first));
+    st.last=ease(st.last,centre(last));
+    const raw=[];
+    for(let g=0;g<GRID;g++){
+      const t=g/(GRID-1);
+      const f=st.first*Math.pow(st.last/st.first,t);
+      const x=x0+t*(x1-x0);
+      const bPos=Math.log2(f/LOW)*PER_OCT-0.5;
+      const b0=Math.min(BANDS-2,Math.max(0,Math.floor(bPos)));
+      const frac=Math.min(1,Math.max(0,bPos-b0));
+      const db=smooth[b0]*(1-frac)+smooth[b0+1]*frac;
+      raw.push([x,mapY(db)]);
+    }
+    const ys=raw.map(p=>p[1]);
+    const shift=(top+bottom)/2-(Math.min(...ys)+Math.max(...ys))/2;
+    const clampY=y=>Math.min(bottom,Math.max(top,y));
+    const out=raw.map(([x,y],g)=>{const target=clampY(y+shift);const before=st.ys&&st.ys.length===GRID?st.ys[g]:null;return [x,before===null?target:before+(target-before)*0.3];});
+    st.ys=out.map(p=>p[1]);
+    return out;
+  }
   function refDrawCanvas(pts,livePts,liveWithoutPts,referenceLivePts){
     // Reference captures keep the purple running target separate from the
     // temporally smoothed white live spectrum. The mix curve remains its own
@@ -21041,11 +21090,8 @@ csInit('csPlatform');
     ctx.clearRect(0,0,w,h);
     const drawReferenceLiveTrace=(points,mapX,mapY,x0,x1,top,bottom)=>{
       if(!Array.isArray(points)||points.length<2){refResetLiveTraceDisplay();return;}
-      const now=performance.now(),previous=refLiveTraceDisplayPoints,dt=refLiveTraceDisplayAt?Math.max(1,Math.min(1000,now-refLiveTraceDisplayAt)):0;
-      const alpha=previous&&previous.length===points.length?1-Math.exp(-dt/REFERENCE_LIVE_TRACE_SMOOTHING_MS):1;
-      const displayPoints=points.map(([f,db],i)=>[f,previous&&previous.length===points.length?previous[i][1]+(db-previous[i][1])*alpha:db]);
-      refLiveTraceDisplayPoints=displayPoints;refLiveTraceDisplayAt=now;
-      const xy=displayPoints.map(([f,db])=>[mapX(f),mapY(db)]);
+      const xy=refLiveDisplayCurve(points,mapY,x0,x1,top,bottom);
+      if(!xy)return;
       ctx.save();ctx.beginPath();ctx.rect(x0,top,x1-x0,bottom-top);ctx.clip();
       ctx.lineCap='round';ctx.lineJoin='round';
       ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(222,204,255,.45)';ctx.lineWidth=5;ctx.filter='blur(4px)';ctx.stroke();

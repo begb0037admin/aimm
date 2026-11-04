@@ -351,6 +351,14 @@ Worth confirming the canonical path with a real call + collapsing the helper dow
 
 Most recent first. Each entry is a one-line summary; for full implementation detail see [CLAUDE.md](./CLAUDE.md) HANDOVER POINT.
 
+### 2026-11-04 — Live white line ported into AIMM (branch preview; levels not yet verified)
+
+Live spectrum line in Spectral Balance now uses the locked test-app display: 12 bands per octave peaks, 5-band smoothing, flat floor trimmed at both ends, edges placed on the plot edges, 240-point grid, vertical centring, and 30% easing per redraw.
+
+- 🎚 **Browser drawing** (`standalone/assets/index.html`): `refLiveDisplayCurve` replaces the live-trace drawing; per-plot state so multiple plots do not share easing.
+- 🧩 **Companion** (`audio-reference-companion/`, now tracked): 44.1 kHz capture and analysis, 8192-point live FFT with 2048 hop, 2-second exponential time smoothing, A-weighting, locked power scale; origin `http://127.0.0.1:8001` allowed.
+- ⚠️ **Not yet verified:** live readings still differ from a digital recording of the same mix (see capture tests). Do not use levels for mixing decisions until verified.
+
 ### 2026-05-12 (Adam seat) — Status strip lifted into shared header chrome + unified snapshot-pill action icons (cross-tab smoke-verified)
 
 End-of-session reconciliation pass on the panel title bar and Snapshot Pill hover actions. Status state was duplicated (Hope / Conversation / **Idle** + the rt-status-strip also reading **Idle**) and the strip itself was scoped to the Conversation panel; pill actions used a mix of glyph + emoji icons with inconsistent weight. All addressed in `index.html` only, minimal diff, no behaviour rewrites.

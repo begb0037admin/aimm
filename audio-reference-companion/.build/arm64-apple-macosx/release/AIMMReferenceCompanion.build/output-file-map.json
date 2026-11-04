@@ -1,0 +1,37 @@
+{
+  "": {
+    "dependencies": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/AIMMReferenceCompanion.d",
+    "object": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/AIMMReferenceCompanion.o",
+    "swift-dependencies": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/primary.swiftdeps"
+  },
+  "/Users/admin/github/aimm-live-line/audio-reference-companion/Sources/AIMMReferenceCompanion/App.swift": {
+    "object": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/App.swift.o",
+    "swiftmodule": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/App~partial.swiftmodule",
+    "swift-dependencies": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/App.swiftdeps",
+    "diagnostics": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/App.dia"
+  },
+  "/Users/admin/github/aimm-live-line/audio-reference-companion/Sources/AIMMReferenceCompanion/AudioCaptureService.swift": {
+    "object": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/AudioCaptureService.swift.o",
+    "swiftmodule": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/AudioCaptureService~partial.swiftmodule",
+    "swift-dependencies": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/AudioCaptureService.swiftdeps",
+    "diagnostics": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/AudioCaptureService.dia"
+  },
+  "/Users/admin/github/aimm-live-line/audio-reference-companion/Sources/AIMMReferenceCompanion/CompanionInstanceLock.swift": {
+    "object": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/CompanionInstanceLock.swift.o",
+    "swiftmodule": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/CompanionInstanceLock~partial.swiftmodule",
+    "swift-dependencies": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/CompanionInstanceLock.swiftdeps",
+    "diagnostics": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/CompanionInstanceLock.dia"
+  },
+  "/Users/admin/github/aimm-live-line/audio-reference-companion/Sources/AIMMReferenceCompanion/LocalBridge.swift": {
+    "object": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/LocalBridge.swift.o",
+    "swiftmodule": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/LocalBridge~partial.swiftmodule",
+    "swift-dependencies": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/LocalBridge.swiftdeps",
+    "diagnostics": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/LocalBridge.dia"
+  },
+  "/Users/admin/github/aimm-live-line/audio-reference-companion/Sources/AIMMReferenceCompanion/ReferenceSpectrumAnalyzer.swift": {
+    "object": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/ReferenceSpectrumAnalyzer.swift.o",
+    "swiftmodule": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/ReferenceSpectrumAnalyzer~partial.swiftmodule",
+    "swift-dependencies": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/ReferenceSpectrumAnalyzer.swiftdeps",
+    "diagnostics": "/Users/admin/github/aimm-live-line/audio-reference-companion/.build/arm64-apple-macosx/release/AIMMReferenceCompanion.build/ReferenceSpectrumAnalyzer.dia"
+  }
+}
