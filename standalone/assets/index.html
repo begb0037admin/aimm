@@ -3378,7 +3378,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     <div class="oz-spec-card card">
       <div class="oz-spec-head">
         <div class="oz-spec-title-group"><span class="oz-spec-title">Spectral Balance</span><span class="oz-spec-subtitle">Live mix compared with your saved target</span></div>
-        <div class="mc-target-select-proxy" aria-hidden="true"><select id="refCurveTarget" onchange="refTargetChanged()" tabindex="-1" title="Saved target"><option value="">Default target</option><optgroup id="refTrackTargets" label="Saved targets"></optgroup></select><span id="refSpecStatus" class="oz-legacy-hide ref-spec-status-idle">drop a file to analyse</span></div>
+        <div class="mc-target-select-proxy" aria-hidden="true"><select id="refCurveTarget" autocomplete="off" onchange="refTargetChanged()" tabindex="-1" title="Saved target"><option value="">Default target</option><optgroup id="refTrackTargets" label="Saved targets"></optgroup></select><span id="refSpecStatus" class="oz-legacy-hide ref-spec-status-idle">drop a file to analyse</span></div>
       </div>
       <div class="mc-saved-targets" id="mcSavedTargets">
         <button class="mc-saved-targets-toggle" id="mcSavedTargetsToggle" type="button" aria-expanded="false" aria-controls="mcSavedTargetsPanel">
@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.144';
+const AIMM_BUILD = '2026-11-04.145';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
