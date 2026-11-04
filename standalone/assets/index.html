@@ -21101,6 +21101,7 @@ csInit('csPlatform');
     canvas.width=wrap.offsetWidth;canvas.height=wrap.offsetHeight;
     const w=canvas.width,h=canvas.height,ctx=canvas.getContext('2d');
     ctx.clearRect(0,0,w,h);
+    refDrawCurveCache=new WeakMap(); // fresh computation each redraw; white and purple share it within the redraw
     const drawReferenceLiveTrace=(points,mapX,mapY,x0,x1,top,bottom)=>{
       if(!Array.isArray(points)||points.length<2){refResetLiveTraceDisplay();return;}
       const xy=refLiveDisplayCurve(points,mapY,x0,x1,top,bottom);
