@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.141';
+const AIMM_BUILD = '2026-11-04.142';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21151,7 +21151,7 @@ csInit('csPlatform');
       const x0=48,x1=w-8,top=43,bottom=h-23,range=SPECTRAL_DB_RANGE;
       const x=f=>x0+freqToX(f,x1-x0),y=db=>top+(range-db)/(range*2)*(bottom-top);
       ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='middle';
-      for(let db=-range;db<=range;db+=12){const py=y(db);ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0,py+.5);ctx.lineTo(x1,py+.5);ctx.stroke();ctx.fillStyle='rgba(174,181,188,.9)';/* dB axis numbers removed: chart shows gridlines only */}
+      for(let db=-range;db<=range;db+=12){const py=y(db);ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0,py+.5);ctx.lineTo(x1,py+.5);ctx.stroke();ctx.fillStyle='rgba(174,181,188,.9)';ctx.fillText((db>0?'+':'')+db,x0-7,py);}
       ctx.strokeStyle='rgba(255,255,255,.10)';for(const f of [250,2000,8000]){const px=Math.round(x(f))+.5;ctx.beginPath();ctx.moveTo(px,top);ctx.lineTo(px,bottom);ctx.stroke();}
       ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(154,160,166,.9)';ctx.font='10px Inter,-apple-system,sans-serif';
       for(const[label,f]of [['Low',Math.sqrt(20*250)],['Low-Mid',Math.sqrt(250*2000)],['High-Mid',Math.sqrt(2000*8000)],['High',Math.sqrt(8000*20000)]])ctx.fillText(label,x(f),h-8);
@@ -21203,7 +21203,7 @@ csInit('csPlatform');
       for(const[blur,color]of haze){ctx.save();ctx.filter='blur('+blur+'px)';drawBand();ctx.fillStyle=color;ctx.fill();ctx.restore();}ctx.filter='none';ctx.restore();
       const tickStep=rangeMax-rangeMin<=48?6:12;
       ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='middle';
-      for(let db=Math.ceil(rangeMin/tickStep)*tickStep;db<=rangeMax;db+=tickStep){const py=stemDbToY(db);ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0,py+.5);ctx.lineTo(x1,py+.5);ctx.stroke();ctx.fillStyle='rgba(174,181,188,.9)';/* dB axis numbers removed: chart shows gridlines only */}
+      for(let db=Math.ceil(rangeMin/tickStep)*tickStep;db<=rangeMax;db+=tickStep){const py=stemDbToY(db);ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0,py+.5);ctx.lineTo(x1,py+.5);ctx.stroke();ctx.fillStyle='rgba(174,181,188,.9)';ctx.fillText((db>0?'+':'')+db,x0-7,py);}
       // Keep the unit label clear of the top tick label. In the full-mix view
       // the top tick sits at the plot edge, so align this label just to its right.
       ctx.textBaseline='alphabetic';ctx.textAlign='left';ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.fillStyle='rgba(174,181,188,.95)';ctx.fillText('dB rel. · '+(corr.referenceSource||'Spotify')+' reference',7,14);
@@ -21288,7 +21288,7 @@ csInit('csPlatform');
       ctx.filter='none';ctx.restore();
     }
     ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='middle';
-    for(let db=-mixRangeAbs;db<=mixRangeAbs;db+=12){const py=mixDbToY(db);ctx.strokeStyle='rgba(255,255,255,.10)';ctx.beginPath();ctx.moveTo(mixX0,py+.5);ctx.lineTo(mixX1,py+.5);ctx.stroke();ctx.fillStyle='rgba(174,181,188,.9)';/* dB axis numbers removed: chart shows gridlines only */}
+    for(let db=-mixRangeAbs;db<=mixRangeAbs;db+=12){const py=mixDbToY(db);ctx.strokeStyle='rgba(255,255,255,.10)';ctx.beginPath();ctx.moveTo(mixX0,py+.5);ctx.lineTo(mixX1,py+.5);ctx.stroke();ctx.fillStyle='rgba(174,181,188,.9)';ctx.fillText((db>0?'+':'')+db,mixX0-7,py);}
     // Reserve the same clean title/legend strip as the selected-stem view so
     // the dB label never overlaps the top tick.
     ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(174,181,188,.95)';ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.fillText('dB rel. · '+(corr&&corr.referenceSource||'Spotify')+' reference',7,14);
