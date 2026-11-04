@@ -1610,16 +1610,19 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop{background:#28352d;color:#dce8df;border:1px solid #405648}
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop:hover{background:#35483b}
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop[hidden]{display:none}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCaptureCancel{background:#28352d;color:#dce8df;border:1px solid #405648}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCaptureCancel[hidden]{display:none}
 #eq.oz-mixcheck .mc-spotify-ref-status{color:#8f9b93;font-size:calc(var(--inv-text-scale, 1) * 10px);line-height:1.4}
-#eq.oz-mixcheck .mc-spotify-capture-state{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px 10px;padding:9px 11px;border:1px solid #344038;border-radius:8px;background:#171d19}
+#eq.oz-mixcheck .mc-spotify-capture-state{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px 10px;padding:12px 14px;border:1px solid #303a34;border-radius:12px;background:#171b19}
 #eq.oz-mixcheck .mc-spotify-capture-state[hidden]{display:none}
 #eq.oz-mixcheck .mc-spotify-capture-dot{width:9px;height:9px;border-radius:50%;background:#89928c;grid-row:1}
 #eq.oz-mixcheck .mc-spotify-capture-copy{display:grid;gap:2px;min-width:0}
-#eq.oz-mixcheck .mc-spotify-capture-copy strong{font-size:calc(var(--inv-text-scale, 1) * 10px);letter-spacing:.06em;color:#e8efea}
+#eq.oz-mixcheck .mc-spotify-capture-copy .mc-spotify-capture-name{font-size:calc(var(--inv-text-scale, 1) * 12px);font-weight:700;color:#edf4ef;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#eq.oz-mixcheck .mc-spotify-capture-copy strong{font-size:calc(var(--inv-text-scale, 1) * 10px);letter-spacing:.12em;color:#aeb9b2;text-transform:uppercase}
 #eq.oz-mixcheck .mc-spotify-capture-copy span{font-size:calc(var(--inv-text-scale, 1) * 10px);line-height:1.35;color:#a8b3aa}
-#eq.oz-mixcheck .mc-spotify-capture-state time{font:700 calc(var(--inv-text-scale, 1) * 12px) ui-monospace,SFMono-Regular,monospace;color:#e8efea;white-space:nowrap}
+#eq.oz-mixcheck .mc-spotify-capture-state time{font:800 calc(var(--inv-text-scale, 1) * 21px)/1 ui-monospace,SFMono-Regular,monospace;color:#edf4ef;white-space:nowrap}
 #eq.oz-mixcheck .mc-spotify-capture-track{grid-column:1/-1;height:3px;overflow:hidden;border-radius:3px;background:#292f2b}
-#eq.oz-mixcheck .mc-spotify-capture-track i{display:block;width:24%;height:100%;border-radius:inherit;background:#f34b62}
+#eq.oz-mixcheck .mc-spotify-capture-track i{display:block;width:24%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#42b8ef,#79e5bb)}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="starting"]{border-color:#65502d;background:#211d15}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="starting"] .mc-spotify-capture-dot{background:#f0b84c}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"]{border-color:#713543;background:#211619}
@@ -1627,7 +1630,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"] .mc-spotify-capture-track i{animation:mcSpotifyCaptureSweep 1.5s ease-in-out infinite}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"]{border-color:#31556a;background:#141c22}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"] .mc-spotify-capture-dot{background:#4fb9ed;animation:mcSpotifyCapturePulse 1.15s ease-in-out infinite}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"] .mc-spotify-capture-track i{background:#4fb9ed;animation:mcSpotifyCaptureSweep 1.5s ease-in-out infinite}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"] .mc-spotify-capture-track i{background:linear-gradient(90deg,#42b8ef,#79e5bb);animation-play-state:paused}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"]{border-color:#65502d;background:#211d15}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"] .mc-spotify-capture-dot{background:#f0b84c}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="saved"]{border-color:#2c6843;background:#142018}
@@ -3403,11 +3406,12 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <button type="button" id="mcSpotifyConnect">Connect Spotify</button>
           <button type="button" id="mcSpotifyRefMatch" disabled>Match Sound</button>
           <button type="button" id="mcSpotifyCapture" hidden>Capture reference</button>
-          <button type="button" id="mcSpotifyRefStop" hidden>Stop &amp; use reference</button>
+          <button type="button" id="mcSpotifyCaptureCancel" hidden>Cancel</button>
+          <button type="button" id="mcSpotifyRefStop" hidden>Stop</button>
         </div>
         <div id="mcSpotifyCaptureState" class="mc-spotify-capture-state" data-state="idle" role="status" aria-live="polite" aria-atomic="true" hidden>
           <span class="mc-spotify-capture-dot" aria-hidden="true"></span>
-          <div class="mc-spotify-capture-copy"><strong id="mcSpotifyCaptureTitle">CAPTURE READY</strong><span id="mcSpotifyCaptureDetail"></span></div>
+          <div class="mc-spotify-capture-copy"><strong id="mcSpotifyCaptureTitle">CAPTURE READY</strong><span id="mcSpotifyCaptureName" class="mc-spotify-capture-name"></span><span id="mcSpotifyCaptureDetail"></span></div>
           <time id="mcSpotifyCaptureElapsed">00:00</time>
           <div class="mc-spotify-capture-track" aria-hidden="true"><i></i></div>
         </div>
@@ -4461,7 +4465,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.160';
+const AIMM_BUILD = '2026-11-04.161';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -20828,8 +20832,8 @@ csInit('csPlatform');
   // One-time cleanup (approved): remove old saved captures that have the +/-3 dB band or more than 240 points.
   const MC_TARGET_CLEANUP_KEY='aimm_mc_target_cleanup_v155';
   function mcTargetIsOld(x){const c=x&&x.referenceCurve;if(!c||!Array.isArray(c.frequencies))return false;if(c.frequencies.length>240)return true;const lo=c.magnitudesLow||[],hi=c.magnitudesHigh||[],sm=c.magnitudesSmoothed||[];return lo.length!==sm.length||hi.length!==sm.length||lo.some((v,i)=>Math.abs(v-sm[i])>1e-9)||hi.some((v,i)=>Math.abs(v-sm[i])>1e-9);}
-  let refTrackTargets=(function(){try{const a=JSON.parse(localStorage.getItem(MC_TRACK_TARGETS_KEY)||'[]');return Array.isArray(a)?a.filter(x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&Array.isArray(x.points)).slice(-20).map(item=>{if(item.referenceSource==='AIMM Companion'){mcSpotifySourceMigrationPending=true;return {...item,referenceSource:'Spotify',referenceCaptureMethod:item.referenceCaptureMethod||'AIMM Companion'};}return item;}):[];}catch(_){return[];}})();
-  function refSaveTrackTargets(){try{localStorage.setItem(MC_TRACK_TARGETS_KEY,JSON.stringify(refTrackTargets.slice(-20)));return true;}catch(_){return false;}}
+  let refTrackTargets=(function(){try{const a=JSON.parse(localStorage.getItem(MC_TRACK_TARGETS_KEY)||'[]');return Array.isArray(a)?a.filter(x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&Array.isArray(x.points)).map(item=>{if(item.referenceSource==='AIMM Companion'){mcSpotifySourceMigrationPending=true;return {...item,referenceSource:'Spotify',referenceCaptureMethod:item.referenceCaptureMethod||'AIMM Companion'};}return item;}):[];}catch(_){return[];}})();
+  function refSaveTrackTargets(){try{localStorage.setItem(MC_TRACK_TARGETS_KEY,JSON.stringify(refTrackTargets));return true;}catch(_){return false;}}
   // Run the approved cleanup once per browser.
   if(!(function(){try{return localStorage.getItem(MC_TARGET_CLEANUP_KEY)==='1';}catch(_){return true;}})()){
     const before=refTrackTargets.length;
@@ -20849,11 +20853,10 @@ csInit('csPlatform');
     const previous=String(select.value||'').replace(/^trackref:/,'');
     group.replaceChildren();
     refTrackTargets.forEach(item=>{const option=document.createElement('option');option.value='trackref:'+item.id;option.textContent=item.name+' · '+refTargetSourceLabel(item);group.appendChild(option);});
-    let persisted='';try{persisted=localStorage.getItem(MC_TRACK_TARGET_SELECTED_KEY)||'';}catch(_){}
     // No target is auto-selected on load: a saved target shows only when the user picks it (or the user's chosen one this session).
     const selectedId=selectId&&refTrackTargets.some(item=>item.id===selectId)?selectId:refTrackTargets.some(item=>item.id===previous)?previous:'';
     select.value=selectedId?'trackref:'+selectedId:'';select.disabled=!refTrackTargets.length;
-    try{if(selectedId)localStorage.setItem(MC_TRACK_TARGET_SELECTED_KEY,selectedId);else if(refTrackTargets.length||persisted==='__default__')localStorage.setItem(MC_TRACK_TARGET_SELECTED_KEY,'__default__');}catch(_){}
+    try{localStorage.setItem(MC_TRACK_TARGET_SELECTED_KEY,selectedId||'__default__');}catch(_){}
     refRenderSavedTargets();
   }
   refRefreshTrackTargets();
@@ -20974,7 +20977,7 @@ csInit('csPlatform');
       const points=refSpotifyTargetPointsFromCapture();
       if(!points||!points.length)return null;
       const tolerance=MC_TRACK_TARGET_TOLERANCE_DB;
-      return{label:'Spotify reference · '+(LIVE.referenceLabel||'capturing'),pts:points.map(([f,db])=>[f,db-tolerance,db+tolerance]),liveAverage:true};
+      return{label:'Spotify reference · '+(LIVE.referenceLabel||'capturing'),pts:points.map(([f,db])=>[f,db-tolerance,db+tolerance]),liveAverage:true,fromCapture:true};
     }
     if(mcSpotifyUsingCompanion){
       if(mcSpotifyCompanionPoints&&mcSpotifyCompanionPoints.length){
@@ -21102,9 +21105,7 @@ csInit('csPlatform');
     return out;
   }
   function refDrawCanvas(pts,livePts,liveWithoutPts,referenceLivePts){
-    // Reference captures keep the purple running target separate from the
-    // temporally smoothed white live spectrum. The mix curve remains its own
-    // full-record LTAS trace.
+    // Capture lines share coordinates; the saved target remains a separate curve.
     const canvas=document.getElementById('specCanvas');
     const wrap=document.getElementById('refSpecWrap');
     if(!canvas||!wrap)return;
@@ -21118,19 +21119,15 @@ csInit('csPlatform');
       if(!xy)return;
       ctx.save();ctx.beginPath();ctx.rect(x0,top,x1-x0,bottom-top);ctx.clip();
       ctx.lineCap='round';ctx.lineJoin='round';
-      ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(222,204,255,.45)';ctx.lineWidth=5;ctx.filter='blur(4px)';ctx.stroke();
-      ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(247,241,255,.98)';ctx.lineWidth=1.8;ctx.stroke();
+      ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(247,241,255,.98)';ctx.lineWidth=3;ctx.stroke();
+      ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(185,112,255,.98)';ctx.lineWidth=1.5;ctx.stroke();
       ctx.restore();
       ctx.save();ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(247,241,255,.86)';ctx.fillText('LIVE AUDIO',x1,14);ctx.restore();
     };
     const drawReferenceLiveAverage=(corr,mapX,mapY,x0,x1,top,bottom)=>{
       if(!corr||!corr.liveAverage)return;
       const points=[];
-      if(corr.fromCapture&&corr.rawLive){
-        // While capturing, the purple is the white line itself: identical processing, so they overlap.
-        const xy=refLiveDisplayCurve(corr.rawLive,mapY,x0,x1,top,bottom);
-        if(xy)points.push(...xy);
-      }
+      if(corr.fromCapture)return;
       if(!corr.fromCapture)for(let i=0;i<96;i++){
         const f=20*Math.pow(1000,i/95),bounds=corridorAt(corr,f);
         points.push([mapX(f),mapY((bounds[0]+bounds[1])*0.5)]);
@@ -21141,9 +21138,9 @@ csInit('csPlatform');
         const pyShift=(top+bottom)/2-(pyMin+pyMax)/2;
         for(const p of points)p[1]=Math.min(bottom,Math.max(top,p[1]+pyShift));
       }
+      if(points.length<2)return;
       ctx.save();ctx.beginPath();ctx.rect(x0,top,x1-x0,bottom-top);ctx.clip();ctx.lineCap='round';ctx.lineJoin='round';
-      ctx.beginPath();smoothPath(ctx,points);ctx.strokeStyle='rgba(185,112,255,.9)';ctx.lineWidth=16;ctx.filter='blur(9px)';ctx.stroke();
-      ctx.beginPath();smoothPath(ctx,points);ctx.filter='none';ctx.strokeStyle='rgba(215,169,255,.98)';ctx.lineWidth=4.5;ctx.stroke();ctx.restore();
+      ctx.beginPath();smoothPath(ctx,points);ctx.strokeStyle='rgba(215,169,255,.98)';ctx.lineWidth=2.4;ctx.stroke();ctx.restore();
     };
 
     // A stem has its own measured spectrum, but the existing genre corridor is
@@ -21305,7 +21302,10 @@ csInit('csPlatform');
     // ── genre TARGET CORRIDOR -> feathered purple zone, no edge line ──
     // While capturing, the bright purple line is the whole target: no corridor band.
     // Any live capture target is a single line: no corridor band behind it.
-    if(corr&&!corr.liveAverage){
+    if(corr&&!corr.liveAverage&&corr.referenceSource==='Spotify'){
+      const points=[];for(const p of corr.pts){const f=Number(p[0]),db=(Number(p[1])+Number(p[2]))/2;if(isFinite(f)&&isFinite(db))points.push([mixFreqToX(f),mixDbToY(db)]);}
+      if(points.length>1){ctx.save();ctx.beginPath();ctx.rect(mixX0,mixPlotTop,mixX1-mixX0,mixPlotBottom-mixPlotTop);ctx.clip();ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();smoothPath(ctx,points);ctx.strokeStyle='rgba(185,112,255,.98)';ctx.lineWidth=1.5;ctx.stroke();ctx.restore();}
+    }else if(corr&&!corr.liveAverage){
       const M=150,fx=[],hiY=[],loY=[];
       for(let i=0;i<M;i++){
         const f=20*Math.pow(1000,i/(M-1));
@@ -21492,7 +21492,7 @@ csInit('csPlatform');
       const response=await mcSpotifyCompanionFetch('/status',{cache:'no-store'}),info=await response.json().catch(()=>({}));
       if(!response.ok)throw new Error(info.error||'The companion returned HTTP '+response.status+'.');
       mcSpotifyLoopbackPermissionState='granted';mcSpotifyCompanionConnected=true;mcSpotifyRenderCompanionAccess();
-      if(info.monitoring===true){mcSpotifyStatus('Companion connected. Play Spotify; the white spectrum follows automatically. Capture reference averages it into the purple target.');mcSpotifyStartCompanionPolling();}
+      if(info.monitoring===true){mcSpotifyStatus('Companion connected. Play Spotify, then capture the live spectrum as a reference.');mcSpotifyStartCompanionPolling();}
       else{mcSpotifyStatus('Companion connected, but system audio is unavailable: '+(info.status||'check the companion’s macOS audio permission.'));mcSpotifyStartCompanionPolling();}
     }catch(error){
       try{const permission=await navigator.permissions.query({name:'loopback-network'});mcSpotifyLoopbackPermissionState=permission.state;}catch(_){}
@@ -21517,8 +21517,15 @@ csInit('csPlatform');
       mcSpotifyCaptureUiStartedAt=0;clearInterval(mcSpotifyCaptureUiTimer);mcSpotifyCaptureUiTimer=null;
     }
     panel.hidden=state==='idle';panel.dataset.state=state;
+    const capture=document.getElementById('mcSpotifyCapture'),cancel=document.getElementById('mcSpotifyCaptureCancel'),stop=document.getElementById('mcSpotifyRefStop'),target=document.getElementById('refCurveTarget');
+    if(cancel)cancel.hidden=state!=='starting';if(target)target.disabled=state!=='idle';
+    if(capture&&state!=='idle')capture.hidden=true;
+    if(stop){stop.hidden=state!=='capturing'&&state!=='processing';if(state==='capturing')stop.disabled=false;}
+    if(capture&&state==='idle')capture.disabled=false;
+    if(stop&&state==='processing')stop.disabled=true;
     if(heading)heading.textContent=title||'';if(copy)copy.textContent=detail||'';mcSpotifyCaptureClock();
   }
+  function mcSpotifyCaptureReturnToIdle(){mcSpotifyCaptureSetState('idle','','');}
   function mcSpotifyCaptureSetDetail(detail,state){const copy=document.getElementById('mcSpotifyCaptureDetail'),panel=document.getElementById('mcSpotifyCaptureState');if(copy)copy.textContent=detail||'';if(panel&&state)panel.dataset.state=state;}
   function mcSpotifyNewSessionId(){
     const bytes=new Uint8Array(16);
@@ -21563,15 +21570,15 @@ csInit('csPlatform');
         const seconds=Number(live.audioSeconds)||0,windows=Number(live.windows)||0;
         if(Array.isArray(live.targetPoints)){
           const title=document.getElementById('mcSpotifyCaptureTitle');if(title)title.textContent=live.available?'CAPTURING REFERENCE':'PLAYBACK PAUSED · TARGET HELD';
-          mcSpotifyCaptureSetDetail('Purple target · '+windows+' windows · '+seconds.toFixed(1)+' sec captured','capturing');
-          const status=document.getElementById('mcSpotifyRefStatus');if(status)status.textContent='';
+          mcSpotifyCaptureSetDetail('One live spectrum · '+windows+' windows · '+seconds.toFixed(1)+' sec captured','capturing');
+          const status=document.getElementById('mcSpotifyRefStatus');if(status)status.textContent=mcSpotifyCaptureIdentityReason;
         }else if(mcSpotifyCaptureUiStartedAt&&Date.now()-mcSpotifyCaptureUiStartedAt>6000){
           const hasBuffers=seconds>0;
         const titleText=hasBuffers?'NO ACTIVE AUDIO SIGNAL':'NO AUDIO RECEIVED';
         const detail=hasBuffers?'No active signal · '+seconds.toFixed(1)+' seconds buffered · '+windows+' spectrum windows':'No audio received · 0.0 seconds · 0 spectrum windows';
-        mcSpotifyCaptureSetDetail(detail,'no-audio');
+        mcSpotifyCaptureSetDetail(detail,'capturing');
         const title=document.getElementById('mcSpotifyCaptureTitle');if(title)title.textContent=titleText;
-        const status=document.getElementById('mcSpotifyRefStatus');if(status)status.textContent='';
+        const status=document.getElementById('mcSpotifyRefStatus');if(status)status.textContent='No audio received';
         }
       }
     }catch(error){
@@ -21586,15 +21593,15 @@ csInit('csPlatform');
   function refSaveSpotifyTarget(name,durationSeconds,capture,captureTrack=mcSpotifyCaptureTrack||mcSpotifySelectedTrack){
     if(durationSeconds<8){const s=document.getElementById('mcSpotifyRefStatus');if(s)s.textContent='Capture at least 8 seconds of playback for a useful reference, then stop to save it.';return false;}
     const profile=capture&&capture.profile;
-    const points=(profile&&Array.isArray(profile.points)&&profile.points.length?profile.points:(capture&&capture.points))||refSpotifyTargetPointsFromCapture();if(!points){const s=document.getElementById('mcSpotifyRefStatus');if(s)s.textContent='No usable spectrum was captured. Play the selected Spotify track and try again.';return false;}
+    const sourcePoints=(profile&&Array.isArray(profile.points)&&profile.points.length?profile.points:(capture&&capture.points))||refSpotifyTargetPointsFromCapture();if(!sourcePoints){const s=document.getElementById('mcSpotifyRefStatus');if(s)s.textContent='No usable spectrum was captured. Play the selected Spotify track and try again.';return false;}
+    const validPoints=sourcePoints.filter(p=>Array.isArray(p)&&Number.isFinite(Number(p[0]))&&Number.isFinite(Number(p[1]))&&Number(p[0])>=20&&Number(p[0])<=20000).map(p=>[Number(p[0]),Number(p[1])]).sort((a,b)=>a[0]-b[0]);
+    if(validPoints.length<2)return false;
+    const points=Array.from({length:240},(_,i)=>{const f=20*Math.pow(1000,i/239),x=Math.log(f);let j=1;while(j<validPoints.length&&validPoints[j][0]<f)j++;if(j>=validPoints.length)return[f,validPoints[validPoints.length-1][1]];if(j===0)return[f,validPoints[0][1]];const a=validPoints[j-1],b=validPoints[j],t=(x-Math.log(a[0]))/(Math.log(b[0])-Math.log(a[0])||1);return[f,a[1]+(b[1]-a[1])*t];});
     const analysis=capture&&capture.analysis?Object.fromEntries(['li','lst','tp','dr','sb','ob','correlation','subRatio','airRatio','sampleRate','rms','rmsLin','rmsDb','peakSampleLin','peakDb','crestDb','lra','noiseFloorDb','stereoWidthPct','sideMidDb','tempoBpm'].filter(k=>typeof capture.analysis[k]==='number'&&isFinite(capture.analysis[k])).map(k=>[k,capture.analysis[k]])):null;
     if(analysis&&capture.analysis&&typeof capture.analysis.keyName==='string'&&capture.analysis.keyName)analysis.keyName=capture.analysis.keyName;
     const previousTargets=refTrackTargets.slice();
-    // Only replace an older target when the capture has a real track ID. An empty ID must never match another target.
-    const hasTrackId=!!(captureTrack&&captureTrack.id);
-    const existing=hasTrackId?refTrackTargets.findIndex(x=>x.spotifyTrackId===String(captureTrack.id)):-1,previous=existing>=0?refTrackTargets[existing]:null;
-    const capturedTitle=String(captureTrack&&captureTrack.name||'').trim(),capturedArtists=Array.isArray(captureTrack&&captureTrack.artists)?captureTrack.artists.map(artist=>String(artist&&artist.name||'').trim()).filter(Boolean):[],trackTitle=capturedTitle&&capturedArtists.length?capturedTitle:String(previous&&previous.spotifyTrackTitle||'').trim(),trackArtists=capturedArtists.length?capturedArtists:(Array.isArray(previous&&previous.spotifyTrackArtists)?previous.spotifyTrackArtists:[]),spotifyName=trackTitle&&trackArtists.length?(trackTitle+' · '+trackArtists.join(', ')).slice(0,100):'',previousName=String(previous&&previous.name||'').trim().toLocaleLowerCase(),isArtistOnlyName=trackArtists.some(artist=>artist.toLocaleLowerCase()===previousName),isCanonicalName=spotifyName&&spotifyName.toLocaleLowerCase()===previousName,preserveCustomName=!!(previous&&(previous.nameAuto===false||(!spotifyName&&previous.nameAuto===true)||(previous.nameAuto!==true&&!isArtistOnlyName&&!isCanonicalName))),targetName=preserveCustomName?previous.name:(spotifyName||((previous&&previous.name)||name||'Spotify track reference')).slice(0,100);
-    const item={id:previous?previous.id:'sr-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),name:targetName,nameAuto:spotifyName?!preserveCustomName:!!(previous&&previous.nameAuto),spotifyTrackId:captureTrack&&captureTrack.id?String(captureTrack.id):'',spotifyTrackTitle:trackTitle,spotifyTrackArtists:trackArtists,points,toleranceDb:MC_TRACK_TARGET_TOLERANCE_DB,capturedAt:new Date().toISOString(),durationSeconds:Number(durationSeconds.toFixed(1)),analysis};
+    const capturedTitle=String(captureTrack&&captureTrack.name||'').trim(),trackArtists=Array.isArray(captureTrack&&captureTrack.artists)?captureTrack.artists.map(artist=>String(artist&&artist.name||'').trim()).filter(Boolean):[],trackTitle=capturedTitle&&trackArtists.length?capturedTitle:'',spotifyName=trackTitle&&trackArtists.length?(trackTitle+' · '+trackArtists.join(', ')).slice(0,100):'',startedAt=mcSpotifyCaptureStartedAt||Date.now(),startedLabel=new Date(startedAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false}),targetName=(spotifyName||('Unidentified capture · '+startedLabel)).slice(0,100);
+    const item={id:'sr-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),name:targetName,nameAuto:!!spotifyName,spotifyTrackId:captureTrack&&captureTrack.id?String(captureTrack.id):'',spotifyTrackTitle:trackTitle,spotifyTrackArtists:trackArtists,points,capturedAt:new Date().toISOString(),durationSeconds:Number(durationSeconds.toFixed(1)),analysis};
     // Browser-fallback captures have no companion profile: store their own single-line curve (no tolerance band).
     if(!(profile&&Array.isArray(profile.frequencies)&&Array.isArray(profile.magnitudesSmoothed))&&points.length>1){
       const fr=points.map(p=>Number(p[0])),mag=points.map(p=>Number(p[1]));
@@ -21603,17 +21610,17 @@ csInit('csPlatform');
     }
     if(profile&&Array.isArray(profile.frequencies)&&Array.isArray(profile.magnitudesSmoothed)){
       item.referenceSource='Spotify';item.referenceCaptureMethod='AIMM Companion';
-      item.referenceCurve={frequencies:profile.frequencies,magnitudesRaw:profile.magnitudesRaw||[],magnitudesSmoothed:profile.magnitudesSmoothed,magnitudesLow:profile.magnitudesLow||[],magnitudesHigh:profile.magnitudesHigh||[],analyzer:profile.analyzer||'AIMM Companion',sampleRate:Number(profile.sampleRate)||44100,windows:Number(profile.windows)||0,audioSeconds:Number(profile.audioSeconds)||durationSeconds};
+      item.referenceCurve={frequencies:points.map(p=>p[0]),magnitudesRaw:points.map(p=>p[1]),magnitudesSmoothed:points.map(p=>p[1]),magnitudesLow:points.map(p=>p[1]),magnitudesHigh:points.map(p=>p[1]),analyzer:profile.analyzer||'AIMM Companion',sampleRate:Number(profile.sampleRate)||44100,windows:Number(profile.windows)||0,audioSeconds:Number(profile.audioSeconds)||durationSeconds};
     }
-    if(existing>=0)refTrackTargets.splice(existing,1);
-    refTrackTargets.push(item);refTrackTargets=refTrackTargets.slice(-20);
+    refTrackTargets.push(item);
     if(!refSaveTrackTargets()){refTrackTargets=previousTargets;const s=document.getElementById('mcSpotifyRefStatus');if(s)s.textContent='Could not save this reference in this browser. Check available local storage.';return false;}
-    refRefreshTrackTargets(item.id);window.refTargetChanged();
+    const targetSelect=document.getElementById('refCurveTarget');if(targetSelect)targetSelect.value='';
+    refRefreshTrackTargets();
     const status=document.getElementById('mcSpotifyRefStatus');if(status)status.textContent='';
     const input=document.getElementById('mcSpotifyRefName');if(input)input.value=item.name;
     return true;
   }
-  let mcNowPlayingReport='';
+  let mcNowPlayingReport='',mcSpotifyCaptureIdentityReason='',mcSpotifyCaptureStartedAt=0,mcSpotifyCaptureStartRequest=null,mcSpotifyCaptureCancelled=false;
   async function mcSpotifyNowPlayingTrack(){
     try{
       const token=await mcSpotifyAccessToken();
@@ -21631,10 +21638,16 @@ csInit('csPlatform');
     const input=document.getElementById('mcSpotifyRefName'),status=document.getElementById('mcSpotifyRefStatus'),start=document.getElementById('mcSpotifyCapture'),stop=document.getElementById('mcSpotifyRefStop');
     const selected=mcSpotifySelectedTrack&&mcSpotifySelectedTrack.id?{...mcSpotifySelectedTrack,artists:Array.isArray(mcSpotifySelectedTrack.artists)?mcSpotifySelectedTrack.artists.map(artist=>({...artist})):[]}:null;
     if(mcSpotifyUsingCompanion){mcSpotifyStatus('A reference capture is already in progress. Stop it before starting another.');return;}
+    mcSpotifyCaptureStartedAt=Date.now();mcSpotifyCaptureCancelled=false;
+    mcSpotifyCaptureSetState('starting','STARTING REFERENCE CAPTURE','Connecting to AIMM Audio Reference Companion…');
+    if(status)status.textContent='Connecting to AIMM Audio Reference Companion…';
     const detected=selected?null:await mcSpotifyNowPlayingTrack();
-    const unidentifiedReason=(!selected&&!detected)?'Track not identified. '+mcNowPlayingReport:'';
+    if(mcSpotifyCaptureCancelled)return;
+    const unidentifiedReason=(!selected&&!detected)?mcNowPlayingReport:'';
+    mcSpotifyCaptureIdentityReason=unidentifiedReason;
     const chosen=selected||detected;
-    const name=mcSpotifyTrackLabel(chosen)||'Spotify track (identifying…)';
+    const name=mcSpotifyTrackLabel(chosen)||('Unidentified capture · '+new Date(mcSpotifyCaptureStartedAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false}));
+    const captureName=document.getElementById('mcSpotifyCaptureName');if(captureName)captureName.textContent=name;
     if(input)input.value=name;
     mcSpotifyCaptureTrack=chosen||{id:'',name,artists:[]};
     mcSpotifyCaptureSessionTrackId=String(mcSpotifyCaptureTrack.id||'');
@@ -21642,21 +21655,22 @@ csInit('csPlatform');
     // Lock any selected Spotify ID before yielding. If there is no ID yet,
     // the first track identified by Spotify during capture can fill it in.
     mcSpotifyUsingCompanion=true; // lock this Spotify track before any bridge request can yield
-    mcSpotifyCaptureSetState('starting','STARTING REFERENCE CAPTURE','Connecting to AIMM Audio Reference Companion…');
-    if(status)status.textContent=unidentifiedReason||'Starting system audio capture…';
     try{
       mcSpotifyCaptureSessionId=mcSpotifyNewSessionId();
-      const started=await mcSpotifyCompanionFetch('/capture/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,spotifyTrackId:String(mcSpotifyCaptureTrack.id||''),sessionId:mcSpotifyCaptureSessionId}),cache:'no-store'});
+      mcSpotifyCaptureStartRequest=mcSpotifyCompanionFetch('/capture/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,spotifyTrackId:String(mcSpotifyCaptureTrack.id||''),sessionId:mcSpotifyCaptureSessionId}),cache:'no-store'});
+      const started=await mcSpotifyCaptureStartRequest;mcSpotifyCaptureStartRequest=null;
       const startInfo=await started.json().catch(()=>({}));
       if(!started.ok)throw new Error(startInfo.error||'The AIMM companion could not start system audio capture.');
       if(startInfo.sessionId!==mcSpotifyCaptureSessionId||String(startInfo.spotifyTrackId||'')!==mcSpotifyCaptureSessionTrackId)throw new Error('The companion could not confirm this tab’s Spotify capture session.');
+      if(mcSpotifyCaptureCancelled)return;
       mcSpotifyBrowserFallbackNext=false;mcSpotifyCompanionWindows=0;mcSpotifyCompanionPoints=null;mcCaptureAccum=null;mcSpotifyCompanionLiveUnsupported=false;
       if(start)start.hidden=true;if(stop)stop.hidden=false;
-      mcSpotifyCaptureSetState('capturing','CAPTURING REFERENCE','Play the Spotify track you want to capture. White monitors live audio; purple builds the saved reference…');
-      const trackNote=mcSpotifyCaptureSessionTrackId?'The reference is linked to '+name+'.':'AIMM will add the track title and artist when Spotify identifies the playing track.';
-      if(status)status.textContent='AIMM Companion is capturing system playback. White follows the smoothed live spectrum; purple builds the running reference target. '+trackNote;
+      mcSpotifyCaptureSetState('capturing','CAPTURING REFERENCE','The live spectrum is recording. Stop to save it as a reference.');
+      if(status)status.textContent=unidentifiedReason||'';
     }catch(error){
-      try{await mcSpotifyCompanionFetch('/capture/stop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:mcSpotifyCaptureSessionId}),cache:'no-store'});}catch(_){}
+      const failedSessionId=mcSpotifyCaptureSessionId;
+      try{await mcSpotifyCompanionFetch('/capture/stop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:failedSessionId}),cache:'no-store'});}catch(_){}
+      if(failedSessionId)try{await mcSpotifyCompanionFetch('/capture/ack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:failedSessionId}),cache:'no-store'});}catch(_){}
       if(start)start.hidden=false;if(stop)stop.hidden=true;
       mcSpotifyUsingCompanion=false;
       mcSpotifyCaptureTrack=null;
@@ -21666,28 +21680,44 @@ csInit('csPlatform');
       mcSpotifyBrowserFallbackNext=true;
       const permissionDenied=/declined TCC|permission|access to screen|screen recording|blocked system.audio capture|system audio recording/i.test(reason);
       const message=permissionDenied?'macOS blocked system-audio capture for AIMM Audio Reference Companion. Enable it in System Settings → Privacy & Security → Screen & System Audio Recording, then quit and reopen the companion.':'AIMM Companion could not start capture: '+reason+'. The browser tab-audio option is still available; press Capture reference again to use it.';
-      if(status)status.textContent=message;mcSpotifyCaptureSetState('error','CAPTURE DID NOT START',message);
+      if(status)status.textContent=mcSpotifyCaptureCancelled?'':message;mcSpotifyCaptureReturnToIdle();mcSpotifyCaptureStartedAt=0;
     }
   }
   async function refSpotifyCaptureStartBrowser(name){
     const input=document.getElementById('mcSpotifyRefName'),status=document.getElementById('mcSpotifyRefStatus'),start=document.getElementById('mcSpotifyCapture'),stop=document.getElementById('mcSpotifyRefStop');
-    if(!navigator.mediaDevices||!navigator.mediaDevices.getDisplayMedia){const message='This browser does not support tab-audio capture. Open AIMM in Chrome or Edge and try again.';if(status)status.textContent=message;mcSpotifyCaptureSetState('error','CAPTURE NOT AVAILABLE',message);return;}
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getDisplayMedia){const message='This browser does not support tab-audio capture. Open AIMM in Chrome or Edge and try again.';if(start)start.hidden=false;if(status)status.textContent=message;mcSpotifyCaptureReturnToIdle();mcSpotifyCaptureStartedAt=0;return;}
     let stream=null;
     try{
       mcSpotifyCaptureSetState('starting','CAPTURE STARTING','Choose this AIMM tab and enable tab audio.');
       const shareRequest=navigator.mediaDevices.getDisplayMedia({video:true,audio:true,preferCurrentTab:true,selfBrowserSurface:'include'});
       stream=await shareRequest;stream.getVideoTracks().forEach(track=>track.stop());
+      if(mcSpotifyCaptureCancelled){stream.getTracks().forEach(track=>track.stop());return;}
       if(!stream.getAudioTracks().length){stream.getTracks().forEach(track=>track.stop());throw new Error('Choose the AIMM tab and enable “Share tab audio”.');}
       if(start)start.hidden=true;if(stop)stop.hidden=false;
       await liveStart(stream,'Spotify reference',{referenceOnly:true,referenceLabel:name});
-      mcSpotifyCaptureSetState('capturing','CAPTURING REFERENCE','Waiting for Spotify audio…');
+      mcSpotifyCaptureSetState('capturing','CAPTURING REFERENCE','The live spectrum is recording. Stop to save it as a reference.');
     }catch(error){
       if(stream)try{stream.getTracks().forEach(track=>track.stop());}catch(_){}
       mcSpotifyCaptureTrack=null;mcSpotifyCaptureSessionTrackId='';
       if(start)start.hidden=false;if(stop)stop.hidden=true;
       const message=(error&&error.name==='NotAllowedError')?'Tab sharing was cancelled. Choose the AIMM tab and allow tab audio to capture a reference.':(error&&error.message)||'Could not capture Spotify tab audio.';
-      if(status)status.textContent=message;mcSpotifyCaptureSetState('error','CAPTURE DID NOT START',message);
+      if(status)status.textContent=mcSpotifyCaptureCancelled?'':message;mcSpotifyCaptureReturnToIdle();mcSpotifyCaptureStartedAt=0;
     }
+  }
+  async function mcSpotifyCaptureCancel(){
+    mcSpotifyCaptureCancelled=true;
+    const status=document.getElementById('mcSpotifyRefStatus');
+    if(mcSpotifyUsingCompanion){
+      const sessionId=mcSpotifyCaptureSessionId;
+      if(mcSpotifyCaptureStartRequest)try{await mcSpotifyCaptureStartRequest;}catch(_){}
+      if(sessionId){
+        try{await mcSpotifyCompanionFetch('/capture/stop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId}),cache:'no-store'});}catch(_){}
+        try{await mcSpotifyCompanionFetch('/capture/ack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId}),cache:'no-store'});}catch(_){}
+      }
+    }
+    mcSpotifyUsingCompanion=false;mcSpotifyCaptureTrack=null;mcSpotifyCaptureSessionId='';mcSpotifyCaptureSessionTrackId='';mcSpotifyCaptureStartRequest=null;
+    const capture=document.getElementById('mcSpotifyCapture'),stop=document.getElementById('mcSpotifyRefStop');if(capture)capture.hidden=false;if(stop){stop.hidden=true;stop.disabled=false;}
+    if(status)status.textContent='';mcSpotifyCaptureReturnToIdle();mcSpotifyCaptureIdentityReason='';mcSpotifyCaptureStartedAt=0;
   }
   async function refSpotifyCaptureStop(){
     if(!mcSpotifyUsingCompanion){
@@ -21696,7 +21726,7 @@ csInit('csPlatform');
     }
     const status=document.getElementById('mcSpotifyRefStatus'),capture=document.getElementById('mcSpotifyCapture'),stop=document.getElementById('mcSpotifyRefStop');
     mcSpotifyCaptureSetState('processing','ANALYSING REFERENCE','Finishing capture and building the target…');
-    if(stop)stop.disabled=true;if(status)status.textContent='Stopping reference averaging and analysing the selected track…';
+    if(stop)stop.disabled=true;if(status)status.textContent='Finishing capture and building the target…';
     try{
       const stopped=await mcSpotifyCompanionFetch('/capture/stop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:mcSpotifyCaptureSessionId})});
       const stopInfo=await stopped.json().catch(()=>({}));
@@ -21748,14 +21778,15 @@ csInit('csPlatform');
       // Keep the captured audio attached to the Spotify ID frozen at start.
       const referenceName=mcSpotifyTrackLabel(linkedTrack);
       const saved=refSaveSpotifyTarget(referenceName,captured.duration,payload,linkedTrack);
-      if(saved){MC_SPECS.setSpotify(analysis,captured,referenceName);mcSpotifyCaptureSetState('saved','REFERENCE SAVED',captured.duration.toFixed(0)+' seconds analysed · purple target and Audio Specs updated.');toast('Spotify reference saved and active as the spectral target');}
+      if(saved){MC_SPECS.setSpotify(analysis,captured,referenceName);if(status)status.textContent=mcSpotifyCaptureIdentityReason;toast('Spotify reference saved and active as the spectral target');}
       else if(status)status.textContent='The capture could not be saved. Play at least eight seconds, then capture again.';
     }catch(error){
-      const message='AIMM Companion reference could not be saved: '+(error&&error.message||'unknown error');if(status)status.textContent=message;mcSpotifyCaptureSetState('error','REFERENCE NOT SAVED',message);
+      const reason=error&&error.message||'unknown error',message=/eight seconds|at least 8 seconds|minimum duration/i.test(reason)?'Capture at least 8 seconds of playback for a useful reference, then stop to save it.':'AIMM Companion reference could not be saved: '+reason;if(status)status.textContent=message;
     }
     finally{
-      if(mcSpotifyCaptureSessionId)try{await mcSpotifyCompanionFetch('/capture/ack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:mcSpotifyCaptureSessionId}),cache:'no-store'});}catch(_){}
-      mcSpotifyUsingCompanion=false;mcSpotifyCaptureTrack=null;mcSpotifyCaptureSessionId='';mcSpotifyCaptureSessionTrackId='';mcSpotifyCompanionPoints=null;if(capture)capture.hidden=false;if(stop){stop.hidden=true;stop.disabled=false;}refDrawCanvas(refSpecPoints,null,null,mcSpotifyLivePoints);
+      const finishedSessionId=mcSpotifyCaptureSessionId;
+      mcSpotifyUsingCompanion=false;mcSpotifyCaptureTrack=null;mcSpotifyCaptureSessionId='';mcSpotifyCaptureSessionTrackId='';mcSpotifyCompanionPoints=null;if(capture)capture.hidden=false;if(stop){stop.hidden=true;stop.disabled=false;}mcSpotifyCaptureReturnToIdle();mcSpotifyCaptureIdentityReason='';refDrawCanvas(refSpecPoints,null,null,mcSpotifyLivePoints);
+      if(finishedSessionId)try{await mcSpotifyCompanionFetch('/capture/ack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:finishedSessionId}),cache:'no-store'});}catch(_){}
     }
   }
   const MC_SPOTIFY_CLIENT_ID='4189bbff45444a28aeb1401e0e9c8db2',MC_SPOTIFY_TOKEN_KEY='aimm_spotify_oauth_v1';
@@ -21777,7 +21808,7 @@ csInit('csPlatform');
     if(LIVE.active&&LIVE.referenceOnly)LIVE.referenceLabel=label;
     if(input)input.value=label;if(capture){capture.hidden=false;capture.textContent='Capture reference';}
     const saved=refTrackTargets.find(item=>item.spotifyTrackId&&item.spotifyTrackId===String(track.id)),targetSelect=document.getElementById('refCurveTarget');
-    if(targetSelect){targetSelect.value=saved?'trackref:'+saved.id:'';window.refTargetChanged();}else refRenderSavedTargets();
+    if(targetSelect){targetSelect.value='';window.refTargetChanged();}else refRenderSavedTargets();
     MC_SPECS.setSpotify(saved&&saved.analysis?saved.analysis:null,null,label);
     mcSpotifyStatus('');
   }
@@ -21965,7 +21996,8 @@ csInit('csPlatform');
     const connect=document.getElementById('mcSpotifyConnect'),capture=document.getElementById('mcSpotifyCapture'),input=document.getElementById('mcSpotifyRefName');
     if(connect)connect.addEventListener('click',()=>{if(connect.dataset.connected==='true'){mcSpotifyTokens=null;try{localStorage.removeItem(MC_SPOTIFY_TOKEN_KEY);}catch(_){}mcSpotifyRenderConnection();mcSpotifyStatus('Spotify disconnected.');}else mcSpotifyBeginConnect();});
     start.addEventListener('click',mcSpotifySearch);if(input){input.addEventListener('input',()=>{if(mcSpotifyUsingCompanion||LIVE.active&&LIVE.referenceOnly){input.value=mcSpotifyTrackLabel(mcSpotifyCaptureTrack||mcSpotifySelectedTrack);mcSpotifyStatus('The selected Spotify track is locked until this reference capture finishes.');return;}if(mcSpotifySelectedTrack&&input.value.trim()!==mcSpotifyTrackLabel(mcSpotifySelectedTrack)){mcSpotifySelectedTrack=null;const capture=document.getElementById('mcSpotifyCapture');if(capture){capture.hidden=!(mcSpotifyTokens&&mcSpotifyTokens.access_token);capture.textContent='Capture reference';}}});input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();mcSpotifySearch();}});}
-    if(capture)capture.addEventListener('click',mcSpotifyCaptureSelected);stop.addEventListener('click',refSpotifyCaptureStop);
+    if(capture)capture.addEventListener('click',()=>{if(document.getElementById('mcSpotifyCaptureState')?.dataset.state==='idle')mcSpotifyCaptureSelected();});stop.addEventListener('click',refSpotifyCaptureStop);
+    const cancel=document.getElementById('mcSpotifyCaptureCancel');if(cancel)cancel.addEventListener('click',mcSpotifyCaptureCancel);
     const companionConnect=document.getElementById('mcSpotifyCompanionConnect');if(companionConnect)companionConnect.addEventListener('click',mcSpotifyConnectCompanion);
     const spotifyAuthCallback=new URLSearchParams(location.search).has('code');
     mcSpotifyRenderConnection();mcSpotifyExchangeCode();if(!spotifyAuthCallback)mcSpotifyRefreshSavedTargetNames();mcSpotifyRefreshLoopbackPermission();
@@ -22305,10 +22337,10 @@ csInit('csPlatform');
         LIVE.lastUiAt=now;
       }
       if(now-LIVE.lastStatusAt>=500){
-        const status=document.getElementById('mcSpotifyRefStatus'),everReceived=LIVE.referenceFrameCount>0,noAudio=!everReceived&&now-LIVE.startedAt>5000,paused=everReceived&&!hasRecentSignal;
-        const line=hasRecentSignal?'Spotify audio is reaching AIMM · white live spectrum and purple reference average updating. Stop to save the reference.':paused?'Spotify playback paused · play the track to continue the reference capture.':noAudio?'No Spotify audio has reached AIMM. Check playback and enable tab audio in the share selection.':'Waiting for Spotify audio · press play in the Spotify player. The target will appear when audio reaches AIMM.';
-        if(status)status.textContent=line;
-        mcSpotifyCaptureSetDetail(hasRecentSignal?'Live spectrum and reference average updating':paused?'Playback paused · waiting for audio':noAudio?'No audio signal · check tab sharing':'Waiting for Spotify playback…',noAudio?'no-audio':'capturing');
+        const status=document.getElementById('mcSpotifyRefStatus'),everReceived=LIVE.referenceFrameCount>0,noAudio=!everReceived&&now-LIVE.startedAt>6000,paused=everReceived&&!hasRecentSignal;
+        const line=hasRecentSignal?'The live spectrum is recording. Stop to save it as a reference.':paused?'Spotify playback paused · play the track to continue the reference capture.':noAudio?'No audio received':'Waiting for Spotify playback…';
+        if(status)status.textContent=mcSpotifyCaptureIdentityReason||line;
+        mcSpotifyCaptureSetDetail(hasRecentSignal?'Live spectrum recording':paused?'Playback paused · waiting for audio':noAudio?'No audio received · check tab sharing':'Waiting for Spotify playback…','capturing');
         LIVE.lastStatusAt=now;
       }
       refRaf=requestAnimationFrame(refLiveAnimate);return;
@@ -23987,7 +24019,7 @@ csInit('csPlatform');
   window.refLiveStop=async function(){
     if(!LIVE.active)return;
     const referenceOnly=!!LIVE.referenceOnly,referenceName=LIVE.referenceLabel,captureSeconds=Math.max(0,(Date.now()-LIVE.startedAt)/1000);
-    if(referenceOnly){refResetLiveTraceDisplay();mcSpotifyCaptureSetState('processing','ANALYSING REFERENCE','Capture stopped · analysing audio and building the target…');}
+    if(referenceOnly){refResetLiveTraceDisplay();mcSpotifyCaptureSetState('processing','ANALYSING REFERENCE','Finishing capture and building the target…');const status=document.getElementById('mcSpotifyRefStatus');if(status)status.textContent='Finishing capture and building the target…';}
     LIVE.active=false;
     clearTimeout(LIVE.raf);
     try{LIVE.stream.getTracks().forEach(t=>t.stop());}catch(_){}
@@ -24035,12 +24067,14 @@ csInit('csPlatform');
       const saved=!!capturedAnalysis&&!!captureTrack&&refSaveSpotifyTarget(resolvedName,capturedAnalysis.durationSeconds,capturedAnalysis,captureTrack);
       if(saved)MC_SPECS.setSpotify(capturedAnalysis.analysis,capturedAnalysis.buffer,resolvedName);
       const capture=document.getElementById('mcSpotifyCapture'),stop=document.getElementById('mcSpotifyRefStop');
-      if(capture)capture.hidden=!mcSpotifySelectedTrack;if(stop)stop.hidden=true;
+      if(stop)stop.hidden=true;mcSpotifyRenderConnection();
       mcSpotifyCaptureTrack=null;mcSpotifyCaptureSessionTrackId='';
       LIVE.referencePowerSum=null;LIVE.referenceFrameCount=0;LIVE.referenceChunks=[];LIVE.referenceSamples=0;
       LIVE.referenceOnly=false;LIVE.referenceLabel='';
-      if(saved){mcSpotifyCaptureSetState('saved','REFERENCE SAVED',capturedAnalysis.durationSeconds.toFixed(0)+' seconds analysed · purple target and Audio Specs updated.');toast('Spotify reference saved and active as the spectral target');}
-      else{const message=analysisError?'Spotify could not resolve the selected track title and artist. '+analysisError:capturedAnalysis?'Capture at least 8 seconds while Spotify is playing, then select a track and capture again.':'No active playback was captured. Start the selected Spotify track and try again.';const s=document.getElementById('mcSpotifyRefStatus');if(s)s.textContent=message;mcSpotifyCaptureSetState('error','REFERENCE NOT SAVED',message);}
+      const status=document.getElementById('mcSpotifyRefStatus');
+      if(saved){if(status)status.textContent=captureTrack&&captureTrack.id?'':mcSpotifyCaptureIdentityReason;toast('Spotify reference saved and active as the spectral target');}
+      else{const message=analysisError?'Spotify could not resolve the selected track title and artist. '+analysisError:capturedAnalysis?'Capture at least 8 seconds of playback for a useful reference, then stop to save it.':'No active playback was captured. Start the selected Spotify track and try again.';if(status)status.textContent=message;}
+      mcSpotifyCaptureReturnToIdle();mcSpotifyCaptureIdentityReason='';mcSpotifyCaptureStartedAt=0;
     }
     const b=document.getElementById('refLiveBtn');if(b){const lbl=b.querySelector('.oz-live-label');if(lbl)lbl.textContent='Listen to input (live)';else b.textContent='Listen to input';}
     refSetEl('refLiveStatus',li>-69?'locked: '+li.toFixed(1)+' LUFS · '+tp.toFixed(1)+' dBTP':'stopped — nothing captured');
