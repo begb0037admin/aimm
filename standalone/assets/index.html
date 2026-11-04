@@ -4465,7 +4465,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.162';
+const AIMM_BUILD = '2026-11-04.163';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21119,6 +21119,7 @@ csInit('csPlatform');
       if(!xy)return;
       ctx.save();ctx.beginPath();ctx.rect(x0,top,x1-x0,bottom-top);ctx.clip();
       ctx.lineCap='round';ctx.lineJoin='round';
+      ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(222,204,255,.5)';ctx.lineWidth=7;ctx.filter='blur(5px)';ctx.stroke();ctx.filter='none';
       ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(247,241,255,.98)';ctx.lineWidth=3;ctx.stroke();
       ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(185,112,255,.98)';ctx.lineWidth=1.5;ctx.stroke();
       ctx.restore();
@@ -21140,6 +21141,7 @@ csInit('csPlatform');
       }
       if(points.length<2)return;
       ctx.save();ctx.beginPath();ctx.rect(x0,top,x1-x0,bottom-top);ctx.clip();ctx.lineCap='round';ctx.lineJoin='round';
+      ctx.beginPath();smoothPath(ctx,points);ctx.strokeStyle='rgba(185,112,255,.9)';ctx.lineWidth=12;ctx.filter='blur(8px)';ctx.stroke();ctx.filter='none';
       ctx.beginPath();smoothPath(ctx,points);ctx.strokeStyle='rgba(215,169,255,.98)';ctx.lineWidth=2.4;ctx.stroke();ctx.restore();
     };
 
