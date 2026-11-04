@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.154';
+const AIMM_BUILD = '2026-11-04.155';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21700,10 +21700,18 @@ csInit('csPlatform');
         profile.magnitudesHigh=profile.magnitudesSmoothed.slice();
       }
       if(mcCaptureAccum&&mcCaptureAccum.count>0){
-        const avg=mcCaptureAccum.sum.map(v=>v/mcCaptureAccum.count);
-        const pts=mcCaptureAccum.freqs.map((f,i)=>[f,avg[i]]);
-        profile.points=pts;
-        profile.frequencies=mcCaptureAccum.freqs;
+        // Store 240 log-spaced points (not 3712): keeps each saved target small enough for browser storage.
+        const avgAll=mcCaptureAccum.sum.map(v=>v/mcCaptureAccum.count);
+        const fAll=mcCaptureAccum.freqs;
+        const G=240,fs=[],avg=[];
+        for(let g=0;g<G;g++){
+          const target=20*Math.pow(1000,g/(G-1));
+          let best=0;for(let i=1;i<fAll.length;i++){if(Math.abs(fAll[i]-target)<Math.abs(fAll[best]-target))best=i;}
+          fs.push(fAll[best]);avg.push(avgAll[best]);
+        }
+        profile.points=fs.map((f,i)=>[f,avg[i]]);
+        profile.frequencies=fs;
+        profile.magnitudesRaw=avg.slice();
         profile.magnitudesSmoothed=avg;
         profile.magnitudesLow=avg.slice();
         profile.magnitudesHigh=avg.slice();
