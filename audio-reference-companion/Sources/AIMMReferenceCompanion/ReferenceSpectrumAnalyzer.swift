@@ -49,7 +49,7 @@ final class ReferenceSpectrumAnalyzer: @unchecked Sendable {
     private var latestLivePower: [Double]?
     // Locked DSP: per-bin exponential time smoothing, 2 s response, 65% recent-sample weight.
     private var liveSmoothedPower = [Double](repeating: 0, count: 4097)
-    private static let liveAlpha: Double = { let n = 2.0 * 44_100.0 / 2048.0; return 1.0 - pow(1.0 - 0.65, 1.0 / (n + 1.0)) }()
+    private static let liveAlpha: Double = { let n = 1.0 * 44_100.0 / 2048.0; return 1.0 - pow(1.0 - 0.65, 1.0 / (n + 1.0)) }()
     private var referenceWindows = 0
     private var referenceAudioFrames = 0
     private var referenceSignalFrames = 0
