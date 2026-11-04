@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.139';
+const AIMM_BUILD = '2026-11-04.140';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21106,6 +21106,10 @@ csInit('csPlatform');
         const f=20*Math.pow(1000,i/95),bounds=corridorAt(corr,f);
         points.push([mapX(f),mapY((bounds[0]+bounds[1])*0.5)]);
       }
+      // Shape only: shift the whole purple target vertically so its midpoint sits at the plot centre. Its level is not compared.
+      const pyMin=Math.min(...points.map(p=>p[1])),pyMax=Math.max(...points.map(p=>p[1]));
+      const pyShift=(top+bottom)/2-(pyMin+pyMax)/2;
+      for(const p of points)p[1]=Math.min(bottom,Math.max(top,p[1]+pyShift));
       ctx.save();ctx.beginPath();ctx.rect(x0,top,x1-x0,bottom-top);ctx.clip();ctx.lineCap='round';ctx.lineJoin='round';
       ctx.beginPath();smoothPath(ctx,points);ctx.strokeStyle='rgba(185,112,255,.9)';ctx.lineWidth=16;ctx.filter='blur(9px)';ctx.stroke();
       ctx.beginPath();smoothPath(ctx,points);ctx.filter='none';ctx.strokeStyle='rgba(215,169,255,.98)';ctx.lineWidth=4.5;ctx.stroke();ctx.restore();
