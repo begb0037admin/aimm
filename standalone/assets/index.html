@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.137';
+const AIMM_BUILD = '2026-11-04.138';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21057,7 +21057,7 @@ csInit('csPlatform');
     const key=x0+'|'+x1+'|'+top+'|'+bottom;
     const st=refLiveDisplayStates.get(key)||{first:null,last:null,ys:null};
     refLiveDisplayStates.set(key,st);
-    const ease=(before,target)=>before===null?target:before*Math.pow(target/before,0.3);
+    const ease=(before,target)=>before===null?target:before*Math.pow(target/before,0.7);
     st.first=ease(st.first,centre(first));
     st.last=ease(st.last,centre(last));
     const raw=[];
@@ -21074,7 +21074,7 @@ csInit('csPlatform');
     const ys=raw.map(p=>p[1]);
     const shift=(top+bottom)/2-(Math.min(...ys)+Math.max(...ys))/2;
     const clampY=y=>Math.min(bottom,Math.max(top,y));
-    const out=raw.map(([x,y],g)=>{const target=clampY(y+shift);const before=st.ys&&st.ys.length===GRID?st.ys[g]:null;return [x,before===null?target:before+(target-before)*0.3];});
+    const out=raw.map(([x,y],g)=>{const target=clampY(y+shift);const before=st.ys&&st.ys.length===GRID?st.ys[g]:null;return [x,before===null?target:before+(target-before)*0.7];});
     st.ys=out.map(p=>p[1]);
     return out;
   }
