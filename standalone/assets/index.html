@@ -4461,7 +4461,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.142';
+const AIMM_BUILD = '2026-11-04.143';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -20973,7 +20973,9 @@ csInit('csPlatform');
       return null;
     }
     const sel=document.getElementById('refCurveTarget');
-    const track=refTrackTargetByKey(sel&&sel.value);
+    // Purple target only when the user has chosen a saved target (or while capturing, handled above).
+    if(!sel||!sel.value)return null;
+    const track=refTrackTargetByKey(sel.value);
     if(!track)return null;
     if(track.referenceCurve&&Array.isArray(track.referenceCurve.frequencies)&&Array.isArray(track.referenceCurve.magnitudesSmoothed)){
       const curve=track.referenceCurve,pts=[],tolerance=Number(track.toleranceDb)||MC_TRACK_TARGET_TOLERANCE_DB;
