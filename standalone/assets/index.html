@@ -2843,7 +2843,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   </div>
 </div>
 
-<div class="tabs oz-tabstrip" title="Press and hold to drag — release to drop">
+<div class="tabs oz-tabstrip">
   <!-- TAB ORDER — R5 Ozone-12 redesign (2026-08-17): the reference's 6-tab
        rack (MixCheck, Workbench, Library, Insight, Snapshots, Settings) in
        ITS exact order, THEN the real tabs that have no reference counterpart
@@ -4645,7 +4645,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.235';
+const AIMM_BUILD = '2026-11-05.236';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -9943,6 +9943,8 @@ document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{do
 // missing from the stored order (e.g. future-added tabs like Snapshots
 // before its first save) append at the end so we degrade gracefully.
 (function aimmReplayTabOrder(){
+  // Tab order is fixed in markup: saved orders are not replayed.
+  return;
   try{
     const raw = localStorage.getItem('aimmTabOrder_v2');
     if(!raw) return;
@@ -9969,6 +9971,8 @@ document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{do
 // regular click still fires the tab switch; onEnd persists the new order
 // under aimmTabOrder_v2 for replay on next page load.
 (function aimmWireTabSortable(){
+  // Tab order is fixed: drag-reorder is disabled.
+  return;
   if(typeof Sortable === 'undefined') return;
   const tabsContainer = document.querySelector('.tabs');
   if(!tabsContainer) return;
