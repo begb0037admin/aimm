@@ -1615,34 +1615,32 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCaptureCancel{background:#28352d;color:#dce8df;border:1px solid #405648}
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCaptureCancel[hidden]{display:none}
 #eq.oz-mixcheck .mc-spotify-ref-status{color:#8f9b93;font-size:calc(var(--inv-text-scale, 1) * 10px);line-height:1.4}
-#eq.oz-mixcheck .mc-spotify-capture-state{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px 10px;padding:12px 14px;border:1px solid #303a34;border-radius:12px;background:#171b19}
+#eq.oz-mixcheck .mc-spotify-capture-state{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px 10px;padding:12px 14px;border:1px solid rgba(79,195,232,.28);border-radius:12px;background:linear-gradient(180deg,#22323c 0%,#171f27 60%,#101418 100%)}
 #eq.oz-mixcheck .mc-spotify-capture-state[hidden]{display:none}
 #eq.oz-mixcheck .mc-spotify-capture-dot{width:9px;height:9px;border-radius:50%;background:#89928c;grid-row:1}
 #eq.oz-mixcheck .mc-spotify-capture-copy{display:grid;gap:2px;min-width:0}
 #eq.oz-mixcheck .mc-spotify-capture-copy .mc-spotify-capture-name{font-size:calc(var(--inv-text-scale, 1) * 12px);font-weight:700;color:#edf4ef;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#eq.oz-mixcheck .mc-spotify-capture-copy strong{font-size:calc(var(--inv-text-scale, 1) * 10px);letter-spacing:.12em;color:#aeb9b2;text-transform:uppercase}
+#eq.oz-mixcheck .mc-spotify-capture-copy strong{font-size:calc(var(--inv-text-scale, 1) * 10px);letter-spacing:.12em;color:#68d3e6;font-weight:700;text-transform:uppercase}
 #eq.oz-mixcheck .mc-spotify-capture-copy span{font-size:calc(var(--inv-text-scale, 1) * 10px);line-height:1.35;color:#a8b3aa}
 #eq.oz-mixcheck .mc-spotify-capture-state time{font:800 calc(var(--inv-text-scale, 1) * 21px)/1 ui-monospace,SFMono-Regular,monospace;color:#edf4ef;white-space:nowrap}
-#eq.oz-mixcheck .mc-spotify-capture-track{grid-column:1/-1;height:3px;overflow:hidden;border-radius:3px;background:#292f2b}
+#eq.oz-mixcheck .mc-spotify-capture-track{grid-column:1/-1;height:3px;overflow:hidden;border-radius:3px;background:#101418}
 #eq.oz-mixcheck .mc-spotify-capture-track i{display:block;width:24%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#42b8ef,#79e5bb)}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="starting"]{border-color:#65502d;background:#211d15}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="starting"] .mc-spotify-capture-dot{background:#f0b84c}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"]{border-color:#713543;background:#211619}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"] .mc-spotify-capture-dot{background:#fa526a;animation:mcSpotifyCapturePulse 1.15s ease-in-out infinite}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="starting"] .mc-spotify-capture-dot{background:#c9a15a;box-shadow:0 0 6px rgba(201,161,90,.6)}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"] .mc-spotify-capture-dot{background:#4fc3e8;box-shadow:0 0 6px rgba(79,195,232,.6);animation:mcSpotifyCapturePulse 1.15s ease-in-out infinite}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"] .mc-spotify-capture-track i{background:linear-gradient(90deg,#4fc3e8 0%,#c9a15a 100%)}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"] .mc-spotify-capture-track i{animation:mcSpotifyCaptureSweep 1.5s ease-in-out infinite}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"]{border-color:#31556a;background:#141c22}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"] .mc-spotify-capture-dot{background:#4fb9ed;animation:mcSpotifyCapturePulse 1.15s ease-in-out infinite}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"] .mc-spotify-capture-track i{background:linear-gradient(90deg,#42b8ef,#79e5bb);animation-play-state:paused}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"]{border-color:#65502d;background:#211d15}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"] .mc-spotify-capture-dot{background:#f0b84c}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="saved"]{border-color:#2c6843;background:#142018}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="saved"] .mc-spotify-capture-dot{background:#46d58a}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="error"],#eq.oz-mixcheck .mc-spotify-capture-state[data-state="notice"]{border-color:#65502d;background:#211d15}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="error"] .mc-spotify-capture-dot{background:#f0b84c}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"] .mc-spotify-capture-dot{background:#4fc3e8;box-shadow:0 0 6px rgba(79,195,232,.6);animation:mcSpotifyCapturePulse 1.15s ease-in-out infinite}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"] .mc-spotify-capture-track i{background:linear-gradient(90deg,#4fc3e8 0%,#c9a15a 100%);animation-play-state:paused}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"] .mc-spotify-capture-dot{background:#c9a15a;box-shadow:0 0 6px rgba(201,161,90,.6)}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"] .mc-spotify-capture-track i{background:#c9a15a}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="saved"] .mc-spotify-capture-dot{background:#4fc3e8}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="error"] .mc-spotify-capture-dot{background:#c9a15a;box-shadow:0 0 6px rgba(201,161,90,.6)}
 @keyframes mcSpotifyCapturePulse{50%{opacity:.38;transform:scale(.76)}}
 @keyframes mcSpotifyCaptureSweep{0%{transform:translateX(-120%)}100%{transform:translateX(430%)}}
 #eq.oz-mixcheck .mc-spotify-results[hidden]{display:none}
-#eq.oz-mixcheck .mc-spotify-result button{min-height:32px;padding:0 11px;border:1px solid #31563a;border-radius:7px;background:#18281c;color:#d8f5df;font-size:calc(var(--inv-text-scale, 1) * 10px);font-weight:700;cursor:pointer}
+#eq.oz-mixcheck .mc-spotify-result button{min-height:32px;padding:0 11px;border:1px solid rgba(79,195,232,.45);border-radius:7px;background:rgba(79,195,232,.10);color:#cfeaf5;font-size:calc(var(--inv-text-scale, 1) * 10px);font-weight:700;cursor:pointer}
+#eq.oz-mixcheck .mc-spotify-result button:hover{background:rgba(79,195,232,.18);border-color:rgba(79,195,232,.70)}
+#eq.oz-mixcheck .mc-spotify-result button:focus-visible{outline:2px solid #65d3e5;outline-offset:2px}
 #eq.oz-mixcheck .mc-spotify-results{display:grid;gap:7px;max-height:min(78vh,960px);overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
 #eq.oz-mixcheck .mc-spotify-load-more{justify-self:center;min-height:34px;padding:0 16px;border:1px solid #31563a;border-radius:7px;background:#18281c;color:#d8f5df;font-size:calc(var(--inv-text-scale, 1) * 10px);font-weight:700;cursor:pointer}
 #eq.oz-mixcheck .mc-spotify-load-more:disabled{opacity:.55;cursor:wait}
@@ -4486,7 +4484,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.175';
+const AIMM_BUILD = '2026-11-05.176';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
