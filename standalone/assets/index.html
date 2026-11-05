@@ -2852,7 +2852,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
        as the single Settings entry point (it was a toolbar-only shortcut
        pre-R5). data-tab/data-label/
        data-persona-label are unchanged so updateTabLabels() / persona colour
-       rules / drag-reorder (aimmTabOrder_v1) keep working untouched.
+       rules / drag-reorder (aimmTabOrder_v2) keep working untouched.
        Icon markup for MixCheck/Workbench/Library/Insight/Settings is the
        reference file's literal <svg> paths (verbatim, not re-derived) —
        Snapshots' ribbon icon was already pixel-identical to the reference's. -->
@@ -4645,7 +4645,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.234';
+const AIMM_BUILD = '2026-11-05.235';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -9939,12 +9939,12 @@ function updateTabLabels(activeTab){
 document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));t.classList.add('active');document.getElementById(t.dataset.tab).classList.add('active');updateTabLabels(t);if(typeof applyFloatMicVisibility==='function')applyFloatMicVisibility();if(typeof notifyTabChangeIfActive==='function')notifyTabChangeIfActive(t.dataset.tab);});});
 // Tab order persistence — replay Kev's saved order BEFORE the active-tab
 // init IIFE so the initial render lays the tabs out the way he left them.
-// Stored as a JSON array of data-tab ids under aimmTabOrder_v1. Any tabs
+// Stored as a JSON array of data-tab ids under aimmTabOrder_v2. Any tabs
 // missing from the stored order (e.g. future-added tabs like Snapshots
 // before its first save) append at the end so we degrade gracefully.
 (function aimmReplayTabOrder(){
   try{
-    const raw = localStorage.getItem('aimmTabOrder_v1');
+    const raw = localStorage.getItem('aimmTabOrder_v2');
     if(!raw) return;
     const order = JSON.parse(raw);
     if(!Array.isArray(order) || !order.length) return;
@@ -9967,7 +9967,7 @@ document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{do
 // Drag-to-reorder the tab nav via Sortable.js (already loaded globally for
 // the Reference + Workbench drag layers). delay:150 ms press-and-hold so a
 // regular click still fires the tab switch; onEnd persists the new order
-// under aimmTabOrder_v1 for replay on next page load.
+// under aimmTabOrder_v2 for replay on next page load.
 (function aimmWireTabSortable(){
   if(typeof Sortable === 'undefined') return;
   const tabsContainer = document.querySelector('.tabs');
@@ -9983,7 +9983,7 @@ document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{do
         const order = Array.from(tabsContainer.querySelectorAll('.tab'))
           .filter(t => t.dataset.tab && t.dataset.tab !== 'settings')
           .map(t => t.dataset.tab);
-        localStorage.setItem('aimmTabOrder_v1', JSON.stringify(order));
+        localStorage.setItem('aimmTabOrder_v2', JSON.stringify(order));
       }catch(e){ console.warn('[tab-order] save failed', e); }
     }
   });
@@ -12112,7 +12112,7 @@ A "Session Snapshot" is a saved past CHAT, not a source of mix analysis. If Kev 
 
 Tab nav labels are always the function name (MixBus / Mix Check / Insight / etc.). The big pink headline above "Idle" in the panel title bar is the active persona's name — currently always Hope (you), since every tab routes to you. When other personas come online (Markey, Matthew, Katie, Ashley, Lauren) the headline will follow whichever persona owns the active tab.
 
-DRAG-TO-REORDER (May 2026): Kev can press-and-hold any tab in the nav strip and drag it to a new position. The new order persists to localStorage under aimmTabOrder_v1 and replays on next page load. Settings stays last + hidden — it's filtered out of the drag layer. If a future tab ships before he's saved a custom order with it included, it appends to the end so nothing disappears. Visual style on the tab strip is browser-tab folders: active tab gets a raised dark fill with rounded top corners; inactive tabs are recessed text-only with subtle right-side dividers between them.
+DRAG-TO-REORDER (May 2026): Kev can press-and-hold any tab in the nav strip and drag it to a new position. The new order persists to localStorage under aimmTabOrder_v2 and replays on next page load. Settings stays last + hidden — it's filtered out of the drag layer. If a future tab ships before he's saved a custom order with it included, it appends to the end so nothing disappears. Visual style on the tab strip is browser-tab folders: active tab gets a raised dark fill with rounded top corners; inactive tabs are recessed text-only with subtle right-side dividers between them.
 
 TOP TOOLBAR (always visible)
 • Genre selector — picks active genre (trap, hip-hop, R&B, pop, afrobeats, lo-fi). Drives which plugins get the ⭐ top-pick badge in the Plugins tab + MixBus picker.
