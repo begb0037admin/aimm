@@ -2689,9 +2689,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .tabs.oz-tabstrip .tab.oz-tab.active .tab-label{color:var(--mixing-state-ink);font-weight:700}
 @media(max-width:1023px){.tabs.oz-tabstrip{gap:5px;padding:7px 9px}.tabs.oz-tabstrip .tab.oz-tab{gap:6px;min-height:48px;padding:8px 6px}.tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:18px;height:18px}.tabs.oz-tabstrip .tab.oz-tab .tab-label{font-size:calc(var(--inv-text-scale, 1) * 12px)}}
 #hopeRail #aiChatSend,#hopeRail #aiChatSend:hover:not(:disabled){background:var(--mixing-state-fill);color:var(--mixing-state-ink)}
-/* Hope panel cards: keep the rail's existing surface and shadow inside a
-   smooth blue-gold border-box ring; give the transcript and every reply a
-   solid card edge without changing the heading, waveform, or composer controls. */
+/* Hope chat finish: preserve the border-box blue-gold rail ring while giving
+   each transcript message its own card and the quick prompts their pill look. */
 #hopeRail{
   border:1.5px solid transparent;
   background:
@@ -2700,8 +2699,12 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     linear-gradient(145deg,#1b1d20 0%,#15181b 58%,#101214 100%) padding-box,
     linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;
 }
-#hopeRail #aiChatTranscript{background:linear-gradient(180deg,#0f161e 0%,#0b1118 100%);border:1px solid #20303c;border-radius:18px}
-#hopeRail .aichat-msg .body,#hopeRail .aichat-msg:is(.user,.ai,.system,.mixmove,.breakdown,.fixaction,.notebooklm) .body{background:linear-gradient(180deg,#152029 0%,#0f161e 100%);border:1px solid #20303c;border-radius:16px;color:#dfe7ef}
+#hopeRail #aiChatTranscript{background:transparent;border:0;border-radius:0}
+#hopeRail .aichat-transcript{gap:10px}
+#hopeRail .aichat-msg .body,#hopeRail .aichat-msg:is(.user,.ai,.system,.mixmove,.breakdown,.fixaction,.notebooklm) .body{background:linear-gradient(180deg,#152029 0%,#0f161e 100%);border:1px solid #20303c;border-radius:16px;padding:10px 12px;color:#dfe7ef}
+#hopeRail .aichat-msg .cites,#hopeRail .aichat-tool-events{border-top-style:solid}
+#hopeRail .aichat-quick-prompt{border-radius:999px;background:#151a20;border:1px solid #2a3340;color:#b4c0cf;font-size:12px;font-weight:600;padding:7px 14px}
+#hopeRail .aichat-quick-prompt:hover{border-color:rgba(79,195,232,.5)}
 </style>
 </head>
 <body>
@@ -4496,7 +4499,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.180';
+const AIMM_BUILD = '2026-11-05.181';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
