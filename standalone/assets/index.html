@@ -1284,6 +1284,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) > #refDropZone{
   border:1px dashed #333a44;border-radius:9px;padding:26px 20px;
   display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) > #refDropZone{position:relative;isolation:isolate;border:0}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) > #refDropZone::before{content:"";position:absolute;inset:0;padding:1.5px;border-radius:inherit;background:linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%);opacity:.75;pointer-events:none;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
 #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #refDzEmpty{
   display:flex;flex-direction:column;align-items:center;gap:8px;font-size:calc(var(--inv-text-scale, 1) * 13px);color:#9ca3af;cursor:pointer;padding:0}
 #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #refDzEmpty .mc-dz-ico{
@@ -2528,7 +2530,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck #refDzEmpty:focus-visible{outline:2px solid #63d6e4;outline-offset:4px}
 /* Audio Specs: clear values in a calm vertical hierarchy; colour no longer
    implies a quality judgement. The advanced readings stay available on demand. */
-#eq.oz-mixcheck #mcSpecs{padding:var(--aimm-panel-card-inset) var(--aimm-panel-inline-inset) var(--aimm-panel-bottom-inset);background:radial-gradient(circle at 100% 0%, rgba(240,160,70,.14) 0%, rgba(240,160,70,0) 55%), linear-gradient(160deg,#171a1f 0%,#101216 100%);border:1px solid #2a3340;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.4);overflow:auto;min-height:0}
+#eq.oz-mixcheck #mcSpecs{padding:var(--aimm-panel-card-inset) var(--aimm-panel-inline-inset) var(--aimm-panel-bottom-inset);overflow:auto;min-height:0}
+#eq.oz-mixcheck #mcSpecs{border:1.5px solid transparent;border-radius:14px;background:radial-gradient(circle at 100% 0%,rgba(240,160,70,.14) 0%,rgba(240,160,70,0) 55%) padding-box,linear-gradient(160deg,#171a1f 0%,#101216 100%) padding-box,linear-gradient(135deg,rgba(79,195,232,.75) 0%,rgba(74,127,142,.75) 45%,rgba(201,161,90,.75) 100%) border-box;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 #eq.oz-mixcheck #mcSpecs .mc-kick{color:#68d3e6;font-size:calc(var(--inv-text-scale, 1) * 9px);font-weight:700;letter-spacing:.16em;text-transform:uppercase}
 #eq.oz-mixcheck #mcSpecs .mc-kick.mc-specs-heading{display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin:0 0 12px;padding:0}
 #eq.oz-mixcheck #mcSpecs .mc-specs-heading-copy{display:grid;gap:var(--aimm-heading-stack-gap);min-width:0}
@@ -4477,7 +4480,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-04.168';
+const AIMM_BUILD = '2026-11-05.169';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
