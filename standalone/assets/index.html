@@ -2961,7 +2961,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     <span class="chain-toolbar-hint">Per-source templates: 808, vocals, drums, master, FX returns. Tap the floating mic to start a live call with Hope — she reads and edits the chain in real time.</span>
   </div>
   <div class="bus-grid" id="busGrid"></div>
-  <div class="tip-box alt"><strong>How to use:</strong> click "+ Add plugin" on any bus, search, click to add. ↑/↓ to reorder, × to remove. Bring the chain into a chat with Claude in Hope's chat, then hit <strong>Snapshot → Claude chat</strong> to save the discussion as a Session Snapshot pill next to START CALL.</div>
+  <div class="tip-box alt mixbus-note"><strong>How to use:</strong> click "+ Add plugin" on any bus, search, click to add. ↑/↓ to reorder, × to remove. Bring the chain into a chat with Claude in Hope's chat, then hit <strong>Snapshot → Claude chat</strong> to save the discussion as a Session Snapshot pill next to START CALL.</div>
 </div>
 
 <!-- Repair tab (#meter) retired — Troubleshooter moved to Mix Check (#eq), P-C 2026-06-04 -->
@@ -3996,6 +3996,55 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   #eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture){transition:none}
 }
 
+/* MixBus follows the Mix Check and Plugins charcoal card language. */
+.tabs.oz-tabstrip .tab.oz-tab[data-tab="chain"].active{background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700}
+.tabs.oz-tabstrip .tab.oz-tab[data-tab="chain"].active .tab-ico,.tabs.oz-tabstrip .tab.oz-tab[data-tab="chain"].active .tab-label{color:var(--mixing-state-ink);font-weight:700}
+#chain{box-sizing:border-box;padding:14px;border:1px solid transparent;border-radius:10px;background:linear-gradient(#1b1d20,#1b1d20) padding-box,linear-gradient(135deg,rgba(79,195,232,.35) 0%,rgba(74,127,142,.35) 45%,rgba(201,161,90,.35) 100%) border-box}
+#chain .chain-toolbar{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:0;background:transparent;border:0;border-radius:0}
+#chain .chain-toolbar-hint{color:#87919b}
+#chain .recipe-card,#chain .bus-col{background:#1b1d20;border:1px solid #2c3034;border-radius:10px;padding:14px}
+#chain .recipe-card{margin:0;padding:12px 14px}
+#chain .recipe-card h5{color:#9caab5;letter-spacing:.12em}
+#chain .recipe-card p{color:#c0c8cf}
+#chain .recipe-card .dx,#chain .recipe-alt{color:#87919b}
+#chain .recipe-step{border-bottom-color:#2c3034}
+#chain .recipe-step .num{color:#72c8df}
+#chain .recipe-step .plugin{color:#e1e7eb}
+#chain .recipe-step .setting{color:#a8b1b9}
+#chain .bus-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+#chain .bus-col{min-width:0;min-height:200px}
+#chain .bus-col h4{font:600 10px/1.4 "SF Mono",ui-monospace,monospace;letter-spacing:.18em;color:#7f8993;text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #2c3034}
+#chain .bus-col h4 .count{color:#87919b;font:500 10px/1.4 "SF Mono",ui-monospace,monospace;letter-spacing:.04em}
+#chain .bus-col h4 .clear-bus-btn{border-radius:999px}
+#chain .chain-item{background:#151719;border-color:#2c3034}
+#chain .chain-list .sortable-ghost{background:rgba(79,195,232,.08);border-color:rgba(79,195,232,.35)}
+#chain .chain-item.has-notes{border-color:#435763}
+#chain .chain-head .name{color:#e1e7eb}
+#chain .chain-item button{color:#71787e}
+#chain .chain-item button{transition:transform .16s ease,box-shadow .16s ease,color .16s ease,border-color .16s ease}
+#chain .chain-item button:hover{color:#c5d8de;transform:translateY(-2px);box-shadow:0 0 12px rgba(79,195,232,.15),0 0 18px rgba(201,161,90,.1)}
+#chain .chain-item button.notes-btn.has{color:#8dd5e7}
+#chain .chain-notes-row{border-top-color:#39434a}
+#chain .chain-notes{color:#d2dbe1}
+#chain .chain-notes:hover{background:#202428;border-color:#435763}
+#chain .chain-notes .nlabel{color:#8dd5e7}
+#chain .chain-notes-edit{background:#151719;color:#e1e7eb;border-color:#435763}
+#chain .chain-empty{color:#7f8993}
+#chain .recipe-card .recipe-step:last-child{border-bottom:0}
+#chain .tip-box.alt{color:#87919b;background:#151719;border:1px solid #292e33;border-radius:8px;padding:9px 11px;margin:12px 0 0;font-size:calc(var(--inv-text-scale, 1) * 10px);line-height:1.5}
+#chain .tip-box.alt strong{color:#aab4bd}
+#chain .btn{transition:transform 180ms ease,box-shadow 180ms ease,color 180ms ease,border-color 180ms ease,background-color 180ms ease}
+#chain .btn.ghost{background:transparent;color:#71787e;border:1px solid transparent;border-radius:999px;outline:none}
+#chain .btn.ghost:hover:not(:disabled){background:transparent;color:#e1e7eb;border-color:transparent;transform:translateY(-2px);box-shadow:0 0 0 1px rgba(79,195,232,.28),0 0 14px rgba(79,195,232,.40),0 0 24px rgba(201,161,90,.28)}
+#chain .btn:disabled{opacity:.45;transform:none;box-shadow:none;cursor:not-allowed}
+#chain .btn:is(.selected,.active,.on,[aria-pressed="true"]),#chain .btn:active:not(:disabled),#chain .chain-item button:is(.selected,.active,.on,[aria-pressed="true"],.has),#chain .chain-item button:active{background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;color:var(--mixing-state-ink);font-weight:700}
+#chain .btn:is(.selected,.active,.on,[aria-pressed="true"]):hover:not(:disabled),#chain .chain-item button:is(.selected,.active,.on,[aria-pressed="true"],.has):hover{background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;transform:translateY(-2px);box-shadow:0 0 0 1px rgba(79,195,232,.28),0 0 14px rgba(79,195,232,.40),0 0 24px rgba(201,161,90,.28)}
+#chain .chain-item button:disabled{opacity:.45;transform:none;box-shadow:none;cursor:not-allowed}
+@media(max-width:1200px){#chain .bus-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){#chain{padding:12px}#chain .bus-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#chain .chain-toolbar{align-items:flex-start}}
+@media(max-width:520px){#chain .bus-grid{grid-template-columns:minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){#chain .btn,#chain .chain-item button{transition:none}#chain .btn.ghost:hover:not(:disabled),#chain .btn:is(.selected,.active,.on,[aria-pressed="true"]):hover:not(:disabled),#chain .chain-item button:hover{transform:none}}
+
 </style>
   <div id="pluginInventoryUI" class="inv-shell">
     <div id="invLayout" class="inv-layout">
@@ -4586,7 +4635,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.220';
+const AIMM_BUILD = '2026-11-05.222';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8450,7 +8499,7 @@ function removeCustom(name){
 document.getElementById('genreSelect').onchange = e => {
   STATE.genre = e.target.value;
   renderLibrary();
-  renderRecipes();
+  renderGenreRecipes();
   saveState();
   // After updating the library/recipes, offer a per-bus picker so the chain
   // builder can also follow the genre change. Cancel keeps chains untouched.
@@ -8590,7 +8639,7 @@ const RECIPES = {
     {h:"Master tame", b:"Sonnox Oxford Inflator 30 % effect · Sonnox Oxford EQ shelf -1.5 dB @ 250 Hz · Sonnox Oxford Limiter → -16 LUFS."}
   ]
 };
-function renderRecipes(){
+function renderGenreRecipes(){
   const strip=document.getElementById('recipesStrip'); if(!strip) return;
   const list=RECIPES[STATE.genre]||[];
   if(!list.length){ strip.innerHTML=''; return; }
@@ -9132,7 +9181,7 @@ function applyCapturedSnap(s){
   if(s.platform){const ps=document.getElementById('platformSelect');if(ps)ps.value=s.platform;}
   renderChain(); renderMeters();
   METERS.forEach(m=>{const v=STATE.meters?.[m.id];if(v==null)return;const el=document.getElementById('meter-'+m.id);if(el)el.value=v;});
-  updateMeters(); renderSymptoms(); renderLibrary(); renderRecipes(); saveState();
+  updateMeters(); renderSymptoms(); renderLibrary(); renderGenreRecipes(); saveState();
 }
 
 // cloneWorkbenchState — capture current workbench as a plain-JSON snapshot.
@@ -20740,7 +20789,7 @@ try { applyCollapsedStatic(); } catch(e){ console.warn('[collapse] static init f
 // above the main script). If somehow it isn't, the helper retries with backoff.
 // Voice Tools customisation was removed — its panel only ships built-in cards.
 troubleInit();
-renderRecipes();
+renderGenreRecipes();
 // Load YouTube KB manifest — async, non-blocking. YT_KB.loaded becomes true
 // once the fetch resolves; buildYtKbDigest() returns '' until then.
 ensureYtKbLoaded();
