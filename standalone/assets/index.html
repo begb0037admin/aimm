@@ -528,7 +528,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .aichat-msg .body strong{color:#f9fafb}
 .aichat-msg .cites{margin-top:8px;font-size:calc(var(--inv-text-scale, 1) * 11px);color:#9ca3af;padding-top:6px;border-top:1px dashed #374151}
 .aichat-msg .cites a{color:#9ca3af;margin-right:8px;display:inline-block;text-decoration:underline}
-.aichat-msg.thinking .body{font-style:italic;color:#9ca3af;display:flex;align-items:center;gap:10px}
+.aichat-msg.thinking .body{font-style:italic;font-size:12px;color:#87919b;display:flex;align-items:center;gap:10px}
 .aichat-thinking-label{flex:1}
 .aichat-thinking-dots{display:inline-flex;gap:4px;flex-shrink:0}
 .aichat-thinking-dots span{width:6px;height:6px;background:#fff;border-radius:50%;animation:aichat-dot 1.4s infinite ease-in-out;opacity:.5}
@@ -4631,7 +4631,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.229';
+const AIMM_BUILD = '2026-11-05.230';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14465,21 +14465,6 @@ function aichatRender(){
         }).join(' · ');
         cites = `<div class="cites">Sources: ${links}</div>`;
       }
-      // Tool-use badges — show when Claude executed a client tool (add/delete/list tile).
-      let toolBadges = '';
-      if (m.role === 'ai' && Array.isArray(m.toolEvents) && m.toolEvents.length){
-        const items = m.toolEvents.map(ev => {
-          const ok = ev.result && ev.result.ok !== false;
-          const cls = ok ? 'ok' : 'err';
-          const sym = ok ? '✓' : '✗';
-          let label = ev.name;
-          if (ev.name === 'add_symptom_tile' && ev.input && ev.input.label) label = `Added tile · ${ev.input.label}`;
-          else if (ev.name === 'delete_symptom_tile') label = `Removed tile · ${ev.result && ev.result.deleted ? ev.result.deleted : (ev.result && ev.result.error ? ev.result.error : ev.input.id)}`;
-          else if (ev.name === 'list_symptom_tiles') label = `Listed ${(ev.result && Array.isArray(ev.result.tiles) ? ev.result.tiles.length : '?')} tiles`;
-          return `<span class="aichat-tool-event ${cls}" title="${escapeHtml(ev.name)}">${sym} ${escapeHtml(label)}</span>`;
-        }).join('');
-        toolBadges = `<div class="aichat-tool-events">${items}</div>`;
-      }
       // Reply read-back controls use Hope's ElevenLabs voice through the Worker;
       // they do not modify the message content or open a live voice session.
       const speakBtn = m.role === 'ai'
@@ -14494,7 +14479,7 @@ function aichatRender(){
       if (m.role !== 'system' || isNbPrompt || isMixMove){
         copyBtn = `<button class="aichat-copy-btn" id="aichatCopyBtn-${i}" onclick="aichatCopyMessage(${i})" title="Copy message text">Copy</button>`;
       }
-      let actions = (copyBtn || speakBtn || toolBadges) ? `<div class="aichat-actions-row">${copyBtn}${speakBtn}${toolBadges}</div>` : '';
+      let actions = (copyBtn || speakBtn) ? `<div class="aichat-actions-row">${copyBtn}${speakBtn}</div>` : '';
       return `<div class="${cls}" data-msg-idx="${i}"><div class="who">${who}</div><div class="body"><div class="aichat-msg-content" data-msg-content="${i}">${body}</div>${cites}${actions}</div></div>`;
     }).join('');
     aichatScrollToBottom();
@@ -15277,6 +15262,13 @@ async function hopeUsageReadLunaStream(reader,decoder,onDelta=()=>{}){
   buffer+=decoder.decode();if(buffer.trim())event(buffer);
   return{text,response,terminal,errorMessage,usage};
 }
+function hopeToolThinkingLabel(name){
+  if(name==='search_yt_knowledge')return'Thinking · searching knowledge base';
+  if(name==='read_yt_knowledge')return'Thinking · reading knowledge base';
+  if(name==='web_search'||name==='web_search_fallback')return'Thinking · searching the web';
+  return'Thinking · using tools';
+}
+
 async function hopeUsageExecuteLunaCall(call,{base,token,signal,onStatus}={}){
   let args={};try{args=JSON.parse(call.arguments||'{}');}catch(_){args={};}
   const allowed=hopeUsageSelectTools(HOPE_KB_DECISION.question).some(tool=>tool.name===call.name);
@@ -15613,7 +15605,11 @@ async function hopeUsageSendLunaTurn(options={}){
       if(!calls.length){takeSpeechSentences(true);break;}
       inputItems.push(...(completed.output||[]));
       for(const call of calls){
-        const executed=await hopeUsageExecuteLunaCall(call,{base,token,signal:abort.signal,onStatus:label=>{setLabel(label);aichatStatus(label+'…','busy');}});
+        setLabel(hopeToolThinkingLabel(call.name));
+        let executed;
+        try{
+          executed=await hopeUsageExecuteLunaCall(call,{base,token,signal:abort.signal,onStatus:label=>aichatStatus(label+'…','busy')});
+        }finally{setLabel('Thinking');}
         const {args,result}=executed;
         webSearchRequests+=Number(result&&result.web_search_requests)||0;
         toolEvents.push({name:call.name,input:args,result});
@@ -15861,10 +15857,13 @@ async function aichatSend(options={}){
       const toolResults = [];
       for (const tu of clientToolUses){
         aichatStatus(`Running ${tu.name}…`, 'busy');
-        setThinkingLabel(`Running ${tu.name}`);
-        const result = typeof window.handleToolCall === 'function'
-          ? await window.handleToolCall(tu.name, tu.input || {})
-          : await executeAichatTool(tu.name, tu.input || {});
+        setThinkingLabel(hopeToolThinkingLabel(tu.name));
+        let result;
+        try{
+          result = typeof window.handleToolCall === 'function'
+            ? await window.handleToolCall(tu.name, tu.input || {})
+            : await executeAichatTool(tu.name, tu.input || {});
+        }finally{setThinkingLabel('Thinking');}
         toolEvents.push({ name: tu.name, input: tu.input || {}, result });
         toolResults.push({
           type: 'tool_result',
