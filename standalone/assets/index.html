@@ -2642,75 +2642,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 @media(max-width:720px){#eq.oz-mixcheck .oz-spec-card{padding:14px;border-radius:14px}#eq.oz-mixcheck .mc-saved-targets-toggle{grid-template-columns:minmax(0,1fr) 22px;gap:4px 10px;padding:13px 14px}#eq.oz-mixcheck .mc-saved-targets-label{grid-column:1;grid-row:1}#eq.oz-mixcheck .mc-saved-targets-active{grid-column:1;grid-row:2;text-align:left}#eq.oz-mixcheck .mc-saved-targets-plus{grid-column:2;grid-row:1 / span 2}#eq.oz-mixcheck .mc-spotify-reference{padding:16px}#eq.oz-mixcheck .mc-spotify-ref-controls{grid-template-columns:1fr 1fr;gap:8px}#eq.oz-mixcheck .mc-spotify-ref-controls input{grid-column:1/-1}#eq.oz-mixcheck .mc-spotify-ref-controls button{min-height:52px;padding:0 18px;white-space:normal}#eq.oz-mixcheck .mc-spectrum-legend{gap:12px;flex-wrap:wrap}#eq.oz-mixcheck .mc-spectrum-legend .mc-spectrum-units{margin-left:auto}}
 @media(max-width:460px){#eq.oz-mixcheck .mc-saved-target-option{grid-template-columns:minmax(0,1fr);gap:3px}#eq.oz-mixcheck .mc-saved-target-option-source{text-align:left}#eq.oz-mixcheck .mc-saved-target-delete{min-width:68px;padding:0 8px}#eq.oz-mixcheck .mc-saved-target-rename-controls{grid-template-columns:minmax(0,1fr)}#eq.oz-mixcheck .mc-spotify-ref-controls button{font-size:calc(var(--inv-text-scale, 1) * 14px)}}
 
-/* Unify the Mix Check panel actions with the Hope chat suggestion pills. */
-#eq.oz-mixcheck #mcSpecs .mc-specs-source button,
-#eq.oz-mixcheck .mc-spotify-ref-controls button,
-#eq.oz-mixcheck .mc-spotify-result-actions button,
-#eq.oz-mixcheck .mc-spotify-load-more,
-#eq.oz-mixcheck .mc-saved-target-option,
-#eq.oz-mixcheck .mc-saved-target-delete,
-#eq.oz-mixcheck .mc-saved-target-rename-controls button,
-#eq.oz-mixcheck .mcs-actions button{
-  border:1px solid #2a3340;
-  border-radius:999px;
-  background:#151a20;
-  color:#b4c0cf;
-  font-family:Inter,-apple-system,sans-serif;
-  font-size:calc(var(--inv-text-scale, 1) * 12px);
-  font-weight:600;
-}
-#eq.oz-mixcheck #mcSpecs .mc-specs-source button{padding:7px 14px}
-#eq.oz-mixcheck .mc-spotify-ref-controls button{padding:0 18px}
-#eq.oz-mixcheck .mc-spotify-result-actions button{padding:0 11px}
-#eq.oz-mixcheck .mc-spotify-load-more{padding:0 16px}
-#eq.oz-mixcheck .mc-saved-target-option{padding:10px 14px;background:#151a20}
-#eq.oz-mixcheck .mc-saved-target-delete{padding:0 12px}
-#eq.oz-mixcheck .mc-saved-target-rename-controls button{padding:0 14px}
-#eq.oz-mixcheck .mcs-actions button{padding:6px 9px}
-#eq.oz-mixcheck #mcSpecs .mc-specs-source button:hover,
-#eq.oz-mixcheck .mc-spotify-ref-controls button:hover:not(:disabled),
-#eq.oz-mixcheck .mc-spotify-result-actions button:hover,
-#eq.oz-mixcheck .mc-spotify-load-more:hover:not(:disabled),
-#eq.oz-mixcheck .mc-saved-target-option:hover,
-#eq.oz-mixcheck .mc-saved-target-delete:hover,
-#eq.oz-mixcheck .mc-saved-target-rename-controls button:hover:not(:disabled),
-#eq.oz-mixcheck .mcs-actions button:hover{
-  border-color:rgba(79,195,232,.5);
-  background:#151a20;
-  color:#e6edf3;
-}
-#eq.oz-mixcheck #mcSpecs .mc-specs-source button[aria-pressed="true"],
-#eq.oz-mixcheck .mc-saved-target-option[aria-pressed="true"],
-#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCapture{
-  border:1px solid #4f7f8c;
-  background:#1c2a33;
-  color:#f2f6fa;
-}
-#eq.oz-mixcheck #mcSpecs .mc-specs-source button[aria-pressed="true"]:hover,
-#eq.oz-mixcheck .mc-saved-target-option[aria-pressed="true"]:hover,
-#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCapture:hover{
-  border-color:#4f7f8c;
-  background:#1c2a33;
-  color:#f2f6fa;
-}
-#eq.oz-mixcheck #mcSpecs #mcSpecsMix,
-#eq.oz-mixcheck #mcSpecs #mcSpecsSpotify{border:1px solid #2a3340;border-radius:999px;background:#151a20;color:#b4c0cf}
-#eq.oz-mixcheck #mcSpecs #mcSpecsMix:hover,
-#eq.oz-mixcheck #mcSpecs #mcSpecsSpotify:hover{border-color:rgba(79,195,232,.5);background:#151a20;color:#e6edf3}
-#eq.oz-mixcheck #mcSpecs #mcSpecsMix[aria-pressed="true"],
-#eq.oz-mixcheck #mcSpecs #mcSpecsSpotify[aria-pressed="true"],
-#eq.oz-mixcheck #mcSpecs #mcSpecsMix[aria-pressed="true"]:hover,
-#eq.oz-mixcheck #mcSpecs #mcSpecsSpotify[aria-pressed="true"]:hover{border:1px solid #4f7f8c;background:#1c2a33;color:#f2f6fa}
-#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop,
-#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCaptureCancel{background:#151a20;color:#b4c0cf}
-#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyConnect,
-#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefMatch{border:1px solid #2a3340;background:#151a20;color:#b4c0cf}
-#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyConnect:hover:not(:disabled),
-#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefMatch:hover:not(:disabled){border-color:rgba(79,195,232,.5);background:#151a20;color:#e6edf3}
-#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop:hover,
-#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCaptureCancel:hover{background:#151a20;color:#e6edf3;border-color:rgba(79,195,232,.5)}
-#eq.oz-mixcheck .mc-saved-target-delete:hover{background:#151a20;color:#e6edf3}
-
 /* AIMM coach identity: the supplied wordmark colours, with Hope retained as
    the conversational persona in her greeting and replies. */
 #hopeRail .rail-head .oz-rail-title{position:relative;min-width:0;overflow:visible}
@@ -4031,72 +3962,10 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 /* Audio Specs source pills share the Hope composer button proportions. */
 #eq.oz-mixcheck #mcSpecs .mc-kick.mc-specs-heading{align-items:center;text-align:center}
 #eq.oz-mixcheck #mcSpecs .mc-specs-heading-copy{width:100%;text-align:center}
-#eq.oz-mixcheck #mcSpecs .mc-specs-source{width:100%;flex:1 1 auto;align-self:stretch;display:flex;justify-content:center;gap:8px;text-align:center}
 #eq.oz-mixcheck #mcSpecs .mc-specs-source{display:none}
-#eq.oz-mixcheck #mcSpecs .mc-specs-source button{display:flex;align-items:center;justify-content:center;flex:1 1 0;min-width:0;height:38px;min-height:38px;max-height:38px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1}
 
-/* Teal blue pill ring and consistent hover feedback for Audio Specs and Hope. */
-#eq.oz-mixcheck #mcSpecs .mc-specs-source button,
-#eq.oz-mixcheck .mc-spotify-ref-controls button,
-#eq.oz-mixcheck .mc-spotify-result-actions button,
-#eq.oz-mixcheck .mc-spotify-load-more,
-#eq.oz-mixcheck .mc-saved-target-option,
-#eq.oz-mixcheck .mc-saved-target-delete,
-#eq.oz-mixcheck .mc-saved-target-rename-controls button,
-#eq.oz-mixcheck .mcs-actions button,
-#hopeRail .aichat-compose .send-col #aiChatSend,
-#hopeRail .aichat-compose .send-col #aiChatClear,
-#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,
-#hopeRail .aichat-compose .send-col #hopeAccountBtn,
-#hopeRail .aichat-quick-prompt{border:1px solid rgba(79,195,232,.5);border-radius:999px;transition:border-color 180ms ease,box-shadow 180ms ease}
-#eq.oz-mixcheck #mcSpecs .mc-specs-source button,
-#eq.oz-mixcheck .mc-spotify-ref-controls button,
-#eq.oz-mixcheck .mc-spotify-result-actions button,
-#eq.oz-mixcheck .mc-spotify-load-more,
-#eq.oz-mixcheck .mc-saved-target-option,
-#eq.oz-mixcheck .mc-saved-target-delete,
-#eq.oz-mixcheck .mc-saved-target-rename-controls button,
-#eq.oz-mixcheck .mcs-actions button,
-#eq.oz-mixcheck .mc-spotify-result-art,
-#hopeRail .aichat-compose .send-col #aiChatSend,
-#hopeRail .aichat-compose .send-col #aiChatClear,
-#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,
-#hopeRail .aichat-compose .send-col #hopeAccountBtn,
-#hopeRail .aichat-quick-prompt{cursor:pointer}
-#eq.oz-mixcheck #mcSpecs .mc-specs-source button[aria-pressed="true"],
-#eq.oz-mixcheck .mc-saved-target-option[aria-pressed="true"]{border-color:rgba(79,195,232,.85)}
-#eq.oz-mixcheck #mcSpecs .mc-specs-source button:hover:not(:disabled),
-#eq.oz-mixcheck .mc-spotify-ref-controls button:hover:not(:disabled),
-#eq.oz-mixcheck .mc-spotify-result-actions button:hover:not(:disabled),
-#eq.oz-mixcheck .mc-spotify-load-more:hover:not(:disabled),
-#eq.oz-mixcheck .mc-saved-target-option:hover,
-#eq.oz-mixcheck .mc-saved-target-delete:hover,
-#eq.oz-mixcheck .mc-saved-target-rename-controls button:hover:not(:disabled),
-#eq.oz-mixcheck .mcs-actions button:hover,
-#hopeRail .aichat-compose .send-col #aiChatSend:hover:not(:disabled),
-#hopeRail .aichat-compose .send-col #aiChatClear:hover:not(:disabled),
-#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn:hover:not(:disabled),
-#hopeRail .aichat-compose .send-col #hopeAccountBtn:hover:not(:disabled),
-#hopeRail .aichat-quick-prompt:hover{border-color:rgba(79,195,232,.85);box-shadow:0 0 12px rgba(79,195,232,.35)}
-#eq.oz-mixcheck .mc-saved-target-option:hover{background:#161b21}
-#eq.oz-mixcheck .mc-saved-target-delete:hover{background:#161b21}
+#eq.oz-mixcheck .mc-spotify-result-art{cursor:pointer}
 #eq.oz-mixcheck .mc-spotify-result:hover{border-color:rgba(79,195,232,.6);background:#161b21}
-#hopeRail .aichat-quick-prompt:hover{background:#161b21}
-@media(prefers-reduced-motion:reduce){
-  #eq.oz-mixcheck #mcSpecs .mc-specs-source button,
-  #eq.oz-mixcheck .mc-spotify-ref-controls button,
-  #eq.oz-mixcheck .mc-spotify-result-actions button,
-  #eq.oz-mixcheck .mc-spotify-load-more,
-  #eq.oz-mixcheck .mc-saved-target-option,
-  #eq.oz-mixcheck .mc-saved-target-delete,
-  #eq.oz-mixcheck .mc-saved-target-rename-controls button,
-  #eq.oz-mixcheck .mcs-actions button,
-  #hopeRail .aichat-compose .send-col #aiChatSend,
-  #hopeRail .aichat-compose .send-col #aiChatClear,
-  #hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,
-  #hopeRail .aichat-compose .send-col #hopeAccountBtn,
-  #hopeRail .aichat-quick-prompt{transition:none}
-}
 /* Active Mix Check tab: smooth blue-gold border-box ring. */
 .tabs.oz-tabstrip .tab.oz-tab[data-tab="eq"].active{background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;box-shadow:none;outline:none}
 
@@ -4690,7 +4559,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.213';
+const AIMM_BUILD = '2026-11-05.214';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
