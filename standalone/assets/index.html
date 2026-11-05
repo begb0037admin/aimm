@@ -3986,11 +3986,11 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]){background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700}
 #eq.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]) .mc-workspace-mode-icon{color:var(--mixing-state-ink);stroke:currentColor}
 #hopeRail #aiChatSend:not(:disabled),
-#eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture){background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700;transition:filter 180ms ease,box-shadow 180ms ease}
+#eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture){background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700;transition:background 200ms ease,color 200ms ease,border-color 200ms ease,box-shadow 200ms ease}
 #hopeRail #aiChatSend:hover:not(:disabled),
-#eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture):hover:not(:disabled){filter:brightness(1.12);box-shadow:0 0 14px rgba(79,195,232,.35)}
+#eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture):hover:not(:disabled){background:linear-gradient(90deg,#6fe3ff 0%,#8ee6e8 50%,#e8c07a 100%);border-color:transparent;color:#07150c;box-shadow:0 0 18px rgba(111,227,255,.55),0 0 30px rgba(232,192,122,.35)}
 #hopeRail #aiChatSend:disabled,
-#eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture):disabled{background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;filter:none;opacity:.45;color:var(--mixing-state-ink);font-weight:700;transition:filter 180ms ease,box-shadow 180ms ease}
+#eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture):disabled{background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;filter:none;opacity:.45;color:var(--mixing-state-ink);font-weight:700;transition:background 200ms ease,color 200ms ease,border-color 200ms ease,box-shadow 200ms ease}
 @media(prefers-reduced-motion:reduce){
   #hopeRail #aiChatSend:not(:disabled),
   #eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture){transition:none}
@@ -4586,7 +4586,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.219';
+const AIMM_BUILD = '2026-11-05.220';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
