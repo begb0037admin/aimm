@@ -1811,13 +1811,13 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
    literal "RIGHT: Hope panel" block (lines 208-261), not re-derived. ── */
 @keyframes ozBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
 
-#hopeRail{background:#1b1d20;border-left:1px solid #2c3034}
+#hopeRail{background:radial-gradient(ellipse 60% 55% at 0% 0%,rgba(74,124,140,.22),transparent 60%),radial-gradient(ellipse 50% 45% at 100% 0%,rgba(201,161,90,.10),transparent 60%),linear-gradient(180deg,#131b25 0%,#0d131c 100%);border:1px solid #20303c;border-radius:18px}
 
 /* Header — avatar orb + name/status + collapse chip, matches the
    reference's rail-head row exactly (gap:11px, 11px bottom padding,
    1px #2c3034 border, 10px margin-bottom in the reference; adapted here
    to the app's existing .rail-head/.rail-body split). */
-#hopeRail .rail-head{background:#1b1d20;border-bottom:1px solid #2c3034;color:#f2f4f5;gap:11px;padding:12px 14px;justify-content:flex-start}
+#hopeRail .rail-head{background:transparent;border-bottom:1px solid #2c3034;color:#f2f4f5;gap:11px;padding:12px 14px;justify-content:flex-start}
 #hopeRail .oz-rail-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:radial-gradient(circle at 34% 30%,#e8ddff,#5aa9e6 45%,#5b3f9e 86%);box-shadow:0 0 18px #5aa9e655;animation:ozBreathe 4s ease-in-out infinite}
 #hopeRail .oz-rail-title{display:flex;flex-direction:column;min-width:0;flex:1;overflow:hidden}
 #hopeRail .oz-rail-name{font-weight:800;font-size:calc(var(--inv-text-scale, 1) * 13px);line-height:1.2;color:#f2f4f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1872,8 +1872,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .aichat-msg .body img.aichat-attach{max-width:100%}
 #hopeRail .aichat-msg.user .who{color:#71787e}
 #hopeRail .aichat-msg.user .body{background:#232629;border:1px solid #2c3034;color:#c7ccd0}
-#hopeRail .aichat-msg.ai .who,#hopeRail .aichat-msg.system .who{color:#a78bfa}
-#hopeRail .aichat-msg.ai .body,#hopeRail .aichat-msg.system .body{background:#14212b;border:1px solid #1c3c52;color:#c7ccd0}
+#hopeRail .aichat-msg.ai .who,#hopeRail .aichat-msg.system .who{color:#68d3e6;letter-spacing:.14em}
+#hopeRail .aichat-msg.ai .body,#hopeRail .aichat-msg.system .body{background:linear-gradient(180deg,#152029 0%,#0f161e 100%);border:1px solid #20303c;border-radius:16px;color:#dfe7ef}
 #hopeRail .aichat-msg.mixmove .body{background:#1c1f22;border:1px solid #2c3034;border-left:3px solid #a78bfa;border-radius:6px}
 
 /* ── R3 STEP 7 — HOPE TRANSCRIPT CARDS (Markey) ─────────────────────────
@@ -1947,7 +1947,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
    guessed at. Chip styling below is pre-positioned so it matches the
    reference instantly if that block is ever revived. */
 #hopeRail .aichat-quick-prompts{background:transparent;border:none;padding:0;flex-direction:row;flex-wrap:wrap;gap:5px}
-#hopeRail .aichat-quick-prompt{background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-size:calc(var(--inv-text-scale, 1) * 11px);padding:5px 11px;width:auto}
+#hopeRail .aichat-quick-prompt{background:#151a20;border:1px solid #2a3340;color:#b4c0cf;border-radius:999px;font-size:calc(var(--inv-text-scale, 1) * 11px);padding:5px 11px;width:auto}
+#hopeRail .aichat-quick-prompt:hover{border-color:rgba(79,195,232,.5)}
 
 /* == R3 SHELL GRID (Kevin 2026-08-30) =====================================
    3-column theme, identical on every tab: [tab left rail] [content] [Hope rail].
@@ -4485,7 +4486,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.177';
+const AIMM_BUILD = '2026-11-05.178';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
