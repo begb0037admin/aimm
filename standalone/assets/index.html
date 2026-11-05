@@ -1923,11 +1923,11 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 
 /* Composer — pill input + gradient Send, reference's exact chip language
    (radius:999px, #232629 fill, #2c3034 border, gradient #2f6fae→#5aa9e6). */
-#hopeRail .aichat-compose{background:transparent;border:none;padding:0;gap:7px;align-items:stretch;flex-direction:column} /* R3 2026-08-31: textarea on top, buttons row below */
+#hopeRail .aichat-compose{background:transparent;border:none;padding:16px;margin-top:18px;gap:14px;align-items:stretch;flex-direction:column} /* R3 2026-08-31: textarea on top, buttons row below */
 #hopeRail .aichat-compose textarea{background:#232629;border:1px solid #2c3034;border-radius:16px;color:#e8ebed;font-size:calc(var(--inv-text-scale, 1) * 12.5px);font-family:Inter,-apple-system,sans-serif}
 #hopeRail .aichat-compose textarea:focus{border-color:#5aa9e6}
 /* The four composer pills form two equal-width rows beneath the textarea. */
-#hopeRail .aichat-compose .send-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:34px 34px;align-items:stretch;gap:6px;min-width:0;max-width:none;width:100%;margin-top:2px}
+#hopeRail .aichat-compose .send-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:34px 34px;align-items:stretch;column-gap:12px;row-gap:12px;min-width:0;max-width:none;width:100%;margin:0 0 2px}
 #hopeRail .aichat-compose .send-col button{width:auto}
 #hopeRail .aichat-compose .send-col #aiChatSend,#hopeRail .aichat-compose .send-col #aiChatClear,#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,#hopeRail .aichat-compose .send-col #hopeAccountBtn{min-width:0;height:34px;box-sizing:border-box;margin:0;padding:0 6px;border-radius:999px;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap}
 #hopeRail #aiChatSend{flex:0 0 auto;background:linear-gradient(90deg,#2fa1e6,#a557f4);color:#0d1211;border-radius:999px;font-weight:700;font-size:calc(var(--inv-text-scale, 1) * 12px);padding:10px 20px}
@@ -1942,6 +1942,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail #aiChatClearInput{flex:1 1 auto;background:transparent;border:1px solid #2c3034;color:#71787e;border-radius:999px;font-size:calc(var(--inv-text-scale, 1) * 11px);line-height:1.25;padding:9px 10px;white-space:nowrap}
 #hopeRail #aiChatClearInput:hover{color:#ff8a8a;border-color:#5a2626}
 #hopeRail .aichat-compose .aichat-status{flex:1 1 100%;font-size:calc(var(--inv-text-scale, 1) * 8.5px);text-align:center}
+#hopeRail #hopeUsageStatus{padding:0 8px;line-height:1.6;font-size:12px;color:#87919b}
 #hopeRail .aichat-foot{color:#71787e;font-size:calc(var(--inv-text-scale, 1) * 10px)}
 #hopeRail .aichat-cost{color:#5aa9e6}
 #hopeRail .aichat-status{color:#9aa0a6}
@@ -2158,7 +2159,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
      flex:0 0 auto — a long transcript scrolls INSIDE the transcript area; the
    transcript scrolls inside the panel, the composer stays at the bottom, and
    chat history cannot set the desktop grid row's minimum height. */
-@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px;min-height:0;overflow:hidden;contain:size}#hopeRail .rail-head{flex:0 0 auto;padding:12px 18px 18px;border-bottom:1px solid #2c3034}/* board item 18: rail-head padding-top 30->12, mirror of the base rule (item 4b re-track) */#hopeRail .rail-body{flex:1 1 0;height:0;min-height:0;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1 1 0;height:0;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 0;height:0;min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034;padding:14px 16px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font: 400 calc(var(--inv-text-scale, 1) * 12px) Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font: 700 calc(var(--inv-text-scale, 1) * 12px) Inter,sans-serif}}
+@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px;min-height:0;overflow:hidden;contain:size}#hopeRail .rail-head{flex:0 0 auto;padding:12px 18px 18px;border-bottom:1px solid #2c3034}/* board item 18: rail-head padding-top 30->12, mirror of the base rule (item 4b re-track) */#hopeRail .rail-body{flex:1 1 0;height:0;min-height:0;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1 1 0;height:0;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 0;height:0;min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font: 400 calc(var(--inv-text-scale, 1) * 12px) Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font: 700 calc(var(--inv-text-scale, 1) * 12px) Inter,sans-serif}}
 /* Feedback board item 8 (2026-09-02.6): thin, near-invisible scrollbar for the
    internal Hope transcript scroll — present but visually quiet. */
 #hopeRail #aiChatTranscript{scrollbar-width:thin;scrollbar-color:#3a3f45 transparent}
@@ -4618,7 +4619,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.224';
+const AIMM_BUILD = '2026-11-05.225';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
