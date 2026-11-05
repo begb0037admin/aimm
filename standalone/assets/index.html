@@ -2268,8 +2268,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
    waveform canvas. Keep .mc-stem-wave-box sizing, canvas drawing and colours intact. */
 #eq.oz-mixcheck #mcStemStack{gap:12px;padding:18px;background:linear-gradient(145deg,#101827,#0c1420);border:1px solid #293648;border-radius:22px}
 #eq.oz-mixcheck #mcStemStack .mc-stem-player-head{display:flex;align-items:center;gap:16px;min-width:0;padding:2px 3px 8px}
-#eq.oz-mixcheck #mcStemStack .mc-stem-big-play{width:58px;height:58px;flex:0 0 58px;display:grid;place-items:center;border:0;border-radius:50%;background:linear-gradient(135deg,#55c7ed,#9b75f5);color:#09131d;box-shadow:0 0 28px rgba(74,181,227,.22);cursor:pointer;transition:transform .16s,box-shadow .16s}
-#eq.oz-mixcheck #mcStemStack .mc-stem-big-play:hover{transform:scale(1.04);box-shadow:0 0 34px rgba(117,115,242,.32)}
+#eq.oz-mixcheck #mcStemStack .mc-stem-big-play{width:58px;height:58px;flex:0 0 58px;display:grid;place-items:center;border:0;border-radius:50%;background:linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%);color:#09131d;box-shadow:0 0 28px rgba(79,195,232,.22),0 0 28px rgba(201,161,90,.18);cursor:pointer;transition:transform .16s,box-shadow .16s}
+#eq.oz-mixcheck #mcStemStack .mc-stem-big-play:hover{transform:scale(1.04);box-shadow:0 0 34px rgba(79,195,232,.32),0 0 30px rgba(201,161,90,.26)}
 #eq.oz-mixcheck #mcStemStack .mc-stem-big-play:focus-visible{outline:3px solid #d7efff;outline-offset:3px}
 #eq.oz-mixcheck #mcStemStack .mc-stem-big-play svg{width:25px;height:25px}
 #eq.oz-mixcheck #mcStemStack .mc-stem-track-meta{display:grid;gap:6px;min-width:0;flex:1}
@@ -4645,7 +4645,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.237';
+const AIMM_BUILD = '2026-11-05.238';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
