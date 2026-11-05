@@ -4014,6 +4014,75 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   #eq.oz-mixcheck .mc-spotify-reference,
   #eq.oz-mixcheck .oz-spec-card{transition:none}
 }
+
+/* Audio Specs source pills share the Hope composer button proportions. */
+#eq.oz-mixcheck #mcSpecs .mc-kick.mc-specs-heading{align-items:center;text-align:center}
+#eq.oz-mixcheck #mcSpecs .mc-specs-heading-copy{width:100%;text-align:center}
+#eq.oz-mixcheck #mcSpecs .mc-specs-source{width:100%;flex:1 1 auto;align-self:stretch;display:flex;justify-content:center;gap:8px;text-align:center}
+#eq.oz-mixcheck #mcSpecs .mc-specs-source button{display:flex;align-items:center;justify-content:center;flex:1 1 0;min-width:0;height:38px;min-height:38px;max-height:38px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1}
+
+/* Teal blue pill ring and consistent hover feedback for Audio Specs and Hope. */
+#eq.oz-mixcheck #mcSpecs .mc-specs-source button,
+#eq.oz-mixcheck .mc-spotify-ref-controls button,
+#eq.oz-mixcheck .mc-spotify-result-actions button,
+#eq.oz-mixcheck .mc-spotify-load-more,
+#eq.oz-mixcheck .mc-saved-target-option,
+#eq.oz-mixcheck .mc-saved-target-delete,
+#eq.oz-mixcheck .mc-saved-target-rename-controls button,
+#eq.oz-mixcheck .mcs-actions button,
+#hopeRail .aichat-compose .send-col #aiChatSend,
+#hopeRail .aichat-compose .send-col #aiChatClear,
+#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,
+#hopeRail .aichat-compose .send-col #hopeAccountBtn,
+#hopeRail .aichat-quick-prompt{border:1px solid rgba(79,195,232,.5);border-radius:999px;transition:border-color 180ms ease,box-shadow 180ms ease}
+#eq.oz-mixcheck #mcSpecs .mc-specs-source button,
+#eq.oz-mixcheck .mc-spotify-ref-controls button,
+#eq.oz-mixcheck .mc-spotify-result-actions button,
+#eq.oz-mixcheck .mc-spotify-load-more,
+#eq.oz-mixcheck .mc-saved-target-option,
+#eq.oz-mixcheck .mc-saved-target-delete,
+#eq.oz-mixcheck .mc-saved-target-rename-controls button,
+#eq.oz-mixcheck .mcs-actions button,
+#eq.oz-mixcheck .mc-spotify-result-art,
+#hopeRail .aichat-compose .send-col #aiChatSend,
+#hopeRail .aichat-compose .send-col #aiChatClear,
+#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,
+#hopeRail .aichat-compose .send-col #hopeAccountBtn,
+#hopeRail .aichat-quick-prompt{cursor:pointer}
+#eq.oz-mixcheck #mcSpecs .mc-specs-source button[aria-pressed="true"],
+#eq.oz-mixcheck .mc-saved-target-option[aria-pressed="true"]{border-color:rgba(79,195,232,.85)}
+#eq.oz-mixcheck #mcSpecs .mc-specs-source button:hover:not(:disabled),
+#eq.oz-mixcheck .mc-spotify-ref-controls button:hover:not(:disabled),
+#eq.oz-mixcheck .mc-spotify-result-actions button:hover:not(:disabled),
+#eq.oz-mixcheck .mc-spotify-load-more:hover:not(:disabled),
+#eq.oz-mixcheck .mc-saved-target-option:hover,
+#eq.oz-mixcheck .mc-saved-target-delete:hover,
+#eq.oz-mixcheck .mc-saved-target-rename-controls button:hover:not(:disabled),
+#eq.oz-mixcheck .mcs-actions button:hover,
+#hopeRail .aichat-compose .send-col #aiChatSend:hover:not(:disabled),
+#hopeRail .aichat-compose .send-col #aiChatClear:hover:not(:disabled),
+#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn:hover:not(:disabled),
+#hopeRail .aichat-compose .send-col #hopeAccountBtn:hover:not(:disabled),
+#hopeRail .aichat-quick-prompt:hover{border-color:rgba(79,195,232,.85);box-shadow:0 0 12px rgba(79,195,232,.35)}
+#eq.oz-mixcheck .mc-saved-target-option:hover{background:#161b21}
+#eq.oz-mixcheck .mc-saved-target-delete:hover{background:#161b21}
+#eq.oz-mixcheck .mc-spotify-result:hover{border-color:rgba(79,195,232,.6);background:#161b21}
+#hopeRail .aichat-quick-prompt:hover{background:#161b21}
+@media(prefers-reduced-motion:reduce){
+  #eq.oz-mixcheck #mcSpecs .mc-specs-source button,
+  #eq.oz-mixcheck .mc-spotify-ref-controls button,
+  #eq.oz-mixcheck .mc-spotify-result-actions button,
+  #eq.oz-mixcheck .mc-spotify-load-more,
+  #eq.oz-mixcheck .mc-saved-target-option,
+  #eq.oz-mixcheck .mc-saved-target-delete,
+  #eq.oz-mixcheck .mc-saved-target-rename-controls button,
+  #eq.oz-mixcheck .mcs-actions button,
+  #hopeRail .aichat-compose .send-col #aiChatSend,
+  #hopeRail .aichat-compose .send-col #aiChatClear,
+  #hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,
+  #hopeRail .aichat-compose .send-col #hopeAccountBtn,
+  #hopeRail .aichat-quick-prompt{transition:none}
+}
 </style>
   <div id="pluginInventoryUI" class="inv-shell">
     <div id="invLayout" class="inv-layout">
@@ -4604,7 +4673,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.189';
+const AIMM_BUILD = '2026-11-05.190';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
