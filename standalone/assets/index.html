@@ -1875,6 +1875,16 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .aichat-msg.ai .body,#hopeRail .aichat-msg.system .body{background:linear-gradient(180deg,#152029 0%,#0f161e 100%);border:1px solid #20303c;border-radius:16px;color:#dfe7ef}
 #hopeRail .aichat-msg.mixmove .body{background:#1c1f22;border:1px solid #2c3034;border-left:3px solid #a78bfa;border-radius:6px}
 
+#hopeRail .aichat-copy-btn{background:rgba(52,211,153,.08);border:1px solid #34d399;color:#6ee7b7;border-radius:999px}
+#hopeRail .aichat-copy-btn:hover{background:rgba(52,211,153,.08);border-color:#6ee7b7;color:#d1fae5}
+#hopeRail .aichat-copy-btn:active,#hopeRail .aichat-copy-btn.ok{background:rgba(52,211,153,.16);border-color:#6ee7b7;color:#d1fae5}
+#hopeRail .aichat-copy-btn.err{background:rgba(52,211,153,.08);border-color:#34d399;color:#6ee7b7}
+#hopeRail .aichat-speak-message{background:rgba(167,139,250,.08);border:1px solid #a78bfa;color:#c4b5fd;border-radius:999px}
+#hopeRail .aichat-speak-message:hover{background:rgba(167,139,250,.08);border-color:#c4b5fd;color:#ede9fe}
+#hopeRail .aichat-speak-message:active,#hopeRail .aichat-speak-message.playing,#hopeRail .aichat-speak-message[aria-pressed="true"]{background:rgba(167,139,250,.16);border-color:#c4b5fd;color:#ede9fe}
+#hopeRail .aichat-speak-message.loading{background:rgba(167,139,250,.08);border-color:#a78bfa;color:#c4b5fd}
+#hopeRail .aichat-copy-btn:disabled,#hopeRail .aichat-speak-message:disabled{opacity:.5;cursor:not-allowed}
+
 /* ── R3 STEP 7 — HOPE TRANSCRIPT CARDS (Markey) ─────────────────────────
    Two auto-rendered kinds inside #aiChatTranscript, matched to jules
    mockups/05 (.msg.breakdown + .actionmsg):
@@ -4559,7 +4569,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.216';
+const AIMM_BUILD = '2026-11-05.217';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
