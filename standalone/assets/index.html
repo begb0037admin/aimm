@@ -2738,7 +2738,11 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .tab-intro{margin:0 0 4px;padding:0;background:transparent;border:0;box-shadow:none}
 .tab-intro h2{margin:0;color:#f3f7fb;font:var(--aimm-heading-weight) var(--aimm-page-heading-size)/var(--aimm-heading-line-height) var(--aimm-font-display);letter-spacing:var(--aimm-heading-letter-spacing)}
 .tab-intro p{max-width:940px;margin:8px 0 0;color:#b8c4d1;font-size:var(--aimm-panel-subtitle-size);font-weight:450;line-height:var(--aimm-panel-subtitle-line-height)}
-.header-top h1{font-size:var(--page-title-size);line-height:1.15}
+.header-top{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;column-gap:16px;margin-bottom:18px}
+.header-top>div:first-child{grid-column:2;grid-row:1;min-width:0;text-align:center}
+.header-top .header-actions{grid-column:3;grid-row:1;justify-self:end;min-width:0;flex-shrink:1}
+.header-top h1{margin:0;font-size:calc(var(--page-title-size) * 1.5);line-height:1.2;letter-spacing:-.01em}
+@media(max-width:680px){.header-top{grid-template-columns:minmax(0,1fr);row-gap:10px}.header-top>div:first-child{grid-column:1;grid-row:1;width:100%}.header-top .header-actions{grid-column:1;grid-row:2;justify-self:stretch}}
 #hopeRail .rail-head .oz-rail-name{font-size:var(--page-title-size)}
 #eq.oz-mixcheck>.mc-head,#settings>.section-head,#marketing>.section-head,#community>.section-head{display:none}
 @media(max-width:720px){:root{--page-title-size:calc(var(--inv-text-scale, 1) * 24px);--aimm-panel-heading-size:calc(var(--inv-text-scale, 1) * 22px)}.tab-intro{margin:0 0 2px;padding:0}.tab-intro h2{font-size:var(--aimm-page-heading-size)}.tab-intro p{margin-top:7px}}
@@ -4676,7 +4680,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.196';
+const AIMM_BUILD = '2026-11-05.197';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
