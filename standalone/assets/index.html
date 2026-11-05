@@ -2567,7 +2567,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 
 /* Spectral Balance: a spacious title, saved-target disclosure, brand control
    bar, simple legend, then the existing full-width chart. */
-#eq.oz-mixcheck .oz-spec-card{padding:var(--aimm-panel-card-inset);background:linear-gradient(180deg,#171a1f 0%,#101216 100%);border:1px solid #2a3340;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.4);gap:0}
+#eq.oz-mixcheck .oz-spec-card{padding:var(--aimm-panel-card-inset);background:linear-gradient(180deg,#171a1f 0%,#101216 100%) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.4);gap:0}
 #eq.oz-mixcheck .oz-spec-title{color:#f1f4f8;font-weight:700}
 #eq.oz-mixcheck .oz-spec-head{display:flex;align-items:flex-start;justify-content:flex-start;margin:0 0 18px}
 #eq.oz-mixcheck .oz-spec-title-group{display:grid;gap:var(--aimm-heading-stack-gap)}
@@ -4083,6 +4083,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   #hopeRail .aichat-compose .send-col #hopeAccountBtn,
   #hopeRail .aichat-quick-prompt{transition:none}
 }
+/* Active Mix Check tab: smooth blue-gold border-box ring. */
+.tabs.oz-tabstrip .tab.oz-tab[data-tab="eq"].active{background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent}
 </style>
   <div id="pluginInventoryUI" class="inv-shell">
     <div id="invLayout" class="inv-layout">
@@ -4673,7 +4675,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.190';
+const AIMM_BUILD = '2026-11-05.191';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
