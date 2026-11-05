@@ -3997,7 +3997,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 }
 
 /* Spotify Reference controls: neutral at rest, glow on hover, blue-gold while pressed. */
-#eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture){background:#16181b;border:1px solid #3a4046;color:#9aa0a6;box-shadow:none;transform:none;transition:transform 180ms ease,box-shadow 180ms ease,color 180ms ease,border-color 180ms ease}
+#eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture){background:transparent;border:1px solid transparent;outline:none;color:#71787e;font-weight:600;box-shadow:none;transform:none;transition:transform 180ms ease,box-shadow 180ms ease,color 180ms ease,border-color 180ms ease}
 @media (hover:hover) and (pointer:fine){
   #eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture):hover:not(:disabled):not(:active){background:#16181b;border:1px solid #3a4046;color:#9aa0a6;transform:translateY(-2px);box-shadow:0 0 0 1px rgba(79,195,232,.28),0 0 14px rgba(79,195,232,.40),0 0 24px rgba(201,161,90,.28)}
 }
@@ -4597,7 +4597,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.221';
+const AIMM_BUILD = '2026-11-05.222';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
