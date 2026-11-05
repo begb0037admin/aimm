@@ -3979,6 +3979,14 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 /* Active Mix Check tab: smooth blue-gold border-box ring. */
 .tabs.oz-tabstrip .tab.oz-tab[data-tab="eq"].active{background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;box-shadow:none;outline:none}
 
+/* Selected-state finish: apply the Mix Check capsule to every selected
+   navigation tab, the active Mixing mode, and the enabled Hope Send action. */
+.tabs.oz-tabstrip .tab.oz-tab:is(.active,[aria-selected="true"],[aria-current]:not([aria-current="false"])){background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700}
+.tabs.oz-tabstrip .tab.oz-tab:is(.active,[aria-selected="true"],[aria-current]:not([aria-current="false"])) .tab-ico,.tabs.oz-tabstrip .tab.oz-tab:is(.active,[aria-selected="true"],[aria-current]:not([aria-current="false"])) .tab-label{color:var(--mixing-state-ink);font-weight:700}
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]){background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700}
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]) .mc-workspace-mode-icon{color:var(--mixing-state-ink);stroke:currentColor}
+#hopeRail #aiChatSend:not(:disabled),#hopeRail #aiChatSend:hover:not(:disabled){background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700}
+
 </style>
   <div id="pluginInventoryUI" class="inv-shell">
     <div id="invLayout" class="inv-layout">
@@ -4569,7 +4577,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.217';
+const AIMM_BUILD = '2026-11-05.218';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
