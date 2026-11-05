@@ -1225,15 +1225,13 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
    place; falls back to the pre-existing .tab/.tab.active rules otherwise. */
 .tabs.oz-tabstrip{display:flex;gap:3px;background:#19191c;border:1px solid #2c3034;border-radius:8px;padding:3px;overflow-x:auto;flex-wrap:nowrap;margin-bottom:0;align-items:stretch;grid-column:1}
 .tabs.oz-tabstrip .tab.oz-tab{flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 16px;border-radius:4px;border-top:2px solid transparent;border-bottom:none;flex-shrink:0;background:transparent;color:#71787e;font-size:calc(var(--inv-text-scale, 1) * 9.5px);font-weight:600;letter-spacing:.06em;text-transform:none;transform:none;transition:background .15s,border-color .15s,color .15s}
-.tabs.oz-tabstrip .tab.oz-tab:hover{background:rgba(90,169,230,.08);color:#c7ccd0;border-bottom-color:transparent}
 .tabs.oz-tabstrip .tab.oz-tab .tab-ico{font-size:calc(var(--inv-text-scale, 1) * 14px);filter:none}
 .tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:22px;height:22px;display:block}
 .tabs.oz-tabstrip .tab.oz-tab .tab-label{font-size:calc(var(--inv-text-scale, 1) * 18px);font-weight:600;letter-spacing:.01em;color:inherit}
 .tabs.oz-tabstrip .tab.oz-tab.active{background:#232629;border-top-color:#5aa9e6;box-shadow:0 0 14px #5aa9e622;color:#e8ebed;font-size:calc(var(--inv-text-scale, 1) * 9.5px);font-weight:700;transform:none}
 .tabs.oz-tabstrip .tab.oz-tab.active .tab-label{font-weight:700}
 .tabs.oz-tabstrip .tab.oz-tab.active .tab-ico{color:#5aa9e6}
-.tabs.oz-tabstrip .tab.oz-tab[data-persona-label="Hope"].active,
-.tabs.oz-tabstrip .tab.oz-tab:hover[data-persona-label="Hope"]{color:#e8ebed;border-bottom-color:transparent}
+.tabs.oz-tabstrip .tab.oz-tab[data-persona-label="Hope"].active{color:#e8ebed;border-bottom-color:transparent}
 
 /* ── #eq panel — R3 Mix Check full layout (jules mockups/05, 2026-08-31) ──
    Two-column-top / full-width-bottom sub-grid:
@@ -2116,8 +2114,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 /* R3 round 18 (Kevin 2026-08-31): unified accent = the Send button's blue->purple gradient,
    applied to tabs and all pills (and the header dropdowns' hover border). */
 :root{--send-blue:linear-gradient(90deg,#2fa1e6,#a557f4);--send-blue-ink:#0d1211}
-.tabs.oz-tabstrip .tab.oz-tab:hover{background:var(--send-blue);color:var(--send-blue-ink);border-bottom-color:transparent}
-.tabs.oz-tabstrip .tab.oz-tab:hover .tab-ico,.tabs.oz-tabstrip .tab.oz-tab:hover .tab-label{color:var(--send-blue-ink)}
 .cs .cs-btn:hover{border-color:#5aa9e6}
 /* R3 round 19 (Kevin 2026-08-31): active tab stays blue-lit (no top bar);
    header dropdowns (genre/target) stay blue-lit while they hold a selection;
@@ -2704,8 +2700,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .tabs.oz-tabstrip .tab.oz-tab .tab-ico{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;color:inherit}
 .tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:20px;height:20px}
 .tabs.oz-tabstrip .tab.oz-tab .tab-label{font-size:calc(var(--inv-text-scale, 1) * 15px);font-weight:650;letter-spacing:0;color:inherit;}
-.tabs.oz-tabstrip .tab.oz-tab:hover:not(.active){background:rgba(47,115,139,.12);color:#d6e2eb;border-color:rgba(64,130,152,.2)}
-.tabs.oz-tabstrip .tab.oz-tab:hover:not(.active) .tab-ico,.tabs.oz-tabstrip .tab.oz-tab:hover:not(.active) .tab-label{color:#edf6f8}
 .tabs.oz-tabstrip .tab.oz-tab.active{background:var(--mixing-state-fill);border:1px solid var(--mixing-state-outline);border-top-color:var(--mixing-state-outline);box-shadow:0 0 0 2px #0a1520,0 0 0 5px rgba(50,112,137,.92);color:var(--mixing-state-ink);font-size:calc(var(--inv-text-scale, 1) * 15px);font-weight:700;}
 .tabs.oz-tabstrip .tab.oz-tab.active .tab-ico{color:#c5eaf2}
 .tabs.oz-tabstrip .tab.oz-tab.active .tab-label{color:var(--mixing-state-ink);font-weight:700}
@@ -3979,6 +3973,21 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 /* Active Mix Check tab: smooth blue-gold border-box ring. */
 .tabs.oz-tabstrip .tab.oz-tab[data-tab="eq"].active{background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;box-shadow:none;outline:none}
 
+/* Top navigation states: plain at rest, Spotify-style light on hover. */
+.tabs.oz-tabstrip .tab.oz-tab{transition:transform 180ms ease,box-shadow 180ms ease,color 180ms ease,border-color 180ms ease}
+.tabs.oz-tabstrip .tab.oz-tab:not(.active):not([aria-selected="true"]):not([aria-current]:not([aria-current="false"])){background:transparent;border:1px solid transparent;color:#71787e;box-shadow:none;transform:none}
+.tabs.oz-tabstrip .tab.oz-tab:not(.active):not([aria-selected="true"]):not([aria-current]:not([aria-current="false"])) .tab-ico,
+.tabs.oz-tabstrip .tab.oz-tab:not(.active):not([aria-selected="true"]):not([aria-current]:not([aria-current="false"])) .tab-label{color:inherit}
+@media (hover:hover) and (pointer:fine){
+  .tabs.oz-tabstrip .tab.oz-tab:not(:disabled):not(.active):not([aria-selected="true"]):not([aria-current]:not([aria-current="false"])):hover{background:transparent;color:#d6e2eb;transform:translateY(-2px);box-shadow:0 0 0 1px rgba(79,195,232,.28),0 0 14px rgba(79,195,232,.40),0 0 24px rgba(201,161,90,.28)}
+  .tabs.oz-tabstrip .tab.oz-tab:not(:disabled):not(.active):not([aria-selected="true"]):not([aria-current]:not([aria-current="false"])):hover .tab-ico,
+  .tabs.oz-tabstrip .tab.oz-tab:not(:disabled):not(.active):not([aria-selected="true"]):not([aria-current]:not([aria-current="false"])):hover .tab-label{color:inherit}
+}
+@media (prefers-reduced-motion:reduce){
+  .tabs.oz-tabstrip .tab.oz-tab{transition:none}
+  .tabs.oz-tabstrip .tab.oz-tab:not(:disabled):not(.active):not([aria-selected="true"]):not([aria-current]:not([aria-current="false"])):hover{transform:none}
+}
+
 /* Selected-state finish: apply the Mix Check capsule to every selected
    navigation tab, the active Mixing mode, and the enabled Hope Send action. */
 .tabs.oz-tabstrip .tab.oz-tab:is(.active,[aria-selected="true"],[aria-current]:not([aria-current="false"])){background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700}
@@ -4597,7 +4606,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.222';
+const AIMM_BUILD = '2026-11-05.223';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
