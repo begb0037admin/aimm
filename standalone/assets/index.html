@@ -3912,6 +3912,39 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     @media(max-width:760px){#library .inv-layout{grid-template-columns:64px minmax(0,1fr)}#library .inv-sidebar{padding-left:8px;padding-right:8px}#library .inv-sidebar .inv-sidebar-head{justify-content:center}#library .inv-sidebar .inv-sidebar-head>span,#library .inv-sidebar .inv-sidebar-section,#library .inv-sidebar .inv-side-label,#library .inv-sidebar .inv-side-count,#library .inv-sidebar .inv-folder-summary{display:none}#library .inv-sidebar .inv-side-button{justify-content:center;gap:0;padding:0}#library .inv-top{flex-direction:column}#library .inv-search{margin-left:0;max-width:none}}
     @media(max-width:680px){#library .inv-scope-banner{grid-template-columns:minmax(0,1fr);align-items:start;gap:4px 0;padding:11px 12px}#library .inv-scope-banner>*{min-width:0}}
       #library .inv-scope-banner,#library .inv-synthetic-preview,#library .inv-status,#library .inv-roots,#library .inv-table,#library .inv-empty{margin-inline:14px}
+
+/* Approved panel hover light-up: brighten the existing border-box ring and
+   add the blue-gold outer glow without changing each panel's resting layout. */
+#eq.oz-mixcheck #mcSpecs,
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) > #refDropZone,
+#hopeRail,
+#eq.oz-mixcheck .mc-spotify-reference,
+#eq.oz-mixcheck .oz-spec-card{transition:box-shadow 220ms ease-out,background 220ms ease-out}
+#eq.oz-mixcheck #mcSpecs:hover,
+#eq.oz-mixcheck #mcSpecs:focus-within{background:radial-gradient(ellipse at 50% 0%,rgba(47,161,230,.14),transparent 58%) padding-box,linear-gradient(145deg,#101827,#0b121e) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) > #refDropZone:hover,
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) > #refDropZone:focus-within{background:radial-gradient(ellipse at 50% 0%,rgba(47,161,230,.14),transparent 58%) padding-box,linear-gradient(145deg,#101827,#0b121e) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box}
+#hopeRail:hover,
+#hopeRail:focus-within{background:radial-gradient(ellipse 115% 78% at 0% 0%,rgba(47,161,230,.15),transparent 70%) padding-box,radial-gradient(ellipse 95% 75% at 100% 0%,rgba(70,199,168,.075),transparent 74%) padding-box,linear-gradient(145deg,#1b1d20 0%,#15181b 58%,#101214 100%) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box}
+#eq.oz-mixcheck .mc-spotify-reference:hover,
+#eq.oz-mixcheck .mc-spotify-reference:focus-within{background:radial-gradient(ellipse 60% 55% at 45% 0%,rgba(74,124,140,.55),transparent 70%) padding-box,linear-gradient(180deg,#22323c 0%,#171f27 60%,#101418 100%) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box}
+#eq.oz-mixcheck #mcSpecs:hover,
+#eq.oz-mixcheck #mcSpecs:focus-within,
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) > #refDropZone:hover,
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) > #refDropZone:focus-within,
+#hopeRail:hover,
+#hopeRail:focus-within,
+#eq.oz-mixcheck .mc-spotify-reference:hover,
+#eq.oz-mixcheck .mc-spotify-reference:focus-within,
+#eq.oz-mixcheck .oz-spec-card:hover,
+#eq.oz-mixcheck .oz-spec-card:focus-within{box-shadow:0 10px 30px rgba(0,0,0,.4),0 0 22px rgba(79,195,232,.25),0 0 30px rgba(201,161,90,.18)}
+@media(prefers-reduced-motion:reduce){
+  #eq.oz-mixcheck #mcSpecs,
+  #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) > #refDropZone,
+  #hopeRail,
+  #eq.oz-mixcheck .mc-spotify-reference,
+  #eq.oz-mixcheck .oz-spec-card{transition:none}
+}
 </style>
   <div id="pluginInventoryUI" class="inv-shell">
     <div id="invLayout" class="inv-layout">
@@ -4502,7 +4535,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.185';
+const AIMM_BUILD = '2026-11-05.186';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
