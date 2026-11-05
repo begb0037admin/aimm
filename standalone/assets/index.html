@@ -4029,6 +4029,18 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   #hopeRail :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn){transition:none}
   #hopeRail :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):hover:not(:disabled):not(:active):not(.active):not([aria-pressed="true"]):not([aria-selected="true"]){transform:none}
 }
+
+/* Hope transcript Copy/Speak buttons: miniature composer states. */
+#hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message){font-size:10px;padding:3px 9px;min-height:22px;border-radius:999px;background:transparent;border:1px solid transparent;color:#71787e;font-weight:600;box-shadow:none;transform:none;transition:transform 180ms ease,box-shadow 180ms ease,color 180ms ease,border-color 180ms ease}
+@media (hover:hover) and (pointer:fine){
+  #hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message):hover:not(:disabled):not(:active):not(.active):not([aria-pressed="true"]):not([aria-selected="true"]){background:transparent;border:1px solid transparent;color:#d6e2eb;transform:translateY(-2px);box-shadow:0 0 0 1px rgba(79,195,232,.28),0 0 14px rgba(79,195,232,.40),0 0 24px rgba(201,161,90,.28)}
+}
+#hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message):is(:active,.active,[aria-pressed="true"],[aria-selected="true"]):not(:disabled){background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;color:var(--mixing-state-ink);font-weight:700;box-shadow:none;transform:none}
+#hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message):disabled{background:transparent;border:1px solid transparent;color:#71787e;opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+@media (prefers-reduced-motion:reduce){
+  #hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message){transition:none}
+  #hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message):hover:not(:disabled):not(:active):not(.active):not([aria-pressed="true"]):not([aria-selected="true"]){transform:none}
+}
 </style>
   <div id="pluginInventoryUI" class="inv-shell">
     <div id="invLayout" class="inv-layout">
@@ -4619,7 +4631,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.228';
+const AIMM_BUILD = '2026-11-05.229';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
