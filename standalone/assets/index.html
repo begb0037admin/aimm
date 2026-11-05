@@ -4645,7 +4645,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.238';
+const AIMM_BUILD = '2026-11-05.239';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -24842,14 +24842,15 @@ csInit('csPlatform');
     document.querySelectorAll('#mcStemRows .mc-stem-wave').forEach(cv=>{
       const stem=stemSession.find(x=>x.key===cv.dataset.key);if(!stem||stem.status!=='ok'||!stem.peaks)return;
       const w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return;
-      if(cv.width!==w)cv.width=w;if(cv.height!==h)cv.height=h;
-      const g=cv.getContext('2d');g.clearRect(0,0,w,h);const mid=h/2,amp=h*.43,cut=played*w;
+      const dpr=Math.max(1,window.devicePixelRatio||1),pixelWidth=Math.round(w*dpr),pixelHeight=Math.round(h*dpr);
+      if(cv.width!==pixelWidth)cv.width=pixelWidth;if(cv.height!==pixelHeight)cv.height=pixelHeight;
+      const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);const mid=h/2,amp=h*.43,cut=played*w;
       const bounds=activeByKey.get(stem.key),peak=bounds?.peak||0,visualGain=peak>1e-7?1/peak:1,activityFloor=bounds?.floor||Infinity;
       const activeStart=bounds?Math.max(0,(bounds.first-cropStart)/visibleBins):0;
       const activeEnd=bounds?Math.min(1,(bounds.last+1-cropStart)/visibleBins):1;
       const activeThird=(activeEnd-activeStart)/3;
       const fadeStart=activeStart+activeThird,fadeEnd=activeStart+2*activeThird;
-      const brandFade=g.createLinearGradient(0,0,Math.max(1,w),0);brandFade.addColorStop(0,'#2fa1e6');brandFade.addColorStop(fadeStart,'#2fa1e6');brandFade.addColorStop(fadeEnd,'#c026d3');brandFade.addColorStop(1,'#c026d3');
+      const brandFade=g.createLinearGradient(0,0,Math.max(1,w),0);brandFade.addColorStop(0,'#4fc3e8');brandFade.addColorStop(fadeStart,'#1a8fa3');brandFade.addColorStop(fadeEnd,'#c9965a');brandFade.addColorStop(1,'#c9965a');
       for(let i=0;i<1024;i++){
         const sourceBin=Math.min(cropEnd-1,cropStart+Math.floor(i*visibleBins/1024));
         const top=stem.peaks[sourceBin*2+1],bottom=stem.peaks[sourceBin*2];
@@ -24857,7 +24858,7 @@ csInit('csPlatform');
         const x=i/1024*w,y0=mid-top*visualGain*amp,y1=mid-bottom*visualGain*amp;
         g.strokeStyle=brandFade;g.beginPath();g.moveTo(x+.5,y0);g.lineTo(x+.5,Math.max(y1,y0+1));g.stroke();
       }
-      g.fillStyle='#eef2f5';g.fillRect(Math.max(0,Math.min(w-1,Math.round(cut))),0,1,h);
+      g.fillStyle='#f1f4f8';g.fillRect(Math.max(0,Math.min(w-1,Math.round(cut))),0,1,h);
     });
   }
   function stemRoleForLabel(label){
