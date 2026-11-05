@@ -1340,8 +1340,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
    (26px * 1.15 ~= 30px). [shell] — applies on every tab; visual = tighter leading
    on one wordmark line, no layout risk. */
 .header-top h1{line-height:1.15}
-.header-top h1 .brand-ai{color:#fbbf24}
-.header-top h1 .brand-mm{background:var(--send-blue);-webkit-background-clip:text;background-clip:text;color:transparent}
+.header-top h1 .brand-ai{color:#2a8fa1}
+.header-top h1 .brand-mm{background:linear-gradient(180deg,#e8c48a 0%,#b8864f 60%,#7a5530 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .rail-head .oz-rail-name .ai-star{width:22px;height:19px;flex:0 0 22px;display:inline-block;color:#fbbf24;overflow:visible;vertical-align:-3px;margin-right:6px}
 .rail-head .oz-rail-name .ai-star path{fill:currentColor}
 /* R3 2026-09-01.9 (Markey — Hope rail item 5): the 3 AI-star sparkles twinkle
@@ -2713,8 +2713,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .rail-head .oz-rail-title{position:relative;min-width:0;overflow:visible}
 #hopeRail .rail-head .oz-rail-name{display:flex;align-items:center;gap:9px;min-width:0;font-size:calc(var(--inv-text-scale, 1) * 23px);font-weight:750;letter-spacing:-.03em;line-height:1.2}
 #hopeRail .rail-wordmark{display:inline-flex;align-items:baseline;white-space:nowrap}
-#hopeRail .rail-brand-ai{color:#fbbf24}
-#hopeRail .rail-brand-mm{background:var(--send-blue);-webkit-background-clip:text;background-clip:text;color:transparent}
+#hopeRail .rail-brand-ai{color:#2a8fa1}
+#hopeRail .rail-brand-mm{background:linear-gradient(180deg,#e8c48a 0%,#b8864f 60%,#7a5530 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 #hopeRail .rail-head .oz-rail-status{margin-top:0;color:#9ca8b6;font-size:calc(var(--inv-text-scale, 1) * 14px);font-weight:600}
 #hopeRail .rail-head .oz-rail-title{gap:11px}
 #hopeRail .rail-head{padding-top:60px;padding-bottom:20px}
@@ -2793,7 +2793,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     <div class="oz-rail-avatar" aria-hidden="true"></div>
     <div class="oz-rail-title">
       <div class="oz-rail-name">
-        <span class="rail-wordmark"><span class="rail-brand-ai">AI</span><span class="rail-brand-mm">MM Coach</span></span>
+        <span class="rail-wordmark"><span class="rail-brand-ai">AIMM</span><span class="rail-brand-mm"> Coach</span></span>
         <button class="coach-info" type="button" aria-label="About AIMix Coach" aria-describedby="coachInfoTooltip" aria-expanded="false"><span aria-hidden="true">i</span><span class="coach-tooltip" id="coachInfoTooltip" role="tooltip">AI suggestions can be wrong. Review any changes before you keep them.</span></button>
       </div>
       <div class="oz-rail-status" id="hopeRailStatusTxt">chat &amp; voice assistant</div>
@@ -2838,7 +2838,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 <div class="app-col">
 <div class="header-top">
   <div>
-    <h1><span class="brand-ai">AI</span><span class="brand-mm">Mix Masters</span></h1>
+    <h1><span class="brand-ai">AIMM</span><span class="brand-mm"> Masters</span></h1>
     <!-- R3 (Kevin 2026-08-31): subtitle removed -->
   </div>
   <div class="header-actions">
@@ -4676,7 +4676,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.194';
+const AIMM_BUILD = '2026-11-05.195';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
