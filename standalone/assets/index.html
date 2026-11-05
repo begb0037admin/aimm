@@ -2747,8 +2747,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .header-top{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;column-gap:16px;margin-bottom:18px}
 .header-top>div:first-child{grid-column:2;grid-row:1;min-width:0;text-align:center}
 .header-top .header-actions{grid-column:3;grid-row:1;justify-self:end;min-width:0;flex-shrink:1}
-.header-top h1{margin:0;font-size:calc(var(--page-title-size) * 1.5 * .6027);line-height:1.1;letter-spacing:-.01em;text-transform:uppercase}
-.header-top h1::first-line{font-size:calc(var(--page-title-size) * 1.5)}
+.header-top h1{margin:0;line-height:1.1;letter-spacing:-.01em;text-transform:uppercase;text-align:center}
+.header-top h1 .title-l1{display:block;font-size:calc(var(--page-title-size) * 1.5);line-height:1.1}
+.header-top h1 .title-l2{display:block;font-size:calc(var(--page-title-size) * 1.5 * .6027);line-height:1.1}
 @media(max-width:680px){.header-top{grid-template-columns:minmax(0,1fr);row-gap:10px}.header-top>div:first-child{grid-column:1;grid-row:1;width:100%}.header-top .header-actions{grid-column:1;grid-row:2;justify-self:stretch}}
 #hopeRail .rail-head .oz-rail-name{font-size:var(--page-title-size)}
 #eq.oz-mixcheck>.mc-head,#settings>.section-head,#marketing>.section-head,#community>.section-head{display:none}
@@ -2849,7 +2850,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 <div class="app-col">
 <div class="header-top">
   <div>
-    <h1><span class="brand-ai">AI</span><span class="brand-mm">MIX<br>MASTERS</span></h1>
+    <h1><span class="title-l1"><span class="brand-ai">AI</span><span class="brand-mm">MIX</span></span><span class="title-l2"><span class="brand-mm">MASTERS</span></span></h1>
     <!-- R3 (Kevin 2026-08-31): subtitle removed -->
   </div>
   <div class="header-actions">
@@ -4688,7 +4689,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.207';
+const AIMM_BUILD = '2026-11-05.208';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
