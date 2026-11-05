@@ -1642,13 +1642,14 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-result button:hover{background:rgba(79,195,232,.18);border-color:rgba(79,195,232,.70)}
 #eq.oz-mixcheck .mc-spotify-result button:focus-visible{outline:2px solid #65d3e5;outline-offset:2px}
 #eq.oz-mixcheck .mc-spotify-results{display:grid;gap:7px;max-height:min(78vh,960px);overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
-#eq.oz-mixcheck .mc-spotify-load-more{justify-self:center;min-height:34px;padding:0 16px;border:1px solid #31563a;border-radius:7px;background:#18281c;color:#d8f5df;font-size:calc(var(--inv-text-scale, 1) * 10px);font-weight:700;cursor:pointer}
+#eq.oz-mixcheck .mc-spotify-load-more{justify-self:center;min-height:34px;padding:0 16px;border:1px solid rgba(79,195,232,.45);border-radius:7px;background:rgba(79,195,232,.10);color:#cfeaf5;font-size:calc(var(--inv-text-scale, 1) * 10px);font-weight:700;cursor:pointer}
+#eq.oz-mixcheck .mc-spotify-load-more:hover{background:rgba(79,195,232,.18);border-color:rgba(79,195,232,.70)}
 #eq.oz-mixcheck .mc-spotify-load-more:disabled{opacity:.55;cursor:wait}
 #eq.oz-mixcheck .mc-spotify-artist-source{display:grid;gap:8px;padding:10px;background:#131a15;border:1px solid #23372a;border-radius:8px}
 #eq.oz-mixcheck .mc-spotify-artist-source strong{font-size:calc(var(--inv-text-scale, 1) * 12px);color:#e5e9e6}
 #eq.oz-mixcheck .mc-spotify-artist-source span{font-size:calc(var(--inv-text-scale, 1) * 10px);color:#8f9b93}
 #eq.oz-mixcheck .mc-spotify-artist-embed{width:100%;min-height:460px;border:0;border-radius:8px;overflow:hidden}
-#eq.oz-mixcheck .mc-spotify-result{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0;padding:8px;background:#131a15;border:1px solid #23372a;border-radius:8px}
+#eq.oz-mixcheck .mc-spotify-result{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0;padding:8px;background:#151a20;border:1px solid #2a3340;border-radius:8px}
 #eq.oz-mixcheck .mc-spotify-result-summary{display:flex;align-items:center;gap:10px;flex:1 1 240px;min-width:0}
 #eq.oz-mixcheck .mc-spotify-result-art{width:44px;height:44px;flex:0 0 44px;padding:0;border:0;border-radius:5px;overflow:hidden;background:#202520;cursor:pointer}
 #eq.oz-mixcheck .mc-spotify-result-art:hover,#eq.oz-mixcheck .mc-spotify-result-art:focus-visible{outline:2px solid rgba(142,227,161,.72);outline-offset:2px}
@@ -4484,7 +4485,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.176';
+const AIMM_BUILD = '2026-11-05.177';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
