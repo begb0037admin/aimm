@@ -2531,7 +2531,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 /* Audio Specs: clear values in a calm vertical hierarchy; colour no longer
    implies a quality judgement. The advanced readings stay available on demand. */
 #eq.oz-mixcheck #mcSpecs{padding:var(--aimm-panel-card-inset) var(--aimm-panel-inline-inset) var(--aimm-panel-bottom-inset);overflow:auto;min-height:0}
-#eq.oz-mixcheck #mcSpecs{border:1.5px solid transparent;border-radius:14px;background:var(--card) padding-box,linear-gradient(135deg,rgba(79,195,232,.75) 0%,rgba(74,127,142,.75) 45%,rgba(201,161,90,.75) 100%) border-box;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+#eq.oz-mixcheck #mcSpecs{border:1.5px solid transparent;border-radius:14px;background:radial-gradient(ellipse 70% 60% at 100% 0%,rgba(176,136,78,.32) 0%,rgba(176,136,78,0) 70%) padding-box,linear-gradient(180deg,#2c5566 0%,#3a5a60 30%,#3d4a48 62%,#1a2026 88%,#111820 100%) padding-box,linear-gradient(135deg,rgba(79,195,232,.75) 0%,rgba(74,127,142,.75) 45%,rgba(201,161,90,.75) 100%) border-box;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 #eq.oz-mixcheck #mcSpecs .mc-kick{color:#68d3e6;font-size:calc(var(--inv-text-scale, 1) * 9px);font-weight:700;letter-spacing:.16em;text-transform:uppercase}
 #eq.oz-mixcheck #mcSpecs .mc-kick.mc-specs-heading{display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin:0 0 12px;padding:0}
 #eq.oz-mixcheck #mcSpecs .mc-specs-heading-copy{display:grid;gap:var(--aimm-heading-stack-gap);min-width:0}
@@ -4481,7 +4481,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.171';
+const AIMM_BUILD = '2026-11-05.172';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
