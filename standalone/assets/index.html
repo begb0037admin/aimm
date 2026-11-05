@@ -4100,21 +4100,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 /* Active Mix Check tab: smooth blue-gold border-box ring. */
 .tabs.oz-tabstrip .tab.oz-tab[data-tab="eq"].active{background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;box-shadow:none;outline:none}
 
-/* Shared pill treatment for app buttons and pill-like chips. */
-:is(button,.pill,.chip,.inv-chip,.genre-pick-pill,.preset-card-pill,.rt-pill,.lib-pub-pill,.mc-stem-fact-pill,.mc-saved-target-option,.inv-status-pill,.inv-hidden-badge):not(.tab):not(.coach-info):not(.close-btn):not(.ov-clear):not(.inv-vendor-toggle):not([data-act="close"]):not([class*="close"]):not([id$="Close"]):not([class*="-x"]):not(.del):not(.del-custom):not(.fav-btn):not(.inv-fav):not(.journal-star):not(.mc-saved-targets-plus):not(.mcq-x):not(.mcq-play):not(.am-play):not(.ref-play-pause):not(.mc-stem-big-play):not(.mc-stem-toggle):not(.mc-stem-remove):not(.aichat-tts-btn):not(.aichat-copy-btn):not(.floating-mic):not(#floatingMic):not(#invSidebarToggle):not(#railToggle):not([aria-hidden]):not(:has(> svg:only-child)):not(:has(> [aria-hidden]:only-child)){
-  background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;
-  border:1.5px solid transparent;
-  border-radius:999px;
-  color:var(--mixing-state-ink);
-  font-weight:700;
-  box-shadow:none;
-  cursor:pointer;
-  transition:filter 180ms ease,box-shadow 180ms ease;
-}
-:is(button,.pill,.chip,.inv-chip,.genre-pick-pill,.preset-card-pill,.rt-pill,.lib-pub-pill,.mc-stem-fact-pill,.mc-saved-target-option,.inv-status-pill,.inv-hidden-badge):not(.tab):not(.coach-info):not(.close-btn):not(.ov-clear):not(.inv-vendor-toggle):not([data-act="close"]):not([class*="close"]):not([id$="Close"]):not([class*="-x"]):not(.del):not(.del-custom):not(.fav-btn):not(.inv-fav):not(.journal-star):not(.mc-saved-targets-plus):not(.mcq-x):not(.mcq-play):not(.am-play):not(.ref-play-pause):not(.mc-stem-big-play):not(.mc-stem-toggle):not(.mc-stem-remove):not(.aichat-tts-btn):not(.aichat-copy-btn):not(.floating-mic):not(#floatingMic):not(#invSidebarToggle):not(#railToggle):not([aria-hidden]):not(:has(> svg:only-child)):not(:has(> [aria-hidden]:only-child)):hover:not(:disabled){filter:brightness(1.12);box-shadow:0 0 14px rgba(79,195,232,.35)}
-:is(button,.pill,.chip,.inv-chip,.genre-pick-pill,.preset-card-pill,.rt-pill,.lib-pub-pill,.mc-stem-fact-pill,.mc-saved-target-option,.inv-status-pill,.inv-hidden-badge):not(.tab):not(.coach-info):not(.close-btn):not(.ov-clear):not(.inv-vendor-toggle):not([data-act="close"]):not([class*="close"]):not([id$="Close"]):not([class*="-x"]):not(.del):not(.del-custom):not(.fav-btn):not(.inv-fav):not(.journal-star):not(.mc-saved-targets-plus):not(.mcq-x):not(.mcq-play):not(.am-play):not(.ref-play-pause):not(.mc-stem-big-play):not(.mc-stem-toggle):not(.mc-stem-remove):not(.aichat-tts-btn):not(.aichat-copy-btn):not(.floating-mic):not(#floatingMic):not(#invSidebarToggle):not(#railToggle):not([aria-hidden]):not(:has(> svg:only-child)):not(:has(> [aria-hidden]:only-child)):disabled{opacity:.45;box-shadow:none;cursor:not-allowed}
-:is(button,.pill,.chip,.inv-chip,.genre-pick-pill,.preset-card-pill,.rt-pill,.lib-pub-pill,.mc-stem-fact-pill,.mc-saved-target-option,.inv-status-pill,.inv-hidden-badge):not(.tab):not(.coach-info):not(.close-btn):not(.ov-clear):not(.inv-vendor-toggle):not([data-act="close"]):not([class*="close"]):not([id$="Close"]):not([class*="-x"]):not(.del):not(.del-custom):not(.fav-btn):not(.inv-fav):not(.journal-star):not(.mc-saved-targets-plus):not(.mcq-x):not(.mcq-play):not(.am-play):not(.ref-play-pause):not(.mc-stem-big-play):not(.mc-stem-toggle):not(.mc-stem-remove):not(.aichat-tts-btn):not(.aichat-copy-btn):not(.floating-mic):not(#floatingMic):not(#invSidebarToggle):not(#railToggle):not([aria-hidden]):not(:has(> svg:only-child)):not(:has(> [aria-hidden]:only-child)):focus-visible{outline:2px solid #65d3e5;outline-offset:2px}
-@media(prefers-reduced-motion:reduce){:is(button,.pill,.chip,.inv-chip,.genre-pick-pill,.preset-card-pill,.rt-pill,.lib-pub-pill,.mc-stem-fact-pill,.mc-saved-target-option,.inv-status-pill,.inv-hidden-badge):not(.tab):not(.coach-info):not(.close-btn):not(.ov-clear):not(.inv-vendor-toggle):not([data-act="close"]):not([class*="close"]):not([id$="Close"]):not([class*="-x"]):not(.del):not(.del-custom):not(.fav-btn):not(.inv-fav):not(.journal-star):not(.mc-saved-targets-plus):not(.mcq-x):not(.mcq-play):not(.am-play):not(.ref-play-pause):not(.mc-stem-big-play):not(.mc-stem-toggle):not(.mc-stem-remove):not(.aichat-tts-btn):not(.aichat-copy-btn):not(.floating-mic):not(#floatingMic):not(#invSidebarToggle):not(#railToggle):not([aria-hidden]):not(:has(> svg:only-child)):not(:has(> [aria-hidden]:only-child)){transition:none}}
 </style>
   <div id="pluginInventoryUI" class="inv-shell">
     <div id="invLayout" class="inv-layout">
@@ -4705,7 +4690,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.212';
+const AIMM_BUILD = '2026-11-05.213';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
