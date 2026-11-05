@@ -4037,6 +4037,14 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 }
 #hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message):is(:active,.active,[aria-pressed="true"],[aria-selected="true"]):not(:disabled){background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;color:var(--mixing-state-ink);font-weight:700;box-shadow:none;transform:none}
 #hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message):disabled{background:transparent;border:1px solid transparent;color:#71787e;opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+#hopeRail #aiChatTranscript .aichat-copy-btn.ok,
+#hopeRail #aiChatTranscript .aichat-speak-message.playing,
+#hopeRail #aiChatTranscript .aichat-speak-message[aria-pressed="true"]{background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;color:var(--mixing-state-ink);font-weight:700;box-shadow:none;transform:none}
+#hopeRail #aiChatTranscript .aichat-copy-btn.err{background:transparent;border:1px solid transparent;color:#87919b;font-weight:600;box-shadow:none;transform:none}
+#hopeRail .aichat-status,#hopeRail .aichat-status.err,#hopeRail .aichat-status.ok,#hopeRail .aichat-status.busy{color:#87919b}
+#hopeRail .mm-applied{font-size:12px;font-weight:400;font-style:italic;color:#87919b;background:none;border:0}
+#hopeRail .aichat-tts-hint,#hopeRail .aichat-tts-hint.armed{font-size:12px;color:#87919b;font-style:italic;font-weight:400}
+#hopeRail .aichat-tts-bar{color:#87919b;border-top:1px solid #2c3034;padding-top:4px;background:none}
 @media (prefers-reduced-motion:reduce){
   #hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message){transition:none}
   #hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message):hover:not(:disabled):not(:active):not(.active):not([aria-pressed="true"]):not([aria-selected="true"]){transform:none}
@@ -4631,7 +4639,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.230';
+const AIMM_BUILD = '2026-11-05.231';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14526,7 +14534,7 @@ function aichatCopyMessage(idx){
   const flash = (ok) => {
     if (!btn) return;
     const original = btn.innerHTML;
-    btn.innerHTML = ok ? '✓ Copied' : '✗ Failed';
+    btn.innerHTML = ok ? '✓ Copied' : 'Copy failed';
     btn.classList.toggle('ok', !!ok);
     btn.classList.toggle('err', !ok);
     setTimeout(() => {
