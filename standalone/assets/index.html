@@ -1959,7 +1959,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail #aiChatClearInput{flex:1 1 auto;background:transparent;border:1px solid #2c3034;color:#71787e;border-radius:999px;font-size:calc(var(--inv-text-scale, 1) * 11px);line-height:1.25;padding:9px 10px;white-space:nowrap}
 #hopeRail #aiChatClearInput:hover{color:#ff8a8a;border-color:#5a2626}
 #hopeRail .aichat-compose .aichat-status{flex:1 1 100%;font-size:calc(var(--inv-text-scale, 1) * 8.5px);text-align:center}
-#hopeRail #hopeUsageStatus{width:100%;max-width:100%;box-sizing:border-box;margin:2px 0 0;padding:0;color:#87919b;font-size:11px;font-weight:500;line-height:1.4;white-space:normal;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+#hopeRail #hopeUsageStatus{width:100%;max-width:100%;max-height:0;box-sizing:border-box;margin:2px 0 0;padding:0;color:#87919b;font-size:11px;font-weight:500;line-height:1.4;white-space:normal;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;opacity:0;overflow:hidden;transition:opacity 180ms ease,max-height 180ms ease}
+#hopeRail .rail-head:hover #hopeUsageStatus,#hopeRail .rail-head:focus-within #hopeUsageStatus{max-height:40px;opacity:1}
+@media(prefers-reduced-motion:reduce){#hopeRail #hopeUsageStatus{transition:none}}
 #hopeRail .aichat-foot{color:#71787e;font-size:calc(var(--inv-text-scale, 1) * 10px)}
 #hopeRail .aichat-cost{color:#5aa9e6}
 #hopeRail .aichat-status{color:#9aa0a6}
@@ -4656,7 +4658,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-06.284';
+const AIMM_BUILD = '2026-11-06.285';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
