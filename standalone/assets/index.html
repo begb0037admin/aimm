@@ -1959,9 +1959,10 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail #aiChatClearInput{flex:1 1 auto;background:transparent;border:1px solid #2c3034;color:#71787e;border-radius:999px;font-size:calc(var(--inv-text-scale, 1) * 11px);line-height:1.25;padding:9px 10px;white-space:nowrap}
 #hopeRail #aiChatClearInput:hover{color:#ff8a8a;border-color:#5a2626}
 #hopeRail .aichat-compose .aichat-status{flex:1 1 100%;font-size:calc(var(--inv-text-scale, 1) * 8.5px);text-align:center}
-#hopeRail .coach-info-wrap{position:relative;display:inline-flex;align-items:flex-start;flex:0 0 21px;width:21px;height:21px}
-#hopeRail #hopeUsageStatus{position:absolute;z-index:5;top:0;left:calc(100% + 6px);width:max-content;max-width:220px;min-height:0;box-sizing:border-box;margin:0;padding:6px 8px;border:1px solid #2a3340;border-radius:8px;background:#151c24;color:#c7d0d9;box-shadow:0 6px 18px rgba(0,0,0,.4);font-size:11px;font-weight:500;line-height:1.4;white-space:normal;overflow-wrap:anywhere;opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity 160ms ease,visibility 160ms ease,transform 160ms ease}
-#hopeRail .coach-info-wrap:hover #hopeUsageStatus,#hopeRail .coach-info-wrap:focus-within #hopeUsageStatus{opacity:1;visibility:visible;transform:translateY(0)}
+#hopeRail .coach-info-wrap{position:relative;display:inline-flex;align-items:flex-start;flex:0 0 21px;width:21px;height:21px;overflow:visible}
+#hopeRail .rail-head{overflow:visible}
+#hopeRail #hopeUsageStatus{position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);width:190px;max-width:190px;box-sizing:border-box;white-space:normal;overflow-wrap:anywhere;font:500 11px/1.4 Inter,-apple-system,sans-serif;color:#c7d0d9;background:#151c24;border:1px solid #2a3340;border-radius:8px;padding:6px 9px;box-shadow:0 6px 18px rgba(0,0,0,.4);z-index:5;opacity:0;visibility:hidden;transition:opacity 160ms ease,visibility 160ms}
+#hopeRail .coach-info-wrap:hover #hopeUsageStatus,#hopeRail .coach-info-wrap:focus-within #hopeUsageStatus{opacity:1;visibility:visible;transform:translateY(-50%)}
 #hopeRail .aichat-foot{color:#71787e;font-size:calc(var(--inv-text-scale, 1) * 10px)}
 #hopeRail .aichat-cost{color:#5aa9e6}
 #hopeRail .aichat-status{color:#9aa0a6}
@@ -2677,7 +2678,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 /* AIMM coach identity: the supplied wordmark colours, with Hope retained as
    the conversational persona in her greeting and replies. */
 #hopeRail .rail-head .oz-rail-title{position:relative;min-width:0;overflow:visible}
-#hopeRail .rail-head .oz-rail-name{display:flex;align-items:center;gap:9px;min-width:0;font-size:calc(var(--inv-text-scale, 1) * 23px);font-weight:750;letter-spacing:-.03em;line-height:1.2}
+#hopeRail .rail-head .oz-rail-name{display:flex;align-items:center;gap:9px;min-width:0;font-size:calc(var(--inv-text-scale, 1) * 23px);font-weight:750;letter-spacing:-.03em;line-height:1.2;overflow:visible}
 #hopeRail .rail-wordmark{display:inline-flex;flex-direction:column;align-items:flex-start;line-height:1.05;white-space:nowrap}
 #hopeRail .rail-wordmark .rail-line{display:flex;white-space:nowrap}
 #hopeRail .rail-wordmark .rail-coach{background:none;color:#9ca8b5;text-transform:uppercase;font-size:calc(var(--page-title-size) * .767)}
@@ -4657,7 +4658,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-06.286';
+const AIMM_BUILD = '2026-11-06.287';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
