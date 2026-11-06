@@ -2271,7 +2271,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck #mcStemStack .mc-stem-big-play{width:58px;height:58px;flex:0 0 58px;display:grid;place-items:center;border:0;border-radius:50%;background:#4fc3e8;color:#09131d;box-shadow:0 0 24px rgba(79,195,232,.28);cursor:pointer;transition:transform .16s,box-shadow .16s}
 #eq.oz-mixcheck #mcStemStack .mc-stem-big-play:hover{background:#4fc3e8;transform:scale(1.04);box-shadow:0 0 30px rgba(79,195,232,.4)}
 #eq.oz-mixcheck #mcStemStack .mc-stem-big-play:focus-visible{outline:3px solid #d7efff;outline-offset:3px}
-#eq.oz-mixcheck #mcStemStack .mc-stem-big-play svg{width:34px;height:34px}
+#eq.oz-mixcheck #mcStemStack .mc-stem-big-play svg{width:40px;height:40px}
 #eq.oz-mixcheck #mcStemStack .mc-stem-track-meta{display:grid;gap:6px;min-width:0;flex:1}
 #eq.oz-mixcheck #mcStemStack .mc-stem-track-meta>strong{font:750 calc(var(--inv-text-scale, 1) * 22px)/1.15 Inter,-apple-system,sans-serif;color:#edf4fb;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #eq.oz-mixcheck #mcStemStack .mc-stem-track-facts{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#a6b6ca;font:500 calc(var(--inv-text-scale, 1) * 12px) Inter,-apple-system,sans-serif}
@@ -2308,7 +2308,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) .mc-drop-formats{font:500 calc(var(--inv-text-scale, 1) * 12px)/1.5 Inter,-apple-system,sans-serif;color:#89dcbc}
 #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #mcInput{margin-top:2px}
 #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #mcCtaSub{color:#96a6ba;max-width:none;font:500 calc(var(--inv-text-scale, 1) * 11px)/1.5 var(--mono)}
-@media(max-width:720px){#eq.oz-mixcheck #mcStemStack{padding:12px;border-radius:16px}#eq.oz-mixcheck #mcStemStack .mc-stem-player-head{gap:11px}#eq.oz-mixcheck #mcStemStack .mc-stem-big-play{width:48px;height:48px;flex-basis:48px}#eq.oz-mixcheck #mcStemStack .mc-stem-big-play svg{width:28px;height:28px}#eq.oz-mixcheck #mcStemStack .mc-stem-track-meta>strong{font-size:calc(var(--inv-text-scale, 1) * 18px)}#eq.oz-mixcheck #mcStemStack .mc-stem-clock{font-size:calc(var(--inv-text-scale, 1) * 11px)}#eq.oz-mixcheck #mcStemStack .mc-stem-clock strong{font-size:calc(var(--inv-text-scale, 1) * 13px)}#eq.oz-mixcheck #mcStemStack .mc-stem-modes{gap:6px}#eq.oz-mixcheck #mcStemStack .mc-stem-modes button{min-height:34px;padding:7px 10px}}
+@media(max-width:720px){#eq.oz-mixcheck #mcStemStack{padding:12px;border-radius:16px}#eq.oz-mixcheck #mcStemStack .mc-stem-player-head{gap:11px}#eq.oz-mixcheck #mcStemStack .mc-stem-big-play{width:48px;height:48px;flex-basis:48px}#eq.oz-mixcheck #mcStemStack .mc-stem-big-play svg{width:34px;height:34px}#eq.oz-mixcheck #mcStemStack .mc-stem-track-meta>strong{font-size:calc(var(--inv-text-scale, 1) * 18px)}#eq.oz-mixcheck #mcStemStack .mc-stem-clock{font-size:calc(var(--inv-text-scale, 1) * 11px)}#eq.oz-mixcheck #mcStemStack .mc-stem-clock strong{font-size:calc(var(--inv-text-scale, 1) * 13px)}#eq.oz-mixcheck #mcStemStack .mc-stem-modes{gap:6px}#eq.oz-mixcheck #mcStemStack .mc-stem-modes button{min-height:34px;padding:7px 10px}}
 @media(max-width:720px){#eq.oz-mixcheck #mcTransport .mc-workspace-modes{min-height:48px;border-radius:18px;flex-wrap:wrap}#eq.oz-mixcheck #mcTransport .mc-workspace-modes button{font-size:calc(var(--inv-text-scale, 1) * 11px);gap:5px;padding:7px 5px}#eq.oz-mixcheck #mcTransport .mc-workspace-modes button small{font-size:calc(var(--inv-text-scale, 1) * 8px);padding:2px 4px}}
 
 /* 2026-11-03.98: preserve the original narrow specs rail and let the card use
@@ -3392,7 +3392,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           </div>
           <div class="mc-stem-stack" id="mcStemStack" hidden>
             <div class="mc-stem-player-head">
-              <button class="mc-stem-big-play" id="mcStemBigPlay" type="button" onclick="refTogglePlay()" aria-label="Play stem mix" title="Play / pause stem mix"><svg id="mcStemBigPlaySvg" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/></svg></button>
+              <button class="mc-stem-big-play" id="mcStemBigPlay" type="button" onclick="refTogglePlay()" aria-label="Play stem mix" title="Play / pause stem mix"><svg id="mcStemBigPlaySvg" viewBox="5 3.5 15 17" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/></svg></button>
               <div class="mc-stem-track-meta"><strong id="mcStemTrackTitle">Stem mix</strong><div class="mc-stem-track-facts"><span id="mcStemSongName">Aligned stems</span><span class="mc-stem-fact-pill" id="mcStemKeyFact">Key · —</span><span class="mc-stem-fact-pill" id="mcStemTempoFact">— BPM</span></div></div>
               <div class="mc-stem-clock"><strong id="mcStemElapsed">0:00</strong><span>/</span><span id="mcStemDuration">0:00</span></div>
             </div>
@@ -4647,7 +4647,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.244';
+const AIMM_BUILD = '2026-11-05.245';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
