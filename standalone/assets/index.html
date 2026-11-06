@@ -1959,9 +1959,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail #aiChatClearInput{flex:1 1 auto;background:transparent;border:1px solid #2c3034;color:#71787e;border-radius:999px;font-size:calc(var(--inv-text-scale, 1) * 11px);line-height:1.25;padding:9px 10px;white-space:nowrap}
 #hopeRail #aiChatClearInput:hover{color:#ff8a8a;border-color:#5a2626}
 #hopeRail .aichat-compose .aichat-status{flex:1 1 100%;font-size:calc(var(--inv-text-scale, 1) * 8.5px);text-align:center}
-#hopeRail #hopeUsageStatus{width:100%;max-width:100%;max-height:0;box-sizing:border-box;margin:2px 0 0;padding:0;color:#87919b;font-size:11px;font-weight:500;line-height:1.4;white-space:normal;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;opacity:0;overflow:hidden;transition:opacity 180ms ease,max-height 180ms ease}
-#hopeRail .rail-head:hover #hopeUsageStatus,#hopeRail .rail-head:focus-within #hopeUsageStatus{max-height:40px;opacity:1}
-@media(prefers-reduced-motion:reduce){#hopeRail #hopeUsageStatus{transition:none}}
+#hopeRail .coach-info-wrap{position:relative;display:inline-flex;align-items:flex-start;flex:0 0 21px;width:21px;height:21px}
+#hopeRail #hopeUsageStatus{position:absolute;z-index:5;top:0;left:calc(100% + 6px);width:max-content;max-width:220px;min-height:0;box-sizing:border-box;margin:0;padding:6px 8px;border:1px solid #2a3340;border-radius:8px;background:#151c24;color:#c7d0d9;box-shadow:0 6px 18px rgba(0,0,0,.4);font-size:11px;font-weight:500;line-height:1.4;white-space:normal;overflow-wrap:anywhere;opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity 160ms ease,visibility 160ms ease,transform 160ms ease}
+#hopeRail .coach-info-wrap:hover #hopeUsageStatus,#hopeRail .coach-info-wrap:focus-within #hopeUsageStatus{opacity:1;visibility:visible;transform:translateY(0)}
 #hopeRail .aichat-foot{color:#71787e;font-size:calc(var(--inv-text-scale, 1) * 10px)}
 #hopeRail .aichat-cost{color:#5aa9e6}
 #hopeRail .aichat-status{color:#9aa0a6}
@@ -2769,10 +2769,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     <div class="oz-rail-title">
       <div class="oz-rail-name">
         <span class="rail-wordmark"><span class="rail-line"><span class="rail-brand-ai">AI</span><span class="rail-brand-mm">MM</span></span><span class="rail-coach">Coach</span></span>
-        <button class="coach-info" type="button" aria-label="About AIMix Coach" aria-describedby="coachInfoTooltip" aria-expanded="false"><span aria-hidden="true">i</span><span class="coach-tooltip" id="coachInfoTooltip" role="tooltip">AI suggestions can be wrong. Review any changes before you keep them.</span></button>
+        <span class="coach-info-wrap"><button class="coach-info" type="button" aria-label="About AIMix Coach" aria-describedby="coachInfoTooltip" aria-expanded="false"><span aria-hidden="true">i</span><span class="coach-tooltip" id="coachInfoTooltip" role="tooltip">AI suggestions can be wrong. Review any changes before you keep them.</span></button><span class="aichat-status" id="hopeUsageStatus"></span></span>
       </div>
       <div class="oz-rail-status" id="hopeRailStatusTxt">chat &amp; voice assistant</div>
-      <span class="aichat-status" id="hopeUsageStatus"></span>
     </div>
     <!-- R3 post-ship (Markey 2026-09-02, board feedback item 17): #hopeWave is a
          LIKE-FOR-LIKE port of the working voice-reactive waveform from the PTT /
@@ -4658,7 +4657,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-06.285';
+const AIMM_BUILD = '2026-11-06.286';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
