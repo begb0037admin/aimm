@@ -2286,7 +2286,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 @media (hover:hover) and (pointer:fine){
   #eq.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover{background:transparent;color:#d6e2eb;transform:translateY(-2px);box-shadow:0 0 0 1px rgba(79,195,232,.28),0 0 14px rgba(79,195,232,.40),0 0 24px rgba(201,161,90,.28)}
 }
-#eq.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"]{border:1.5px solid transparent;background:radial-gradient(ellipse 90% 160% at 0% 0%,rgba(74,140,160,.22),transparent 70%),radial-gradient(ellipse 80% 150% at 100% 0%,rgba(201,161,90,.14),transparent 68%),linear-gradient(180deg,#121b22 0%,#080d13 100%) padding-box,linear-gradient(135deg,#2d5f86 0%,#244c6e 45%,#c9a15a 100%) border-box;color:var(--mixing-state-ink);font-weight:700;box-shadow:none}
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"]{border:1.5px solid transparent;background:radial-gradient(ellipse 90% 160% at 0% 0%,rgba(74,140,160,.29),transparent 72%),radial-gradient(ellipse 80% 150% at 100% 0%,rgba(201,161,90,.19),transparent 70%),linear-gradient(180deg,#131c24 0%,#091016 100%) padding-box,linear-gradient(135deg,#2d5f86 0%,#244c6e 45%,#c9a15a 100%) border-box;color:var(--mixing-state-ink);font-weight:700;box-shadow:none}
 @media (prefers-reduced-motion:reduce){
   #eq.oz-mixcheck #mcStemStack .mc-stem-modes button{transition:none}
 }
@@ -3997,7 +3997,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-result-art{cursor:pointer}
 #eq.oz-mixcheck .mc-spotify-result:hover{border-color:rgba(79,195,232,.6);background:#161b21}
 /* Active Mix Check tab: smooth blue-gold border-box ring. */
-.tabs.oz-tabstrip .tab.oz-tab[data-tab="eq"].active:is(.active){background:radial-gradient(ellipse 90% 160% at 0% 0%,rgba(74,140,160,.22),transparent 70%),radial-gradient(ellipse 80% 150% at 100% 0%,rgba(201,161,90,.14),transparent 68%),linear-gradient(180deg,#121b22 0%,#080d13 100%) padding-box,linear-gradient(135deg,#1d4d6a 0%,#173f58 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;box-shadow:none;outline:none}
+.tabs.oz-tabstrip .tab.oz-tab[data-tab="eq"].active:is(.active){background:radial-gradient(ellipse 90% 160% at 0% 0%,rgba(74,140,160,.29),transparent 72%),radial-gradient(ellipse 80% 150% at 100% 0%,rgba(201,161,90,.19),transparent 70%),linear-gradient(180deg,#131c24 0%,#091016 100%) padding-box,linear-gradient(135deg,#1d4d6a 0%,#173f58 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;box-shadow:none;outline:none}
 
 /* Top navigation states: plain at rest, Spotify-style light on hover. */
 .tabs.oz-tabstrip .tab.oz-tab{transition:transform 180ms ease,box-shadow 180ms ease,color 180ms ease,border-color 180ms ease}
@@ -4016,9 +4016,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 
 /* Selected-state finish: apply the Mix Check capsule to every selected
    navigation tab, the active Mixing mode, and the enabled Hope Send action. */
-.tabs.oz-tabstrip .tab.oz-tab:is(.active,[aria-selected="true"],[aria-current]:not([aria-current="false"])){background:radial-gradient(ellipse 90% 160% at 0% 0%,rgba(74,140,160,.22),transparent 70%),radial-gradient(ellipse 80% 150% at 100% 0%,rgba(201,161,90,.14),transparent 68%),linear-gradient(180deg,#121b22 0%,#080d13 100%) padding-box,linear-gradient(135deg,#1d4d6a 0%,#173f58 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700}
+.tabs.oz-tabstrip .tab.oz-tab:is(.active,[aria-selected="true"],[aria-current]:not([aria-current="false"])){background:radial-gradient(ellipse 90% 160% at 0% 0%,rgba(74,140,160,.29),transparent 72%),radial-gradient(ellipse 80% 150% at 100% 0%,rgba(201,161,90,.19),transparent 70%),linear-gradient(180deg,#131c24 0%,#091016 100%) padding-box,linear-gradient(135deg,#1d4d6a 0%,#173f58 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700}
 .tabs.oz-tabstrip .tab.oz-tab:is(.active,[aria-selected="true"],[aria-current]:not([aria-current="false"])) .tab-ico,.tabs.oz-tabstrip .tab.oz-tab:is(.active,[aria-selected="true"],[aria-current]:not([aria-current="false"])) .tab-label{color:var(--mixing-state-ink);font-weight:700}
-#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]){background:radial-gradient(ellipse 90% 160% at 0% 0%,rgba(74,140,160,.22),transparent 70%),radial-gradient(ellipse 80% 150% at 100% 0%,rgba(201,161,90,.14),transparent 68%),linear-gradient(180deg,#121b22 0%,#080d13 100%) padding-box,linear-gradient(135deg,#2d5f86 0%,#244c6e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700}
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]){background:radial-gradient(ellipse 90% 160% at 0% 0%,rgba(74,140,160,.29),transparent 72%),radial-gradient(ellipse 80% 150% at 100% 0%,rgba(201,161,90,.19),transparent 70%),linear-gradient(180deg,#131c24 0%,#091016 100%) padding-box,linear-gradient(135deg,#2d5f86 0%,#244c6e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700}
 #eq.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]) .mc-workspace-mode-icon{color:var(--mixing-state-ink);stroke:currentColor}
 #hopeRail #aiChatSend:not(:disabled),
 #eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture){background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700;transition:background 200ms ease,color 200ms ease,border-color 200ms ease,box-shadow 200ms ease}
@@ -4656,7 +4656,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-06.281';
+const AIMM_BUILD = '2026-11-06.282';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
