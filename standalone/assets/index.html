@@ -1959,7 +1959,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail #aiChatClearInput{flex:1 1 auto;background:transparent;border:1px solid #2c3034;color:#71787e;border-radius:999px;font-size:calc(var(--inv-text-scale, 1) * 11px);line-height:1.25;padding:9px 10px;white-space:nowrap}
 #hopeRail #aiChatClearInput:hover{color:#ff8a8a;border-color:#5a2626}
 #hopeRail .aichat-compose .aichat-status{flex:1 1 100%;font-size:calc(var(--inv-text-scale, 1) * 8.5px);text-align:center}
-#hopeRail #hopeUsageStatus{padding:0 8px;margin-top:14px;margin-bottom:-6px;line-height:1.6;font-size:12px;color:#87919b}
+#hopeRail #hopeUsageStatus{width:100%;max-width:100%;box-sizing:border-box;margin:2px 0 0;padding:0;color:#87919b;font-size:11px;font-weight:500;line-height:1.4;white-space:normal;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 #hopeRail .aichat-foot{color:#71787e;font-size:calc(var(--inv-text-scale, 1) * 10px)}
 #hopeRail .aichat-cost{color:#5aa9e6}
 #hopeRail .aichat-status{color:#9aa0a6}
@@ -2770,6 +2770,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         <button class="coach-info" type="button" aria-label="About AIMix Coach" aria-describedby="coachInfoTooltip" aria-expanded="false"><span aria-hidden="true">i</span><span class="coach-tooltip" id="coachInfoTooltip" role="tooltip">AI suggestions can be wrong. Review any changes before you keep them.</span></button>
       </div>
       <div class="oz-rail-status" id="hopeRailStatusTxt">chat &amp; voice assistant</div>
+      <span class="aichat-status" id="hopeUsageStatus"></span>
     </div>
     <!-- R3 post-ship (Markey 2026-09-02, board feedback item 17): #hopeWave is a
          LIKE-FOR-LIKE port of the working voice-reactive waveform from the PTT /
@@ -3073,7 +3074,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         <button id="hopeVoiceRouteBtn" type="button" class="hope-voice-route-btn" aria-label="Voice route: ElevenLabs" title="Space starts voice when the message box is empty. Shift+Space starts voice while you have a draft. Click to switch routes." onclick="hopeUsageToggleRoute()">ElevenLabs</button>
         <button id="hopeAccountBtn" type="button" class="hope-voice-route-btn" aria-label="Hope account: Auto" title="Choose which ElevenLabs account Hope uses" onclick="hopeCycleAccount()">Auto</button>
       </div>
-      <span class="aichat-status" id="hopeUsageStatus" hidden></span>
       <span class="aichat-status" id="aiChatStatus">&nbsp;</span>
       <!-- DORMANT post-this-batch: the Quick Prompts column was retired since
            the compose area shrank and the Snapshots panel grew. The buttons
@@ -4656,7 +4656,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-06.283';
+const AIMM_BUILD = '2026-11-06.284';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -15235,7 +15235,7 @@ function hopeUsagePaintRoute(){
   const mode=hopeUsageGetMode(),button=document.getElementById('hopeVoiceRouteBtn');
   if(button){button.textContent=mode==='usage'?'Deepgram':'ElevenLabs';button.dataset.mode=mode;button.setAttribute('aria-label','Voice route: '+(mode==='usage'?'Deepgram':'ElevenLabs'));button.title='Space starts '+(mode==='usage'?'Deepgram':'ElevenLabs')+' when the message box is empty. Shift+Space starts voice while you have a draft. Click to switch routes.';}
   const status=document.getElementById('hopeUsageStatus');
-  if(status){status.hidden=mode!=='usage';if(mode==='usage'&&!status.textContent.trim())hopeUsageStatus('Deepgram route selected · Deepgram listens, GPT-6 Luna replies, Hope speaks with Flash.');}
+  if(status){status.hidden=false;status.textContent=mode==='usage'?'Deepgram route selected · Deepgram listens, GPT-6 Luna replies, Hope speaks with Flash.':'ElevenLabs route selected · ElevenLabs listens and replies, Hope speaks with Flash.';}
 }
 function hopeAccountPaint(){
   const choice = getHopeAccountChoice();
@@ -15327,13 +15327,10 @@ function hopeUsageStatus(message, busy=false, error=false){
   el.dataset.state=error?'error':(busy?'busy':'ready');
 }
 function hopeUsageSetMode(mode){
-  const custom=mode==='usage';
   const status=document.getElementById('hopeUsageStatus');
-  if(status)status.hidden=hopeUsageGetMode()!=='usage';
-  // Keep the completed turn's usage summary visible when recording/processing
-  // finishes; only seed the prompt for a fresh/empty status area.
-  if(custom&&!HOPE_USAGE_VOICE.recording&&!HOPE_USAGE_VOICE.processing&&status&&!status.textContent.trim())hopeUsageStatus('Usage-based route selected. Press Spacebar to start.');
-  if(!custom&&status)status.textContent='';
+  // Keep the route line visible in both modes; restore it only if another path
+  // has cleared the status while changing modes.
+  if(status&&!status.textContent.trim())hopeUsagePaintRoute();
 }
 function hopeUsageResetTotals(){
   HOPE_USAGE_VOICE.sessionTurns=0;
