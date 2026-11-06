@@ -1222,6 +1222,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #railReopen{position:fixed;right:14px;bottom:64px;z-index:1500;width:42px;height:42px;border-radius:50%;background:#1f2937;color:#e5e7eb;border:1px solid #374151;font-size:calc(var(--inv-text-scale, 1) * 18px);cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 #railReopen:hover{border-color:#4fd8ff66}
 #buildStamp{align-self:center;margin:0 auto;font: 600 calc(var(--inv-text-scale, 1) * 9px) ui-monospace,Menlo,monospace;letter-spacing:.02em;color:#3d4650;pointer-events:none;user-select:text}
+#mcSpecs #buildStamp{margin:18px auto 0;padding-bottom:14px;text-align:center}
 
 /* ══════════════════════════════════════════════════════════════════════
    OZONE-12 MIXCHECK REDESIGN (R5, 2026-08-17) — literal transplant of
@@ -3066,7 +3067,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
       </div>
       <span class="aichat-status" id="hopeUsageStatus" hidden></span>
       <span class="aichat-status" id="aiChatStatus">&nbsp;</span>
-      <div id="buildStamp"></div>
       <!-- DORMANT post-this-batch: the Quick Prompts column was retired since
            the compose area shrank and the Snapshots panel grew. The buttons
            are kept in a hidden wrapper so the document.querySelectorAll
@@ -3303,6 +3303,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         <div class="sub" id="refDynRangeSub">no file loaded</div><div id="refDynRangeTag"></div><div class="oz-bar-track"><div id="refDynRangeBar" class="oz-bar-fill" style="width:0%"></div></div>
         <div class="meter-override"><label>Manual DR:</label><input type="number" id="ovDynRange" step="0.1" placeholder="e.g. 6.0" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovDynRange')" title="Clear override">✕</button></div>
       </div>
+      <div id="buildStamp"></div>
     </div>
 
     <!-- Input — the real drop-zone/live-input engine physically relocated
@@ -4647,7 +4648,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.252';
+const AIMM_BUILD = '2026-11-05.253';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
