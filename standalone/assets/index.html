@@ -1353,7 +1353,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
    (26px * 1.15 ~= 30px). [shell] — applies on every tab; visual = tighter leading
    on one wordmark line, no layout risk. */
 .header-top h1{line-height:1.15}
-.header-top h1 .brand-ai{background:linear-gradient(180deg,#e8c48a 0%,#b8864f 60%,#7a5530 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.header-top h1 .brand-ai{background:linear-gradient(180deg,#fff1c2 0%,#e2bd7a 22%,#b8864f 44%,#f3d9a0 52%,#8a5f2c 70%,#d9b274 86%,#f7e2b0 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(43,28,10,.9)) drop-shadow(0 0 1px rgba(255,236,190,.35))}
 .header-top h1 .brand-mm{background:none;color:#2a8fa1}
 .rail-head .oz-rail-name .ai-star{width:22px;height:19px;flex:0 0 22px;display:inline-block;color:#fbbf24;overflow:visible;vertical-align:-3px;margin-right:6px}
 .rail-head .oz-rail-name .ai-star path{fill:currentColor}
@@ -2680,7 +2680,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .rail-wordmark .rail-line{display:flex;white-space:nowrap}
 #hopeRail .rail-wordmark .rail-coach{background:none;color:#9ca8b5;text-transform:uppercase;font-size:calc(var(--page-title-size) * .767)}
 #hopeRail .rail-head .coach-info{align-self:flex-start}
-#hopeRail .rail-brand-ai{background:linear-gradient(180deg,#e8c48a 0%,#b8864f 60%,#7a5530 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+#hopeRail .rail-brand-ai{background:linear-gradient(180deg,#fff1c2 0%,#e2bd7a 22%,#b8864f 44%,#f3d9a0 52%,#8a5f2c 70%,#d9b274 86%,#f7e2b0 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(43,28,10,.9)) drop-shadow(0 0 1px rgba(255,236,190,.35))}
 #hopeRail .rail-brand-mm{background:none;color:#4fc3e8}
 #hopeRail .rail-head .oz-rail-status{margin-top:0;color:#9ca8b6;font-size:calc(var(--inv-text-scale, 1) * 14px);font-weight:600}
 #hopeRail .rail-head .oz-rail-title{gap:5px}
@@ -4656,7 +4656,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-06.272';
+const AIMM_BUILD = '2026-11-06.273';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
