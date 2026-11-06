@@ -4645,7 +4645,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.239';
+const AIMM_BUILD = '2026-11-05.240';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -24844,7 +24844,7 @@ csInit('csPlatform');
       const w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return;
       const dpr=Math.max(1,window.devicePixelRatio||1),pixelWidth=Math.round(w*dpr),pixelHeight=Math.round(h*dpr);
       if(cv.width!==pixelWidth)cv.width=pixelWidth;if(cv.height!==pixelHeight)cv.height=pixelHeight;
-      const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);const mid=h/2,amp=h*.43,cut=played*w;
+      const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);const mid=h/2,amp=h*.43;
       const bounds=activeByKey.get(stem.key),peak=bounds?.peak||0,visualGain=peak>1e-7?1/peak:1,activityFloor=bounds?.floor||Infinity;
       const activeStart=bounds?Math.max(0,(bounds.first-cropStart)/visibleBins):0;
       const activeEnd=bounds?Math.min(1,(bounds.last+1-cropStart)/visibleBins):1;
@@ -24858,8 +24858,21 @@ csInit('csPlatform');
         const x=i/1024*w,y0=mid-top*visualGain*amp,y1=mid-bottom*visualGain*amp;
         g.strokeStyle=brandFade;g.beginPath();g.moveTo(x+.5,y0);g.lineTo(x+.5,Math.max(y1,y0+1));g.stroke();
       }
-      g.fillStyle='#f1f4f8';g.fillRect(Math.max(0,Math.min(w-1,Math.round(cut))),0,1,h);
     });
+    const rows=document.getElementById('mcStemRows');
+    if(rows){
+      rows.style.position='relative';
+      let playhead=document.getElementById('mcStemPlayhead');
+      if(!playhead){playhead=document.createElement('div');playhead.id='mcStemPlayhead';playhead.setAttribute('aria-hidden','true');Object.assign(playhead.style,{position:'absolute',width:'2px',background:'#f1f4f8',pointerEvents:'none',zIndex:'5'});rows.appendChild(playhead);}
+      const rowEls=rows.querySelectorAll('.mc-stem-row'),firstCanvas=rows.querySelector('.mc-stem-wave');
+      if(rowEls.length&&firstCanvas&&firstCanvas.clientWidth){
+        const rowsRect=rows.getBoundingClientRect(),firstRect=firstCanvas.getBoundingClientRect(),firstRowRect=rowEls[0].getBoundingClientRect(),lastRowRect=rowEls[rowEls.length-1].getBoundingClientRect();
+        playhead.style.display='block';
+        playhead.style.left=(firstRect.left-rowsRect.left+Math.max(0,Math.min(firstCanvas.clientWidth-1,Math.round(played*firstCanvas.clientWidth))))+'px';
+        playhead.style.top=(firstRowRect.top-rowsRect.top)+'px';
+        playhead.style.bottom=(rowsRect.bottom-lastRowRect.bottom)+'px';
+      }else playhead.style.display='none';
+    }
   }
   function stemRoleForLabel(label){
     const value=String(label||'').toLowerCase();
