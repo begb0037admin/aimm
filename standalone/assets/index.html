@@ -1221,7 +1221,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .rail-body #aiChatTranscript{flex:0 1 auto;min-height:110px;max-height:38vh}
 #railReopen{position:fixed;right:14px;bottom:64px;z-index:1500;width:42px;height:42px;border-radius:50%;background:#1f2937;color:#e5e7eb;border:1px solid #374151;font-size:calc(var(--inv-text-scale, 1) * 18px);cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 #railReopen:hover{border-color:#4fd8ff66}
-#buildStamp{align-self:center;margin:2px auto 0;font: 600 calc(var(--inv-text-scale, 1) * 10px) ui-monospace,Menlo,monospace;letter-spacing:.02em;color:#71787e;pointer-events:none;user-select:text}
+#buildStamp{align-self:center;margin:0 auto;font: 600 calc(var(--inv-text-scale, 1) * 9px) ui-monospace,Menlo,monospace;letter-spacing:.02em;color:#3d4650;pointer-events:none;user-select:text}
 
 /* ══════════════════════════════════════════════════════════════════════
    OZONE-12 MIXCHECK REDESIGN (R5, 2026-08-17) — literal transplant of
@@ -1937,11 +1937,11 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 
 /* Composer — pill input + gradient Send, reference's exact chip language
    (radius:999px, #232629 fill, #2c3034 border, gradient #2f6fae→#5aa9e6). */
-#hopeRail .aichat-compose{background:transparent;border:none;padding:16px;margin-top:18px;gap:14px;align-items:stretch;flex-direction:column} /* R3 2026-08-31: textarea on top, buttons row below */
+#hopeRail .aichat-compose{background:transparent;border:none;padding:0 16px;margin-top:0;gap:0;align-items:stretch;flex-direction:column} /* R3 2026-08-31: textarea on top, buttons row below */
 #hopeRail .aichat-compose textarea{background:#232629;border:1px solid #2c3034;border-radius:16px;color:#e8ebed;font-size:calc(var(--inv-text-scale, 1) * 12.5px);font-family:Inter,-apple-system,sans-serif}
 #hopeRail .aichat-compose textarea:focus{border-color:#5aa9e6}
 /* The four composer pills form two equal-width rows beneath the textarea. */
-#hopeRail .aichat-compose .send-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:34px 34px;align-items:stretch;column-gap:12px;row-gap:14px;min-width:0;max-width:none;width:100%;margin:14px 0 2px}
+#hopeRail .aichat-compose .send-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:34px 34px;align-items:stretch;column-gap:12px;row-gap:14px;min-width:0;max-width:none;width:100%;margin:28px 0 2px}
 #hopeRail .aichat-compose .send-col button{width:auto}
 #hopeRail .aichat-compose .send-col #aiChatSend,#hopeRail .aichat-compose .send-col #aiChatClear,#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,#hopeRail .aichat-compose .send-col #hopeAccountBtn{min-width:0;height:34px;box-sizing:border-box;margin:0;padding:0 6px;border-radius:999px;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap}
 #hopeRail #aiChatSend{flex:0 0 auto;background:linear-gradient(90deg,#2fa1e6,#a557f4);color:#0d1211;border-radius:999px;font-weight:700;font-size:calc(var(--inv-text-scale, 1) * 12px);padding:10px 20px}
@@ -2173,7 +2173,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
      flex:0 0 auto — a long transcript scrolls INSIDE the transcript area; the
    transcript scrolls inside the panel, the composer stays at the bottom, and
    chat history cannot set the desktop grid row's minimum height. */
-@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px;min-height:0;overflow:hidden;contain:size}#hopeRail .rail-head{flex:0 0 auto;padding:12px 18px 18px;border-bottom:1px solid #2c3034}/* board item 18: rail-head padding-top 30->12, mirror of the base rule (item 4b re-track) */#hopeRail .rail-body{flex:1 1 0;height:0;min-height:0;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1 1 0;height:0;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;height:0;min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034}#hopeRail #aiChatInput{height:90px;min-height:72px;max-height:150px;background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font: 400 calc(var(--inv-text-scale, 1) * 12px) Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font: 700 calc(var(--inv-text-scale, 1) * 12px) Inter,sans-serif}}
+@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px;min-height:0;overflow:hidden;contain:size}#hopeRail .rail-head{flex:0 0 auto;padding:12px 18px 18px;border-bottom:1px solid #2c3034}/* board item 18: rail-head padding-top 30->12, mirror of the base rule (item 4b re-track) */#hopeRail .rail-body{flex:1 1 0;height:0;min-height:0;padding:7px 16px 0;display:flex;flex-direction:column;gap:0;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1 1 0;height:0;min-height:0;max-height:none;display:flex;flex-direction:column;gap:0}#hopeRail #aiChatTranscript{flex:1 1 auto;height:0;min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034}#hopeRail #aiChatInput{height:90px;min-height:72px;max-height:150px;background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font: 400 calc(var(--inv-text-scale, 1) * 12px) Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font: 700 calc(var(--inv-text-scale, 1) * 12px) Inter,sans-serif}}
 /* Feedback board item 8 (2026-09-02.6): thin, near-invisible scrollbar for the
    internal Hope transcript scroll — present but visually quiet. */
 #hopeRail #aiChatTranscript{scrollbar-width:thin;scrollbar-color:#3a3f45 transparent}
@@ -4647,7 +4647,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.250';
+const AIMM_BUILD = '2026-11-05.251';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
