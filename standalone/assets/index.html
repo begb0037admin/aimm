@@ -2282,9 +2282,15 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck #mcStemStack .mc-stem-clock{display:flex;align-items:center;gap:6px;flex:0 0 auto;color:#9fb0c6;font:500 calc(var(--inv-text-scale, 1) * 14px) var(--mono)}
 #eq.oz-mixcheck #mcStemStack .mc-stem-clock strong{font-size:calc(var(--inv-text-scale, 1) * 17px);font-weight:600;color:#e7eff8}
 #eq.oz-mixcheck #mcStemStack .mc-stem-modes{display:flex;gap:8px;flex-wrap:wrap;padding:2px 0 4px}
-#eq.oz-mixcheck #mcStemStack .mc-stem-modes button{min-height:38px;padding:8px 15px;border:1px solid #374151;border-radius:999px;background:rgba(255,255,255,.035);color:#c2ccda;font:600 calc(var(--inv-text-scale, 1) * 12px) Inter,-apple-system,sans-serif;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
-#eq.oz-mixcheck #mcStemStack .mc-stem-modes button:hover{border-color:#4a7892;color:#f1f8ff}
-#eq.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"]{border-color:#56bada;background:linear-gradient(110deg,rgba(47,161,230,.24),rgba(165,87,244,.22));color:#f3f8ff;box-shadow:inset 0 0 0 1px rgba(109,193,231,.12)}
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes button{min-height:38px;padding:8px 15px;border:1px solid transparent;border-radius:999px;background:transparent;color:#71787e;font:600 calc(var(--inv-text-scale, 1) * 12px) Inter,-apple-system,sans-serif;cursor:pointer;transition:background 180ms ease,border-color 180ms ease,color 180ms ease,box-shadow 180ms ease,transform 180ms ease}
+@media (hover:hover) and (pointer:fine){
+  #eq.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover{background:transparent;color:#d6e2eb;transform:translateY(-2px);box-shadow:0 0 0 1px rgba(79,195,232,.28),0 0 14px rgba(79,195,232,.40),0 0 24px rgba(201,161,90,.28)}
+}
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"]{border:1.5px solid transparent;background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;color:var(--mixing-state-ink);font-weight:700;box-shadow:none}
+@media (prefers-reduced-motion:reduce){
+  #eq.oz-mixcheck #mcStemStack .mc-stem-modes button{transition:none}
+}
+@media (prefers-reduced-motion:reduce) and (hover:hover) and (pointer:fine){#eq.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover{transform:none}}
 #eq.oz-mixcheck #mcStemStack .mc-stem-status{padding:0 3px;color:#97a7ba}
 #eq.oz-mixcheck #mcStemStack .mc-stem-icon svg{width:21px;height:21px}
 #eq.oz-mixcheck #mcStemStack .mc-stem-solo[aria-pressed="true"]{color:#082016;background:#68e1a7;border-color:#9cf1c8;box-shadow:0 0 14px rgba(87,223,160,.34)}
@@ -4650,7 +4656,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.257';
+const AIMM_BUILD = '2026-11-05.258';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
