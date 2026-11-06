@@ -2308,7 +2308,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible))> #refDropZone{min-height:300px;justify-content:center;padding:22px 26px;border:1.5px solid transparent;border-radius:24px;background:radial-gradient(ellipse at 50% 0%,rgba(47,161,230,.14),transparent 58%) padding-box,linear-gradient(145deg,#101827,#0b121e) padding-box,linear-gradient(135deg,rgba(79,195,232,.35) 0%,rgba(74,127,142,.35) 45%,rgba(201,161,90,.65) 100%) border-box}
 #eq.oz-mixcheck #mcTransport .mc-workspace-modes{width:min(100%,740px);min-height:54px;display:flex;align-items:center;justify-content:center;gap:6px;padding:5px;border:1px solid #303b4a;border-radius:999px;background:rgba(7,13,23,.74);margin:0 auto 2px}
 #eq.oz-mixcheck #mcTransport .mc-workspace-modes button{min-height:42px;flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 14px;border:1px solid transparent;border-radius:999px;background:transparent;color:#aeb9c8;font:700 calc(var(--inv-text-scale, 1) * 14px) Inter,-apple-system,sans-serif;white-space:nowrap}
-#eq.oz-mixcheck #mcTransport .mc-workspace-modes button.is-active{border-color:#34728a;background:linear-gradient(110deg,rgba(47,161,230,.25),rgba(70,199,168,.18));color:#eaf8fb}
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button.is-active{border-color:#34728a;background:linear-gradient(100deg,#152331 0%,#1c2636 45%,#2b242a 100%) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;color:#eaf8fb}
 #eq.oz-mixcheck #mcTransport .mc-workspace-modes button:disabled{cursor:default;opacity:.76}
 #eq.oz-mixcheck #mcTransport .mc-workspace-modes button small{font:600 calc(var(--inv-text-scale, 1) * 9px) Inter,-apple-system,sans-serif;color:#7e8fa3;border:1px solid #344153;border-radius:999px;padding:3px 6px}
 #eq.oz-mixcheck #mcTransport .mc-workspace-mode-icon{width:20px;height:20px;flex:0 0 20px;fill:none;stroke:#9bd9ef;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -4018,7 +4018,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
    navigation tab, the active Mixing mode, and the enabled Hope Send action. */
 .tabs.oz-tabstrip .tab.oz-tab:is(.active,[aria-selected="true"],[aria-current]:not([aria-current="false"])){background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700}
 .tabs.oz-tabstrip .tab.oz-tab:is(.active,[aria-selected="true"],[aria-current]:not([aria-current="false"])) .tab-ico,.tabs.oz-tabstrip .tab.oz-tab:is(.active,[aria-selected="true"],[aria-current]:not([aria-current="false"])) .tab-label{color:var(--mixing-state-ink);font-weight:700}
-#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]){background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700}
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]){background:linear-gradient(100deg,#152331 0%,#1c2636 45%,#2b242a 100%) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700}
 #eq.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]) .mc-workspace-mode-icon{color:var(--mixing-state-ink);stroke:currentColor}
 #hopeRail #aiChatSend:not(:disabled),
 #eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture){background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;border-radius:999px;box-shadow:none;outline:none;color:var(--mixing-state-ink);font-weight:700;transition:background 200ms ease,color 200ms ease,border-color 200ms ease,box-shadow 200ms ease}
@@ -4656,7 +4656,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-05.258';
+const AIMM_BUILD = '2026-11-05.259';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
