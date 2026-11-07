@@ -3457,7 +3457,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     <div class="oz-spec-card card">
       <div class="oz-spec-head">
         <div class="oz-spec-title-group"><span class="oz-spec-title">Spectral Balance</span><span class="oz-spec-subtitle">Live mix compared with your saved target</span></div>
-        <div class="mc-target-select-proxy" aria-hidden="true"><select id="refCurveTarget" autocomplete="off" onchange="refTargetChanged()" tabindex="-1" title="Saved target"><option value="">Default target</option><optgroup id="refTrackTargets" label="Saved targets"></optgroup></select><span id="refSpecStatus" class="oz-legacy-hide ref-spec-status-idle">drop a file to analyse</span></div>
+        <div class="mc-target-select-proxy" aria-hidden="true"><select id="refCurveTarget" autocomplete="off" onchange="refTargetChanged()" tabindex="-1" title="Saved target"><option value="">Flat</option><optgroup id="refTrackTargets" label="Saved targets"></optgroup></select><span id="refSpecStatus" class="oz-legacy-hide ref-spec-status-idle">drop a file to analyse</span></div>
       </div>
       <div class="mc-saved-targets" id="mcSavedTargets">
         <button class="mc-saved-targets-toggle" id="mcSavedTargetsToggle" type="button" aria-expanded="false" aria-controls="mcSavedTargetsPanel">
@@ -4655,7 +4655,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.17';
+const AIMM_BUILD = '2026-11-07.18';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -12146,7 +12146,7 @@ The mixing surface. Five buses across the top: Master, Vocal, 808, Drums, FX. Ea
 MIX CHECK TAB (eq) — the mastering-analysis surface (YOUR territory; see MIX CHECK AWARENESS below)
 Kev drops a rendered WAV of his mix/master here and the app analyses it. Nothing on this tab is canned — every number comes from measuring the actual file. Three columns:
 • Audio Specs (left) — measured metrics of the loaded file: Integrated LUFS, Short-term LUFS, True Peak (4×-oversampled inter-sample), PLR / dynamic range, stereo correlation, crest factor, plus format rows (sample rate, bit depth, duration). Below them a CLASSIFIED block (Genre, Tempo, Key + Subgenre / Production style / Energy / Mood / Dissonance) — some rows render "with full analysis" placeholders until the analyst phase ships.
-• Spectral Balance analyser (centre/right) — the file's whole-track average spectrum drawn against a genre TARGET CORRIDOR. "Target: auto (workbench genre)" or a preset (Trap / 808-heavy, Hip-Hop, R&B, Pop, Afrobeats, Lo-Fi, Flat / reference). The LOW / LOW-MID / MID / HIGH deviation meters read the file's energy vs that corridor's shape (gain-normalised around 150 Hz–3 kHz).
+• Spectral Balance analyser (centre/right) — the file's whole-track average spectrum drawn against the selected target. Flat starts as a 0 dB line; saved Spotify targets can be selected for comparison. The LOW / LOW-MID / MID / HIGH deviation meters read the file's energy vs the selected target.
 • Fix Queue (#mcActions, centre column) — a RANKED list of concrete fixes derived from the measured analysis vs the active corridor. See THE FIX QUEUE below.
 • Transport + waveform (#mcWave) — play / skip / ±10s / stop, elapsed / duration. The waveform is rendered min/max peak bars from the decoded buffer: a blue→purple (--send-blue) wash covers the played span, the rest is grey, a thin light playhead advances left→right during playback, click or drag to seek. (No section labels — real arrangement detection is a later feature.)
 • When analysis finishes the app also drops a one-line analysis banner on the tab and you post your spoken read into the chat (see MIX CHECK AWARENESS).
@@ -12289,7 +12289,7 @@ WORKBENCH TAB — full button-by-button inventory
 MIX CHECK TAB (tab id eq) — full inventory
 • Drop zone / transport — drop a WAV (or click to pick). Once loaded: eject/clear control, skip / −10s / play / +10s / stop, elapsed + duration, and the #mcWave rendered-peak waveform (played span washed --send-blue #2fa1e6→#a557f4, unplayed grey, thin light playhead advancing during playback, click/drag to seek).
 • Audio Specs column — measured metric rows (Integrated LUFS, Short-term LUFS, True Peak, PLR / DR, correlation, crest, sample rate, bit depth, duration) + the CLASSIFIED block (Genre, Tempo, Key, then Subgenre / Production style / Energy / Mood / Dissonance as "with full analysis" placeholders until the analyst phase).
-• Spectral Balance analyser — the file's average spectrum vs the genre TARGET CORRIDOR, with a "Target:" selector (auto = workbench genre, or Trap / 808-heavy, Hip-Hop, R&B, Pop, Afrobeats, Lo-Fi, Flat / reference) and LOW / LOW-MID / MID / HIGH deviation meters.
+• Spectral Balance analyser — the file's average spectrum vs Flat (a 0 dB line) or a selected saved Spotify target, with LOW / LOW-MID / MID / HIGH deviation meters.
 • Fix Queue (#mcActions) — one "Up next" card (id, measured title + why, grounded move, FOCUS band · IMP · CONF), an "N / M done" progress bar, a "✓ Mark done" button, "Show all queued (N)" expander, dismiss ×, "Ask Hope about this" (sends the selected fix details directly to Hope for an explanation). The same current fix also renders as a card in Hope's chat transcript. Advancing: the card's "✓ Mark done" button, or Hope's mark_fix_applied tool once Kev says he's handled it.
 • On analysis complete: a one-line analysis banner on the tab + Hope's spoken read posted into the chat.
 
@@ -21007,7 +21007,7 @@ csInit('csPlatform');
     pop:      {label:'Pop',              pts:[[20,-24,-14],[40,-10,-2],[90,-5,3],[160,-8,-1],[300,-9.75,-2.75],[600,-13.25,-6.25],[1200,-18.25,-11.25],[2500,-23.5,-16.5],[5000,-31.25,-24.25],[10000,-36.25,-28.25],[16000,-41.25,-31.25],[20000,-46,-34]]},
     afrobeats:{label:'Afrobeats',        pts:[[20,-22.5,-12.5],[40,-8,0],[90,-3.25,4.75],[160,-6.75,0.25],[300,-9.5,-2.5],[600,-13.5,-6.5],[1200,-18,-11],[2500,-24.75,-17.75],[5000,-31.5,-24.5],[10000,-37.25,-29.25],[16000,-42.75,-32.75],[20000,-46,-37]]},
     lofi:     {label:'Lo-Fi',            pts:[[20,-26.5,-16.5],[40,-12.5,-4.5],[90,-7.5,0.5],[160,-8,-1],[300,-7.25,-0.25],[600,-11.25,-4.25],[1200,-17.25,-10.25],[2500,-28,-21],[5000,-39.25,-30.25],[10000,-46,-37],[16000,-46,-43.5],[20000,-46,-43.5]]},
-    flat:     {label:'Flat / reference', pts:[[20,-24,-14],[40,-11,-3],[90,-6.25,1.75],[160,-8,-1],[300,-9.25,-2.25],[600,-12.75,-5.75],[1200,-17.75,-10.75],[2500,-25,-18],[5000,-32.75,-25.75],[10000,-38.25,-30.25],[16000,-43.75,-33.75],[20000,-46,-39]]}
+    flat:     {label:'Flat', pts:[[20,0,0],[20000,0,0]]}
   };
   let refCtx,refAnalyser,refSource,refBuffer,refAuditionBuffers=[],refSources=[];
   const refStemGainNodes=new Map();
@@ -21056,13 +21056,13 @@ csInit('csPlatform');
     const select=document.getElementById('refCurveTarget'),activeLabel=document.getElementById('mcSavedTargetsActive'),list=document.getElementById('mcSavedTargetList'),nameInput=document.getElementById('mcSavedTargetName'),renameButton=document.getElementById('mcSavedTargetRename');
     if(!select||!activeLabel||!list)return;
     const active=refTrackTargetByKey(select.value);
-    activeLabel.textContent=active?active.name+' · '+refTargetSourceLabel(active):'Default genre target';
+    activeLabel.textContent=active?active.name+' · '+refTargetSourceLabel(active):'Flat';
     if(nameInput&&document.activeElement!==nameInput)nameInput.value=active?active.name:'';
     if(nameInput)nameInput.disabled=!active;
     if(renameButton)renameButton.disabled=!active;
     list.replaceChildren();
     const defaultButton=document.createElement('button');defaultButton.type='button';defaultButton.className='mc-saved-target-option';defaultButton.dataset.targetId='';defaultButton.setAttribute('aria-pressed',String(!active));
-    const defaultName=document.createElement('span');defaultName.className='mc-saved-target-option-name';defaultName.textContent='Default genre target';
+    const defaultName=document.createElement('span');defaultName.className='mc-saved-target-option-name';defaultName.textContent='Flat';
     const defaultSource=document.createElement('span');defaultSource.className='mc-saved-target-option-source';defaultSource.textContent='AIMM default';
     defaultButton.append(defaultName,defaultSource);list.appendChild(defaultButton);
     if(!refTrackTargets.length){const empty=document.createElement('div');empty.className='mc-saved-target-empty';empty.textContent='Captured references will be saved here.';list.appendChild(empty);return;}
@@ -21367,6 +21367,8 @@ csInit('csPlatform');
     const badge=document.getElementById('stemTargetUnavailable');
     const bandGrid=document.querySelector('#eq .oz-band-grid');
     if(!refActiveCorridor()){
+      const targetSelect=document.getElementById('refCurveTarget');
+      const flatSelected=!(LIVE.active&&LIVE.referenceOnly)&&!mcSpotifyUsingCompanion&&!(targetSelect&&targetSelect.value);
       wrap.classList.toggle('stem-measured',!!stemView);
       if(bandGrid)bandGrid.classList.remove('stem-relative');
       if(badge)badge.hidden=true;
@@ -21375,10 +21377,11 @@ csInit('csPlatform');
       ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='middle';
       for(let db=-range;db<=range;db+=12){const py=y(db);ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0,py+.5);ctx.lineTo(x1,py+.5);ctx.stroke();ctx.fillStyle='rgba(174,181,188,.9)';ctx.fillText((db>0?'+':'')+db,x0-7,py);}
       ctx.strokeStyle='rgba(255,255,255,.10)';for(const f of [250,2000,8000]){const px=Math.round(x(f))+.5;ctx.beginPath();ctx.moveTo(px,top);ctx.lineTo(px,bottom);ctx.stroke();}
+      if(flatSelected){ctx.strokeStyle='#9aa0a6';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0,y(0));ctx.lineTo(x1,y(0));ctx.stroke();}
       ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(154,160,166,.9)';ctx.font='10px Inter,-apple-system,sans-serif';
       for(const[label,f]of [['Low',Math.sqrt(20*250)],['Low-Mid',Math.sqrt(250*2000)],['High-Mid',Math.sqrt(2000*8000)],['High',Math.sqrt(8000*20000)]])ctx.fillText(label,x(f),h-8);
       ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(174,181,188,.95)';ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.fillText('dB rel. · Spotify reference',7,14);
-      drawReferenceLiveTrace(referenceLivePts,x,y,x0,x1,top,bottom);
+      if(!flatSelected)drawReferenceLiveTrace(referenceLivePts,x,y,x0,x1,top,bottom);
       if(!Array.isArray(referenceLivePts)||referenceLivePts.length<2){ctx.font='12px Inter,-apple-system,sans-serif';ctx.fillStyle='rgba(174,181,188,.9)';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(refTrackTargets.length?'Select a Spotify match to compare':'Play Spotify to monitor its live spectrum',w/2,h/2);ctx.textAlign='left';}
       for(const id of ['ozBandLowVal','ozBandMidVal','ozBandHighVal'])refSetHTML(id,'– –<span class="oz-unit"> dB rel.</span>');
       for(const id of ['ozBandLowFill','ozBandMidFill','ozBandHighFill']){refSetStyle(id,'left','50%');refSetStyle(id,'width','0%');}
@@ -25708,6 +25711,8 @@ csInit('csPlatform');
   function boot(){
     const eq = document.getElementById('eq');
     if (!eq || !eq.classList.contains('active')) return; // not the default tab — nothing to do
+    const targetSelect = document.getElementById('refCurveTarget');
+    if (targetSelect) targetSelect.value = '';
     if (typeof eqGridInit === 'function') { try { eqGridInit(); } catch(_){} }
     if (typeof window.refTargetChanged === 'function') { try { window.refTargetChanged(); } catch(_){} }
     else { setTimeout(boot, 60); }
