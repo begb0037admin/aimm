@@ -3496,7 +3496,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         <div class="mc-spotify-saved-status" id="mcSpotifySavedStatus" role="status" aria-live="polite" aria-atomic="true" hidden><span id="mcSpotifySavedStatusLabel"></span><span class="mc-spotify-saved-reason" id="mcSpotifySavedStatusReason" hidden></span></div>
       </div>
       <div class="mc-spectrum-legend" aria-label="Chart legend">
-        <span><i class="mc-spectrum-live" aria-hidden="true"></i>Live mix</span><span><i class="mc-spectrum-stems" aria-hidden="true"></i>Stems</span><span><i class="mc-spectrum-muted" aria-hidden="true"></i>Muted stems</span><span><i class="mc-spectrum-target" aria-hidden="true"></i>Saved target</span><span class="mc-spectrum-units">dB relative</span>
+        <span><i class="mc-spectrum-stems" aria-hidden="true"></i>Stems</span><span><i class="mc-spectrum-muted" aria-hidden="true"></i>Muted stems</span><span><i class="mc-spectrum-target" aria-hidden="true"></i>Saved target</span><span class="mc-spectrum-units">dB relative</span>
       </div>
       <div class="oz-spec-canvas-wrap" id="refSpecWrap">
         <canvas id="specCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
@@ -4655,7 +4655,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.24';
+const AIMM_BUILD = '2026-11-07.25';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21342,7 +21342,7 @@ csInit('csPlatform');
     let stemView=null;
     try{
       const state=window.mcStemAnalysis&&window.mcStemAnalysis.snapshot();
-      if(state&&(state.playbackView||(refPlaying&&state.playbackKeys&&state.playbackKeys.length))){
+      if(state&&state.playbackView){
         const playbackKeys=state.playbackKeys||[],playbackSet=new Set(playbackKeys),playingStems=(state.stems||[]).filter(s=>playbackSet.has(s.key)),remainderNames=(state.stems||[]).filter(s=>s.status==='ok'&&!playbackSet.has(s.key)).map(s=>s.trackName||s.fileName);
         if(playingStems.length>1){
           const groupName=(state.playbackStems||playingStems.map(s=>s.trackName||s.fileName)).join(' + ');
@@ -21368,7 +21368,7 @@ csInit('csPlatform');
     const activeCorridor=refActiveCorridor();
     const targetSelect=document.getElementById('refCurveTarget');
     const flatSelected=!(LIVE.active&&LIVE.referenceOnly)&&!mcSpotifyUsingCompanion&&!(targetSelect&&targetSelect.value);
-    if(!activeCorridor&&(!flatSelected||!refPlaying)){
+    if(!stemView&&!activeCorridor&&(!flatSelected||!refPlaying)){
       wrap.classList.toggle('stem-measured',!!stemView);
       if(bandGrid)bandGrid.classList.remove('stem-relative');
       if(badge)badge.hidden=true;
@@ -22641,7 +22641,7 @@ csInit('csPlatform');
     // Use a short-time, PCM-calibrated spectrum for the selected source. This
     // shares the offline stem FFT's Hann window and power scaling; AnalyserNode
     // dB bins have a different scale and cannot be overlaid as-is.
-    const stemState=window.mcStemAnalysis&&window.mcStemAnalysis.playbackState&&window.mcStemAnalysis.playbackState(),playbackView=!!(stemState&&(stemState.active||(refPlaying&&stemState.keys&&stemState.keys.length))),selectedKeys=playbackView?(stemState.keys||[]):stemAuditionKeys.slice();
+    const stemState=window.mcStemAnalysis&&window.mcStemAnalysis.playbackState&&window.mcStemAnalysis.playbackState(),playbackView=!!(stemState&&stemState.active),selectedKeys=playbackView?(stemState.keys||[]):stemAuditionKeys.slice();
     const livePts=selectedKeys.length?stemLiveSpectrumAt(selectedKeys.length>1?selectedKeys:selectedKeys[0],elapsed):playbackView?null:refPtsFromDbBins(data,refCtx.sampleRate);
     const selectedSet=new Set(selectedKeys),remainderKeys=(playbackView||selectedKeys.length)?(stemSession||[]).filter(s=>s.status==='ok'&&s.buffer&&!selectedSet.has(s.key)).map(s=>s.key):[];
     const liveWithoutPts=remainderKeys.length?stemLiveSpectrumAt(remainderKeys.length>1?remainderKeys:remainderKeys[0],elapsed):null;
