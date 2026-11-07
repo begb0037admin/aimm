@@ -4655,7 +4655,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.25';
+const AIMM_BUILD = '2026-11-07.26';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21368,7 +21368,9 @@ csInit('csPlatform');
     const activeCorridor=refActiveCorridor();
     const targetSelect=document.getElementById('refCurveTarget');
     const flatSelected=!(LIVE.active&&LIVE.referenceOnly)&&!mcSpotifyUsingCompanion&&!(targetSelect&&targetSelect.value);
-    if(!stemView&&!activeCorridor&&(!flatSelected||!refPlaying)){
+    const flatStemState=!activeCorridor&&flatSelected&&!refPlaying&&window.mcStemAnalysis&&window.mcStemAnalysis.snapshot();
+    const flatStemSum=flatStemState&&flatStemState.sessionStems&&flatStemState.sessionStems.length===6&&flatStemState.sessionStems.every(s=>s.status==='ok')&&flatStemState.playbackKeys&&flatStemState.playbackKeys.length===6&&flatStemState.mixSpectrum;
+    if(!stemView&&!activeCorridor&&(!flatSelected||(!refPlaying&&!flatStemSum))){
       wrap.classList.toggle('stem-measured',!!stemView);
       if(bandGrid)bandGrid.classList.remove('stem-relative');
       if(badge)badge.hidden=true;
@@ -21467,11 +21469,17 @@ csInit('csPlatform');
     if(badge)badge.hidden=true;
 
     const corr=activeCorridor,mixX0=48,mixX1=w-8,mixFreqToX=f=>mixX0+freqToX(f,mixX1-mixX0);
+    const drawPts=flatStemSum||pts;
     // One fixed, symmetric dB scale shared with every stem and group view.
     let cSum=0,cN=0,mSum=0,mN=0;
-    if(pts)for(const[f,db]of pts)if(f>=150&&f<=3000){mSum+=db;mN++;}
+    if(drawPts)for(const[f,db]of drawPts)if(f>=150&&f<=3000){mSum+=db;mN++;}
     if(corr)for(let i=0;i<150;i++){const f=20*Math.pow(1000,i/149);if(f>=150&&f<=3000){const[lo,hi]=corridorAt(corr,f);cSum+=(lo+hi)/2;cN++;}}
-    const offset=(corr&&mN&&cN)?(cSum/cN-mSum/mN):0;
+    let offset=(corr&&mN&&cN)?(cSum/cN-mSum/mN):0;
+    // The paused Flat stem trace uses the same full-sum FFT and midrange alignment as the stem view.
+    if(flatStemSum&&flatStemSum.length>1){
+      const at=f=>{let i=1;while(i<flatStemSum.length-1&&flatStemSum[i][0]<f)i++;const[f0,db0]=flatStemSum[i-1],[f1,db1]=flatStemSum[i];return db0+(db1-db0)*Math.log(f/f0)/Math.log(f1/f0);};
+      offset=-[250,1000,3000].reduce((sum,f)=>sum+at(f),0)/3;
+    }
     const mixRangeAbs=SPECTRAL_DB_RANGE,mixPlotTop=43,mixPlotBottom=h-23;
     const mixDbToY=db=>mixPlotTop+(mixRangeAbs-db)/(mixRangeAbs*2)*(mixPlotBottom-mixPlotTop);
     // band dividers at the iZotope boundaries: 250 Hz / 2 kHz / 8 kHz
@@ -21521,7 +21529,7 @@ csInit('csPlatform');
     // the dB label never overlaps the top tick.
     ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(174,181,188,.95)';ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.fillText('dB rel. · '+(corr&&corr.referenceSource||'Spotify')+' reference',7,14);
 
-    if(!pts||!pts.length){
+    if(!drawPts||!drawPts.length){
       // The drop zone above the chart already explains how to load audio. Keep
       // this empty plot quiet: the corridor, scale and aligned band labels remain.
       drawReferenceLiveAverage(corr,mixFreqToX,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom);
@@ -21530,9 +21538,9 @@ csInit('csPlatform');
     }
 
     // ── YOUR MIX (LTAS): gain-match to the corridor over 150 Hz-3 kHz, smooth ──
-    const ys=pts.map(([f,db])=>mixDbToY(db+offset));
+    const ys=drawPts.map(([f,db])=>mixDbToY(db+offset));
     smoothY(ys,2);
-    const xy=pts.map(([f],i)=>[mixFreqToX(f),ys[i]]);
+    const xy=drawPts.map(([f],i)=>[mixFreqToX(f),ys[i]]);
 
     ctx.lineCap='round';ctx.lineJoin='round';
     crPath(xy);ctx.strokeStyle='rgba(47,161,230,.38)';ctx.lineWidth=6;ctx.filter='blur(5px)';ctx.stroke();
