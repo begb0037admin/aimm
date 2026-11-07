@@ -4655,7 +4655,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.15';
+const AIMM_BUILD = '2026-11-07.16';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21751,7 +21751,7 @@ csInit('csPlatform');
       }
       const spotifyCaptureActive=mcSpotifyUsingCompanion&&!mcSpotifyCaptureCancelled&&live.capturing&&live.sessionId===mcSpotifyCaptureSessionId&&document.getElementById('mcSpotifyCaptureState')?.dataset.state==='capturing';
       const stemState=window.mcStemAnalysis&&window.mcStemAnalysis.playbackState&&window.mcStemAnalysis.playbackState(),playbackView=!!(stemState&&stemState.active);
-      const stemOrMixPlaybackActive=refPlaying||playbackView;
+      const stemOrMixPlaybackActive=refPlaying||!!(stemState&&stemState.playing)||playbackView;
       const spotifyLiveShouldShow=mcSpotifyIsPlaying&&!stemOrMixPlaybackActive;
       const showSpotifyLive=(spotifyLiveShouldShow||spotifyCaptureActive)&&!stemOrMixPlaybackActive;
       if(nextLivePoints&&showSpotifyLive){
@@ -22640,7 +22640,7 @@ csInit('csPlatform');
     const livePts=selectedKeys.length?stemLiveSpectrumAt(selectedKeys.length>1?selectedKeys:selectedKeys[0],elapsed):playbackView?null:refPtsFromDbBins(data,refCtx.sampleRate);
     const selectedSet=new Set(selectedKeys),remainderKeys=(playbackView||selectedKeys.length)?(stemSession||[]).filter(s=>s.status==='ok'&&s.buffer&&!selectedSet.has(s.key)).map(s=>s.key):[];
     const liveWithoutPts=remainderKeys.length?stemLiveSpectrumAt(remainderKeys.length>1?remainderKeys:remainderKeys[0],elapsed):null;
-    const stemPlaybackActive=playbackView||(refPlaying&&refAuditionBuffers.length>0);
+    const stemPlaybackActive=playbackView||!!(stemState&&stemState.playing)||(refPlaying&&refAuditionBuffers.length>0);
     refDrawCanvas(averagedPts,livePts,liveWithoutPts,stemPlaybackActive?null:livePts);
     MC_WAVE.draw(); // step 5: playhead + played wash advance here, no separate rAF
     stemRowsDraw();
@@ -24701,7 +24701,7 @@ csInit('csPlatform');
     stemSpectrumBuildAuditionGroup();
     stemReviewEmit('selected');return true;
   }
-  window.mcStemAnalysis={snapshot:stemReviewSnapshot,playbackState(){return {active:stemPlaybackViewActive(),keys:stemPlaybackRows().map(s=>s.key)};},
+  window.mcStemAnalysis={snapshot:stemReviewSnapshot,playbackState(){return {active:stemPlaybackViewActive(),playing:!!(refPlaying&&stemSession),keys:stemPlaybackRows().map(s=>s.key)};},
     setSelection(keys){return stemApplySelection(keys);},
     select(key){
       if(key!==null&&!(stemSession||[]).some(s=>s.key===key&&s.status==='ok'))return false;
