@@ -1944,9 +1944,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 /* Hope composer: one rounded 2x2 panel with fading hairline dividers. */
 #hopeRail .aichat-compose .send-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:52px 52px;flex:0 0 auto;position:relative;gap:0;min-width:0;width:100%;margin:18px 0 2px;background:#1b1d20;border:0;border-radius:14px;overflow:hidden}
 #hopeRail .aichat-compose .send-col::before,#hopeRail .aichat-compose .send-col::after{content:"";position:absolute;pointer-events:none;z-index:1}
-#hopeRail .aichat-compose .send-col::before{left:50%;top:0;bottom:0;width:1px;transform:translateX(-.5px);background:linear-gradient(to bottom,transparent,#2c3034 35%,#2c3034 65%,transparent)}
-#hopeRail .aichat-compose .send-col::after{top:50%;left:0;right:0;height:1px;transform:translateY(-.5px);background:linear-gradient(to right,transparent,#2c3034 35%,#2c3034 65%,transparent)}
-#hopeRail .aichat-compose .send-col button{box-sizing:border-box;width:100%;min-width:0;height:52px;margin:0;padding:0 4px;border:0;border-radius:0;display:flex;align-items:center;justify-content:center;gap:6px;background:#1b1d20;color:#71787e;font:600 12px/1 Inter,-apple-system,sans-serif;text-align:center;white-space:nowrap;cursor:pointer}
+#hopeRail .aichat-compose .send-col::before{left:round(nearest,50%,1px);top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,#2c3034 35%,#2c3034 65%,transparent)}
+#hopeRail .aichat-compose .send-col::after{top:50%;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,#2c3034 35%,#2c3034 65%,transparent)}
+#hopeRail .aichat-compose .send-col button{box-sizing:border-box;width:100%;min-width:0;height:52px;margin:0;padding:0 4px;border:0;border-radius:0;display:flex;align-items:center;justify-content:center;gap:6px;background:#1b1d20;color:#9aa0a6;font:600 12px/1 Inter,-apple-system,sans-serif;text-align:center;white-space:nowrap;cursor:pointer}
 #hopeRail .aichat-compose .send-col #aiChatSend{color:#cfd3d7;font-weight:700}
 #hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn[data-mode="usage"]{color:#e2c8ff}
 #hopeRail #aiChatImageBtn{flex:1 1 auto;background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-weight:600;font-size:calc(var(--inv-text-scale, 1) * 11px);line-height:1.25;padding:9px 10px;text-align:center;white-space:nowrap}
@@ -4040,6 +4040,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn){background:#1b1d20;border:0;border-radius:0;box-shadow:none;transform:none;transition:background 180ms ease,color 180ms ease}
 #hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):hover:not(:disabled){background:#202327;color:#aeb4ba}
 #hopeRail .aichat-compose .send-col #aiChatSend:not(:disabled){color:#cfd3d7;font-weight:700}
+#hopeRail .aichat-compose .send-col button#aiChatSend:hover:not(:disabled){color:#cfd3d7}
 #hopeRail .aichat-compose .send-col #aiChatClear:hover:not(:disabled){color:#ff8a8a}
 #hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn[data-mode="usage"]:not(:disabled){color:#e2c8ff}
 #hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):focus-visible{outline:2px solid #5aa9e6;outline-offset:-2px}
@@ -4647,7 +4648,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.2';
+const AIMM_BUILD = '2026-11-07.3';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
