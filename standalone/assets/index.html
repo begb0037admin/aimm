@@ -3502,7 +3502,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         <canvas id="specCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
         <div id="stemTargetUnavailable" class="stem-target-unavailable" hidden>TARGET COMPARISON UNAVAILABLE</div>
       </div>
-      <div id="mcSpotifyLiveDiag" style="font-size:11px;white-space:pre-line;overflow:visible;" aria-live="off"></div><!-- DIAG-TEMP: remove before merge -->
       <div class="oz-band-grid">
         <div class="oz-band-card">
           <div class="oz-band-label">Low <small>20–250 Hz</small></div>
@@ -4656,7 +4655,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.31'; // DIAG-TEMP: remove before merge
+const AIMM_BUILD = '2026-11-07.32';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21311,9 +21310,9 @@ csInit('csPlatform');
       ctx.save();ctx.beginPath();ctx.rect(x0,top,x1-x0,bottom-top);ctx.clip();
       ctx.lineCap='round';ctx.lineJoin='round';
       [{w:70,b:28,a:.07},{w:52,b:22,a:.09},{w:38,b:16,a:.12},{w:26,b:10,a:.18},{w:16,b:5,a:.26}].forEach(layer=>{
-        ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(29,185,84,'+layer.a+')';ctx.lineWidth=layer.w;ctx.filter='blur('+layer.b+'px)';ctx.stroke();ctx.filter='none';
+        ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(165,105,255,'+layer.a+')';ctx.lineWidth=layer.w;ctx.filter='blur('+layer.b+'px)';ctx.stroke();ctx.filter='none';
       });
-      ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(29,185,84,.95)';ctx.lineWidth=4.2;ctx.stroke();
+      ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(185,112,255,.95)';ctx.lineWidth=4.2;ctx.stroke();
       ctx.restore();
       ctx.save();ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(247,241,255,.86)';ctx.fillText('LIVE AUDIO',x1,14);ctx.restore();
     };
@@ -21382,7 +21381,7 @@ csInit('csPlatform');
       ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(154,160,166,.9)';ctx.font='10px Inter,-apple-system,sans-serif';
       for(const[label,f]of [['Low',Math.sqrt(20*250)],['Low-Mid',Math.sqrt(250*2000)],['High-Mid',Math.sqrt(2000*8000)],['High',Math.sqrt(8000*20000)]])ctx.fillText(label,x(f),h-8);
       ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(174,181,188,.95)';ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.fillText('dB rel. · Spotify reference',7,14);
-      if(!flatSelected)drawReferenceLiveTrace(referenceLivePts,x,y,x0,x1,top,bottom);
+      drawReferenceLiveTrace(referenceLivePts,x,y,x0,x1,top,bottom);
       if(!Array.isArray(referenceLivePts)||referenceLivePts.length<2){ctx.font='12px Inter,-apple-system,sans-serif';ctx.fillStyle='rgba(174,181,188,.9)';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(refTrackTargets.length?'Select a Spotify match to compare':'Play Spotify to monitor its live spectrum',w/2,h/2);ctx.textAlign='left';}
       for(const id of ['ozBandLowVal','ozBandMidVal','ozBandHighVal'])refSetHTML(id,'– –<span class="oz-unit"> dB rel.</span>');
       for(const id of ['ozBandLowFill','ozBandMidFill','ozBandHighFill']){refSetStyle(id,'left','50%');refSetStyle(id,'width','0%');}
@@ -21645,12 +21644,6 @@ csInit('csPlatform');
   let mcSpotifyUsingCompanion=false,mcSpotifyCompanionAvailable=false,mcSpotifyCaptureTrack=null,mcSpotifyCaptureSessionId='',mcSpotifyCaptureSessionTrackId='',mcSpotifyCompanionLiveUnsupported=false;
   let mcSpotifyCompanionPollTimer=null,mcSpotifyCompanionWindows=0,mcSpotifyCompanionPoints=null,mcSpotifyLivePoints=null,mcCaptureAccum=null;
   let mcSpotifyLoopbackPermissionState='prompt',mcSpotifyLoopbackPermissionStatus=null,mcSpotifyCompanionConnected=false,mcSpotifyCompanionConnectBusy=false;
-  let mcSpotifyDiagLastPlaybackUpdatePaused=null,mcSpotifyDiagLastPlaybackUpdateAt=0,mcSpotifyDiagLivePointsPollCount=0; // DIAG-TEMP: remove before merge
-  function mcSpotifyDiagRender(liveAvailable,nextLivePoints,stemOrMixPlaybackActive){ // DIAG-TEMP: remove before merge
-    const line=document.getElementById('mcSpotifyLiveDiag');if(!line)return; // DIAG-TEMP: remove before merge
-    const seconds=mcSpotifyDiagLastPlaybackUpdateAt?Math.max(0,(Date.now()-mcSpotifyDiagLastPlaybackUpdateAt)/1000).toFixed(1)+'s ago':'not received'; // DIAG-TEMP: remove before merge
-    line.textContent='DIAG |\nmcSpotifyIsPlaying='+mcSpotifyIsPlaying+'\nlast playback_update isPaused='+(mcSpotifyDiagLastPlaybackUpdatePaused===null?'not received':mcSpotifyDiagLastPlaybackUpdatePaused)+' ('+seconds+')\nmcSpotifyLoopbackPermissionState='+mcSpotifyLoopbackPermissionState+'\nlive.available='+liveAvailable+'\nnextLivePoints='+(nextLivePoints?'non-null':'null')+'\npoll count with livePoints='+mcSpotifyDiagLivePointsPollCount+'\nstemOrMixPlaybackActive='+stemOrMixPlaybackActive; // DIAG-TEMP: remove before merge
-  } // DIAG-TEMP: remove before merge
   let mcSpotifyCaptureUiTimer=null,mcSpotifyCaptureUiStartedAt=0,mcSpotifyCaptureUiElapsed=0;
   function mcSpotifyCompanionFetch(path,options={}){
     return fetch(MC_REFERENCE_COMPANION_URL+path,{...options,targetAddressSpace:'loopback'});
@@ -21752,7 +21745,6 @@ csInit('csPlatform');
         if(status)status.textContent='AIMM Audio Reference Companion cannot monitor playback. '+live.status;
       }
       const nextLivePoints=live.available&&Array.isArray(live.livePoints)?live.livePoints:null;
-      if(nextLivePoints)mcSpotifyDiagLivePointsPollCount++; // DIAG-TEMP: remove before merge
       if(live.capturing&&mcSpotifyUsingCompanion&&live.sessionId===mcSpotifyCaptureSessionId&&nextLivePoints){
         mcSpotifyCompanionWindows=Number(live.windows)||0;
         // The purple line is the captured white line: same analysis, same frequencies.
@@ -21765,7 +21757,6 @@ csInit('csPlatform');
       const spotifyCaptureActive=mcSpotifyUsingCompanion&&!mcSpotifyCaptureCancelled&&live.capturing&&live.sessionId===mcSpotifyCaptureSessionId&&document.getElementById('mcSpotifyCaptureState')?.dataset.state==='capturing';
       const stemState=window.mcStemAnalysis&&window.mcStemAnalysis.playbackState&&window.mcStemAnalysis.playbackState(),playbackView=!!(stemState&&stemState.active);
       const stemOrMixPlaybackActive=refPlaying||!!(stemState&&stemState.playing)||playbackView;
-      mcSpotifyDiagRender(live.available===true,nextLivePoints!==null,stemOrMixPlaybackActive); // DIAG-TEMP: remove before merge
       const spotifyLiveShouldShow=mcSpotifyIsPlaying&&!stemOrMixPlaybackActive;
       const showSpotifyLive=(spotifyLiveShouldShow||spotifyCaptureActive)&&!stemOrMixPlaybackActive;
       if(nextLivePoints&&showSpotifyLive){
@@ -21792,7 +21783,6 @@ csInit('csPlatform');
       }
     }catch(error){
       mcSpotifyCompanionAvailable=false;mcSpotifyCompanionConnected=false;delay=2000;mcSpotifyRenderCompanionAccess();
-      const stemState=window.mcStemAnalysis&&window.mcStemAnalysis.playbackState&&window.mcStemAnalysis.playbackState(),stemOrMixPlaybackActive=refPlaying||!!(stemState&&stemState.playing)||!!(stemState&&stemState.active);mcSpotifyDiagRender(false,false,stemOrMixPlaybackActive); // DIAG-TEMP: remove before merge
       if(mcSpotifyLivePoints){mcSpotifyLivePoints=null;if(!LIVE.active)refDrawCanvas(refSpecPoints,null,null,null);}
       const status=document.getElementById('mcSpotifyRefStatus');
       if(status)status.textContent=mcSpotifyUsingCompanion?'AIMM Companion connection lost: '+(error.message||'unknown error'):'AIMM Audio Reference Companion is not reachable. Keep the companion open, then use Reconnect companion. '+(error.message||'');
@@ -22240,8 +22230,7 @@ csInit('csPlatform');
     const help=document.createElement('span');help.textContent='Play a track in Spotify’s list to select it for AIMM, then capture it.';
     const embed=document.createElement('div');embed.className='mc-spotify-artist-embed';card.append(title,help,embed);host.appendChild(card);
     try{const api=await mcSpotifyEnsureIframeApi();api.createController(embed,{uri:'spotify:artist:'+artist.id,width:'100%',height:'460'},controller=>{
-      mcSpotifyArtistController=controller;controller.addListener('playback_started',event=>mcSpotifySelectPlayingURI(event&&event.data&&event.data.playingURI,'playback_started'));controller.addListener('playback_update',event=>{const data=event&&event.data;if(data){mcSpotifyDiagLastPlaybackUpdatePaused=data.isPaused;mcSpotifyDiagLastPlaybackUpdateAt=Date.now(); // DIAG-TEMP: remove before merge
-        mcSpotifyIsPlaying=!data.isPaused;if(mcSpotifyIsPlaying&&data.playingURI)mcSpotifySelectPlayingURI(data.playingURI,'playback_update');}});controller.addListener('playback_ended',()=>{mcSpotifyIsPlaying=false;}); // DIAG-TEMP: remove before merge
+      mcSpotifyArtistController=controller;controller.addListener('playback_started',event=>mcSpotifySelectPlayingURI(event&&event.data&&event.data.playingURI,'playback_started'));controller.addListener('playback_update',event=>{const data=event&&event.data;if(data){mcSpotifyIsPlaying=!data.isPaused;if(mcSpotifyIsPlaying&&data.playingURI)mcSpotifySelectPlayingURI(data.playingURI,'playback_update');}});controller.addListener('playback_ended',()=>{mcSpotifyIsPlaying=false;});
     });}
     catch(error){help.textContent=error.message||'Spotify Top tracks player could not load.';}
   }
