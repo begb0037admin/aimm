@@ -4655,7 +4655,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.20';
+const AIMM_BUILD = '2026-11-07.21';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21345,7 +21345,7 @@ csInit('csPlatform');
     let stemView=null;
     try{
       const state=window.mcStemAnalysis&&window.mcStemAnalysis.snapshot();
-      if(state&&state.playbackView){
+      if(state&&(state.playbackView||(refPlaying&&state.playbackKeys&&state.playbackKeys.length))){
         const playbackKeys=state.playbackKeys||[],playbackSet=new Set(playbackKeys),playingStems=(state.stems||[]).filter(s=>playbackSet.has(s.key)),remainderNames=(state.stems||[]).filter(s=>s.status==='ok'&&!playbackSet.has(s.key)).map(s=>s.trackName||s.fileName);
         if(playingStems.length>1){
           const groupName=(state.playbackStems||playingStems.map(s=>s.trackName||s.fileName)).join(' + ');
@@ -22645,7 +22645,7 @@ csInit('csPlatform');
     // Use a short-time, PCM-calibrated spectrum for the selected source. This
     // shares the offline stem FFT's Hann window and power scaling; AnalyserNode
     // dB bins have a different scale and cannot be overlaid as-is.
-    const stemState=window.mcStemAnalysis&&window.mcStemAnalysis.playbackState&&window.mcStemAnalysis.playbackState(),playbackView=!!(stemState&&stemState.active),selectedKeys=playbackView?(stemState.keys||[]):stemAuditionKeys.slice();
+    const stemState=window.mcStemAnalysis&&window.mcStemAnalysis.playbackState&&window.mcStemAnalysis.playbackState(),playbackView=!!(stemState&&(stemState.active||(refPlaying&&stemState.keys&&stemState.keys.length))),selectedKeys=playbackView?(stemState.keys||[]):stemAuditionKeys.slice();
     const livePts=selectedKeys.length?stemLiveSpectrumAt(selectedKeys.length>1?selectedKeys:selectedKeys[0],elapsed):playbackView?null:refPtsFromDbBins(data,refCtx.sampleRate);
     const selectedSet=new Set(selectedKeys),remainderKeys=(playbackView||selectedKeys.length)?(stemSession||[]).filter(s=>s.status==='ok'&&s.buffer&&!selectedSet.has(s.key)).map(s=>s.key):[];
     const liveWithoutPts=remainderKeys.length?stemLiveSpectrumAt(remainderKeys.length>1?remainderKeys:remainderKeys[0],elapsed):null;
