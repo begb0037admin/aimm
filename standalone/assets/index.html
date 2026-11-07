@@ -1942,7 +1942,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .aichat-compose textarea{background:#232629;border:1px solid #2c3034;border-radius:16px;color:#e8ebed;font-size:calc(var(--inv-text-scale, 1) * 12.5px);font-family:Inter,-apple-system,sans-serif}
 #hopeRail .aichat-compose textarea:focus{border-color:#5aa9e6}
 /* Hope composer: one rounded 2x2 panel with fading hairline dividers. */
-#hopeRail .aichat-compose .send-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:52px 52px;flex:0 0 auto;position:relative;gap:0;min-width:0;width:100%;margin:18px 0 2px;background:#1b1d20;border:0;border-radius:14px;overflow:hidden}
+#hopeRail .aichat-compose .send-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:52px 52px;flex:0 0 auto;position:relative;gap:0;min-width:0;width:100%;margin:18px 0 2px;background:#1b1d20;border:0;border-radius:14px}
 #hopeRail .aichat-compose .send-col::before,#hopeRail .aichat-compose .send-col::after{content:"";position:absolute;pointer-events:none;z-index:1}
 #hopeRail .aichat-compose .send-col::before{left:round(nearest,50%,1px);top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,#2c3034 35%,#2c3034 65%,transparent)}
 #hopeRail .aichat-compose .send-col::after{top:50%;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,#2c3034 35%,#2c3034 65%,transparent)}
@@ -4650,7 +4650,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.4';
+const AIMM_BUILD = '2026-11-07.5';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
