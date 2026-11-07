@@ -4655,7 +4655,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.19';
+const AIMM_BUILD = '2026-11-07.20';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21405,7 +21405,7 @@ csInit('csPlatform');
       const savedTarget=refTrackTargetByKey(targetSelect&&targetSelect.value),spotifyTargetLoaded=!!savedTarget&&refTargetSourceLabel(savedTarget)==='Spotify';
       const values=['ozBandLowVal','ozBandMidVal','ozBandHighVal'],fills=['ozBandLowFill','ozBandMidFill','ozBandHighFill'],tags=['ozBandLowTag','ozBandMidTag','ozBandHighTag'];
       const corr=activeCorridor||{pts:[[20,0,0],[20000,0,0]]},x0=48,x1=Math.max(49,w-10),x=f=>x0+Math.log(Math.max(20,Math.min(20000,f))/20)/Math.log(1000)*(x1-x0);
-      const normOffset=spec=>{let sm=0,sn=0,cm=0,cn=0;if(!spec)return 0;for(const[f,db]of spec)if(f>=150&&f<=3000){sm+=db;sn++;}for(let i=0;i<48;i++){const f=150*Math.pow(3000/150,i/47),[lo,hi]=corridorAt(corr,f);cm+=(lo+hi)/2;cn++;}return sn&&cn?cm/cn-sm/sn:0;};
+      const normOffset=spec=>{let sm=0,sn=0,cm=0,cn=0;if(!spec)return 0;for(const[f,db]of spec)if(f>=250&&f<=3000){sm+=db;sn++;}for(let i=0;i<48;i++){const f=250*Math.pow(3000/250,i/47),[lo,hi]=corridorAt(corr,f);cm+=(lo+hi)/2;cn++;}return sn&&cn?cm/cn-sm/sn:0;};
       const offset=normOffset(sum);
       const selectedLive=refPlaying&&livePts&&livePts.length?livePts:null;
       const selectedCurve=selectedLive||sourceSpectrum;
