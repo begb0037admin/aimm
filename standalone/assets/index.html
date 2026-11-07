@@ -4655,7 +4655,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.12';
+const AIMM_BUILD = '2026-11-07.13';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21753,9 +21753,10 @@ csInit('csPlatform');
         nextLivePoints.forEach((p,i)=>{mcCaptureAccum.sum[i]+=p[1];});
         mcCaptureAccum.count++;
       }
-      if(nextLivePoints){
+      const spotifyCaptureActive=mcSpotifyUsingCompanion&&!mcSpotifyCaptureCancelled&&live.capturing&&live.sessionId===mcSpotifyCaptureSessionId&&document.getElementById('mcSpotifyCaptureState')?.dataset.state==='capturing';
+      if(nextLivePoints&&spotifyCaptureActive){
         mcSpotifyLivePoints=nextLivePoints;
-        if(!LIVE.active)refDrawCanvas(refSpecPoints,null,null,mcSpotifyLivePoints);
+        if(!LIVE.active)refDrawCanvas(refSpecPoints,null,null,spotifyCaptureActive?mcSpotifyLivePoints:null);
       }else if(mcSpotifyLivePoints){
         mcSpotifyLivePoints=null;
         if(!LIVE.active)refDrawCanvas(refSpecPoints,null,null,null);
@@ -21926,6 +21927,8 @@ csInit('csPlatform');
   }
   async function mcSpotifyCaptureCancel(){
     mcSpotifyCaptureCancelled=true;
+    mcSpotifyLivePoints=null;
+    if(!LIVE.active)refDrawCanvas(refSpecPoints,null,null,null);
     const status=document.getElementById('mcSpotifyRefStatus');
     if(mcSpotifyUsingCompanion){
       const sessionId=mcSpotifyCaptureSessionId;
@@ -21935,11 +21938,13 @@ csInit('csPlatform');
         try{await mcSpotifyCompanionFetch('/capture/ack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId}),cache:'no-store'});}catch(_){}
       }
     }
-    mcSpotifyUsingCompanion=false;mcSpotifyCaptureTrack=null;mcSpotifyCaptureSessionId='';mcSpotifyCaptureSessionTrackId='';mcSpotifyCaptureStartRequest=null;
+    mcSpotifyUsingCompanion=false;mcSpotifyCaptureTrack=null;mcSpotifyCaptureSessionId='';mcSpotifyCaptureSessionTrackId='';mcSpotifyCaptureStartRequest=null;mcSpotifyLivePoints=null;
     const capture=document.getElementById('mcSpotifyCapture'),stop=document.getElementById('mcSpotifyRefStop');if(capture)capture.hidden=false;if(stop){stop.hidden=true;stop.disabled=false;}
     if(status)status.textContent='';mcSpotifyCaptureReturnToIdle();mcSpotifyCaptureIdentityReason='';mcSpotifyCaptureStartedAt=0;
   }
   async function refSpotifyCaptureStop(){
+    mcSpotifyLivePoints=null;
+    if(!LIVE.active)refDrawCanvas(refSpecPoints,null,null,null);
     if(!mcSpotifyUsingCompanion){
       if(LIVE.active)await window.refLiveStop();
       return;
@@ -22017,7 +22022,7 @@ csInit('csPlatform');
     }
     finally{
       const finishedSessionId=mcSpotifyCaptureSessionId;
-      mcSpotifyUsingCompanion=false;mcSpotifyCaptureTrack=null;mcSpotifyCaptureSessionId='';mcSpotifyCaptureSessionTrackId='';mcSpotifyCompanionPoints=null;if(capture)capture.hidden=false;if(stop){stop.hidden=true;stop.disabled=false;}mcSpotifyCaptureReturnToIdle();mcSpotifyCaptureIdentityReason='';refDrawCanvas(refSpecPoints,null,null,mcSpotifyLivePoints);
+      mcSpotifyUsingCompanion=false;mcSpotifyCaptureTrack=null;mcSpotifyCaptureSessionId='';mcSpotifyCaptureSessionTrackId='';mcSpotifyCompanionPoints=null;mcSpotifyLivePoints=null;if(capture)capture.hidden=false;if(stop){stop.hidden=true;stop.disabled=false;}mcSpotifyCaptureReturnToIdle();mcSpotifyCaptureIdentityReason='';refDrawCanvas(refSpecPoints,null,null,null);
       if(finishedSessionId)try{await mcSpotifyCompanionFetch('/capture/ack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:finishedSessionId}),cache:'no-store'});}catch(_){}
     }
   }
@@ -25140,6 +25145,7 @@ csInit('csPlatform');
 
   function refPlay(){
     const buffers=refActivePlaybackBuffers();if(!buffers.length)return;
+    mcSpotifyLivePoints=null;
     refStopSources();
     if(stemSession){
       const audible=new Set(stemPlaybackRows().map(s=>s.key));
