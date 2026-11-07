@@ -4655,7 +4655,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.28';
+const AIMM_BUILD = '2026-11-07.29';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21342,10 +21342,7 @@ csInit('csPlatform');
     let stemView=null;
     try{
       const state=window.mcStemAnalysis&&window.mcStemAnalysis.snapshot();
-      if(state&&!state.selectedStemKey&&!(state.auditionKeys||[]).length&&stemPlaybackMode==='full'&&state.sessionStems&&state.sessionStems.length===6&&state.sessionStems.every(s=>s.status==='ok')&&state.playbackKeys&&state.playbackKeys.length===6){
-        const groupName=state.sessionStems.map(s=>s.trackName||s.fileName).join(' + ');
-        stemView={key:'group:'+state.playbackKeys.slice().sort().join('|'),trackName:groupName,isGroup:true,isFullGroup:true,groupCount:6,remainderNames:[],status:state.mixSpectrumStatus,spectrum:state.mixSpectrum,spectrumWithoutSelected:null,spectrumComparisonStatus:'no-remainder',mixSpectrum:state.mixSpectrum,mixSpectrumStatus:state.mixSpectrumStatus};
-      }else if(state&&(state.playbackView||(refPlaying&&state.playbackKeys&&state.playbackKeys.length))){
+      if(state&&(state.playbackView||(refPlaying&&state.playbackKeys&&state.playbackKeys.length))){
         const playbackKeys=state.playbackKeys||[],playbackSet=new Set(playbackKeys),playingStems=(state.stems||[]).filter(s=>playbackSet.has(s.key)),remainderNames=(state.stems||[]).filter(s=>s.status==='ok'&&!playbackSet.has(s.key)).map(s=>s.trackName||s.fileName);
         if(playingStems.length>1){
           const groupName=(state.playbackStems||playingStems.map(s=>s.trackName||s.fileName)).join(' + ');
@@ -21371,9 +21368,7 @@ csInit('csPlatform');
     const activeCorridor=refActiveCorridor();
     const targetSelect=document.getElementById('refCurveTarget');
     const flatSelected=!(LIVE.active&&LIVE.referenceOnly)&&!mcSpotifyUsingCompanion&&!(targetSelect&&targetSelect.value);
-    const flatStemState=!activeCorridor&&flatSelected&&!refPlaying&&window.mcStemAnalysis&&window.mcStemAnalysis.snapshot();
-    const flatStemSum=flatStemState&&flatStemState.sessionStems&&flatStemState.sessionStems.length===6&&flatStemState.sessionStems.every(s=>s.status==='ok')&&flatStemState.playbackKeys&&flatStemState.playbackKeys.length===6&&flatStemState.mixSpectrum;
-    if(!stemView&&!activeCorridor&&(!flatSelected||(!refPlaying&&!flatStemSum))){
+    if(!activeCorridor&&(!flatSelected||!refPlaying)){
       wrap.classList.toggle('stem-measured',!!stemView);
       if(bandGrid)bandGrid.classList.remove('stem-relative');
       if(badge)badge.hidden=true;
@@ -21472,17 +21467,11 @@ csInit('csPlatform');
     if(badge)badge.hidden=true;
 
     const corr=activeCorridor,mixX0=48,mixX1=w-8,mixFreqToX=f=>mixX0+freqToX(f,mixX1-mixX0);
-    const drawPts=flatStemSum||pts;
     // One fixed, symmetric dB scale shared with every stem and group view.
     let cSum=0,cN=0,mSum=0,mN=0;
-    if(drawPts)for(const[f,db]of drawPts)if(f>=150&&f<=3000){mSum+=db;mN++;}
+    if(pts)for(const[f,db]of pts)if(f>=150&&f<=3000){mSum+=db;mN++;}
     if(corr)for(let i=0;i<150;i++){const f=20*Math.pow(1000,i/149);if(f>=150&&f<=3000){const[lo,hi]=corridorAt(corr,f);cSum+=(lo+hi)/2;cN++;}}
-    let offset=(corr&&mN&&cN)?(cSum/cN-mSum/mN):0;
-    // The paused Flat stem trace uses the same full-sum FFT and midrange alignment as the stem view.
-    if(flatStemSum&&flatStemSum.length>1){
-      const at=f=>{let i=1;while(i<flatStemSum.length-1&&flatStemSum[i][0]<f)i++;const[f0,db0]=flatStemSum[i-1],[f1,db1]=flatStemSum[i];return db0+(db1-db0)*Math.log(f/f0)/Math.log(f1/f0);};
-      offset=-[250,1000,3000].reduce((sum,f)=>sum+at(f),0)/3;
-    }
+    const offset=(corr&&mN&&cN)?(cSum/cN-mSum/mN):0;
     const mixRangeAbs=SPECTRAL_DB_RANGE,mixPlotTop=43,mixPlotBottom=h-23;
     const mixDbToY=db=>mixPlotTop+(mixRangeAbs-db)/(mixRangeAbs*2)*(mixPlotBottom-mixPlotTop);
     // band dividers at the iZotope boundaries: 250 Hz / 2 kHz / 8 kHz
@@ -21532,7 +21521,7 @@ csInit('csPlatform');
     // the dB label never overlaps the top tick.
     ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(174,181,188,.95)';ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.fillText('dB rel. · '+(corr&&corr.referenceSource||'Spotify')+' reference',7,14);
 
-    if(!drawPts||!drawPts.length){
+    if(!pts||!pts.length){
       // The drop zone above the chart already explains how to load audio. Keep
       // this empty plot quiet: the corridor, scale and aligned band labels remain.
       drawReferenceLiveAverage(corr,mixFreqToX,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom);
@@ -21541,9 +21530,9 @@ csInit('csPlatform');
     }
 
     // ── YOUR MIX (LTAS): gain-match to the corridor over 150 Hz-3 kHz, smooth ──
-    const ys=drawPts.map(([f,db])=>mixDbToY(db+offset));
+    const ys=pts.map(([f,db])=>mixDbToY(db+offset));
     smoothY(ys,2);
-    const xy=drawPts.map(([f],i)=>[mixFreqToX(f),ys[i]]);
+    const xy=pts.map(([f],i)=>[mixFreqToX(f),ys[i]]);
 
     ctx.lineCap='round';ctx.lineJoin='round';
     crPath(xy);ctx.strokeStyle='rgba(47,161,230,.38)';ctx.lineWidth=6;ctx.filter='blur(5px)';ctx.stroke();
@@ -22635,8 +22624,7 @@ csInit('csPlatform');
       }
       refRaf=requestAnimationFrame(refLiveAnimate);return;
     }
-    // Keep the analyser's running average for its separate spectrum path.
-    // The blue PCM stem trace below reads the current window without this filter.
+    // Exponential running average for the analyser spectrum; stem PCM traces use the same smoothing time constant.
     const elapsed=refCtx.currentTime-refStartTime+refStartOffset;
     if(!refAvg||refAvg.length!==data.length){
       refAvg=new Float32Array(data.length);
@@ -24438,6 +24426,7 @@ csInit('csPlatform');
   const stemSoloKeys=new Set(),stemMutedKeys=new Set();
   let stemPlaybackMode='full';
   let stemVisibleCrop={start:0,end:1024};
+  const stemLiveSpectrumCache=new Map();
   let stemAnalysisWork=Promise.resolve();
   let stemSpectrumGeneration=0,stemLeaveOutGeneration=0;
   let stemAggregateSpectrum={status:'idle',points:null,windows:0,hop:0};
@@ -24452,10 +24441,12 @@ csInit('csPlatform');
   const stemReviewProgress=new Map();
   let stemLiveHann=null,stemLiveHannPower=0;
   function stemLiveSpectrumAt(keyOrKeys,seconds){
-    const keys=Array.isArray(keyOrKeys)?keyOrKeys:[keyOrKeys];
+    const keys=Array.isArray(keyOrKeys)?keyOrKeys:[keyOrKeys],key=keys.join('|');
     const stems=keys.map(k=>(stemSession||[]).find(s=>s.key===k&&s.status==='ok'&&s.buffer)).filter(Boolean);
     if(!stems.length)return null;
-    const buf=stems[0].buffer,N=8192,sr=buf.sampleRate;
+    const buf=stems[0].buffer,N=8192,sr=buf.sampleRate,playhead=Math.max(0,seconds),bucket=Math.floor(playhead*20);
+    const previous=stemLiveSpectrumCache.get(key);
+    if(previous&&previous.bucket===bucket&&previous.points)return previous.points;
     if(buf.length<N)return keys.length===1?(stems[0].spectrum||null):null;
     if(!stemLiveHann||stemLiveHann.length!==N){
       stemLiveHann=new Float32Array(N);stemLiveHannPower=0;
@@ -24464,15 +24455,25 @@ csInit('csPlatform');
     const end=Math.round(Math.max(0,seconds)*sr),start=Math.max(0,Math.min(buf.length-N,end-Math.floor(N/2)));
     const channels=stems.map(s=>{const b=s.buffer,l=b.getChannelData(0);return[l,b.numberOfChannels>1?b.getChannelData(1):l];}),re=new Float32Array(N);
     for(let i=0;i<N;i++){let l=0,r=0;for(const pair of channels){l+=pair[0][start+i];r+=pair[1][start+i];}re[i]=((l+r)*0.5)*stemLiveHann[i];}
-    const mag=fftMag(re),binHz=sr/N,points=[],NP=512,fmin=20,fmax=20000,halfBand=Math.pow(fmax/fmin,1/(2*(NP-1)));
+    const mag=fftMag(re),binHz=sr/N,points=[],smoothedPower=[],NP=64,fmin=20,fmax=20000;
     for(let i=0;i<NP;i++){
       const f=fmin*Math.pow(fmax/fmin,i/(NP-1));
-      const b0=Math.max(1,Math.ceil((f/halfBand)/binHz)),b1=Math.min(mag.length-1,Math.floor((f*halfBand)/binHz));
-      if(b1<b0){const at=f/binHz,lo=Math.max(1,Math.min(mag.length-2,Math.floor(at))),t=at-lo;points.push([f,10*Math.log10(Math.pow(Math.max(mag[lo]*mag[lo],1e-24),1-t)*Math.pow(Math.max(mag[lo+1]*mag[lo+1],1e-24),t)/Math.max(1,stemLiveHannPower)+1e-24)]);continue;}
-      let power=0;for(let b=b0;b<=b1;b++)power+=mag[b]*mag[b];
-      points.push([f,10*Math.log10(power/(b1-b0+1)/Math.max(1,stemLiveHannPower)+1e-24)]);
+      let b0=Math.max(1,Math.floor((f/1.09)/binHz)),b1=Math.min(mag.length-1,Math.ceil((f*1.09)/binHz));
+      if(b1<b0)b1=b0;let power=0,n=0;
+      for(let b=b0;b<=b1;b++){power+=mag[b]*mag[b];n++;}
+      smoothedPower.push(power/Math.max(1,n)/Math.max(1,stemLiveHannPower));
+      points.push([f,0]);
     }
-    // Each reading is the current Hann window, with no power history or time cache.
+    // Smooth linear power, not dB, so brief frame spikes settle naturally without
+    // changing calibration or applying frame-by-frame gain normalisation.
+    const reset=!previous||!previous.power||previous.power.length!==NP||previous.seconds==null||playhead<=previous.seconds;
+    const dt=reset?0:playhead-previous.seconds,alpha=reset?1:1-Math.exp(-dt/STEM_LIVE_SPECTRUM_SMOOTHING_SECONDS);
+    for(let i=0;i<NP;i++){
+      if(!reset)smoothedPower[i]=previous.power[i]+alpha*(smoothedPower[i]-previous.power[i]);
+      points[i][1]=10*Math.log10(smoothedPower[i]+1e-24);
+    }
+    stemLiveSpectrumCache.set(key,{bucket,points,power:smoothedPower,seconds:playhead});
+    if(stemLiveSpectrumCache.size>8){const oldestIt=stemLiveSpectrumCache.keys(),first=oldestIt.next().value,oldest=first===key?oldestIt.next().value:first;if(oldest!==undefined)stemLiveSpectrumCache.delete(oldest);}
     return points;
   }
   function stemReviewKey(stem){return STEM_REVIEW_POLICY+'|'+stem.fileName+'|'+(stem.sourceHash||stem.key);}
@@ -24680,14 +24681,14 @@ csInit('csPlatform');
       else{stemSoloKeys.add(key);stemMutedKeys.delete(key);}
     }else if(stemMutedKeys.has(key))stemMutedKeys.delete(key);else stemMutedKeys.add(key);
     if(refPlaying)refRetargetPlayback();
-    refAvg=null;refAvgLastPlayhead=null;stemPlaybackSpectrumBuild();
+    refAvg=null;refAvgLastPlayhead=null;stemLiveSpectrumCache.clear();stemPlaybackSpectrumBuild();
     stemRenderRows();
   }
   function stemSetPlaybackMode(mode){
     if(!['full','vocals','instrumental','drums-bass'].includes(mode))return;
     stemPlaybackMode=mode;stemSoloKeys.clear();
     if(refPlaying)refRetargetPlayback();
-    refAvg=null;refAvgLastPlayhead=null;stemPlaybackSpectrumBuild();
+    refAvg=null;refAvgLastPlayhead=null;stemLiveSpectrumCache.clear();stemPlaybackSpectrumBuild();
     stemRenderRows();
   }
   function stemApplySelection(keys){
