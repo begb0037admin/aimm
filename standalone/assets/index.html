@@ -4655,7 +4655,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.13';
+const AIMM_BUILD = '2026-11-07.14';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21754,9 +21754,13 @@ csInit('csPlatform');
         mcCaptureAccum.count++;
       }
       const spotifyCaptureActive=mcSpotifyUsingCompanion&&!mcSpotifyCaptureCancelled&&live.capturing&&live.sessionId===mcSpotifyCaptureSessionId&&document.getElementById('mcSpotifyCaptureState')?.dataset.state==='capturing';
-      if(nextLivePoints&&spotifyCaptureActive){
+      const stemState=window.mcStemAnalysis&&window.mcStemAnalysis.playbackState&&window.mcStemAnalysis.playbackState(),playbackView=!!(stemState&&stemState.active),selectedKeys=playbackView?(stemState.keys||[]):stemAuditionKeys.slice();
+      const stemOrMixPlaybackActive=refPlaying||playbackView||selectedKeys.length>0;
+      const spotifyLiveShouldShow=mcSpotifyIsPlaying&&!stemOrMixPlaybackActive;
+      const showSpotifyLive=(spotifyLiveShouldShow||spotifyCaptureActive)&&!stemOrMixPlaybackActive;
+      if(nextLivePoints&&showSpotifyLive){
         mcSpotifyLivePoints=nextLivePoints;
-        if(!LIVE.active)refDrawCanvas(refSpecPoints,null,null,spotifyCaptureActive?mcSpotifyLivePoints:null);
+        if(!LIVE.active)refDrawCanvas(refSpecPoints,null,null,showSpotifyLive?mcSpotifyLivePoints:null);
       }else if(mcSpotifyLivePoints){
         mcSpotifyLivePoints=null;
         if(!LIVE.active)refDrawCanvas(refSpecPoints,null,null,null);
@@ -22029,7 +22033,7 @@ csInit('csPlatform');
   const MC_SPOTIFY_CLIENT_ID='4189bbff45444a28aeb1401e0e9c8db2',MC_SPOTIFY_TOKEN_KEY='aimm_spotify_oauth_v1';
   const mcSpotifyClientId=MC_SPOTIFY_CLIENT_ID;
   let mcSpotifyTokens=null;try{mcSpotifyTokens=JSON.parse(localStorage.getItem(MC_SPOTIFY_TOKEN_KEY)||'null');}catch(_){}
-  let mcSpotifySelectedTrack=null,mcSpotifySearchBusy=false,mcSpotifyNextSearchUrl=null,mcSpotifyIframeApi=null,mcSpotifyIframeApiPromise=null,mcSpotifyArtistController=null,mcSpotifyArtistPlayingId='',mcSpotifyArtistPlayingURI='',mcSpotifyArtistLookupId='',mcSpotifyArtistLookupPromise=null,mcSpotifyArtistSourceActive=false;
+  let mcSpotifySelectedTrack=null,mcSpotifySearchBusy=false,mcSpotifyNextSearchUrl=null,mcSpotifyIframeApi=null,mcSpotifyIframeApiPromise=null,mcSpotifyArtistController=null,mcSpotifyArtistPlayingId='',mcSpotifyArtistPlayingURI='',mcSpotifyArtistLookupId='',mcSpotifyArtistLookupPromise=null,mcSpotifyArtistSourceActive=false,mcSpotifyIsPlaying=false;
   const mcSpotifyRedirectUri='https://aimixmasters.com/';
   const mcSpotifyStatus=msg=>{
     const el=document.getElementById('mcSpotifyRefStatus'),settingsStatus=document.getElementById('mcSpotifyCompanionSettingsStatus'),text=String(msg||'');
@@ -22041,6 +22045,7 @@ csInit('csPlatform');
   function mcSpotifySelectTrack(track,source='Spotify result'){
     if(!track||!track.id)return;
     if((mcSpotifyUsingCompanion||(LIVE.active&&LIVE.referenceOnly))&&mcSpotifySelectedTrack&&String(mcSpotifySelectedTrack.id)!==String(track.id)){mcSpotifyStatus('Stop the current capture before selecting another Spotify track.');return;}
+    if(mcSpotifySelectedTrack&&String(mcSpotifySelectedTrack.id)!==String(track.id))mcSpotifyIsPlaying=false;
     mcSpotifySelectedTrack=track;const captureActive=mcSpotifyUsingCompanion||LIVE.active&&LIVE.referenceOnly||mcSpotifyCaptureStartedAt>0;if(captureActive&&mcSpotifyCaptureTrack&&(!mcSpotifyCaptureTrack.id||String(mcSpotifyCaptureTrack.id)===String(track.id)))mcSpotifyCaptureTrack={...track,artists:Array.isArray(track.artists)?track.artists.map(artist=>({...artist})):[]};const label=mcSpotifyTrackLabel(track),input=document.getElementById('mcSpotifyRefName'),capture=document.getElementById('mcSpotifyCapture');
     if(LIVE.active&&LIVE.referenceOnly)LIVE.referenceLabel=label;
     if(input)input.value=label;if(capture){capture.hidden=false;capture.textContent='Capture reference';}
@@ -22216,7 +22221,7 @@ csInit('csPlatform');
   }
   async function mcSpotifyShowArtistTopTracks(artist){
     const host=document.getElementById('mcSpotifyResults');if(!host)return;
-    if(mcSpotifyArtistController){try{mcSpotifyArtistController.destroy();}catch(_){}mcSpotifyArtistController=null;}
+    if(mcSpotifyArtistController){mcSpotifyIsPlaying=false;try{mcSpotifyArtistController.destroy();}catch(_){}mcSpotifyArtistController=null;}
     host.replaceChildren();host.hidden=false;mcSpotifyArtistPlayingId='';mcSpotifyArtistSourceActive=true;
     const capture=document.getElementById('mcSpotifyCapture');if(capture){capture.hidden=false;capture.textContent='Capture reference';}
     const card=document.createElement('div');card.className='mc-spotify-artist-source';
@@ -22224,7 +22229,7 @@ csInit('csPlatform');
     const help=document.createElement('span');help.textContent='Play a track in Spotify’s list to select it for AIMM, then capture it.';
     const embed=document.createElement('div');embed.className='mc-spotify-artist-embed';card.append(title,help,embed);host.appendChild(card);
     try{const api=await mcSpotifyEnsureIframeApi();api.createController(embed,{uri:'spotify:artist:'+artist.id,width:'100%',height:'460'},controller=>{
-      mcSpotifyArtistController=controller;controller.addListener('playback_started',event=>mcSpotifySelectPlayingURI(event&&event.data&&event.data.playingURI,'playback_started'));controller.addListener('playback_update',event=>{const data=event&&event.data;if(data&&!data.isPaused&&data.playingURI)mcSpotifySelectPlayingURI(data.playingURI,'playback_update');});
+      mcSpotifyArtistController=controller;controller.addListener('playback_started',event=>mcSpotifySelectPlayingURI(event&&event.data&&event.data.playingURI,'playback_started'));controller.addListener('playback_update',event=>{const data=event&&event.data;if(data){mcSpotifyIsPlaying=!data.isPaused;if(mcSpotifyIsPlaying&&data.playingURI)mcSpotifySelectPlayingURI(data.playingURI,'playback_update');}});controller.addListener('playback_ended',()=>{mcSpotifyIsPlaying=false;});
     });}
     catch(error){help.textContent=error.message||'Spotify Top tracks player could not load.';}
   }
@@ -22241,7 +22246,7 @@ csInit('csPlatform');
     if(mcSpotifyUsingCompanion){mcSpotifyStatus('Stop the current reference capture before searching for another Spotify track.');return;}
     if(LIVE.active&&LIVE.referenceOnly){mcSpotifyStatus('Stop the current reference capture before searching for another Spotify track.');return;}
     const input=document.getElementById('mcSpotifyRefName'),q=(input&&input.value||'').trim();if(!q)return mcSpotifyStatus('Enter a track or artist name to search Spotify.');
-    if(mcSpotifyArtistController){try{mcSpotifyArtistController.destroy();}catch(_){}mcSpotifyArtistController=null;}mcSpotifyArtistSourceActive=false;
+    if(mcSpotifyArtistController){mcSpotifyIsPlaying=false;try{mcSpotifyArtistController.destroy();}catch(_){}mcSpotifyArtistController=null;}mcSpotifyArtistSourceActive=false;
     mcSpotifySelectedTrack=null;mcSpotifyNextSearchUrl=null;const capture=document.getElementById('mcSpotifyCapture');if(capture)capture.hidden=true;
     mcSpotifySearchBusy=true;mcSpotifyRenderConnection();mcSpotifyStatus('Searching Spotify…');
     try{const token=await mcSpotifyAccessToken();let url;if(/^https?:\/\/(?:open\.)?spotify\.com\/(?:intl-[^/]+\/)?track\/([A-Za-z0-9]+)/i.test(q)){const id=q.match(/\/track\/([A-Za-z0-9]+)/i)[1];url='https://api.spotify.com/v1/tracks/'+encodeURIComponent(id);}else url='https://api.spotify.com/v1/search?'+new URLSearchParams({q,type:'track,artist',limit:'10',offset:'0'}).toString();
