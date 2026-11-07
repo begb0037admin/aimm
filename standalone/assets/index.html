@@ -1829,7 +1829,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
    reference's rail-head row exactly (gap:11px, 11px bottom padding,
    1px #2c3034 border, 10px margin-bottom in the reference; adapted here
    to the app's existing .rail-head/.rail-body split). */
-#hopeRail .rail-head{background:transparent;border-bottom:1px solid #2c3034;color:#f2f4f5;gap:11px;padding:12px 14px;justify-content:flex-start}
+#hopeRail .rail-head{background:transparent;border-bottom:0;color:#f2f4f5;gap:11px;padding:12px 14px;justify-content:flex-start}
 #hopeRail .oz-rail-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:radial-gradient(circle at 34% 30%,#e8ddff,#5aa9e6 45%,#5b3f9e 86%);box-shadow:0 0 18px #5aa9e655;animation:ozBreathe 4s ease-in-out infinite}
 #hopeRail .oz-rail-title{display:flex;flex-direction:column;min-width:0;flex:1;overflow:hidden}
 #hopeRail .oz-rail-name{font-weight:800;font-size:calc(var(--inv-text-scale, 1) * 13px);line-height:1.2;color:#f2f4f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1884,7 +1884,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .aichat-msg .body img.aichat-attach{max-width:100%}
 #hopeRail .aichat-msg.user .who{color:#68d3e6}
 #hopeRail .aichat-msg.user .body{background:#232629;border:1px solid #2c3034;color:#c7ccd0}
-#hopeRail .aichat-msg.ai .who,#hopeRail .aichat-msg.system .who{color:#a78bfa;letter-spacing:.14em}
+#hopeRail .aichat-msg.ai .who,#hopeRail .aichat-msg.system .who{color:#b8864f;letter-spacing:.14em}
 #hopeRail .aichat-msg.ai .body,#hopeRail .aichat-msg.system .body{background:linear-gradient(180deg,#152029 0%,#0f161e 100%);border:1px solid #20303c;border-radius:16px;color:#dfe7ef}
 #hopeRail .aichat-msg.mixmove .body{background:#1c1f22;border:1px solid #2c3034;border-left:3px solid #a78bfa;border-radius:6px}
 
@@ -1942,7 +1942,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .aichat-compose textarea{background:#232629;border:1px solid #2c3034;border-radius:16px;color:#e8ebed;font-size:calc(var(--inv-text-scale, 1) * 12.5px);font-family:Inter,-apple-system,sans-serif}
 #hopeRail .aichat-compose textarea:focus{border-color:#5aa9e6}
 /* Hope composer: one rounded 2x2 panel with fading hairline dividers. */
-#hopeRail .aichat-compose .send-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:52px 52px;position:relative;gap:0;min-width:0;width:100%;margin:18px 0 2px;background:#1b1d20;border:0;border-radius:14px;overflow:hidden}
+#hopeRail .aichat-compose .send-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:52px 52px;flex:0 0 auto;position:relative;gap:0;min-width:0;width:100%;margin:18px 0 2px;background:#1b1d20;border:0;border-radius:14px;overflow:hidden}
 #hopeRail .aichat-compose .send-col::before,#hopeRail .aichat-compose .send-col::after{content:"";position:absolute;pointer-events:none;z-index:1}
 #hopeRail .aichat-compose .send-col::before{left:50%;top:0;bottom:0;width:1px;transform:translateX(-.5px);background:linear-gradient(to bottom,transparent,#2c3034 35%,#2c3034 65%,transparent)}
 #hopeRail .aichat-compose .send-col::after{top:50%;left:0;right:0;height:1px;transform:translateY(-.5px);background:linear-gradient(to right,transparent,#2c3034 35%,#2c3034 65%,transparent)}
@@ -2168,7 +2168,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
      flex:0 0 auto — a long transcript scrolls INSIDE the transcript area; the
    transcript scrolls inside the panel, the composer stays at the bottom, and
    chat history cannot set the desktop grid row's minimum height. */
-@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px;min-height:0;overflow:hidden;contain:size}#hopeRail .rail-head{flex:0 0 auto;padding:12px 18px 18px;border-bottom:1px solid #2c3034}/* board item 18: rail-head padding-top 30->12, mirror of the base rule (item 4b re-track) */#hopeRail .rail-body{flex:1 1 0;height:0;min-height:0;padding:7px 16px 0;display:flex;flex-direction:column;gap:0;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1 1 0;height:0;min-height:0;max-height:none;display:flex;flex-direction:column;gap:0}#hopeRail #aiChatTranscript{flex:1 1 auto;height:0;min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034;padding-top:28px}#hopeRail #aiChatInput{height:90px;min-height:72px;max-height:150px;background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font: 400 calc(var(--inv-text-scale, 1) * 12px) Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font: 700 calc(var(--inv-text-scale, 1) * 12px) Inter,sans-serif}}
+@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px;min-height:0;overflow:hidden;contain:size}#hopeRail .rail-head{flex:0 0 auto;padding:12px 18px 18px;border-bottom:0}/* board item 18: rail-head padding-top 30->12, mirror of the base rule (item 4b re-track) */#hopeRail .rail-body{flex:1 1 0;height:0;min-height:0;padding:7px 16px 0;display:flex;flex-direction:column;gap:0;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1 1 0;height:0;min-height:0;max-height:none;display:flex;flex-direction:column;gap:0}#hopeRail #aiChatTranscript{flex:1 1 auto;height:0;min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain}#hopeRail .aichat-compose{flex:0 0 auto;padding-top:28px}#hopeRail #aiChatInput{height:90px;min-height:72px;max-height:150px;background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font: 400 calc(var(--inv-text-scale, 1) * 12px) Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font: 700 calc(var(--inv-text-scale, 1) * 12px) Inter,sans-serif}}
+#hopeRail .rail-head{position:relative}
+#hopeRail .rail-head::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(to right,transparent,#2c3034 35%,#2c3034 65%,transparent);pointer-events:none}
 /* Feedback board item 8 (2026-09-02.6): thin, near-invisible scrollbar for the
    internal Hope transcript scroll — present but visually quiet. */
 #hopeRail #aiChatTranscript{scrollbar-width:thin;scrollbar-color:#3a3f45 transparent}
@@ -4645,7 +4647,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.1';
+const AIMM_BUILD = '2026-11-07.2';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
