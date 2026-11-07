@@ -4655,7 +4655,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.22';
+const AIMM_BUILD = '2026-11-07.23';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21302,20 +21302,17 @@ csInit('csPlatform');
     canvas.width=wrap.offsetWidth;canvas.height=wrap.offsetHeight;
     const w=canvas.width,h=canvas.height,ctx=canvas.getContext('2d');
     ctx.clearRect(0,0,w,h);
-    refDrawCurveCache=new WeakMap(); // fresh computation each redraw; white and purple share it within the redraw
-    const drawReferenceLiveTrace=(points,mapX,mapY,x0,x1,top,bottom,whiteOnly=false)=>{
+    refDrawCurveCache=new WeakMap(); // fresh computation each redraw
+    const drawReferenceLiveTrace=(points,mapX,mapY,x0,x1,top,bottom)=>{
       if(!Array.isArray(points)||points.length<2){refResetLiveTraceDisplay();return;}
       const xy=refLiveDisplayCurve(points,mapY,x0,x1,top,bottom);
       if(!xy)return;
       ctx.save();ctx.beginPath();ctx.rect(x0,top,x1-x0,bottom-top);ctx.clip();
       ctx.lineCap='round';ctx.lineJoin='round';
-      if(!whiteOnly){
-        [{w:70,b:28,a:.07},{w:52,b:22,a:.09},{w:38,b:16,a:.12},{w:26,b:10,a:.18},{w:16,b:5,a:.26}].forEach(layer=>{
-          ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(165,105,255,'+layer.a+')';ctx.lineWidth=layer.w;ctx.filter='blur('+layer.b+'px)';ctx.stroke();ctx.filter='none';
-        });
-        ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(185,112,255,.95)';ctx.lineWidth=4.2;ctx.stroke();
-      }
-      ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(247,241,255,1)';ctx.lineWidth=2.2;ctx.stroke();
+      [{w:70,b:28,a:.07},{w:52,b:22,a:.09},{w:38,b:16,a:.12},{w:26,b:10,a:.18},{w:16,b:5,a:.26}].forEach(layer=>{
+        ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(165,105,255,'+layer.a+')';ctx.lineWidth=layer.w;ctx.filter='blur('+layer.b+'px)';ctx.stroke();ctx.filter='none';
+      });
+      ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(185,112,255,.95)';ctx.lineWidth=4.2;ctx.stroke();
       ctx.restore();
       ctx.save();ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(247,241,255,.86)';ctx.fillText('LIVE AUDIO',x1,14);ctx.restore();
     };
@@ -21402,7 +21399,6 @@ csInit('csPlatform');
       const liveRemainder=refPlaying&&Array.isArray(liveWithoutPts)&&liveWithoutPts.length?liveWithoutPts:null;
       const comparisonCurve=refPlaying?liveRemainder:without;
       const comparisonStatus=stemView.spectrumComparisonStatus||'pending';
-      const savedTarget=refTrackTargetByKey(targetSelect&&targetSelect.value),spotifyTargetLoaded=!!savedTarget&&refTargetSourceLabel(savedTarget)==='Spotify';
       const values=['ozBandLowVal','ozBandMidVal','ozBandHighVal'],fills=['ozBandLowFill','ozBandMidFill','ozBandHighFill'],tags=['ozBandLowTag','ozBandMidTag','ozBandHighTag'];
       const corr=activeCorridor||{pts:[[20,0,0],[20000,0,0]]},x0=48,x1=Math.max(49,w-10),x=f=>x0+Math.log(Math.max(20,Math.min(20000,f))/20)/Math.log(1000)*(x1-x0);
       const normOffset=spec=>{if(!spec||spec.length<2)return 0;const at=f=>{let i=1;while(i<spec.length-1&&spec[i][0]<f)i++;const [f0,db0]=spec[i-1],[f1,db1]=spec[i];return db0+(db1-db0)*(Math.log(f/f0)/Math.log(f1/f0));};const anchors=[250,1000,3000];return anchors.reduce((sum,f)=>{const[lo,hi]=corridorAt(corr,f);return sum+(lo+hi)/2-at(f);},0)/anchors.length;};
@@ -21453,8 +21449,8 @@ csInit('csPlatform');
       // paused, show its full-record spectrum. Both use the same fixed gain
       // offset as the sum, so a bass-heavy source is not artificially boosted.
       if(selectedCurve){
-        ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=spotifyTargetLoaded?'rgba(247,241,255,.38)':'rgba(47,161,230,.38)';ctx.lineWidth=6;ctx.filter='blur(5px)';path(selectedCurve,offset);ctx.stroke();
-        ctx.filter='none';ctx.strokeStyle=spotifyTargetLoaded?'rgba(247,241,255,.99)':'rgba(96,196,248,.99)';ctx.lineWidth=2.3;path(selectedCurve,offset);ctx.stroke();ctx.restore();
+        ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='rgba(47,161,230,.38)';ctx.lineWidth=6;ctx.filter='blur(5px)';path(selectedCurve,offset);ctx.stroke();
+        ctx.filter='none';ctx.strokeStyle='rgba(96,196,248,.99)';ctx.lineWidth=2.3;path(selectedCurve,offset);ctx.stroke();ctx.restore();
       }else{ctx.textAlign='center';ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.fillStyle='rgba(154,160,166,.9)';ctx.fillText(stemView.status==='error'?'Selected source spectrum unavailable':'Calculating '+track+' spectrum…',(x0+x1)/2,h/2);ctx.textAlign='left';}
       drawReferenceLiveAverage(corr,x,stemDbToY,x0,x1,plotTop,plotBottom);
       if(activeCorridor)drawReferenceLiveTrace(referenceLivePts,x,stemDbToY,x0,x1,plotTop,plotBottom);
@@ -21529,7 +21525,7 @@ csInit('csPlatform');
       // The drop zone above the chart already explains how to load audio. Keep
       // this empty plot quiet: the corridor, scale and aligned band labels remain.
       drawReferenceLiveAverage(corr,mixFreqToX,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom);
-      drawReferenceLiveTrace(referenceLivePts,mixFreqToX,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom,!corr);
+      drawReferenceLiveTrace(referenceLivePts,mixFreqToX,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom);
       return;
     }
 
@@ -21543,7 +21539,7 @@ csInit('csPlatform');
     ctx.filter='none';
     crPath(xy);ctx.strokeStyle='rgba(96,196,248,.98)';ctx.lineWidth=2.1;ctx.stroke();
     drawReferenceLiveAverage(corr,mixFreqToX,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom);
-    drawReferenceLiveTrace(referenceLivePts,mixFreqToX,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom,!corr);
+    drawReferenceLiveTrace(referenceLivePts,mixFreqToX,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom);
   }
 
   // Log-spaced smoothed points from a per-bin dB array (analyser float data
@@ -22629,7 +22625,7 @@ csInit('csPlatform');
       refRaf=requestAnimationFrame(refLiveAnimate);return;
     }
     // Exponential running average -> long-term spectrum. Use the same 0.4s
-    // time constant as the PCM stem traces so the white and blue curves track
+    // time constant as the PCM stem traces so the analyser and blue curves track
     // playback at the same pace.
     const elapsed=refCtx.currentTime-refStartTime+refStartOffset;
     if(!refAvg||refAvg.length!==data.length){
@@ -22649,8 +22645,7 @@ csInit('csPlatform');
     const livePts=selectedKeys.length?stemLiveSpectrumAt(selectedKeys.length>1?selectedKeys:selectedKeys[0],elapsed):playbackView?null:refPtsFromDbBins(data,refCtx.sampleRate);
     const selectedSet=new Set(selectedKeys),remainderKeys=(playbackView||selectedKeys.length)?(stemSession||[]).filter(s=>s.status==='ok'&&s.buffer&&!selectedSet.has(s.key)).map(s=>s.key):[];
     const liveWithoutPts=remainderKeys.length?stemLiveSpectrumAt(remainderKeys.length>1?remainderKeys:remainderKeys[0],elapsed):null;
-    const stemPlaybackActive=playbackView||!!(stemState&&stemState.playing)||(refPlaying&&refAuditionBuffers.length>0);
-    refDrawCanvas(averagedPts,livePts,liveWithoutPts,stemPlaybackActive?null:livePts);
+    refDrawCanvas(averagedPts,livePts,liveWithoutPts);
     MC_WAVE.draw(); // step 5: playhead + played wash advance here, no separate rAF
     stemRowsDraw();
     if(refPlaying&&refBuffer){
