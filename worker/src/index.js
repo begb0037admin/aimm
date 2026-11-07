@@ -1,18 +1,20 @@
 // AIMM key relay — Cloudflare Worker
 //
-// Holds the real Anthropic + ElevenLabs API keys as Worker secrets and
+// Holds the real OpenAI, Anthropic + ElevenLabs API keys as Worker secrets and
 // forwards requests from the AIMM app, so no API key ever lives in the
 // (public) GitHub repo, on GitHub Pages, or in browser localStorage.
 //
 // Routes:
 //   /anthropic/<path>  → https://api.anthropic.com/<path>   (injects x-api-key)
 //   /elevenlabs/<path> → https://api.elevenlabs.io/<path>   (injects xi-api-key)
+//   /openai/<path>     → https://api.openai.com/<path>      (injects Bearer token)
 //
 // Deploy + secrets: see worker/README.md.
 
 const UPSTREAMS = {
   anthropic:  { base: 'https://api.anthropic.com',  header: 'x-api-key',  secret: 'ANTHROPIC_API_KEY' },
   elevenlabs: { base: 'https://api.elevenlabs.io',  header: 'xi-api-key', secret: 'ELEVENLABS_API_KEY' },
+  openai:     { base: 'https://api.openai.com',     header: 'Authorization', secret: 'OPENAI_API_KEY', prefix: 'Bearer ' },
 };
 
 // Origins allowed to call the relay. This is browser-enforced only — a curl
@@ -208,10 +210,12 @@ export default {
         if (!key){ lines.push('❌ ' + up.secret + ' — secret not set'); continue; }
         try {
           const probe = await fetch(
-            up.base + (name === 'anthropic' ? '/v1/models' : '/v1/user/subscription'),
+            up.base + (name === 'anthropic' ? '/v1/models'
+              : name === 'openai' ? '/v1/models/gpt-6-luna'
+              : '/v1/user/subscription'),
             { headers: name === 'anthropic'
                 ? { [up.header]: key, 'anthropic-version': '2023-06-01' }
-                : { [up.header]: key } });
+                : { [up.header]: (up.prefix||'')+key } });
           lines.push(probe.ok
             ? '✅ ' + up.secret + ' — OK'
             : '❌ ' + up.secret + ' — rejected by ' + name + ' (HTTP ' + probe.status + ') — check the key value');
@@ -455,7 +459,7 @@ export default {
       }
     }
 
-    const m = url.pathname.match(/^\/(anthropic|elevenlabs)(\/.*)$/);
+    const m = url.pathname.match(/^\/(anthropic|elevenlabs|openai)(\/.*)$/);
     if (!m){
       return new Response('Not found', { status: 404, headers: corsHeaders(origin, request) });
     }
@@ -475,7 +479,8 @@ export default {
     headers.delete('Cookie');
     headers.delete('x-api-key');
     headers.delete('xi-api-key');
-    headers.set(up.header, key);
+    headers.delete('Authorization');
+    headers.set(up.header, (up.prefix||'')+key);
 
     const upstream = await fetch(up.base + m[2] + url.search, {
       method: request.method,

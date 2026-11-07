@@ -20999,12 +20999,9 @@ csInit('csPlatform');
     }
     ctx.lineTo(xy[xy.length-1][0],xy[xy.length-1][1]);
   }
-  const REFERENCE_LIVE_TRACE_SMOOTHING_MS=650;
-  let refLiveTraceDisplayPoints=null,refLiveTraceDisplayAt=0;
-  function refResetLiveTraceDisplay(){refLiveTraceDisplayPoints=null;refLiveTraceDisplayAt=0;}
   function refDrawCanvas(pts,livePts,liveWithoutPts,referenceLivePts){
     // Reference captures keep the purple running target separate from the
-    // temporally smoothed white live spectrum. The mix curve remains its own
+    // AudioLens-matched white live spectrum. The mix curve remains its own
     // full-record LTAS trace.
     const canvas=document.getElementById('specCanvas');
     const wrap=document.getElementById('refSpecWrap');
@@ -21013,16 +21010,13 @@ csInit('csPlatform');
     const w=canvas.width,h=canvas.height,ctx=canvas.getContext('2d');
     ctx.clearRect(0,0,w,h);
     const drawReferenceLiveTrace=(points,mapX,mapY,x0,x1,top,bottom)=>{
-      if(!Array.isArray(points)||points.length<2){refResetLiveTraceDisplay();return;}
-      const now=performance.now(),previous=refLiveTraceDisplayPoints,dt=refLiveTraceDisplayAt?Math.max(1,Math.min(1000,now-refLiveTraceDisplayAt)):0;
-      const alpha=previous&&previous.length===points.length?1-Math.exp(-dt/REFERENCE_LIVE_TRACE_SMOOTHING_MS):1;
-      const displayPoints=points.map(([f,db],i)=>[f,previous&&previous.length===points.length?previous[i][1]+(db-previous[i][1])*alpha:db]);
-      refLiveTraceDisplayPoints=displayPoints;refLiveTraceDisplayAt=now;
-      const xy=displayPoints.map(([f,db])=>[mapX(f),mapY(db)]);
+      if(!Array.isArray(points)||points.length<2)return;
+      const xy=points.map(([f,db])=>[mapX(f),mapY(db)]);
+      const tracePath=()=>{ctx.beginPath();ctx.moveTo(xy[0][0],xy[0][1]);for(let i=1;i<xy.length;i++)ctx.lineTo(xy[i][0],xy[i][1]);};
       ctx.save();ctx.beginPath();ctx.rect(x0,top,x1-x0,bottom-top);ctx.clip();
       ctx.lineCap='round';ctx.lineJoin='round';
-      ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(222,204,255,.45)';ctx.lineWidth=5;ctx.filter='blur(4px)';ctx.stroke();
-      ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(247,241,255,.98)';ctx.lineWidth=1.8;ctx.stroke();
+      tracePath();ctx.strokeStyle='rgba(222,204,255,.45)';ctx.lineWidth=5;ctx.filter='blur(4px)';ctx.stroke();
+      tracePath();ctx.filter='none';ctx.strokeStyle='rgba(247,241,255,.98)';ctx.lineWidth=1.8;ctx.stroke();
       ctx.restore();
       ctx.save();ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(247,241,255,.86)';ctx.fillText('LIVE AUDIO',x1,14);ctx.restore();
     };

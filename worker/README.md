@@ -1,8 +1,8 @@
 # AIMM key relay (Cloudflare Worker)
 
-Moves the Anthropic + ElevenLabs API keys off the browser and out of the repo.
+Moves the OpenAI, Anthropic + ElevenLabs API keys off the browser and out of the repo.
 The Worker holds the real keys as **server-side secrets** and relays the app's
-`api.anthropic.com` / `api.elevenlabs.io` calls. Once it's deployed and wired
+`api.openai.com`, `api.anthropic.com` / `api.elevenlabs.io` calls. Once it's deployed and wired
 in, a fresh browser or device runs AIMM with **zero Settings entry** — no keys,
 no agent ID.
 
@@ -18,7 +18,7 @@ Kev's Cloudflare account already exists (kevinlelitte.workers.dev — hr-kb-ai,
 cc-tasks-writer and github-proxy live on it), and `AIMM_PROXY_URL` in
 `index.html` is already set to `https://aimm-proxy.kevinlelitte.workers.dev`
 — the name this config deploys to. So the only remaining work is deploying
-the Worker and storing the two secrets, either route below.
+the Worker and storing the three secrets, either route below.
 
 ### Route A — Terminal (wrangler)
 
@@ -33,6 +33,7 @@ npx wrangler deploy
 
 # 3. Store the real keys as Worker secrets (each prompts for the value —
 #    paste the key, press Enter; nothing is written to disk or the repo)
+npx wrangler secret put OPENAI_API_KEY
 npx wrangler secret put ANTHROPIC_API_KEY
 npx wrangler secret put ELEVENLABS_API_KEY
 ```
@@ -43,15 +44,15 @@ npx wrangler secret put ELEVENLABS_API_KEY
    Worker → name it exactly **`aimm-proxy`** → Deploy.
 2. Edit code → replace the hello-world with the contents of
    `worker/src/index.js` → Save and deploy.
-3. Worker → Settings → Variables and Secrets → add **`ANTHROPIC_API_KEY`**
-   and **`ELEVENLABS_API_KEY`**, type **Secret** → paste each key → Deploy.
+3. Worker → Settings → Variables and Secrets → add **`OPENAI_API_KEY`**,
+   **`ANTHROPIC_API_KEY`**, and **`ELEVENLABS_API_KEY`**, type **Secret** → paste each key → Deploy.
 
 > If the deployed URL ends up different from
 > `https://aimm-proxy.kevinlelitte.workers.dev` (e.g. a different worker
 > name), update `AIMM_PROXY_URL` in `index.html` to match and push — the URL
 > is not a secret.
 
-That's it. On any browser/device, the app now: routes all Claude and
+That's it. On any browser/device, the app now: routes GPT-6 Luna, Claude and
 ElevenLabs REST calls through the Worker (which adds the real keys
 server-side), and uses the baked-in agent IDs. The Settings key fields are
 auto-filled with an `aimm-proxy-managed` placeholder so the existing
