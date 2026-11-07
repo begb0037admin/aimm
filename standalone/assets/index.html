@@ -2742,6 +2742,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .aichat-msg:nth-child(even) .body{background:radial-gradient(ellipse 80% 120% at 100% 0%,rgba(74,124,140,.42),transparent 80%),radial-gradient(ellipse 70% 110% at 0% 0%,rgba(201,161,90,.26),transparent 78%),linear-gradient(180deg,#152029 0%,#0f161e 100%)}
 #hopeRail .aichat-msg.user:is(:nth-child(odd),:nth-child(even)) .body{background:radial-gradient(ellipse 80% 120% at 0% 0%,rgba(74,124,140,.42),transparent 80%),linear-gradient(180deg,#16181a 0%,#0e0f10 100%)}
 #hopeRail .aichat-msg.ai:is(:nth-child(odd),:nth-child(even)) .body{background:radial-gradient(ellipse 70% 110% at 100% 0%,rgba(201,161,90,.26),transparent 78%),linear-gradient(180deg,#16181a 0%,#0e0f10 100%)}
+#hopeRail .aichat-msg.user:is(:nth-child(odd),:nth-child(even)) .body{border-color:rgba(74,124,140,.6)}
+#hopeRail .aichat-msg.ai:is(:nth-child(odd),:nth-child(even)) .body{border-color:rgba(201,161,90,.45)}
 #hopeRail .hope-empty-greeting .body{background:radial-gradient(ellipse 80% 120% at 0% 0%,rgba(74,124,140,.42),transparent 80%),radial-gradient(ellipse 70% 110% at 100% 0%,rgba(201,161,90,.26),transparent 78%),linear-gradient(180deg,#152029 0%,#0f161e 100%)}
 #hopeRail .aichat-msg .cites,#hopeRail .aichat-tool-events{border-top-style:solid}
 #hopeRail .aichat-quick-prompt{border-radius:999px;background:#151a20;border:1px solid #2a3340;color:#b4c0cf;font-size:12px;font-weight:600;padding:7px 14px}
@@ -4652,7 +4654,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.7';
+const AIMM_BUILD = '2026-11-07.8';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
