@@ -4655,7 +4655,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.24';
+const AIMM_BUILD = '2026-11-07.25';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21353,6 +21353,9 @@ csInit('csPlatform');
         }else{
           stemView={trackName:'No audible stems',isGroup:true,groupCount:0,remainderNames,status:'empty',spectrum:null,spectrumWithoutSelected:state.playbackSpectrumWithout||null,spectrumComparisonStatus:state.playbackSpectrumWithoutStatus||'pending',mixSpectrum:state.mixSpectrum,mixSpectrumStatus:state.mixSpectrumStatus};
         }
+      }else if(state&&state.selectedTarget==='mix'&&state.playbackKeys&&state.playbackKeys.length>1){
+        const playingStems=(state.stems||[]).filter(s=>state.playbackKeys.includes(s.key));
+        stemView={trackName:'Full song',isGroup:true,groupCount:playingStems.length,remainderNames:[],status:state.mixSpectrumStatus,spectrum:state.mixSpectrum,spectrumComparisonStatus:'no-remainder',mixSpectrum:state.mixSpectrum,mixSpectrumStatus:state.mixSpectrumStatus};
       }else if(state&&state.selectedTarget==='stem'){
         const selected=state.stems.find(s=>s.key===state.selectedStemKey);
         const auditionKeys=state.auditionKeys||[],auditionSet=new Set(auditionKeys);
@@ -21368,7 +21371,7 @@ csInit('csPlatform');
     const activeCorridor=refActiveCorridor();
     const targetSelect=document.getElementById('refCurveTarget');
     const flatSelected=!(LIVE.active&&LIVE.referenceOnly)&&!mcSpotifyUsingCompanion&&!(targetSelect&&targetSelect.value);
-    if(!activeCorridor&&(!flatSelected||!refPlaying)){
+    if(!stemView&&!activeCorridor&&(!flatSelected||!refPlaying)){
       wrap.classList.toggle('stem-measured',!!stemView);
       if(bandGrid)bandGrid.classList.remove('stem-relative');
       if(badge)badge.hidden=true;
@@ -21431,11 +21434,24 @@ csInit('csPlatform');
       const tickStep=rangeMax-rangeMin<=48?6:12;
       ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='middle';
       for(let db=Math.ceil(rangeMin/tickStep)*tickStep;db<=rangeMax;db+=tickStep){const py=stemDbToY(db);ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0,py+.5);ctx.lineTo(x1,py+.5);ctx.stroke();ctx.fillStyle='rgba(174,181,188,.9)';ctx.fillText((db>0?'+':'')+db,x0-7,py);}
+      if(flatSelected){ctx.strokeStyle='#9aa0a6';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0,stemDbToY(0));ctx.lineTo(x1,stemDbToY(0));ctx.stroke();}
       // Keep the unit label clear of the top tick label. In the full-mix view
       // the top tick sits at the plot edge, so align this label just to its right.
       ctx.textBaseline='alphabetic';ctx.textAlign='left';ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.fillStyle='rgba(174,181,188,.95)';ctx.fillText('dB rel. · '+(corr.referenceSource||'Spotify')+' reference',7,14);
       for(const f of[20,100,1000,10000,20000]){const px=x(f);ctx.strokeStyle='rgba(255,255,255,.12)';ctx.beginPath();ctx.moveTo(px+.5,plotTop);ctx.lineTo(px+.5,plotBottom);ctx.stroke();ctx.textAlign='center';ctx.fillStyle='rgba(154,160,166,.9)';ctx.fillText(f>=1000?(f/1000)+'k':String(f),px,h-5);}ctx.textAlign='left';
-      const path=(spec,traceOffset=offset)=>{const pts2=spec.map(([f,db])=>[x(f),stemDbToY(db+traceOffset)]);ctx.beginPath();ctx.moveTo(pts2[0][0],pts2[0][1]);for(let i=1;i<pts2.length-1;i++){const mx=(pts2[i][0]+pts2[i+1][0])/2,my=(pts2[i][1]+pts2[i+1][1])/2;ctx.quadraticCurveTo(pts2[i][0],pts2[i][1],mx,my);}ctx.lineTo(pts2[pts2.length-1][0],pts2[pts2.length-1][1]);};
+      const displayCache=new WeakMap();
+      const displaySmooth=spec=>{
+        if(displayCache.has(spec))return displayCache.get(spec);
+        const powerAt=(points,f)=>{let lo=0,hi=points.length-1;while(hi-lo>1){const mid=(lo+hi)>>1;if(points[mid][0]<f)lo=mid;else hi=mid;}const [f0,db0]=points[lo],[f1,db1]=points[hi];const t=Math.max(0,Math.min(1,Math.log(f/f0)/Math.log(f1/f0)));return Math.pow(10,db0/10)*(1-t)+Math.pow(10,db1/10)*t;};
+        const averageAt=(points,f)=>{let power=0;for(let j=-6;j<=6;j++)power+=powerAt(points,Math.max(points[0][0],Math.min(points[points.length-1][0],f*Math.pow(2,j/36))));return 10*Math.log10(power/13+1e-24);};
+        const first=spec.map(([f])=>[f,averageAt(spec,f)]);
+        const smoothAt=f=>averageAt(first,f);
+        // Keep calibrated landmarks fixed while smoothing only the display shape.
+        const anchors=[20,100,250,1000,3000,8000,16000,20000].map(f=>[f,10*Math.log10(powerAt(spec,f)+1e-24)-smoothAt(f)]);
+        const result=spec.map(([f])=>{let i=1;while(i<anchors.length-1&&anchors[i][0]<f)i++;const [f0,d0]=anchors[i-1],[f1,d1]=anchors[i],t=Math.max(0,Math.min(1,Math.log(f/f0)/Math.log(f1/f0)));return [f,smoothAt(f)+d0+(d1-d0)*t];});
+        displayCache.set(spec,result);return result;
+      };
+      const path=(spec,traceOffset=offset)=>{const pts2=displaySmooth(spec).map(([f,db])=>[x(f),stemDbToY(db+traceOffset)]);ctx.beginPath();ctx.moveTo(pts2[0][0],pts2[0][1]);for(let i=1;i<pts2.length-1;i++){const mx=(pts2[i][0]+pts2[i+1][0])/2,my=(pts2[i][1]+pts2[i+1][1])/2;ctx.quadraticCurveTo(pts2[i][0],pts2[i][1],mx,my);}ctx.lineTo(pts2[pts2.length-1][0],pts2[pts2.length-1][1]);};
       const legendY=29,legendTextX=69;ctx.lineWidth=2;ctx.setLineDash([]);ctx.strokeStyle='rgba(96,196,248,.98)';ctx.beginPath();ctx.moveTo(48,legendY);ctx.lineTo(65,legendY);ctx.stroke();ctx.fillStyle='rgba(210,216,222,.9)';ctx.font='9.5px Inter,-apple-system,sans-serif';
       const sourceLabel=stemView.isGroup?(refPlaying?'Live group':'Selected group')+' · '+stemView.groupCount+' stems':refPlaying?'Live · '+track:track+' spectrum';
       ctx.fillText(sourceLabel,legendTextX,legendY+3);
@@ -22624,9 +22640,8 @@ csInit('csPlatform');
       }
       refRaf=requestAnimationFrame(refLiveAnimate);return;
     }
-    // Exponential running average -> long-term spectrum. Use the same 0.4s
-    // time constant as the PCM stem traces so the analyser and blue curves track
-    // playback at the same pace.
+    // Exponential running average for the analyser's long-term spectrum.
+    // The blue PCM stem trace uses the current window independently.
     const elapsed=refCtx.currentTime-refStartTime+refStartOffset;
     if(!refAvg||refAvg.length!==data.length){
       refAvg=new Float32Array(data.length);
@@ -24428,7 +24443,6 @@ csInit('csPlatform');
   const stemSoloKeys=new Set(),stemMutedKeys=new Set();
   let stemPlaybackMode='full';
   let stemVisibleCrop={start:0,end:1024};
-  const stemLiveSpectrumCache=new Map();
   let stemAnalysisWork=Promise.resolve();
   let stemSpectrumGeneration=0,stemLeaveOutGeneration=0;
   let stemAggregateSpectrum={status:'idle',points:null,windows:0,hop:0};
@@ -24443,12 +24457,10 @@ csInit('csPlatform');
   const stemReviewProgress=new Map();
   let stemLiveHann=null,stemLiveHannPower=0;
   function stemLiveSpectrumAt(keyOrKeys,seconds){
-    const keys=Array.isArray(keyOrKeys)?keyOrKeys:[keyOrKeys],key=keys.join('|');
+    const keys=Array.isArray(keyOrKeys)?keyOrKeys:[keyOrKeys];
     const stems=keys.map(k=>(stemSession||[]).find(s=>s.key===k&&s.status==='ok'&&s.buffer)).filter(Boolean);
     if(!stems.length)return null;
-    const buf=stems[0].buffer,N=8192,sr=buf.sampleRate,playhead=Math.max(0,seconds),bucket=Math.floor(playhead*20);
-    const previous=stemLiveSpectrumCache.get(key);
-    if(previous&&previous.bucket===bucket&&previous.points)return previous.points;
+    const buf=stems[0].buffer,N=8192,sr=buf.sampleRate;
     if(buf.length<N)return keys.length===1?(stems[0].spectrum||null):null;
     if(!stemLiveHann||stemLiveHann.length!==N){
       stemLiveHann=new Float32Array(N);stemLiveHannPower=0;
@@ -24457,25 +24469,19 @@ csInit('csPlatform');
     const end=Math.round(Math.max(0,seconds)*sr),start=Math.max(0,Math.min(buf.length-N,end-Math.floor(N/2)));
     const channels=stems.map(s=>{const b=s.buffer,l=b.getChannelData(0);return[l,b.numberOfChannels>1?b.getChannelData(1):l];}),re=new Float32Array(N);
     for(let i=0;i<N;i++){let l=0,r=0;for(const pair of channels){l+=pair[0][start+i];r+=pair[1][start+i];}re[i]=((l+r)*0.5)*stemLiveHann[i];}
-    const mag=fftMag(re),binHz=sr/N,points=[],smoothedPower=[],NP=64,fmin=20,fmax=20000;
+    const mag=fftMag(re),binHz=sr/N,points=[],bandPower=[],NP=64,fmin=20,fmax=20000;
     for(let i=0;i<NP;i++){
       const f=fmin*Math.pow(fmax/fmin,i/(NP-1));
       let b0=Math.max(1,Math.floor((f/1.09)/binHz)),b1=Math.min(mag.length-1,Math.ceil((f*1.09)/binHz));
       if(b1<b0)b1=b0;let power=0,n=0;
       for(let b=b0;b<=b1;b++){power+=mag[b]*mag[b];n++;}
-      smoothedPower.push(power/Math.max(1,n)/Math.max(1,stemLiveHannPower));
+      bandPower.push(power/Math.max(1,n)/Math.max(1,stemLiveHannPower));
       points.push([f,0]);
     }
-    // Smooth linear power, not dB, so brief frame spikes settle naturally without
-    // changing calibration or applying frame-by-frame gain normalisation.
-    const reset=!previous||!previous.power||previous.power.length!==NP||previous.seconds==null||playhead<=previous.seconds;
-    const dt=reset?0:playhead-previous.seconds,alpha=reset?1:1-Math.exp(-dt/STEM_LIVE_SPECTRUM_SMOOTHING_SECONDS);
+    // Convert the current window's power to dB without a time average.
     for(let i=0;i<NP;i++){
-      if(!reset)smoothedPower[i]=previous.power[i]+alpha*(smoothedPower[i]-previous.power[i]);
-      points[i][1]=10*Math.log10(smoothedPower[i]+1e-24);
+      points[i][1]=10*Math.log10(bandPower[i]+1e-24);
     }
-    stemLiveSpectrumCache.set(key,{bucket,points,power:smoothedPower,seconds:playhead});
-    if(stemLiveSpectrumCache.size>8){const oldestIt=stemLiveSpectrumCache.keys(),first=oldestIt.next().value,oldest=first===key?oldestIt.next().value:first;if(oldest!==undefined)stemLiveSpectrumCache.delete(oldest);}
     return points;
   }
   function stemReviewKey(stem){return STEM_REVIEW_POLICY+'|'+stem.fileName+'|'+(stem.sourceHash||stem.key);}
