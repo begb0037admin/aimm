@@ -3502,6 +3502,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         <canvas id="specCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
         <div id="stemTargetUnavailable" class="stem-target-unavailable" hidden>TARGET COMPARISON UNAVAILABLE</div>
       </div>
+      <div id="mcSpotifyLiveDiag" style="font-size:11px;white-space:nowrap;overflow-x:auto;" aria-live="off"></div><!-- DIAG-TEMP: remove before merge -->
       <div class="oz-band-grid">
         <div class="oz-band-card">
           <div class="oz-band-label">Low <small>20–250 Hz</small></div>
@@ -4655,7 +4656,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.29';
+const AIMM_BUILD = '2026-11-07.30'; // DIAG-TEMP: remove before merge
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21644,6 +21645,12 @@ csInit('csPlatform');
   let mcSpotifyUsingCompanion=false,mcSpotifyCompanionAvailable=false,mcSpotifyCaptureTrack=null,mcSpotifyCaptureSessionId='',mcSpotifyCaptureSessionTrackId='',mcSpotifyCompanionLiveUnsupported=false;
   let mcSpotifyCompanionPollTimer=null,mcSpotifyCompanionWindows=0,mcSpotifyCompanionPoints=null,mcSpotifyLivePoints=null,mcCaptureAccum=null;
   let mcSpotifyLoopbackPermissionState='prompt',mcSpotifyLoopbackPermissionStatus=null,mcSpotifyCompanionConnected=false,mcSpotifyCompanionConnectBusy=false;
+  let mcSpotifyDiagLastPlaybackUpdatePaused=null,mcSpotifyDiagLastPlaybackUpdateAt=0,mcSpotifyDiagLivePointsPollCount=0; // DIAG-TEMP: remove before merge
+  function mcSpotifyDiagRender(liveAvailable,nextLivePoints,stemOrMixPlaybackActive){ // DIAG-TEMP: remove before merge
+    const line=document.getElementById('mcSpotifyLiveDiag');if(!line)return; // DIAG-TEMP: remove before merge
+    const seconds=mcSpotifyDiagLastPlaybackUpdateAt?Math.max(0,(Date.now()-mcSpotifyDiagLastPlaybackUpdateAt)/1000).toFixed(1)+'s ago':'not received'; // DIAG-TEMP: remove before merge
+    line.textContent='DIAG | mcSpotifyIsPlaying='+mcSpotifyIsPlaying+' | last playback_update isPaused='+(mcSpotifyDiagLastPlaybackUpdatePaused===null?'not received':mcSpotifyDiagLastPlaybackUpdatePaused)+' ('+seconds+') | mcSpotifyLoopbackPermissionState='+mcSpotifyLoopbackPermissionState+' | live.available='+liveAvailable+' | nextLivePoints='+(nextLivePoints?'non-null':'null')+' | poll count with livePoints='+mcSpotifyDiagLivePointsPollCount+' | stemOrMixPlaybackActive='+stemOrMixPlaybackActive; // DIAG-TEMP: remove before merge
+  } // DIAG-TEMP: remove before merge
   let mcSpotifyCaptureUiTimer=null,mcSpotifyCaptureUiStartedAt=0,mcSpotifyCaptureUiElapsed=0;
   function mcSpotifyCompanionFetch(path,options={}){
     return fetch(MC_REFERENCE_COMPANION_URL+path,{...options,targetAddressSpace:'loopback'});
@@ -21745,6 +21752,7 @@ csInit('csPlatform');
         if(status)status.textContent='AIMM Audio Reference Companion cannot monitor playback. '+live.status;
       }
       const nextLivePoints=live.available&&Array.isArray(live.livePoints)?live.livePoints:null;
+      if(nextLivePoints)mcSpotifyDiagLivePointsPollCount++; // DIAG-TEMP: remove before merge
       if(live.capturing&&mcSpotifyUsingCompanion&&live.sessionId===mcSpotifyCaptureSessionId&&nextLivePoints){
         mcSpotifyCompanionWindows=Number(live.windows)||0;
         // The purple line is the captured white line: same analysis, same frequencies.
@@ -21757,6 +21765,7 @@ csInit('csPlatform');
       const spotifyCaptureActive=mcSpotifyUsingCompanion&&!mcSpotifyCaptureCancelled&&live.capturing&&live.sessionId===mcSpotifyCaptureSessionId&&document.getElementById('mcSpotifyCaptureState')?.dataset.state==='capturing';
       const stemState=window.mcStemAnalysis&&window.mcStemAnalysis.playbackState&&window.mcStemAnalysis.playbackState(),playbackView=!!(stemState&&stemState.active);
       const stemOrMixPlaybackActive=refPlaying||!!(stemState&&stemState.playing)||playbackView;
+      mcSpotifyDiagRender(live.available===true,nextLivePoints!==null,stemOrMixPlaybackActive); // DIAG-TEMP: remove before merge
       const spotifyLiveShouldShow=mcSpotifyIsPlaying&&!stemOrMixPlaybackActive;
       const showSpotifyLive=(spotifyLiveShouldShow||spotifyCaptureActive)&&!stemOrMixPlaybackActive;
       if(nextLivePoints&&showSpotifyLive){
@@ -21783,6 +21792,7 @@ csInit('csPlatform');
       }
     }catch(error){
       mcSpotifyCompanionAvailable=false;mcSpotifyCompanionConnected=false;delay=2000;mcSpotifyRenderCompanionAccess();
+      const stemState=window.mcStemAnalysis&&window.mcStemAnalysis.playbackState&&window.mcStemAnalysis.playbackState(),stemOrMixPlaybackActive=refPlaying||!!(stemState&&stemState.playing)||!!(stemState&&stemState.active);mcSpotifyDiagRender(false,false,stemOrMixPlaybackActive); // DIAG-TEMP: remove before merge
       if(mcSpotifyLivePoints){mcSpotifyLivePoints=null;if(!LIVE.active)refDrawCanvas(refSpecPoints,null,null,null);}
       const status=document.getElementById('mcSpotifyRefStatus');
       if(status)status.textContent=mcSpotifyUsingCompanion?'AIMM Companion connection lost: '+(error.message||'unknown error'):'AIMM Audio Reference Companion is not reachable. Keep the companion open, then use Reconnect companion. '+(error.message||'');
@@ -22230,7 +22240,8 @@ csInit('csPlatform');
     const help=document.createElement('span');help.textContent='Play a track in Spotify’s list to select it for AIMM, then capture it.';
     const embed=document.createElement('div');embed.className='mc-spotify-artist-embed';card.append(title,help,embed);host.appendChild(card);
     try{const api=await mcSpotifyEnsureIframeApi();api.createController(embed,{uri:'spotify:artist:'+artist.id,width:'100%',height:'460'},controller=>{
-      mcSpotifyArtistController=controller;controller.addListener('playback_started',event=>mcSpotifySelectPlayingURI(event&&event.data&&event.data.playingURI,'playback_started'));controller.addListener('playback_update',event=>{const data=event&&event.data;if(data){mcSpotifyIsPlaying=!data.isPaused;if(mcSpotifyIsPlaying&&data.playingURI)mcSpotifySelectPlayingURI(data.playingURI,'playback_update');}});controller.addListener('playback_ended',()=>{mcSpotifyIsPlaying=false;});
+      mcSpotifyArtistController=controller;controller.addListener('playback_started',event=>mcSpotifySelectPlayingURI(event&&event.data&&event.data.playingURI,'playback_started'));controller.addListener('playback_update',event=>{const data=event&&event.data;if(data){mcSpotifyDiagLastPlaybackUpdatePaused=data.isPaused;mcSpotifyDiagLastPlaybackUpdateAt=Date.now(); // DIAG-TEMP: remove before merge
+        mcSpotifyIsPlaying=!data.isPaused;if(mcSpotifyIsPlaying&&data.playingURI)mcSpotifySelectPlayingURI(data.playingURI,'playback_update');}});controller.addListener('playback_ended',()=>{mcSpotifyIsPlaying=false;}); // DIAG-TEMP: remove before merge
     });}
     catch(error){help.textContent=error.message||'Spotify Top tracks player could not load.';}
   }
