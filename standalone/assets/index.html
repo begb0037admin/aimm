@@ -4655,7 +4655,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.18';
+const AIMM_BUILD = '2026-11-07.19';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21303,16 +21303,18 @@ csInit('csPlatform');
     const w=canvas.width,h=canvas.height,ctx=canvas.getContext('2d');
     ctx.clearRect(0,0,w,h);
     refDrawCurveCache=new WeakMap(); // fresh computation each redraw; white and purple share it within the redraw
-    const drawReferenceLiveTrace=(points,mapX,mapY,x0,x1,top,bottom)=>{
+    const drawReferenceLiveTrace=(points,mapX,mapY,x0,x1,top,bottom,whiteOnly=false)=>{
       if(!Array.isArray(points)||points.length<2){refResetLiveTraceDisplay();return;}
       const xy=refLiveDisplayCurve(points,mapY,x0,x1,top,bottom);
       if(!xy)return;
       ctx.save();ctx.beginPath();ctx.rect(x0,top,x1-x0,bottom-top);ctx.clip();
       ctx.lineCap='round';ctx.lineJoin='round';
-      [{w:70,b:28,a:.07},{w:52,b:22,a:.09},{w:38,b:16,a:.12},{w:26,b:10,a:.18},{w:16,b:5,a:.26}].forEach(layer=>{
-        ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(165,105,255,'+layer.a+')';ctx.lineWidth=layer.w;ctx.filter='blur('+layer.b+'px)';ctx.stroke();ctx.filter='none';
-      });
-      ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(185,112,255,.95)';ctx.lineWidth=4.2;ctx.stroke();
+      if(!whiteOnly){
+        [{w:70,b:28,a:.07},{w:52,b:22,a:.09},{w:38,b:16,a:.12},{w:26,b:10,a:.18},{w:16,b:5,a:.26}].forEach(layer=>{
+          ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(165,105,255,'+layer.a+')';ctx.lineWidth=layer.w;ctx.filter='blur('+layer.b+'px)';ctx.stroke();ctx.filter='none';
+        });
+        ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(185,112,255,.95)';ctx.lineWidth=4.2;ctx.stroke();
+      }
       ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(247,241,255,1)';ctx.lineWidth=2.2;ctx.stroke();
       ctx.restore();
       ctx.save();ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(247,241,255,.86)';ctx.fillText('LIVE AUDIO',x1,14);ctx.restore();
@@ -21366,9 +21368,10 @@ csInit('csPlatform');
     }catch(_){}
     const badge=document.getElementById('stemTargetUnavailable');
     const bandGrid=document.querySelector('#eq .oz-band-grid');
-    if(!refActiveCorridor()){
-      const targetSelect=document.getElementById('refCurveTarget');
-      const flatSelected=!(LIVE.active&&LIVE.referenceOnly)&&!mcSpotifyUsingCompanion&&!(targetSelect&&targetSelect.value);
+    const activeCorridor=refActiveCorridor();
+    const targetSelect=document.getElementById('refCurveTarget');
+    const flatSelected=!(LIVE.active&&LIVE.referenceOnly)&&!mcSpotifyUsingCompanion&&!(targetSelect&&targetSelect.value);
+    if(!activeCorridor&&(!flatSelected||!refPlaying)){
       wrap.classList.toggle('stem-measured',!!stemView);
       if(bandGrid)bandGrid.classList.remove('stem-relative');
       if(badge)badge.hidden=true;
@@ -21399,9 +21402,9 @@ csInit('csPlatform');
       const liveRemainder=refPlaying&&Array.isArray(liveWithoutPts)&&liveWithoutPts.length?liveWithoutPts:null;
       const comparisonCurve=refPlaying?liveRemainder:without;
       const comparisonStatus=stemView.spectrumComparisonStatus||'pending';
-      const targetSelect=document.getElementById('refCurveTarget'),savedTarget=refTrackTargetByKey(targetSelect&&targetSelect.value),spotifyTargetLoaded=!!savedTarget&&refTargetSourceLabel(savedTarget)==='Spotify';
+      const savedTarget=refTrackTargetByKey(targetSelect&&targetSelect.value),spotifyTargetLoaded=!!savedTarget&&refTargetSourceLabel(savedTarget)==='Spotify';
       const values=['ozBandLowVal','ozBandMidVal','ozBandHighVal'],fills=['ozBandLowFill','ozBandMidFill','ozBandHighFill'],tags=['ozBandLowTag','ozBandMidTag','ozBandHighTag'];
-      const corr=refActiveCorridor(),x0=48,x1=Math.max(49,w-10),x=f=>x0+Math.log(Math.max(20,Math.min(20000,f))/20)/Math.log(1000)*(x1-x0);
+      const corr=activeCorridor||{pts:[[20,0,0],[20000,0,0]]},x0=48,x1=Math.max(49,w-10),x=f=>x0+Math.log(Math.max(20,Math.min(20000,f))/20)/Math.log(1000)*(x1-x0);
       const normOffset=spec=>{let sm=0,sn=0,cm=0,cn=0;if(!spec)return 0;for(const[f,db]of spec)if(f>=150&&f<=3000){sm+=db;sn++;}for(let i=0;i<48;i++){const f=150*Math.pow(3000/150,i/47),[lo,hi]=corridorAt(corr,f);cm+=(lo+hi)/2;cn++;}return sn&&cn?cm/cn-sm/sn:0;};
       const offset=normOffset(sum);
       const selectedLive=refPlaying&&livePts&&livePts.length?livePts:null;
@@ -21420,13 +21423,15 @@ csInit('csPlatform');
       const rangeMin=-SPECTRAL_DB_RANGE,rangeMax=SPECTRAL_DB_RANGE,plotTop=43,plotBottom=h-23;
       const stemDbToY=db=>plotTop+(rangeMax-db)/(rangeMax-rangeMin)*(plotBottom-plotTop);
       const smooth=(arr,passes)=>{for(let p=0;p<passes;p++){const b=arr.slice();for(let i=1;i<arr.length-1;i++)arr[i]=(b[i-1]+2*b[i]+b[i+1])/4;}};
-      const yvals=[],fx=[];for(let i=0;i<150;i++){const f=20*Math.pow(1000,i/149),[lo,hi]=corridorAt(corr,f);fx.push(x(f));yvals.push([stemDbToY(hi),stemDbToY(lo)]);}const upper=yvals.map(v=>v[0]),lower=yvals.map(v=>v[1]);smooth(upper,corr.dense?0:4);smooth(lower,corr.dense?0:4);
-      const drawBand=()=>{ctx.beginPath();ctx.moveTo(fx[0],upper[0]);for(let i=1;i<fx.length;i++)ctx.lineTo(fx[i],upper[i]);for(let i=fx.length-1;i>=0;i--)ctx.lineTo(fx[i],lower[i]);ctx.closePath();};
-      // Keep the corridor as a soft blended ghost, but give the inner band
-      // enough purple density to remain visible beneath the live source trace.
-      const haze=[[42,'rgba(148,66,220,.15)'],[24,'rgba(158,78,224,.20)'],[13,'rgba(172,98,230,.24)'],[5,'rgba(188,126,236,.22)'],[2,'rgba(208,164,242,.16)']];
-      ctx.save();ctx.beginPath();ctx.rect(x0,plotTop,x1-x0,plotBottom-plotTop);ctx.clip();
-      for(const[blur,color]of haze){ctx.save();ctx.filter='blur('+blur+'px)';drawBand();ctx.fillStyle=color;ctx.fill();ctx.restore();}ctx.filter='none';ctx.restore();
+      if(activeCorridor){
+        const yvals=[],fx=[];for(let i=0;i<150;i++){const f=20*Math.pow(1000,i/149),[lo,hi]=corridorAt(corr,f);fx.push(x(f));yvals.push([stemDbToY(hi),stemDbToY(lo)]);}const upper=yvals.map(v=>v[0]),lower=yvals.map(v=>v[1]);smooth(upper,corr.dense?0:4);smooth(lower,corr.dense?0:4);
+        const drawBand=()=>{ctx.beginPath();ctx.moveTo(fx[0],upper[0]);for(let i=1;i<fx.length;i++)ctx.lineTo(fx[i],upper[i]);for(let i=fx.length-1;i>=0;i--)ctx.lineTo(fx[i],lower[i]);ctx.closePath();};
+        // Keep the corridor as a soft blended ghost, but give the inner band
+        // enough purple density to remain visible beneath the live source trace.
+        const haze=[[42,'rgba(148,66,220,.15)'],[24,'rgba(158,78,224,.20)'],[13,'rgba(172,98,230,.24)'],[5,'rgba(188,126,236,.22)'],[2,'rgba(208,164,242,.16)']];
+        ctx.save();ctx.beginPath();ctx.rect(x0,plotTop,x1-x0,plotBottom-plotTop);ctx.clip();
+        for(const[blur,color]of haze){ctx.save();ctx.filter='blur('+blur+'px)';drawBand();ctx.fillStyle=color;ctx.fill();ctx.restore();}ctx.filter='none';ctx.restore();
+      }
       const tickStep=rangeMax-rangeMin<=48?6:12;
       ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='middle';
       for(let db=Math.ceil(rangeMin/tickStep)*tickStep;db<=rangeMax;db+=tickStep){const py=stemDbToY(db);ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0,py+.5);ctx.lineTo(x1,py+.5);ctx.stroke();ctx.fillStyle='rgba(174,181,188,.9)';ctx.fillText((db>0?'+':'')+db,x0-7,py);}
@@ -21452,7 +21457,7 @@ csInit('csPlatform');
         ctx.filter='none';ctx.strokeStyle=spotifyTargetLoaded?'rgba(247,241,255,.99)':'rgba(96,196,248,.99)';ctx.lineWidth=2.3;path(selectedCurve,offset);ctx.stroke();ctx.restore();
       }else{ctx.textAlign='center';ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.fillStyle='rgba(154,160,166,.9)';ctx.fillText(stemView.status==='error'?'Selected source spectrum unavailable':'Calculating '+track+' spectrum…',(x0+x1)/2,h/2);ctx.textAlign='left';}
       drawReferenceLiveAverage(corr,x,stemDbToY,x0,x1,plotTop,plotBottom);
-      drawReferenceLiveTrace(referenceLivePts,x,stemDbToY,x0,x1,plotTop,plotBottom);
+      if(activeCorridor)drawReferenceLiveTrace(referenceLivePts,x,stemDbToY,x0,x1,plotTop,plotBottom);
       if(comparisonCurve){ctx.save();ctx.strokeStyle='#f2a65a';ctx.lineWidth=1.8;ctx.setLineDash([5,4]);path(comparisonCurve);ctx.stroke();ctx.restore();}
       for(let i=0;i<bandRanges.length;i++){
         const d=bandDelta(sum,...bandRanges[i]);if(d===null){refSetHTML(values[i],'– –<span class="oz-unit"> dB rel.</span>');refSetStyle(fills[i],'left','50%');refSetStyle(fills[i],'width','0%');if(tags[i])refSetHTML(tags[i],'');continue;}
@@ -21465,7 +21470,7 @@ csInit('csPlatform');
     if(bandGrid)bandGrid.classList.remove('stem-relative');
     if(badge)badge.hidden=true;
 
-    const corr=refActiveCorridor(),mixX0=48,mixX1=w-8,mixFreqToX=f=>mixX0+freqToX(f,mixX1-mixX0);
+    const corr=activeCorridor,mixX0=48,mixX1=w-8,mixFreqToX=f=>mixX0+freqToX(f,mixX1-mixX0);
     // One fixed, symmetric dB scale shared with every stem and group view.
     let cSum=0,cN=0,mSum=0,mN=0;
     if(pts)for(const[f,db]of pts)if(f>=150&&f<=3000){mSum+=db;mN++;}
@@ -21524,7 +21529,7 @@ csInit('csPlatform');
       // The drop zone above the chart already explains how to load audio. Keep
       // this empty plot quiet: the corridor, scale and aligned band labels remain.
       drawReferenceLiveAverage(corr,mixFreqToX,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom);
-      drawReferenceLiveTrace(referenceLivePts,mixFreqToX,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom);
+      drawReferenceLiveTrace(referenceLivePts,mixFreqToX,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom,!corr);
       return;
     }
 
@@ -21538,7 +21543,7 @@ csInit('csPlatform');
     ctx.filter='none';
     crPath(xy);ctx.strokeStyle='rgba(96,196,248,.98)';ctx.lineWidth=2.1;ctx.stroke();
     drawReferenceLiveAverage(corr,mixFreqToX,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom);
-    drawReferenceLiveTrace(referenceLivePts,mixFreqToX,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom);
+    drawReferenceLiveTrace(referenceLivePts,mixFreqToX,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom,!corr);
   }
 
   // Log-spaced smoothed points from a per-bin dB array (analyser float data
