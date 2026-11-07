@@ -4655,7 +4655,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.16';
+const AIMM_BUILD = '2026-11-07.17';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21396,6 +21396,7 @@ csInit('csPlatform');
       const liveRemainder=refPlaying&&Array.isArray(liveWithoutPts)&&liveWithoutPts.length?liveWithoutPts:null;
       const comparisonCurve=refPlaying?liveRemainder:without;
       const comparisonStatus=stemView.spectrumComparisonStatus||'pending';
+      const targetSelect=document.getElementById('refCurveTarget'),savedTarget=refTrackTargetByKey(targetSelect&&targetSelect.value),spotifyTargetLoaded=!!savedTarget&&refTargetSourceLabel(savedTarget)==='Spotify';
       const values=['ozBandLowVal','ozBandMidVal','ozBandHighVal'],fills=['ozBandLowFill','ozBandMidFill','ozBandHighFill'],tags=['ozBandLowTag','ozBandMidTag','ozBandHighTag'];
       const corr=refActiveCorridor(),x0=48,x1=Math.max(49,w-10),x=f=>x0+Math.log(Math.max(20,Math.min(20000,f))/20)/Math.log(1000)*(x1-x0);
       const normOffset=spec=>{let sm=0,sn=0,cm=0,cn=0;if(!spec)return 0;for(const[f,db]of spec)if(f>=150&&f<=3000){sm+=db;sn++;}for(let i=0;i<48;i++){const f=150*Math.pow(3000/150,i/47),[lo,hi]=corridorAt(corr,f);cm+=(lo+hi)/2;cn++;}return sn&&cn?cm/cn-sm/sn:0;};
@@ -21444,8 +21445,8 @@ csInit('csPlatform');
       // paused, show its full-record spectrum. Both use the same fixed gain
       // offset as the sum, so a bass-heavy source is not artificially boosted.
       if(selectedCurve){
-        ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='rgba(47,161,230,.38)';ctx.lineWidth=6;ctx.filter='blur(5px)';path(selectedCurve,offset);ctx.stroke();
-        ctx.filter='none';ctx.strokeStyle='rgba(96,196,248,.99)';ctx.lineWidth=2.3;path(selectedCurve,offset);ctx.stroke();ctx.restore();
+        ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=spotifyTargetLoaded?'rgba(247,241,255,.38)':'rgba(47,161,230,.38)';ctx.lineWidth=6;ctx.filter='blur(5px)';path(selectedCurve,offset);ctx.stroke();
+        ctx.filter='none';ctx.strokeStyle=spotifyTargetLoaded?'rgba(247,241,255,.99)':'rgba(96,196,248,.99)';ctx.lineWidth=2.3;path(selectedCurve,offset);ctx.stroke();ctx.restore();
       }else{ctx.textAlign='center';ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.fillStyle='rgba(154,160,166,.9)';ctx.fillText(stemView.status==='error'?'Selected source spectrum unavailable':'Calculating '+track+' spectrum…',(x0+x1)/2,h/2);ctx.textAlign='left';}
       drawReferenceLiveAverage(corr,x,stemDbToY,x0,x1,plotTop,plotBottom);
       drawReferenceLiveTrace(referenceLivePts,x,stemDbToY,x0,x1,plotTop,plotBottom);
