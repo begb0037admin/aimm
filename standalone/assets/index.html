@@ -4040,12 +4040,12 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn){background:#1b1d20;border:0;border-radius:0;box-shadow:none;transform:none;transition:background 180ms ease,color 180ms ease}
 #hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):hover:not(:disabled){background:#202327;color:#aeb4ba}
 #hopeRail .aichat-compose .send-col #aiChatSend:not(:disabled){color:#cfd3d7;font-weight:700}
-#hopeRail .aichat-compose .send-col #aiChatClear:hover:not(:disabled){color:#ff8a8a}
 #hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn[data-mode="usage"]:not(:disabled){color:#e2c8ff}
 #hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):focus-visible{outline:2px solid #5aa9e6;outline-offset:-2px}
 #hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):disabled{background:#1b1d20;border:0;color:#71787e;opacity:.45;cursor:not-allowed;box-shadow:none;transform:none}
 #hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn){width:calc(100% - 12px);height:40px;margin:auto;border-radius:999px;transition:box-shadow 180ms ease,color 180ms ease,background 180ms ease}
 #hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):hover:not(:disabled){background:#1b1d20;color:#d6e2eb;box-shadow:0 0 0 1px rgba(79,195,232,.28),0 0 14px rgba(79,195,232,.40),0 0 24px rgba(201,161,90,.28)}
+#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn[data-mode="usage"]:hover:not(:disabled){color:#e2c8ff}
 #hopeRail .aichat-compose .send-col #aiChatSend:hover:not(:disabled){color:#d6e2eb}
 @media (prefers-reduced-motion:reduce){#hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn){transition:none}}
 
@@ -4650,7 +4650,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.5';
+const AIMM_BUILD = '2026-11-07.6';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
