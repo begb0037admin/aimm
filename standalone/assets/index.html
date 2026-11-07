@@ -1941,19 +1941,14 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .aichat-compose{background:transparent;border:none;padding:0 16px;margin-top:0;gap:0;align-items:stretch;flex-direction:column} /* R3 2026-08-31: textarea on top, buttons row below */
 #hopeRail .aichat-compose textarea{background:#232629;border:1px solid #2c3034;border-radius:16px;color:#e8ebed;font-size:calc(var(--inv-text-scale, 1) * 12.5px);font-family:Inter,-apple-system,sans-serif}
 #hopeRail .aichat-compose textarea:focus{border-color:#5aa9e6}
-/* The four composer pills form two equal-width rows beneath the textarea. */
-#hopeRail .aichat-compose .send-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:34px 34px;align-items:stretch;column-gap:12px;row-gap:14px;min-width:0;max-width:none;width:100%;margin:28px 0 2px}
-#hopeRail .aichat-compose .send-col button{width:auto}
-#hopeRail .aichat-compose .send-col #aiChatSend,#hopeRail .aichat-compose .send-col #aiChatClear,#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,#hopeRail .aichat-compose .send-col #hopeAccountBtn{min-width:0;height:34px;box-sizing:border-box;margin:0;padding:0 6px;border-radius:999px;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap}
-#hopeRail .aichat-compose .send-col #hopeAccountBtn{order:1}
-#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn{order:2}
-#hopeRail #aiChatSend{flex:0 0 auto;background:linear-gradient(90deg,#2fa1e6,#a557f4);color:#0d1211;border-radius:999px;font-weight:700;font-size:calc(var(--inv-text-scale, 1) * 12px);padding:10px 20px}
-#hopeRail #aiChatSend:hover:not(:disabled){background:linear-gradient(90deg,#2fa1e6,#a557f4);opacity:.9}
-#hopeRail .aichat-compose .send-col #aiChatClear{background:#232629;border:1px solid #2c3034;color:#9aa0a6;font-weight:600}
-#hopeRail .aichat-compose .send-col #aiChatClear:hover{background:#2c3034;color:#ff8a8a;border-color:#5a2626}
-#hopeRail .aichat-compose .send-col .hope-voice-route-btn{height:34px;padding:0 6px;border-radius:999px;background:#17191c;border:1px solid #3b4148;color:#aeb4ba;font:600 11px Inter,-apple-system,sans-serif;cursor:pointer;flex:1 1 0;min-width:0}
-#hopeRail .aichat-compose .send-col .hope-voice-route-btn[data-mode="usage"]{background:#241b33;border-color:#8052b7;color:#e2c8ff}
-#hopeRail .aichat-compose .send-col .hope-voice-route-btn:disabled{opacity:.55;cursor:not-allowed}
+/* Hope composer: one rounded 2x2 panel with fading hairline dividers. */
+#hopeRail .aichat-compose .send-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:52px 52px;position:relative;gap:0;min-width:0;width:100%;margin:18px 0 2px;background:#1b1d20;border:0;border-radius:14px;overflow:hidden}
+#hopeRail .aichat-compose .send-col::before,#hopeRail .aichat-compose .send-col::after{content:"";position:absolute;pointer-events:none;z-index:1}
+#hopeRail .aichat-compose .send-col::before{left:50%;top:0;bottom:0;width:1px;transform:translateX(-.5px);background:linear-gradient(to bottom,transparent,#2c3034 35%,#2c3034 65%,transparent)}
+#hopeRail .aichat-compose .send-col::after{top:50%;left:0;right:0;height:1px;transform:translateY(-.5px);background:linear-gradient(to right,transparent,#2c3034 35%,#2c3034 65%,transparent)}
+#hopeRail .aichat-compose .send-col button{box-sizing:border-box;width:100%;min-width:0;height:52px;margin:0;padding:0 4px;border:0;border-radius:0;display:flex;align-items:center;justify-content:center;gap:6px;background:#1b1d20;color:#71787e;font:600 12px/1 Inter,-apple-system,sans-serif;text-align:center;white-space:nowrap;cursor:pointer}
+#hopeRail .aichat-compose .send-col #aiChatSend{color:#cfd3d7;font-weight:700}
+#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn[data-mode="usage"]{color:#e2c8ff}
 #hopeRail #aiChatImageBtn{flex:1 1 auto;background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-weight:600;font-size:calc(var(--inv-text-scale, 1) * 11px);line-height:1.25;padding:9px 10px;text-align:center;white-space:nowrap}
 #hopeRail #aiChatImageBtn:hover{background:#2c3034}
 #hopeRail #aiChatClearInput{flex:1 1 auto;background:transparent;border:1px solid #2c3034;color:#71787e;border-radius:999px;font-size:calc(var(--inv-text-scale, 1) * 11px);line-height:1.25;padding:9px 10px;white-space:nowrap}
@@ -2118,12 +2113,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
    search, Snapshot->Claude, Import Plugin hidden; Clear chat moved into the
    composer button row. Mix Issues pills left exactly as they are. */
 .aichat-layout .aichat-bar{display:none}
-/* Feedback board item 6 (2026-09-02.6): "Clear chat" is visible again in the
-   composer row, styled as a rail pill mirroring #aiChatImageBtn (:1676) — same
-   #232629 fill, 999px radius, 11px weight. Row is Send | mic | speaker |
-   Attach | Clear. #aiChatClearInput stays hidden (:1828). */
-#hopeRail .aichat-compose .send-col #aiChatClear{flex:1 1 auto;background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-weight:600;font-size:calc(var(--inv-text-scale, 1) * 11px);line-height:1.25;padding:9px 10px;text-align:center;white-space:nowrap}
-#hopeRail .aichat-compose .send-col #aiChatClear:hover{background:#2c3034;color:#ff8a8a;border-color:#5a2626}
 /* R3 round 15 (Kevin 2026-08-31): remove the 'Clear input' button - no use.
    Hidden in the rail; node + handler kept. */
 #hopeRail .aichat-compose .send-col #aiChatClearInput{display:none}
@@ -3071,7 +3060,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     <div class="aichat-compose aichat-compose-compact">
       <textarea id="aiChatInput" placeholder="Ask Hope about a fix…" rows="3"></textarea>
       <div class="send-col">
-        <button id="aiChatSend" type="button">Send ↵</button>
+        <button id="aiChatSend" type="button">Send</button>
         <button id="aiChatClear" type="button" class="btn ghost sm" title="Wipe conversation history (typed + voice turns)">Clear chat</button>
         <button id="hopeVoiceRouteBtn" type="button" class="hope-voice-route-btn" aria-label="Voice route: ElevenLabs" title="Space starts voice when the message box is empty. Shift+Space starts voice while you have a draft. Click to switch routes." onclick="hopeUsageToggleRoute()">ElevenLabs</button>
         <button id="hopeAccountBtn" type="button" class="hope-voice-route-btn" aria-label="Hope account: Auto" title="Choose which ElevenLabs account Hope uses" onclick="hopeCycleAccount()">Auto</button>
@@ -4045,17 +4034,15 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   #eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture):hover:not(:disabled):not(:active){transform:none}
 }
 
-/* Hope composer buttons: mirror the Spotify Reference and navigation states. */
-#hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):not(:disabled){background:transparent;border:1px solid transparent;outline:none;color:#71787e;font-weight:600;box-shadow:none;transform:none;transition:transform 180ms ease,box-shadow 180ms ease,color 180ms ease,border-color 180ms ease}
-@media (hover:hover) and (pointer:fine){
-  #hopeRail :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):hover:not(:disabled):not(:active):not(.active):not([aria-pressed="true"]):not([aria-selected="true"]){background:transparent;border:1px solid transparent;color:#d6e2eb;transform:translateY(-2px);box-shadow:0 0 0 1px rgba(79,195,232,.28),0 0 14px rgba(79,195,232,.40),0 0 24px rgba(201,161,90,.28)}
-}
-#hopeRail :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):is(:active,.active,[aria-pressed="true"],[aria-selected="true"]):not(:disabled){background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%,#4a7f8e 45%,#c9a15a 100%) border-box;border:1.5px solid transparent;color:var(--mixing-state-ink);font-weight:700;box-shadow:none;transform:none}
-#hopeRail :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):disabled{background:transparent;border:1px solid transparent;color:#71787e;opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;transition:transform 180ms ease,box-shadow 180ms ease,color 180ms ease,border-color 180ms ease}
-@media (prefers-reduced-motion:reduce){
-  #hopeRail :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn){transition:none}
-  #hopeRail :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):hover:not(:disabled):not(:active):not(.active):not([aria-pressed="true"]):not([aria-selected="true"]){transform:none}
-}
+/* Hope composer panel states. */
+#hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn){background:#1b1d20;border:0;border-radius:0;box-shadow:none;transform:none;transition:background 180ms ease,color 180ms ease}
+#hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):hover:not(:disabled){background:#202327;color:#aeb4ba}
+#hopeRail .aichat-compose .send-col #aiChatSend:not(:disabled){color:#cfd3d7;font-weight:700}
+#hopeRail .aichat-compose .send-col #aiChatClear:hover:not(:disabled){color:#ff8a8a}
+#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn[data-mode="usage"]:not(:disabled){color:#e2c8ff}
+#hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):focus-visible{outline:2px solid #5aa9e6;outline-offset:-2px}
+#hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):disabled{background:#1b1d20;border:0;color:#71787e;opacity:.45;cursor:not-allowed;box-shadow:none;transform:none}
+@media (prefers-reduced-motion:reduce){#hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn){transition:none}}
 
 /* Hope transcript Copy/Speak buttons: miniature composer states. */
 #hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message){font-size:10px;padding:3px 9px;min-height:22px;border-radius:999px;background:transparent;border:1px solid transparent;color:#71787e;font-weight:600;box-shadow:none;transform:none;transition:transform 180ms ease,box-shadow 180ms ease,color 180ms ease,border-color 180ms ease}
@@ -4658,7 +4645,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-06.289';
+const AIMM_BUILD = '2026-11-07.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -12300,7 +12287,7 @@ HOPE'S CHAT (persistent rail) — full inventory (NOT a tab — docked on every 
 Status strip top: status dot + label ("Idle" / "Connecting…" / "Live") + timer "0:42" + cost chip "$0.06" once a call is live.
 • START CALL button (id #rtCallBtn) — large purple violet (.btn) — but mostly retired in favour of the floating mic. Tap-toggles a call.
 • AI Chat compose box: model picker dropdown (Haiku 5.5 default), Web search toggle, Snapshot → Claude chat (id #aiChatToJournal, purple emphasis #a855f7) — TL;DRs the current chat into a Session Snapshot pill that auto-favourites and lands on the Snapshots tab. Then ✨ Import Plugin (purple emphasis #a855f7), Clear chat (ghost grey).
-• Compose textarea + Send button (id #aiChatSend, label "Send ↵") — blue-to-purple gradient in the chat rail.
+• Compose textarea + Send button (id #aiChatSend, label "Send") in the chat rail.
 • Composer buttons are two rows of two pills: Send and Clear chat on row one; the route button (ElevenLabs or Deepgram; click to switch when no voice session is running) and account button (cycles Auto, Primary, Backup) on row two. There is no mic, Listen, mute or Attach button on the composer. Drag and drop screenshots onto the textarea.
 • Voice mode toggles (Push to talk / Always on) — DORMANT now, wrapped hidden.
 • Snapshot pills + Session Snapshots panel relocated to the dedicated Snapshots tab (May 2026). Only creation (#aiChatToJournal above) stays here, in your chat.
