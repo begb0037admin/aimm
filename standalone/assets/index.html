@@ -3502,7 +3502,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         <canvas id="specCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
         <div id="stemTargetUnavailable" class="stem-target-unavailable" hidden>TARGET COMPARISON UNAVAILABLE</div>
       </div>
-      <div id="mcSpotifyLiveDiag" style="font-size:11px;white-space:nowrap;overflow-x:auto;" aria-live="off"></div><!-- DIAG-TEMP: remove before merge -->
+      <div id="mcSpotifyLiveDiag" style="font-size:11px;white-space:pre-line;overflow:visible;" aria-live="off"></div><!-- DIAG-TEMP: remove before merge -->
       <div class="oz-band-grid">
         <div class="oz-band-card">
           <div class="oz-band-label">Low <small>20–250 Hz</small></div>
@@ -4656,7 +4656,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.30'; // DIAG-TEMP: remove before merge
+const AIMM_BUILD = '2026-11-07.31'; // DIAG-TEMP: remove before merge
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21649,7 +21649,7 @@ csInit('csPlatform');
   function mcSpotifyDiagRender(liveAvailable,nextLivePoints,stemOrMixPlaybackActive){ // DIAG-TEMP: remove before merge
     const line=document.getElementById('mcSpotifyLiveDiag');if(!line)return; // DIAG-TEMP: remove before merge
     const seconds=mcSpotifyDiagLastPlaybackUpdateAt?Math.max(0,(Date.now()-mcSpotifyDiagLastPlaybackUpdateAt)/1000).toFixed(1)+'s ago':'not received'; // DIAG-TEMP: remove before merge
-    line.textContent='DIAG | mcSpotifyIsPlaying='+mcSpotifyIsPlaying+' | last playback_update isPaused='+(mcSpotifyDiagLastPlaybackUpdatePaused===null?'not received':mcSpotifyDiagLastPlaybackUpdatePaused)+' ('+seconds+') | mcSpotifyLoopbackPermissionState='+mcSpotifyLoopbackPermissionState+' | live.available='+liveAvailable+' | nextLivePoints='+(nextLivePoints?'non-null':'null')+' | poll count with livePoints='+mcSpotifyDiagLivePointsPollCount+' | stemOrMixPlaybackActive='+stemOrMixPlaybackActive; // DIAG-TEMP: remove before merge
+    line.textContent='DIAG |\nmcSpotifyIsPlaying='+mcSpotifyIsPlaying+'\nlast playback_update isPaused='+(mcSpotifyDiagLastPlaybackUpdatePaused===null?'not received':mcSpotifyDiagLastPlaybackUpdatePaused)+' ('+seconds+')\nmcSpotifyLoopbackPermissionState='+mcSpotifyLoopbackPermissionState+'\nlive.available='+liveAvailable+'\nnextLivePoints='+(nextLivePoints?'non-null':'null')+'\npoll count with livePoints='+mcSpotifyDiagLivePointsPollCount+'\nstemOrMixPlaybackActive='+stemOrMixPlaybackActive; // DIAG-TEMP: remove before merge
   } // DIAG-TEMP: remove before merge
   let mcSpotifyCaptureUiTimer=null,mcSpotifyCaptureUiStartedAt=0,mcSpotifyCaptureUiElapsed=0;
   function mcSpotifyCompanionFetch(path,options={}){
