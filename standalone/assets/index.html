@@ -4655,7 +4655,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.14';
+const AIMM_BUILD = '2026-11-07.15';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21439,10 +21439,6 @@ csInit('csPlatform');
       const availableWidth=Math.max(0,x1-secondTextX);
       if(ctx.measureText(comparisonLabel).width>availableWidth)comparisonLabel=(refPlaying?'Live remainder':'Unselected sum')+' · '+(stemView.remainderNames?stemView.remainderNames.length:0)+' stems';
       ctx.strokeStyle='#f2a65a';ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(secondLineX,legendY);ctx.lineTo(secondLineX+17,legendY);ctx.stroke();ctx.setLineDash([]);ctx.fillText(comparisonLabel,secondTextX,legendY+3);
-      // Keep the analyser's white live-output trace visible alongside the
-      // source-calibrated blue stem trace. Both use the same 0.4s smoothing.
-      const liveOutput=refPlaying&&Array.isArray(pts)&&pts.length?pts:null;
-      if(liveOutput){ctx.save();ctx.strokeStyle='rgba(247,241,255,.96)';ctx.lineWidth=1.6;path(liveOutput,offset);ctx.stroke();ctx.restore();}
       // Reuse the existing cyan mix-curve slot for the selected source. While
       // playing, draw the solo source's live PCM spectrum in that slot; while
       // paused, show its full-record spectrum. Both use the same fixed gain
@@ -21754,8 +21750,8 @@ csInit('csPlatform');
         mcCaptureAccum.count++;
       }
       const spotifyCaptureActive=mcSpotifyUsingCompanion&&!mcSpotifyCaptureCancelled&&live.capturing&&live.sessionId===mcSpotifyCaptureSessionId&&document.getElementById('mcSpotifyCaptureState')?.dataset.state==='capturing';
-      const stemState=window.mcStemAnalysis&&window.mcStemAnalysis.playbackState&&window.mcStemAnalysis.playbackState(),playbackView=!!(stemState&&stemState.active),selectedKeys=playbackView?(stemState.keys||[]):stemAuditionKeys.slice();
-      const stemOrMixPlaybackActive=refPlaying||playbackView||selectedKeys.length>0;
+      const stemState=window.mcStemAnalysis&&window.mcStemAnalysis.playbackState&&window.mcStemAnalysis.playbackState(),playbackView=!!(stemState&&stemState.active);
+      const stemOrMixPlaybackActive=refPlaying||playbackView;
       const spotifyLiveShouldShow=mcSpotifyIsPlaying&&!stemOrMixPlaybackActive;
       const showSpotifyLive=(spotifyLiveShouldShow||spotifyCaptureActive)&&!stemOrMixPlaybackActive;
       if(nextLivePoints&&showSpotifyLive){
@@ -22644,7 +22640,8 @@ csInit('csPlatform');
     const livePts=selectedKeys.length?stemLiveSpectrumAt(selectedKeys.length>1?selectedKeys:selectedKeys[0],elapsed):playbackView?null:refPtsFromDbBins(data,refCtx.sampleRate);
     const selectedSet=new Set(selectedKeys),remainderKeys=(playbackView||selectedKeys.length)?(stemSession||[]).filter(s=>s.status==='ok'&&s.buffer&&!selectedSet.has(s.key)).map(s=>s.key):[];
     const liveWithoutPts=remainderKeys.length?stemLiveSpectrumAt(remainderKeys.length>1?remainderKeys:remainderKeys[0],elapsed):null;
-    refDrawCanvas(averagedPts,livePts,liveWithoutPts,(!playbackView&&!selectedKeys.length)?livePts:null);
+    const stemPlaybackActive=playbackView||(refPlaying&&refAuditionBuffers.length>0);
+    refDrawCanvas(averagedPts,livePts,liveWithoutPts,stemPlaybackActive?null:livePts);
     MC_WAVE.draw(); // step 5: playhead + played wash advance here, no separate rAF
     stemRowsDraw();
     if(refPlaying&&refBuffer){
