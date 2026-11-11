@@ -351,6 +351,8 @@ Worth confirming the canonical path with a real call + collapsing the helper dow
 
 Most recent first. Each entry is a one-line summary; for full implementation detail see [CLAUDE.md](./CLAUDE.md) HANDOVER POINT.
 
+11 Nov 2026: Preview in Place process adopted. Audio Specs tiles, Spotify logo connect with disconnect confirmation and Hope name-tag removal went live as build 2026-11-11.07, commit 92a94a85. Disconnect confirmation not yet browser-tested. Pushed from the shell, not through Codex.
+
 ### 2026-11-04 — Live white line ported into AIMM (branch preview; levels not yet verified)
 
 Live spectrum line in Spectral Balance now uses the locked test-app display: 12 bands per octave peaks, 5-band smoothing, flat floor trimmed at both ends, edges placed on the plot edges, 240-point grid, vertical centring, and 30% easing per redraw.

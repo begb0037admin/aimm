@@ -16,6 +16,8 @@
 
 # STATUS.md — AIMM
 
+Preview in Place adopted as the default AIMM design process on 11 Nov 2026. Build 2026-11-11.07 is live (commit 92a94a85): Audio Specs tiles, Spotify logo connect with disconnect confirmation, Hope name tags hidden. Disconnect confirmation not browser-tested. This push was made from the shell, not through Codex, which departs from the Codex-only rule; Kevin to decide whether the rule stands.
+
 **2026-11-11 update — Mix Check design session, live build `2026-11-11.02`, commit `4b78345`.** Live on `origin/main`. Palette v2 went live on top tabs, mode pills and the Hope panel in commit `b7b010a`; top tab icons are 24px with 1.5px lines; Mixing uses the MixBus slider icon, Mastering level-meter bars and Stem Splitter a fork; mode pills are 54px high, matching top tabs, with width and text size unchanged. The Spotify logo is a 50px white circle with a 34px icon. The Spotify top tracks panel is player only, with no outer border, title line or instruction text (commit `4b78345`). Top tab labels remain truncated as before. Previous builds: `2026-11-11.01` (`b7b010a`) and `2026-11-07.33` (`9c4960d`); revert `4b78345` for `.01`, then `b7b010a` for `.33`.
 
 **Preview only — not live:** Spotify capture status line hidden (`#mcSpotifyRefStatus`, including errors); search input padding 10px; 16px gaps between Spotify buttons; about 8px extra space between search box and Connect Spotify (Kevin said “leave it”); Hope panel fix was undone and is back in its pre-session state in preview.

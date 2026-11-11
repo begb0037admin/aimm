@@ -73,6 +73,26 @@ GitHub `main` commit `1078d45c9ef2149d363928c53d9d91babc98da15` updates `index.h
 
 # HANDOVER.md — AIMM
 
+## CURRENT STATE — 2026-11-11 evening, build 2026-11-11.07
+
+Live build `2026-11-11.07`, commit `92a94a85` on `origin/main`. Previous build for revert: `2026-11-11.06` (commit `89d152b5`). Revert with `git revert 92a94a85`.
+
+**Live now:** Audio Specs as tiles (labels and figures aligned, Tempo and Key hidden, measurement rows as tiles, Match Sound hidden); the header Spotify logo is the connect control (white connects, green asks first, then disconnects); Hope name tags hidden in the chat.
+
+**Not yet verified:** the disconnect confirmation has not been tested in a browser. Please tap the green logo on the live site and check it.
+
+**Kept as in the approved preview:** the "More measurements" bar stays visible. Jules's spec r3 asked for it hidden, and Kevin earlier asked for it removed. Kevin has not yet decided this; it is still open.
+
+**Process:** Preview in Place is the default for AIMM visual changes (see `docs/CLAUDE.md`). This push was made from the shell after Codex's sandbox could not write to `.git`, so it departs from the Codex-only rule. Kevin to decide whether that rule still stands.
+
+**Next:** Mixbus tab (Kevin's next topic). Mix Check items still open: the More measurements bar decision, the disconnect test, and the Fix queue styling (needs a loaded WAV to preview).
+
+**Housekeeping:** an untrack job for `audio-reference-companion/.build` (Codex, from aimm-chore) has been running for days and should be checked. `.build` is still tracked in git.
+
+## HANDOVER POINT, 11 Nov 2026 (evening): Preview in Place and Audio Specs
+
+Preview in Place is the default process for visual changes; see `docs/CLAUDE.md` for the full rule. The Audio Specs direction above went live in build 2026-11-11.07. This section is kept for the design record.
+
 ## HANDOVER POINT — 2026-11-11, Mix Check design session
 
 ### 1. How we work (Kevin's rules)
