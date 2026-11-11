@@ -2988,6 +2988,31 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-artist-source > strong,
 #eq.oz-mixcheck .mc-spotify-artist-source > span{display:none !important}
 </style>
+<style id="visual-hope-2026-11-11">
+
+/* ---- Hope rail spacing (Kevin, 11 Nov): more room in the rail head, body and composer; more space between turns (22px, or 38px after Kevin's messages), leaving room under each message for Copy and Speak. Spacing only: no colour or wording change. Live from build 2026-11-11.03. ---- */
+#hopeRail .rail-head{padding:22px 18px 16px !important}
+#hopeRail .rail-body{padding:14px 16px !important}
+#hopeRail .aichat-compose{padding:14px 16px 14px !important}
+#hopeRail .aichat-msg{margin-bottom:22px !important}
+#hopeRail .aichat-msg.user{margin-bottom:38px !important;padding-bottom:0 !important}
+#hopeRail .aichat-msg.user .body{margin-bottom:0 !important}
+
+/* ---- Chat bubbles (Kevin, 11 Nov). Your messages: bass blue #60a5fa. Hope: purple #a78bfa. Dark text #0b0d10 on both: 7.65:1 on #60a5fa, 7.15:1 on #a78bfa (WCAG 2.x contrast ratio, from relative luminance). Name tags: the rule below hides only the You and Hope name tags above messages. The greeting and Thinking labels keep their Hope tag, and card titles (breakdown, NotebookLM, Mix Move) keep their labels. The rules below also set dark text on p, li and strong in every message kind. Live from build 2026-11-11.03. ---- */
+#hopeRail .aichat-msg.user .who,
+#hopeRail .aichat-msg.ai:not(.thinking):not(.hope-empty-greeting) .who{display:none !important}
+#hopeRail .aichat-msg.user .body,
+#hopeRail .aichat-msg.user:is(:nth-child(odd),:nth-child(even)) .body{background:#60a5fa !important;border:0 !important;color:#0b0d10 !important;border-radius:18px !important;padding:10px 16px !important;box-shadow:none !important}
+#hopeRail .aichat-msg.ai .body,
+#hopeRail .aichat-msg.ai:is(:nth-child(odd),:nth-child(even)) .body{background:#a78bfa !important;border:0 !important;color:#0b0d10 !important;border-radius:18px !important;padding:10px 16px !important;box-shadow:none !important;max-width:85% !important}
+#hopeRail .aichat-msg .body p,
+#hopeRail .aichat-msg .body li,
+#hopeRail .aichat-msg .body strong{color:#0b0d10 !important}
+#hopeRail .aichat-msg .aichat-actions-row .aichat-copy-btn,
+#hopeRail .aichat-msg .aichat-actions-row .aichat-speak-message{color:#f3f4f6 !important}
+/* ---- No Speak button on your (blue) messages (Kevin, 11 Nov). Hope messages keep Copy and Speak. This rule changes nothing in practice, because the renderer only creates Speak for Hope replies. Live from build 2026-11-11.03. ---- */
+#hopeRail .aichat-msg.user .aichat-actions-row .aichat-speak-message{display:none !important}
+</style>
 </head>
 <body>
 <div class="container">
@@ -4893,7 +4918,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-11.02';
+const AIMM_BUILD = '2026-11-11.03';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
