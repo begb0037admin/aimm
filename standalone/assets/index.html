@@ -2750,6 +2750,241 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .aichat-quick-prompt{border-radius:999px;background:#151a20;border:1px solid #2a3340;color:#b4c0cf;font-size:12px;font-weight:600;padding:7px 14px}
 #hopeRail .aichat-quick-prompt:hover{border-color:rgba(79,195,232,.5)}
 </style>
+<style id="visual-palette-v2">
+/* PREVIEW ONLY · proposed palette v2. Rule: selected or enabled = teal with black text; everything else = neutral. Not in the repo. */
+:root{--pv-black:#0b0d10;--pv-teal:#2dd4bf;--pv-neutral-bg:#1a1d21;--pv-neutral-bd:#2a2e35;--pv-neutral-ink:#9ca3af}
+
+/* ---- Tabs ---- */
+.tabs.oz-tabstrip .tab.oz-tab:is(.active,[aria-selected="true"],[aria-current]:not([aria-current="false"])){background:var(--pv-teal) !important;border:1.5px solid transparent !important;box-shadow:none !important;color:var(--pv-black) !important}
+.tabs.oz-tabstrip .tab.oz-tab:is(.active,[aria-selected="true"],[aria-current]:not([aria-current="false"])) *{color:var(--pv-black) !important;fill:currentColor !important}
+.tabs.oz-tabstrip .tab.oz-tab:not(.active):not([aria-selected="true"]):not([aria-current]){background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-neutral-bd) !important;box-shadow:none !important;color:var(--pv-neutral-ink) !important}
+.tabs.oz-tabstrip .tab.oz-tab:not(.active):not([aria-selected="true"]):not([aria-current]) *{color:var(--pv-neutral-ink) !important}
+
+/* ---- Mixing mode pills ---- */
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]){background:var(--pv-teal) !important;border:1.5px solid transparent !important;box-shadow:none !important;color:var(--pv-black) !important}
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]) *{color:var(--pv-black) !important;fill:currentColor !important}
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]){background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-neutral-bd) !important;box-shadow:none !important;color:var(--pv-neutral-ink) !important}
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]) *{color:var(--pv-neutral-ink) !important}
+
+/* ---- Stem mode buttons ---- */
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"]{background:var(--pv-teal) !important;border:1.5px solid transparent !important;box-shadow:none !important;color:var(--pv-black) !important}
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"] *{color:var(--pv-black) !important;fill:currentColor !important}
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]){background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-neutral-bd) !important;box-shadow:none !important;color:var(--pv-neutral-ink) !important}
+
+/* ---- Spotify buttons: enabled = teal, disabled = neutral ---- */
+#eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture):not(:disabled){background:var(--pv-teal) !important;border:1.5px solid transparent !important;box-shadow:none !important;color:var(--pv-black) !important;opacity:1 !important}
+#eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture):not(:disabled) *{color:var(--pv-black) !important}
+#eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture):disabled{background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-neutral-bd) !important;box-shadow:none !important;color:var(--pv-neutral-ink) !important;opacity:1 !important}
+#eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture):disabled *{color:var(--pv-neutral-ink) !important}
+
+/* ---- Hope selected chat buttons ---- */
+#hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message):is(:active,.active,[aria-pressed="true"],[aria-selected="true"]):not(:disabled){background:var(--pv-teal) !important;border:1.5px solid transparent !important;color:var(--pv-black) !important;box-shadow:none !important}
+#hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message):is(:active,.active,[aria-pressed="true"],[aria-selected="true"]):not(:disabled) *{color:var(--pv-black) !important}
+
+/* ---- Capture status dots ---- */
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="starting"] .mc-spotify-capture-dot,
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"] .mc-spotify-capture-dot{background:#7b8190 !important;box-shadow:none !important}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="error"] .mc-spotify-capture-dot{background:#f472b6 !important;box-shadow:none !important}
+
+/* ---- Hope speaker label ---- */
+#hopeRail .aichat-msg.ai .who{color:#facc15 !important}
+
+/* ---- Chat, PREVIEW ONLY (Kevin): Hope label yellow; "you" label blue with a solid blue bubble and dark text (#0b0d10 on #60a5fa, 6.9:1). ---- */
+#hopeRail .aichat-msg.user .who{color:#60a5fa !important}
+#hopeRail .aichat-msg.user .body,
+#hopeRail .aichat-msg.user:is(:nth-child(odd),:nth-child(even)) .body{background:#60a5fa !important;border:1px solid #60a5fa !important;color:#f3f4f6 !important;box-shadow:none !important}
+
+/* ---- Measurement tiles: all neutral, whatever their status class ---- */
+#eq.oz-mixcheck .mc-tile{background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-neutral-bd) !important}
+#eq.oz-mixcheck .mc-tile-v,
+#eq.oz-mixcheck .mc-tile-v.ok,
+#eq.oz-mixcheck .mc-tile-v.warn,
+#eq.oz-mixcheck .mc-tile-v.bad{color:#f3f4f6 !important}
+#eq.oz-mixcheck .mc-tile-v *{color:inherit !important}
+
+/* ---- PREVIEW ONLY: show the third Spotify button (Capture reference). It is hidden in the app until Spotify is connected. ---- */
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCapture[hidden]{display:inline-flex !important}
+
+/* ---- Round 2, PREVIEW ONLY: remove the remaining bronze and gold. The logo is left as it is. ---- */
+#eq.oz-mixcheck #mcTransport,
+#eq.oz-mixcheck #mcTransport > #refDropZone,
+#eq.oz-mixcheck #mcTransport > #refDropZone:focus-within,
+#eq.oz-mixcheck #mcSpecs,
+#eq.oz-mixcheck #mcSpecs:focus-within,
+#eq.oz-mixcheck .oz-spec-card,
+#eq.oz-mixcheck .oz-spec-card:focus-within,
+#eq.oz-mixcheck .mc-spotify-reference,
+#eq.oz-mixcheck .mc-spotify-reference:hover,
+#eq.oz-mixcheck .mc-spotify-reference:focus-within,
+#hopeRail .aichat-msg.ai .body,
+#hopeRail .aichat-msg.ai:is(:nth-child(odd),:nth-child(even)) .body,
+#hopeRail .hope-empty-greeting .body{background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-neutral-bd) !important;box-shadow:none !important}
+
+/* ---- Round 2, PREVIEW ONLY: stop the Spotify row running past the box edge. Capture reference wraps to a second line. ---- */
+/* Kept as ONE row, as in Kevin's screenshot: title, search box, then the buttons on the same line. */
+#eq.oz-mixcheck .mc-spotify-reference{grid-template-columns:minmax(150px,.3fr) minmax(0,1.7fr) !important;gap:16px !important}
+#eq.oz-mixcheck .mc-spotify-ref-controls{grid-template-columns:minmax(0,1fr) auto auto auto !important;row-gap:0 !important;gap:8px !important}
+#eq.oz-mixcheck .mc-spotify-ref-controls input{grid-column:auto !important;width:auto !important;min-width:0 !important}
+#eq.oz-mixcheck .mc-spotify-ref-controls button{padding:0 12px !important;font-size:12px !important}
+
+/* ---- Logo, PREVIEW ONLY, palette v2 (Kevin): AI = yellow (Vocals #facc15), MIX = blue (Bass #60a5fa), MASTERS = white (Text strong #f3f4f6). No gradients. Coach wordmark follows the same pattern: COACH = white. ---- */
+.header-top h1 .brand-ai{background:none !important;color:#facc15 !important}
+.header-top h1 .brand-mm,
+.header-top h1 .title-l1 .brand-mm{background:none !important;color:#60a5fa !important}
+.header-top h1 .title-l2 .brand-mm{color:#f3f4f6 !important}
+#hopeRail .rail-brand-ai{background:none !important;color:#facc15 !important}
+#hopeRail .rail-brand-mm{background:none !important;color:#60a5fa !important}
+#hopeRail .rail-wordmark .rail-coach{background:none !important;color:#f3f4f6 !important}
+
+/* ---- Copy and Speak under chat messages, PREVIEW ONLY (Kevin): neutral pill in every state. Copy on the blue "you" bubble was grey-on-blue, so it is now a dark pill. ---- */
+#hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message),
+#hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message):is(:hover,:active,.active,.ok,.loading,.playing,[aria-pressed="true"],[aria-selected="true"]):not(:disabled){background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-neutral-bd) !important;color:#f3f4f6 !important;border-radius:999px !important;box-shadow:none !important;transform:none !important}
+#hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message):hover:not(:disabled){border-color:#9ca3af !important}
+#hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message):disabled{background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-neutral-bd) !important;color:#7b8190 !important;opacity:.6 !important}
+
+/* ---- Send, Clear chat, ElevenLabs and Auto, PREVIEW ONLY (Kevin): layout unchanged, neutral pill in every state. No teal or gold glow. ---- */
+#hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn),
+#hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):is(:hover,:active,:focus,:focus-visible):not(:disabled){background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-neutral-bd) !important;color:#f3f4f6 !important;box-shadow:none !important;transform:none !important;outline:none !important}
+#hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):is(:hover,:focus-visible):not(:disabled){border-color:#9ca3af !important}
+#hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):disabled{background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-neutral-bd) !important;color:#7b8190 !important;opacity:.6 !important;box-shadow:none !important}
+
+/* ---- Send only, PREVIEW ONLY (Kevin, "teal outline"): Send is the primary button, so its outline is teal in every state. Fill stays neutral; the other three keep neutral outlines. ---- */
+#hopeRail .aichat-compose .send-col #aiChatSend,
+#hopeRail .aichat-compose .send-col #aiChatSend:is(:hover,:active,:focus,:focus-visible):not(:disabled){border:1px solid var(--pv-teal) !important;outline:none !important;box-shadow:none !important}
+#hopeRail .aichat-compose .send-col #aiChatSend:disabled{border:1px solid var(--pv-neutral-bd) !important}
+
+/* ---- Your messages sit on the RIGHT, PREVIEW ONLY (Kevin). Label, bubble and actions align right; Hope stays on the left. ---- */
+#hopeRail .aichat-msg.user{display:flex !important;flex-direction:column !important;align-items:flex-end !important;text-align:right !important}
+#hopeRail .aichat-msg.user .who{align-self:flex-end !important}
+#hopeRail .aichat-msg.user .body{margin-left:auto !important;max-width:85% !important;text-align:left !important}
+#hopeRail .aichat-msg.user .aichat-actions-row{justify-content:flex-end !important}
+
+/* ---- Hope panel outline and background, PREVIEW ONLY (Kevin, "not fixed"): the gold edge came from the rail's gradient border. Neutral border, neutral background. ---- */
+#hopeRail,
+#hopeRail:focus-within{border:1px solid #2c3034 !important;background:linear-gradient(180deg,#1b1d20 0%,#15181b 100%) !important;box-shadow:none !important}
+
+/* ---- Copy on YOUR messages sits under the blue bubble, not inside it, PREVIEW ONLY (Kevin, option 2). ---- */
+#hopeRail .aichat-msg.user .body{position:relative !important;margin-bottom:34px !important}
+#hopeRail .aichat-msg.user .body .aichat-actions-row{position:absolute !important;top:100% !important;right:0 !important;margin-top:6px !important;justify-content:flex-end !important}
+
+/* ---- Round: your bubble wider, and Send's teal outline only on hover, PREVIEW ONLY (Kevin) ---- */
+#hopeRail .aichat-msg.user .body{width:70% !important;max-width:85% !important}
+#hopeRail .aichat-compose .send-col #aiChatSend{border:1px solid var(--pv-neutral-bd) !important}
+#hopeRail .aichat-compose .send-col #aiChatSend:is(:hover,:focus-visible):not(:disabled){border:1px solid var(--pv-teal) !important}
+
+/* ---- Hope chat, PREVIEW ONLY, to Kevin's reference (Splice screenshot): your messages = navy bubble, white text, right, no label. Hope = plain text, no bubble, no label. Copy and Speak appear on hover only. ---- */
+#hopeRail .aichat-msg.ai .who,
+#hopeRail .aichat-msg.user .who{display:none !important}
+#hopeRail .aichat-msg.ai .body,
+#hopeRail .aichat-msg.ai:is(:nth-child(odd),:nth-child(even)) .body,
+#hopeRail .aichat-msg.ai .body,
+#hopeRail .hope-empty-greeting .body{background:transparent !important;border:0 !important;padding:0 !important;box-shadow:none !important;border-radius:0 !important;color:#e5e7eb !important}
+#hopeRail .aichat-msg.user .body,
+#hopeRail .aichat-msg.user:is(:nth-child(odd),:nth-child(even)) .body{background:#1e3a6b !important;border:0 !important;border-radius:18px !important;padding:10px 16px !important;width:auto !important;max-width:80% !important;margin-bottom:8px !important;color:#f3f4f6 !important;box-shadow:none !important}
+#hopeRail .aichat-msg .aichat-actions-row{opacity:0 !important;transition:opacity 120ms ease}
+#hopeRail .aichat-msg:hover .aichat-actions-row,
+#hopeRail .aichat-msg .aichat-actions-row:focus-within{opacity:1 !important}
+#hopeRail .aichat-msg.ai .aichat-actions-row{margin-top:6px !important}
+
+/* ---- Pill hover, PREVIEW ONLY (Kevin): on hover, every enabled pill on the screen gets the teal outline, same as Send. Selected pills keep their teal fill. ---- */
+#hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):hover:not(:disabled),
+#hopeRail .aichat-quick-prompt:hover:not(:disabled),
+#hopeRail .aichat-quick-prompts .aichat-quick-prompt:hover,
+#hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message):hover:not(:disabled):not(.active):not([aria-pressed="true"]),
+.tabs.oz-tabstrip .tab.oz-tab:not(.active):not([aria-selected="true"]):not([aria-current]):hover,
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]):hover:not(:disabled),
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover:not(:disabled)
+{background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-teal) !important;color:#f3f4f6 !important;box-shadow:none !important;transform:none !important}
+
+/* Spotify buttons: enabled ones are already teal and keep their fill on hover, so no hover change here. */
+
+/* ---- Copy and Speak OUTSIDE the bubble, for every message, PREVIEW ONLY (Kevin). Error and Hope messages lose their box too. Buttons stay visible. ---- */
+#hopeRail .aichat-msg.system .body,
+#hopeRail .aichat-msg.system:is(:nth-child(odd),:nth-child(even)) .body{background:transparent !important;border:0 !important;padding:0 !important;box-shadow:none !important;color:#e5e7eb !important}
+#hopeRail .aichat-msg .body{position:relative !important;margin-bottom:34px !important}
+#hopeRail .aichat-msg .body .aichat-actions-row{position:absolute !important;top:100% !important;margin-top:6px !important;opacity:1 !important;left:0 !important;right:auto !important;justify-content:flex-start !important}
+#hopeRail .aichat-msg.user .body .aichat-actions-row{left:auto !important;right:0 !important;justify-content:flex-end !important}
+
+/* ---- Copy and Speak: same teal hover as Send, PREVIEW ONLY (Kevin, "same teal hover"). ---- */
+#hopeRail .aichat-actions-row .aichat-copy-btn:hover:not(:disabled),
+#hopeRail .aichat-actions-row .aichat-speak-message:hover:not(:disabled){background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-teal) !important;color:#f3f4f6 !important}
+
+/* ---- Send group: fully round ends like the Mix Check pill, PREVIEW ONLY. ---- */
+#hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn){border-radius:999px !important}
+
+/* ---- Hover = SOLID TEAL FILL with dark text, no outline, PREVIEW ONLY (Kevin: "we do not use outline"). Same look as the selected Mix Check pill. ---- */
+#hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):hover:not(:disabled),
+#hopeRail .aichat-quick-prompt:hover:not(:disabled),
+#hopeRail .aichat-quick-prompts .aichat-quick-prompt:hover,
+#hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message):hover:not(:disabled):not(.active):not([aria-pressed="true"]),
+#hopeRail .aichat-actions-row .aichat-copy-btn:hover:not(:disabled),
+#hopeRail .aichat-actions-row .aichat-speak-message:hover:not(:disabled),
+.tabs.oz-tabstrip .tab.oz-tab:not(.active):not([aria-selected="true"]):not([aria-current]):hover,
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]):hover:not(:disabled),
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover:not(:disabled)
+{background:var(--pv-teal) !important;border:1.5px solid transparent !important;color:var(--pv-black) !important;box-shadow:none !important}
+#hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):hover:not(:disabled) *,
+#hopeRail .aichat-quick-prompt:hover:not(:disabled) *,
+#hopeRail .aichat-actions-row :is(.aichat-copy-btn,.aichat-speak-message):hover:not(:disabled) *,
+.tabs.oz-tabstrip .tab.oz-tab:not(.active):not([aria-selected="true"]):not([aria-current]):hover *,
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]):hover:not(:disabled) *{color:var(--pv-black) !important;fill:currentColor !important}
+
+/* ---- Mixing / Mastering / Stem Splitter pills: same size as the top tabs, PREVIEW ONLY (Kevin). Height only (54px, same as top tabs). Width and text size unchanged, per Kevin. ---- */
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button{min-height:54px !important;padding:10px 14px !important}
+
+/* ---- Mode pill icons: bigger and heavier line, PREVIEW ONLY (Kevin: "make the icon bigger and more definition"). ---- */
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button svg{width:24px !important;height:24px !important;flex-shrink:0}
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button svg *{stroke-width:1.8 !important}
+
+/* ---- Icon definition, PREVIEW ONLY (Kevin: "make all the icons better definition, neutral and selected"). Heavier line on top-tab and mode-pill icons; neutral icons a brighter grey so they read. ---- */
+.tabs.oz-tabstrip .tab.oz-tab svg *,
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button svg *{stroke-width:1.8 !important}
+.tabs.oz-tabstrip .tab.oz-tab:not(.active):not([aria-selected="true"]):not([aria-current]) svg{stroke:#d1d5db !important}
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]) svg{stroke:#d1d5db !important}
+
+/* ---- Selected pill on hover: stays exactly as selected (teal fill, dark text and icon, no lift or glow), PREVIEW ONLY (Kevin: "hover state is not good, fix it for all"). ---- */
+.tabs.oz-tabstrip .tab.oz-tab:is(.active,[aria-selected="true"],[aria-current]:not([aria-current="false"])):hover,
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]):hover,
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"]:hover{background:var(--pv-teal) !important;border:1.5px solid transparent !important;color:var(--pv-black) !important;box-shadow:none !important;transform:none !important;filter:none !important}
+.tabs.oz-tabstrip .tab.oz-tab:is(.active,[aria-selected="true"],[aria-current]:not([aria-current="false"])):hover *,
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]):hover *{color:var(--pv-black) !important;fill:currentColor !important;stroke:currentColor !important;opacity:1 !important}
+
+/* ---- Hover on an UNSELECTED pill = same as selected: teal fill, dark text and dark icon. The icon line was staying light grey; now it goes dark on hover too. PREVIEW ONLY (Kevin). ---- */
+.tabs.oz-tabstrip .tab.oz-tab:not(.active):not([aria-selected="true"]):not([aria-current]):hover svg,
+.tabs.oz-tabstrip .tab.oz-tab:not(.active):not([aria-selected="true"]):not([aria-current]):hover svg *,
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]):hover:not(:disabled) svg,
+#eq.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]):hover:not(:disabled) svg *,
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover:not(:disabled) svg,
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover:not(:disabled) svg *{stroke:var(--pv-black) !important;fill:none !important}
+
+/* ---- Selected top tab: NO ring around the pill, PREVIEW ONLY (Kevin: "this is the one i dont want"). Removes the app's box-shadow ring and any outline. ---- */
+.tabs.oz-tabstrip .tab.oz-tab.active,
+.tabs.oz-tabstrip .tab.oz-tab[aria-selected="true"],
+.tabs.oz-tabstrip .tab.oz-tab[aria-current]:not([aria-current="false"]){box-shadow:none !important;outline:none !important;filter:none !important;border-color:transparent !important}
+
+/* ---- Tab bar: NO outline ring, PREVIEW ONLY (Kevin: "this is the one i dont want"). Removes the bar's own border, which drew the ring around the selected pill. ---- */
+.tabs.oz-tabstrip{border:0 !important;box-shadow:none !important}
+.tabs.oz-tabstrip{background:transparent !important}
+
+/* ---- Top tab icons: larger, same line thickness (Kevin: "larger but not heavier"). Icon 20px -> 24px; line units 1.8 -> 1.5, so the drawn line stays 1.5px. PREVIEW ONLY. ---- */
+.tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:24px !important;height:24px !important}
+.tabs.oz-tabstrip .tab.oz-tab .tab-ico svg *{stroke-width:1.5 !important}
+
+/* ---- Selected tab must NOT change on hover, PREVIEW ONLY (Kevin: "when i hover i want it to stay the same"). ---- */
+.tabs.oz-tabstrip .tab.oz-tab.active,
+.tabs.oz-tabstrip .tab.oz-tab[aria-selected="true"],
+.tabs.oz-tabstrip .tab.oz-tab[aria-current]:not([aria-current="false"]),
+.tabs.oz-tabstrip .tab.oz-tab.active:hover,
+.tabs.oz-tabstrip .tab.oz-tab[aria-selected="true"]:hover,
+.tabs.oz-tabstrip .tab.oz-tab[aria-current]:not([aria-current="false"]):hover{transition:none !important;transform:none !important;box-shadow:none !important;filter:none !important;background:var(--pv-teal) !important;border:1.5px solid transparent !important;color:var(--pv-black) !important}
+.tabs.oz-tabstrip .tab.oz-tab.active *,
+.tabs.oz-tabstrip .tab.oz-tab.active:hover *{color:var(--pv-black) !important;fill:currentColor !important}
+
+/* ---- Spotify logo a little bigger, PREVIEW ONLY (Kevin, 11 Nov). Circle 44 -> 50px, icon 28 -> 34px. Row stays on one line. ---- */
+#eq.oz-mixcheck .mc-spotify-mark{width:50px !important;height:50px !important;flex:0 0 50px !important}
+#eq.oz-mixcheck .mc-spotify-mark svg{width:34px !important;height:34px !important}
+
+</style>
 </head>
 <body>
 <div class="container">
@@ -3340,9 +3575,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
            old inline styles were removed). -->
       <div class="ref-drop-zone" id="refDropZone">
         <div class="mc-workspace-modes" role="group" aria-label="Mix workflow">
-          <button type="button" class="is-active" aria-pressed="true"><svg class="mc-workspace-mode-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v6m0 4v6M12 4v2m0 4v10M19 4v9m0 4v3M2 10h6m1 0h6m1 3h6"/></svg> Mixing</button>
-          <button type="button" disabled aria-disabled="true" title="Coming soon"><svg class="mc-workspace-mode-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16a8 8 0 1 1 16 0M12 12l5-4M5 19h14"/></svg> Mastering <small>Coming soon</small></button>
-          <button type="button" disabled aria-disabled="true" title="Coming soon"><svg class="mc-workspace-mode-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h7m0 0 8-7m-8 7 8 7M4 6v12"/></svg> Stem Splitter <small>Coming soon</small></button>
+          <button type="button" class="is-active" aria-pressed="true"><svg class="mc-workspace-mode-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v18M9.3 3v18M14.7 3v18M20 3v18"/><path d="M2.5 7h3M7.8 14h3M13.2 5.5h3M18.5 16.5h3"/></svg> Mixing</button>
+          <button type="button" disabled aria-disabled="true" title="Coming soon"><svg class="mc-workspace-mode-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h2M7 8v8M11 4v16M15 8v8M19 11v2"/></svg> Mastering <small>Coming soon</small></button>
+          <button type="button" disabled aria-disabled="true" title="Coming soon"><svg class="mc-workspace-mode-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M12 11l-7 10M12 11l7 10"/></svg> Stem Splitter <small>Coming soon</small></button>
         </div>
         <div class="ref-dz-empty" id="refDzEmpty" role="button" tabindex="0" aria-label="Choose a mix file, or drop files here">
           <svg class="mc-dz-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
@@ -4655,7 +4890,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-07.33';
+const AIMM_BUILD = '2026-11-11.01';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
