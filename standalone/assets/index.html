@@ -2750,8 +2750,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .aichat-quick-prompt{border-radius:999px;background:#151a20;border:1px solid #2a3340;color:#b4c0cf;font-size:12px;font-weight:600;padding:7px 14px}
 #hopeRail .aichat-quick-prompt:hover{border-color:rgba(79,195,232,.5)}
 </style>
-<style id="visual-palette-v2">
-/* PREVIEW ONLY · proposed palette v2. Rule: selected or enabled = teal with black text; everything else = neutral. Not in the repo. */
+<style id="visual-palette-v2">/* PREVIEW ONLY · proposed palette v2. Rule: selected or enabled = teal with black text; everything else = neutral. Not in the repo. */
 :root{--pv-black:#0b0d10;--pv-teal:#2dd4bf;--pv-neutral-bg:#1a1d21;--pv-neutral-bd:#2a2e35;--pv-neutral-ink:#9ca3af}
 
 /* ---- Tabs ---- */
@@ -2984,6 +2983,10 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-mark{width:50px !important;height:50px !important;flex:0 0 50px !important}
 #eq.oz-mixcheck .mc-spotify-mark svg{width:34px !important;height:34px !important}
 
+/* ---- Spotify top tracks panel: panel only, no border, title or instruction text, PREVIEW ONLY (Kevin, approved 11 Nov). ---- */
+#eq.oz-mixcheck .mc-spotify-artist-source{display:block !important;padding:0 !important;background:none !important;border:0 !important;border-radius:0 !important;gap:0 !important}
+#eq.oz-mixcheck .mc-spotify-artist-source > strong,
+#eq.oz-mixcheck .mc-spotify-artist-source > span{display:none !important}
 </style>
 </head>
 <body>
@@ -4890,7 +4893,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-11.01';
+const AIMM_BUILD = '2026-11-11.02';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
