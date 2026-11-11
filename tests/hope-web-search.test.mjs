@@ -102,7 +102,7 @@ test('Luna returns streamed partial text when the response is incomplete', async
   const context = vm.createContext({
     AICHAT: { busy: false, history: [], sessionCost: 0 },
     HOPE_USAGE_VOICE: { turnId: 4, sessionTurns: 0, sessionLlmCost: 0, sessionLlmInputTokens: 0, sessionLlmOutputTokens: 0 },
-    HOPE_STT_TOKEN_STORAGE: 'token-key', AIMM_PROXY_URL: 'https://worker.test', HOPE_USAGE_SYSTEM: 'test system',
+    HOPE_STT_TOKEN_STORAGE: 'token-key', AIMM_PROXY_URL: 'https://worker.test', HOPE_USAGE_SYSTEM: 'test system', HOPE_INVENTORY_RULES: 'test inventory rules',
     HOPE_KB_DECISION: { question:'What should I check?', usable:false, searched:false, results:[], garbled:false },
     hopeVagueVideoReference() { return false; },
     hopeWebSearchBeginTurn() {}, hopeShowGarbledRepeat() { return false; },
