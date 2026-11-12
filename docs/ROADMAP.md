@@ -12,7 +12,7 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 ## Guided move cards — build 2026-11-12.14
 
-Kevin selected mockup B for Hope's action card and asked for its move-label style everywhere. Hope's card now presents the measurement before the recommended move, with numbered sections for explicit sequential advice. Centre Fix Queue and selected-stem details use the same teal labels. Deployment verification is pending; the requested `aimmastersx.com` hostname issue remains separate.
+Kevin selected mockup B for Hope's action card and asked for its move-label style everywhere. Hope's card now presents the measurement before the recommended move, with numbered sections for explicit sequential advice. Centre Fix Queue and selected-stem details use the same teal labels. App commit `9e038b64` is deployed as Worker version `0d1b354b-c61d-4e2e-9fb5-da23db56646d`; build .14 is served by `aimixmasters.com` and the workers.dev URL. The requested `aimmastersx.com` hostname issue remains separate.
 
 ## Approved Fix Queue buttons — build 2026-11-12.13
 

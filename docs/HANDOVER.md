@@ -2,7 +2,7 @@
 
 ## CURRENT CHANGE — 2026-11-12, build 2026-11-12.14
 
-Kevin chose Guided steps mockup B. Hope's action card is a neutral AIMM tile with teal measurement and move labels; clear sequential advice is shown as numbered sections. The centre Fix Queue and selected-stem detail labels match. Syntax and seven Hope web-search tests pass. Deployment verification is pending. The separate `aimmastersx.com` hostname issue remains unresolved.
+Kevin chose Guided steps mockup B. Hope's action card is a neutral AIMM tile with teal measurement and move labels; clear sequential advice is shown as numbered sections. The centre Fix Queue and selected-stem detail labels match. Syntax and seven Hope web-search tests pass. App commit `9e038b64` is deployed as Worker version `0d1b354b-c61d-4e2e-9fb5-da23db56646d`; `aimixmasters.com` and the workers.dev URL serve build .14. The separate `aimmastersx.com` hostname issue remains unresolved.
 
 ## CURRENT CHANGE — 2026-11-12, build 2026-11-12.13
 

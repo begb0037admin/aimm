@@ -2,7 +2,7 @@
 
 ## Guided move cards — 2026-11-12, build 2026-11-12.14
 
-Kevin chose mockup B. Hope's Fix Queue action card now uses AIMM's neutral tile, teal section labels, a measured-reason section and numbered move sections when the advice contains a clear sequence. The centre Fix Queue detail and selected-stem detail use the same measurement/move labels. Deployment verification is pending. The separate `aimmastersx.com` hostname issue remains open.
+Kevin chose mockup B. Hope's Fix Queue action card now uses AIMM's neutral tile, teal section labels, a measured-reason section and numbered move sections when the advice contains a clear sequence. The centre Fix Queue detail and selected-stem detail use the same measurement/move labels. App commit `9e038b64` is live as Worker version `0d1b354b-c61d-4e2e-9fb5-da23db56646d`; both `aimixmasters.com` and the workers.dev URL serve build .14. The separate `aimmastersx.com` hostname issue remains open.
 
 ## Approved Fix Queue buttons — 2026-11-12, build 2026-11-12.13
 
