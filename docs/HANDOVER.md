@@ -2,7 +2,7 @@
 
 ## CURRENT CHANGE — 2026-11-12, build 2026-11-12.13
 
-Kevin approved the rendered Fix Queue button preview. The three action buttons match the Full song stem control's height, padding and font size and highlight teal on hover, keyboard focus and press. Syntax and seven Hope web-search tests pass. Deployment verification is pending. The separate `aimmastersx.com` hostname issue remains unresolved.
+Kevin approved the rendered Fix Queue button preview. The three action buttons match the Full song stem control's height, padding and font size and highlight teal on hover, keyboard focus and press. Syntax and seven Hope web-search tests pass. App commit `aab1aaf2` is deployed as Worker version `ad7a577d-cd36-4cfd-b37f-c8cd48c821b7`; `aimixmasters.com` and the workers.dev URL serve build .13. The separate `aimmastersx.com` hostname issue remains unresolved.
 
 ## CURRENT STATE — 2026-11-12, build 2026-11-12.12
 
