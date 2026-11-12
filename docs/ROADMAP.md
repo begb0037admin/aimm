@@ -12,7 +12,7 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 ## Revisitable Fix Queue — build 2026-11-12.17
 
-Kevin authorized merge and deployment. Centre Fix Queue, Hope, and stem review retain completed items for back-and-forth review, support Undo done/Restore, and keep completion counts separate from the selected item. Deployment verification pending.
+Kevin authorized merge and deployment. Centre Fix Queue, Hope, and stem review retain completed items for back-and-forth review, support Undo done/Restore, and keep completion counts separate from the selected item. App commit `9aeb50e3` is deployed as Worker version `8e3464d7-1af4-4df9-8c23-8250eba39fa7`; both public URLs serve build .17.
 
 ## Action-card button states — build 2026-11-12.16
 

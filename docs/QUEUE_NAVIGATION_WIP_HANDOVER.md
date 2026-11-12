@@ -4,9 +4,9 @@ Kevin reports the full-mix Fix Queue is stuck at `2 / 2 done` and wants to move 
 
 ## Current live state
 
-- `main` and the live `aimm` Worker remain on build `2026-11-12.16`. No queue-navigation code was merged or deployed.
-- The unfinished implementation is saved on branch `fix/revisitable-fix-queue`, commit `965ec5ca`, in worktree `/Users/admin/github/aimm-revisitable-fix-queue`. The branch was pushed to origin.
-- That worktree intentionally still has build stamp `.16`; bump it only when implementation is ready for review.
+- `main` and the live `aimm` Worker remain on build `2026-11-12.16`. The queue-navigation fix is now merged and deployed as build .17.
+- Release commit `9aeb50e3` is on main and the work branch.
+- Worker version `8e3464d7-1af4-4df9-8c23-8250eba39fa7` was verified at both public URLs.
 
 ## Root cause and review
 

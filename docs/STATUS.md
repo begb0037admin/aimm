@@ -2,7 +2,7 @@
 
 ## Revisitable Fix Queue — 2026-11-12, build 2026-11-12.17
 
-Kevin authorized merge and deployment. Completed fixes remain navigable with Previous/Next, separate done count, Undo done/Restore, and selectable item lists; Hope follows the selected item. Queue transition and Hope web-search tests passed on WIP branch `965ec5ca`. Build .17 release commit pending deployment verification. The separate `aimmastersx.com` hostname issue remains open.
+Kevin authorized merge and deployment. Completed fixes remain navigable with Previous/Next, separate done count, Undo done/Restore, and selectable item lists; Hope follows the selected item. Queue transition and Hope web-search tests passed on WIP branch `965ec5ca`. App release commit `9aeb50e3` is deployed as Worker version `8e3464d7-1af4-4df9-8c23-8250eba39fa7`; build .17 is verified at `aimixmasters.com` and the workers.dev URL. The separate `aimmastersx.com` hostname issue remains open.
 
 ## Paused Fix Queue navigation — 2026-11-12
 

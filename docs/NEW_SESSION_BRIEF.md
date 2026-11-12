@@ -8,7 +8,7 @@ Read this before continuing. The current user goal is **not resolved**: Kevin ne
 
 ## Current source and deployment
 
-- Revisitable Fix Queue release: build `2026-11-12.17` on `fix/revisitable-fix-queue`; Kevin authorized merge/deploy. Completed items stay navigable; completion count is separate; Undo done/Restore and selection persistence are included. Tests passed on WIP before build bump. Current deployment and commit status are recorded in `docs/HANDOVER.md` and `docs/QUEUE_NAVIGATION_WIP_HANDOVER.md`.
+- Revisitable Fix Queue release: build `2026-11-12.17` on `fix/revisitable-fix-queue`; Kevin authorized merge/deploy. Completed items stay navigable; completion count is separate; Undo done/Restore and selection persistence are included. Tests passed on WIP before build bump. App commit `9aeb50e3` is deployed as Worker version `8e3464d7-1af4-4df9-8c23-8250eba39fa7`; both `aimixmasters.com` and the workers.dev URL serve build .17. See `docs/HANDOVER.md` for details.
 
 - Latest correction: build `2026-11-12.16` applies one neutral-at-rest, teal-on-hover/focus/press/selection rule to every button in Hope, centre Fix Queue and stem action cards. Kevin clarified this applies to all buttons and all action cards. The persistent Mark done fill from .15 is removed. Actual-page resting render, syntax and seven Hope tests pass. Worker version `aa78d133-5b5f-41b6-a543-4739a4288554` serves .16 at `aimixmasters.com` and the workers.dev URL; `aimmastersx.com` remains a separate unresolved hostname issue.
 
