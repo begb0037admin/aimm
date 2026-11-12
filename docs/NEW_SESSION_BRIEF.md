@@ -4,6 +4,8 @@ Read this before continuing. The current user goal is **not resolved**: Kevin ne
 
 ## Current source and deployment
 
+- Approved Fix Queue button change: build `2026-11-12.13` makes Mark done, Play mix and Ask Hope about this the Full song stem button's size, with teal interaction highlighting. The populated queue preview was approved by Kevin. Deployment verification is pending; this does not resolve the separate `aimmastersx.com` hostname issue.
+
 - Repo: `/Users/admin/github/aimm`, branch `main`, remote `origin/main`.
 - Last app-code commit: `f3c9d79d` (`Align empty Mix Check and Hope rail`).
 - App build in `standalone/assets/index.html`: `2026-11-12.12`.

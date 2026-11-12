@@ -10,6 +10,10 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 # ROADMAP.md — AIMM Active
 
+## Approved Fix Queue buttons — build 2026-11-12.13
+
+Kevin approved the rendered populated Fix Queue preview. The three action buttons now match the Full song stem button's size and use teal interaction highlighting. Deployment verification is pending; the requested `aimmastersx.com` hostname issue is tracked separately.
+
 ## Approved Mix Check and Hope layout fix — build 2026-11-12.12
 
 Kevin approved the rendered preview on 12 Nov. The empty Fix Queue layout places Spectral Balance beside Audio Specs, and the desktop Hope rail ends level with the cards. Commit `f3c9d79d` is live as Worker version `a88e2d8d-1df4-419a-b4f4-2ad7909dfb79`; both `aimixmasters.com` and the workers.dev URL serve build .12. The cross-device pill/hostname issue is separate.

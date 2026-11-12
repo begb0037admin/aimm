@@ -4377,6 +4377,21 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 }
 #eq.oz-mixcheck .mcq-acts button:focus-visible,
 #hopeRail .aichat-msg.fixaction .am-acts button:focus-visible{outline:2px solid #5aa9e6;outline-offset:2px}
+/* Fix Queue actions match the stem mode buttons' size and teal highlight. */
+#eq.oz-mixcheck .mcq-acts{gap:8px}
+#eq.oz-mixcheck .mcq-acts button{
+  min-height:34px!important;padding:7px 14px!important;border-radius:999px!important;
+  background:#1b1d20!important;border:1px solid #262a2f!important;color:#9aa0a6!important;
+  font:600 calc(var(--inv-text-scale, 1) * 13px) Inter,-apple-system,sans-serif!important;
+  box-shadow:none!important;transform:none!important;
+  transition:background 180ms ease,border-color 180ms ease,color 180ms ease!important;
+}
+#eq.oz-mixcheck .mcq-acts button:is(:hover,:focus-visible,:active):not(:disabled){
+  background:#2dd4bf!important;border-color:#2dd4bf!important;color:#06201c!important;
+  font-weight:700!important;box-shadow:none!important;
+}
+#eq.oz-mixcheck .mcq-acts button:focus-visible{outline:2px solid #6fe3ff;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){#eq.oz-mixcheck .mcq-acts button{transition:none!important}}
 .aichat-msg.fixaction .am-k,
 .aichat-msg.fixaction .am-flag{
   display:inline-flex;align-items:center;min-height:22px;padding:3px 9px;
@@ -4973,7 +4988,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-12.12';
+const AIMM_BUILD = '2026-11-12.13';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);

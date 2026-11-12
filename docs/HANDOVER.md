@@ -1,5 +1,9 @@
 # HANDOVER.md — AIMM
 
+## CURRENT CHANGE — 2026-11-12, build 2026-11-12.13
+
+Kevin approved the rendered Fix Queue button preview. The three action buttons match the Full song stem control's height, padding and font size and highlight teal on hover, keyboard focus and press. Syntax and seven Hope web-search tests pass. Deployment verification is pending. The separate `aimmastersx.com` hostname issue remains unresolved.
+
 ## CURRENT STATE — 2026-11-12, build 2026-11-12.12
 
 Kevin approved the desktop preview. The empty Mix Check analyser grid span is corrected from rows 4–5 to 3–4 after the banner row was removed. Hope's desktop rail stretches to the app column height, aligning its bottom with Audio Specs and Spectral Balance. Commit `f3c9d79d` is deployed as Worker version `a88e2d8d-1df4-419a-b4f4-2ad7909dfb79`; both `aimixmasters.com` and the workers.dev URL serve build .12. The separate cross-device pill/hostname issue remains unresolved.
