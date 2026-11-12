@@ -4447,6 +4447,26 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   font-weight:700!important;box-shadow:none!important;
 }
 #eq.oz-mixcheck .mcs-actions button:disabled{opacity:.6;cursor:not-allowed}
+/* Queue position is separate from the completed count. */
+#eq.oz-mixcheck .mcq-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:5px 0 10px}
+#eq.oz-mixcheck .mcq-position{color:#9aa0a6;font:700 calc(var(--inv-text-scale, 1) * 11px) Inter,-apple-system,sans-serif;white-space:nowrap}
+#eq.oz-mixcheck .mcq-nav button{
+  min-height:34px;padding:7px 14px;border:1px solid #31383e;border-radius:999px;
+  background:#1b1d20;color:#e7ebee;font:600 calc(var(--inv-text-scale, 1) * 13px) Inter,-apple-system,sans-serif;cursor:pointer;
+}
+#eq.oz-mixcheck .mcq-nav button:is(:hover,:focus-visible,:active):not(:disabled){background:#2dd4bf;border-color:#2dd4bf;color:#06201c}
+#eq.oz-mixcheck .mcq-nav button:disabled{opacity:.45;cursor:not-allowed}
+#eq.oz-mixcheck .mcq-allrow{padding:0;border-color:#30363c;background:#1b1d20}
+#eq.oz-mixcheck .mcq-allrow.is-current{border-color:#2dd4bf;background:#1b1d20;box-shadow:none}
+#eq.oz-mixcheck .mcq-select{width:100%;display:flex;align-items:center;gap:9px;text-align:left;padding:9px 11px;border:0;border-radius:7px;background:transparent;color:#d3d8dd;cursor:pointer;font:inherit}
+#eq.oz-mixcheck .mcq-select:is(:hover,:focus-visible),#eq.oz-mixcheck .mcq-select[aria-current="true"]{background:#17322f;color:#e7fffa}
+#eq.oz-mixcheck .mcq-select .mcq-alltag{color:#2dd4bf}
+#hopeRail .aichat-msg.fixaction .am-progress{margin:-3px 0 10px;color:#9aa0a6;font:600 calc(var(--inv-text-scale, 1) * 10px) Inter,-apple-system,sans-serif}
+#eq.oz-mixcheck .mcs-nav{align-items:center;justify-content:space-between;margin:12px 0 8px}
+#eq.oz-mixcheck .mcs-nav span{color:#9aa0a6;font:700 calc(var(--inv-text-scale, 1) * 11px) Inter,-apple-system,sans-serif;white-space:nowrap}
+#eq.oz-mixcheck .mcs-all{display:grid;gap:6px;margin-top:8px}
+#eq.oz-mixcheck .mcs-all button{padding:9px 11px;text-align:left;border:1px solid #30363c;border-radius:8px;background:#1b1d20;color:#d3d8dd;cursor:pointer;font:600 calc(var(--inv-text-scale, 1) * 11px) Inter,-apple-system,sans-serif}
+#eq.oz-mixcheck .mcs-all button:is(:hover,:focus-visible),#eq.oz-mixcheck .mcs-all button[aria-current="true"]{border-color:#2dd4bf;background:#17322f;color:#e7fffa}
 @media (prefers-reduced-motion:reduce){
   #hopeRail .aichat-msg.fixaction .am-acts button,
   #eq.oz-mixcheck .mcs-actions button{transition:none!important}
@@ -12248,6 +12268,7 @@ function buildMixCheckState(){
       fname = (bd && bd.fileSignature) ? String(bd.fileSignature).split('|')[0] : (t ? (t.textContent || '').trim() : '');
     } catch(_){}
     const cur = (typeof q.current === 'function') ? q.current() : null;
+    const viewed = (typeof q.selected === 'function') ? q.selected() : cur;
     const applied = (typeof q.appliedCount === 'function') ? q.appliedCount() : 0;
     const total = (typeof q.total === 'function') ? q.total() : list.length;
     let spectralBalance=null;try{if(typeof window.mcSpectrumContext==='function')spectralBalance=window.mcSpectrumContext();}catch(_){}
@@ -12268,8 +12289,9 @@ function buildMixCheckState(){
       fix_queue: {
         total: total,
         applied: applied,
-        pending: list.filter((it,i)=> i >= applied).length,
+        pending: list.filter(it => typeof q.status === 'function' ? q.status(it.id)==='pending' : true).length,
         current: cur ? { id: cur.id, title: cur.title, why: cur.why, move: moveFor(cur), focus_band: cur.focusBand, impact: cur.impact, confidence: cur.confidence } : null,
+        selected: viewed ? { id: viewed.id, title: viewed.title, status: typeof q.status==='function'?q.status(viewed.id):'pending' } : null,
         all: list.map(it => ({ id: it.id, title: it.title, why: it.why, move: moveFor(it), focus_band: it.focusBand, impact: it.impact, confidence: it.confidence }))
       }
     };
@@ -17905,8 +17927,9 @@ async function handleToolCall(name,args){
         const q = window.mcFixQueue;
         if (!q || typeof q.markApplied !== 'function') throw new Error('The Fix Queue is not ready — load a mix into Mix Check first.');
         const cur = (typeof q.current === 'function') ? q.current() : null;
+        const viewed = (typeof q.selected === 'function') ? q.selected() : null;
         const wantId = (args && args.fix_id != null) ? String(args.fix_id).trim() : '';
-        const targetId = wantId || (cur && cur.id) || '';
+        const targetId = wantId || (viewed && q.status(viewed.id)==='pending' && viewed.id) || (cur && cur.id) || '';
         if (!targetId) throw new Error('No active fix to mark — the queue is empty or every fix is already applied or dismissed.');
         window.__mcHopeAdvanceTs = Date.now();   // Hope is driving this advance
         const ok = q.markApplied(targetId);      // fires emit() synchronously → onChange reads the stamp
@@ -23747,6 +23770,7 @@ csInit('csPlatform');
     let items=[];               // exact-shape item[], rank order (never mutated in place)
     let applied=new Set();      // item ids
     let dismissed=new Set();    // item ids
+    let selectedId=null;        // item being reviewed, independent of completion
     let sig=null;               // current file signature (persistence key)
     let rev=0;                  // analysisRev — bumps on every derive()/recompute()
     let lastR=null;             // last analysis object seen (for recompute/breakdownData)
@@ -23760,12 +23784,12 @@ csInit('csPlatform');
 
     // ── persistence ────────────────────────────────────────────────────────
     function persist(){
-      try{ localStorage.setItem(LS,JSON.stringify({sig:sig,applied:[...applied],dismissed:[...dismissed]})); }catch(_){}
+      try{ localStorage.setItem(LS,JSON.stringify({sig:sig,applied:[...applied],dismissed:[...dismissed],selectedId})); }catch(_){}
     }
     // Called from derive() with the new file's signature. Same sig as stored →
     // restore applied/dismissed; different sig (or none) → reset both.
     function restoreFor(newSig){
-      applied=new Set(); dismissed=new Set();
+      applied=new Set(); dismissed=new Set(); selectedId=null;
       sig=newSig||null;
       if(sig){
         try{
@@ -23773,6 +23797,7 @@ csInit('csPlatform');
           if(j&&j.sig===sig){
             applied=new Set(Array.isArray(j.applied)?j.applied:[]);
             dismissed=new Set(Array.isArray(j.dismissed)?j.dismissed:[]);
+            selectedId=typeof j.selectedId==='string'?j.selectedId:null;
           }
         }catch(_){}
       }
@@ -23918,11 +23943,27 @@ csInit('csPlatform');
     function publicList(){ return items.map(copyItem); }
     function pending(){ return items.filter(it=>!applied.has(it.id)&&!dismissed.has(it.id)); }
     function current(){ const p=pending(); return p.length?copyItem(p[0]):null; }
+    function selectedIndex(){ const i=items.findIndex(it=>it.id===selectedId); return i<0?0:i; }
+    function selected(){ return items.length?copyItem(items[selectedIndex()]):null; }
+    function status(id){ return applied.has(id)?'done':dismissed.has(id)?'dismissed':'pending'; }
+    function select(id){
+      if(!items.some(it=>it.id===id)) return false;
+      if(selectedId===id) return true;
+      const previousId=selectedId;
+      selectedId=id;_open=false;persist();render();emit('selected',previousId);
+      return true;
+    }
+    function navigate(delta){
+      if(!items.length) return false;
+      const i=clamp(selectedIndex()+delta,0,items.length-1);
+      return select(items[i].id);
+    }
     // drop persisted ids that no longer exist in the rebuilt queue
     function pruneSets(){
       const ids=new Set(items.map(it=>it.id));
       applied=new Set([...applied].filter(x=>ids.has(x)));
       dismissed=new Set([...dismissed].filter(x=>ids.has(x)));
+      if(!ids.has(selectedId)) selectedId=(pending()[0]||items[0]||{}).id||null;
     }
 
     // ── build entry points ─────────────────────────────────────────────────
@@ -23951,14 +23992,26 @@ csInit('csPlatform');
       if(!items.some(it=>it.id===id)) return false;
       if(applied.has(id) && !dismissed.has(id)) return true; // already applied — no-op, don't re-render / re-emit
       applied.add(id); dismissed.delete(id);
+      selectedId=(items.slice(items.findIndex(it=>it.id===id)+1).find(it=>!applied.has(it.id)&&!dismissed.has(it.id))||pending()[0]||{id}).id;
       _open=false; persist(); render(); emit('applied',id);
+      return true;
+    }
+    function unmarkApplied(id){
+      if(!applied.has(id)) return false;
+      applied.delete(id);selectedId=id;_open=false;persist();render();emit('undone',id);
       return true;
     }
     function dismiss(id){
       if(!items.some(it=>it.id===id)) return false;
       if(dismissed.has(id) && !applied.has(id)) return true; // already dismissed — no-op, don't re-render / re-emit
       dismissed.add(id); applied.delete(id);
+      selectedId=(items.slice(items.findIndex(it=>it.id===id)+1).find(it=>!applied.has(it.id)&&!dismissed.has(it.id))||pending()[0]||{id}).id;
       _open=false; persist(); render(); emit('dismissed',id);
+      return true;
+    }
+    function restore(id){
+      if(!dismissed.has(id)) return false;
+      dismissed.delete(id);selectedId=id;_open=false;persist();render();emit('restored',id);
       return true;
     }
     function onChange(cb){ if(typeof cb==='function') cbs.push(cb); }
@@ -23979,6 +24032,9 @@ csInit('csPlatform');
         previousId: prevId||null,
         current: cur,
         currentId: cur?cur.id:null,
+        selected: selected(),
+        selectedId: selectedId,
+        selectedIndex: items.length?selectedIndex():-1,
         done: applied.size,
         dismissed: dismissed.size,
         total: items.length,
@@ -24037,8 +24093,7 @@ csInit('csPlatform');
     function askHope(it){
       const ta=document.getElementById('aiChatInput');
       if(!ta) return;
-      const pIdx=pending().findIndex(x=>x.id===it.id);
-      const dispId='#'+String(applied.size+1+(pIdx<0?0:pIdx)).padStart(2,'0');
+      const dispId='#'+String(items.findIndex(x=>x.id===it.id)+1).padStart(2,'0');
       ta.value=aimmBuildFixQueueQuestion({item:it,ordinal:parseInt(dispId.slice(1),10)});
       try{ ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length); }catch(_){}
       try{ ta.dispatchEvent(new Event('input',{bubbles:true})); }catch(_){}
@@ -24051,7 +24106,6 @@ csInit('csPlatform');
       if(!host) return;
       if(!items.length){ host.className=''; host.innerHTML=''; return; }
       host.className='oz-card card actions';
-      const p=pending();
       const total=items.length, done=applied.size;
       const pct=total?Math.round(done/total*100):0;
       // R3 post-ship fix #3 (Kevin 2026-09-01): ONE source of truth for "which
@@ -24060,30 +24114,19 @@ csInit('csPlatform');
       // card showed the progress ordinal ("Action item 1 / 5"). Both now use the
       // progress ordinal = doneCount + 1 (+ the row offset for the "show all"
       // list). it.id stays the internal stable key for markApplied/dismiss.
-      const dispNo=k=>'#'+String(done+1+(k||0)).padStart(2,'0');
       let h='<div class="mcq-head ai-head"><span class="mcq-t t">Fix queue</span><span class="mcq-hr qhr">'
         +'<span class="mcq-prog prog"><span class="mcq-prog-n">'+done+' / '+total+' done</span> <span class="track"><i style="width:'+pct+'%"></i></span></span>';
       // "Show all queued (N)" — opt-in; once opened it stays open across
       // re-renders (apply / dismiss never re-collapses it). The (N) pending
       // count stays visible in either label.
-      if(p.length>1){
-        h+='<button type="button" class="mcq-showall">'+(_showAll?'Hide queued':'Show all queued')+' ('+p.length+') ▾</button>';
+      if(total>1){
+        h+='<button type="button" class="mcq-showall">'+(_showAll?'Hide items':'Show all items')+' ('+total+') ▾</button>';
       }
       h+='</span></div>';
-
-      if(!p.length){
-        // Board item 15: the "all done" state — clean, not a broken empty card.
-        // The head above still shows the "N / M done" progress at 100%.
-        const dn=applied.size, ds=dismissed.size, tot=items.length;
-        let msg;
-        if(dn>=tot) msg='All '+tot+' fix'+(tot===1?'':'es')+' marked done. Re-analyse after your changes to rebuild the queue.';
-        else if(dn>0) msg=dn+' of '+tot+' applied, '+ds+' dismissed — the queue is clear. Re-analyse to rebuild it.';
-        else msg='All '+tot+' fix'+(tot===1?'':'es')+' dismissed — none applied. Re-analyse to rebuild the queue.';
-        h+='<div class="mcq-empty mcq-alldone">'+msg+'</div>';
-        host.innerHTML=h; wire(host); return;
-      }
-
-      const it=p[0];
+      const it=selected(), index=selectedIndex(), state=status(it.id);
+      h+='<div class="mcq-nav"><button type="button" data-act="previous" '+(index===0?'disabled':'')+'>← Previous</button>'
+        +'<span class="mcq-position">Item '+(index+1)+' of '+total+' · '+(state==='done'?'Done':state==='dismissed'?'Dismissed':'To do')+'</span>'
+        +'<button type="button" data-act="next" '+(index===total-1?'disabled':'')+'>Next →</button></div>';
       // Freq-target marker = a spectrum POSITION band, not a level fill. Spectral
       // bands keep their log-scaled position, width capped so it always reads as a
       // marker band (~mockup 05's 22-24%), never a meter (Jules step-4 note).
@@ -24099,36 +24142,32 @@ csInit('csPlatform');
           +'<div class="mcq-tk qtk"><span>20</span><span>200</span><span>2k</span><span>20k</span></div></div>';
       }
       h+='<div class="mcq-card qcard'+(_open?' open':'')+'" data-id="'+esc(it.id)+'">'
-        +'<button type="button" class="mcq-x" data-act="dismiss" title="Dismiss — don’t bring this to Hope">×</button>'
-        +'<span class="mcq-k qk">Up next</span>'
-        +'<div class="mcq-row qrow"><span class="mcq-rk rk">'+dispNo(0)+'</span><span class="mcq-title qtitle">'+esc(it.title)+'</span></div>'
+        +(state==='dismissed'?'':'<button type="button" class="mcq-x" data-act="dismiss" title="Dismiss this item">×</button>')
+        +'<span class="mcq-k qk">Action item '+(index+1)+' of '+total+'</span>'
+        +'<div class="mcq-row qrow"><span class="mcq-rk rk">'+esc(it.id)+'</span><span class="mcq-title qtitle">'+esc(it.title)+'</span></div>'
         +fxHtml
         +'<div class="mcq-meta">FOCUS '+esc(it.focusBand)+' · IMP '+esc(it.impact)+' · CONF '+esc(it.confidence)+'</div>'
         +'<div class="mcq-acts">';
       // Board item 15: a direct "Mark done" backup to Hope's mark_fix_applied —
       // calls the same MC_FIXQUEUE.markApplied(id), so it removes this card,
       // ticks "N / M done", promotes the next fix and fires onChange.
-      h+='<button type="button" class="mcq-done" data-act="done">✓ Mark done</button>';
+      h+='<button type="button" class="mcq-done" data-act="'+(state==='done'?'undo':state==='dismissed'?'restore':'done')+'">'+(state==='done'?'↶ Undo done':state==='dismissed'?'↶ Restore':'✓ Mark done')+'</button>';
       h+='<button type="button" class="mcq-play" data-act="play">'
         +(it.playFromSec!=null?'▸ Play from '+esc(refFmt(it.playFromSec)):'▸ Play mix')+'</button>';
       h+='<button type="button" class="mcq-hope" data-act="hope">Ask Hope about this</button></div>'
         +'<div class="mcq-detail"><div class="mcq-section"><span class="mcq-section-label">What we measured</span><div class="mcq-why">'+esc(it.why)+'</div></div>'
         +(it.move?'<div class="mcq-section"><span class="mcq-section-label">Recommended move</span><div class="mcq-move">'+esc(it.move)+'</div></div>':'')
         +'</div>'
-        +'<div class="mcq-hint">Click the card to '+(_open?'collapse':'expand')+' the full move. Mark it done here, or tell Hope once you’ve applied it — the next fix moves up.</div>'
+        +'<div class="mcq-hint">Click the card to '+(_open?'collapse':'expand')+' the full move. Previous and Next let you review every item, including completed fixes.</div>'
         +'</div>';
 
       if(_showAll){
-        // Full queue = EVERY not-applied / not-dismissed item, INCLUDING the
-        // current one as row 1 (keeps "(N)" + "n / total applied" consistent).
-        // p[0] is the same item expanded in the card above — mark it, don't drop.
         h+='<div class="mcq-all">';
-        p.forEach((q,qi)=>{
-          const cur=qi===0;
-          h+='<div class="mcq-allrow'+(cur?' is-current':'')+'" data-id="'+esc(q.id)+'"><span class="mcq-rk">'+dispNo(qi)+'</span>'
+        items.forEach((q,qi)=>{
+          const cur=qi===index, qstate=status(q.id);
+          h+='<div class="mcq-allrow'+(cur?' is-current':'')+'" data-id="'+esc(q.id)+'"><button type="button" class="mcq-select" data-act="select" '+(cur?'aria-current="true"':'')+'><span class="mcq-rk">'+esc(q.id)+'</span>'
             +'<span class="mcq-allt">'+esc(q.title)+'</span>'
-            +(cur?'<span class="mcq-alltag">Up next</span>':'')
-            +'<button type="button" class="mcq-x" data-act="dismiss" title="Dismiss">×</button></div>';
+            +'<span class="mcq-alltag">'+(qstate==='done'?'Done':qstate==='dismissed'?'Dismissed':'To do')+'</span></button></div>';
         });
         h+='</div>';
       }
@@ -24152,13 +24191,20 @@ csInit('csPlatform');
           const id=row?row.getAttribute('data-id'):null;
           if(act==='dismiss'&&id){ dismiss(id); }
           else if(act==='done'&&id){ markApplied(id); }
-          else if(act==='play'){ const it=pending()[0]; if(it&&typeof refPlayFromTime==='function') refPlayFromTime(it.playFromSec!=null?it.playFromSec:0); }
-          else if(act==='hope'){ const it=pending()[0]; if(it) askHope(it); }
+          else if(act==='undo'&&id){ unmarkApplied(id); }
+          else if(act==='restore'&&id){ restore(id); }
+          else if(act==='previous'){ navigate(-1); }
+          else if(act==='next'){ navigate(1); }
+          else if(act==='select'&&id){ select(id); }
+          else if(act==='play'){ const it=selected(); if(it&&typeof refPlayFromTime==='function') refPlayFromTime(it.playFromSec!=null?it.playFromSec:0); }
+          else if(act==='hope'){ const it=selected(); if(it) askHope(it); }
         });
       });
     }
 
-    return { derive, recompute, onChange, list:publicList, current, markApplied, dismiss,
+    return { derive, recompute, onChange, list:publicList, current, selected, select,
+             previous:()=>navigate(-1), next:()=>navigate(1), selectedIndex, status,
+             markApplied, unmarkApplied, dismiss, restore,
              total:()=>items.length, appliedCount:()=>applied.size, breakdownData };
   })();
   window.MC_FIXQUEUE=MC_FIXQUEUE;
@@ -24166,8 +24212,16 @@ csInit('csPlatform');
   window.mcFixQueue={
     list:         MC_FIXQUEUE.list,
     current:      MC_FIXQUEUE.current,
+    selected:     MC_FIXQUEUE.selected,
+    select:       MC_FIXQUEUE.select,
+    previous:     MC_FIXQUEUE.previous,
+    next:         MC_FIXQUEUE.next,
+    selectedIndex:MC_FIXQUEUE.selectedIndex,
+    status:       MC_FIXQUEUE.status,
     markApplied:  MC_FIXQUEUE.markApplied,
+    unmarkApplied:MC_FIXQUEUE.unmarkApplied,
     dismiss:      MC_FIXQUEUE.dismiss,
+    restore:      MC_FIXQUEUE.restore,
     onChange:     MC_FIXQUEUE.onChange,
     total:        MC_FIXQUEUE.total,
     appliedCount: MC_FIXQUEUE.appliedCount,
@@ -24384,7 +24438,7 @@ csInit('csPlatform');
       if (!q || typeof q.current !== 'function') return '';
       const total = (typeof q.total === 'function') ? (q.total() || 0) : 0;
       const applied = (typeof q.appliedCount === 'function') ? (q.appliedCount() || 0) : 0;
-      const it = q.current();
+      const it = typeof q.selected === 'function' ? q.selected() : q.current();
       // Queue fully worked (every fix applied or dismissed) — clean "all done"
       // card so the loop ends in the chat, not a card that just vanishes.
       if (!it){
@@ -24394,7 +24448,9 @@ csInit('csPlatform');
              + '<div class="am-title">' + esc(applied) + ' of ' + esc(total) + ' fixes handled — queue clear.</div>'
              + '<div class="am-why">Nice work. Re-analyse once your changes are rendered in and I&rsquo;ll rebuild the queue.</div>';
       }
-      const nStr = Math.min(applied + 1, total || (applied + 1)) + ' / ' + (total || (applied + 1));
+      const index = typeof q.selectedIndex === 'function' ? q.selectedIndex() : Math.min(applied,total-1);
+      const nStr = (index + 1) + ' / ' + total;
+      const itemState = typeof q.status === 'function' ? q.status(it.id) : 'pending';
       const broad = it.focusBand === 'broadband';
       let lo = fxPct((it.freqRange && it.freqRange.loHz) || 20);
       let wd = Math.max(2, fxPct((it.freqRange && it.freqRange.hiHz) || 20000) - lo);
@@ -24405,11 +24461,12 @@ csInit('csPlatform');
       const whyMain = altIdx >= 0 ? whyFull.slice(0, altIdx) : whyFull;
       const altText = altIdx >= 0 ? whyFull.slice(altIdx + 2).replace(/^\(/, '').replace(/\)\s*$/, '') : '';
 
-      const flag = (applied === 0) ? '<span class="am-flag">Recommended first</span>' : '';
+      const flag = '<span class="am-flag">'+(itemState==='done'?'Done':itemState==='dismissed'?'Dismissed':index===0?'Recommended first':'To do')+'</span>';
       const hasT = it.playFromSec != null && isFinite(it.playFromSec);
       const mv = cardMove(it);
 
       let h = '<div class="am-head"><span class="am-k">Action item ' + esc(nStr) + '</span>' + flag + '</div>';
+      h += '<div class="am-progress">' + applied + ' / ' + total + ' done</div>';
       h += '<div class="am-title">' + esc(it.title) + '</div>';
       // Match the main Fix Queue: frequency-specific fixes get an orange
       // position marker; broadband measurements have no frequency locus, so
@@ -24425,9 +24482,11 @@ csInit('csPlatform');
         });
       }
       h += '<div class="am-acts">';
-      h += '<button type="button" class="am-done" onclick="aimmFixCardDone()">&#10003; Mark done</button>';
+      h += '<button type="button" class="am-done" onclick="aimmFixCardDone()">' + (itemState==='done'?'&#8630; Undo done':itemState==='dismissed'?'&#8630; Restore':'&#10003; Mark done') + '</button>';
       h += '<button type="button" class="am-play" onclick="aimmFixCardPlay(' + (hasT ? Number(it.playFromSec) : 0) + ')">'
          + '&#9654; ' + (hasT ? ('Play ' + esc(fmtTime(it.playFromSec))) : 'Play mix') + '</button>';
+      h += '<button type="button" class="am-previous" onclick="aimmFixCardNavigate(-1)" '+(index===0?'disabled':'')+'>← Previous</button>';
+      h += '<button type="button" class="am-next" onclick="aimmFixCardNavigate(1)" '+(index===total-1?'disabled':'')+'>Next →</button>';
       if (altText) h += '<button type="button" class="am-alt" onclick="aimmFixCardToggleAlt(this)">Alternatives</button>';
       h += '</div>';
       if (altText) h += '<div class="am-alt-body" hidden>' + esc(altText) + '</div>';
@@ -24443,11 +24502,19 @@ csInit('csPlatform');
       if (body.hasAttribute('hidden')) body.removeAttribute('hidden'); else body.setAttribute('hidden', '');
     };
     window.aimmFixCardPlay = (sec) => { try { if (typeof refPlayFromTime === 'function') refPlayFromTime(+sec || 0); } catch(_){} };
+    window.aimmFixCardNavigate = (delta) => {
+      const q=window.mcFixQueue;
+      if(q && typeof q[delta<0?'previous':'next']==='function') q[delta<0?'previous':'next']();
+    };
     window.aimmFixCardDone = () => {
       try {
         const q = window.mcFixQueue;
-        const it = q && typeof q.current === 'function' ? q.current() : null;
-        if (it && typeof q.markApplied === 'function') q.markApplied(it.id);
+        const it = q && typeof q.selected === 'function' ? q.selected() : null;
+        if (!it) return;
+        const state=typeof q.status==='function'?q.status(it.id):'pending';
+        if(state==='done'&&typeof q.unmarkApplied==='function') q.unmarkApplied(it.id);
+        else if(state==='dismissed'&&typeof q.restore==='function') q.restore(it.id);
+        else if(typeof q.markApplied==='function') q.markApplied(it.id);
       } catch(_){}
     };
 
@@ -24889,11 +24956,11 @@ csInit('csPlatform');
     const key=stemReviewKey(stem);
     if(!stemReviewProgress.has(key)){
       let saved=null;try{saved=JSON.parse(localStorage.getItem('aimmStemFixQueue_v1:'+key)||'null');}catch(_){}
-      stemReviewProgress.set(key,{applied:new Set(saved&&Array.isArray(saved.applied)?saved.applied:[]),dismissed:new Set(saved&&Array.isArray(saved.dismissed)?saved.dismissed:[]),expanded:false,open:false});
+      stemReviewProgress.set(key,{applied:new Set(saved&&Array.isArray(saved.applied)?saved.applied:[]),dismissed:new Set(saved&&Array.isArray(saved.dismissed)?saved.dismissed:[]),selectedId:saved&&typeof saved.selectedId==='string'?saved.selectedId:null,expanded:false,open:false});
     }
     return stemReviewProgress.get(key);
   }
-  function stemReviewPersist(stem){const q=stemReviewState(stem);try{localStorage.setItem('aimmStemFixQueue_v1:'+stemReviewKey(stem),JSON.stringify({applied:[...q.applied],dismissed:[...q.dismissed]}));}catch(_){} }
+  function stemReviewPersist(stem){const q=stemReviewState(stem);try{localStorage.setItem('aimmStemFixQueue_v1:'+stemReviewKey(stem),JSON.stringify({applied:[...q.applied],dismissed:[...q.dismissed],selectedId:q.selectedId}));}catch(_){} }
   function stemSpectrumBandComparison(sum,without,corr){
     if(!Array.isArray(sum)||!sum.length||!Array.isArray(without)||!without.length||!corr)return null;
     let sm=0,sn=0,cm=0,cn=0;
@@ -25050,15 +25117,25 @@ csInit('csPlatform');
     return {sessionStems:(stemSession||[]).map(s=>({key:s.key,trackName:s.label,fileName:s.fileName,status:s.status,selected:stemAuditionKeys.includes(s.key)})),auditionKeys:stemAuditionKeys.slice(),auditionStems:stemAuditionKeys.map(key=>(stemSession||[]).find(s=>s.key===key)?.label).filter(Boolean),auditionSpectrumStatus:group?group.status:'idle',auditionSpectrum:group&&group.status==='ready'?group.points.map(p=>p.slice()):null,auditionSpectrumWithoutStatus:group?group.withoutStatus:'idle',auditionSpectrumWithout:group&&group.withoutStatus==='ready'?group.withoutPoints.map(p=>p.slice()):null,auditionSpectrumWindows:group?group.windows:0,auditionSpectrumHop:group?group.hop:0,selectedTarget:stemSelectedKey?'stem':'mix',selectedStemKey:stemSelectedKey,playbackView:stemPlaybackViewActive(),playbackKeys,playbackStems:playbackKeys.map(key=>(stemSession||[]).find(s=>s.key===key)?.label).filter(Boolean),playbackSpectrumStatus:playbackGroup?playbackGroup.status:'pending',playbackSpectrum:playbackGroup&&playbackGroup.status==='ready'?playbackGroup.points.map(p=>p.slice()):null,playbackSpectrumWithoutStatus:playbackGroup?playbackGroup.withoutStatus:'pending',playbackSpectrumWithout:playbackGroup&&playbackGroup.withoutStatus==='ready'?playbackGroup.withoutPoints.map(p=>p.slice()):null,mixSpectrum:stemAggregateSpectrum.status==='ready'?stemAggregateSpectrum.points.map(p=>p.slice()):null,mixSpectrumStatus:stemAggregateSpectrum.status,spectrumComparisonStatus:selectedLoo?selectedLoo.status:(stems.length>1?'pending':'unavailable'),spectrumWindows:stemAggregateSpectrum.windows,spectrumHop:stemAggregateSpectrum.hop,policy:STEM_REVIEW_POLICY,stems:stems.map(s=>{
       const a=stemReviewCache.get(stemReviewKey(s)),q=stemReviewState(s),items=a&&a.items||[];
       const loo=stemLeaveOutSpectra.get(s.key);
-      return {key:s.key,trackName:s.label,fileName:s.fileName,status:a?a.status:'pending',analysisRevision:a&&a.revision||0,measurements:a&&a.measurements?{...a.measurements}:null,spectrum:a&&a.spectrum?a.spectrum.map(p=>p.slice()):null,spectrumWithoutSelected:loo&&loo.status==='ready'?loo.points.map(p=>p.slice()):null,spectrumComparisonStatus:loo?loo.status:(stems.length>1?'pending':'unavailable'),spectrumComparison:loo&&loo.status==='ready'&&stemAggregateSpectrum.status==='ready'?stemSpectrumBandComparison(stemAggregateSpectrum.points,loo.points,refActiveCorridor()):null,spectrumBasis:'full-record 8192-point Hann Welch spectrum; 50% overlap; every complete aligned frame; L/R averaged to mono; power averaged before logarithmic frequency folding; leave-one-out sum formed sample-by-sample before FFT',fixes:items.map(it=>({...it,applied:q.applied.has(it.id),dismissed:q.dismissed.has(it.id)}))};
+      return {key:s.key,trackName:s.label,fileName:s.fileName,status:a?a.status:'pending',analysisRevision:a&&a.revision||0,selectedFixId:q.selectedId,measurements:a&&a.measurements?{...a.measurements}:null,spectrum:a&&a.spectrum?a.spectrum.map(p=>p.slice()):null,spectrumWithoutSelected:loo&&loo.status==='ready'?loo.points.map(p=>p.slice()):null,spectrumComparisonStatus:loo?loo.status:(stems.length>1?'pending':'unavailable'),spectrumComparison:loo&&loo.status==='ready'&&stemAggregateSpectrum.status==='ready'?stemSpectrumBandComparison(stemAggregateSpectrum.points,loo.points,refActiveCorridor()):null,spectrumBasis:'full-record 8192-point Hann Welch spectrum; 50% overlap; every complete aligned frame; L/R averaged to mono; power averaged before logarithmic frequency folding; leave-one-out sum formed sample-by-sample before FFT',fixes:items.map(it=>({...it,applied:q.applied.has(it.id),dismissed:q.dismissed.has(it.id)}))};
     })};
   }
   function stemReviewTransition(key,id,action,expectedRevision){
     const stem=(stemSession||[]).find(s=>s.key===key&&s.status==='ok'),a=stem&&stemReviewCache.get(stemReviewKey(stem));
     if(!stem||!a||a.status!=='ready'||(expectedRevision!==undefined&&expectedRevision!==a.revision)||!a.items.some(i=>i.id===id))return false;
-    const q=stemReviewState(stem),set=action==='applied'?q.applied:q.dismissed,other=action==='applied'?q.dismissed:q.applied;
-    if(set.has(id)&&!other.has(id))return true;
-    set.add(id);other.delete(id);q.open=false;stemReviewPersist(stem);stemReviewRender();stemReviewEmit(action);return true;
+    const q=stemReviewState(stem);
+    if(action==='undone')q.applied.delete(id);
+    else if(action==='restored')q.dismissed.delete(id);
+    else{
+      const set=action==='applied'?q.applied:q.dismissed,other=action==='applied'?q.dismissed:q.applied;
+      if(set.has(id)&&!other.has(id))return true;
+      set.add(id);other.delete(id);
+    }
+    if(action==='applied'||action==='dismissed'){
+      const index=a.items.findIndex(i=>i.id===id);
+      q.selectedId=(a.items.slice(index+1).find(i=>!q.applied.has(i.id)&&!q.dismissed.has(i.id))||a.items.find(i=>!q.applied.has(i.id)&&!q.dismissed.has(i.id))||{id}).id;
+    }else q.selectedId=id;
+    q.open=false;stemReviewPersist(stem);stemReviewRender();stemReviewEmit(action);return true;
   }
   function stemSelectedBuffers(){return stemAuditionKeys.map(key=>(stemSession||[]).find(s=>s.key===key&&s.status==='ok')?.buffer).filter(Boolean);}
   function stemPlaybackViewActive(){return stemSoloKeys.size>0||stemMutedKeys.size>0||stemPlaybackMode!=='full';}
@@ -25119,7 +25196,9 @@ csInit('csPlatform');
       return stemApplySelection(next);
     },
     markApplied:(key,id,expectedRevision)=>stemReviewTransition(key,id,'applied',expectedRevision),
-    dismiss:(key,id,expectedRevision)=>stemReviewTransition(key,id,'dismissed',expectedRevision)
+    dismiss:(key,id,expectedRevision)=>stemReviewTransition(key,id,'dismissed',expectedRevision),
+    unmarkApplied:(key,id,expectedRevision)=>stemReviewTransition(key,id,'undone',expectedRevision),
+    restore:(key,id,expectedRevision)=>stemReviewTransition(key,id,'restored',expectedRevision)
   };
   function stemReviewEmit(reason){try{window.dispatchEvent(new CustomEvent('aimm:stem-analysis-changed',{detail:{reason,...stemReviewSnapshot()}}));}catch(_){} }
   /* 2026-10-19.42: show stem review only after a track is selected. */
@@ -25144,20 +25223,23 @@ csInit('csPlatform');
       if(!a||a.status==='pending')html+='<div class="mcs-note" role="status">Analysing '+esc(selected.label)+'…</div>';
       else if(a.status==='error')html+='<div class="mcs-note" role="status">Analysis unavailable for '+esc(selected.label)+'.</div><div class="mcs-actions"><button data-stem-action="retry">Retry analysis</button></div>';
       else{
-        const r=a.measurements,q=stemReviewState(selected),pending=(a.items||[]).filter(i=>!q.applied.has(i.id)&&!q.dismissed.has(i.id));
+        const r=a.measurements,q=stemReviewState(selected);
         html+='<div class="mcs-metrics">'+r.li.toFixed(1)+' LUFS · '+r.tp.toFixed(1)+' dBTP · crest '+r.crestDb.toFixed(1)+' dB · correlation '+r.correlation.toFixed(2)+'</div><div class="mcs-note">These loudness and stereo readings describe this stem. Spectral checks compare the aligned full sum and the sum without this track against the selected Spotify reference; it is a mix reference, not a target for a solo stem. Recommendations name the source Logic track.</div>';
         if(!Array.isArray(a.items))html+='<div class="mcs-note" role="status">Finishing the full-range spectral comparison for '+esc(selected.label)+'…</div>';
         else if(!a.items.length)html+='<div class="mcs-note" role="status">No supported issues detected for '+esc(selected.label)+'. This does not establish that the track needs no work.</div>';
         else{
           const done=a.items.filter(i=>q.applied.has(i.id)).length;
           html+='<div class="mcs-note">'+done+' / '+a.items.length+' done'+(q.dismissed.size?' · '+q.dismissed.size+' dismissed':'')+'</div><div class="mcs-progress" role="progressbar" aria-label="'+esc(selected.label)+' fixes done" aria-valuemin="0" aria-valuemax="'+a.items.length+'" aria-valuenow="'+done+'"><i style="width:'+Math.round(done/a.items.length*100)+'%"></i></div>';
-          if(!pending.length)html+='<div class="mcs-note" role="status">Queue clear. Re-export and import the revised source track to check your changes.</div>';
-          else{
-            const it=pending[0],ordinal=a.items.indexOf(it)+1;
-            html+='<div class="mcs-card"><div class="mcs-note">Up next · #'+String(ordinal).padStart(2,'0')+'</div><div class="mcs-title">'+esc(it.title)+'</div><div class="mcs-note">FOCUS '+it.focusBand+' · IMP '+it.impact+' · CONF '+it.confidence+'</div><div class="mcs-actions"><button data-stem-action="done">✓ Mark done</button><button data-stem-action="dismiss">× Dismiss</button><button data-stem-action="detail">'+(q.open?'Hide':'Show')+' full move</button><button data-stem-action="hope">Ask Hope about this</button></div>'+(q.open?'<div class="mcs-detail"><div class="mcs-section"><span class="mcs-section-label">What we measured</span>'+esc(it.why)+'</div><div class="mcs-section"><span class="mcs-section-label">Recommended move</span>'+esc(it.move)+'</div></div>':'')+'</div>';
-            if(pending.length>1)html+='<div class="mcs-actions" style="margin-top:9px"><button data-stem-action="all">'+(q.expanded?'Hide':'Show all')+' queued ('+pending.length+')</button></div>';
-            if(q.expanded)html+=pending.map(i=>'<div class="mcs-detail">#'+String(a.items.indexOf(i)+1).padStart(2,'0')+' '+esc(i.title)+'</div>').join('');
+          if(!a.items.some(i=>i.id===q.selectedId)){
+            q.selectedId=(a.items.find(i=>!q.applied.has(i.id)&&!q.dismissed.has(i.id))||a.items[0]).id;
+            stemReviewPersist(selected);
           }
+          const ordinal=a.items.findIndex(i=>i.id===q.selectedId)+1,it=a.items[ordinal-1];
+          const state=q.applied.has(it.id)?'done':q.dismissed.has(it.id)?'dismissed':'pending';
+          html+='<div class="mcs-actions mcs-nav"><button data-stem-action="previous" '+(ordinal===1?'disabled':'')+'>← Previous</button><span>Item '+ordinal+' of '+a.items.length+' · '+(state==='done'?'Done':state==='dismissed'?'Dismissed':'To do')+'</span><button data-stem-action="next" '+(ordinal===a.items.length?'disabled':'')+'>Next →</button></div>';
+          html+='<div class="mcs-card"><div class="mcs-note">Action item '+ordinal+' of '+a.items.length+'</div><div class="mcs-title">'+esc(it.title)+'</div><div class="mcs-note">FOCUS '+esc(it.focusBand)+' · IMP '+esc(it.impact)+' · CONF '+esc(it.confidence)+'</div><div class="mcs-actions"><button data-stem-action="'+(state==='done'?'undo':state==='dismissed'?'restore':'done')+'">'+(state==='done'?'↶ Undo done':state==='dismissed'?'↶ Restore':'✓ Mark done')+'</button>'+(state==='dismissed'?'':'<button data-stem-action="dismiss">× Dismiss</button>')+'<button data-stem-action="detail">'+(q.open?'Hide':'Show')+' full move</button><button data-stem-action="hope">Ask Hope about this</button></div>'+(q.open?'<div class="mcs-detail"><div class="mcs-section"><span class="mcs-section-label">What we measured</span>'+esc(it.why)+'</div><div class="mcs-section"><span class="mcs-section-label">Recommended move</span>'+esc(it.move)+'</div></div>':'')+'</div>';
+          if(a.items.length>1)html+='<div class="mcs-actions" style="margin-top:9px"><button data-stem-action="all">'+(q.expanded?'Hide':'Show all')+' items ('+a.items.length+')</button></div>';
+          if(q.expanded)html+='<div class="mcs-all">'+a.items.map((i,j)=>'<button type="button" data-stem-action="select" data-fix-id="'+esc(i.id)+'" '+(i.id===q.selectedId?'aria-current="true"':'')+'>#'+String(j+1).padStart(2,'0')+' '+esc(i.title)+' · '+(q.applied.has(i.id)?'Done':q.dismissed.has(i.id)?'Dismissed':'To do')+'</button>').join('')+'</div>';
         }
       }
     }
@@ -25166,9 +25248,19 @@ csInit('csPlatform');
       if(!selected)return;const act=btn.dataset.stemAction,a=stemReviewCache.get(stemReviewKey(selected)),q=stemReviewState(selected);
       if(act==='retry'){stemReviewCache.delete(stemReviewKey(selected));stemReviewSchedule();return;}
       if(!a||a.status!=='ready')return;
-      const it=a.items.find(i=>!q.applied.has(i.id)&&!q.dismissed.has(i.id));if(!it)return;
+      const index=a.items.findIndex(i=>i.id===q.selectedId),it=a.items[index];if(!it)return;
+      if(act==='previous'||act==='next'){
+        const next=Math.max(0,Math.min(a.items.length-1,index+(act==='previous'?-1:1)));
+        q.selectedId=a.items[next].id;q.open=false;stemReviewPersist(selected);stemReviewRender();stemReviewEmit('selected-fix');return;
+      }
+      if(act==='select'){
+        if(a.items.some(i=>i.id===btn.dataset.fixId)){q.selectedId=btn.dataset.fixId;q.open=false;stemReviewPersist(selected);stemReviewRender();stemReviewEmit('selected-fix');}
+        return;
+      }
       if(act==='done'){stemReviewTransition(selected.key,it.id,'applied');return;}
       if(act==='dismiss'){stemReviewTransition(selected.key,it.id,'dismissed');return;}
+      if(act==='undo'){stemReviewTransition(selected.key,it.id,'undone');return;}
+      if(act==='restore'){stemReviewTransition(selected.key,it.id,'restored');return;}
       if(act==='detail')q.open=!q.open;
       if(act==='all')q.expanded=!q.expanded;
       if(act==='hope'){
