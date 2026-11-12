@@ -10,6 +10,10 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 # ROADMAP.md — AIMM Active
 
+## Hope action button highlight — build 2026-11-12.15
+
+Mark done on Hope's Guided steps card now uses the approved mockup B teal fill; Play mix stays neutral. Both buttons match the mockup's size. The corrected layout was rendered in the AIMM page. Deployment verification is pending; the `aimmastersx.com` hostname issue remains separate.
+
 ## Guided move cards — build 2026-11-12.14
 
 Kevin selected mockup B for Hope's action card and asked for its move-label style everywhere. Hope's card now presents the measurement before the recommended move, with numbered sections for explicit sequential advice. Centre Fix Queue and selected-stem details use the same teal labels. App commit `9e038b64` is deployed as Worker version `0d1b354b-c61d-4e2e-9fb5-da23db56646d`; build .14 is served by `aimixmasters.com` and the workers.dev URL. The requested `aimmastersx.com` hostname issue remains separate.

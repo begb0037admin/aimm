@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## Hope action button highlight — 2026-11-12, build 2026-11-12.15
+
+Kevin flagged that the live Guided steps card had an outlined Mark done button, unlike approved mockup B. Mark done is now filled teal at rest with dark text, and both card actions have the mockup's larger button size. The corrected card was rendered in the actual AIMM layout. Deployment verification is pending. The separate `aimmastersx.com` hostname issue remains open.
+
 ## Guided move cards — 2026-11-12, build 2026-11-12.14
 
 Kevin chose mockup B. Hope's Fix Queue action card now uses AIMM's neutral tile, teal section labels, a measured-reason section and numbered move sections when the advice contains a clear sequence. The centre Fix Queue detail and selected-stem detail use the same measurement/move labels. App commit `9e038b64` is live as Worker version `0d1b354b-c61d-4e2e-9fb5-da23db56646d`; both `aimixmasters.com` and the workers.dev URL serve build .14. The separate `aimmastersx.com` hostname issue remains open.

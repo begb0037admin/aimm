@@ -4424,6 +4424,15 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .aichat-msg.fixaction .am-why,
 #hopeRail .aichat-msg.fixaction .am-move{font-size:calc(var(--inv-text-scale, 1) * 12.5px);line-height:1.5;color:#d3d8dd;margin:0}
 #hopeRail .aichat-msg.fixaction .am-acts{margin-top:16px;gap:8px}
+#hopeRail .aichat-msg.fixaction .am-acts button{
+  min-height:34px!important;padding:7px 14px!important;
+  font:600 calc(var(--inv-text-scale, 1) * 13px) Inter,-apple-system,sans-serif!important;
+}
+#hopeRail .aichat-msg.fixaction .am-acts button.am-done:not(:disabled),
+#hopeRail .aichat-msg.fixaction .am-acts button.am-done:is(:hover,:focus-visible,:active):not(:disabled){
+  background:#2dd4bf!important;border-color:#2dd4bf!important;color:#06201c!important;
+  font-weight:700!important;
+}
 #hopeRail .aichat-msg.fixaction .am-alt-body{border-top-color:#30363c}
 #eq.oz-mixcheck .mcq-detail .mcq-section{padding-top:10px;margin-top:10px;border-top:1px solid #30363c}
 #eq.oz-mixcheck .mcq-detail .mcq-section:first-child{margin-top:0;padding-top:0;border:0}
@@ -5020,7 +5029,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-12.14';
+const AIMM_BUILD = '2026-11-12.15';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);

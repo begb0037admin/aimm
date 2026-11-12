@@ -4,6 +4,8 @@ Read this before continuing. The current user goal is **not resolved**: Kevin ne
 
 ## Current source and deployment
 
+- Hope button correction: build `2026-11-12.15` gives Mark done the persistent teal fill and dark text from approved mockup B; both Hope action-card buttons now match its 34px size. Kevin flagged the missing highlight in a live screenshot. The actual page render, syntax and seven Hope tests pass. Deployment verification is pending. The `aimmastersx.com` hostname issue remains separate.
+
 - Approved Guided steps rollout: app commit `9e038b64`, build `2026-11-12.14`, gives Hope's action card the mockup B neutral tile and teal measurement/move sections, splitting explicit sequential advice into numbered steps. Centre Fix Queue and selected-stem detail move labels match. Kevin selected B and asked to roll it out to all move labels. Worker version `0d1b354b-c61d-4e2e-9fb5-da23db56646d` serves .14 at `aimixmasters.com` and the workers.dev URL. The separate `aimmastersx.com` issue remains open.
 
 - Approved Fix Queue button change: app commit `aab1aaf2`, build `2026-11-12.13`, makes Mark done, Play mix and Ask Hope about this the Full song stem button's size, with teal interaction highlighting. Kevin approved the populated queue preview. Worker version `ad7a577d-cd36-4cfd-b37f-c8cd48c821b7` serves .13 at `aimixmasters.com` and the workers.dev URL. The separate `aimmastersx.com` hostname issue remains unresolved.
