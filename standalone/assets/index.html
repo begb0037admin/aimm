@@ -4986,7 +4986,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-12.05';
+const AIMM_BUILD = '2026-11-12.06';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -25266,7 +25266,10 @@ csInit('csPlatform');
       if(rowEls.length&&firstCanvas&&firstCanvas.clientWidth){
         const rowsRect=rows.getBoundingClientRect(),firstRect=firstCanvas.getBoundingClientRect();
         playhead.style.display='block';
-        playhead.style.left=(firstRect.left-rowsRect.left+Math.max(0,Math.min(firstCanvas.clientWidth-1,Math.round(played*firstCanvas.clientWidth))))+'px';
+        const dpr=Math.max(1,window.devicePixelRatio||1),pixelWidth=Math.max(1,Math.round(3*dpr)),cssWidth=pixelWidth/dpr;
+        const progressX=Math.max(0,Math.min(firstRect.width-cssWidth,played*firstRect.width));
+        playhead.style.left=(Math.round((firstRect.left+progressX)*dpr)/dpr-rowsRect.left)+'px';
+        playhead.style.width=cssWidth+'px';
         playhead.style.top='0px';
         playhead.style.bottom='auto';
         playhead.style.height=rows.clientHeight+'px';
@@ -26120,7 +26123,7 @@ csInit('csPlatform');
 #eq.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"]{background:#2dd4bf!important;color:#06201c!important;border-color:#2dd4bf!important}
 </style>
 <style id="stems-playhead">/* White play line */
-#eq.oz-mixcheck #mcStemPlayhead{background:#ffffff!important;width:3px!important;z-index:100!important;display:block!important;pointer-events:none!important;border-radius:2px!important}
+#eq.oz-mixcheck #mcStemPlayhead{background:#ffffff!important;z-index:100!important;display:block!important;pointer-events:none!important;border-radius:2px!important}
 </style>
 </body>
 </html>
