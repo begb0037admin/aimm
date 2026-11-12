@@ -4986,7 +4986,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-12.04';
+const AIMM_BUILD = '2026-11-12.05';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -25261,7 +25261,7 @@ csInit('csPlatform');
     if(rows){
       rows.style.position='relative';
       let playhead=document.getElementById('mcStemPlayhead');
-      if(!playhead){playhead=document.createElement('div');playhead.id='mcStemPlayhead';playhead.setAttribute('aria-hidden','true');Object.assign(playhead.style,{position:'absolute',width:'3px',background:'#fff',pointerEvents:'none',zIndex:'100',borderRadius:'2px',boxShadow:'0 0 0 1px rgba(0,0,0,.9),0 0 6px rgba(0,0,0,.65)'});rows.appendChild(playhead);}
+      if(!playhead){playhead=document.createElement('div');playhead.id='mcStemPlayhead';playhead.setAttribute('aria-hidden','true');Object.assign(playhead.style,{position:'absolute',width:'3px',background:'#fff',pointerEvents:'none',zIndex:'100',borderRadius:'2px'});rows.appendChild(playhead);}
       const rowEls=rows.querySelectorAll('.mc-stem-row'),firstCanvas=rows.querySelector('.mc-stem-wave');
       if(rowEls.length&&firstCanvas&&firstCanvas.clientWidth){
         const rowsRect=rows.getBoundingClientRect(),firstRect=firstCanvas.getBoundingClientRect();
@@ -26120,7 +26120,7 @@ csInit('csPlatform');
 #eq.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"]{background:#2dd4bf!important;color:#06201c!important;border-color:#2dd4bf!important}
 </style>
 <style id="stems-playhead">/* White play line */
-#eq.oz-mixcheck #mcStemPlayhead{background:#ffffff!important;width:3px!important;z-index:100!important;display:block!important;pointer-events:none!important;box-shadow:0 0 0 1px rgba(0,0,0,.9),0 0 6px rgba(0,0,0,.65)!important;border-radius:2px!important}
+#eq.oz-mixcheck #mcStemPlayhead{background:#ffffff!important;width:3px!important;z-index:100!important;display:block!important;pointer-events:none!important;border-radius:2px!important}
 </style>
 </body>
 </html>
