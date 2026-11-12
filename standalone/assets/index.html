@@ -1251,14 +1251,13 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 /* ── #eq panel — R3 Mix Check full layout (jules mockups/05, 2026-08-31) ──
    Two-column-top / full-width-bottom sub-grid:
      head       head       ← per-view panel header (accent-word title + CTA)
-     banner     banner     ← analysis-ready context banner (restyled #refHopeBox)
      transport  transport  ← in-flow transport + waveform (was viewport-pinned #ozTransport)
      specs      analyser   ← Audio Specs rail | Spectral Balance + LOW/MID/HIGH bands
      specs      actions    ← Audio Specs stretches level with the Fix Queue
    .oz-rail / .oz-center class names kept (only referenced in these scoped
    rules) — grid-area does the placement. */
 #eq.oz-mixcheck{--card:#1b1d20;--card-bd:#2c3034;--inset:#16181b;--inset2:#101214;--ink:#e8ebed;--muted:#9aa0a6;--faint:#6b7280;--purple:#a78bfa;--accent-a:#2fa1e6;--accent-b:#a557f4;--grad:linear-gradient(90deg,var(--accent-a),var(--accent-b));--grad-ink:#0d1211;--green:#34d399;--amber:#fbbf24;--red:#f87171;--mono:"JetBrains Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;display:none;grid-template-columns:var(--mc-rail-w) minmax(0,1fr);gap:var(--gutter);align-items:start;
-  grid-template-areas:"head head" "banner banner" "transport transport" "specs analyser" "specs actions"}
+  grid-template-areas:"head head" "transport transport" "specs analyser" "specs actions"}
 #eq.oz-mixcheck.active{display:grid} /* higher specificity than .panel{display:none} needs an explicit .active-gated override, or MixCheck bleeds through on every tab */
 #eq.oz-mixcheck .oz-card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px}
 #eq.oz-mixcheck .oz-rail{grid-area:specs;align-self:stretch;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
@@ -1271,7 +1270,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
    .header-top on every other tab. It sits on the right of the title row,
    vertically centred against the 24px title. */
 #eq.oz-mixcheck .mc-head .header-actions{flex-wrap:wrap;justify-content:flex-end;flex-shrink:0}
-#eq.oz-mixcheck #refHopeBox{grid-area:banner}
 #eq.oz-mixcheck #mcTransport{grid-area:transport;padding:10px;border:1px solid var(--card-bd);background:var(--card);border-radius:10px} /* board item 18: padding 14->10 */
 #eq.oz-mixcheck #mcActions{grid-area:actions;min-width:0}
 /* R3 step 0: the head / actions wrappers collapse while empty so intermediate
@@ -1377,9 +1375,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #mcInput{display:flex;width:100%;flex-direction:column}
   #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) .mc-input-main{width:100%;justify-content:center}
   #eq.oz-mixcheck .mc-input-menu{left:0;right:0;min-width:0}
-  #eq.oz-mixcheck #refHopeBox.mc-banner{flex-wrap:wrap}
-  #eq.oz-mixcheck .mc-banner .mcb-body{flex:1 1 100%}
-  #eq.oz-mixcheck .mc-banner .mcb-fixes{white-space:normal;flex:0 0 auto;margin-top:6px}
 }
 .oz-card{background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px}
 .oz-meter-label{font-size:calc(var(--inv-text-scale, 1) * 8px);letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:3px}
@@ -1584,30 +1579,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .oz-hope-card{background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px;font-size:calc(var(--inv-text-scale, 1) * 12.5px);line-height:1.55}
 .oz-hope-card .oz-hope-kicker{font-size:calc(var(--inv-text-scale, 1) * 8px);letter-spacing:.16em;text-transform:uppercase;color:#a78bfa;font-weight:700}
 .oz-hope-card .tip-label{display:none} /* legacy .tip-box label — reference uses its own kicker span instead */
-#eq.oz-mixcheck #refHopeBox.oz-hope-card{margin:0}
-#eq.oz-mixcheck #refHopeBox.oz-hope-card #refHopeText{color:#c7ccd0}
-#eq.oz-mixcheck #refHopeBox.oz-hope-card #refHopeText strong{color:#f2f4f5}
-/* ── R3 step 3 (jules mockups/05, 2026-08-31) — analysis context banner ────
-   #refHopeBox restyled to .mc-banner: full-width row, blue->purple gradient
-   border via the padding-box / border-box two-layer technique off
-   --send-blue, weighted thicker down the left edge. The dismiss x is
-   session-only (no localStorage) — refLoadFile clears the dismissed flag so
-   the banner re-shows for each new file. #mcBannerFixes stays hidden until
-   Step 4's MC_FIXQUEUE populates it. No orange here — the mockup's banner has
-   none; the one #f97316 is reserved for the Fix Queue graphic. */
-#eq.oz-mixcheck #refHopeBox.mc-banner{
-  display:flex;align-items:center;gap:11px;
-  border:1px solid transparent;border-left:3px solid transparent;border-radius:10px;padding:9px;
-  background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;
-  font-size:calc(var(--inv-text-scale, 1) * 12.5px);line-height:1.4;color:#c7ccd0} /* board item 18: padding 14->9, align-items center, line-height 1.5->1.4 (shrinks downward — item 4b safe) */
-#eq.oz-mixcheck .mc-banner .mcb-ico{width:15px;height:15px;flex-shrink:0;margin-top:0;color:#a78bfa} /* board item 18: 18->15, fits the tighter line */
-#eq.oz-mixcheck .mcb-body{flex:1;min-width:0;font-size:calc(var(--inv-text-scale, 1) * 12.5px);color:#c7ccd0}
-#eq.oz-mixcheck .mcb-body strong,#eq.oz-mixcheck .mcb-body b{color:#f2f4f5}
-#eq.oz-mixcheck .mcb-fixes{color:#2fa1e6;font-weight:600;cursor:pointer;white-space:nowrap;font-size:calc(var(--inv-text-scale, 1) * 12px)}
-#eq.oz-mixcheck .mcb-fixes:hover{text-decoration:underline}
-#eq.oz-mixcheck .mcb-fixes[hidden]{display:none}
-#eq.oz-mixcheck .mcb-x{background:transparent;border:0;color:var(--faint);cursor:pointer;font-size:calc(var(--inv-text-scale, 1) * 15px);line-height:1;flex-shrink:0}
-#eq.oz-mixcheck .mcb-x:hover{color:#c7ccd0}
 #eq.oz-mixcheck .oz-center>.oz-spec-card{flex:1 1 auto;min-height:0}
 #eq.oz-mixcheck .oz-spec-card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px;display:flex;flex-direction:column}
 #eq.oz-mixcheck .oz-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px} /* board item 18: 10->8 */
@@ -2014,7 +1985,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   #hopeRail{position:fixed;top:0;right:0;bottom:0;width:min(86vw,360px);max-height:100vh;display:none}
   body.rail-open #hopeRail{display:flex}
   #eq.oz-mixcheck{grid-template-columns:minmax(0,1fr);
-    grid-template-areas:"head" "banner" "transport" "specs" "analyser" "actions"}
+    grid-template-areas:"head" "transport" "specs" "analyser" "actions"}
   #eq.oz-mixcheck .oz-rail{align-self:auto}
   .tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:18px;height:18px}
   .tabs.oz-tabstrip .tab.oz-tab .tab-label{font-size:calc(var(--inv-text-scale, 1) * 14px)}
@@ -2138,7 +2109,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-head .ttl{font-size:calc(var(--inv-text-scale, 1) * 24px);font-weight:700;letter-spacing:-.2px}
 #eq.oz-mixcheck .mc-head .ttl em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 #eq.oz-mixcheck .mc-head .primary{background:var(--grad);color:var(--grad-ink);border:0;border-radius:8px;padding:9px 15px;font: 700 calc(var(--inv-text-scale, 1) * 12px) Inter,sans-serif;display:flex;align-items:center;gap:7px}
-#eq.oz-mixcheck .mc-banner.card{border-left:3px solid transparent;background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;border:1px solid transparent;border-radius:8px;padding:14px}
 #eq.oz-mixcheck .specs{grid-area:specs;display:flex;flex-direction:column;gap:var(--gutter);min-width:0;align-self:stretch}
 #eq.oz-mixcheck .specs>.card{flex:1;display:flex;flex-direction:column}
 #eq.oz-mixcheck .kick{font: 800 calc(var(--inv-text-scale, 1) * 8px) Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e}
@@ -3548,19 +3518,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
       <div class="mc-ttl ttl"><span id="mcTitle">Mix Check</span><em class="ext"></em></div>
       <div class="mc-sub sub" id="mcSub" hidden></div>
     </div>
-  </div>
-
-  <!-- R3 grid-area:banner — analysis-ready context banner (jules mockups/05
-       .mc-banner). Restyled #refHopeBox, lifted out of .oz-center to be a
-       direct grid child. #refHopeText stays the headline target (refLoadFile /
-       refLiveStop write into it). #mcBannerFixes is populated by Step 4's
-       MC_FIXQUEUE — hidden until then. The x is a session-only dismiss (no
-       localStorage); refLoadFile clears the dismissed flag. -->
-  <div class="tip-box oz-hope-card mc-banner" id="refHopeBox" style="display:none">
-    <svg class="mcb-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
-    <div class="mcb-body"><span id="refHopeText">Analysing…</span></div>
-    <span id="mcBannerFixes" class="mcb-fixes" role="button" tabindex="0" hidden></span>
-    <button type="button" class="mcb-x" id="mcBannerX" aria-label="Dismiss analysis banner" title="Dismiss">&times;</button>
   </div>
 
   <!-- R3 grid-area:transport — in-flow transport + arrangement waveform. The real
@@ -4986,7 +4943,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-12.07';
+const AIMM_BUILD = '2026-11-12.08';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -12480,7 +12437,7 @@ Kev drops a rendered WAV of his mix/master here and the app analyses it. Nothing
 • Spectral Balance analyser (centre/right) — the file's whole-track average spectrum drawn against the selected target. Flat starts as a 0 dB line; saved Spotify targets can be selected for comparison. The LOW / LOW-MID / MID / HIGH deviation meters read the file's energy vs the selected target.
 • Fix Queue (#mcActions, centre column) — a RANKED list of concrete fixes derived from the measured analysis vs the active corridor. See THE FIX QUEUE below.
 • Transport + waveform (#mcWave) — play / skip / ±10s / stop, elapsed / duration. The waveform is rendered min/max peak bars from the decoded buffer: a blue→purple (--send-blue) wash covers the played span, the rest is grey, a thin light playhead advances left→right during playback, click or drag to seek. (No section labels — real arrangement detection is a later feature.)
-• When analysis finishes the app also drops a one-line analysis banner on the tab and you post your spoken read into the chat (see MIX CHECK AWARENESS).
+• When analysis finishes, post your spoken read into the chat (see MIX CHECK AWARENESS).
 
 THE FIX QUEUE (window.mcFixQueue — this is a live object you can read)
 After analysis the app builds a ranked queue of fixes. Each item is: an id ("#01", "#02", …), a measured title + why (the REAL deviation — e.g. "Low end +8.9 dB vs corridor (20–120 Hz)", "True peak -0.4 dBTP — 0.6 dB over the -1.0 ceiling"), a move (the concrete corrective recommendation, grounded in Kev's YouTube reference library — per song, not a template), a focus band, an impact (low/med/high) and a confidence. The panel shows ONE "Up next" card at a time with an "N / M done" progress bar, a "✓ Mark done" button, a "Show all queued (N)" expander, a dismiss ×, and an "Ask Hope about this" button that sends the selected fix's measured reason and recommended move straight to Hope for an explanation. The current fix ALSO renders as a card in your chat transcript. Kev advances a fix by clicking the card's "✓ Mark done" (or its dismiss × to skip) OR by telling you he's handled it, in which case YOU call mark_fix_applied. Either way the next fix moves up, its card re-renders in the chat, and you present it — production-line style until the queue is clear.
@@ -12622,7 +12579,7 @@ MIX CHECK TAB (tab id eq) — full inventory
 • Audio Specs column — measured metric rows (Integrated LUFS, Short-term LUFS, True Peak, PLR / DR, correlation, crest, sample rate, bit depth, duration) + the CLASSIFIED block (Genre, Tempo, Key, then Subgenre / Production style / Energy / Mood / Dissonance as "with full analysis" placeholders until the analyst phase).
 • Spectral Balance analyser — the file's average spectrum vs Flat (a 0 dB line) or a selected saved Spotify target, with LOW / LOW-MID / MID / HIGH deviation meters.
 • Fix Queue (#mcActions) — one "Up next" card (id, measured title + why, grounded move, FOCUS band · IMP · CONF), an "N / M done" progress bar, a "✓ Mark done" button, "Show all queued (N)" expander, dismiss ×, "Ask Hope about this" (sends the selected fix details directly to Hope for an explanation). The same current fix also renders as a card in Hope's chat transcript. Advancing: the card's "✓ Mark done" button, or Hope's mark_fix_applied tool once Kev says he's handled it.
-• On analysis complete: a one-line analysis banner on the tab + Hope's spoken read posted into the chat.
+• On analysis complete: Hope's spoken read is posted into the chat.
 
 HOPE'S CHAT (persistent rail) — full inventory (NOT a tab — docked on every tab; retired as a standalone "Conversation" tab 2026-09-05)
 Status strip top: status dot + label ("Idle" / "Connecting…" / "Live") + timer "0:42" + cost chip "$0.06" once a call is live.
@@ -23469,16 +23426,6 @@ csInit('csPlatform');
   const _mcKeyCache=new WeakMap();
   let _mcKeyGen=0;
 
-  // ── R3 step 3: analysis context banner (.mc-banner) ──────────────────────
-  // Session-only dismiss flag — no localStorage. refLoadFile / refLiveStop
-  // clear it so the banner re-shows for each new analysis. mcBannerFixesReset
-  // blanks + hides the #mcBannerFixes span (Step 4's MC_FIXQUEUE.onChange is
-  // the only thing that fills it).
-  let _mcBannerDismissed=false;
-  function mcBannerFixesReset(){
-    const f=document.getElementById('mcBannerFixes');
-    if(f){ f.textContent=''; f.hidden=true; }
-  }
   const MC_KS_MAJOR=[6.35,2.23,3.48,2.33,4.38,4.09,2.52,5.19,2.39,3.66,2.29,2.88];
   const MC_KS_MINOR=[6.33,2.68,3.52,5.38,2.60,3.53,2.54,4.75,3.98,2.69,3.34,3.17];
   const MC_NOTE_NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -23889,7 +23836,7 @@ csInit('csPlatform');
       pruneSets();
       persist(); // write back the pruned sets so localStorage doesn't keep dead ids
       _open=false;
-      render(); syncBanner();
+      render();
     }
     function recompute(rOverride){
       rev++;
@@ -23898,7 +23845,7 @@ csInit('csPlatform');
       items=build(r);
       pruneSets();
       persist();
-      render(); syncBanner();
+      render();
     }
 
     // ── state transitions (fire onChange) ─────────────────────────────────
@@ -23998,16 +23945,6 @@ csInit('csPlatform');
       try{ ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length); }catch(_){}
       try{ ta.dispatchEvent(new Event('input',{bubbles:true})); }catch(_){}
       aichatSend({noTools:true});
-    }
-
-    // ── #mcBannerFixes (the Step 3 span) sync ─────────────────────────────
-    function syncBanner(){
-      const f=document.getElementById('mcBannerFixes');
-      if(!f) return;
-      const p=pending();
-      if(!p.length){ f.textContent=''; f.hidden=true; return; }
-      f.textContent=p.length+' action item'+(p.length===1?'':'s')+' · top fix: '+p[0].title+' →';
-      f.hidden=false;
     }
 
     // ── render the Fix Queue card into #mcActions ─────────────────────────
@@ -24122,9 +24059,6 @@ csInit('csPlatform');
         });
       });
     }
-
-    // banner sync is driven by the documented onChange path for applied/dismiss
-    onChange(syncBanner);
 
     return { derive, recompute, onChange, list:publicList, current, markApplied, dismiss,
              total:()=>items.length, appliedCount:()=>applied.size, breakdownData };
@@ -24683,15 +24617,7 @@ csInit('csPlatform');
       refPopulate(li,lst,tp,dr,0,0,1);
       mcEvalSignals(refLastAnalysis); // plain threshold flags, no DOM
       MC_SPECS.populate(refLastAnalysis); // live capture: measured rows partial, Tempo/Key → unavailable (no buffer)
-      // R3 step 3: clear the session dismiss + blank the fixes span BEFORE
-      // step 4 repopulates it via MC_FIXQUEUE.recompute → syncBanner.
-      _mcBannerDismissed=false; mcBannerFixesReset();
       MC_FIXQUEUE.recompute(refLastAnalysis); // R3 step 4: re-rank the Fix Queue off the locked live capture
-      const hb=document.getElementById('refHopeBox'),ht=document.getElementById('refHopeText');
-      if(hb&&ht){
-        ht.innerHTML='Live capture locked: <strong>'+li.toFixed(1)+' LUFS</strong> integrated, <strong>'+tp.toFixed(1)+' dBTP</strong> max, PLR '+dr.toFixed(1)+'. (Stereo balance / correlation / band pills need a file analysis — live mode meters loudness + peak.)';
-        hb.style.display='flex'; // R3 step 3: new analysis re-shows the banner
-      }
     }
     const bar=document.getElementById('refLiveBar');if(bar)bar.classList.remove('live');
     if(referenceOnly){
@@ -25358,7 +25284,6 @@ csInit('csPlatform');
     refBuffer=null;refAnalyser=null;refSource=null;refAuditionBuffers=[];refSources=[];refStartOffset=0;refPlaying=false;refStopped=true;refSpecPoints=null;
     MC_SPECS.reset();try{MC_FIXQUEUE.derive(null,null,null);}catch(_){}
     const rm=document.getElementById('refMeters');if(rm)rm.classList.remove('visible');
-    const hb=document.getElementById('refHopeBox');if(hb)hb.style.display='none';
     refSetEl('refTimeElapsed','0:00');refSetEl('refTimeDuration','0:00');
     MC_WAVE.clear();cancelAnimationFrame(refRaf);
     const canvas=document.getElementById('refSpecCanvas');if(canvas){const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);}
@@ -25467,9 +25392,6 @@ csInit('csPlatform');
     refPopulate(r.li,r.lst,r.tp,r.dr,r.sb,r.ob,r.correlation);
     mcEvalSignals(r); // plain threshold flags, no DOM
     MC_SPECS.populate(r); // Audio Specs metric rows + CLASSIFIED block
-    // R3 step 3: a new file clears the session dismiss + blanks the fixes span
-    // BEFORE step 4 repopulates it (MC_FIXQUEUE.derive → syncBanner just below).
-    _mcBannerDismissed=false; mcBannerFixesReset();
     // R3 step 4: build the ranked Fix Queue from this analysis. refSpecPoints is
     // already set (the BLOCKER-4 reorder above) so the per-band corridor deltas
     // resolve. The signature keys applied/dismissed persistence to THIS file.
@@ -25477,12 +25399,6 @@ csInit('csPlatform');
       const fqSig=meta.name+'|'+meta.size+'|'+meta.lastModified+'|'+refBuffer.duration.toFixed(2);
       MC_FIXQUEUE.derive(r,refSpecPoints,fqSig);
     }catch(e){ console.warn('[MC_FIXQUEUE] derive failed',e); }
-    const hb=document.getElementById('refHopeBox'),ht=document.getElementById('refHopeText');
-    if(hb&&ht){
-      const tpOk=r.tp<=-1.0,liOk=r.li>=-9&&r.li<=-7;
-      ht.innerHTML='Your mix is at <strong>'+r.li.toFixed(1)+' LUFS</strong> integrated. '+(liOk?'Right in the Trap zone. ':r.li>-8?'Slightly hot against the -8 target. ':'A touch quiet — you can push harder. ')+(tpOk?'True peak at <strong>'+r.tp.toFixed(1)+' dBTP</strong> — within streaming ceilings. ':'True peak at <strong>'+r.tp.toFixed(1)+' dBTP</strong> exceeds the -1.0 dBTP streaming ceiling — pull your limiter before export. ')+'Dynamic range is <strong>'+r.dr.toFixed(1)+' DR</strong> — '+(r.dr>=7?'healthy for the genre.':'a little compressed.');
-      hb.style.display='flex'; // layout is flex, not block
-    }
     refSetEl('refSpecStatus','idle · press play');
     document.getElementById('refSpecStatus').className='ref-spec-status-idle';
     mcFillWaveBars();
@@ -25634,12 +25550,11 @@ csInit('csPlatform');
     stemEndSession();
     refBuffer=null;refAnalyser=null;refSource=null;refStartOffset=0;refPlaying=false;refStopped=true;refSpecPoints=null;
     MC_SPECS.reset(); // blank the Audio Specs rows; Genre keeps mirroring STATE.genre
-    try{ MC_FIXQUEUE.derive(null,null,null); }catch(_){} // R3 step 4: empty the Fix Queue + its banner span
+    try{ MC_FIXQUEUE.derive(null,null,null); }catch(_){} // R3 step 4: empty the Fix Queue
     document.getElementById('refDzEmpty').style.display='';
     document.getElementById('refDzLoaded').classList.remove('visible');
     document.getElementById('refDropZone').classList.remove('has-file');
     {const rm=document.getElementById('refMeters');if(rm)rm.classList.remove('visible');}
-    const hb=document.getElementById('refHopeBox');if(hb)hb.style.display='none';
     refSetEl('refTimeElapsed','0:00');refSetEl('refTimeDuration','0:00');
     MC_WAVE.clear(); // step 5: wipe the waveform canvas + cached peaks/markers
     cancelAnimationFrame(refRaf);
@@ -25758,39 +25673,6 @@ csInit('csPlatform');
       el.addEventListener('drop',e=>{if(e.defaultPrevented)return;e.preventDefault();stemRouteFiles(e.dataTransfer&&e.dataTransfer.files);});
     });
   })();
-
-  // R3 step 3: analysis context banner (.mc-banner) wiring —
-  //  · the x hides the banner for this session only (no localStorage); the
-  //    _mcBannerDismissed flag is cleared by refLoadFile / refLiveStop.
-  //  · #mcBannerFixes (populated by Step 4's MC_FIXQUEUE) scrolls #mcActions
-  //    into view, expanding it first if collapsed.
-  (function wireMcBanner(){
-    const x=document.getElementById('mcBannerX');
-    const fixes=document.getElementById('mcBannerFixes');
-    if(!x||!fixes){ setTimeout(wireMcBanner,50); return; }
-    x.addEventListener('click',()=>{
-      const hb=document.getElementById('refHopeBox');
-      if(hb) hb.style.display='none';
-      _mcBannerDismissed=true;
-    });
-    function jumpToActions(){
-      const a=document.getElementById('mcActions');
-      if(!a) return;
-      // Step 4 owns the real collapse state; clear any collapsed marker so the
-      // queue is visible before we scroll to it.
-      a.classList.remove('mc-collapsed');
-      if(a.hasAttribute('hidden')) a.removeAttribute('hidden');
-      a.scrollIntoView({behavior:'smooth',block:'nearest'});
-    }
-    fixes.addEventListener('click',jumpToActions);
-    fixes.addEventListener('keydown',e=>{
-      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); jumpToActions(); }
-    });
-  })();
-  // R3 step 4: MC_FIXQUEUE keeps #mcBannerFixes in sync — filled with
-  // "N action items · top fix: <title> →" on every derive/recompute and via the
-  // MC_FIXQUEUE.onChange(syncBanner) subscription on markApplied/dismiss; hidden
-  // again whenever the pending queue is empty.
 
   // R3 step 1: panel-header "Drop / browse WAV ▾" split-button. Body click is
   // wired inline (opens the file picker); the caret opens a 3-item menu —
