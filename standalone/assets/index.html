@@ -2231,73 +2231,84 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-stem-status{font: calc(var(--inv-text-scale, 1) * 10px) var(--mono);color:#9299a1;padding:0 2px}
 #eq.oz-mixcheck .mc-stem-rows{display:flex;flex-direction:column;gap:8px;background:transparent;overflow:visible}
 #eq.oz-mixcheck .mc-stem-row{min-width:0;display:grid;grid-template-columns:minmax(180px,230px) minmax(0,1fr);align-items:stretch;gap:12px;padding:10px 12px;background:linear-gradient(145deg,#171c24,#11161d);border:1px solid rgba(41,49,58,.48);border-radius:15px;cursor:pointer;transition:border-color .18s ease,background .18s ease,box-shadow .18s ease}
-#eq.oz-mixcheck .mc-stem-row[data-audition-selected="true"]{border-color:#3b789a;background:linear-gradient(105deg,rgba(47,161,230,.12),rgba(165,87,244,.12));box-shadow:inset 0 0 0 1px rgba(76,174,218,.12)}
-#eq.oz-mixcheck .mc-stem-row:focus-visible{outline:2px solid #a557f4;outline-offset:2px}
+#eq.oz-mixcheck .mc-stem-row[data-audition-selected="true"]{border-color:#262a2f;background:#1b1d20;box-shadow:none}
+#eq.oz-mixcheck .mc-stem-row:focus-visible{outline:2px solid #262a2f;outline-offset:2px}
 #eq.oz-mixcheck .mc-stem-info{min-width:0;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:minmax(0,1fr) auto;align-items:center;column-gap:9px;row-gap:6px}
 #eq.oz-mixcheck .mc-stem-identity{display:flex;align-items:center;gap:10px;min-width:0}
-#eq.oz-mixcheck .mc-stem-icon{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:50%;font:700 14px var(--mono);background:#1d2a35;color:#6bd5f6;box-shadow:0 0 18px rgba(47,161,230,.14)}
-#eq.oz-mixcheck .mc-stem-row[data-role="vocals"] .mc-stem-icon{color:#ffbd76;background:#30271f;box-shadow:0 0 18px rgba(255,177,90,.14)}
-#eq.oz-mixcheck .mc-stem-row[data-role="drums"] .mc-stem-icon{color:#6fe0ff;background:#1c2d35}
-#eq.oz-mixcheck .mc-stem-row[data-role="bass"] .mc-stem-icon{color:#71e5b9;background:#1b302c}
-#eq.oz-mixcheck .mc-stem-row[data-role="guitar"] .mc-stem-icon{color:#9baaff;background:#22283a}
-#eq.oz-mixcheck .mc-stem-row[data-role="keys"] .mc-stem-icon{color:#d0a1ff;background:#2a2238}
+#eq.oz-mixcheck .mc-stem-icon{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:8px;font:700 14px var(--mono);background:color-mix(in srgb,var(--stem-color,#f472b6) 18%,transparent);color:var(--stem-color,#f472b6);box-shadow:none}
 #eq.oz-mixcheck .mc-stem-name-wrap{display:grid;gap:4px;min-width:0}
 #eq.oz-mixcheck .mc-stem-label{font: 700 calc(var(--inv-text-scale, 1) * 11px) Inter,-apple-system,sans-serif;color:#e7e9eb;white-space:nowrap}
 #eq.oz-mixcheck .mc-stem-ref{font: 700 calc(var(--inv-text-scale, 1) * 8px) var(--mono);letter-spacing:.08em;color:#f97316;border:1px solid #8b431c;border-radius:3px;padding:2px 4px}
 #eq.oz-mixcheck .mc-stem-source{font: calc(var(--inv-text-scale, 1) * 9px) var(--mono);color:#8793a0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 #eq.oz-mixcheck .mc-stem-controls{display:flex;align-items:center;gap:5px}
 #eq.oz-mixcheck .mc-stem-toggle,#eq.oz-mixcheck .mc-stem-remove{width:30px;height:30px;flex:0 0 auto;display:grid;place-items:center;border:1px solid #394653;border-radius:9px;background:#171e27;color:#aebbd0;font:700 12px var(--mono);cursor:pointer;transition:background .15s,border-color .15s,color .15s,box-shadow .15s}
-#eq.oz-mixcheck .mc-stem-toggle[aria-pressed="true"]{color:#0d1520;background:linear-gradient(135deg,#36b5e8,#a855f7);border-color:#72c6ed;box-shadow:0 0 15px rgba(89,146,247,.38)}
-#eq.oz-mixcheck .mc-stem-mute[aria-pressed="true"]{color:#fff;background:#db526a;border-color:#ff8292;box-shadow:0 0 13px rgba(219,82,106,.36)}
+#eq.oz-mixcheck .mc-stem-toggle[aria-pressed="true"]{color:#e5e7eb;background:#262a2f;border-color:#262a2f;box-shadow:none}
+#eq.oz-mixcheck .mc-stem-mute[aria-pressed="true"]{color:#06201c;background:#e5e7eb;border-color:#e5e7eb;box-shadow:none}
 #eq.oz-mixcheck .mc-stem-remove{font:16px/1 Inter,sans-serif;color:#aeb4ba;padding:0}
 #eq.oz-mixcheck .mc-stem-remove:hover{color:#fff;border-color:#f97316}
 #eq.oz-mixcheck .mc-stem-message{grid-column:1/-1;font: calc(var(--inv-text-scale, 1) * 9px) Inter,-apple-system,sans-serif;color:#d49a57;line-height:1.4}
 #eq.oz-mixcheck .mc-stem-row[data-status="error"] .mc-stem-message{color:#e08282}
 #eq.oz-mixcheck .mc-stem-wave-box{height:62px;min-width:0;align-self:center;position:relative;overflow:hidden;background:#0f141a;border:1px solid rgba(39,49,60,.42);border-radius:12px;margin:0;padding:4px}
 #eq.oz-mixcheck .mc-stem-wave{position:absolute;inset:0;width:100%;height:100%;display:block}
-#eq.oz-mixcheck .mc-stem-row[data-muted="true"] .mc-stem-wave{opacity:.42}
-#eq.oz-mixcheck .mc-stem-row[data-solo="true"] .mc-stem-wave{filter:drop-shadow(0 0 3px rgba(89,173,235,.2))}
+#eq.oz-mixcheck .mc-stem-row[data-muted="true"]{opacity:.42}
 #eq.oz-mixcheck .mc-stem-row[data-status="pending"],#eq.oz-mixcheck .mc-stem-row[data-status="mismatch"],#eq.oz-mixcheck .mc-stem-row[data-status="error"]{grid-template-columns:1fr}
 #eq.oz-mixcheck .mc-stem-row[data-status="pending"] .mc-stem-info,#eq.oz-mixcheck .mc-stem-row[data-status="mismatch"] .mc-stem-info,#eq.oz-mixcheck .mc-stem-row[data-status="error"] .mc-stem-info{grid-template-columns:minmax(0,1fr) auto}
 @media(max-width:720px){#eq.oz-mixcheck .mc-stem-row{grid-template-columns:1fr;gap:8px}#eq.oz-mixcheck .mc-stem-wave-box{height:54px}#eq.oz-mixcheck .mc-stem-icon{width:32px;height:32px;flex-basis:32px}}
 #eq.oz-mixcheck .mc-stem-input-notice{margin-top:7px;color:#e08282;font: calc(var(--inv-text-scale, 1) * 10px) Inter,-apple-system,sans-serif}
 
-/* Stem-player redesign: new transport and selection chrome around the existing
-   waveform canvas. Keep .mc-stem-wave-box sizing, canvas drawing and colours intact. */
-#eq.oz-mixcheck #mcStemStack{gap:12px;padding:18px;background:linear-gradient(145deg,#101827,#0c1420);border:1px solid #293648;border-radius:22px}
-#eq.oz-mixcheck #mcStemStack .mc-stem-player-head{display:flex;align-items:center;gap:16px;min-width:0;padding:2px 3px 8px}
-#eq.oz-mixcheck #mcStemStack .mc-stem-big-play{width:58px;height:58px;flex:0 0 58px;display:grid;place-items:center;border:0;border-radius:50%;background:#4fc3e8;color:#09131d;box-shadow:0 0 24px rgba(79,195,232,.28);cursor:pointer;transition:transform .16s,box-shadow .16s}
-#eq.oz-mixcheck #mcStemStack .mc-stem-big-play:hover{background:#4fc3e8;transform:scale(1.04);box-shadow:0 0 30px rgba(79,195,232,.4)}
-#eq.oz-mixcheck #mcStemStack .mc-stem-big-play:focus-visible{outline:3px solid #d7efff;outline-offset:3px}
-#eq.oz-mixcheck #mcStemStack .mc-stem-big-play svg{width:40px;height:40px}
-#eq.oz-mixcheck #mcStemStack .mc-stem-track-meta{display:grid;gap:6px;min-width:0;flex:1}
-#eq.oz-mixcheck #mcStemStack .mc-stem-track-meta>strong{font:750 calc(var(--inv-text-scale, 1) * 22px)/1.15 Inter,-apple-system,sans-serif;color:#edf4fb;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#eq.oz-mixcheck #mcStemStack .mc-stem-track-facts{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#a6b6ca;font:500 calc(var(--inv-text-scale, 1) * 12px) Inter,-apple-system,sans-serif}
-#eq.oz-mixcheck #mcStemStack .mc-stem-fact-pill{padding:4px 10px;border:1px solid #344154;border-radius:999px;background:rgba(255,255,255,.035);color:#d4dfeb}
-#eq.oz-mixcheck #mcStemStack .mc-stem-clock{display:flex;align-items:center;gap:6px;flex:0 0 auto;color:#9fb0c6;font:500 calc(var(--inv-text-scale, 1) * 14px) var(--mono)}
-#eq.oz-mixcheck #mcStemStack .mc-stem-clock strong{font-size:calc(var(--inv-text-scale, 1) * 17px);font-weight:600;color:#e7eff8}
-#eq.oz-mixcheck #mcStemStack .mc-stem-modes{display:flex;gap:8px;flex-wrap:wrap;padding:2px 0 4px}
-#eq.oz-mixcheck #mcStemStack .mc-stem-modes button{min-height:38px;padding:8px 15px;border:1px solid transparent;border-radius:999px;background:transparent;color:#71787e;font:600 calc(var(--inv-text-scale, 1) * 12px) Inter,-apple-system,sans-serif;cursor:pointer;transition:background 180ms ease,border-color 180ms ease,color 180ms ease,box-shadow 180ms ease,transform 180ms ease}
+/* Stem-player panel and row presentation around the existing controls and waveform canvas. */
+#eq.oz-mixcheck #mcStemStack{gap:0;padding:18px 18px 12px;background:#15181b;border:1px solid #262a2f;border-radius:14px}
+#eq.oz-mixcheck #mcStemStack .mc-stem-player-head{display:flex;align-items:center;gap:14px;min-width:0;flex-wrap:wrap;padding:0}
+#eq.oz-mixcheck #mcStemStack .mc-stem-big-play{width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;border:0;border-radius:50%;background:#2dd4bf;color:#06201c;box-shadow:none;cursor:pointer;transition:transform .16s}
+#eq.oz-mixcheck #mcStemStack .mc-stem-big-play:hover{background:#2dd4bf;transform:scale(1.04);box-shadow:none}
+#eq.oz-mixcheck #mcStemStack .mc-stem-big-play:focus-visible{outline:3px solid #262a2f;outline-offset:3px}
+#eq.oz-mixcheck #mcStemStack .mc-stem-big-play svg{width:20px;height:20px}
+#eq.oz-mixcheck #mcStemStack .mc-stem-track-meta{display:grid;gap:4px;min-width:0;flex:1 1 180px}
+#eq.oz-mixcheck #mcStemStack .mc-stem-track-meta>strong{font:700 calc(var(--inv-text-scale, 1) * 20px)/1.15 Inter,-apple-system,sans-serif;color:#eef1f4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#eq.oz-mixcheck #mcStemStack .mc-stem-track-facts{display:flex;align-items:center;gap:0;flex-wrap:nowrap;overflow:hidden;white-space:nowrap;color:#9aa0a6;font:500 calc(var(--inv-text-scale, 1) * 12px) Inter,-apple-system,sans-serif;font-variant-numeric:tabular-nums}
+#eq.oz-mixcheck #mcStemStack .mc-stem-track-facts>span+span::before{content:' · ';white-space:pre}
+#eq.oz-mixcheck #mcStemStack .mc-stem-clock{display:flex;align-items:center;gap:6px;flex:0 0 auto;color:#6b7280;font:500 calc(var(--inv-text-scale, 1) * 14px) var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+#eq.oz-mixcheck #mcStemStack .mc-stem-clock strong{font-size:calc(var(--inv-text-scale, 1) * 20px);font-weight:700;color:#eef1f4}
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes{display:flex;gap:8px;flex-wrap:wrap;padding:0;margin:16px 0 14px}
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes button{min-height:34px;padding:7px 14px;border:1px solid #262a2f;border-radius:999px;background:#1b1d20;color:#9aa0a6;font:600 calc(var(--inv-text-scale, 1) * 13px) Inter,-apple-system,sans-serif;cursor:pointer;transition:background 180ms ease,border-color 180ms ease,color 180ms ease}
 @media (hover:hover) and (pointer:fine){
-  #eq.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover{background:transparent;color:#d6e2eb;transform:translateY(-2px);box-shadow:0 0 0 1px rgba(79,195,232,.28),0 0 14px rgba(79,195,232,.40),0 0 24px rgba(201,161,90,.28)}
+  #eq.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover{background:#1b1d20;color:#eef1f4;border-color:#262a2f;transform:none;box-shadow:none}
 }
-#eq.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"]{border:1.5px solid transparent;background:radial-gradient(ellipse 90% 160% at 0% 0%,rgba(74,140,160,.36),transparent 75%),radial-gradient(ellipse 80% 150% at 100% 0%,rgba(201,161,90,.26),transparent 72%),linear-gradient(180deg,#131d25 0%,#0a1017 100%) padding-box,linear-gradient(135deg,#2d5f86 0%,#244c6e 45%,#c9a15a 100%) border-box;color:var(--mixing-state-ink);font-weight:700;box-shadow:none}
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"]{border-color:#2dd4bf;background:#2dd4bf;color:#06201c;font-weight:700;box-shadow:none}
 @media (prefers-reduced-motion:reduce){
   #eq.oz-mixcheck #mcStemStack .mc-stem-modes button{transition:none}
 }
 @media (prefers-reduced-motion:reduce) and (hover:hover) and (pointer:fine){#eq.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover{transform:none}}
-#eq.oz-mixcheck #mcStemStack .mc-stem-status{padding:0 3px;color:#97a7ba}
-#eq.oz-mixcheck #mcStemStack .mc-stem-icon svg{width:21px;height:21px}
-#eq.oz-mixcheck #mcStemStack .mc-stem-solo[aria-pressed="true"]{color:#082016;background:#68e1a7;border-color:#9cf1c8;box-shadow:0 0 14px rgba(87,223,160,.34)}
-#eq.oz-mixcheck #mcStemStack .mc-stem-mute[aria-pressed="true"]{color:#fff;background:#dc5269;border-color:#ff9ba7;box-shadow:0 0 14px rgba(219,82,106,.36)}
-#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-muted="true"] .mc-stem-mute{border-color:#e96c7e}
+#eq.oz-mixcheck #mcStemStack .mc-stem-status{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+#eq.oz-mixcheck #mcStemStack .mc-stem-rows{display:grid;gap:8px}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row{--stem-color:#f472b6;grid-template-columns:minmax(0,132px) minmax(0,1fr) auto;align-items:center;gap:12px;padding:8px 10px;background:#1b1d20;border:1px solid #262a2f;border-left:3px solid var(--stem-color);border-radius:10px;box-shadow:none}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="vocals"]{--stem-color:#facc15}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="drums"]{--stem-color:#f87171}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="bass"]{--stem-color:#60a5fa}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="guitar"]{--stem-color:#4ade80}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="keys"]{--stem-color:#a78bfa}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-muted="true"]{opacity:.42}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-audition-selected="true"]{border-color:#262a2f;border-left-color:var(--stem-color);background:#1b1d20;box-shadow:none}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row:focus-visible{outline-color:#262a2f}
+#eq.oz-mixcheck #mcStemStack .mc-stem-info{display:contents}
+#eq.oz-mixcheck #mcStemStack .mc-stem-identity{grid-column:1;gap:10px}
+#eq.oz-mixcheck #mcStemStack .mc-stem-icon{width:30px;height:30px;flex:0 0 30px;border-radius:8px;background:color-mix(in srgb,var(--stem-color) 18%,transparent);color:var(--stem-color);box-shadow:none}
+#eq.oz-mixcheck #mcStemStack .mc-stem-icon svg{width:16px;height:16px}
+#eq.oz-mixcheck #mcStemStack .mc-stem-label{font-size:calc(var(--inv-text-scale, 1) * 13px)}
+#eq.oz-mixcheck #mcStemStack .mc-stem-source{font:calc(var(--inv-text-scale, 1) * 11px) Inter,-apple-system,sans-serif;color:#9aa0a6}
+#eq.oz-mixcheck #mcStemStack .mc-stem-wave-box{grid-column:2;height:44px;align-self:center;padding:0;border:0;border-radius:0;background:transparent}
+#eq.oz-mixcheck #mcStemStack .mc-stem-wave{opacity:1}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-solo="true"] .mc-stem-wave{filter:none}
+#eq.oz-mixcheck #mcStemStack .mc-stem-controls{grid-column:3;gap:6px}
+#eq.oz-mixcheck #mcStemStack .mc-stem-toggle{width:30px;height:30px;border:1px solid #262a2f;border-radius:8px;background:#101214;color:#9aa0a6;box-shadow:none}
+#eq.oz-mixcheck #mcStemStack .mc-stem-solo[aria-pressed="true"]{color:#06201c;background:#2dd4bf;border-color:#2dd4bf;box-shadow:none}
+#eq.oz-mixcheck #mcStemStack .mc-stem-mute[aria-pressed="true"]{color:#06201c;background:#e5e7eb;border-color:#e5e7eb;box-shadow:none}
+#eq.oz-mixcheck #mcStemStack .mc-stem-message{grid-column:1/-1}
 #eq.oz-mixcheck #mcStemStack .mc-stem-ref{display:none}
 #eq.oz-mixcheck #mcStemStack:not([hidden]){order:2}
 #eq.oz-mixcheck #refDzLoaded:has(#mcStemStack:not([hidden]))>.mc-wave-box{display:none}
 #eq.oz-mixcheck #refDzLoaded:has(#mcStemStack:not([hidden])) #refFileName{display:none}
 #eq.oz-mixcheck #refDzLoaded:has(#mcStemStack:not([hidden])) #mcInput{display:none!important}
-#eq.oz-mixcheck #mcStemStack .mc-stem-row{border-color:transparent}
-#eq.oz-mixcheck #mcStemStack .mc-stem-wave-box{border:0}
 #eq.oz-mixcheck #mcTransport .mc-cta-sub{display:none}
 #eq.oz-mixcheck #refDzLoaded:has(#mcStemStack:not([hidden])) .ref-transport .tp-btns,#eq.oz-mixcheck #refDzLoaded:has(#mcStemStack:not([hidden])) .ref-transport .tp-vol,#eq.oz-mixcheck #refDzLoaded:has(#mcStemStack:not([hidden])) .ref-transport #refTimeElapsed,#eq.oz-mixcheck #refDzLoaded:has(#mcStemStack:not([hidden])) .ref-transport #refTimeDuration{display:none}
 #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible))> #refDropZone{min-height:300px;justify-content:center;padding:22px 26px;border:1.5px solid transparent;border-radius:24px;background:radial-gradient(ellipse at 50% 0%,rgba(47,161,230,.14),transparent 58%) padding-box,linear-gradient(145deg,#101827,#0b121e) padding-box,linear-gradient(135deg,rgba(79,195,232,.35) 0%,rgba(74,127,142,.35) 45%,rgba(201,161,90,.65) 100%) border-box}
@@ -2988,6 +2999,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]):hover:not(:disabled) svg *,
 #eq.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover:not(:disabled) svg,
 #eq.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover:not(:disabled) svg *{stroke:var(--pv-black) !important;fill:none !important}
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover:not(:disabled){background:#1b1d20 !important;border:1px solid #262a2f !important;color:#eef1f4 !important}
 
 /* ---- Selected top tab: NO ring around the pill, PREVIEW ONLY (Kevin: "this is the one i dont want"). Removes the app's box-shadow ring and any outline. ---- */
 .tabs.oz-tabstrip .tab.oz-tab.active,
@@ -3699,7 +3711,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <div class="mc-stem-stack" id="mcStemStack" hidden>
             <div class="mc-stem-player-head">
               <button class="mc-stem-big-play" id="mcStemBigPlay" type="button" onclick="refTogglePlay()" aria-label="Play stem mix" title="Play / pause stem mix"><svg id="mcStemBigPlaySvg" viewBox="5 3.5 15 17" aria-hidden="true"><path d="M8.2 5.2 L19.2 11.2 Q20 12 19.2 12.8 L8.2 18.8 Q7.2 19.3 7.2 18.1 L7.2 5.9 Q7.2 4.7 8.2 5.2 Z" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
-              <div class="mc-stem-track-meta"><strong id="mcStemTrackTitle">Stem mix</strong><div class="mc-stem-track-facts"><span id="mcStemSongName">Aligned stems</span><span class="mc-stem-fact-pill" id="mcStemKeyFact">Key · —</span><span class="mc-stem-fact-pill" id="mcStemTempoFact">— BPM</span></div></div>
+              <div class="mc-stem-track-meta"><strong id="mcStemTrackTitle">Stem mix</strong><div class="mc-stem-track-facts"><span id="mcStemKeyFact">Key · —</span><span id="mcStemTempoFact">— BPM</span><span id="mcStemSongName">0 aligned stems</span></div></div>
               <div class="mc-stem-clock"><strong id="mcStemElapsed">0:00</strong><span>/</span><span id="mcStemDuration">0:00</span></div>
             </div>
             <div class="mc-stem-modes" role="group" aria-label="Stem playback selection">
@@ -4974,7 +4986,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-12.02';
+const AIMM_BUILD = '2026-11-12.03';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -25181,7 +25193,7 @@ csInit('csPlatform');
     const dot=file.name.lastIndexOf('.'),base=dot>0?file.name.slice(0,dot):file.name;
     const m=base.match(/\(([^()]+)\)$/);
     const label=m?m[1].trim().charAt(0).toUpperCase()+m[1].trim().slice(1):base;
-    return /^bass$/i.test(label)?'808':label;
+    return /^bass$/i.test(label)?'Bass':label;
   }
   function stemValidFile(file){return /\.wav$/i.test(file.name);}
   function stemShowInputNotice(msg){const el=document.getElementById('mcStemInputNotice');if(el){el.textContent=msg||'';el.hidden=!msg;}}
@@ -25216,11 +25228,11 @@ csInit('csPlatform');
     document.querySelectorAll('#mcStemRows .mc-stem-wave').forEach(cv=>{
       const stem=stemSession.find(x=>x.key===cv.dataset.key);if(!stem||stem.status!=='ok'||!stem.peaks)return;
       const w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return;
-      const dpr=Math.max(1,window.devicePixelRatio||1),pixelWidth=Math.round(w*dpr),pixelHeight=Math.round(h*dpr);
+      const dpr=Math.max(3,window.devicePixelRatio||1),pixelWidth=Math.round(w*dpr),pixelHeight=Math.round(h*dpr);
       if(cv.width!==pixelWidth)cv.width=pixelWidth;if(cv.height!==pixelHeight)cv.height=pixelHeight;
-      const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);const mid=h/2,amp=h*.43;
+      const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);const mid=h/2,amp=h*.5;
       const bounds=activeByKey.get(stem.key),peak=bounds?.peak||0,visualGain=peak>1e-7?1/peak:1,activityFloor=bounds?.floor||Infinity;
-      const brandFade=g.createLinearGradient(0,0,Math.max(1,w),0);brandFade.addColorStop(0,'#4fc3e8');brandFade.addColorStop(.5,'#1a8fa3');brandFade.addColorStop(1,'#c9965a');
+      const stemColor='#ffffff';
       const columnCount=Math.max(1,pixelWidth),envelope=new Float32Array(columnCount);
       for(let x=0;x<columnCount;x++){
         const sourceBin=Math.min(cropEnd-1,cropStart+Math.floor(x/Math.max(1,columnCount-1)*visibleBins));
@@ -25237,9 +25249,13 @@ csInit('csPlatform');
       g.beginPath();g.moveTo(0,mid-smoothed[0]);
       for(let x=1;x<columnCount;x++)g.lineTo(columnX(x),mid-smoothed[x]);
       for(let x=columnCount-1;x>=0;x--)g.lineTo(columnX(x),mid+smoothed[x]);
-      g.closePath();g.fillStyle=brandFade;g.fill();
       const playedX=Math.max(0,Math.min(w,played*w));
-      if(playedX<w){g.fillStyle='rgba(15,20,26,0.55)';g.fillRect(playedX,0,w-playedX,h);}
+      g.closePath();g.fillStyle=stemColor;g.globalAlpha=.32;g.fill();
+      g.save();g.beginPath();g.rect(0,0,playedX,h);g.clip();g.globalAlpha=1;
+      g.beginPath();g.moveTo(0,mid-smoothed[0]);
+      for(let x=1;x<columnCount;x++)g.lineTo(columnX(x),mid-smoothed[x]);
+      for(let x=columnCount-1;x>=0;x--)g.lineTo(columnX(x),mid+smoothed[x]);
+      g.closePath();g.fill();g.restore();g.globalAlpha=1;
     });
     const rows=document.getElementById('mcStemRows');
     if(rows){
@@ -25279,8 +25295,8 @@ csInit('csPlatform');
   function stemPlayerSyncMetadata(){
     const title=document.getElementById('mcStemTrackTitle'),song=document.getElementById('mcStemSongName'),keyFact=document.getElementById('mcStemKeyFact'),tempoFact=document.getElementById('mcStemTempoFact');
     if(!title||!stemSession)return;
-    const playable=stemSession.filter(s=>s.status==='ok'),name=stemSongTitle||'Stem mix';
-    title.textContent=name;
+    const playable=stemSession.filter(s=>s.status==='ok');
+    title.textContent='Stem mix';
     song.textContent=playable.length+' aligned stem'+(playable.length===1?'':'s');
     const key=(document.getElementById('mcKey')?.textContent||'').trim(),tempo=(document.getElementById('mcTempo')?.textContent||'').trim();
     keyFact.textContent='Key · '+(key&&key!=='– –'?key+' approx':'—');
@@ -25311,7 +25327,8 @@ csInit('csPlatform');
     rows.innerHTML=stemSession.map(stem=>{
       const isSelected=stem.status==='ok'&&stemAuditionKeys.includes(stem.key),isSolo=stemSoloKeys.has(stem.key),isImplicitMute=stemSoloKeys.size>0&&!isSolo,isModeMute=!stemSoloKeys.size&&!stemModeIncludes(stem),isMuted=stemMutedKeys.has(stem.key)||isImplicitMute||isModeMute,role=stemRoleForLabel(stem.label);
       const message=stem.status==='pending'?'Waiting to decode…':stem.message;
-      return '<div class="mc-stem-row" data-key="'+escapeHtml(stem.key)+'" data-role="'+role.role+'" data-status="'+stem.status+'" data-audition-selected="'+isSelected+'" data-solo="'+isSolo+'" data-muted="'+isMuted+'" role="group" tabindex="'+(stem.status==='ok'?'0':'-1')+'" aria-label="'+escapeHtml(stem.label)+' stem controls"><div class="mc-stem-info"><div class="mc-stem-identity"><span class="mc-stem-icon" aria-hidden="true">'+stemIconMarkup(role.role)+'</span><span class="mc-stem-name-wrap"><span class="mc-stem-label">'+escapeHtml(stem.label)+'</span><span class="mc-stem-source" title="'+escapeHtml(stem.fileName)+'">'+escapeHtml(stem.fileName)+'</span></span></div><div class="mc-stem-controls">'+(stem.status==='ok'?'<button type="button" class="mc-stem-toggle mc-stem-solo" data-key="'+escapeHtml(stem.key)+'" aria-label="Solo '+escapeHtml(stem.label)+'" aria-pressed="'+isSolo+'" title="Solo '+escapeHtml(stem.label)+'">S</button><button type="button" class="mc-stem-toggle mc-stem-mute" data-key="'+escapeHtml(stem.key)+'" aria-label="Mute '+escapeHtml(stem.label)+'" aria-pressed="'+isMuted+'" title="Mute '+escapeHtml(stem.label)+'">M</button>':'')+'<button type="button" class="mc-stem-remove" aria-label="Remove '+escapeHtml(stem.label)+'" title="Remove '+escapeHtml(stem.label)+'">&times;</button></div>'+(message?'<div class="mc-stem-message">'+escapeHtml(message)+'</div>':'')+'</div>'+(stem.status==='ok'?'<div class="mc-stem-wave-box" title="Shared leading/trailing silence is trimmed; stems remain aligned. Per-stem fade centers on detected audio. Playback levels are unchanged."><canvas class="mc-stem-wave" data-key="'+escapeHtml(stem.key)+'"></canvas></div>':'')+'</div>';
+      const displayLabel=role.role==='bass'?'Bass':stem.label.replace(/piano/ig,'Keys'),displayFileName=stem.fileName.replace(/piano/ig,'Keys');
+      return '<div class="mc-stem-row" data-key="'+escapeHtml(stem.key)+'" data-role="'+role.role+'" data-status="'+stem.status+'" data-audition-selected="'+isSelected+'" data-solo="'+isSolo+'" data-muted="'+isMuted+'" role="group" tabindex="'+(stem.status==='ok'?'0':'-1')+'" aria-label="'+escapeHtml(displayLabel)+' stem controls"><div class="mc-stem-info"><div class="mc-stem-identity"><span class="mc-stem-icon" aria-hidden="true">'+stemIconMarkup(role.role)+'</span><span class="mc-stem-name-wrap"><span class="mc-stem-label">'+escapeHtml(displayLabel)+'</span><span class="mc-stem-source" title="'+escapeHtml(displayFileName)+'">'+escapeHtml(displayFileName)+'</span></span></div><div class="mc-stem-controls">'+(stem.status==='ok'?'<button type="button" class="mc-stem-toggle mc-stem-solo" data-key="'+escapeHtml(stem.key)+'" aria-label="Solo '+escapeHtml(displayLabel)+'" aria-pressed="'+isSolo+'" title="Solo '+escapeHtml(displayLabel)+'">S</button><button type="button" class="mc-stem-toggle mc-stem-mute" data-key="'+escapeHtml(stem.key)+'" aria-label="Mute '+escapeHtml(displayLabel)+'" aria-pressed="'+isMuted+'" title="Mute '+escapeHtml(displayLabel)+'">M</button>':'')+'<button type="button" class="mc-stem-remove" aria-label="Remove '+escapeHtml(displayLabel)+'" title="Remove '+escapeHtml(displayLabel)+'">&times;</button></div>'+(message?'<div class="mc-stem-message">'+escapeHtml(message)+'</div>':'')+'</div>'+(stem.status==='ok'?'<div class="mc-stem-wave-box" title="Shared leading/trailing silence is trimmed; stems remain aligned. Per-stem fade centers on detected audio. Playback levels are unchanged."><canvas class="mc-stem-wave" data-key="'+escapeHtml(stem.key)+'"></canvas></div>':'')+'</div>';
     }).join('');
     rows.querySelectorAll('.mc-stem-remove').forEach((btn,i)=>btn.addEventListener('click',()=>stemRemoveAt(i)));
     rows.querySelectorAll('.mc-stem-solo').forEach(btn=>btn.addEventListener('click',()=>stemToggleAudioControl(btn.dataset.key,'solo')));
@@ -26078,5 +26095,51 @@ csInit('csPlatform');
 </script>
 
 <script src="/standalone-tools.js?v=2026-11-02.89" defer></script>
+<style id="stems-candidate-final">
+/* Consolidated stem panel look (replaces earlier stacked patches) */
+#eq.oz-mixcheck #mcStemRows{display:flex!important;flex-direction:column!important}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row{min-height:58px!important;align-items:center!important;position:relative!important;border:0!important;border-radius:12px!important;grid-template-columns:minmax(0,132px) minmax(0,1fr) auto!important}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="vocals"]{background:#facc15!important;order:1}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="drums"]{background:#f87171!important;order:2}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="bass"]{background:#60a5fa!important;order:3}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="guitar"]{background:#4ade80!important;order:4}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="keys"]{background:#a78bfa!important;order:5}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="other"]{background:#f472b6!important;order:6}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row .mc-stem-wave-box{position:absolute!important;top:50%!important;transform:translateY(-50%)!important;left:-22px!important;right:124px!important;height:32px!important;margin:0!important;background:transparent!important;border:0!important;align-self:auto!important}
+#eq.oz-mixcheck .mc-stem-icon{display:none!important}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row .mc-stem-label{color:#ffffff!important;font-weight:700}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row .mc-stem-source{color:#ffffff!important;opacity:.85}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="vocals"] .mc-stem-toggle,#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="vocals"] .mc-stem-remove{background:#8a6a00!important;border-color:transparent!important;color:#ffffff!important}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="drums"] .mc-stem-toggle,#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="drums"] .mc-stem-remove{background:#a32626!important;border-color:transparent!important;color:#ffffff!important}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="bass"] .mc-stem-toggle,#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="bass"] .mc-stem-remove{background:#2f56c0!important;border-color:transparent!important;color:#ffffff!important}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="guitar"] .mc-stem-toggle,#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="guitar"] .mc-stem-remove{background:#1f7a43!important;border-color:transparent!important;color:#ffffff!important}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="keys"] .mc-stem-toggle,#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="keys"] .mc-stem-remove{background:#6a33c9!important;border-color:transparent!important;color:#ffffff!important}
+#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="other"] .mc-stem-toggle,#eq.oz-mixcheck #mcStemStack .mc-stem-row[data-role="other"] .mc-stem-remove{background:#a52660!important;border-color:transparent!important;color:#ffffff!important}
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes button{background:#1b1d20!important;color:#9aa0a6!important;border-color:#262a2f!important}
+#eq.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"]{background:#2dd4bf!important;color:#06201c!important;border-color:#2dd4bf!important}
+</style>
+<style id="stems-playhead">/* White play line */
+#eq.oz-mixcheck #mcStemPlayhead{background:#ffffff!important;width:2px!important;z-index:20!important;display:block!important;pointer-events:none!important}
+</style>
+<script id="stems-playhead-js">
+(function(){
+  // One continuous white play line across all stem rows (the app's own playhead element).
+  // The app moves it during playback; this only makes sure it exists and sits at the start when idle.
+  setInterval(function(){
+    var rows=document.getElementById('mcStemRows'); if(!rows) return;
+    var cv=rows.querySelector('.mc-stem-wave'); if(!cv||!cv.clientWidth) return;
+    var ph=document.getElementById('mcStemPlayhead');
+    if(!ph){ ph=document.createElement('div'); ph.id='mcStemPlayhead'; ph.setAttribute('aria-hidden','true'); rows.appendChild(ph); }
+    rows.style.position='relative';
+    var rr=rows.getBoundingClientRect(), cr=cv.getBoundingClientRect();
+    var first=rows.querySelector('.mc-stem-row'), last=rows.querySelector('.mc-stem-row:last-of-type')||first;
+    var fr=first.getBoundingClientRect(), lr=last.getBoundingClientRect();
+    ph.style.position='absolute';
+    if(!ph.style.left) ph.style.left=(cr.left-rr.left)+'px';
+    if(!ph.style.top) ph.style.top=(fr.top-rr.top)+'px';
+    if(!ph.style.bottom) ph.style.bottom=(rr.bottom-lr.bottom)+'px';
+  },400);
+})();
+</script>
 </body>
 </html>
