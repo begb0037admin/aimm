@@ -1,6 +1,12 @@
-## CURRENT STATE — 2026-11-12, build 2026-11-12.11
+# HANDOVER.md — AIMM
 
-The last app-code commit is `2999b93`; current `main`/`origin/main` HEAD is docs-only commit `8df31ad`. Build `.11` is deployed to Worker `aimm` (version `20d05ce8-c51b-47be-98b3-eec3e3383f67`) and was verified at `aimixmasters.com` plus `aimm.kevinlelitte.workers.dev`.
+## CURRENT STATE — 2026-11-12, build 2026-11-12.12
+
+Kevin approved the desktop preview. The empty Mix Check analyser grid span is corrected from rows 4–5 to 3–4 after the banner row was removed. Hope's desktop rail stretches to the app column height, aligning its bottom with Audio Specs and Spectral Balance. Commit `f3c9d79d` is deployed as Worker version `a88e2d8d-1df4-419a-b4f4-2ad7909dfb79`; both `aimixmasters.com` and the workers.dev URL serve build .12. The separate cross-device pill/hostname issue remains unresolved.
+
+## Prior state — 2026-11-12, build 2026-11-12.11
+
+The preceding app-code commit was `2999b93`. Build `.11` was deployed to Worker `aimm` (version `20d05ce8-c51b-47be-98b3-eec3e3383f67`) and verified at `aimixmasters.com` plus `aimm.kevinlelitte.workers.dev`. Build `.12` is the current deployment, recorded above.
 
 **Latest UI change:** Fix Queue action buttons and Hope action-card controls/status chips now use the current neutral capsule pill style. Kevin reports the appearance is still old on other devices even though the build label is correct. Do not call this visually fixed yet.
 
@@ -8,7 +14,7 @@ The last app-code commit is `2999b93`; current `main`/`origin/main` HEAD is docs
 
 **Configuration:** `standalone/wrangler.toml` declares Worker `aimm` and assets but no custom hostname/route. `standalone/src/index.js` CORS origins currently list only `aimixmasters.com` and `www.aimixmasters.com`. Once the correct zone is confirmed and controlled, bind the Worker to the requested hostname (and `www` if desired), add those exact HTTPS origins to the proxy allowlist, deploy, and verify from the requested hostname on another device.
 
-**Diagnostic note:** the app CSS is inline in the same single HTML asset as `AIMM_BUILD`; a separate CSS cache is not a sufficient explanation if the exact current HTML is loaded. Compare exact host/response and inspect the live cascade/DOM before another styling edit. Build `.10` briefly moved the empty-state grid; `.11` reverted it, so the current source has the original grid rule.
+**Diagnostic note:** the app CSS is inline in the same single HTML asset as `AIMM_BUILD`; a separate CSS cache is not a sufficient explanation if the exact current HTML is loaded. Compare exact host/response and inspect the live cascade/DOM before another styling edit. Build `.10` briefly moved the empty-state grid; `.11` reverted it; the approved `.12` build corrects it.
 
 **No browser visual verification** was possible in this session. The `.11` source and fetched HTML include the new pill CSS, but Kevin reports the result is not visible elsewhere.
 
@@ -72,12 +78,6 @@ GitHub `main` commit `77612f05daf4f2a79bb9472d6692a7f66d27fcf1` deploys the MixC
 ## Active checkpoint — Sonnet paths switched to Haiku 5.5, build `.77`, 2026-10-21
 
 GitHub `main` commit `1078d45c9ef2149d363928c53d9d91babc98da15` updates `index.html`: typed Hope chat, Research Brain, top-picks re-ranking, and Mix Check advice use Claude Haiku 5.5. Sonnet options were removed from active selectors; persisted Sonnet selections migrate to Haiku 5.5. Mix Check/ranking cost estimates reflect Haiku pricing. Historical Sonnet price entries and migration-map keys are intentional. Live ElevenLabs Primary and Fallback Hope agents remain GPT-6 Luna; ElevenLabs' current native model catalog does not offer Haiku 5.5, so neither agent was altered. No tests or live model turns were run. The production repo working tree had unrelated local edits and was left untouched; source was updated through the authenticated GitHub Contents API.
-
-# HANDOVER.md — AIMM
-
-## CURRENT STATE — 2026-11-12, build 2026-11-12.12
-
-Kevin approved the desktop preview. The empty Mix Check analyser grid span is corrected from rows 4–5 to 3–4 after the banner row was removed. Hope's desktop rail stretches to the app column height, aligning its bottom with Audio Specs and Spectral Balance. The implementation was rendered from the current Worker source; deployment verification is pending. The separate cross-device pill/hostname issue remains unresolved.
 
 ## Historical state — 2026-11-11 evening, build 2026-11-11.07
 

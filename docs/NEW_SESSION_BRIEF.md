@@ -5,11 +5,11 @@ Read this before continuing. The current user goal is **not resolved**: Kevin ne
 ## Current source and deployment
 
 - Repo: `/Users/admin/github/aimm`, branch `main`, remote `origin/main`.
-- Last app-code commit: `2999b93` (`Match Mix Check actions to neutral pill style`). The current `main`/`origin/main` HEAD is docs-only commit `8df31ad`.
-- App build in `standalone/assets/index.html`: `2026-11-12.11`.
-- The Worker `aimm` was deployed as version `20d05ce8-c51b-47be-98b3-eec3e3383f67`. Build `.11` was fetched and verified at `https://aimixmasters.com/` and `https://aimm.kevinlelitte.workers.dev/`.
+- Last app-code commit: `f3c9d79d` (`Align empty Mix Check and Hope rail`).
+- App build in `standalone/assets/index.html`: `2026-11-12.12`.
+- The Worker `aimm` was deployed as version `a88e2d8d-1df4-419a-b4f4-2ad7909dfb79`. Build `.12` was fetched and verified at `https://aimixmasters.com/` and `https://aimm.kevinlelitte.workers.dev/`.
 - The `.11` change styles Fix Queue and Hope action-card controls as neutral capsule pills, matching the current Copy/Speak and composer pills. Hope action-card status labels also use that capsule treatment. Source contains the CSS, but Kevin says the changes are still not visible on other devices. **Do not report the pill update as visually fixed.**
-- Build `.11` also reverted the unrelated empty-state grid change from `.10`; no layout adjustment from that attempt remains in `.11`.
+- Build `.12` corrects the empty Mix Check grid placement and stretches Hope's desktop rail to end level with the cards. Kevin approved the rendered preview before the app change. The earlier `.11` pill visibility issue remains separate.
 
 ## Domain issue — unresolved
 
@@ -27,7 +27,7 @@ Relevant configuration:
 
 1. Ask Kevin for the exact URL shown in the address bar on an affected device if it is not already clear. Preserve his stated target: `aimmastersx.com`.
 2. Recheck public DNS/RDAP and inspect the Cloudflare account/zone for that exact domain. Do not silently substitute `aimixmasters.com`.
-3. If the domain is active and controlled in Cloudflare, attach the `aimm` Worker to the apex (and `www` if intended), add the exact HTTPS origins to the proxy CORS allowlist, then deploy and verify build `.11` plus the visible pill styles from the requested host.
+3. If the domain is active and controlled in Cloudflare, attach the `aimm` Worker to the apex (and `www` if intended), add the exact HTTPS origins to the proxy CORS allowlist, then deploy and verify build `.12` plus the visible pill styles from the requested host.
 4. If the domain is not connected/available, tell Kevin the precise DNS/zone action needed. Keep the current Worker URL as a temporary diagnostic only; it does not satisfy the requested hostname.
 5. Do not mark this complete until Kevin can see the changes at the intended domain on another device.
 
@@ -37,5 +37,6 @@ Relevant configuration:
 - `0c1fd56` — add Mark done to Hope fix card (build `.09`).
 - `2b94299` — attempted empty-grid spacing change (build `.10`); reverted in `.11` after Kevin said the screenshots reflected an old layout.
 - `2999b93` — match Mix Check actions to current neutral pill style (build `.11`).
+- `f3c9d79d` — align empty Mix Check and Hope rail (build `.12`, approved preview, deployed).
 
 There are pre-existing untracked paths `.wrangler/`, `standalone/.wrangler/`, and `audio-reference-companion.ARCHIVED-20261104T174319Z/`. Do not clean them up as part of this task.

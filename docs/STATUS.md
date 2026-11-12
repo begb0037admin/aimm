@@ -2,17 +2,17 @@
 
 ## Approved layout fix — 2026-11-12, build 2026-11-12.12
 
-Kevin approved the rendered empty Mix Check preview. The desktop analyser now spans grid rows 3–4 beside Audio Specs, and Hope's rail stretches to the app column height so its bottom aligns with the cards. Source and render are complete; deployment verification is pending. The separate cross-device pill/hostname issue below remains open.
+Kevin approved the rendered empty Mix Check preview. The desktop analyser now spans grid rows 3–4 beside Audio Specs, and Hope's rail stretches to the app column height so its bottom aligns with the cards. Commit `f3c9d79d` is on `main`; Worker version `a88e2d8d-1df4-419a-b4f4-2ad7909dfb79` serves build .12 at both `aimixmasters.com` and the workers.dev URL. The separate cross-device pill/hostname issue below remains open.
 
 ## Current deployment issue — 2026-11-12
 
-The last app-code commit is `2999b93` (current `main`/`origin/main` HEAD is docs-only commit `8df31ad`); `standalone/assets/index.html` carries build `2026-11-12.11`. The current `aimm` Worker deployment is version `20d05ce8-c51b-47be-98b3-eec3e3383f67`. The `.11` HTML and pill CSS were fetched successfully from `aimixmasters.com` and `aimm.kevinlelitte.workers.dev`.
+The cross-device pill report began with app-code commit `2999b93` and build `2026-11-12.11`. That build was deployed as Worker version `20d05ce8-c51b-47be-98b3-eec3e3383f67`, and its HTML and pill CSS were fetched successfully from `aimixmasters.com` and `aimm.kevinlelitte.workers.dev`. The current deployed build is `.12`, recorded above.
 
 The `.11` source changes the Fix Queue and Hope action-card controls to the current neutral capsule pill style. Kevin reports that other devices still show the old appearance despite the correct build number. The visual result is **not confirmed**.
 
 Kevin states the intended hostname is `aimmastersx.com`. Public DNS-over-HTTPS returned NXDOMAIN (Status 3) and Verisign RDAP returned HTTP 404 when checked on 12 Nov. Recheck from the authoritative registrar/Cloudflare account; do not substitute `aimixmasters.com` or treat this as resolved. `standalone/wrangler.toml` has no route/custom-domain entry, and `standalone/src/index.js` allows only `aimixmasters.com` origins. If the intended zone is active and owned, attach the Worker to the exact hostname and add its apex/`www` origins to the proxy allowlist, then verify the served build and pill appearance on another device.
 
-Build `.10` briefly changed the empty-grid row placement; build `.11` reverted that unrelated adjustment. The current source retains the original grid rule.
+Build `.10` briefly changed the empty-grid row placement; build `.11` reverted it. The approved `.12` build corrects that grid rule and is live at the two verified hosts.
 
 ## Historical updates
 

@@ -12,7 +12,7 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 ## Approved Mix Check and Hope layout fix — build 2026-11-12.12
 
-Kevin approved the rendered preview on 12 Nov. The empty Fix Queue layout places Spectral Balance beside Audio Specs, and the desktop Hope rail ends level with the cards. Source is ready; deployment verification is pending. The cross-device pill/hostname issue is separate.
+Kevin approved the rendered preview on 12 Nov. The empty Fix Queue layout places Spectral Balance beside Audio Specs, and the desktop Hope rail ends level with the cards. Commit `f3c9d79d` is live as Worker version `a88e2d8d-1df4-419a-b4f4-2ad7909dfb79`; both `aimixmasters.com` and the workers.dev URL serve build .12. The cross-device pill/hostname issue is separate.
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
