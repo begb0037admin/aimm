@@ -24,7 +24,7 @@ You are taking over AIMM design and build work for Kevin Lelitte from a previous
   3. Open the copy in Chrome on Kevin's Mac: `open -a "Google Chrome" <file>`.
   4. Iterate quickly on Kevin's feedback.
   5. Nothing is committed or pushed from a preview.
-- **The approved look is the preview file:** `/Users/admin/aimm-previews/spotify-logo-connect-preview.html`. It is a copy of the live page with the approved styling on top. Its title is "AI Mix Masters".
+- **The approved look:** `docs/previews/approved-overlay-2026-11-11.html` in this repo. It holds the approved CSS and JS only. Apply it to a copy of `origin/main` standalone/assets/index.html to preview. It excludes the sample numbers on purpose.
 - **Approval is Kevin's own words in this chat.** Relayed approval (one agent passing on what Kevin said) does not count. Ask for it directly if it's missing.
 - **AIMM repo changes go through Codex, not Claude.** Process per `docs/UI_CHANGE_PROCESS.md`: design by Jules (review of spec and screenshots), implementation by Codex, merge only after Kevin approves the screenshots in chat.
   - Caveat: on 11 Nov Codex's sandbox could not write to `.git` (`index.lock: Operation not permitted`). Kevin then told Claude to push from the shell. Both pushes that day (`92a94a85`, `654139a4`) were made from the shell, which breaks the Codex-only rule. Kevin has not yet said whether that rule still stands. Ask him before the next push.
