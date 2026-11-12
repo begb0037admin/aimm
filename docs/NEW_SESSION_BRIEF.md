@@ -5,7 +5,7 @@ Read this before continuing. The current user goal is **not resolved**: Kevin ne
 ## Current source and deployment
 
 - Repo: `/Users/admin/github/aimm`, branch `main`, remote `origin/main`.
-- Current source commit: `2999b93` (`Match Mix Check actions to neutral pill style`).
+- Last app-code commit: `2999b93` (`Match Mix Check actions to neutral pill style`). The current `main`/`origin/main` HEAD is docs-only commit `8df31ad`.
 - App build in `standalone/assets/index.html`: `2026-11-12.11`.
 - The Worker `aimm` was deployed as version `20d05ce8-c51b-47be-98b3-eec3e3383f67`. Build `.11` was fetched and verified at `https://aimixmasters.com/` and `https://aimm.kevinlelitte.workers.dev/`.
 - The `.11` change styles Fix Queue and Hope action-card controls as neutral capsule pills, matching the current Copy/Speak and composer pills. Hope action-card status labels also use that capsule treatment. Source contains the CSS, but Kevin says the changes are still not visible on other devices. **Do not report the pill update as visually fixed.**

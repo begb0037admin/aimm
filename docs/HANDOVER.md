@@ -1,6 +1,6 @@
 ## CURRENT STATE — 2026-11-12, build 2026-11-12.11
 
-Source `main` and `origin/main` are at commit `2999b93`. Build `.11` is deployed to Worker `aimm` (version `20d05ce8-c51b-47be-98b3-eec3e3383f67`) and was verified at `aimixmasters.com` plus `aimm.kevinlelitte.workers.dev`.
+The last app-code commit is `2999b93`; current `main`/`origin/main` HEAD is docs-only commit `8df31ad`. Build `.11` is deployed to Worker `aimm` (version `20d05ce8-c51b-47be-98b3-eec3e3383f67`) and was verified at `aimixmasters.com` plus `aimm.kevinlelitte.workers.dev`.
 
 **Latest UI change:** Fix Queue action buttons and Hope action-card controls/status chips now use the current neutral capsule pill style. Kevin reports the appearance is still old on other devices even though the build label is correct. Do not call this visually fixed yet.
 
