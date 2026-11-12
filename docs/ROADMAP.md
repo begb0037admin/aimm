@@ -12,7 +12,7 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 ## Hope action button highlight — build 2026-11-12.15
 
-Mark done on Hope's Guided steps card now uses the approved mockup B teal fill; Play mix stays neutral. Both buttons match the mockup's size. The corrected layout was rendered in the AIMM page. Deployment verification is pending; the `aimmastersx.com` hostname issue remains separate.
+Mark done on Hope's Guided steps card now uses the approved mockup B teal fill; Play mix stays neutral. Both buttons match the mockup's size. The corrected layout was rendered in the AIMM page. App commit `e5229cbe` is deployed as Worker version `2868382b-c0d4-4b16-a9b0-a6e96bd00ecf`; build .15 is served by `aimixmasters.com` and the workers.dev URL. The `aimmastersx.com` hostname issue remains separate.
 
 ## Guided move cards — build 2026-11-12.14
 
