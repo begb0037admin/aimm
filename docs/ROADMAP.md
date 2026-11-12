@@ -10,6 +10,10 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 # ROADMAP.md — AIMM Active
 
+## Approved Mix Check and Hope layout fix — build 2026-11-12.12
+
+Kevin approved the rendered preview on 12 Nov. The empty Fix Queue layout places Spectral Balance beside Audio Specs, and the desktop Hope rail ends level with the cards. Source is ready; deployment verification is pending. The cross-device pill/hostname issue is separate.
+
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
 ## Spotify Top tracks capture restored — build 2026-11-03.136

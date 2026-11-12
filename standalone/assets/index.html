@@ -1970,11 +1970,11 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
      Keep the rail as a normal stretched grid item with no viewport-based
      minimum height. Its transcript scrolls internally, and its lower edge
      follows the app column (including the active tab's final panel). */
-  .container > #hopeRail{grid-column:2;grid-row:1;align-self:start;position:sticky;top:var(--gutter);display:flex;height:calc(100vh - 2 * var(--gutter));min-height:0;max-height:calc(100vh - 2 * var(--gutter))}
+  .container > #hopeRail{grid-column:2;grid-row:1;align-self:stretch;position:sticky;top:var(--gutter);display:flex;height:auto;min-height:0;max-height:none}
   /* When the Fix Queue has no cards, its named grid row is empty. Audio Specs
      still spans that row, so let Spectral Balance span it too; otherwise the
      chart stops one row early and leaves a black gap beside the lower specs. */
-  #eq.oz-mixcheck:has(#mcActions:empty) .oz-center{grid-row:4 / 6}
+  #eq.oz-mixcheck:has(#mcActions:empty) .oz-center{grid-row:3 / 5}
   /* R3 round 13 REVERSED (header re-layout, 2026-09-02.5 — Kevin marked this on
      the live app): the Mix-Check-only left indent is gone. The tab strip is a
      block child of .app-col (flex column) so it spans the full content column —
@@ -4973,7 +4973,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-12.11';
+const AIMM_BUILD = '2026-11-12.12';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);

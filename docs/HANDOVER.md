@@ -75,6 +75,10 @@ GitHub `main` commit `1078d45c9ef2149d363928c53d9d91babc98da15` updates `index.h
 
 # HANDOVER.md — AIMM
 
+## CURRENT STATE — 2026-11-12, build 2026-11-12.12
+
+Kevin approved the desktop preview. The empty Mix Check analyser grid span is corrected from rows 4–5 to 3–4 after the banner row was removed. Hope's desktop rail stretches to the app column height, aligning its bottom with Audio Specs and Spectral Balance. The implementation was rendered from the current Worker source; deployment verification is pending. The separate cross-device pill/hostname issue remains unresolved.
+
 ## Historical state — 2026-11-11 evening, build 2026-11-11.07
 
 Live build `2026-11-11.07`, commit `92a94a85` on `origin/main`. Previous build for revert: `2026-11-11.06` (commit `89d152b5`). Revert with `git revert 92a94a85`.
