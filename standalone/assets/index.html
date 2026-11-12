@@ -3593,7 +3593,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <div class="mc-measure-row"><span class="mc-measure-label">Sample rate</span><span class="mc-measure-value" id="mcSampleRate">– –</span><span class="unit-sub">kHz</span><span class="mc-hidden-data mc-d na" id="mcdSr"></span></div>
           <div class="mc-measure-row"><span class="mc-measure-label">LUF short</span><span class="mc-measure-value" id="refLufsSt">– –</span><span class="unit-sub">LUFS</span><span class="mc-hidden-data mc-d na" id="mcdSt"></span></div>
           <div class="mc-measure-row"><span class="mc-measure-label">Headroom</span><span class="mc-measure-value" id="mcHeadroom">– –</span><span class="unit-sub">dB</span><span class="mc-hidden-data mc-d na" id="mcdHeadroom"></span></div>
-          <div class="mc-measure-row"><span class="mc-measure-label">Noise floor</span><span class="mc-measure-value" id="mcNoiseFloor">– –</span><span class="unit-sub">dB</span><span class="mc-hidden-data mc-d na" id="mcdNoise"></span></div>
+          <div class="mc-measure-row"><span class="mc-measure-label">Noise floor</span><span class="mc-measure-value" id="mcNoiseFloor">– –</span><span class="unit-sub">dBFS</span><span class="mc-hidden-data mc-d na" id="mcdNoise"></span></div>
         </div>
       </details>
       <span class="mc-hidden-data mc-d na" id="mcdWidth"></span><span class="mc-hidden-data" id="mcTruePeakDup">– –</span>
@@ -4974,7 +4974,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-12.01';
+const AIMM_BUILD = '2026-11-12.02';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -23550,18 +23550,18 @@ csInit('csPlatform');
     function populateMeasured(r){
       if(!r)return;
       set('refLufsInt',has(r.li)?r.li.toFixed(1):'– –');
-      set('refTruePeak',has(r.tp)?r.tp.toFixed(1)+' dBTP':'– –');
-      set('refDynRange',has(r.dr)?r.dr.toFixed(1)+' dB':'– –');
+      set('refTruePeak',has(r.tp)?r.tp.toFixed(1):'– –');
+      set('refDynRange',has(r.dr)?r.dr.toFixed(1):'– –');
       set('refLufsSt',has(r.lst)?r.lst.toFixed(1):'– –');
       set('refLufsIntSub','LUFS · integrated'+(activeSource==='spotify'?' · captured':' · measured'));
       set('refTruePeakSub','dBTP · true peak');
       set('refDynRangeSub','PLR · true peak − integrated');
       set('refLufsStSub','LUFS · short-term 3s');
-      set('mcRms',has(r.rmsDb)?r.rmsDb.toFixed(1)+' dB':'– –');
+      set('mcRms',has(r.rmsDb)?r.rmsDb.toFixed(1):'– –');
       dot('mcdRms',has(r.rmsDb)?(r.rmsDb>-7?'warn':'ok'):'na');
       set('mcCrest',has(r.crestDb)?r.crestDb.toFixed(1):'– –');
       dot('mcdCrest',has(r.crestDb)?(r.crestDb<6?'warn':'ok'):'na');
-      set('mcLra',has(r.lra)?r.lra.toFixed(1)+' LU':'– –');
+      set('mcLra',has(r.lra)?r.lra.toFixed(1):'– –');
       dot('mcdLra',has(r.lra)?'ok':'na');
       set('mcCorr',has(r.correlation)?(r.correlation>=0?'+':'')+r.correlation.toFixed(2):'– –');
       dot('mcdCorr',has(r.correlation)?(r.correlation<0.5?'bad':(r.correlation<0.7?'warn':'ok')):'na');
@@ -23569,21 +23569,21 @@ csInit('csPlatform');
       // capture builds refLastAnalysis without it → has() false → grey / blank.
       { const sw=r.stereoWidthPct;
         const q= sw<=1 ? 'mono' : sw<15 ? 'narrow' : sw>42 ? 'wide' : 'balanced';
-        set('mcWidth',has(sw)?Math.round(sw)+'%':'– –');
+        set('mcWidth',has(sw)?Math.round(sw):'– –');
         dot('mcdWidth',has(sw)?((sw<=1||sw>60)?'warn':'ok'):'na');
         const f=document.getElementById('mcWidthFill'),mk=document.getElementById('mcWidthMark');
         const p=has(sw)?Math.max(0,Math.min(100,sw)):0;
         if(f)f.style.width=has(sw)?p+'%':'0';
         if(mk){ mk.style.left=p+'%'; mk.style.display=has(sw)?'block':'none'; } }
       const sr=r.sampleRate;
-      set('mcSampleRate',has(sr)?((sr%1000)?(sr/1000).toFixed(1):String(sr/1000))+' kHz':'– –');
+      set('mcSampleRate',has(sr)?((sr%1000)?(sr/1000).toFixed(1):String(sr/1000)):'– –');
       dot('mcdSr',has(sr)?'ok':'na');
       dot('mcdSt',has(r.lst)?'ok':'na');
-      set('mcTruePeakDup',has(r.tp)?r.tp.toFixed(1)+' dBTP':'– –');
+      set('mcTruePeakDup',has(r.tp)?r.tp.toFixed(1):'– –');
       dot('mcdTp',has(r.tp)?(r.tp>-1.0?'warn':'ok'):'na');
-      set('mcHeadroom',has(r.tp)?(-r.tp).toFixed(1)+' dB':'– –');
+      set('mcHeadroom',has(r.tp)?(-r.tp).toFixed(1):'– –');
       dot('mcdHeadroom',has(r.tp)?((-r.tp)<1.0?'warn':'ok'):'na');
-      set('mcNoiseFloor',has(r.noiseFloorDb)?Math.round(r.noiseFloorDb)+' dBFS':'– –');
+      set('mcNoiseFloor',has(r.noiseFloorDb)?Math.round(r.noiseFloorDb):'– –');
       dot('mcdNoise',has(r.noiseFloorDb)?(r.noiseFloorDb>-55?'warn':'ok'):'na');
       tcls('mcTileLoudV',has(r.li)?(r.li>=-6.5||r.li<=-16?'bad':(r.li>=-7.5||r.li<=-13?'warn':'ok')):'');
       tcls('mcTilePeakV',has(r.tp)?(r.tp>-0.5?'bad':(r.tp>-1.0?'warn':'ok')):'');
@@ -24563,13 +24563,13 @@ csInit('csPlatform');
     else if(segs.length){let s=0;for(const p of segs)s+=p;lst=LOG(s/segs.length);}
     const tp=LIVE.tpMax>0?20*Math.log10(LIVE.tpMax):-70;
     const dr=Math.max(0,tp-li);
-    if(li>-69)refSetEl('refLufsInt',li.toFixed(1)+' LUFS');
+    if(li>-69)refSetEl('refLufsInt',li.toFixed(1));
     refSetEl('refLufsIntSub','LUFS · integrated (live, gated)');
-    if(lst>-69)refSetEl('refLufsSt',lst.toFixed(1)+' LUFS');
+    if(lst>-69)refSetEl('refLufsSt',lst.toFixed(1));
     refSetEl('refLufsStSub','LUFS · short-term 3s (live)');
-    if(tp>-69)refSetEl('refTruePeak',tp.toFixed(1)+' dBTP');
+    if(tp>-69)refSetEl('refTruePeak',tp.toFixed(1));
     refSetEl('refTruePeakSub','dBTP · max hold (live)');
-    if(li>-69&&tp>-69)refSetEl('refDynRange',dr.toFixed(1)+' dB');
+    if(li>-69&&tp>-69)refSetEl('refDynRange',dr.toFixed(1));
     refSetEl('refDynRangeSub','PLR · live');
     const secs=Math.floor((Date.now()-LIVE.startedAt)/1000);
     refSetEl('refLiveStatus','● listening '+Math.floor(secs/60)+':'+String(secs%60).padStart(2,'0')+' — stop to lock readings + pills');
