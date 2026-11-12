@@ -4986,7 +4986,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-12.06';
+const AIMM_BUILD = '2026-11-12.07';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -25225,12 +25225,13 @@ csInit('csPlatform');
     let absolutePlayed=0;
     if(refBuffer&&refBuffer.duration>0){const pos=refPlaying&&refCtx?refCtx.currentTime-refStartTime+refStartOffset:refStartOffset;absolutePlayed=Math.max(0,Math.min(1,pos/refBuffer.duration));}
     const played=Math.max(0,Math.min(1,(absolutePlayed-cropStart/1024)/(visibleBins/1024)));
+    const playheadDpr=Math.max(1,window.devicePixelRatio||1),playheadPixelWidth=Math.max(1,Math.round(3*playheadDpr)),playheadCssWidth=playheadPixelWidth/playheadDpr;
     document.querySelectorAll('#mcStemRows .mc-stem-wave').forEach(cv=>{
       const stem=stemSession.find(x=>x.key===cv.dataset.key);if(!stem||stem.status!=='ok'||!stem.peaks)return;
       const w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return;
-      const dpr=Math.max(3,window.devicePixelRatio||1),pixelWidth=Math.round(w*dpr),pixelHeight=Math.round(h*dpr);
+      const canvasDpr=Math.max(3,window.devicePixelRatio||1),pixelWidth=Math.round(w*canvasDpr),pixelHeight=Math.round(h*canvasDpr);
       if(cv.width!==pixelWidth)cv.width=pixelWidth;if(cv.height!==pixelHeight)cv.height=pixelHeight;
-      const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);const mid=h/2,amp=h*.5;
+      const g=cv.getContext('2d');g.setTransform(canvasDpr,0,0,canvasDpr,0,0);g.clearRect(0,0,w,h);const mid=h/2,amp=h*.5;
       const bounds=activeByKey.get(stem.key),peak=bounds?.peak||0,visualGain=peak>1e-7?1/peak:1,activityFloor=bounds?.floor||Infinity;
       const stemColor='#ffffff';
       const columnCount=Math.max(1,pixelWidth),envelope=new Float32Array(columnCount);
@@ -25256,6 +25257,10 @@ csInit('csPlatform');
       for(let x=1;x<columnCount;x++)g.lineTo(columnX(x),mid-smoothed[x]);
       for(let x=columnCount-1;x>=0;x--)g.lineTo(columnX(x),mid+smoothed[x]);
       g.closePath();g.fill();g.restore();g.globalAlpha=1;
+      // Leave the playhead a clean strip through each waveform. Without this,
+      // bright peaks merge into the white cursor and make its thickness appear to pulse.
+      const lineGapWidth=Math.min(w,playheadCssWidth+1),lineCentre=Math.max(lineGapWidth/2,Math.min(w-lineGapWidth/2,playedX));
+      g.clearRect(lineCentre-lineGapWidth/2,0,lineGapWidth,h);
     });
     const rows=document.getElementById('mcStemRows');
     if(rows){
@@ -25266,10 +25271,9 @@ csInit('csPlatform');
       if(rowEls.length&&firstCanvas&&firstCanvas.clientWidth){
         const rowsRect=rows.getBoundingClientRect(),firstRect=firstCanvas.getBoundingClientRect();
         playhead.style.display='block';
-        const dpr=Math.max(1,window.devicePixelRatio||1),pixelWidth=Math.max(1,Math.round(3*dpr)),cssWidth=pixelWidth/dpr;
-        const progressX=Math.max(0,Math.min(firstRect.width-cssWidth,played*firstRect.width));
-        playhead.style.left=(Math.round((firstRect.left+progressX)*dpr)/dpr-rowsRect.left)+'px';
-        playhead.style.width=cssWidth+'px';
+        const progressX=Math.max(0,Math.min(firstRect.width-playheadCssWidth,played*firstRect.width));
+        playhead.style.left=(Math.round((firstRect.left+progressX)*playheadDpr)/playheadDpr-rowsRect.left)+'px';
+        playhead.style.width=playheadCssWidth+'px';
         playhead.style.top='0px';
         playhead.style.bottom='auto';
         playhead.style.height=rows.clientHeight+'px';
