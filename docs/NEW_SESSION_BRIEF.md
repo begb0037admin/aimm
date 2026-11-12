@@ -4,7 +4,7 @@ Read this before continuing. The current user goal is **not resolved**: Kevin ne
 
 ## Current source and deployment
 
-- Latest correction: build `2026-11-12.16` applies one neutral-at-rest, teal-on-hover/focus/press/selection rule to every button in Hope, centre Fix Queue and stem action cards. Kevin clarified this applies to all buttons and all action cards. The persistent Mark done fill from .15 is removed. Actual-page resting render, syntax and seven Hope tests pass. Deployment verification is pending; `aimmastersx.com` remains a separate unresolved hostname issue.
+- Latest correction: build `2026-11-12.16` applies one neutral-at-rest, teal-on-hover/focus/press/selection rule to every button in Hope, centre Fix Queue and stem action cards. Kevin clarified this applies to all buttons and all action cards. The persistent Mark done fill from .15 is removed. Actual-page resting render, syntax and seven Hope tests pass. Worker version `aa78d133-5b5f-41b6-a543-4739a4288554` serves .16 at `aimixmasters.com` and the workers.dev URL; `aimmastersx.com` remains a separate unresolved hostname issue.
 
 - Hope button correction: app commit `e5229cbe`, build `2026-11-12.15`, gives Mark done the persistent teal fill and dark text from approved mockup B; both Hope action-card buttons now match its 34px size. Kevin flagged the missing highlight in a live screenshot. The actual page render, syntax and seven Hope tests pass. Worker version `2868382b-c0d4-4b16-a9b0-a6e96bd00ecf` serves .15 at `aimixmasters.com` and the workers.dev URL. The `aimmastersx.com` hostname issue remains separate.
 
@@ -13,9 +13,9 @@ Read this before continuing. The current user goal is **not resolved**: Kevin ne
 - Approved Fix Queue button change: app commit `aab1aaf2`, build `2026-11-12.13`, makes Mark done, Play mix and Ask Hope about this the Full song stem button's size, with teal interaction highlighting. Kevin approved the populated queue preview. Worker version `ad7a577d-cd36-4cfd-b37f-c8cd48c821b7` serves .13 at `aimixmasters.com` and the workers.dev URL. The separate `aimmastersx.com` hostname issue remains unresolved.
 
 - Repo: `/Users/admin/github/aimm`, branch `main`, remote `origin/main`.
-- Last app-code commit: `e5229cbe` (`Match Hope action buttons to approved mockup`).
-- App build in `standalone/assets/index.html`: `2026-11-12.15`.
-- The Worker `aimm` is deployed as version `2868382b-c0d4-4b16-a9b0-a6e96bd00ecf`. Build `.15` was fetched and verified at `https://aimixmasters.com/` and `https://aimm.kevinlelitte.workers.dev/`.
+- Last app-code commit: `996b9596` (`Unify action-card button interaction states`).
+- App build in `standalone/assets/index.html`: `2026-11-12.16`.
+- The Worker `aimm` is deployed as version `aa78d133-5b5f-41b6-a543-4739a4288554`. Build `.16` was fetched and verified at `https://aimixmasters.com/` and `https://aimm.kevinlelitte.workers.dev/`.
 - The `.11` change styles Fix Queue and Hope action-card controls as neutral capsule pills, matching the current Copy/Speak and composer pills. Hope action-card status labels also use that capsule treatment. Source contains the CSS, but Kevin says the changes are still not visible on other devices. **Do not report the pill update as visually fixed.**
 - Build `.12` corrects the empty Mix Check grid placement and stretches Hope's desktop rail to end level with the cards. Kevin approved the rendered preview before the app change. The earlier `.11` pill visibility issue remains separate.
 
@@ -35,7 +35,7 @@ Relevant configuration:
 
 1. Ask Kevin for the exact URL shown in the address bar on an affected device if it is not already clear. Preserve his stated target: `aimmastersx.com`.
 2. Recheck public DNS/RDAP and inspect the Cloudflare account/zone for that exact domain. Do not silently substitute `aimixmasters.com`.
-3. If the domain is active and controlled in Cloudflare, attach the `aimm` Worker to the apex (and `www` if intended), add the exact HTTPS origins to the proxy CORS allowlist, then deploy and verify build `.15` plus the visible pill styles from the requested host.
+3. If the domain is active and controlled in Cloudflare, attach the `aimm` Worker to the apex (and `www` if intended), add the exact HTTPS origins to the proxy CORS allowlist, then deploy and verify build `.16` plus the visible pill styles from the requested host.
 4. If the domain is not connected/available, tell Kevin the precise DNS/zone action needed. Keep the current Worker URL as a temporary diagnostic only; it does not satisfy the requested hostname.
 5. Do not mark this complete until Kevin can see the changes at the intended domain on another device.
 
@@ -48,6 +48,7 @@ Relevant configuration:
 - `f3c9d79d` — align empty Mix Check and Hope rail (build `.12`, approved preview, deployed).
 - `aab1aaf2` — match Fix Queue buttons to stem modes (build `.13`, approved preview, deployed).
 - `9e038b64` — apply Guided steps to move cards and labels (build `.14`, approved mockup, deployed).
-- `e5229cbe` — match Hope action-card buttons to approved highlight and size (build `.15`, deployed).
+- `e5229cbe` — match Hope action-card buttons to approved highlight and size (build `.15`, superseded).
+- `996b9596` — unify all action-card button states (build `.16`, deployed).
 
 There are pre-existing untracked paths `.wrangler/`, `standalone/.wrangler/`, and `audio-reference-companion.ARCHIVED-20261104T174319Z/`. Do not clean them up as part of this task.
