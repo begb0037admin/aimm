@@ -1,0 +1,62 @@
+<!-- Approved Preview in Place overlay, 11 Nov 2026. Apply to origin/main standalone/assets/index.html
+     as CSS and JS for preview only. Not shipped as-is: live source must carry the same rules.
+     Excludes the sample-numbers script on purpose. Live build 2026-11-11.07 (commit 92a94a85) already
+     contains these rules. Open items: the More measurements bar (kept visible, as in this overlay). -->
+<style id="preview-spotify-logo-connect">
+/* Existing header logo is the Connect control. The text button is hidden, not removed, so its script still runs. */
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyConnect{display:none!important}
+#eq.oz-mixcheck #mcSpotifyReference .mc-spotify-mark{cursor:pointer}
+#eq.oz-mixcheck #mcSpotifyReference .mc-spotify-mark:focus-visible{outline:2px solid #6fe3ff;outline-offset:3px}
+#eq.oz-mixcheck #mcSpotifyReference .mc-spotify-mark:hover{box-shadow:0 0 22px rgba(111,227,255,.7)!important}
+</style>
+<script id="preview-spotify-logo-connect-js">
+(function(){
+  function init(){
+    var mark=document.querySelector('#mcSpotifyReference .mc-spotify-mark');
+    var connect=document.getElementById('mcSpotifyConnect');
+    if(!mark||!connect)return;
+    mark.setAttribute('role','button');
+    mark.setAttribute('tabindex','0');
+    mark.setAttribute('aria-label','Connect Spotify');
+    mark.setAttribute('title','Connect Spotify');
+    function go(){ if(!connect.disabled) connect.click(); }
+    mark.addEventListener('click',go);
+    mark.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } });
+    new MutationObserver(function(){
+      var on=connect.dataset.connected==='true';
+      mark.setAttribute('aria-label',on?'Disconnect Spotify':'Connect Spotify');
+      mark.setAttribute('title',on?'Disconnect Spotify':'Connect Spotify');
+    }).observe(connect,{attributes:true,attributeFilter:['data-connected']});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+<style id="preview-audio-specs">
+/* Every block is a tile: same surface, border, radius and padding. */
+#eq.oz-mixcheck #mcSpecs{--tile-bg:#1a1d21;--tile-bd:#2a2e35;--tile-muted:#9ca3af;--tile-ink:#f3f4f6;--tile-teal:#2dd4bf}
+#eq.oz-mixcheck #mcSpecs .mc-core-specs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:12px}
+#eq.oz-mixcheck #mcSpecs .mc-core-row{display:flex!important;flex-direction:column;align-items:flex-start;gap:2px;min-height:0!important;padding:14px 16px!important;border:1px solid var(--tile-bd)!important;border-radius:14px;background:var(--tile-bg)}
+#eq.oz-mixcheck #mcSpecs .mc-core-row:nth-child(n+5){display:none!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-label,#eq.oz-mixcheck #mcSpecs .mc-measure-label{font-size:13px!important;color:var(--tile-muted)!important;font-weight:500}
+#eq.oz-mixcheck #mcSpecs .mc-core-value,#eq.oz-mixcheck #mcSpecs .mc-measure-value{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif!important;font-size:30px!important;font-weight:700!important;color:var(--tile-ink)!important;line-height:1.15!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-row:first-child .mc-core-value{color:var(--tile-teal)!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-note{display:none!important}
+#eq.oz-mixcheck #mcSpecs .mc-more-measurements{margin-top:0;border:0;background:none;padding:0}
+#eq.oz-mixcheck #mcSpecs .mc-more-measurements summary{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 16px;margin-bottom:12px;border:1px solid var(--tile-bd);border-radius:14px;background:var(--tile-bg);color:var(--tile-muted);font-size:13px;font-weight:600}
+#eq.oz-mixcheck #mcSpecs .mc-more-measurements summary::after{content:"\25BE";color:var(--tile-muted);font-size:13px}
+#eq.oz-mixcheck #mcSpecs .mc-more-measurements[open] summary::after{content:"\25B4"}
+#eq.oz-mixcheck #mcSpecs .mc-more-measurements summary:focus-visible{outline:2px solid var(--tile-teal);outline-offset:2px}
+#eq.oz-mixcheck #mcSpecs .mc-detail-specs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#eq.oz-mixcheck #mcSpecs .mc-measure-row{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:0;padding:14px 16px;border:1px solid var(--tile-bd);border-radius:14px;background:var(--tile-bg)}
+#eq.oz-mixcheck .mcq-card{border:1px solid var(--tile-bd);border-radius:14px;background:var(--tile-bg);padding:14px 16px;margin-top:12px;cursor:pointer}
+#eq.oz-mixcheck .mcq-card .mcq-k{color:var(--tile-muted)}
+#eq.oz-mixcheck .mcq-title{font-size:15px;font-weight:600;color:var(--tile-ink)}
+#eq.oz-mixcheck #mcSpecs .mc-core-label,#eq.oz-mixcheck #mcSpecs .mc-measure-label{display:block;line-height:1.3!important;min-height:2.6em;text-align:left}
+#eq.oz-mixcheck #mcSpecs .mc-core-value,#eq.oz-mixcheck #mcSpecs .mc-measure-value{display:block;text-align:left;width:100%}
+#eq.oz-mixcheck #mcSpecs .mc-core-row,#eq.oz-mixcheck #mcSpecs .mc-measure-row{align-items:stretch!important;justify-content:flex-start}
+</style>
+<style id="preview-hide-match">#mcSpotifyRefMatch{display:none!important}
+</style>
+<style id="preview-chat-name">
+#hopeRail .aichat-msg.ai .who,#hopeRail .aichat-msg.ai.thinking .who,#hopeRail .hope-empty-greeting .who{display:none!important}
+</style>
