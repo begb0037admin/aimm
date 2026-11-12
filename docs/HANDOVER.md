@@ -1,14 +1,16 @@
-## CURRENT STATE — 2026-11-11, build 2026-11-11.02
+## CURRENT STATE — 2026-11-12, build 2026-11-12.11
 
-Live build `2026-11-11.02`, commit `4b78345` on `origin/main`. Previous builds for revert: `2026-11-11.01` (commit `b7b010a`) and `2026-11-07.33` (commit `9c4960d`, before today). `git revert 4b78345` gives `2026-11-11.01`; reverting `b7b010a` as well gives `2026-11-07.33`.
+Source `main` and `origin/main` are at commit `2999b93`. Build `.11` is deployed to Worker `aimm` (version `20d05ce8-c51b-47be-98b3-eec3e3383f67`) and was verified at `aimixmasters.com` plus `aimm.kevinlelitte.workers.dev`.
 
-**Live today:** Palette v2 on top tabs, mode pills and Hope panel (commit `b7b010a`); top tab icons 24px with 1.5px lines; Mixing uses the MixBus slider icon, Mastering uses level-meter bars, and Stem Splitter uses a fork; mode pills are 54px high, matching top tabs, with width and text size unchanged; Spotify logo is a 50px white circle with a 34px icon; Spotify top tracks panel has no outer border, title line or instruction text (commit `4b78345`). The truncated top tab labels (“Mix ...”, “Snap...”, “Setti...”, “Mark...”, “Com...”) were already present before today and did not change.
+**Latest UI change:** Fix Queue action buttons and Hope action-card controls/status chips now use the current neutral capsule pill style. Kevin reports the appearance is still old on other devices even though the build label is correct. Do not call this visually fixed yet.
 
-**Not verified live:** Hope navy bubble for your messages; Hope Send button teal outline (live screenshot outline is grey, so this is not live); Hope Copy and Speak pills outside the bubble; Hope speaker labels hidden.
+**Requested host:** Kevin says the site must be `aimmastersx.com`. This is not the hostname used by the previous deployments. A public DNS-over-HTTPS lookup returned NXDOMAIN (Status 3), and Verisign RDAP returned HTTP 404 on 12 Nov 2026. Recheck current registration/delegation and the Cloudflare account because Kevin says he owns this domain. Do not silently substitute `aimixmasters.com`.
 
-**Preview only, not live:** Spotify capture status line hidden (`#mcSpotifyRefStatus`, including errors); narrower search box (10px input padding); 16px Spotify button gaps; about 8px extra space between search box and Connect Spotify (Kevin said “leave it”); Hope panel fix undone and returned to its pre-session state in preview.
+**Configuration:** `standalone/wrangler.toml` declares Worker `aimm` and assets but no custom hostname/route. `standalone/src/index.js` CORS origins currently list only `aimixmasters.com` and `www.aimixmasters.com`. Once the correct zone is confirmed and controlled, bind the Worker to the requested hostname (and `www` if desired), add those exact HTTPS origins to the proxy allowlist, deploy, and verify from the requested hostname on another device.
 
-**Kevin's decisions:** Palette v2 uses teal `#2dd4bf` for selected or enabled with black text and icon; everything else is neutral, with no gold or bronze. Logo: AI yellow `#facc15`; MIX and MM blue `#60a5fa`; MASTERS and COACH white `#f3f4f6`. Hover makes any unselected pill solid teal with black text and icon and no outline; selected tabs do not change on hover. Selected tab is teal with no ring or outline. Enabled Spotify buttons stay teal-filled on hover. Spotify row stays on one line. Hope chat spec: user messages are right-aligned navy `#1e3a6b` bubbles with white text and no label; Hope messages are plain text with no bubble or label; Copy and Speak are small pills outside the bubble; Send is a neutral pill with teal outline; Clear chat, ElevenLabs and Auto are neutral pills in the existing 2x2 layout. Spotify top tracks panel is player only, with no border, title or instruction text; approved on a mock-up and live. Spotify capture status-dot colours remain open: grey for starting/no audio and pink for error were proposed but are neither decided nor live.
+**Diagnostic note:** the app CSS is inline in the same single HTML asset as `AIMM_BUILD`; a separate CSS cache is not a sufficient explanation if the exact current HTML is loaded. Compare exact host/response and inspect the live cascade/DOM before another styling edit. Build `.10` briefly moved the empty-state grid; `.11` reverted it, so the current source has the original grid rule.
+
+**No browser visual verification** was possible in this session. The `.11` source and fetched HTML include the new pill CSS, but Kevin reports the result is not visible elsewhere.
 
 ## LOCKED WORKING COPY — 2026-11-06, build 2026-11-06.289
 
@@ -73,7 +75,7 @@ GitHub `main` commit `1078d45c9ef2149d363928c53d9d91babc98da15` updates `index.h
 
 # HANDOVER.md — AIMM
 
-## CURRENT STATE — 2026-11-11 evening, build 2026-11-11.07
+## Historical state — 2026-11-11 evening, build 2026-11-11.07
 
 Live build `2026-11-11.07`, commit `92a94a85` on `origin/main`. Previous build for revert: `2026-11-11.06` (commit `89d152b5`). Revert with `git revert 92a94a85`.
 

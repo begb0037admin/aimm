@@ -1,57 +1,41 @@
-# Brief: AIMM (AI Mix Masters) — picking up from 11–12 Nov 2026
+# New session brief — AIMM deployment visibility, 12 Nov 2026
 
-You are taking over AIMM design and build work for Kevin Lelitte from a previous session. Read this whole brief first. This file is in the repo as `docs/NEW_SESSION_BRIEF.md`, so it works on any of Kevin's machines. Do not start work until you have checked the live state (step 1 below).
+Read this before continuing. The current user goal is **not resolved**: Kevin needs the latest AIMM changes visible on other devices at `aimmastersx.com`.
 
-## 1. What AIMM is
-- Single-file web app: `standalone/assets/index.html` in the repo `begb0037admin/aimm`, served live at https://aimixmasters.com/.
-- Repo checkout on Kevin's Mac: `/Users/admin/github/aimm` (branch main). On other machines, clone `begb0037admin/aimm`.
-- Live build stamp is `AIMM_BUILD` near the top of `index.html`. Format `YYYY-MM-DD.N`.
+## Current source and deployment
 
-## 2. Where things stand (as of 12 Nov 2026, early morning)
-- **Live build: `2026-11-11.07`, commit `92a94a85`** on origin/main. It contains:
-  - Mix Check Audio Specs as tiles: labels and figures aligned, Tempo and Key hidden, measurement rows shown as tiles, Match Sound hidden.
-  - The Spotify logo in the Mix Check header is the connect control. White connects; green asks first, then disconnects.
-  - Hope name tags hidden in the chat panel.
-- **Docs commit `654139a4`** updated `docs/HANDOVER.md`, `docs/STATUS.md`, `ROADMAP.md` and `docs/CLAUDE.md` (adds the Preview in Place rule).
-- **Not browser-tested:** the disconnect confirmation on the green logo. Ask Kevin to tap it on the live site and report what happens. Do not claim it works until he has.
-- **The "More measurements" bar is still visible** in the live build and in the approved preview. Jules's spec r3 asked for it hidden. Kevin asked for it removed earlier. This is an open decision for Kevin. Do not change it without his answer.
-- **Fix queue** is not previewed. It only fills in once a WAV is loaded, so it cannot be checked on an empty page.
+- Repo: `/Users/admin/github/aimm`, branch `main`, remote `origin/main`.
+- Current source commit: `2999b93` (`Match Mix Check actions to neutral pill style`).
+- App build in `standalone/assets/index.html`: `2026-11-12.11`.
+- The Worker `aimm` was deployed as version `20d05ce8-c51b-47be-98b3-eec3e3383f67`. Build `.11` was fetched and verified at `https://aimixmasters.com/` and `https://aimm.kevinlelitte.workers.dev/`.
+- The `.11` change styles Fix Queue and Hope action-card controls as neutral capsule pills, matching the current Copy/Speak and composer pills. Hope action-card status labels also use that capsule treatment. Source contains the CSS, but Kevin says the changes are still not visible on other devices. **Do not report the pill update as visually fixed.**
+- Build `.11` also reverted the unrelated empty-state grid change from `.10`; no layout adjustment from that attempt remains in `.11`.
 
-## 3. How we work (Kevin's rules — these are firm)
-- **Preview in Place** is the default for any AIMM visual change:
-  1. Take the live source (`git show origin/main:standalone/assets/index.html`).
-  2. Make a preview copy with CSS-only overrides and sample values. Do not edit the repo file for a preview.
-  3. Open the copy in Chrome on Kevin's Mac: `open -a "Google Chrome" <file>`.
-  4. Iterate quickly on Kevin's feedback.
-  5. Nothing is committed or pushed from a preview.
-- **The approved look:** `docs/previews/approved-overlay-2026-11-11.html` in this repo. It holds the approved CSS and JS only. Apply it to a copy of `origin/main` standalone/assets/index.html to preview. It excludes the sample numbers on purpose.
-- **Approval is Kevin's own words in this chat.** Relayed approval (one agent passing on what Kevin said) does not count. Ask for it directly if it's missing.
-- **AIMM repo changes go through Codex, not Claude.** Process per `docs/UI_CHANGE_PROCESS.md`: design by Jules (review of spec and screenshots), implementation by Codex, merge only after Kevin approves the screenshots in chat.
-  - Caveat: on 11 Nov Codex's sandbox could not write to `.git` (`index.lock: Operation not permitted`). Kevin then told Claude to push from the shell. Both pushes that day (`92a94a85`, `654139a4`) were made from the shell, which breaks the Codex-only rule. Kevin has not yet said whether that rule still stands. Ask him before the next push.
-- **Zero manual steps.** Never ask Kevin to click, copy or paste anything an agent can do. Check tools first.
-- **Keep it short and plain.** Kevin is dyslexic. One question at a time. Short sentences. No walls of text.
-- **Before any question to Kevin:** play a sound with `afplay /System/Library/Sounds/Glass.aiff`.
-- **Verify before reporting.** Check the live build with `curl -s https://aimixmasters.com/ | grep -o "AIMM_BUILD *= *'[^']*'"` and `origin/main` with `git fetch` and `git show origin/main:standalone/assets/index.html`. Do not say something is live until both show the new stamp.
-- **Do not open browser windows or DevTools on Kevin's Mac** unless he asks. He has asked for this explicitly.
-- **Do not change things he has not approved.** If he says "stop", stop everything and report.
+## Domain issue — unresolved
 
-## 4. Known problems and gotchas
-- **Stale Codex job:** PID 59683 (`codex exec`, worktree `/Users/admin/github/aimm-chore`) has been running for days. It was meant to untrack `audio-reference-companion/.build`. Check it before touching anything; do not kill it without Kevin's yes.
-- **`.build` is still tracked** in git (about 278 files). Untracking it is a separate, approved task.
-- **GitHub is the source of truth.** Kevin uses several machines. Keep anything a new session needs in the repo (under `docs/`), not in local folders or scratchpads.
-- **Headless Chrome from the Codex sandbox crashes** (exit 134). Headless from Kevin's shell works: `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --hide-scrollbars --window-size=1440,1000 --virtual-time-budget=8000 --screenshot=<out.png> "file://<path>"`.
-- **Preview sample values** (-9.1 LUFS, -1.2 dBTP, 7.4 DR, 0.62 width) are for previews only. They must not ship. Live shows dashes until a file is loaded.
+Kevin says the intended site domain is `aimmastersx.com` and that other devices show the correct build number but not the changes. Previous deployments targeted `aimixmasters.com` (different spelling) and the `workers.dev` URL.
 
-## 5. Open decisions for Kevin (ask, one at a time)
-1. Does the "More measurements" bar stay, or is it removed?
-2. Does the Codex-only rule for AIMM still stand, given the shell pushes on 11 Nov?
-3. Disconnect confirmation: has Kevin tested the green-logo tap on the live site?
+On 12 Nov 2026, `aimmastersx.com` did not resolve locally; a public Cloudflare DNS-over-HTTPS query returned `Status: 3` (NXDOMAIN), and Verisign RDAP returned HTTP 404. Browser web access to both the apex and `www` hostname also failed. Kevin says this is his domain, so **recheck current DNS and the Cloudflare zone before concluding it is unregistered**; the status could have changed or there may be an account/hostname mismatch.
 
-## 6. Next topic
-- **The Mixbus tab.** Kevin's next topic. Start with a Preview in Place copy of the live page. Do not write code for it before Kevin has seen the preview and approved the direction. Read `docs/CLAUDE.md` and `docs/UI_CHANGE_PROCESS.md` first.
+Relevant configuration:
 
-## 7. First steps for the new session
-1. Check the live build stamp and origin/main (section 3). Confirm build `2026-11-11.07`, commit `92a94a85`.
-2. Read `docs/HANDOVER.md` (top section, "CURRENT STATE") and `docs/CLAUDE.md` (hard rules).
-3. Tell Kevin in one short message where things stand, and ask whether he has tested the green logo tap.
-4. Wait for his answer before any repo or live change.
+- `standalone/wrangler.toml` declares Worker `aimm` and static assets, with no custom domain or route.
+- `standalone/src/index.js` CORS `ALLOWED_ORIGINS` currently contains `https://aimixmasters.com` and `https://www.aimixmasters.com`, not `aimmastersx.com`.
+- The app CSS is inline in the single HTML asset. A correct `.11` stamp with old styling is not explained by a separately cached CSS file. Check the exact hostname, response body, and live DOM/CSS cascade on the device before changing styling again.
+
+## Next steps
+
+1. Ask Kevin for the exact URL shown in the address bar on an affected device if it is not already clear. Preserve his stated target: `aimmastersx.com`.
+2. Recheck public DNS/RDAP and inspect the Cloudflare account/zone for that exact domain. Do not silently substitute `aimixmasters.com`.
+3. If the domain is active and controlled in Cloudflare, attach the `aimm` Worker to the apex (and `www` if intended), add the exact HTTPS origins to the proxy CORS allowlist, then deploy and verify build `.11` plus the visible pill styles from the requested host.
+4. If the domain is not connected/available, tell Kevin the precise DNS/zone action needed. Keep the current Worker URL as a temporary diagnostic only; it does not satisfy the requested hostname.
+5. Do not mark this complete until Kevin can see the changes at the intended domain on another device.
+
+## Recent commits
+
+- `98358fe` — remove duplicate Mix Check summary banner (build `.08`).
+- `0c1fd56` — add Mark done to Hope fix card (build `.09`).
+- `2b94299` — attempted empty-grid spacing change (build `.10`); reverted in `.11` after Kevin said the screenshots reflected an old layout.
+- `2999b93` — match Mix Check actions to current neutral pill style (build `.11`).
+
+There are pre-existing untracked paths `.wrangler/`, `standalone/.wrangler/`, and `audio-reference-companion.ARCHIVED-20261104T174319Z/`. Do not clean them up as part of this task.

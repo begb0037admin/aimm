@@ -193,10 +193,10 @@
   <div class="sec-body">
 
     <div class="now-sub" style="margin-top:12px">
-      <div class="now-sub-head p1">Mix Check design session — 11 Nov 2026</div>
+      <div class="now-sub-head p1">Mix Check cross-device update — 12 Nov 2026</div>
       <article class="card" style="border-left:3px solid #10b981">
-        <div class="card-title">Live build and Spotify top tracks panel <span class="badge ship">Build 2026-11-11.02 · live · 4b78345</span></div>
-        <div class="card-body">Palette v2 is live on top tabs, mode pills and Hope panel (commit <code>b7b010a</code>). Top tab icons are 24px with 1.5px lines; Mixing uses the MixBus slider icon, Mastering level-meter bars and Stem Splitter a fork. Mode pills are 54px high, matching top tabs; width and text size are unchanged. Spotify logo is a 50px white circle with a 34px icon. Spotify top tracks panel is player only, with no outer border, title line or instruction text (commit <code>4b78345</code>). Top tab labels remain truncated as before. Previous builds: <code>2026-11-11.01</code> (<code>b7b010a</code>) and <code>2026-11-07.33</code> (<code>9c4960d</code>).</div>
+        <div class="card-title">Fix Queue and Hope action pills <span class="badge d">Build 2026-11-12.11 · visibility unresolved · 2999b93</span></div>
+        <div class="card-body">Fix Queue buttons and Hope action-card controls/status tags use the current neutral capsule pill styling. The duplicate Mix Check summary banner was removed in build .08; Hope’s action card has Mark done, which advances the shared queue. Build .11 was fetched from <code>aimixmasters.com</code> and the Worker URL, but Kevin reports other devices still show the old appearance. Kevin says the intended hostname is <code>aimmastersx.com</code>. Public DNS returned NXDOMAIN and Verisign RDAP returned 404 on 12 Nov, so verify the current domain/Cloudflare zone before calling this fixed. The app CSS is inline with the build HTML; check the exact host and live CSS cascade if .11 is genuinely served but the pill appearance is old.</div>
       </article>
       <article class="card" style="border-left:3px solid #a855f7">
         <div class="card-title">Spotify and Hope preview changes <span class="badge bk">Preview only · not live</span></div>
@@ -904,6 +904,20 @@
     <span class="sec-chevron">▾</span>
   </div>
   <div class="sec-body" style="margin-top:12px">
+
+    <div class="date-group" id="dg-2026-11-12">
+      <div class="date-toggle" onclick="toggleDateGroup('dg-2026-11-12')">
+        <span class="date-label">2026-11-12</span>
+        <span class="date-chevron">▾</span>
+      </div>
+      <div class="date-body">
+        <article class="card shipped-card">
+          <div class="card-title">Mix Check action pills and Hope fix card <span class="badge ship">Build 2026-11-12.11 · visual result unresolved</span></div>
+          <div class="card-body">The Fix Queue controls and Hope action-card controls/status tags now use the current neutral capsule pill styling; the Hope card has a working Mark done control. The duplicate Mix Check summary banner was removed in build .08. Source `main` is `2999b93`, and build .11 is deployed to Worker `aimm` and verified on `aimixmasters.com` plus the workers.dev URL. Kevin reports that other devices still show the old pill appearance. He says the intended hostname is `aimmastersx.com`; public DNS returned NXDOMAIN and Verisign RDAP returned 404 when checked, so the domain/Cloudflare mapping remains unresolved. Do not claim the cross-device update is fixed until the exact intended host is verified.</div>
+          <div class="card-meta"><span class="effort">M</span> · source: `docs/NEW_SESSION_BRIEF.md`, `docs/HANDOVER.md`, `docs/STATUS.md`</div>
+        </article>
+      </div>
+    </div>
 
     <div class="date-group" id="dg-2026-11-04">
       <div class="date-toggle" onclick="toggleDateGroup('dg-2026-11-04')">
