@@ -1974,7 +1974,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   /* When the Fix Queue has no cards, its named grid row is empty. Audio Specs
      still spans that row, so let Spectral Balance span it too; otherwise the
      chart stops one row early and leaves a black gap beside the lower specs. */
-  #eq.oz-mixcheck:has(#mcActions:empty) .oz-center{grid-row:3 / 5}
+  #eq.oz-mixcheck:has(#mcActions:empty) .oz-center{grid-row:4 / 6}
   /* R3 round 13 REVERSED (header re-layout, 2026-09-02.5 — Kevin marked this on
      the live app): the Mix-Check-only left indent is gone. The tab strip is a
      block child of .app-col (flex column) so it spans the full content column —
@@ -4355,6 +4355,34 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   #hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message){transition:none}
   #hopeRail #aiChatTranscript :is(.aichat-copy-btn,.aichat-speak-message):hover:not(:disabled):not(:active):not(.active):not([aria-pressed="true"]):not([aria-selected="true"]){transform:none}
 }
+
+/* Mix Check queue and Hope action-card controls use the current Copy/Speak
+   neutral pill treatment so these actions share the same button language. */
+#eq.oz-mixcheck .mcq-acts button,
+#hopeRail .aichat-msg.fixaction .am-acts button{
+  min-height:22px;padding:3px 9px;border-radius:999px !important;
+  background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-neutral-bd) !important;
+  color:#f3f4f6 !important;font:600 calc(var(--inv-text-scale, 1) * 10px) Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  box-shadow:none !important;transform:none !important;transition:background .12s,border-color .12s,color .12s;
+}
+#eq.oz-mixcheck .mcq-acts button:hover:not(:disabled),
+#hopeRail .aichat-msg.fixaction .am-acts button:hover:not(:disabled){
+  background:var(--pv-neutral-bg) !important;border-color:#9ca3af !important;color:#f3f4f6 !important;
+  box-shadow:none !important;transform:none !important;
+}
+#eq.oz-mixcheck .mcq-acts button:disabled,
+#hopeRail .aichat-msg.fixaction .am-acts button:disabled{
+  background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-neutral-bd) !important;
+  color:#7b8190 !important;opacity:.6;box-shadow:none !important;transform:none !important;
+}
+#eq.oz-mixcheck .mcq-acts button:focus-visible,
+#hopeRail .aichat-msg.fixaction .am-acts button:focus-visible{outline:2px solid #5aa9e6;outline-offset:2px}
+.aichat-msg.fixaction .am-k,
+.aichat-msg.fixaction .am-flag{
+  display:inline-flex;align-items:center;min-height:22px;padding:3px 9px;
+  background:var(--pv-neutral-bg);border:1px solid var(--pv-neutral-bd);border-radius:999px;
+  color:#f3f4f6;font-weight:700;letter-spacing:.08em;
+}
 </style>
   <div id="pluginInventoryUI" class="inv-shell">
     <div id="invLayout" class="inv-layout">
@@ -4945,7 +4973,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-12.10';
+const AIMM_BUILD = '2026-11-12.11';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
