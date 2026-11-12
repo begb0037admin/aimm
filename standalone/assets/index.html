@@ -1900,6 +1900,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .aichat-msg.fixaction .am-acts{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
 .aichat-msg.fixaction .am-acts button{font: 600 calc(var(--inv-text-scale, 1) * 10px) Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;border-radius:6px;padding:5px 9px;cursor:pointer;background:#101214;border:1px solid #2c3034;color:#e8ebed;display:inline-flex;align-items:center;gap:5px}
 .aichat-msg.fixaction .am-acts button.am-play{border-color:#2b4a63;color:#bfe0f5}
+.aichat-msg.fixaction .am-acts button.am-done{border-color:#2f6f52;color:#7ee0b8;background:#1a241f}
+.aichat-msg.fixaction .am-acts button.am-done:hover{border-color:#34d399;color:#d4f5e6;background:#204034}
 .aichat-msg.fixaction .am-acts button:disabled{opacity:.5;cursor:not-allowed}
 .aichat-msg.fixaction .am-alt-body{font-size:calc(var(--inv-text-scale, 1) * 11px);color:#9aa0a6;margin-top:8px;padding-top:8px;border-top:1px solid #2c2340;line-height:1.5}
 .aichat-msg.fixaction .am-alt-body[hidden]{display:none}
@@ -4943,7 +4945,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-12.08';
+const AIMM_BUILD = '2026-11-12.09';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -24321,6 +24323,7 @@ csInit('csPlatform');
       h += '<div class="am-why">' + esc(whyMain) + '</div>';
       if (mv) h += '<div class="am-move"><b>Move &mdash;</b> ' + esc(mv) + '</div>';
       h += '<div class="am-acts">';
+      h += '<button type="button" class="am-done" onclick="aimmFixCardDone()">&#10003; Mark done</button>';
       h += '<button type="button" class="am-play" onclick="aimmFixCardPlay(' + (hasT ? Number(it.playFromSec) : 0) + ')">'
          + '&#9654; ' + (hasT ? ('Play ' + esc(fmtTime(it.playFromSec))) : 'Play mix') + '</button>';
       if (altText) h += '<button type="button" class="am-alt" onclick="aimmFixCardToggleAlt(this)">Alternatives</button>';
@@ -24338,6 +24341,13 @@ csInit('csPlatform');
       if (body.hasAttribute('hidden')) body.removeAttribute('hidden'); else body.setAttribute('hidden', '');
     };
     window.aimmFixCardPlay = (sec) => { try { if (typeof refPlayFromTime === 'function') refPlayFromTime(+sec || 0); } catch(_){} };
+    window.aimmFixCardDone = () => {
+      try {
+        const q = window.mcFixQueue;
+        const it = q && typeof q.current === 'function' ? q.current() : null;
+        if (it && typeof q.markApplied === 'function') q.markApplied(it.id);
+      } catch(_){}
+    };
 
     // Exactly one fix-action marker. Positioned right after Hope's spoken read
     // (mc-read) so the transcript reads: read -> current fix card -> chat.
