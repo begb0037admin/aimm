@@ -1,5 +1,9 @@
 # New session brief — AIMM deployment visibility, 12 Nov 2026
 
+## Latest paused task — Fix Queue navigation
+
+Kevin asked to fix the queue stuck at `2 / 2 done` so completed fixes can be reviewed back and forth, requested Jules review, then asked to stop and hand over. **No queue-navigation change is live.** WIP is saved on pushed branch `fix/revisitable-fix-queue` at `965ec5ca`, in `/Users/admin/github/aimm-revisitable-fix-queue`. Read `docs/QUEUE_NAVIGATION_WIP_HANDOVER.md` before continuing. Do not merge or deploy until the unfinished implementation is reviewed, desktop and phone previews are shown to Kevin, and he approves.
+
 Read this before continuing. The current user goal is **not resolved**: Kevin needs the latest AIMM changes visible on other devices at `aimmastersx.com`.
 
 ## Current source and deployment

@@ -1,5 +1,9 @@
 # HANDOVER.md — AIMM
 
+## PAUSED TASK — Fix Queue navigation, 2026-11-12
+
+The queue currently becomes terminal at `2 / 2 done`; Kevin wants Previous/Next and completed items reviewable. Jules-style independent review identified the pending-only renderer as the cause. Unfinished code and a passing transition test are saved on pushed branch `fix/revisitable-fix-queue` (`965ec5ca`). Nothing was merged or deployed; live remains build `.16`. See `docs/QUEUE_NAVIGATION_WIP_HANDOVER.md` for checks, screenshots and remaining work.
+
 ## CURRENT CHANGE — 2026-11-12, build 2026-11-12.16
 
 Kevin clarified that all action-card buttons across Hope, centre Fix Queue and stem review must follow the mockup's neutral resting state and teal interaction/selected state. The persistent Mark done fill introduced in .15 is removed. The actual-page resting render and page syntax pass; seven Hope web-search tests pass. App commit `996b9596` is deployed as Worker version `aa78d133-5b5f-41b6-a543-4739a4288554`; `aimixmasters.com` and the workers.dev URL serve build .16. The separate `aimmastersx.com` issue remains open.

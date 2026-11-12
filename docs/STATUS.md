@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## Paused Fix Queue navigation — 2026-11-12
+
+Kevin asked to revisit completed queue items after `2 / 2 done`, then requested a stop and handover. The WIP branch `fix/revisitable-fix-queue` (`965ec5ca`) is pushed but not merged or deployed. Live remains build `.16`. See `docs/QUEUE_NAVIGATION_WIP_HANDOVER.md`.
+
 ## Action-card button states — 2026-11-12, build 2026-11-12.16
 
 Kevin clarified that every button in Hope, centre Fix Queue and stem action cards must be neutral at rest and teal on hover, keyboard focus, press or a selected state. Build .16 corrects the persistent Mark done fill from .15 and applies one shared rule to all three card types. The actual-page resting render was checked. App commit `996b9596` is live as Worker version `aa78d133-5b5f-41b6-a543-4739a4288554`; both `aimixmasters.com` and the workers.dev URL serve build .16. The separate `aimmastersx.com` issue remains open.
