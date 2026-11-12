@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## Action-card button states — 2026-11-12, build 2026-11-12.16
+
+Kevin clarified that every button in Hope, centre Fix Queue and stem action cards must be neutral at rest and teal on hover, keyboard focus, press or a selected state. Build .16 corrects the persistent Mark done fill from .15 and applies one shared rule to all three card types. The actual-page resting render was checked; deployment verification is pending. The separate `aimmastersx.com` issue remains open.
+
 ## Hope action button highlight — 2026-11-12, build 2026-11-12.15
 
 Kevin flagged that the live Guided steps card had an outlined Mark done button, unlike approved mockup B. Mark done is now filled teal at rest with dark text, and both card actions have the mockup's larger button size. The corrected card was rendered in the actual AIMM layout. App commit `e5229cbe` is live as Worker version `2868382b-c0d4-4b16-a9b0-a6e96bd00ecf`; both `aimixmasters.com` and the workers.dev URL serve build .15. The separate `aimmastersx.com` hostname issue remains open.

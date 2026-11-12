@@ -1,5 +1,9 @@
 # HANDOVER.md — AIMM
 
+## CURRENT CHANGE — 2026-11-12, build 2026-11-12.16
+
+Kevin clarified that all action-card buttons across Hope, centre Fix Queue and stem review must follow the mockup's neutral resting state and teal interaction/selected state. The persistent Mark done fill introduced in .15 is removed. The actual-page resting render and page syntax pass; seven Hope web-search tests pass. Deployment verification is pending. The separate `aimmastersx.com` issue remains open.
+
 ## CURRENT CHANGE — 2026-11-12, build 2026-11-12.15
 
 Kevin flagged the Hope action-card button mismatch. Mark done is now filled teal at rest with dark text; Play mix remains neutral, and both actions match mockup B's size. The actual page render was checked, page syntax passes, and seven Hope web-search tests pass. App commit `e5229cbe` is deployed as Worker version `2868382b-c0d4-4b16-a9b0-a6e96bd00ecf`; `aimixmasters.com` and the workers.dev URL serve build .15. The separate `aimmastersx.com` issue remains open.

@@ -4,6 +4,8 @@ Read this before continuing. The current user goal is **not resolved**: Kevin ne
 
 ## Current source and deployment
 
+- Latest correction: build `2026-11-12.16` applies one neutral-at-rest, teal-on-hover/focus/press/selection rule to every button in Hope, centre Fix Queue and stem action cards. Kevin clarified this applies to all buttons and all action cards. The persistent Mark done fill from .15 is removed. Actual-page resting render, syntax and seven Hope tests pass. Deployment verification is pending; `aimmastersx.com` remains a separate unresolved hostname issue.
+
 - Hope button correction: app commit `e5229cbe`, build `2026-11-12.15`, gives Mark done the persistent teal fill and dark text from approved mockup B; both Hope action-card buttons now match its 34px size. Kevin flagged the missing highlight in a live screenshot. The actual page render, syntax and seven Hope tests pass. Worker version `2868382b-c0d4-4b16-a9b0-a6e96bd00ecf` serves .15 at `aimixmasters.com` and the workers.dev URL. The `aimmastersx.com` hostname issue remains separate.
 
 - Approved Guided steps rollout: app commit `9e038b64`, build `2026-11-12.14`, gives Hope's action card the mockup B neutral tile and teal measurement/move sections, splitting explicit sequential advice into numbered steps. Centre Fix Queue and selected-stem detail move labels match. Kevin selected B and asked to roll it out to all move labels. Worker version `0d1b354b-c61d-4e2e-9fb5-da23db56646d` serves .14 at `aimixmasters.com` and the workers.dev URL. The separate `aimmastersx.com` issue remains open.
