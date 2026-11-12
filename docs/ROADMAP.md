@@ -10,6 +10,10 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 # ROADMAP.md — AIMM Active
 
+## Revisitable Fix Queue — build 2026-11-12.17
+
+Kevin authorized merge and deployment. Centre Fix Queue, Hope, and stem review retain completed items for back-and-forth review, support Undo done/Restore, and keep completion counts separate from the selected item. Deployment verification pending.
+
 ## Action-card button states — build 2026-11-12.16
 
 Kevin clarified the approved mockup behaviour: all action-card buttons in Hope, centre Fix Queue and stem review are dark at rest, teal on hover, focus, press or selection. This supersedes the persistent Mark done fill in .15. App commit `996b9596` is deployed as Worker version `aa78d133-5b5f-41b6-a543-4739a4288554`; build .16 is served by `aimixmasters.com` and the workers.dev URL. The `aimmastersx.com` hostname issue remains separate.

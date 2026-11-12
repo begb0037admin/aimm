@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## Revisitable Fix Queue — 2026-11-12, build 2026-11-12.17
+
+Kevin authorized merge and deployment. Completed fixes remain navigable with Previous/Next, separate done count, Undo done/Restore, and selectable item lists; Hope follows the selected item. Queue transition and Hope web-search tests passed on WIP branch `965ec5ca`. Build .17 release commit pending deployment verification. The separate `aimmastersx.com` hostname issue remains open.
+
 ## Paused Fix Queue navigation — 2026-11-12
 
 Kevin asked to revisit completed queue items after `2 / 2 done`, then requested a stop and handover. The WIP branch `fix/revisitable-fix-queue` (`965ec5ca`) is pushed but not merged or deployed. Live remains build `.16`. See `docs/QUEUE_NAVIGATION_WIP_HANDOVER.md`.
