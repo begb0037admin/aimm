@@ -10,6 +10,10 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 # ROADMAP.md — AIMM Active
 
+## Guided move cards — build 2026-11-12.14
+
+Kevin selected mockup B for Hope's action card and asked for its move-label style everywhere. Hope's card now presents the measurement before the recommended move, with numbered sections for explicit sequential advice. Centre Fix Queue and selected-stem details use the same teal labels. Deployment verification is pending; the requested `aimmastersx.com` hostname issue remains separate.
+
 ## Approved Fix Queue buttons — build 2026-11-12.13
 
 Kevin approved the rendered populated Fix Queue preview. The three action buttons now match the Full song stem button's size and use teal interaction highlighting. App commit `aab1aaf2` is deployed as Worker version `ad7a577d-cd36-4cfd-b37f-c8cd48c821b7`, and build .13 is served by `aimixmasters.com` and the workers.dev URL. The requested `aimmastersx.com` hostname issue is tracked separately.

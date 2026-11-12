@@ -4,6 +4,8 @@ Read this before continuing. The current user goal is **not resolved**: Kevin ne
 
 ## Current source and deployment
 
+- Approved Guided steps rollout: build `2026-11-12.14` gives Hope's action card the mockup B neutral tile and teal measurement/move sections, splitting explicit sequential advice into numbered steps. Centre Fix Queue and selected-stem detail move labels match. Kevin selected B and asked to roll it out to all move labels. Deployment verification is pending; the separate `aimmastersx.com` hostname issue remains open.
+
 - Approved Fix Queue button change: app commit `aab1aaf2`, build `2026-11-12.13`, makes Mark done, Play mix and Ask Hope about this the Full song stem button's size, with teal interaction highlighting. Kevin approved the populated queue preview. Worker version `ad7a577d-cd36-4cfd-b37f-c8cd48c821b7` serves .13 at `aimixmasters.com` and the workers.dev URL. The separate `aimmastersx.com` hostname issue remains unresolved.
 
 - Repo: `/Users/admin/github/aimm`, branch `main`, remote `origin/main`.

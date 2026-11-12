@@ -4398,6 +4398,38 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   background:var(--pv-neutral-bg);border:1px solid var(--pv-neutral-bd);border-radius:999px;
   color:#f3f4f6;font-weight:700;letter-spacing:.08em;
 }
+/* Guided steps: one AIMM tile, measured reason, then the move sequence. */
+#hopeRail .aichat-msg.fixaction:is(:nth-child(odd),:nth-child(even)) .body{
+  background:#1b1d20;border:1px solid #30363c;border-radius:14px;padding:18px;color:#d3d8dd;
+}
+#hopeRail .aichat-msg.fixaction .am-head{justify-content:flex-start;flex-wrap:wrap;gap:4px}
+#hopeRail .aichat-msg.fixaction .am-k,
+#hopeRail .aichat-msg.fixaction .am-flag{
+  display:inline;min-height:0;padding:0;background:none;border:0;border-radius:0;
+  font:800 calc(var(--inv-text-scale, 1) * 10px) Inter,-apple-system,sans-serif;
+  letter-spacing:.12em;text-transform:uppercase;
+}
+#hopeRail .aichat-msg.fixaction .am-k{color:#9aa0a6}
+#hopeRail .aichat-msg.fixaction .am-flag{color:#2dd4bf;white-space:normal}
+#hopeRail .aichat-msg.fixaction .am-flag::before{content:' · ';white-space:pre}
+#hopeRail .aichat-msg.fixaction .am-title{font-size:calc(var(--inv-text-scale, 1) * 16px);line-height:1.25;margin:10px 0 12px;color:#f3f4f6}
+#hopeRail .aichat-msg.fixaction .am-section{border-top:1px solid #30363c;padding:12px 0 0;margin-top:12px}
+#hopeRail .aichat-msg.fixaction .am-section-label,
+#eq.oz-mixcheck .mcq-section-label,
+#eq.oz-mixcheck .mcs-section-label{
+  display:block;margin-bottom:5px;color:#2dd4bf;
+  font:800 calc(var(--inv-text-scale, 1) * 10px) Inter,-apple-system,sans-serif;
+  letter-spacing:.13em;text-transform:uppercase;
+}
+#hopeRail .aichat-msg.fixaction .am-why,
+#hopeRail .aichat-msg.fixaction .am-move{font-size:calc(var(--inv-text-scale, 1) * 12.5px);line-height:1.5;color:#d3d8dd;margin:0}
+#hopeRail .aichat-msg.fixaction .am-acts{margin-top:16px;gap:8px}
+#hopeRail .aichat-msg.fixaction .am-alt-body{border-top-color:#30363c}
+#eq.oz-mixcheck .mcq-detail .mcq-section{padding-top:10px;margin-top:10px;border-top:1px solid #30363c}
+#eq.oz-mixcheck .mcq-detail .mcq-section:first-child{margin-top:0;padding-top:0;border:0}
+#eq.oz-mixcheck .mcq-detail .mcq-move{margin-top:0}
+#eq.oz-mixcheck .mcs-detail .mcs-section{padding-top:8px;margin-top:8px;border-top:1px solid #30363c}
+#eq.oz-mixcheck .mcs-detail .mcs-section:first-child{padding-top:0;margin-top:0;border:0}
 </style>
   <div id="pluginInventoryUI" class="inv-shell">
     <div id="invLayout" class="inv-layout">
@@ -4988,7 +5020,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-12.13';
+const AIMM_BUILD = '2026-11-12.14';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -24059,8 +24091,8 @@ csInit('csPlatform');
       h+='<button type="button" class="mcq-play" data-act="play">'
         +(it.playFromSec!=null?'▸ Play from '+esc(refFmt(it.playFromSec)):'▸ Play mix')+'</button>';
       h+='<button type="button" class="mcq-hope" data-act="hope">Ask Hope about this</button></div>'
-        +'<div class="mcq-detail"><div class="mcq-why">'+esc(it.why)+'</div>'
-        +(it.move?'<div class="mcq-move"><b>Recommended move &mdash;</b> '+esc(it.move)+'</div>':'')
+        +'<div class="mcq-detail"><div class="mcq-section"><span class="mcq-section-label">What we measured</span><div class="mcq-why">'+esc(it.why)+'</div></div>'
+        +(it.move?'<div class="mcq-section"><span class="mcq-section-label">Recommended move</span><div class="mcq-move">'+esc(it.move)+'</div></div>':'')
         +'</div>'
         +'<div class="mcq-hint">Click the card to '+(_open?'collapse':'expand')+' the full move. Mark it done here, or tell Hope once you’ve applied it — the next fix moves up.</div>'
         +'</div>';
@@ -24195,7 +24227,7 @@ csInit('csPlatform');
             const mv = movesById[id];
             if (!mv) return;
             const el = card.querySelector('.mcq-move');
-            if (el) el.innerHTML = '<b>Recommended move &mdash;</b> ' + esc(mv);
+            if (el) el.textContent = mv;
           });
         } catch(_){}
       }
@@ -24352,7 +24384,7 @@ csInit('csPlatform');
       const whyMain = altIdx >= 0 ? whyFull.slice(0, altIdx) : whyFull;
       const altText = altIdx >= 0 ? whyFull.slice(altIdx + 2).replace(/^\(/, '').replace(/\)\s*$/, '') : '';
 
-      const flag = (applied === 0) ? '<span class="am-flag">Recommended first fix</span>' : '';
+      const flag = (applied === 0) ? '<span class="am-flag">Recommended first</span>' : '';
       const hasT = it.playFromSec != null && isFinite(it.playFromSec);
       const mv = cardMove(it);
 
@@ -24363,8 +24395,14 @@ csInit('csPlatform');
       // don't draw a misleading full-width spectrum strip for them.
       if (!broad) h += '<div class="fa-fx"><div class="fa-mini"><i style="left:' + lo.toFixed(1) + '%;width:' + wd.toFixed(1) + '%"></i></div>'
          + '<div class="fa-tk"><span>20</span><span>200</span><span>2k</span><span>20k</span></div></div>';
-      h += '<div class="am-why">' + esc(whyMain) + '</div>';
-      if (mv) h += '<div class="am-move"><b>Move &mdash;</b> ' + esc(mv) + '</div>';
+      h += '<div class="am-section"><span class="am-section-label">What we measured</span><div class="am-why">' + esc(whyMain) + '</div></div>';
+      if (mv){
+        const steps = String(mv).replace(/([.!?])\s+(?=(?:Then|Next|After that)\b)/gi, '$1\u0000').split('\u0000').filter(Boolean);
+        steps.forEach((step, i) => {
+          const label = steps.length > 1 ? ((i + 1) + ' · ' + (i ? 'Next move' : 'First move')) : 'Recommended move';
+          h += '<div class="am-section"><span class="am-section-label">' + label + '</span><div class="am-move">' + esc(step) + '</div></div>';
+        });
+      }
       h += '<div class="am-acts">';
       h += '<button type="button" class="am-done" onclick="aimmFixCardDone()">&#10003; Mark done</button>';
       h += '<button type="button" class="am-play" onclick="aimmFixCardPlay(' + (hasT ? Number(it.playFromSec) : 0) + ')">'
@@ -25095,7 +25133,7 @@ csInit('csPlatform');
           if(!pending.length)html+='<div class="mcs-note" role="status">Queue clear. Re-export and import the revised source track to check your changes.</div>';
           else{
             const it=pending[0],ordinal=a.items.indexOf(it)+1;
-            html+='<div class="mcs-card"><div class="mcs-note">Up next · #'+String(ordinal).padStart(2,'0')+'</div><div class="mcs-title">'+esc(it.title)+'</div><div class="mcs-note">FOCUS '+it.focusBand+' · IMP '+it.impact+' · CONF '+it.confidence+'</div><div class="mcs-actions"><button data-stem-action="done">✓ Mark done</button><button data-stem-action="dismiss">× Dismiss</button><button data-stem-action="detail">'+(q.open?'Hide':'Show')+' full move</button><button data-stem-action="hope">Ask Hope about this</button></div>'+(q.open?'<div class="mcs-detail">'+esc(it.why)+'\nRecommended move — '+esc(it.move)+'</div>':'')+'</div>';
+            html+='<div class="mcs-card"><div class="mcs-note">Up next · #'+String(ordinal).padStart(2,'0')+'</div><div class="mcs-title">'+esc(it.title)+'</div><div class="mcs-note">FOCUS '+it.focusBand+' · IMP '+it.impact+' · CONF '+it.confidence+'</div><div class="mcs-actions"><button data-stem-action="done">✓ Mark done</button><button data-stem-action="dismiss">× Dismiss</button><button data-stem-action="detail">'+(q.open?'Hide':'Show')+' full move</button><button data-stem-action="hope">Ask Hope about this</button></div>'+(q.open?'<div class="mcs-detail"><div class="mcs-section"><span class="mcs-section-label">What we measured</span>'+esc(it.why)+'</div><div class="mcs-section"><span class="mcs-section-label">Recommended move</span>'+esc(it.move)+'</div></div>':'')+'</div>';
             if(pending.length>1)html+='<div class="mcs-actions" style="margin-top:9px"><button data-stem-action="all">'+(q.expanded?'Hide':'Show all')+' queued ('+pending.length+')</button></div>';
             if(q.expanded)html+=pending.map(i=>'<div class="mcs-detail">#'+String(a.items.indexOf(i)+1).padStart(2,'0')+' '+esc(i.title)+'</div>').join('');
           }

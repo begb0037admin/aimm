@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## Guided move cards — 2026-11-12, build 2026-11-12.14
+
+Kevin chose mockup B. Hope's Fix Queue action card now uses AIMM's neutral tile, teal section labels, a measured-reason section and numbered move sections when the advice contains a clear sequence. The centre Fix Queue detail and selected-stem detail use the same measurement/move labels. Deployment verification is pending. The separate `aimmastersx.com` hostname issue remains open.
+
 ## Approved Fix Queue buttons — 2026-11-12, build 2026-11-12.13
 
 Kevin approved the populated Fix Queue preview. Mark done, Play mix and Ask Hope about this now use the Full song stem control's height, padding and text size, with teal hover, keyboard focus and press highlighting. App commit `aab1aaf2` is live as Worker version `ad7a577d-cd36-4cfd-b37f-c8cd48c821b7`; both `aimixmasters.com` and the workers.dev URL serve build .13. The separate `aimmastersx.com` cross-device hostname issue remains open.
