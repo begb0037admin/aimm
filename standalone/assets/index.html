@@ -3576,24 +3576,24 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         <div class="mc-specs-source" role="group" aria-label="Audio Specs source"><button type="button" id="mcSpecsMix" aria-pressed="true">Mix</button><button type="button" id="mcSpecsSpotify" aria-pressed="false" disabled>Spotify</button></div>
       </div>
       <div class="mc-core-specs" aria-label="Key audio measurements">
-        <div class="mc-core-row"><span class="mc-core-label">LUFS</span><span class="mc-tile-v mc-core-value" id="mcTileLoudV"><span id="refLufsInt">– –</span></span></div>
-        <div class="mc-core-row"><span class="mc-core-label">True peak</span><span class="mc-tile-v mc-core-value" id="mcTilePeakV"><span id="refTruePeak">– –</span></span></div>
-        <div class="mc-core-row"><span class="mc-core-label">DR</span><span class="mc-tile-v mc-core-value" id="mcTileDrV"><span id="refDynRange">– –</span></span></div>
-        <div class="mc-core-row"><span class="mc-core-label">Stereo width</span><span class="mc-core-value" id="mcWidth">– –</span></div>
+        <div class="mc-core-row"><span class="mc-core-label">LUFS</span><span class="mc-tile-v mc-core-value" id="mcTileLoudV"><span id="refLufsInt">– –</span></span><span class="unit-sub">LUFS</span></div>
+        <div class="mc-core-row"><span class="mc-core-label">True peak</span><span class="mc-tile-v mc-core-value" id="mcTilePeakV"><span id="refTruePeak">– –</span></span><span class="unit-sub">dBTP</span></div>
+        <div class="mc-core-row"><span class="mc-core-label">DR</span><span class="mc-tile-v mc-core-value" id="mcTileDrV"><span id="refDynRange">– –</span></span><span class="unit-sub">dB</span></div>
+        <div class="mc-core-row"><span class="mc-core-label">Stereo width</span><span class="mc-core-value" id="mcWidth">– –</span><span class="unit-sub">%</span></div>
         <div class="mc-core-row"><span class="mc-core-label">Tempo</span><span class="mc-core-value mc-tile-v" id="mcTempo">– –</span><span class="mc-hidden-data mc-d na" id="mcdTempo"></span></div>
         <div class="mc-core-row mc-core-key"><span class="mc-core-label">Key</span><span class="mc-core-value mc-tile-v" id="mcKey">– –</span><span class="mc-core-note">approx</span><span class="mc-hidden-data mc-d na" id="mcdKey"></span></div>
       </div>
       <details class="mc-more-measurements" id="mcMoreMeasurements" open>
         <summary>More measurements</summary>
         <div class="mc-detail-specs">
-          <div class="mc-measure-row"><span class="mc-measure-label">RMS</span><span class="mc-measure-value" id="mcRms">– –</span><span class="mc-hidden-data mc-d na" id="mcdRms"></span></div>
-          <div class="mc-measure-row"><span class="mc-measure-label">Crest factor</span><span class="mc-measure-value" id="mcCrest">– –</span><span class="mc-hidden-data mc-d na" id="mcdCrest"></span></div>
-          <div class="mc-measure-row"><span class="mc-measure-label">LRA</span><span class="mc-measure-value" id="mcLra">– –</span><span class="mc-hidden-data mc-d na" id="mcdLra"></span></div>
-          <div class="mc-measure-row"><span class="mc-measure-label">Phase / correlation</span><span class="mc-measure-value" id="mcCorr">– –</span><span class="mc-hidden-data mc-d na" id="mcdCorr"></span></div>
-          <div class="mc-measure-row"><span class="mc-measure-label">Sample rate</span><span class="mc-measure-value" id="mcSampleRate">– –</span><span class="mc-hidden-data mc-d na" id="mcdSr"></span></div>
-          <div class="mc-measure-row"><span class="mc-measure-label">LUFS short-term</span><span class="mc-measure-value" id="refLufsSt">– –</span><span class="mc-hidden-data mc-d na" id="mcdSt"></span></div>
-          <div class="mc-measure-row"><span class="mc-measure-label">Headroom</span><span class="mc-measure-value" id="mcHeadroom">– –</span><span class="mc-hidden-data mc-d na" id="mcdHeadroom"></span></div>
-          <div class="mc-measure-row"><span class="mc-measure-label">Noise floor</span><span class="mc-measure-value" id="mcNoiseFloor">– –</span><span class="mc-hidden-data mc-d na" id="mcdNoise"></span></div>
+          <div class="mc-measure-row"><span class="mc-measure-label">RMS</span><span class="mc-measure-value" id="mcRms">– –</span><span class="unit-sub">dB</span><span class="mc-hidden-data mc-d na" id="mcdRms"></span></div>
+          <div class="mc-measure-row"><span class="mc-measure-label">Crest factor</span><span class="mc-measure-value" id="mcCrest">– –</span><span class="unit-sub"></span><span class="mc-hidden-data mc-d na" id="mcdCrest"></span></div>
+          <div class="mc-measure-row"><span class="mc-measure-label">LRA</span><span class="mc-measure-value" id="mcLra">– –</span><span class="unit-sub">LU</span><span class="mc-hidden-data mc-d na" id="mcdLra"></span></div>
+          <div class="mc-measure-row"><span class="mc-measure-label">Phase</span><span class="mc-measure-value" id="mcCorr">– –</span><span class="unit-sub"></span><span class="mc-hidden-data mc-d na" id="mcdCorr"></span></div>
+          <div class="mc-measure-row"><span class="mc-measure-label">Sample rate</span><span class="mc-measure-value" id="mcSampleRate">– –</span><span class="unit-sub">kHz</span><span class="mc-hidden-data mc-d na" id="mcdSr"></span></div>
+          <div class="mc-measure-row"><span class="mc-measure-label">LUF short</span><span class="mc-measure-value" id="refLufsSt">– –</span><span class="unit-sub">LUFS</span><span class="mc-hidden-data mc-d na" id="mcdSt"></span></div>
+          <div class="mc-measure-row"><span class="mc-measure-label">Headroom</span><span class="mc-measure-value" id="mcHeadroom">– –</span><span class="unit-sub">dB</span><span class="mc-hidden-data mc-d na" id="mcdHeadroom"></span></div>
+          <div class="mc-measure-row"><span class="mc-measure-label">Noise floor</span><span class="mc-measure-value" id="mcNoiseFloor">– –</span><span class="unit-sub">dB</span><span class="mc-hidden-data mc-d na" id="mcdNoise"></span></div>
         </div>
       </details>
       <span class="mc-hidden-data mc-d na" id="mcdWidth"></span><span class="mc-hidden-data" id="mcTruePeakDup">– –</span>
@@ -4292,6 +4292,25 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck #mcSpecs .mc-specs-heading-copy{width:100%;text-align:center}
 #eq.oz-mixcheck #mcSpecs .mc-specs-source{display:none}
 
+/* Audio Specs approved layout, 12 Nov 2026 */
+#eq.oz-mixcheck #mcSpecs .mc-core-specs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-row,#eq.oz-mixcheck #mcSpecs .mc-measure-row{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:0!important;padding:14px 16px!important;min-height:0!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-label,#eq.oz-mixcheck #mcSpecs .mc-measure-label{height:3.9em!important;min-height:0!important;font-size:13px!important;line-height:1.3!important;color:#9ca3af!important;font-weight:500!important;margin:0!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-value,#eq.oz-mixcheck #mcSpecs .mc-measure-value,#eq.oz-mixcheck #mcSpecs .mc-tile-v{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif!important;font-size:26px!important;font-weight:700!important;line-height:1.1!important;height:auto!important;margin:4px 0 0!important;padding:0!important;white-space:nowrap!important;text-align:left!important;display:block!important;color:#f3f4f6!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-row:first-child .mc-core-value,#eq.oz-mixcheck #mcSpecs .mc-core-row:first-child .mc-tile-v{color:#2dd4bf!important}
+#eq.oz-mixcheck #mcSpecs .mc-more-measurements summary{display:none!important}
+#eq.oz-mixcheck #mcSpecs .mc-more-measurements{border:0!important;margin:0!important;padding:0!important}
+#eq.oz-mixcheck #mcSpecs .mc-detail-specs{border:0!important}
+#eq.oz-mixcheck #mcSpecs .unit-sub{display:block;margin-top:2px;min-height:1.3em;font-size:12px;line-height:1.3;color:#9ca3af;font-weight:500}
+#eq.oz-mixcheck{--mc-rail-w:300px}
+#eq.oz-mixcheck #mcSpecs .mc-core-row,#eq.oz-mixcheck #mcSpecs .mc-measure-row{align-items:center!important;text-align:center!important;justify-content:center!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-label,#eq.oz-mixcheck #mcSpecs .mc-measure-label{height:1.4em!important;width:100%!important;text-align:center!important;white-space:nowrap!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-value,#eq.oz-mixcheck #mcSpecs .mc-measure-value,#eq.oz-mixcheck #mcSpecs .mc-tile-v{margin:2px 0 0!important;width:100%!important;text-align:center!important}
+#eq.oz-mixcheck #mcSpecs .unit-sub{width:100%!important;text-align:center!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-specs,#eq.oz-mixcheck #mcSpecs .mc-detail-specs{row-gap:26px!important;column-gap:12px!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-specs{margin-bottom:26px!important}
+#eq.oz-mixcheck #mcSpecs .mc-kick.mc-specs-heading{margin-bottom:24px!important}
+
 #eq.oz-mixcheck .mc-spotify-result-art{cursor:pointer}
 #eq.oz-mixcheck .mc-spotify-result:hover{border-color:rgba(79,195,232,.6);background:#161b21}
 /* Active Mix Check tab: smooth blue-gold border-box ring. */
@@ -4955,7 +4974,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-11.07';
+const AIMM_BUILD = '2026-11-12.01';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
