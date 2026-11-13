@@ -1,5 +1,18 @@
 # HANDOVER.md — AIMM
 
+## CURRENT CHANGE — 2026-11-13, build 2026-11-13.05 (locked in)
+
+Spotify saved target (purple) arc, all live at aimixmasters.com. Builds .01-.05: (1) selecting a Spotify song keeps its saved target selected and saving a capture selects the new target; (2) the target is drawn through the live-line pipeline, smoothed about a third of an octave (SAVED_TARGET_SMOOTH_OCT) and centred, so it is visible and smooth; (3) it is a thick glow band with a 1px purple outline on both edges and no centre line, cached offscreen; (4) the live Spotify line is white with the same glow. Step 3 (capture-in-progress curves through the purple renderer) was closed as not needed: the live line already draws during capture and purple appears on save.
+
+Commits: `1bc4119f` (.01), `3d0e979c` (.02), `6778486b` (.03), `f27f1186` (.04), `902fe3bf` (.05). Latest Worker version `7026296f-675b-4def-82ce-e7be1f05cc09`; rollback chain in `docs/STATUS.md`. Codex (gpt-6.1-sol) made every edit; Jules reviewed .01, .02 and the .03 glow band; the smoothing, white live line and outline were approved by Kevin from rendered previews without a separate Jules pass.
+
+Known and open:
+- Not seen on a real capture during live playback on Kevin's machine: the white live line and purple band together.
+- Kevin saw no live line during capture in a fresh test Chrome profile; with the companion's live data (simulated and real) the line draws, so the likely cause was the missing Loopback network permission in that profile. Unconfirmed on his normal Chrome.
+- A saved target is drawn shape-only (level not compared), centred in the plot.
+
+NEXT TASK (Kevin, 13 Nov): saving the targets for use with stems. Not started. Open a planning conversation first: what a stem should compare against (the saved full-mix target, a per-stem target, or both), where the targets are stored, and how Hope uses them.
+
 ## CURRENT CHANGE — 2026-11-12, build 2026-11-12.17
 
 Kevin authorized merge and deployment of revisitable Fix Queue navigation. WIP branch adds Previous/Next, selectable items, Undo done/Restore, selection persistence per mix, and Hope synchronization. Tests passed before the build bump. Deployment verification pending; check this section before further work.

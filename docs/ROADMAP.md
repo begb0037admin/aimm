@@ -1,3 +1,9 @@
+## Spotify saved target: glow band, white live line — builds 2026-11-13.01 to .05
+
+Spotify saved target (purple) arc, all live at aimixmasters.com. Builds .01-.05: (1) selecting a Spotify song keeps its saved target selected and saving a capture selects the new target; (2) the target is drawn through the live-line pipeline, smoothed about a third of an octave (SAVED_TARGET_SMOOTH_OCT) and centred, so it is visible and smooth; (3) it is a thick glow band with a 1px purple outline on both edges and no centre line, cached offscreen; (4) the live Spotify line is white with the same glow. Step 3 (capture-in-progress curves through the purple renderer) was closed as not needed: the live line already draws during capture and purple appears on save.
+
+Next on the roadmap: save targets for use with stems (planning not started).
+
 ## Hope speech waveform route parity — build 2026-10-28.8
 
 Deepgram uses ElevenLabs TTS for Hope's voice. The Hope rail now samples that playback element with the same byte-frequency mean/255 volume reduction used by the pinned ElevenLabs client, while preserving the original waveform renderer and its current display settings. ElevenLabs Live remains on its SDK output-volume path. No voice/model settings changed.

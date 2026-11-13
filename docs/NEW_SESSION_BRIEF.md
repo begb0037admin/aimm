@@ -1,5 +1,11 @@
 # New session brief — AIMM deployment visibility, 12 Nov 2026
 
+## Latest (13 Nov 2026): Spotify purple target locked in, build 2026-11-13.05
+
+Spotify saved target (purple) arc, all live at aimixmasters.com. Builds .01-.05: (1) selecting a Spotify song keeps its saved target selected and saving a capture selects the new target; (2) the target is drawn through the live-line pipeline, smoothed about a third of an octave (SAVED_TARGET_SMOOTH_OCT) and centred, so it is visible and smooth; (3) it is a thick glow band with a 1px purple outline on both edges and no centre line, cached offscreen; (4) the live Spotify line is white with the same glow. Step 3 (capture-in-progress curves through the purple renderer) was closed as not needed: the live line already draws during capture and purple appears on save.
+
+Next: saving the targets for use with stems (not started; plan with Kevin first). Details and open questions are in `docs/HANDOVER.md`.
+
 ## Latest paused task — Fix Queue navigation
 
 Kevin asked to fix the queue stuck at `2 / 2 done` so completed fixes can be reviewed back and forth, requested Jules review, then asked to stop and hand over. **No queue-navigation change is live.** WIP is saved on pushed branch `fix/revisitable-fix-queue` at `965ec5ca`, in `/Users/admin/github/aimm-revisitable-fix-queue`. Read `docs/QUEUE_NAVIGATION_WIP_HANDOVER.md` before continuing. Do not merge or deploy until the unfinished implementation is reviewed, desktop and phone previews are shown to Kevin, and he approves.
