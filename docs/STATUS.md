@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## Live Spotify line white — 2026-11-13, build 2026-11-13.04
+
+Kevin approved deployment. The live Spotify reference line (drawReferenceLiveTrace) is now white instead of Spotify green, with the same widths, blur and glow; the saved target's glow band no longer has a thin centre line, because the white line is the live play to match it. Colour and one removed stroke only. Codex (gpt-6.1-sol) made the edit; Kevin approved from rendered previews; Jules has not reviewed this change. App commit `f27f1186` is deployed as Worker version `19423228-01a6-4a99-a98e-400a516ac732`. Rollback: Worker version `ee565f9b-377a-48d4-9cfc-5155fc82f43e`. Not yet seen: white live line over the purple band together in real playback.
+
 ## Spotify purple target glow band — 2026-11-13, build 2026-11-13.03
 
 Kevin approved deployment. The saved Spotify target is now a thick translucent purple glow band with a thin pale centre line (like iZotope Tonal Balance Control), drawn once into a cached offscreen canvas for speed, and smoothed over about a third of an octave (`SAVED_TARGET_SMOOTH_OCT`) so it shows the broad tonal shape while the green live line keeps its detail. Drawing only. Codex (gpt-6.1-sol) made the edits; Jules approved the glow band and the caching concern; the smoothing change was approved by Kevin from a rendered preview and has not had a separate Jules pass. App commit `6778486b` is deployed as Worker version `ee565f9b-377a-48d4-9cfc-5155fc82f43e`. Rollback: Worker version `1c35c379-e24a-496e-a9b2-81f506433c72`. Not yet seen: the band on a real capture and its speed during live playback on Kevin's machine.
