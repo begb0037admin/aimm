@@ -5061,7 +5061,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-13.02';
+const AIMM_BUILD = '2026-11-13.03';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21908,8 +21908,45 @@ csInit('csPlatform');
     // Any live capture target is a single line: no corridor band behind it.
     if(corr&&!corr.liveAverage&&corr.referenceSource==='Spotify'){
       const midpoints=[];for(const p of corr.pts){const f=Number(p[0]),db=(Number(p[1])+Number(p[2]))/2;if(f>=20&&f<=20000&&isFinite(db))midpoints.push([f,db]);}
-      const points=refLiveDisplayCurveCompute(midpoints,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom,'saved-target|'+((document.getElementById('refCurveTarget')||{}).value||corr.label||''))||[];
-      if(points.length>1){ctx.save();ctx.beginPath();ctx.rect(mixX0,mixPlotTop,mixX1-mixX0,mixPlotBottom-mixPlotTop);ctx.clip();ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();smoothPath(ctx,points);ctx.strokeStyle='rgba(185,112,255,.98)';ctx.lineWidth=1.5;ctx.stroke();ctx.restore();}
+      // Broad tonal balance for saved targets only; interpolate and smooth in log-frequency.
+      const SAVED_TARGET_SMOOTH_OCT=0.33;
+      let targetMidpoints=midpoints;
+      if(midpoints.length>1){
+        midpoints.sort((a,b)=>a[0]-b[0]);
+        const steps=Math.ceil(Math.log2(1000)*24),stepOct=Math.log2(1000)/steps,grid=[];
+        let at=0;
+        for(let i=0;i<=steps;i++){
+          const f=20*Math.pow(1000,i/steps);
+          while(at<midpoints.length-1&&midpoints[at+1][0]<=f)at++;
+          const a=midpoints[at],b=midpoints[Math.min(at+1,midpoints.length-1)];
+          const t=b[0]>a[0]?Math.max(0,Math.min(1,Math.log2(f/a[0])/Math.log2(b[0]/a[0]))):0;
+          grid.push([f,a[1]+(b[1]-a[1])*t]);
+        }
+        const sigma=SAVED_TARGET_SMOOTH_OCT/stepOct,radius=Math.ceil(3*sigma);
+        targetMidpoints=grid.map(([f],i)=>{
+          let sum=0,weight=0;
+          for(let k=-radius;k<=radius;k++){const w=Math.exp(-0.5*Math.pow(k/sigma,2));sum+=grid[Math.max(0,Math.min(steps,i+k))][1]*w;weight+=w;}
+          return [f,sum/weight];
+        });
+      }
+      const points=refLiveDisplayCurveCompute(targetMidpoints,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom,'saved-target|'+((document.getElementById('refCurveTarget')||{}).value||corr.label||''))||[];
+      if(points.length>1){
+        ctx.save();ctx.beginPath();ctx.rect(mixX0,mixPlotTop,mixX1-mixX0,mixPlotBottom-mixPlotTop);ctx.clip();ctx.lineCap='round';ctx.lineJoin='round';
+        const transform=ctx.getTransform();
+        const glowKey=JSON.stringify([points,canvas.width,canvas.height,mixX0,mixX1,mixPlotTop,mixPlotBottom,transform.a,transform.b,transform.c,transform.d,transform.e,transform.f]);
+        let glowCache=refDrawCanvas.spotifyGlowCache;
+        if(!glowCache||glowCache.key!==glowKey){
+          const glowCanvas=document.createElement('canvas');glowCanvas.width=canvas.width;glowCanvas.height=canvas.height;
+          const glowCtx=glowCanvas.getContext('2d');glowCtx.setTransform(transform);glowCtx.lineCap='round';glowCtx.lineJoin='round';
+          [{w:110,b:30,a:.10},{w:84,b:18,a:.16},{w:60,b:8,a:.26},{w:46,b:3,a:.32}].forEach(layer=>{
+            glowCtx.beginPath();smoothPath(glowCtx,points);glowCtx.strokeStyle='rgba(185,112,255,'+layer.a+')';glowCtx.lineWidth=layer.w;glowCtx.filter='blur('+layer.b+'px)';glowCtx.stroke();glowCtx.filter='none';
+          });
+          glowCache=refDrawCanvas.spotifyGlowCache={key:glowKey,canvas:glowCanvas};
+        }
+        // The cached bitmap already includes the main context's coordinate scale.
+        ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(glowCache.canvas,0,0);ctx.restore();
+        ctx.beginPath();smoothPath(ctx,points);ctx.filter='none';ctx.strokeStyle='rgba(225,205,255,.95)';ctx.lineWidth=2;ctx.stroke();ctx.restore();
+      }
     }else if(corr&&!corr.liveAverage){
       const M=150,fx=[],hiY=[],loY=[];
       for(let i=0;i<M;i++){
