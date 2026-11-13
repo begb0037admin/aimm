@@ -5061,7 +5061,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-13.01';
+const AIMM_BUILD = '2026-11-13.02';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21907,7 +21907,8 @@ csInit('csPlatform');
     // While capturing, the bright purple line is the whole target: no corridor band.
     // Any live capture target is a single line: no corridor band behind it.
     if(corr&&!corr.liveAverage&&corr.referenceSource==='Spotify'){
-      const points=[];for(const p of corr.pts){const f=Number(p[0]),db=(Number(p[1])+Number(p[2]))/2;if(isFinite(f)&&isFinite(db))points.push([mixFreqToX(f),mixDbToY(db)]);}
+      const midpoints=[];for(const p of corr.pts){const f=Number(p[0]),db=(Number(p[1])+Number(p[2]))/2;if(f>=20&&f<=20000&&isFinite(db))midpoints.push([f,db]);}
+      const points=refLiveDisplayCurveCompute(midpoints,mixDbToY,mixX0,mixX1,mixPlotTop,mixPlotBottom,'saved-target|'+((document.getElementById('refCurveTarget')||{}).value||corr.label||''))||[];
       if(points.length>1){ctx.save();ctx.beginPath();ctx.rect(mixX0,mixPlotTop,mixX1-mixX0,mixPlotBottom-mixPlotTop);ctx.clip();ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();smoothPath(ctx,points);ctx.strokeStyle='rgba(185,112,255,.98)';ctx.lineWidth=1.5;ctx.stroke();ctx.restore();}
     }else if(corr&&!corr.liveAverage){
       const M=150,fx=[],hiY=[],loY=[];
