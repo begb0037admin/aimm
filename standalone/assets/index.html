@@ -5061,7 +5061,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-13.03';
+const AIMM_BUILD = '2026-11-13.04';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21719,9 +21719,9 @@ csInit('csPlatform');
       ctx.save();ctx.beginPath();ctx.rect(x0,top,x1-x0,bottom-top);ctx.clip();
       ctx.lineCap='round';ctx.lineJoin='round';
       [{w:70,b:28,a:.07},{w:52,b:22,a:.09},{w:38,b:16,a:.12},{w:26,b:10,a:.18},{w:16,b:5,a:.26}].forEach(layer=>{
-        ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(29,185,84,'+layer.a+')';ctx.lineWidth=layer.w;ctx.filter='blur('+layer.b+'px)';ctx.stroke();ctx.filter='none';
+        ctx.beginPath();smoothPath(ctx,xy);ctx.strokeStyle='rgba(255,255,255,'+layer.a+')';ctx.lineWidth=layer.w;ctx.filter='blur('+layer.b+'px)';ctx.stroke();ctx.filter='none';
       });
-      ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(29,185,84,.95)';ctx.lineWidth=4.2;ctx.stroke();
+      ctx.beginPath();smoothPath(ctx,xy);ctx.filter='none';ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=4.2;ctx.stroke();
       ctx.restore();
       ctx.save();ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(247,241,255,.86)';ctx.fillText('LIVE AUDIO',x1,14);ctx.restore();
     };
@@ -21945,7 +21945,7 @@ csInit('csPlatform');
         }
         // The cached bitmap already includes the main context's coordinate scale.
         ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(glowCache.canvas,0,0);ctx.restore();
-        ctx.beginPath();smoothPath(ctx,points);ctx.filter='none';ctx.strokeStyle='rgba(225,205,255,.95)';ctx.lineWidth=2;ctx.stroke();ctx.restore();
+        ctx.restore();
       }
     }else if(corr&&!corr.liveAverage){
       const M=150,fx=[],hiY=[],loY=[];
