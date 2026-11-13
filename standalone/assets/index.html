@@ -5061,7 +5061,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-12.17';
+const AIMM_BUILD = '2026-11-13.01';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -22225,8 +22225,7 @@ csInit('csPlatform');
     }
     refTrackTargets.push(item);
     if(!refSaveTrackTargets()){refTrackTargets=previousTargets;const s=document.getElementById('mcSpotifyRefStatus');if(s)s.textContent='Could not save this reference in this browser. Check available local storage.';return false;}
-    const targetSelect=document.getElementById('refCurveTarget');if(targetSelect)targetSelect.value='';
-    refRefreshTrackTargets();
+    refRefreshTrackTargets(item.id);setTimeout(()=>{if(typeof window.refTargetChanged==='function')window.refTargetChanged();},0);
     const status=document.getElementById('mcSpotifyRefStatus');if(status)status.textContent='';
     const input=document.getElementById('mcSpotifyRefName');if(input)input.value=item.name;
     return true;
@@ -22460,7 +22459,7 @@ csInit('csPlatform');
     if(LIVE.active&&LIVE.referenceOnly)LIVE.referenceLabel=label;
     if(input)input.value=label;if(capture){capture.hidden=false;capture.textContent='Capture reference';}
     const saved=refTrackTargets.find(item=>item.spotifyTrackId&&item.spotifyTrackId===String(track.id)),targetSelect=document.getElementById('refCurveTarget');
-    if(targetSelect){targetSelect.value='';window.refTargetChanged();}else refRenderSavedTargets();
+    if(targetSelect){targetSelect.value=saved&&Array.from(targetSelect.options).some(option=>option.value==='trackref:'+saved.id)?'trackref:'+saved.id:'';window.refTargetChanged();}else refRenderSavedTargets();
     MC_SPECS.setSpotify(saved&&saved.analysis?saved.analysis:null,null,label);
     if(!captureActive)mcSpotifyStatus('');
   }
