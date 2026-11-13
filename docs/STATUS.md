@@ -1524,3 +1524,6 @@ small follow-up ticket). Branch `markey-hope-history-key-bump` @ `d492eb1`, off 
 P-A → P-C → P-B → P-D → P-E (in that order, each depends on prior)
 Effort total: ~12.5 hours across all five items.
 Start with P-A (Mix Check) — smallest risk, highest immediate value.
+
+## 2026-11-13 (late) — MacBook shows no new features (OPEN, handed over)
+Kevin reports build .08 loads on the MacBook but none of the recent additions work. Mini checks (read-only): page byte-identical on both Macs, companion running and answering on both, Person 1 profile has loopback Allow + Spotify token. Cause not found; needs a look on the MacBook itself. Full detail and next steps: `docs/HANDOVER-macbook-2026-11-13.md`. No code or deploy change.
