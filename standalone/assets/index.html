@@ -1625,6 +1625,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-result button:hover{background:rgba(79,195,232,.18);border-color:rgba(79,195,232,.70)}
 #eq.oz-mixcheck .mc-spotify-result button:focus-visible{outline:2px solid #65d3e5;outline-offset:2px}
 #eq.oz-mixcheck .mc-spotify-results{display:grid;gap:7px;max-height:min(78vh,960px);overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+#eq.oz-mixcheck .mc-spotify-results:has(.mc-spotify-artist-tracks){max-height:none}
+#eq.oz-mixcheck .mc-spotify-artist-tracks{display:grid;gap:7px;max-height:338px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
 #eq.oz-mixcheck .mc-spotify-load-more{justify-self:center;min-height:34px;padding:0 16px;border:1px solid rgba(79,195,232,.45);border-radius:7px;background:rgba(79,195,232,.10);color:#cfeaf5;font-size:calc(var(--inv-text-scale, 1) * 10px);font-weight:700;cursor:pointer}
 #eq.oz-mixcheck .mc-spotify-load-more:hover{background:rgba(79,195,232,.18);border-color:rgba(79,195,232,.70)}
 #eq.oz-mixcheck .mc-spotify-load-more:disabled{opacity:.55;cursor:wait}
@@ -5061,7 +5063,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-13.05';
+const AIMM_BUILD = '2026-11-13.06';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -22568,8 +22570,8 @@ csInit('csPlatform');
     })();
     try{return await mcSpotifySavedNameRefreshPromise;}finally{mcSpotifySavedNameRefreshPromise=null;}
   }
-  function mcSpotifyShowTracks(tracks,append=false,nextUrl=null){
-    const host=document.getElementById('mcSpotifyResults');if(!host)return;
+  function mcSpotifyShowTracks(tracks,append=false,nextUrl=null,host=document.getElementById('mcSpotifyResults')){
+    if(!host)return;
     if(!append)host.replaceChildren();
     const priorMore=host.querySelector('.mc-spotify-load-more');if(priorMore)priorMore.remove();
     host.hidden=!tracks.length&&!append;
@@ -22680,7 +22682,7 @@ csInit('csPlatform');
     const capture=document.getElementById('mcSpotifyCapture');if(capture){capture.hidden=false;capture.textContent='Capture reference';}
     const card=document.createElement('div');card.className='mc-spotify-artist-source';
     const title=document.createElement('strong');title.textContent=(artist.name||'Artist')+' · Spotify Top tracks';
-    const help=document.createElement('span');help.textContent='Play a track in Spotify’s list to select it for AIMM, then capture it.';
+    const help=document.createElement('span');help.textContent='Press Select on a track, then press Capture reference.';
     const embed=document.createElement('div');embed.className='mc-spotify-artist-embed';card.append(title,help,embed);host.appendChild(card);
     try{const api=await mcSpotifyEnsureIframeApi();api.createController(embed,{uri:'spotify:artist:'+artist.id,width:'100%',height:'460'},controller=>{
       mcSpotifyArtistController=controller;controller.addListener('playback_started',event=>mcSpotifySelectPlayingURI(event&&event.data&&event.data.playingURI,'playback_started'));controller.addListener('playback_update',event=>{const data=event&&event.data;if(data){mcSpotifyIsPlaying=!data.isPaused;if(mcSpotifyIsPlaying&&data.playingURI)mcSpotifySelectPlayingURI(data.playingURI,'playback_update');}});controller.addListener('playback_ended',()=>{mcSpotifyIsPlaying=false;});
@@ -22705,12 +22707,18 @@ csInit('csPlatform');
     mcSpotifySearchBusy=true;mcSpotifyRenderConnection();mcSpotifyStatus('Searching Spotify…');
     try{const token=await mcSpotifyAccessToken();let url;if(/^https?:\/\/(?:open\.)?spotify\.com\/(?:intl-[^/]+\/)?track\/([A-Za-z0-9]+)/i.test(q)){const id=q.match(/\/track\/([A-Za-z0-9]+)/i)[1];url='https://api.spotify.com/v1/tracks/'+encodeURIComponent(id);}else url='https://api.spotify.com/v1/search?'+new URLSearchParams({q,type:'track,artist',limit:'10',offset:'0'}).toString();
       const response=await fetch(url,{headers:{Authorization:'Bearer '+token}}),data=await response.json();if(!response.ok)throw new Error((data.error&&data.error.message)||'Spotify search failed');const tracks=data&&data.tracks&&Array.isArray(data.tracks.items)?data.tracks.items:(data&&data.id?[data]:[]),artists=data&&data.artists&&Array.isArray(data.artists.items)?data.artists.items:[];const exactArtist=artists.find(artist=>String(artist.name||'').trim().toLocaleLowerCase()===q.toLocaleLowerCase());
-      if(exactArtist){mcSpotifyNextSearchUrl=null;await mcSpotifyShowArtistTopTracks(exactArtist);mcSpotifyStatus('Spotify Top tracks for '+exactArtist.name+'. Play the track you want, then click Capture reference.');}
+      if(exactArtist){mcSpotifyNextSearchUrl=null;await mcSpotifyShowArtistTopTracks(exactArtist);
+        try{const response=await fetch('https://api.spotify.com/v1/search?'+new URLSearchParams({q:'artist:"'+exactArtist.name+'"',type:'track',limit:'10'}).toString(),{headers:{Authorization:'Bearer '+token}}),data=await response.json();if(!response.ok)throw new Error((data.error&&data.error.message)||'Spotify could not load artist tracks.');
+          const tracks=(data&&data.tracks&&Array.isArray(data.tracks.items)?data.tracks.items:[]).filter(track=>Array.isArray(track.artists)&&track.artists.some(artist=>artist.id===exactArtist.id)),host=document.getElementById('mcSpotifyResults');
+          if(tracks.length&&host){const heading=document.createElement('strong'),list=document.createElement('div');heading.textContent='Select a track to capture';list.className='mc-spotify-artist-tracks';host.append(heading,list);mcSpotifyShowTracks(tracks,false,null,list);mcSpotifyStatus('Press Select on a track, then press Capture reference.');}else mcSpotifyStatus('No tracks found. Search for a track by name instead.');
+        }catch(error){mcSpotifyStatus('Could not load tracks. Search for a track by name instead.');}
+      }
       else{mcSpotifyNextSearchUrl=data&&data.tracks&&data.tracks.next||null;mcSpotifyShowTracks(tracks,false,mcSpotifyNextSearchUrl);mcSpotifyStatus(tracks.length?'Select a Spotify result. Use Load more to continue through Spotify’s relevance-ranked results.':'No matching tracks found.');}
     }catch(error){mcSpotifyStatus(error.message||'Spotify search failed.');}finally{mcSpotifySearchBusy=false;mcSpotifyRenderConnection(false);}
   }
   async function mcSpotifyCaptureSelected(){
-    if(mcSpotifyArtistSourceActive&&!mcSpotifySelectedTrack){
+    if(!(mcSpotifySelectedTrack&&mcSpotifySelectedTrack.id)&&!(mcSpotifyArtistSourceActive&&mcSpotifyArtistPlayingId)){mcSpotifyStatus('Press Select on a track, then press Capture reference.');return;}
+    if(mcSpotifyArtistSourceActive&&!(mcSpotifySelectedTrack&&mcSpotifySelectedTrack.id)){
       const playingId=mcSpotifyArtistPlayingId;
       if(playingId){
         // Capture must be requested in the same click turn. Start the Spotify
