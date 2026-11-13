@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## Spotify purple target glow band — 2026-11-13, build 2026-11-13.03
+
+Kevin approved deployment. The saved Spotify target is now a thick translucent purple glow band with a thin pale centre line (like iZotope Tonal Balance Control), drawn once into a cached offscreen canvas for speed, and smoothed over about a third of an octave (`SAVED_TARGET_SMOOTH_OCT`) so it shows the broad tonal shape while the green live line keeps its detail. Drawing only. Codex (gpt-6.1-sol) made the edits; Jules approved the glow band and the caching concern; the smoothing change was approved by Kevin from a rendered preview and has not had a separate Jules pass. App commit `6778486b` is deployed as Worker version `ee565f9b-377a-48d4-9cfc-5155fc82f43e`. Rollback: Worker version `1c35c379-e24a-496e-a9b2-81f506433c72`. Not yet seen: the band on a real capture and its speed during live playback on Kevin's machine.
+
 ## Spotify purple target shape — 2026-11-13, build 2026-11-13.02
 
 Kevin approved deployment. The saved Spotify target (purple line) was drawn from raw points, so Companion captures stored at raw dB sat below the -72 dB floor and looked saw-toothed. It now goes through the green line's pipeline (1/12-octave banding, smoothing, 240-point grid, vertical centring) with a per-target easing tag and no raw fallback. Drawing only; selection, saving and band comparisons are unchanged. Codex (gpt-6.1-sol) made the edit; Jules approved. App commit `3d0e979c` is deployed as Worker version `1c35c379-e24a-496e-a9b2-81f506433c72`. Rollback: Worker version `5f13f7b7-d94a-410c-b5ec-17d314d31484`. Open: Kevin saw no green live line during capture in a fresh test Chrome profile; with the companion's live data (simulated and real) the green line draws in the current code, so the likely cause is the missing Loopback network permission in that profile. Unconfirmed until checked on his normal Chrome.
