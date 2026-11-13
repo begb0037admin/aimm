@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## Spotify purple target line — 2026-11-13, build 2026-11-13.01
+
+Kevin approved deployment. Selecting a Spotify song now keeps its saved target selected, and saving a capture selects the new target, so the purple line shows in Spectral Balance. Uncaptured tracks still fall back to Flat. Codex (gpt-6.1-sol) made the edit and reviewed it; its one finding (refTargetChanged during companion capture) is fixed by deferring the call. Jules approved. Kevin saw the purple line with real Spotify on the pre-deferral build. App commit `1bc4119f` is deployed as Worker version `5f13f7b7-d94a-410c-b5ec-17d314d31484`; build .01 verified at `aimixmasters.com` and the workers.dev URL. Rollback: Worker version `8e3464d7-1af4-4df9-8c23-8250eba39fa7`. Not done: step 3, capture-in-progress curves through the purple renderer (needs a draw-order check against the green live trace).
+
 ## Revisitable Fix Queue — 2026-11-12, build 2026-11-12.17
 
 Kevin authorized merge and deployment. Completed fixes remain navigable with Previous/Next, separate done count, Undo done/Restore, and selectable item lists; Hope follows the selected item. Queue transition and Hope web-search tests passed on WIP branch `965ec5ca`. App release commit `9aeb50e3` is deployed as Worker version `8e3464d7-1af4-4df9-8c23-8250eba39fa7`; build .17 is verified at `aimixmasters.com` and the workers.dev URL. The separate `aimmastersx.com` hostname issue remains open.
