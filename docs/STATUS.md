@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## Saved target hairline outline — 2026-11-13, build 2026-11-13.05
+
+Kevin approved deployment. The saved Spotify target's glow band now has a 1px purple outline along both edges (no centre line), drawn into the same cached offscreen canvas as the glow so it adds no per-frame cost. Drawing only. Codex (gpt-6.1-sol) made the edit; Kevin approved from a rendered preview; Jules has not reviewed this change. App commit `902fe3bf` is deployed as Worker version `7026296f-675b-4def-82ce-e7be1f05cc09`. Rollback: Worker version `19423228-01a6-4a99-a98e-400a516ac732`.
+
 ## Live Spotify line white — 2026-11-13, build 2026-11-13.04
 
 Kevin approved deployment. The live Spotify reference line (drawReferenceLiveTrace) is now white instead of Spotify green, with the same widths, blur and glow; the saved target's glow band no longer has a thin centre line, because the white line is the live play to match it. Colour and one removed stroke only. Codex (gpt-6.1-sol) made the edit; Kevin approved from rendered previews; Jules has not reviewed this change. App commit `f27f1186` is deployed as Worker version `19423228-01a6-4a99-a98e-400a516ac732`. Rollback: Worker version `ee565f9b-377a-48d4-9cfc-5155fc82f43e`. Not yet seen: white live line over the purple band together in real playback.
