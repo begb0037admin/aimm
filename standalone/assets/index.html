@@ -1626,7 +1626,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-result button:focus-visible{outline:2px solid #65d3e5;outline-offset:2px}
 #eq.oz-mixcheck .mc-spotify-results{display:grid;gap:7px;max-height:min(78vh,960px);overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
 #eq.oz-mixcheck .mc-spotify-results:has(.mc-spotify-artist-tracks){max-height:none}
-#eq.oz-mixcheck .mc-spotify-artist-tracks{display:grid;gap:7px;max-height:338px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
 #eq.oz-mixcheck .mc-spotify-load-more{justify-self:center;min-height:34px;padding:0 16px;border:1px solid rgba(79,195,232,.45);border-radius:7px;background:rgba(79,195,232,.10);color:#cfeaf5;font-size:calc(var(--inv-text-scale, 1) * 10px);font-weight:700;cursor:pointer}
 #eq.oz-mixcheck .mc-spotify-load-more:hover{background:rgba(79,195,232,.18);border-color:rgba(79,195,232,.70)}
 #eq.oz-mixcheck .mc-spotify-load-more:disabled{opacity:.55;cursor:wait}
@@ -1648,6 +1647,25 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-result-actions{display:flex;gap:6px;flex:0 0 auto}
 #eq.oz-mixcheck .mc-spotify-result-player{display:block;flex:1 0 100%;width:100%;height:152px;border:0;border-radius:8px;background:#0b0f0c}
 #eq.oz-mixcheck .mc-spotify-result.is-previewing .mc-spotify-result-actions{margin-left:auto}
+#eq.oz-mixcheck .mc-spotify-artist-fallback{margin-top:12px;border:1px solid #2a3340;border-radius:12px;background:linear-gradient(180deg,#15181c,#0f1114);overflow:hidden;font-size:calc(var(--inv-text-scale,1)*13px);color:#a4b1c1}
+#eq.oz-mixcheck .mc-spotify-artist-fallback>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;min-height:52px;padding:0 20px;cursor:pointer;color:#68d3e6;font-size:calc(var(--inv-text-scale,1)*14px);font-weight:700}
+#eq.oz-mixcheck .mc-spotify-artist-fallback>summary::-webkit-details-marker{display:none}
+#eq.oz-mixcheck .mc-spotify-artist-fallback>summary:hover{background:rgba(101,211,229,.035)}
+#eq.oz-mixcheck .mc-spotify-artist-fallback>summary:focus-visible{outline:2px solid #65d3e5;outline-offset:-3px}
+#eq.oz-mixcheck .mc-spotify-artist-fallback[open]>summary{border-bottom:1px solid #2a3340}
+#eq.oz-mixcheck .mc-spotify-artist-fallback[open] .mc-saved-targets-plus{transform:rotate(45deg)}
+#eq.oz-mixcheck .mc-spotify-artist-panel{padding:14px 16px 16px;background:#131519}
+#eq.oz-mixcheck .mc-spotify-artist-tracks{display:grid;gap:8px;max-height:302px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+#eq.oz-mixcheck .mc-spotify-artist-help{margin-top:12px;font-size:calc(var(--inv-text-scale,1)*13px);color:#a4b1c1}
+#eq.oz-mixcheck .mc-spotify-artist-message{padding:14px;font-size:calc(var(--inv-text-scale,1)*13px);color:#a4b1c1}
+#eq.oz-mixcheck .mc-spotify-result--compact{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:14px;align-items:center;min-height:54px;padding:10px 14px;border:1px solid #2a3340;border-radius:12px;background:linear-gradient(180deg,#1d2025,#16181c)}
+#eq.oz-mixcheck .mc-spotify-result-thumb{display:block;box-sizing:border-box;width:44px;height:44px;flex:none;border-radius:8px;overflow:hidden;background:#0f1114;border:1px solid #2a3340}
+#eq.oz-mixcheck .mc-spotify-result-thumb img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;border-radius:0;background:transparent}
+#eq.oz-mixcheck .mc-spotify-result--compact:hover,#eq.oz-mixcheck .mc-spotify-result--compact.is-selected{border-color:#4f7f8c;background:#22262b}
+#eq.oz-mixcheck .mc-spotify-result--compact .mc-spotify-result-copy strong{font-size:calc(var(--inv-text-scale,1)*14px);font-weight:650;color:#eaf0f6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#eq.oz-mixcheck .mc-spotify-result--compact .mc-spotify-result-copy span{font-size:calc(var(--inv-text-scale,1)*12px);color:#a4b1c1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#eq.oz-mixcheck .mc-spotify-result--compact button{min-height:38px;padding:0 16px;border-radius:10px;font-size:calc(var(--inv-text-scale,1)*13px);border:1px solid rgba(79,195,232,.45);background:rgba(79,195,232,.10);color:#cfeaf5;font-weight:700}
+@media(max-width:460px){#eq.oz-mixcheck .mc-spotify-result--compact{grid-template-columns:44px minmax(0,1fr)}#eq.oz-mixcheck .mc-spotify-result--compact button{grid-column:1 / -1;min-height:44px;width:100%}}
 @media(max-width:680px){#eq.oz-mixcheck .mc-spotify-ref-controls{flex-wrap:wrap}#eq.oz-mixcheck .mc-spotify-ref-controls input{flex-basis:100%}}
 #eq.oz-mixcheck #refSpecStatus{display:none !important}
 #eq.oz-mixcheck .oz-spec-canvas-wrap{height:440px;flex:1 1 440px;min-height:440px;border:1px solid #14171b;border-radius:6px;position:relative;overflow:hidden;background:radial-gradient(120% 150% at 32% 125%,rgba(165,87,244,.22),transparent 60%),radial-gradient(120% 160% at 78% 130%,rgba(47,161,230,.18),transparent 60%),#04060a}
@@ -2803,6 +2821,33 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="starting"] .mc-spotify-capture-dot,
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"] .mc-spotify-capture-dot{background:#7b8190 !important;box-shadow:none !important}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="error"] .mc-spotify-capture-dot{background:#f472b6 !important;box-shadow:none !important}
+
+/* ---- Capture panel: native look ---- */
+#eq.oz-mixcheck .mc-spotify-capture-state{padding:14px 16px;gap:6px 12px;border:1px solid #2a3340;border-radius:12px;background:linear-gradient(180deg,#15181c 0%,#0f1114 100%)}
+#eq.oz-mixcheck .mc-spotify-capture-state:is([data-state="capturing"],[data-state="processing"]){border-color:#4f7f8c}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="error"]{border-color:#4d3538}
+#eq.oz-mixcheck .mc-spotify-capture-dot{width:10px;height:10px;align-self:start;margin-top:5px}
+#eq.oz-mixcheck .mc-spotify-capture-copy{gap:3px}
+#eq.oz-mixcheck #mcSpotifyCaptureTitle{font-size:calc(var(--inv-text-scale,1)*14px);font-weight:700;letter-spacing:0;color:#68d3e6;text-transform:lowercase}
+#eq.oz-mixcheck #mcSpotifyCaptureTitle::first-letter{text-transform:uppercase}
+#eq.oz-mixcheck #mcSpotifyCaptureName{font-size:calc(var(--inv-text-scale,1)*15px);font-weight:700;color:#ecf2f8}
+#eq.oz-mixcheck #mcSpotifyCaptureDetail{font-size:calc(var(--inv-text-scale,1)*13px);font-weight:500;line-height:1.4;color:#b4c0cf}
+#eq.oz-mixcheck .mc-spotify-capture-state time{font-weight:600;font-size:calc(var(--inv-text-scale,1)*18px);line-height:1;font-family:inherit;font-variant-numeric:tabular-nums;color:#ecf2f8}
+#eq.oz-mixcheck .mc-spotify-capture-track{height:4px;border-radius:999px;background:#0b0d10}
+#eq.oz-mixcheck .mc-spotify-capture-track i{background:linear-gradient(90deg,#4fc3e8,#c9a15a)}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"] .mc-spotify-capture-track i{animation:mcSpotifyCaptureSweep 2.2s ease-in-out infinite}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="starting"] .mc-spotify-capture-track i{background:#4f7f8c;animation:mcSpotifyCaptureSweep 1.8s ease-in-out infinite}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="saved"] .mc-spotify-capture-dot{background:#7ee2a8}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="saved"] .mc-spotify-capture-track i{width:100%;background:#7ee2a8}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"] .mc-spotify-capture-track i{width:100%;background:#7b8190}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="error"] .mc-spotify-capture-track i{width:0}
+#eq.oz-mixcheck .mc-spotify-saved-status{font-size:calc(var(--inv-text-scale,1)*13px);font-weight:650}
+#eq.oz-mixcheck .mc-spotify-saved-status .mc-spotify-saved-reason{font-size:calc(var(--inv-text-scale,1)*12px);color:#b4c0cf}
+@media(max-width:460px){
+#eq.oz-mixcheck .mc-spotify-capture-state{padding:12px 14px;gap:6px 10px}
+#eq.oz-mixcheck .mc-spotify-capture-state time{font-size:calc(var(--inv-text-scale,1)*16px)}
+#eq.oz-mixcheck #mcSpotifyCaptureName{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+}
 
 /* ---- Hope speaker label ---- */
 #hopeRail .aichat-msg.ai .who{color:#facc15 !important}
@@ -5063,7 +5108,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-13.06';
+const AIMM_BUILD = '2026-11-13.07';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -22570,17 +22615,28 @@ csInit('csPlatform');
     })();
     try{return await mcSpotifySavedNameRefreshPromise;}finally{mcSpotifySavedNameRefreshPromise=null;}
   }
-  function mcSpotifyShowTracks(tracks,append=false,nextUrl=null,host=document.getElementById('mcSpotifyResults')){
+  function mcSpotifyShowTracks(tracks,append=false,nextUrl=null,host=document.getElementById('mcSpotifyResults'),opts={}){
     if(!host)return;
     if(!append)host.replaceChildren();
     const priorMore=host.querySelector('.mc-spotify-load-more');if(priorMore)priorMore.remove();
     host.hidden=!tracks.length&&!append;
     const closePreview=row=>{const player=row.querySelector('.mc-spotify-result-player');if(player)player.remove();row.classList.remove('is-previewing');const summary=row.querySelector('.mc-spotify-result-summary');if(summary)summary.hidden=false;const close=row.querySelector('[data-preview-close]');if(close)close.remove();};
-    tracks.forEach(track=>{const row=document.createElement('div');row.className='mc-spotify-result';
+    tracks.forEach(track=>{const row=document.createElement('div');row.className='mc-spotify-result'+(opts.compact?' mc-spotify-result--compact':'');
+      if(opts.compact){
+        const thumb=document.createElement('span');thumb.className='mc-spotify-result-thumb';thumb.setAttribute('aria-hidden','true');
+        const images=Array.isArray(track.album&&track.album.images)?track.album.images.filter(x=>x&&/^https:\/\/i\.scdn\.co\//i.test(x.url)):[];
+        const image=images.filter(x=>Number(x.width)>=64).sort((a,b)=>Number(a.width)-Number(b.width))[0]||images[0];
+        if(image){const img=document.createElement('img');img.src=image.url;img.alt='';img.loading='lazy';thumb.appendChild(img);}row.appendChild(thumb);
+      }
       const summary=document.createElement('div');summary.className='mc-spotify-result-summary';
       const image=Array.isArray(track.album&&track.album.images)?track.album.images.find(x=>x&&x.url):null;
-      const art=document.createElement('button');art.type='button';art.className='mc-spotify-result-art';if(image&&/^https:\/\/i\.scdn\.co\//i.test(image.url)){const img=document.createElement('img');img.src=image.url;img.alt='';img.loading='lazy';art.appendChild(img);}summary.appendChild(art);
+      const art=document.createElement('button');if(!opts.compact){art.type='button';art.className='mc-spotify-result-art';if(image&&/^https:\/\/i\.scdn\.co\//i.test(image.url)){const img=document.createElement('img');img.src=image.url;img.alt='';img.loading='lazy';art.appendChild(img);}summary.appendChild(art);}
       const copy=document.createElement('div');copy.className='mc-spotify-result-copy';const title=document.createElement('strong');title.textContent=track.name||'Untitled track';const details=document.createElement('span');details.textContent=(track.artists||[]).map(a=>a.name).join(', ')+(track.album&&track.album.name?' · '+track.album.name:'');copy.append(title,details);summary.appendChild(copy);row.appendChild(summary);
+      if(opts.compact){
+        const use=document.createElement('button');use.type='button';use.textContent='Select';use.setAttribute('aria-pressed','false');
+        use.addEventListener('click',()=>{mcSpotifySelectTrack(track);host.querySelectorAll('.mc-spotify-result--compact').forEach(other=>{other.classList.remove('is-selected');const button=other.querySelector('button');if(button){button.setAttribute('aria-pressed','false');button.textContent='Select';}});row.classList.add('is-selected');use.setAttribute('aria-pressed','true');use.textContent='Selected';});
+        row.appendChild(use);host.appendChild(row);return;
+      }
       const actions=document.createElement('div');actions.className='mc-spotify-result-actions';
       const openPreview=()=>{
         if(row.classList.contains('is-previewing'))return;
@@ -22675,6 +22731,20 @@ csInit('csPlatform');
     mcSpotifyCaptureTrailSet('save','Saved label: "'+label+'" — '+(identified?'resolved from Spotify track metadata.':mcSpotifyCaptureIdentityReason||'track metadata was unavailable.'));
     return label;
   }
+  const mcSpotifyArtistTracksCache=new Map();
+  function mcSpotifyArtistTracks(artist){
+    if(!mcSpotifyArtistTracksCache.has(artist.id))mcSpotifyArtistTracksCache.set(artist.id,(async()=>{
+      let failed=false,tracks=[];
+      try{const token=await mcSpotifyAccessToken(),pages=[];
+        for(let start=0;start<30;start+=6)pages.push(...await Promise.all(Array.from({length:6},(_,i)=>(start+i)*5).map(async offset=>{
+          try{const response=await fetch('https://api.spotify.com/v1/search?'+new URLSearchParams({q:'artist:"'+artist.name+'"',type:'track',limit:'5',offset:String(offset)}).toString(),{headers:{Authorization:'Bearer '+token}});if(!response.ok){failed=true;return [];}const data=await response.json();return data&&data.tracks&&Array.isArray(data.tracks.items)?data.tracks.items:[];}catch(_){failed=true;return [];}
+        })));
+        tracks=pages.flat().filter(track=>track&&Array.isArray(track.artists)&&track.artists.some(item=>item.id===artist.id));
+      }catch(_){failed=true;}
+      if(failed||!tracks.length)mcSpotifyArtistTracksCache.delete(artist.id);return tracks;
+    })());
+    return mcSpotifyArtistTracksCache.get(artist.id);
+  }
   async function mcSpotifyShowArtistTopTracks(artist){
     const host=document.getElementById('mcSpotifyResults');if(!host)return;
     if(mcSpotifyArtistController){mcSpotifyIsPlaying=false;try{mcSpotifyArtistController.destroy();}catch(_){}mcSpotifyArtistController=null;}
@@ -22682,10 +22752,40 @@ csInit('csPlatform');
     const capture=document.getElementById('mcSpotifyCapture');if(capture){capture.hidden=false;capture.textContent='Capture reference';}
     const card=document.createElement('div');card.className='mc-spotify-artist-source';
     const title=document.createElement('strong');title.textContent=(artist.name||'Artist')+' · Spotify Top tracks';
-    const help=document.createElement('span');help.textContent='Press Select on a track, then press Capture reference.';
+    const help=document.createElement('span');help.textContent='Play a track in the list, then press Capture reference.';
     const embed=document.createElement('div');embed.className='mc-spotify-artist-embed';card.append(title,help,embed);host.appendChild(card);
+    const fallback=document.createElement('details'),summary=document.createElement('summary'),list=document.createElement('div'),listHelp=document.createElement('div');
+    const label=document.createElement('span'),plusSpan=document.createElement('span'),panel=document.createElement('div');
+    fallback.className='mc-spotify-artist-fallback';label.className='mc-saved-targets-label';label.textContent='Track not found? Pick it from a list';plusSpan.className='mc-saved-targets-plus';plusSpan.setAttribute('aria-hidden','true');plusSpan.textContent='＋';summary.append(label,plusSpan);panel.className='mc-spotify-artist-panel';list.className='mc-spotify-artist-tracks';listHelp.className='mc-spotify-artist-help';listHelp.hidden=true;panel.append(list,listHelp);fallback.append(summary,panel);host.appendChild(fallback);
+    const showListMessage=text=>{const message=document.createElement('div');message.className='mc-spotify-artist-message';message.textContent=text;list.replaceChildren(message);};
+    let listLoaded=false;
+    fallback.addEventListener('toggle',async()=>{
+      if(!fallback.open||listLoaded)return;listLoaded=true;showListMessage('Looking for tracks…');
+      const tracks=await mcSpotifyArtistTracks(artist);if(!fallback.isConnected)return;
+      if(tracks.length){mcSpotifyShowTracks(tracks,false,null,list,{compact:true});listHelp.hidden=false;listHelp.textContent='Press Select on a track, then press Capture reference.';}
+      else showListMessage('No tracks found. Search for the song by name.');
+    });
     try{const api=await mcSpotifyEnsureIframeApi();api.createController(embed,{uri:'spotify:artist:'+artist.id,width:'100%',height:'460'},controller=>{
-      mcSpotifyArtistController=controller;controller.addListener('playback_started',event=>mcSpotifySelectPlayingURI(event&&event.data&&event.data.playingURI,'playback_started'));controller.addListener('playback_update',event=>{const data=event&&event.data;if(data){mcSpotifyIsPlaying=!data.isPaused;if(mcSpotifyIsPlaying&&data.playingURI)mcSpotifySelectPlayingURI(data.playingURI,'playback_update');}});controller.addListener('playback_ended',()=>{mcSpotifyIsPlaying=false;});
+      mcSpotifyArtistController=controller;let lastDuration=null,lastPosition=null,identifying=false,pendingDuration=null;
+      const captureActive=()=>mcSpotifyUsingCompanion||(LIVE.active&&LIVE.referenceOnly)||mcSpotifyCaptureStartedAt>0;
+      const identify=async(data,eventType)=>{
+        if(mcSpotifyArtistController!==controller)return;
+        if(captureActive()){lastDuration=null;lastPosition=null;pendingDuration=null;return;}
+        if(!data)return;
+        const uri=String(data.playingURI||'');if(!uri.startsWith('spotify:artist:')){lastDuration=null;lastPosition=null;pendingDuration=null;mcSpotifySelectPlayingURI(uri,eventType);return;}
+        if(!Number.isFinite(data.duration))return;
+        const changed=lastDuration===null||eventType==='playback_started'||(Number.isFinite(data.position)&&lastPosition!==null&&data.position<lastPosition-2000)||Math.abs(data.duration-lastDuration)>1500;
+        lastDuration=data.duration;lastPosition=Number.isFinite(data.position)?data.position:lastPosition;if(!changed)return;
+        pendingDuration=data.duration;mcSpotifyArtistPlayingURI=uri;mcSpotifyArtistPlayingId='';mcSpotifySelectedTrack=null;const input=document.getElementById('mcSpotifyRefName');if(input)input.value='';
+        if(identifying)return;identifying=true;
+        try{while(pendingDuration!==null){const duration=pendingDuration;pendingDuration=null;if(!mcSpotifyArtistTracksCache.has(artist.id))mcSpotifyStatus('Working out which song this is…');const tracks=await mcSpotifyArtistTracks(artist);
+          if(mcSpotifyArtistController!==controller)return;if(captureActive()){lastDuration=null;lastPosition=null;pendingDuration=null;return;}if(lastDuration===null)return;if(pendingDuration!==null)continue;
+          let match=null,best=61,ambiguous=false;for(const track of tracks){if(!Number.isFinite(track.duration_ms))continue;const difference=Math.abs(track.duration_ms-duration);if(difference<=60){if(match&&String(track.name||'').toLowerCase()!==String(match.name||'').toLowerCase())ambiguous=true;if(difference<best){match=track;best=difference;}}}if(ambiguous)match=null;
+          if(match){mcSpotifyArtistPlayingId=match.id;mcSpotifySelectTrack(match,'Spotify Top tracks');}
+          else{mcSpotifySelectedTrack=null;if(input)input.value='';fallback.open=true;mcSpotifyStatus("Couldn't tell which song this is. Pick it from the list below, or search by name.");}
+        }}finally{identifying=false;}
+      };
+      controller.addListener('playback_started',event=>identify(event&&event.data,'playback_started'));controller.addListener('playback_update',event=>{const data=event&&event.data;if(data){mcSpotifyIsPlaying=!data.isPaused;if(mcSpotifyIsPlaying&&data.playingURI)identify(data,'playback_update');}});controller.addListener('playback_ended',()=>{mcSpotifyIsPlaying=false;});
     });}
     catch(error){help.textContent=error.message||'Spotify Top tracks player could not load.';}
   }
@@ -22703,31 +22803,17 @@ csInit('csPlatform');
     if(LIVE.active&&LIVE.referenceOnly){mcSpotifyStatus('Stop the current reference capture before searching for another Spotify track.');return;}
     const input=document.getElementById('mcSpotifyRefName'),q=(input&&input.value||'').trim();if(!q)return mcSpotifyStatus('Enter a track or artist name to search Spotify.');
     if(mcSpotifyArtistController){mcSpotifyIsPlaying=false;try{mcSpotifyArtistController.destroy();}catch(_){}mcSpotifyArtistController=null;}mcSpotifyArtistSourceActive=false;
+    const fallback=document.querySelector('#mcSpotifyResults .mc-spotify-artist-fallback');if(fallback)fallback.remove();
     mcSpotifySelectedTrack=null;mcSpotifyNextSearchUrl=null;const capture=document.getElementById('mcSpotifyCapture');if(capture)capture.hidden=true;
     mcSpotifySearchBusy=true;mcSpotifyRenderConnection();mcSpotifyStatus('Searching Spotify…');
     try{const token=await mcSpotifyAccessToken();let url;if(/^https?:\/\/(?:open\.)?spotify\.com\/(?:intl-[^/]+\/)?track\/([A-Za-z0-9]+)/i.test(q)){const id=q.match(/\/track\/([A-Za-z0-9]+)/i)[1];url='https://api.spotify.com/v1/tracks/'+encodeURIComponent(id);}else url='https://api.spotify.com/v1/search?'+new URLSearchParams({q,type:'track,artist',limit:'10',offset:'0'}).toString();
       const response=await fetch(url,{headers:{Authorization:'Bearer '+token}}),data=await response.json();if(!response.ok)throw new Error((data.error&&data.error.message)||'Spotify search failed');const tracks=data&&data.tracks&&Array.isArray(data.tracks.items)?data.tracks.items:(data&&data.id?[data]:[]),artists=data&&data.artists&&Array.isArray(data.artists.items)?data.artists.items:[];const exactArtist=artists.find(artist=>String(artist.name||'').trim().toLocaleLowerCase()===q.toLocaleLowerCase());
-      if(exactArtist){mcSpotifyNextSearchUrl=null;await mcSpotifyShowArtistTopTracks(exactArtist);
-        try{const response=await fetch('https://api.spotify.com/v1/search?'+new URLSearchParams({q:'artist:"'+exactArtist.name+'"',type:'track',limit:'10'}).toString(),{headers:{Authorization:'Bearer '+token}}),data=await response.json();if(!response.ok)throw new Error((data.error&&data.error.message)||'Spotify could not load artist tracks.');
-          const tracks=(data&&data.tracks&&Array.isArray(data.tracks.items)?data.tracks.items:[]).filter(track=>Array.isArray(track.artists)&&track.artists.some(artist=>artist.id===exactArtist.id)),host=document.getElementById('mcSpotifyResults');
-          if(tracks.length&&host){const heading=document.createElement('strong'),list=document.createElement('div');heading.textContent='Select a track to capture';list.className='mc-spotify-artist-tracks';host.append(heading,list);mcSpotifyShowTracks(tracks,false,null,list);mcSpotifyStatus('Press Select on a track, then press Capture reference.');}else mcSpotifyStatus('No tracks found. Search for a track by name instead.');
-        }catch(error){mcSpotifyStatus('Could not load tracks. Search for a track by name instead.');}
-      }
+      if(exactArtist){mcSpotifyNextSearchUrl=null;await mcSpotifyShowArtistTopTracks(exactArtist);mcSpotifyStatus('Play a track in the list, then press Capture reference.');}
       else{mcSpotifyNextSearchUrl=data&&data.tracks&&data.tracks.next||null;mcSpotifyShowTracks(tracks,false,mcSpotifyNextSearchUrl);mcSpotifyStatus(tracks.length?'Select a Spotify result. Use Load more to continue through Spotify’s relevance-ranked results.':'No matching tracks found.');}
     }catch(error){mcSpotifyStatus(error.message||'Spotify search failed.');}finally{mcSpotifySearchBusy=false;mcSpotifyRenderConnection(false);}
   }
   async function mcSpotifyCaptureSelected(){
-    if(!(mcSpotifySelectedTrack&&mcSpotifySelectedTrack.id)&&!(mcSpotifyArtistSourceActive&&mcSpotifyArtistPlayingId)){mcSpotifyStatus('Press Select on a track, then press Capture reference.');return;}
-    if(mcSpotifyArtistSourceActive&&!(mcSpotifySelectedTrack&&mcSpotifySelectedTrack.id)){
-      const playingId=mcSpotifyArtistPlayingId;
-      if(playingId){
-        // Capture must be requested in the same click turn. Start the Spotify
-        // metadata lookup without awaiting it so Chrome retains user activation
-        // for the tab-audio share request inside refSpotifyCaptureStart().
-        mcSpotifySelectedTrack={id:playingId,name:'Spotify track',artists:[]};
-        mcSpotifySelectPlayingURI('spotify:track:'+playingId);
-      }
-    }
+    if(!(mcSpotifySelectedTrack&&mcSpotifySelectedTrack.id)){mcSpotifyStatus(mcSpotifyArtistSourceActive?'Play a track in the list, then press Capture reference.':'Select a song first, then press Capture reference.');return;}
     await refSpotifyCaptureStart();
   }
   function wireSpotifyReference(){
