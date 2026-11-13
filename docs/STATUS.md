@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## Spotify artist search: Select buttons — 2026-11-13, build 2026-11-13.06
+
+Kevin approved deployment (Jules review: approve with notes, notes applied). Searching an artist showed Spotify's Top tracks embed, which reports only the artist URI, so captures saved as "Unidentified capture · time". The artist view now also lists that artist's tracks (Spotify search `artist:"Name"`, filtered to the artist id) as rows with Select buttons under "Select a track to capture", about five rows tall; Capture with no selected track says "Press Select on a track, then press Capture reference." and saves nothing. Normal song search and pasted track links unchanged (tested). Codex (gpt-6.1-sol, medium) made the edit. Commit 1271d480. Worker version 5232fe68-d788-43e0-843e-adf93e04845f. Rollback: redeploy commit a3d2bf44 (build .05, Worker 7026296f-675b-4def-82ce-e7be1f05cc09).
+
 ## Saved target hairline outline — 2026-11-13, build 2026-11-13.05
 
 Kevin approved deployment. The saved Spotify target's glow band now has a 1px purple outline along both edges (no centre line), drawn into the same cached offscreen canvas as the glow so it adds no per-frame cost. Drawing only. Codex (gpt-6.1-sol) made the edit; Kevin approved from a rendered preview; Jules has not reviewed this change. App commit `902fe3bf` is deployed as Worker version `7026296f-675b-4def-82ce-e7be1f05cc09`. Rollback: Worker version `19423228-01a6-4a99-a98e-400a516ac732`.
