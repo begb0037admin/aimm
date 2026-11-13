@@ -5061,7 +5061,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-13.04';
+const AIMM_BUILD = '2026-11-13.05';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21910,6 +21910,7 @@ csInit('csPlatform');
       const midpoints=[];for(const p of corr.pts){const f=Number(p[0]),db=(Number(p[1])+Number(p[2]))/2;if(f>=20&&f<=20000&&isFinite(db))midpoints.push([f,db]);}
       // Broad tonal balance for saved targets only; interpolate and smooth in log-frequency.
       const SAVED_TARGET_SMOOTH_OCT=0.33;
+      const bodyWidth=46,outlineWidth=1;
       let targetMidpoints=midpoints;
       if(midpoints.length>1){
         midpoints.sort((a,b)=>a[0]-b[0]);
@@ -21933,14 +21934,20 @@ csInit('csPlatform');
       if(points.length>1){
         ctx.save();ctx.beginPath();ctx.rect(mixX0,mixPlotTop,mixX1-mixX0,mixPlotBottom-mixPlotTop);ctx.clip();ctx.lineCap='round';ctx.lineJoin='round';
         const transform=ctx.getTransform();
-        const glowKey=JSON.stringify([points,canvas.width,canvas.height,mixX0,mixX1,mixPlotTop,mixPlotBottom,transform.a,transform.b,transform.c,transform.d,transform.e,transform.f]);
+        const glowKey=JSON.stringify([points,canvas.width,canvas.height,mixX0,mixX1,mixPlotTop,mixPlotBottom,transform.a,transform.b,transform.c,transform.d,transform.e,transform.f,bodyWidth,outlineWidth,'edge-ring-v1']);
         let glowCache=refDrawCanvas.spotifyGlowCache;
         if(!glowCache||glowCache.key!==glowKey){
           const glowCanvas=document.createElement('canvas');glowCanvas.width=canvas.width;glowCanvas.height=canvas.height;
           const glowCtx=glowCanvas.getContext('2d');glowCtx.setTransform(transform);glowCtx.lineCap='round';glowCtx.lineJoin='round';
-          [{w:110,b:30,a:.10},{w:84,b:18,a:.16},{w:60,b:8,a:.26},{w:46,b:3,a:.32}].forEach(layer=>{
+          [{w:110,b:30,a:.10},{w:84,b:18,a:.16},{w:60,b:8,a:.26},{w:bodyWidth,b:3,a:.32}].forEach(layer=>{
             glowCtx.beginPath();smoothPath(glowCtx,points);glowCtx.strokeStyle='rgba(185,112,255,'+layer.a+')';glowCtx.lineWidth=layer.w;glowCtx.filter='blur('+layer.b+'px)';glowCtx.stroke();glowCtx.filter='none';
           });
+          // Cut the centre out on a separate canvas so the glow stays intact.
+          const outlineCanvas=document.createElement('canvas');outlineCanvas.width=glowCanvas.width;outlineCanvas.height=glowCanvas.height;
+          const outlineCtx=outlineCanvas.getContext('2d');outlineCtx.setTransform(transform);outlineCtx.lineCap='round';outlineCtx.lineJoin='round';
+          outlineCtx.beginPath();smoothPath(outlineCtx,points);outlineCtx.strokeStyle='rgba(200,140,255,.85)';outlineCtx.lineWidth=bodyWidth+2*outlineWidth;outlineCtx.stroke();
+          outlineCtx.globalCompositeOperation='destination-out';outlineCtx.strokeStyle='#000';outlineCtx.lineWidth=bodyWidth;outlineCtx.stroke();
+          glowCtx.save();glowCtx.setTransform(1,0,0,1,0,0);glowCtx.globalCompositeOperation='source-over';glowCtx.drawImage(outlineCanvas,0,0);glowCtx.restore();
           glowCache=refDrawCanvas.spotifyGlowCache={key:glowKey,canvas:glowCanvas};
         }
         // The cached bitmap already includes the main context's coordinate scale.
