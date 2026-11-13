@@ -1592,8 +1592,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-ref-controls button{min-height:38px;padding:0 15px;border:0;border-radius:8px;background:#1db954;color:#07150c;font-size:calc(var(--inv-text-scale, 1) * 12px);font-weight:700;cursor:pointer;white-space:nowrap}
 #eq.oz-mixcheck .mc-spotify-ref-controls button:hover{background:#27cf63}
 #eq.oz-mixcheck .mc-spotify-ref-controls button:disabled{opacity:.5;cursor:not-allowed}
-#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop{background:#28352d;color:#dce8df;border:1px solid #405648}
-#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop:hover{background:#35483b}
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop[hidden]{display:none}
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCaptureCancel{background:#28352d;color:#dce8df;border:1px solid #405648}
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCaptureCancel[hidden]{display:none}
@@ -1607,13 +1605,13 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-capture-copy span{font-size:calc(var(--inv-text-scale, 1) * 10px);line-height:1.35;color:#a8b3aa}
 #eq.oz-mixcheck .mc-spotify-capture-state time{font:800 calc(var(--inv-text-scale, 1) * 21px)/1 ui-monospace,SFMono-Regular,monospace;color:#edf4ef;white-space:nowrap}
 #eq.oz-mixcheck .mc-spotify-capture-track{grid-column:1/-1;height:3px;overflow:hidden;border-radius:3px;background:#101418}
-#eq.oz-mixcheck .mc-spotify-capture-track i{display:block;width:24%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#42b8ef,#79e5bb)}
+#eq.oz-mixcheck .mc-spotify-capture-track i{display:block;width:24%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#9442dc,#d0a4f2)}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="starting"] .mc-spotify-capture-dot{background:#c9a15a;box-shadow:0 0 6px rgba(201,161,90,.6)}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"] .mc-spotify-capture-dot{background:#4fc3e8;box-shadow:0 0 6px rgba(79,195,232,.6);animation:mcSpotifyCapturePulse 1.15s ease-in-out infinite}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"] .mc-spotify-capture-track i{background:linear-gradient(90deg,#4fc3e8 0%,#c9a15a 100%)}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"] .mc-spotify-capture-track i{background:linear-gradient(90deg,#9442dc,#d0a4f2)}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="capturing"] .mc-spotify-capture-track i{animation:mcSpotifyCaptureSweep 1.5s ease-in-out infinite}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"] .mc-spotify-capture-dot{background:#4fc3e8;box-shadow:0 0 6px rgba(79,195,232,.6);animation:mcSpotifyCapturePulse 1.15s ease-in-out infinite}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"] .mc-spotify-capture-track i{background:linear-gradient(90deg,#4fc3e8 0%,#c9a15a 100%);animation-play-state:paused}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"] .mc-spotify-capture-track i{background:linear-gradient(90deg,#9442dc,#d0a4f2);animation-play-state:paused}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"] .mc-spotify-capture-dot{background:#c9a15a;box-shadow:0 0 6px rgba(201,161,90,.6)}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"] .mc-spotify-capture-track i{background:#c9a15a}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="saved"] .mc-spotify-capture-dot{background:#4fc3e8}
@@ -1666,6 +1664,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-result--compact .mc-spotify-result-copy span{font-size:calc(var(--inv-text-scale,1)*12px);color:#a4b1c1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #eq.oz-mixcheck .mc-spotify-result--compact button{min-height:38px;padding:0 16px;border-radius:10px;font-size:calc(var(--inv-text-scale,1)*13px);border:1px solid rgba(79,195,232,.45);background:rgba(79,195,232,.10);color:#cfeaf5;font-weight:700}
 @media(max-width:460px){#eq.oz-mixcheck .mc-spotify-result--compact{grid-template-columns:44px minmax(0,1fr)}#eq.oz-mixcheck .mc-spotify-result--compact button{grid-column:1 / -1;min-height:44px;width:100%}}
+#eq.oz-mixcheck .mc-spotify-result--compact .mc-spotify-result-player{grid-column:1 / -1;border-radius:12px}
+#eq.oz-mixcheck .mc-spotify-result--compact [data-preview-close]{grid-column:1 / -1;justify-self:end;width:auto;min-height:28px;padding:0 10px}
 @media(max-width:680px){#eq.oz-mixcheck .mc-spotify-ref-controls{flex-wrap:wrap}#eq.oz-mixcheck .mc-spotify-ref-controls input{flex-basis:100%}}
 #eq.oz-mixcheck #refSpecStatus{display:none !important}
 #eq.oz-mixcheck .oz-spec-canvas-wrap{height:440px;flex:1 1 440px;min-height:440px;border:1px solid #14171b;border-radius:6px;position:relative;overflow:hidden;background:radial-gradient(120% 150% at 32% 125%,rgba(165,87,244,.22),transparent 60%),radial-gradient(120% 160% at 78% 130%,rgba(47,161,230,.18),transparent 60%),#04060a}
@@ -2597,10 +2597,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck #mcSpecs{--tile-bg:#1a1d21;--tile-bd:#2a2e35;--tile-muted:#9ca3af;--tile-ink:#f3f4f6;--tile-teal:#2dd4bf}
 #eq.oz-mixcheck #mcSpecs .mc-core-specs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:12px}
 #eq.oz-mixcheck #mcSpecs .mc-core-row{display:flex!important;flex-direction:column;align-items:flex-start;gap:2px;min-height:0!important;padding:14px 16px!important;border:1px solid var(--tile-bd)!important;border-radius:14px;background:var(--tile-bg)}
-#eq.oz-mixcheck #mcSpecs .mc-core-row:nth-child(n+5){display:none!important}
 #eq.oz-mixcheck #mcSpecs .mc-core-label,#eq.oz-mixcheck #mcSpecs .mc-measure-label{font-size:13px!important;color:var(--tile-muted)!important;font-weight:500}
 #eq.oz-mixcheck #mcSpecs .mc-core-value,#eq.oz-mixcheck #mcSpecs .mc-measure-value{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif!important;font-size:30px!important;font-weight:700!important;color:var(--tile-ink)!important;line-height:1.15!important}
-#eq.oz-mixcheck #mcSpecs .mc-core-row:first-child .mc-core-value{color:var(--tile-teal)!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-lufs .mc-core-value{color:var(--tile-teal)!important}
 #eq.oz-mixcheck #mcSpecs .mc-core-note{display:none!important}
 #eq.oz-mixcheck #mcSpecs .mc-more-measurements{margin-top:0;border:0;background:none;padding:0}
 #eq.oz-mixcheck #mcSpecs .mc-more-measurements summary{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 16px;margin-bottom:12px;border:1px solid var(--tile-bd);border-radius:14px;background:var(--tile-bg);color:var(--tile-muted);font-size:13px;font-weight:600}
@@ -2615,6 +2614,36 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck #mcSpecs .mc-core-label,#eq.oz-mixcheck #mcSpecs .mc-measure-label{display:block;line-height:1.3!important;min-height:2.6em;text-align:left}
 #eq.oz-mixcheck #mcSpecs .mc-core-value,#eq.oz-mixcheck #mcSpecs .mc-measure-value{display:block;text-align:left;width:100%}
 #eq.oz-mixcheck #mcSpecs .mc-core-row,#eq.oz-mixcheck #mcSpecs .mc-measure-row{align-items:stretch!important;justify-content:flex-start}
+
+/* Key tile: show the "approx" note as a small muted line under the value */
+#eq.oz-mixcheck #mcSpecs .mc-core-key .mc-core-note{display:block!important;grid-column:auto;grid-row:auto;order:3;width:100%;margin-top:2px;min-height:24px;font-size:12px;line-height:1.3;color:#9ca3af;font-weight:500;text-align:center}
+/* muted when unavailable (the hidden dot sibling has class na) */
+#eq.oz-mixcheck #mcSpecs #mcTempo:has(+ .mc-d.na),#eq.oz-mixcheck #mcSpecs #mcKey:has(+ .mc-core-note + .mc-d.na){color:var(--tile-muted,#9ca3af)!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-row:nth-child(-n+4){order:1}
+#eq.oz-mixcheck #mcSpecs .mc-core-row:nth-child(n+5){order:0;align-items:center!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-row:nth-child(n+5) .mc-core-label,#eq.oz-mixcheck #mcSpecs .mc-core-row:nth-child(n+5) .mc-core-value{text-align:center}
+#eq.oz-mixcheck #mcSpecs .mc-core-row:nth-child(n+5) .mc-tile-v{font-size:19px!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-row:nth-child(n+5) .mc-tile-v.fit1{font-size:16px!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-row:nth-child(n+5) .mc-tile-v.fit2{font-size:12px!important}
+/* Tempo: teal prompt at rest; solid page teal while awaiting interaction or tapping. */
+#eq.oz-mixcheck #mcSpecs #mcTempoTile{min-height:0!important;padding:14px 16px!important;justify-content:center!important;outline:none;transition:background-color 120ms ease,color 120ms ease}
+#eq.oz-mixcheck #mcSpecs #mcTempoTile :is(.mc-core-label,#mcTempo,#mcTempoPrompt){transition:color 120ms ease}
+#eq.oz-mixcheck #mcSpecs #mcTempoTile.is-tappable{cursor:pointer}
+#eq.oz-mixcheck #mcSpecs #mcTempoTile.is-tappable:focus-visible{outline:2px solid #edf6f8;outline-offset:2px}
+#eq.oz-mixcheck #mcSpecs #mcTempoTile.is-awaiting-tap #mcTempoPrompt{color:var(--tile-teal)!important;font-weight:700!important}
+#eq.oz-mixcheck #mcSpecs #mcTempoTile:is(.is-tapping,.is-awaiting-tap:active,.is-awaiting-tap:focus-visible){background-color:#2dd4bf!important;color:#fff!important}
+#eq.oz-mixcheck #mcSpecs #mcTempoTile:is(.is-tapping,.is-awaiting-tap:active,.is-awaiting-tap:focus-visible) :is(.mc-core-label,#mcTempo,#mcTempoPrompt){color:#fff!important}
+@media (hover:hover){
+  #eq.oz-mixcheck #mcSpecs #mcTempoTile.is-awaiting-tap:hover{background-color:#2dd4bf!important;color:#fff!important}
+  #eq.oz-mixcheck #mcSpecs #mcTempoTile.is-awaiting-tap:hover :is(.mc-core-label,#mcTempo,#mcTempoPrompt){color:#fff!important}
+}
+@media (prefers-reduced-motion:reduce){
+  #eq.oz-mixcheck #mcSpecs #mcTempoTile,#eq.oz-mixcheck #mcSpecs #mcTempoTile :is(.mc-core-label,#mcTempo,#mcTempoPrompt){transition:none}
+}
+#eq.oz-mixcheck #mcSpecs #mcTempoPrompt{display:none!important}
+#eq.oz-mixcheck #mcSpecs #mcTempoTile.is-awaiting-tap #mcTempo{display:none!important}
+#eq.oz-mixcheck #mcSpecs #mcTempoTile.is-awaiting-tap #mcTempoPrompt{display:block!important}
+#eq.oz-mixcheck #mcSpecs #mcTempoNote{display:none!important}
 
 /* Spectral Balance: a spacious title, saved-target disclosure, brand control
    bar, simple legend, then the existing full-width chart. */
@@ -2834,9 +2863,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck #mcSpotifyCaptureDetail{font-size:calc(var(--inv-text-scale,1)*13px);font-weight:500;line-height:1.4;color:#b4c0cf}
 #eq.oz-mixcheck .mc-spotify-capture-state time{font-weight:600;font-size:calc(var(--inv-text-scale,1)*18px);line-height:1;font-family:inherit;font-variant-numeric:tabular-nums;color:#ecf2f8}
 #eq.oz-mixcheck .mc-spotify-capture-track{height:4px;border-radius:999px;background:#0b0d10}
-#eq.oz-mixcheck .mc-spotify-capture-track i{background:linear-gradient(90deg,#4fc3e8,#c9a15a)}
+#eq.oz-mixcheck .mc-spotify-capture-track i{background:linear-gradient(90deg,#9442dc,#d0a4f2)}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="processing"] .mc-spotify-capture-track i{animation:mcSpotifyCaptureSweep 2.2s ease-in-out infinite}
-#eq.oz-mixcheck .mc-spotify-capture-state[data-state="starting"] .mc-spotify-capture-track i{background:#4f7f8c;animation:mcSpotifyCaptureSweep 1.8s ease-in-out infinite}
+#eq.oz-mixcheck .mc-spotify-capture-state[data-state="starting"] .mc-spotify-capture-track i{background:#6b4a8f;animation:mcSpotifyCaptureSweep 1.8s ease-in-out infinite}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="saved"] .mc-spotify-capture-dot{background:#7ee2a8}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="saved"] .mc-spotify-capture-track i{width:100%;background:#7ee2a8}
 #eq.oz-mixcheck .mc-spotify-capture-state[data-state="no-audio"] .mc-spotify-capture-track i{width:100%;background:#7b8190}
@@ -2886,7 +2915,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 /* ---- Round 2, PREVIEW ONLY: stop the Spotify row running past the box edge. Capture reference wraps to a second line. ---- */
 /* Kept as ONE row, as in Kevin's screenshot: title, search box, then the buttons on the same line. */
 #eq.oz-mixcheck .mc-spotify-reference{grid-template-columns:minmax(150px,.3fr) minmax(0,1.7fr) !important;gap:16px !important}
-#eq.oz-mixcheck .mc-spotify-ref-controls{grid-template-columns:minmax(0,1fr) auto auto auto !important;row-gap:0 !important;gap:8px !important}
+#eq.oz-mixcheck .mc-spotify-ref-controls{grid-template-columns:minmax(0,1fr) auto auto auto !important;row-gap:0 !important;gap:12px !important}
 #eq.oz-mixcheck .mc-spotify-ref-controls input{grid-column:auto !important;width:auto !important;min-width:0 !important}
 #eq.oz-mixcheck .mc-spotify-ref-controls button{padding:0 12px !important;font-size:12px !important}
 
@@ -3594,11 +3623,11 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         <div class="mc-specs-source" role="group" aria-label="Audio Specs source"><button type="button" id="mcSpecsMix" aria-pressed="true">Mix</button><button type="button" id="mcSpecsSpotify" aria-pressed="false" disabled>Spotify</button></div>
       </div>
       <div class="mc-core-specs" aria-label="Key audio measurements">
-        <div class="mc-core-row"><span class="mc-core-label">LUFS</span><span class="mc-tile-v mc-core-value" id="mcTileLoudV"><span id="refLufsInt">– –</span></span><span class="unit-sub">LUFS</span></div>
+        <div class="mc-core-row mc-core-lufs"><span class="mc-core-label">LUFS</span><span class="mc-tile-v mc-core-value" id="mcTileLoudV"><span id="refLufsInt">– –</span></span><span class="unit-sub">LUFS</span></div>
         <div class="mc-core-row"><span class="mc-core-label">True peak</span><span class="mc-tile-v mc-core-value" id="mcTilePeakV"><span id="refTruePeak">– –</span></span><span class="unit-sub">dBTP</span></div>
         <div class="mc-core-row"><span class="mc-core-label">DR</span><span class="mc-tile-v mc-core-value" id="mcTileDrV"><span id="refDynRange">– –</span></span><span class="unit-sub">dB</span></div>
         <div class="mc-core-row"><span class="mc-core-label">Stereo width</span><span class="mc-core-value" id="mcWidth">– –</span><span class="unit-sub">%</span></div>
-        <div class="mc-core-row"><span class="mc-core-label">Tempo</span><span class="mc-core-value mc-tile-v" id="mcTempo">– –</span><span class="mc-hidden-data mc-d na" id="mcdTempo"></span></div>
+        <div class="mc-core-row" id="mcTempoTile"><span class="mc-core-label">Tempo</span><span class="mc-core-value mc-tile-v" id="mcTempo">– –</span><span class="mc-hidden-data mc-d na" id="mcdTempo"></span><span class="mc-core-value mc-tile-v" id="mcTempoPrompt" aria-hidden="true">Tap</span><span id="mcTempoNote"></span></div>
         <div class="mc-core-row mc-core-key"><span class="mc-core-label">Key</span><span class="mc-core-value mc-tile-v" id="mcKey">– –</span><span class="mc-core-note">approx</span><span class="mc-hidden-data mc-d na" id="mcdKey"></span></div>
       </div>
       <details class="mc-more-measurements" id="mcMoreMeasurements" open>
@@ -3799,9 +3828,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <input type="text" id="mcSpotifyRefName" placeholder="Search tracks or artists" aria-label="Search Spotify tracks or artists" autocomplete="off">
           <button type="button" id="mcSpotifyConnect">Connect Spotify</button>
           <button type="button" id="mcSpotifyRefMatch" disabled>Match Sound</button>
-          <button type="button" id="mcSpotifyCapture" hidden>Capture reference</button>
+          <button type="button" id="mcSpotifyCapture" hidden>Capture</button>
           <button type="button" id="mcSpotifyCaptureCancel" hidden>Cancel</button>
-          <button type="button" id="mcSpotifyRefStop" hidden>Stop</button>
+          <button type="button" id="mcSpotifyRefStop" aria-label="Stop capture" title="Stop" hidden><span>Stop</span></button>
         </div>
         <div id="mcSpotifyCaptureState" class="mc-spotify-capture-state" data-state="idle" role="status" aria-live="polite" aria-atomic="true" hidden>
           <span class="mc-spotify-capture-dot" aria-hidden="true"></span>
@@ -4315,7 +4344,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck #mcSpecs .mc-core-row,#eq.oz-mixcheck #mcSpecs .mc-measure-row{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:0!important;padding:14px 16px!important;min-height:0!important}
 #eq.oz-mixcheck #mcSpecs .mc-core-label,#eq.oz-mixcheck #mcSpecs .mc-measure-label{height:3.9em!important;min-height:0!important;font-size:13px!important;line-height:1.3!important;color:#9ca3af!important;font-weight:500!important;margin:0!important}
 #eq.oz-mixcheck #mcSpecs .mc-core-value,#eq.oz-mixcheck #mcSpecs .mc-measure-value,#eq.oz-mixcheck #mcSpecs .mc-tile-v{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif!important;font-size:26px!important;font-weight:700!important;line-height:1.1!important;height:auto!important;margin:4px 0 0!important;padding:0!important;white-space:nowrap!important;text-align:left!important;display:block!important;color:#f3f4f6!important}
-#eq.oz-mixcheck #mcSpecs .mc-core-row:first-child .mc-core-value,#eq.oz-mixcheck #mcSpecs .mc-core-row:first-child .mc-tile-v{color:#2dd4bf!important}
+#eq.oz-mixcheck #mcSpecs .mc-core-lufs .mc-core-value,#eq.oz-mixcheck #mcSpecs .mc-core-lufs .mc-tile-v{color:#2dd4bf!important}
 #eq.oz-mixcheck #mcSpecs .mc-more-measurements summary{display:none!important}
 #eq.oz-mixcheck #mcSpecs .mc-more-measurements{border:0!important;margin:0!important;padding:0!important}
 #eq.oz-mixcheck #mcSpecs .mc-detail-specs{border:0!important}
@@ -4377,6 +4406,18 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   #eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture){transition:none}
   #eq.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture):hover:not(:disabled):not(:active){transform:none}
 }
+
+/* Spotify capture Stop: match the Capture control's 52px height. */
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCapture{margin-left:12px;width:133.4px;min-width:133px;height:52px;flex:0 0 auto;display:inline-flex;justify-content:center;align-items:center;text-align:center}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;min-width:52px;max-width:52px;min-height:52px;max-height:52px;flex:0 0 52px;justify-self:start;padding:0 !important;border:0;border-radius:50%;background:linear-gradient(135deg,#9442dc,#b970ff);color:#fff;transition:filter 120ms ease,box-shadow 120ms ease,transform 120ms ease}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop::before{content:"";display:block;width:14px;height:14px;border-radius:3px;background:#fff}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop>span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop:hover:not(:disabled){filter:brightness(1.1);box-shadow:0 0 0 4px rgba(148,66,220,.25)}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop:active:not(:disabled){transform:scale(.96)}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop:focus-visible{outline:2px solid #d0a4f2;outline-offset:2px}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop:disabled{opacity:.5}
+@media(max-width:460px){#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCapture{margin-left:2px}#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop{width:52px;min-width:52px;max-width:52px;height:52px;flex:0 0 52px;padding:0 !important}}
+@media(prefers-reduced-motion:reduce){#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop{transition:none}}
 
 /* Hope composer panel states. */
 #hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn){background:#1b1d20;border:0;border-radius:0;box-shadow:none;transform:none;transition:background 180ms ease,color 180ms ease}
@@ -5108,7 +5149,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-13.07';
+const AIMM_BUILD = '2026-11-13.08';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -22322,7 +22363,7 @@ csInit('csPlatform');
     const input=document.getElementById('mcSpotifyRefName');if(input)input.value=item.name;
     return true;
   }
-  let mcNowPlayingReport='',mcSpotifyCaptureIdentityReason='',mcSpotifyCaptureStartedAt=0,mcSpotifyCaptureStartRequest=null,mcSpotifyCaptureCancelled=false,mcSpotifyCaptureStatusTrail=[],mcSpotifySavedStatusTimer=0;
+  let mcNowPlayingReport='',mcSpotifyCaptureIdentityReason='',mcSpotifyCaptureStartedAt=0,mcSpotifyCaptureGeneration=0,mcSpotifyCaptureStartRequest=null,mcSpotifyCaptureCancelled=false,mcSpotifyCaptureStatusTrail=[],mcSpotifySavedStatusTimer=0;
   function mcSpotifyClearSavedStatus(){
     if(mcSpotifySavedStatusTimer){clearTimeout(mcSpotifySavedStatusTimer);mcSpotifySavedStatusTimer=0;}
     const savedStatus=document.getElementById('mcSpotifySavedStatus'),label=document.getElementById('mcSpotifySavedStatusLabel'),reason=document.getElementById('mcSpotifySavedStatusReason');
@@ -22355,7 +22396,7 @@ csInit('csPlatform');
     const selected=mcSpotifySelectedTrack&&mcSpotifySelectedTrack.id?{...mcSpotifySelectedTrack,artists:Array.isArray(mcSpotifySelectedTrack.artists)?mcSpotifySelectedTrack.artists.map(artist=>({...artist})):[]}:null;
     mcSpotifyClearSavedStatus();
     if(mcSpotifyUsingCompanion){mcSpotifyStatus('A reference capture is already in progress. Stop it before starting another.');return;}
-    mcSpotifyCaptureStatusTrail=[];mcSpotifyCaptureStartedAt=Date.now();mcSpotifyCaptureCancelled=false;
+    mcSpotifyCaptureStatusTrail=[];mcSpotifyCaptureGeneration++;mcSpotifyCaptureStartedAt=Date.now();mcSpotifyCaptureCancelled=false;
     mcSpotifyCaptureSetState('starting','STARTING REFERENCE CAPTURE','Connecting to AIMM Audio Reference Companion…');
     if(status)status.textContent='Connecting to AIMM Audio Reference Companion…';
     const embedIdAtStart=mcSpotifyArtistPlayingId;
@@ -22405,7 +22446,7 @@ csInit('csPlatform');
       const reason=(error&&error.message)||'connection failed';
       mcSpotifyBrowserFallbackNext=true;
       const permissionDenied=/declined TCC|permission|access to screen|screen recording|blocked system.audio capture|system audio recording/i.test(reason);
-      const message=permissionDenied?'macOS blocked system-audio capture for AIMM Audio Reference Companion. Enable it in System Settings → Privacy & Security → Screen & System Audio Recording, then quit and reopen the companion.':'AIMM Companion could not start capture: '+reason+'. The browser tab-audio option is still available; press Capture reference again to use it.';
+      const message=permissionDenied?'macOS blocked system-audio capture for AIMM Audio Reference Companion. Enable it in System Settings → Privacy & Security → Screen & System Audio Recording, then quit and reopen the companion.':'AIMM Companion could not start capture: '+reason+'. The browser tab-audio option is still available; press Capture again to use it.';
       if(status)status.textContent=mcSpotifyCaptureCancelled?'':message;mcSpotifyCaptureReturnToIdle();mcSpotifyCaptureStartedAt=0;
     }
   }
@@ -22421,17 +22462,25 @@ csInit('csPlatform');
       if(!stream.getAudioTracks().length){stream.getTracks().forEach(track=>track.stop());throw new Error('Choose the AIMM tab and enable “Share tab audio”.');}
       if(start)start.hidden=true;if(stop)stop.hidden=false;
       await liveStart(stream,'Spotify reference',{referenceOnly:true,referenceLabel:name});
+      if(mcSpotifyCaptureCancelled){mcSpotifyCaptureDiscardBrowser();return;}
       mcSpotifyCaptureSetState('capturing','CAPTURING REFERENCE','The live spectrum is recording. Stop to save it as a reference.');
     }catch(error){
       if(stream)try{stream.getTracks().forEach(track=>track.stop());}catch(_){}
-      mcSpotifyCaptureTrack=null;mcSpotifyCaptureSessionTrackId='';
+      mcSpotifyCaptureDiscardBrowser();mcSpotifyUsingCompanion=false;mcSpotifyCaptureTrack=null;mcSpotifyCaptureSessionTrackId='';
       if(start)start.hidden=false;if(stop)stop.hidden=true;
       const message=(error&&error.name==='NotAllowedError')?'Tab sharing was cancelled. Choose the AIMM tab and allow tab audio to capture a reference.':(error&&error.message)||'Could not capture Spotify tab audio.';
       if(status)status.textContent=mcSpotifyCaptureCancelled?'':message;mcSpotifyCaptureReturnToIdle();mcSpotifyCaptureStartedAt=0;
     }
   }
+  function mcSpotifyCaptureDiscardBrowser(){
+    if(!LIVE.referenceOnly)return;
+    LIVE.active=false;clearTimeout(LIVE.raf);
+    try{LIVE.src?.disconnect();LIVE.node?.disconnect();LIVE.silent?.disconnect();}catch(_){}
+    try{LIVE.stream?.getTracks().forEach(track=>track.stop());}catch(_){}
+    LIVE.referenceOnly=false;LIVE.referenceLabel='';LIVE.referenceChunks=[];LIVE.referenceSamples=0;LIVE.referencePowerSum=null;LIVE.referenceFrameCount=0;
+  }
   async function mcSpotifyCaptureCancel(){
-    mcSpotifyCaptureCancelled=true;
+    mcSpotifyCaptureCancelled=true;mcSpotifyCaptureDiscardBrowser();
     mcSpotifyLivePoints=null;
     if(!LIVE.active)refDrawCanvas(refSpecPoints,null,null,null);
     const status=document.getElementById('mcSpotifyRefStatus');
@@ -22527,7 +22576,7 @@ csInit('csPlatform');
     }
     finally{
       const finishedSessionId=mcSpotifyCaptureSessionId;
-      mcSpotifyUsingCompanion=false;mcSpotifyCaptureTrack=null;mcSpotifyCaptureSessionId='';mcSpotifyCaptureSessionTrackId='';mcSpotifyCompanionPoints=null;mcSpotifyLivePoints=null;if(capture)capture.hidden=false;if(stop){stop.hidden=true;stop.disabled=false;}mcSpotifyCaptureReturnToIdle();mcSpotifyCaptureIdentityReason='';refDrawCanvas(refSpecPoints,null,null,null);
+      mcSpotifyUsingCompanion=false;mcSpotifyCaptureTrack=null;mcSpotifyCaptureSessionId='';mcSpotifyCaptureSessionTrackId='';mcSpotifyCompanionPoints=null;mcSpotifyLivePoints=null;if(capture)capture.hidden=false;if(stop){stop.hidden=true;stop.disabled=false;}mcSpotifyCaptureReturnToIdle();mcSpotifyCaptureIdentityReason='';mcSpotifyCaptureStartedAt=0;refDrawCanvas(refSpecPoints,null,null,null);
       if(finishedSessionId)try{await mcSpotifyCompanionFetch('/capture/ack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:finishedSessionId}),cache:'no-store'});}catch(_){}
     }
   }
@@ -22549,7 +22598,7 @@ csInit('csPlatform');
     if(mcSpotifySelectedTrack&&String(mcSpotifySelectedTrack.id)!==String(track.id))mcSpotifyIsPlaying=false;
     mcSpotifySelectedTrack=track;const captureActive=mcSpotifyUsingCompanion||LIVE.active&&LIVE.referenceOnly||mcSpotifyCaptureStartedAt>0;if(captureActive&&mcSpotifyCaptureTrack&&(!mcSpotifyCaptureTrack.id||String(mcSpotifyCaptureTrack.id)===String(track.id)))mcSpotifyCaptureTrack={...track,artists:Array.isArray(track.artists)?track.artists.map(artist=>({...artist})):[]};const label=mcSpotifyTrackLabel(track),input=document.getElementById('mcSpotifyRefName'),capture=document.getElementById('mcSpotifyCapture');
     if(LIVE.active&&LIVE.referenceOnly)LIVE.referenceLabel=label;
-    if(input)input.value=label;if(capture){capture.hidden=false;capture.textContent='Capture reference';}
+    if(input)input.value=label;if(capture){capture.hidden=false;capture.textContent='Capture';}
     const saved=refTrackTargets.find(item=>item.spotifyTrackId&&item.spotifyTrackId===String(track.id)),targetSelect=document.getElementById('refCurveTarget');
     if(targetSelect){targetSelect.value=saved&&Array.from(targetSelect.options).some(option=>option.value==='trackref:'+saved.id)?'trackref:'+saved.id:'';window.refTargetChanged();}else refRenderSavedTargets();
     MC_SPECS.setSpotify(saved&&saved.analysis?saved.analysis:null,null,label);
@@ -22565,7 +22614,7 @@ csInit('csPlatform');
     if(connectionLabel)connectionLabel.textContent=connected?'Connected':'Not connected';
     if(reference)reference.dataset.connected=String(connected);
     if(search)search.disabled=!connected||mcSpotifySearchBusy;
-    if(capture&&!mcSpotifyUsingCompanion){capture.hidden=!connected;capture.textContent='Capture reference';}
+    if(capture&&!mcSpotifyUsingCompanion){capture.hidden=!connected;capture.textContent='Capture';}
   }
   async function mcSpotifyBeginConnect(){
     try{const verifier=mcSpotifyRandom(32),state=mcSpotifyRandom(16),challenge=await mcSpotifyChallenge(verifier);sessionStorage.setItem('aimm_spotify_verifier',verifier);sessionStorage.setItem('aimm_spotify_state',state);
@@ -22632,19 +22681,19 @@ csInit('csPlatform');
       const image=Array.isArray(track.album&&track.album.images)?track.album.images.find(x=>x&&x.url):null;
       const art=document.createElement('button');if(!opts.compact){art.type='button';art.className='mc-spotify-result-art';if(image&&/^https:\/\/i\.scdn\.co\//i.test(image.url)){const img=document.createElement('img');img.src=image.url;img.alt='';img.loading='lazy';art.appendChild(img);}summary.appendChild(art);}
       const copy=document.createElement('div');copy.className='mc-spotify-result-copy';const title=document.createElement('strong');title.textContent=track.name||'Untitled track';const details=document.createElement('span');details.textContent=(track.artists||[]).map(a=>a.name).join(', ')+(track.album&&track.album.name?' · '+track.album.name:'');copy.append(title,details);summary.appendChild(copy);row.appendChild(summary);
-      if(opts.compact){
-        const use=document.createElement('button');use.type='button';use.textContent='Select';use.setAttribute('aria-pressed','false');
-        use.addEventListener('click',()=>{mcSpotifySelectTrack(track);host.querySelectorAll('.mc-spotify-result--compact').forEach(other=>{other.classList.remove('is-selected');const button=other.querySelector('button');if(button){button.setAttribute('aria-pressed','false');button.textContent='Select';}});row.classList.add('is-selected');use.setAttribute('aria-pressed','true');use.textContent='Selected';});
-        row.appendChild(use);host.appendChild(row);return;
-      }
       const actions=document.createElement('div');actions.className='mc-spotify-result-actions';
       const openPreview=()=>{
         if(row.classList.contains('is-previewing'))return;
         host.querySelectorAll('.mc-spotify-result.is-previewing').forEach(closePreview);
         const id=String(track.id||'');if(!/^[A-Za-z0-9]{10,32}$/.test(id)){mcSpotifyStatus('Spotify did not provide a playable track ID. Open the result in Spotify instead.');return;}
-        const player=document.createElement('iframe');player.className='mc-spotify-result-player';player.title='Spotify player for '+(track.name||'track');player.src='https://open.spotify.com/embed/track/'+encodeURIComponent(id)+'?utm_source=generator&theme=0';player.loading='lazy';player.allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';player.setAttribute('allowfullscreen','');player.referrerPolicy='strict-origin-when-cross-origin';summary.hidden=true;row.classList.add('is-previewing');row.insertBefore(player,actions);
-        const close=document.createElement('button');close.type='button';close.dataset.previewClose='true';close.textContent='Close';close.setAttribute('aria-label','Close '+(track.name||'track')+' preview');close.addEventListener('click',()=>closePreview(row));actions.appendChild(close);mcSpotifyStatus('Player opened on hover. Press play in the expanded Spotify player, then select the track if it is the right reference.');
+        const player=document.createElement('iframe');player.className='mc-spotify-result-player';player.title='Spotify player for '+(track.name||'track');player.src='https://open.spotify.com/embed/track/'+encodeURIComponent(id)+'?utm_source=generator&theme=0';player.loading='lazy';player.allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';player.setAttribute('allowfullscreen','');player.referrerPolicy='strict-origin-when-cross-origin';if(!opts.compact)summary.hidden=true;row.classList.add('is-previewing');if(opts.compact)row.appendChild(player);else row.insertBefore(player,actions);
+        const close=document.createElement('button');close.type='button';close.dataset.previewClose='true';close.textContent='Close';close.setAttribute('aria-label','Close '+(track.name||'track')+' preview');close.addEventListener('click',()=>closePreview(row));(opts.compact?row:actions).appendChild(close);if(opts.compact){row.scrollIntoView({block:'nearest'});mcSpotifyStatus('Press play in the Spotify player, then press Capture.');}else mcSpotifyStatus('Player opened on hover. Press play in the expanded Spotify player, then select the track if it is the right reference.');
       };
+      if(opts.compact){
+        const use=document.createElement('button');use.type='button';use.textContent='Select';use.setAttribute('aria-pressed','false');
+        use.addEventListener('click',()=>{mcSpotifySelectTrack(track);if(!mcSpotifySelectedTrack||String(mcSpotifySelectedTrack.id)!==String(track.id))return;host.querySelectorAll('.mc-spotify-result--compact').forEach(other=>{other.classList.remove('is-selected');const button=other.querySelector('button');if(button){button.setAttribute('aria-pressed','false');button.textContent='Select';}});row.classList.add('is-selected');use.setAttribute('aria-pressed','true');use.textContent='Selected';openPreview();});
+        row.appendChild(use);host.appendChild(row);return;
+      }
       let hoverTimer=null;
       art.type='button';art.setAttribute('aria-label','Preview '+(track.name||'track')+' on Spotify');
       art.addEventListener('mouseenter',()=>{hoverTimer=setTimeout(openPreview,450);});
@@ -22749,10 +22798,10 @@ csInit('csPlatform');
     const host=document.getElementById('mcSpotifyResults');if(!host)return;
     if(mcSpotifyArtistController){mcSpotifyIsPlaying=false;try{mcSpotifyArtistController.destroy();}catch(_){}mcSpotifyArtistController=null;}
     host.replaceChildren();host.hidden=false;mcSpotifyArtistPlayingId='';mcSpotifyArtistSourceActive=true;
-    const capture=document.getElementById('mcSpotifyCapture');if(capture){capture.hidden=false;capture.textContent='Capture reference';}
+    const capture=document.getElementById('mcSpotifyCapture');if(capture){capture.hidden=false;capture.textContent='Capture';}
     const card=document.createElement('div');card.className='mc-spotify-artist-source';
     const title=document.createElement('strong');title.textContent=(artist.name||'Artist')+' · Spotify Top tracks';
-    const help=document.createElement('span');help.textContent='Play a track in the list, then press Capture reference.';
+    const help=document.createElement('span');help.textContent='Play a track in the list, then press Capture.';
     const embed=document.createElement('div');embed.className='mc-spotify-artist-embed';card.append(title,help,embed);host.appendChild(card);
     const fallback=document.createElement('details'),summary=document.createElement('summary'),list=document.createElement('div'),listHelp=document.createElement('div');
     const label=document.createElement('span'),plusSpan=document.createElement('span'),panel=document.createElement('div');
@@ -22762,14 +22811,15 @@ csInit('csPlatform');
     fallback.addEventListener('toggle',async()=>{
       if(!fallback.open||listLoaded)return;listLoaded=true;showListMessage('Looking for tracks…');
       const tracks=await mcSpotifyArtistTracks(artist);if(!fallback.isConnected)return;
-      if(tracks.length){mcSpotifyShowTracks(tracks,false,null,list,{compact:true});listHelp.hidden=false;listHelp.textContent='Press Select on a track, then press Capture reference.';}
+      if(tracks.length){mcSpotifyShowTracks(tracks,false,null,list,{compact:true});listHelp.hidden=false;listHelp.textContent='Press Select on a track, then press Capture.';}
       else showListMessage('No tracks found. Search for the song by name.');
     });
     try{const api=await mcSpotifyEnsureIframeApi();api.createController(embed,{uri:'spotify:artist:'+artist.id,width:'100%',height:'460'},controller=>{
-      mcSpotifyArtistController=controller;let lastDuration=null,lastPosition=null,identifying=false,pendingDuration=null;
+      mcSpotifyArtistController=controller;let lastDuration=null,lastPosition=null,identifying=false,pendingDuration=null,lastCaptureGeneration=mcSpotifyCaptureGeneration;
       const captureActive=()=>mcSpotifyUsingCompanion||(LIVE.active&&LIVE.referenceOnly)||mcSpotifyCaptureStartedAt>0;
       const identify=async(data,eventType)=>{
         if(mcSpotifyArtistController!==controller)return;
+        if(lastCaptureGeneration!==mcSpotifyCaptureGeneration){lastCaptureGeneration=mcSpotifyCaptureGeneration;lastDuration=null;lastPosition=null;pendingDuration=null;}
         if(captureActive()){lastDuration=null;lastPosition=null;pendingDuration=null;return;}
         if(!data)return;
         const uri=String(data.playingURI||'');if(!uri.startsWith('spotify:artist:')){lastDuration=null;lastPosition=null;pendingDuration=null;mcSpotifySelectPlayingURI(uri,eventType);return;}
@@ -22808,12 +22858,12 @@ csInit('csPlatform');
     mcSpotifySearchBusy=true;mcSpotifyRenderConnection();mcSpotifyStatus('Searching Spotify…');
     try{const token=await mcSpotifyAccessToken();let url;if(/^https?:\/\/(?:open\.)?spotify\.com\/(?:intl-[^/]+\/)?track\/([A-Za-z0-9]+)/i.test(q)){const id=q.match(/\/track\/([A-Za-z0-9]+)/i)[1];url='https://api.spotify.com/v1/tracks/'+encodeURIComponent(id);}else url='https://api.spotify.com/v1/search?'+new URLSearchParams({q,type:'track,artist',limit:'10',offset:'0'}).toString();
       const response=await fetch(url,{headers:{Authorization:'Bearer '+token}}),data=await response.json();if(!response.ok)throw new Error((data.error&&data.error.message)||'Spotify search failed');const tracks=data&&data.tracks&&Array.isArray(data.tracks.items)?data.tracks.items:(data&&data.id?[data]:[]),artists=data&&data.artists&&Array.isArray(data.artists.items)?data.artists.items:[];const exactArtist=artists.find(artist=>String(artist.name||'').trim().toLocaleLowerCase()===q.toLocaleLowerCase());
-      if(exactArtist){mcSpotifyNextSearchUrl=null;await mcSpotifyShowArtistTopTracks(exactArtist);mcSpotifyStatus('Play a track in the list, then press Capture reference.');}
+      if(exactArtist){mcSpotifyNextSearchUrl=null;await mcSpotifyShowArtistTopTracks(exactArtist);mcSpotifyStatus('Play a track in the list, then press Capture.');}
       else{mcSpotifyNextSearchUrl=data&&data.tracks&&data.tracks.next||null;mcSpotifyShowTracks(tracks,false,mcSpotifyNextSearchUrl);mcSpotifyStatus(tracks.length?'Select a Spotify result. Use Load more to continue through Spotify’s relevance-ranked results.':'No matching tracks found.');}
     }catch(error){mcSpotifyStatus(error.message||'Spotify search failed.');}finally{mcSpotifySearchBusy=false;mcSpotifyRenderConnection(false);}
   }
   async function mcSpotifyCaptureSelected(){
-    if(!(mcSpotifySelectedTrack&&mcSpotifySelectedTrack.id)){mcSpotifyStatus(mcSpotifyArtistSourceActive?'Play a track in the list, then press Capture reference.':'Select a song first, then press Capture reference.');return;}
+    if(!(mcSpotifySelectedTrack&&mcSpotifySelectedTrack.id)){mcSpotifyStatus(mcSpotifyArtistSourceActive?'Play a track in the list, then press Capture.':'Select a song first, then press Capture.');return;}
     await refSpotifyCaptureStart();
   }
   function wireSpotifyReference(){
@@ -22821,7 +22871,7 @@ csInit('csPlatform');
     if(!start||!stop){setTimeout(wireSpotifyReference,50);return;}
     const connect=document.getElementById('mcSpotifyConnect'),capture=document.getElementById('mcSpotifyCapture'),input=document.getElementById('mcSpotifyRefName');
     if(connect)connect.addEventListener('click',()=>{if(connect.dataset.connected==='true'){mcSpotifyTokens=null;try{localStorage.removeItem(MC_SPOTIFY_TOKEN_KEY);}catch(_){}mcSpotifyRenderConnection();mcSpotifyStatus('Spotify disconnected.');}else mcSpotifyBeginConnect();});
-    start.addEventListener('click',mcSpotifySearch);if(input){input.addEventListener('input',()=>{if(mcSpotifyUsingCompanion||LIVE.active&&LIVE.referenceOnly){input.value=mcSpotifyTrackLabel(mcSpotifyCaptureTrack||mcSpotifySelectedTrack);mcSpotifyStatus('The selected Spotify track is locked until this reference capture finishes.');return;}if(mcSpotifySelectedTrack&&input.value.trim()!==mcSpotifyTrackLabel(mcSpotifySelectedTrack)){mcSpotifySelectedTrack=null;const capture=document.getElementById('mcSpotifyCapture');if(capture){capture.hidden=!(mcSpotifyTokens&&mcSpotifyTokens.access_token);capture.textContent='Capture reference';}}});input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();mcSpotifySearch();}});}
+    start.addEventListener('click',mcSpotifySearch);if(input){input.addEventListener('input',()=>{if(mcSpotifyUsingCompanion||LIVE.active&&LIVE.referenceOnly){input.value=mcSpotifyTrackLabel(mcSpotifyCaptureTrack||mcSpotifySelectedTrack);mcSpotifyStatus('The selected Spotify track is locked until this reference capture finishes.');return;}if(mcSpotifySelectedTrack&&input.value.trim()!==mcSpotifyTrackLabel(mcSpotifySelectedTrack)){mcSpotifySelectedTrack=null;const capture=document.getElementById('mcSpotifyCapture');if(capture){capture.hidden=!(mcSpotifyTokens&&mcSpotifyTokens.access_token);capture.textContent='Capture';}}});input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();mcSpotifySearch();}});}
     if(capture)capture.addEventListener('click',()=>{if(document.getElementById('mcSpotifyCaptureState')?.dataset.state==='idle')mcSpotifyCaptureSelected();});stop.addEventListener('click',refSpotifyCaptureStop);
     const cancel=document.getElementById('mcSpotifyCaptureCancel');if(cancel)cancel.addEventListener('click',mcSpotifyCaptureCancel);
     const companionConnect=document.getElementById('mcSpotifyCompanionConnect');if(companionConnect)companionConnect.addEventListener('click',mcSpotifyConnectCompanion);
@@ -23157,6 +23207,8 @@ csInit('csPlatform');
   }
   window.addEventListener('resize',()=>{if(!refPlaying)refIdleAnimate();});
   window.refTargetChanged=function(){
+    const tempoSelect=document.getElementById('refCurveTarget'),tempoTarget=refTrackTargetByKey(tempoSelect&&tempoSelect.value);
+    if((tempoTarget&&tempoTarget.id)!==mcTempoSource)mcClearTappedTempo();
     if(!refPlaying)refIdleAnimate();
     refRenderSavedTargets();
     const select=document.getElementById('refCurveTarget'),saved=refTrackTargetByKey(select&&select.value);
@@ -23607,71 +23659,148 @@ csInit('csPlatform');
 
   // Keep the existing mix-file detector intact; Spotify references also use
   // the local estimator below so their result does not depend on a CDN load.
+  let mcTempoSource=null,tappedTempoFor=null,tappedTempoBpm=null,mcTempoGeneration=0;
+  let mcTapTimes=[],mcTapTimer=null;
+  function mcSyncTapTempoVisibility(){
+    const tile=document.getElementById('mcTempoTile'),value=document.getElementById('mcTempo');if(!tile||!value)return false;
+    // A real BPM takes priority over a stale .na dot, including restored values.
+    const hasTempo=Number.parseFloat(value.textContent)>0,tapped=!!mcTempoSource&&tappedTempoFor===mcTempoSource;
+    const interactive=!!mcTempoSource&&(!hasTempo||tapped),awaiting=interactive&&(!hasTempo||mcTapTimes.length===1);
+    tile.classList.toggle('is-tappable',interactive);
+    tile.classList.toggle('is-awaiting-tap',awaiting);
+    if(interactive){tile.setAttribute('role','button');tile.setAttribute('tabindex','0');tile.setAttribute('aria-label','Tap tempo');}
+    else{tile.removeAttribute('role');tile.removeAttribute('tabindex');tile.removeAttribute('aria-label');tile.classList.remove('is-tapping');}
+    const prompt=document.getElementById('mcTempoPrompt'),note=document.getElementById('mcTempoNote');
+    if(prompt)prompt.textContent=mcTapTimes.length===1?'Tap again':'Tap';
+    if(note)note.textContent='';
+    return interactive;
+  }
+  const mcTempoValue=document.getElementById('mcTempo'),mcTempoDot=document.getElementById('mcdTempo');
+  const mcTempoObserver=new MutationObserver(()=>{mcSyncTapTempoVisibility();stemPlayerSyncMetadata();});
+  if(mcTempoValue)mcTempoObserver.observe(mcTempoValue,{childList:true,characterData:true,subtree:true});
+  if(mcTempoDot)mcTempoObserver.observe(mcTempoDot,{attributes:true,attributeFilter:['class']});
+  function mcClearTappedTempo(){
+    tappedTempoFor=null;tappedTempoBpm=null;mcTapTimes=[];clearTimeout(mcTapTimer);mcTempoGeneration++;
+    document.getElementById('mcTempoTile')?.classList.remove('is-tapping');mcSyncTapTempoVisibility();
+  }
+  function mcSetTempoSource(source){if(source!==mcTempoSource){mcClearTappedTempo();mcTempoSource=source;}}
+  function mcWriteTempo(bpm){
+    const e=document.getElementById('mcTempo');if(e){e.textContent=bpm+' bpm';mcFitTileV(e);}
+    const dot=document.getElementById('mcdTempo');if(dot)dot.className='mc-d ok';
+    stemPlayerSyncMetadata();
+  }
   const _mcTempoCache=new WeakMap();
   async function mcDetectTempo(buf){
+    const source=mcTempoSource,generation=mcTempoGeneration;
+    const current=()=>source===mcTempoSource&&generation===mcTempoGeneration&&tappedTempoFor!==source;
+    if(source&&tappedTempoFor===source)return tappedTempoBpm;
     const setRow=t=>{const e=document.getElementById('mcTempo');if(e){e.textContent=t;mcFitTileV(e);}stemPlayerSyncMetadata();};
     const setDot=c=>{const e=document.getElementById('mcdTempo');if(e)e.className='mc-d '+c;};
     if(!buf)return null;
-    if(_mcTempoCache.has(buf)){const v=_mcTempoCache.get(buf);setRow(v==null?'unavailable':v+' bpm');setDot(v==null?'na':'ok');return v;}
+    if(_mcTempoCache.has(buf)){const v=_mcTempoCache.get(buf);setRow(v==null?'– –':v+' bpm');setDot(v==null?'na':'ok');return v;}
     setRow('estimating…');setDot('na');
     const withTimeout=(p,ms)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
     try{
       const mod=await withTimeout(import('https://esm.sh/web-audio-beat-detector@8.2.39'),8000);
       const bpm=await withTimeout(mod.analyze(buf),8000),rounded=Math.round(bpm);
       if(!isFinite(rounded)||rounded<=0)throw new Error('bad bpm');
-      _mcTempoCache.set(buf,rounded);setRow(rounded+' bpm');setDot('ok');return rounded;
-    }catch(_){_mcTempoCache.set(buf,null);setRow('unavailable');setDot('na');return null;}
+      _mcTempoCache.set(buf,rounded);if(current()){setRow(rounded+' bpm');setDot('ok');}return rounded;
+    }catch(_){_mcTempoCache.set(buf,null);if(current()){setRow('– –');setDot('na');}return null;}
   }
-  // Positive energy-rise envelope, autocorrelated over 60–180 BPM periods.
+  // Band energy and onset strength at >=200 Hz; decimate to bound main-thread work.
   const _mcSpotifyTempoCache=new WeakMap();
   function mcEstimateTempoLocal(buf){
     try{
       const sr=Number(buf&&buf.sampleRate),length=Number(buf&&buf.length);
       if(!isFinite(sr)||!isFinite(length)||sr<8000||length<sr*6)return null;
       const ch0=buf.getChannelData(0),ch1=buf.numberOfChannels>1?buf.getChannelData(1):ch0;
-      let start=Math.floor(length*.08),end=Math.floor(length*.92);
-      const maxSamples=Math.floor(sr*45);
-      if(end-start>maxSamples){const mid=(start+end)/2;start=Math.floor(mid-maxSamples/2);end=Math.floor(mid+maxSamples/2);}
-      const frameSamples=Math.max(1,Math.round(sr/100)),frameCount=Math.floor((end-start)/frameSamples);
-      if(frameCount<500)return null;
-      const envelope=new Float32Array(frameCount);
-      for(let f=0;f<frameCount;f++){
-        const from=start+f*frameSamples,to=Math.min(end,from+frameSamples);let energy=0,count=0;
-        for(let i=from;i<to;i++){const mono=(ch0[i]+ch1[i])*.5;energy+=mono*mono;count++;}
-        envelope[f]=Math.log1p(Math.sqrt(energy/Math.max(1,count))*24);
+      const span=Math.min(Math.floor(length*.84),Math.floor(sr*60)),start=Math.floor((length-span)/2);
+      const step=Math.max(1,Math.floor(sr/6000)),rate=sr/step,hop=Math.floor(rate/200),hz=rate/hop;
+      const count=Math.floor(span/(step*hop));if(count<500)return null;
+      const bands=[new Float32Array(count),new Float32Array(count),new Float32Array(count),new Float32Array(count)];
+      const alpha=[180,700,2000].map(f=>1-Math.exp(-2*Math.PI*f/rate));
+      let low=0,mid=0,high=0,total=0;
+      for(let f=0;f<count;f++){
+        let e0=0,e1=0,e2=0,e3=0;
+        for(let j=0;j<hop;j++){
+          const from=start+(f*hop+j)*step;let x=0;
+          for(let k=0;k<step;k++)x+=(ch0[from+k]+ch1[from+k])*.5;
+          x/=step;low+=alpha[0]*(x-low);mid+=alpha[1]*(x-mid);high+=alpha[2]*(x-high);
+          e0+=low*low;e1+=(mid-low)*(mid-low);e2+=(high-mid)*(high-mid);e3+=(x-high)*(x-high);
+        }
+        bands[0][f]=Math.sqrt(e0/hop);bands[1][f]=Math.sqrt(e1/hop);bands[2][f]=Math.sqrt(e2/hop);bands[3][f]=Math.sqrt(e3/hop);total+=e0+e1+e2+e3;
       }
-      const onset=new Float32Array(frameCount);let mean=0;
-      for(let i=3;i<frameCount;i++){const rise=Math.max(0,envelope[i]-envelope[i-3]);onset[i]=rise;mean+=rise;}
-      mean/=Math.max(1,frameCount-3);let energy=0;
-      for(let i=3;i<frameCount;i++){onset[i]-=mean;energy+=onset[i]*onset[i];}
+      if(total<1e-10)return null;
+      const minLag=Math.floor(hz*60/200),lastLag=Math.ceil(hz*60/60);
+      const maxLag=lastLag*4,corr=new Float64Array(maxLag+2);
+      // Correlate bands independently so hats cannot mask sparse bass attacks.
+      const weights=[3,1,.5,.25];let energy=0;
+      for(let b=0;b<4;b++){
+        const band=bands[b],onset=new Float32Array(count);
+        let rms=0;for(let i=0;i<count;i++)rms+=band[i]*band[i];
+        rms=Math.sqrt(rms/count);if(rms<1e-9)continue;
+        // Compressed energy retains sustained 808 pulses; flux adds attack timing.
+        for(let i=2;i<count-1;i++)onset[i]=Math.sqrt(band[i]/rms)+Math.max(0,(band[i]-band[i-2])/rms);
+        // Smooth attacks across neighbouring 5 ms frames before correlating.
+        const smooth=Float32Array.from(onset,(_,i)=>(onset[i-1]||0)*.25+onset[i]*.5+(onset[i+1]||0)*.25);
+        const prefix=new Float64Array(count+1);for(let i=0;i<count;i++)prefix[i+1]=prefix[i]+smooth[i];
+        const radius=Math.round(hz*.5);let bandEnergy=0;
+        for(let i=0;i<count;i++){const l=Math.max(0,i-radius),r=Math.min(count,i+radius+1);onset[i]=smooth[i]-(prefix[r]-prefix[l])/(r-l);bandEnergy+=onset[i]*onset[i];}
+        energy+=bandEnergy;if(bandEnergy<1e-7)continue;
+        // Search 60–200 BPM and its two- to four-beat repetitions.
+        for(let lag=Math.max(2,minLag-1);lag<=maxLag+1;lag++){
+          let cross=0,left=0,right=0;
+          for(let i=lag;i<count;i++){const a=onset[i],v=onset[i-lag];cross+=a*v;left+=a*a;right+=v*v;}
+          corr[lag]+=weights[b]*cross/Math.sqrt(Math.max(1e-12,left*right))/4.75;
+        }
+      }
       if(energy<1e-7)return null;
-      const minLag=Math.floor(100*60/180),maxLag=Math.ceil(100*60/60),scores=[];
-      for(let lag=minLag;lag<=maxLag;lag++){
-        let cross=0,left=0,right=0;
-        for(let i=lag+3;i<frameCount;i++){const a=onset[i],b=onset[i-lag];cross+=a*b;left+=a*a;right+=b*b;}
-        const corr=cross/Math.sqrt(Math.max(1e-12,left*right));
-        scores.push({lag,score:corr,bpm:6000/lag});
+      const at=lag=>{const i=Math.floor(lag),t=lag-i;return i>=2&&i+1<corr.length?corr[i]*(1-t)+corr[i+1]*t:0;};
+      const scores=[];
+      const lagStep=.25;
+      for(let lag=minLag;lag<=lastLag;lag+=lagStep){
+        const bpm=hz*60/lag;
+        // One-, two- and four-beat repetition also resolves sparse half-time grooves.
+        const support=Math.max(0,at(lag))+.5*Math.max(0,at(lag*2))+.8*Math.max(0,at(lag*4));
+        const prior=1+.06*Math.exp(-Math.pow((bpm-110)/40,2));
+        // Favour conventional beat rates over dotted or half-time subharmonics.
+        const range=bpm<69.5||bpm>160.5?.4:1;
+        scores.push({lag,score:support*prior*range});
       }
-      scores.sort((a,b)=>b.score-a.score);
-      const best=scores[0];
-      if(!best||best.score<.12)return null;
-      // A half-time / double-time pair can correlate almost equally. Prefer
-      // the conventional 80–150 BPM reading when the evidence is tied.
-      const tied=scores.filter(x=>best.score-x.score<.015&&x.bpm>=80&&x.bpm<=150);
-      const choice=tied.length?tied.sort((a,b)=>Math.abs(a.bpm-112)-Math.abs(b.bpm-112))[0]:best;
-      return Math.round(choice.bpm);
+      const sorted=scores.map(x=>x.score).sort((a,b)=>a-b),median=sorted[Math.floor(sorted.length/2)];
+      let best=scores.reduce((a,b)=>b.score>a.score?b:a);
+      // Require repeatable beat or bar evidence plus prominence over background scores.
+      if(Math.max(at(best.lag),at(best.lag*2),at(best.lag*4))<.12||best.score<Math.max(.1,Math.max(.025,median)*2.5))return null;
+      const conventional=scores.filter(x=>hz*60/x.lag>=69.5&&hz*60/x.lag<=160.5&&x.score>=best.score*.94);
+      if(conventional.length)best=conventional.reduce((a,b)=>b.score>a.score?b:a);
+      // Refine actual correlation peaks, rather than the linearly interpolated
+      // score. Longer repetitions give a finer estimate of the per-beat period.
+      let fitted=0,fitWeight=0;
+      for(let k=1;k<=4;k++){
+        const centre=best.lag*k,radius=Math.max(2,Math.ceil(hz*.015*k));
+        const lo=Math.max(3,Math.floor(centre-radius)),hi=Math.min(maxLag,Math.ceil(centre+radius));
+        let peak=lo;for(let lag=lo+1;lag<=hi;lag++)if(corr[lag]>corr[peak])peak=lag;
+        if(peak===lo||peak===hi||corr[peak]<.12)continue;
+        const y0=corr[peak-1],y1=corr[peak],y2=corr[peak+1],denom=y0-2*y1+y2;
+        const offset=denom<0?Math.max(-.5,Math.min(.5,.5*(y0-y2)/denom)):0;
+        const weight=k*k*y1*y1;
+        fitted+=(peak+offset)/k*weight;fitWeight+=weight;
+      }
+      const period=fitWeight?fitted/fitWeight:best.lag;
+      return Math.round(hz*60/period);
     }catch(_){return null;}
   }
   function mcDetectTempoLocal(buf){
+    if(mcTempoSource&&tappedTempoFor===mcTempoSource)return tappedTempoBpm;
     const setRow=t=>{const e=document.getElementById('mcTempo');if(e){e.textContent=t;mcFitTileV(e);}stemPlayerSyncMetadata();};
     const setDot=c=>{const e=document.getElementById('mcdTempo');if(e)e.className='mc-d '+c;};
-    // Grey .na dot until a real bpm lands; "estimating" / "unavailable" stay grey.
+    // Grey .na dot until a real bpm lands; pending and empty values stay grey.
     if(!buf)return null;
-    if(_mcSpotifyTempoCache.has(buf)){const v=_mcSpotifyTempoCache.get(buf);setRow(v==null?'unavailable':v+' bpm');setDot(v==null?'na':'ok');return v;}
+    if(_mcSpotifyTempoCache.has(buf)){const v=_mcSpotifyTempoCache.get(buf);setRow(v==null?'– –':v+' bpm');setDot(v==null?'na':'ok');return v;}
     setRow('analysing…');setDot('na');
     const bpm=mcEstimateTempoLocal(buf);
     _mcSpotifyTempoCache.set(buf,bpm);
-    setRow(bpm==null?'unavailable':bpm+' bpm');setDot(bpm==null?'na':'ok');
+    setRow(bpm==null?'– –':bpm+' bpm');setDot(bpm==null?'na':'ok');
     return bpm;
   }
 
@@ -23828,17 +23957,22 @@ csInit('csPlatform');
     }
 
     function populateClassified(buffer,analysis,targetId){
+      mcSetTempoSource(targetId||buffer||null);
+      const tapped=mcTempoSource&&tappedTempoFor===mcTempoSource;
+      if(tapped)mcWriteTempo(tappedTempoBpm);
       syncGenre();
       dot('mcdKey','na'); // amber only once mcDetectKey lands a real estimate
       if(buffer){
         classifyBuf=buffer;
-        if(targetId){const bpm=mcDetectTempoLocal(buffer);if(bpm!=null)refPersistSpotifyDerived(targetId,'tempoBpm',bpm);}
-        else mcDetectTempo(buffer);
+        if(!tapped){
+          if(targetId){const bpm=mcDetectTempoLocal(buffer);if(bpm!=null)refPersistSpotifyDerived(targetId,'tempoBpm',bpm);}
+          else mcDetectTempo(buffer);
+        }
         mcDetectKey(buffer).then(key=>{if(targetId&&key&&key!=='unavailable')refPersistSpotifyDerived(targetId,'keyName',key);});
       }else{
         const bpm=analysis&&typeof analysis.tempoBpm==='number'&&isFinite(analysis.tempoBpm)?Math.round(analysis.tempoBpm):null;
         const key=analysis&&typeof analysis.keyName==='string'&&analysis.keyName?analysis.keyName:null;
-        set('mcTempo',bpm==null?'unavailable':bpm+' bpm');dot('mcdTempo',bpm==null?'na':'ok');
+        if(!tapped){set('mcTempo',bpm==null?'– –':bpm+' bpm');dot('mcdTempo',bpm==null?'na':'ok');}
         set('mcKey',key||'unavailable');dot('mcdKey',key?'warn':'na');
       }
     }
@@ -23850,6 +23984,7 @@ csInit('csPlatform');
       const mixButton=document.getElementById('mcSpecsMix'),spotifyButton=document.getElementById('mcSpecsSpotify');
       if(mixButton)mixButton.setAttribute('aria-pressed',String(!isSpotify));
       if(spotifyButton){spotifyButton.disabled=!spotifyAnalysis;spotifyButton.setAttribute('aria-pressed',String(isSpotify));}
+      mcSetTempoSource(isSpotify?spotifyTargetId||buffer:buffer);
       if(r){populateMeasured(r);populateClassified(buffer,r,isSpotify?spotifyTargetId:'');}
       else resetValues();
     }
@@ -23860,11 +23995,45 @@ csInit('csPlatform');
       { const f=document.getElementById('mcWidthFill'),mk=document.getElementById('mcWidthMark');if(f)f.style.width='0';if(mk)mk.style.display='none'; }
       set('refLufsInt','– –');set('refTruePeak','– –');set('refDynRange','– –');
     }
-    function populate(r,buffer){mixAnalysis=r||null;mixBuffer=buffer||refBuffer||null;if(activeSource==='mix')renderActive();}
+    function populate(r,buffer){if((buffer||refBuffer||null)!==mixBuffer)mcClearTappedTempo();mixAnalysis=r||null;mixBuffer=buffer||refBuffer||null;if(activeSource==='mix')renderActive();}
     function setSpotify(r,buffer,name,targetId){spotifyAnalysis=r||null;spotifyBuffer=buffer||null;spotifyName=String(name||'Spotify reference').slice(0,36);const select=document.getElementById('refCurveTarget'),saved=refTrackTargetByKey(select&&select.value);spotifyTargetId=String(targetId||(saved&&saved.id)||'');activeSource='spotify';renderActive();}
     function show(source){if(source==='spotify'&&spotifyAnalysis)activeSource='spotify';else activeSource='mix';renderActive();}
 
-    function reset(){mixAnalysis=null;mixBuffer=null;classifyBuf=null;_mcKeyGen++;if(!spotifyAnalysis)activeSource='mix';renderActive();syncGenre();}
+    function reset(){mcClearTappedTempo();mixAnalysis=null;mixBuffer=null;classifyBuf=null;_mcKeyGen++;if(!spotifyAnalysis)activeSource='mix';renderActive();syncGenre();}
+
+    function mcTapTempo(){
+      if(!mcSyncTapTempoVisibility())return;
+      const now=performance.now(),source=mcTempoSource;
+      if(!source)return;
+      if(!mcTapTimes.length||now-mcTapTimes[mcTapTimes.length-1]>2500)mcTapTimes=[];
+      mcTapTimes.push(now);if(mcTapTimes.length>9)mcTapTimes.shift();
+      const tile=document.getElementById('mcTempoTile');tile.classList.add('is-tapping');
+      if(mcTapTimes.length>=2){
+        const mean=(now-mcTapTimes[0])/(mcTapTimes.length-1);
+        tappedTempoBpm=Math.max(40,Math.min(240,Math.round(60000/mean)));tappedTempoFor=source;
+        mcWriteTempo(tappedTempoBpm);
+      }
+      mcSyncTapTempoVisibility();
+      clearTimeout(mcTapTimer);
+      const bpm=mcTapTimes.length>=2?tappedTempoBpm:null;
+      // Persist only the sequence's own target, after the final tap settles.
+      const targetId=activeSource==='spotify'?spotifyTargetId:'';
+      mcTapTimer=setTimeout(()=>{
+        tile.classList.remove('is-tapping');mcTapTimes=[];mcSyncTapTempoVisibility();
+        if(bpm!=null&&source===mcTempoSource&&tappedTempoFor===source){
+          const analysis=activeSource==='spotify'?spotifyAnalysis:mixAnalysis;if(analysis)analysis.tempoBpm=bpm;
+          if(targetId)refPersistSpotifyDerived(targetId,'tempoBpm',bpm);
+        }
+      },2500);
+    }
+    const tempoTile=document.getElementById('mcTempoTile');
+    tempoTile?.addEventListener('click',mcTapTempo);
+    tempoTile?.addEventListener('keydown',event=>{
+      if((event.key==='Enter'||event.key===' ')&&mcSyncTapTempoVisibility()){
+        event.preventDefault();if(!event.repeat)mcTapTempo();
+      }
+    });
+    mcSyncTapTempoVisibility();
 
     document.getElementById('mcSpecsMix')?.addEventListener('click',()=>show('mix'));
     document.getElementById('mcSpecsSpotify')?.addEventListener('click',()=>show('spotify'));
@@ -24960,7 +25129,7 @@ csInit('csPlatform');
       if(stop)stop.hidden=true;mcSpotifyRenderConnection();
       mcSpotifyCaptureTrack=null;mcSpotifyCaptureSessionTrackId='';
       LIVE.referencePowerSum=null;LIVE.referenceFrameCount=0;LIVE.referenceChunks=[];LIVE.referenceSamples=0;
-      LIVE.referenceOnly=false;LIVE.referenceLabel='';
+      mcSpotifyUsingCompanion=false;LIVE.referenceOnly=false;LIVE.referenceLabel='';
       const status=document.getElementById('mcSpotifyRefStatus');
       if(saved){if(captureTrack&&captureTrack.id)mcSpotifyCaptureSavedLabel(captureTrack);else mcSpotifyCaptureSavedLabel(null);mcSpotifyCaptureTrailRender();}
       else{const message=analysisError?'Spotify could not resolve the selected track title and artist. '+analysisError:capturedAnalysis?'Capture at least 8 seconds of playback for a useful reference, then stop to save it.':'No active playback was captured. Start the selected Spotify track and try again.';if(status)status.textContent=message;}
