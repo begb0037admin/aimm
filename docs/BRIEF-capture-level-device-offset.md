@@ -17,3 +17,12 @@ Status: research + tone test done. Fix NOT started. Nothing deployed, no code ch
 
 ## Rules
 Kevin is dyslexic: one short action at a time. Codex edits (gpt-6.1-sol, medium). No tone playing loud. Do not commit audio files.
+
+## Update 14 Nov (UA interface connected, tone test run)
+Tone -40 dBFS (expected rms -43.0), companion restarted while UA was output:
+- Built-in speakers: rms -41.2, -43.3 (about +-1 dB run to run).
+- Universal Audio Thunderbolt (10 ch): rms -54.5, -53.2.
+- Offset UA vs built-in: about -11.6 dB (range -10 to -13). Formula 2/channels predicts -14, not exact.
+- First UA run, BEFORE the companion was restarted (companion had started while built-in was the output): rms -67.2 = about -24 dB. So the offset also depends on whether the output device changed after the companion started. A fixed per-device gain correction is therefore fragile.
+- tonetest.py now acks the capture (/capture/ack); without the ack the next capture returns 409 until the companion is restarted.
+Recommendation: prototype a Core Audio process tap (tap Chrome only) and run the same tone test through UA and built-in; only fall back to a calibrated correction if the tap also scales.

@@ -16,6 +16,8 @@ while i<len(w)-8:
     cid=w[i:i+4]; sz=struct.unpack('<I',w[i+4:i+8])[0]
     if cid==b'data': d=w[i+8:i+8+sz]; break
     i+=8+sz
+try: call('POST','/capture/ack',{'sessionId':sid})
+except Exception as e: print('ack failed',e)
 x=np.frombuffer(d,dtype='<f4' if fmt==3 else '<i2').astype(np.float64)
 if fmt!=3: x/=32768
 x=x.reshape(-1,ch); print("wav: fmt",fmt,"ch",ch,"sr",sr,"bits",bits,"seconds",round(len(x)/sr,1))
