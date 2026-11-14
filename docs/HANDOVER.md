@@ -1,5 +1,9 @@
 # HANDOVER.md — AIMM
 
+## CURRENT CHANGE — 2026-11-14, build 2026-11-14.07 (confirmed by Kevin)
+
+Stem-view purple band, Audio Specs prioritise stems, thumbnails, live white line with track player, hidden diagnostics, and a single round Clear/Stop button. Build .06 is BROKEN (lost Spotify player) — do not redeploy. Pushing to main can auto-deploy; keep main == live. Full detail, rollback chain and open items: `docs/handovers/2026-11-14-spotify-stems-companion.md`. Latest Worker `2c3ccc51-e351-421e-8711-88b04b63a0a5`.
+
 ## CURRENT CHANGE — 2026-11-13, build 2026-11-13.05 (locked in)
 
 Spotify saved target (purple) arc, all live at aimixmasters.com. Builds .01-.05: (1) selecting a Spotify song keeps its saved target selected and saving a capture selects the new target; (2) the target is drawn through the live-line pipeline, smoothed about a third of an octave (SAVED_TARGET_SMOOTH_OCT) and centred, so it is visible and smooth; (3) it is a thick glow band with a 1px purple outline on both edges and no centre line, cached offscreen; (4) the live Spotify line is white with the same glow. Step 3 (capture-in-progress curves through the purple renderer) was closed as not needed: the live line already draws during capture and purple appears on save.
