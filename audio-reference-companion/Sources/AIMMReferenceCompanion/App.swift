@@ -85,7 +85,7 @@ struct CompanionWindow: View {
             HStack(spacing: 12) {
                 Image(systemName: "waveform.circle.fill")
                     .font(.system(size: 34))
-                    .foregroundStyle(.purple)
+                    .foregroundStyle(Color(red: 38/255, green: 206/255, blue: 183/255))
                 VStack(alignment: .leading, spacing: 3) {
                     Text("AIMM Audio Reference")
                         .font(.title2.weight(.semibold))

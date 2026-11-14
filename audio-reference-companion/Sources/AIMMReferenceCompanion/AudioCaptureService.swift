@@ -27,7 +27,22 @@ enum CaptureError: LocalizedError, Equatable {
 final class AudioCaptureService: NSObject, ObservableObject, SCStreamOutput, SCStreamDelegate {
     @Published private(set) var isMonitoring = false
     @Published private(set) var isCapturing = false
-    @Published var status = "Starting live system-audio monitoring…"
+    @Published private var statusMessage = "Starting live audio monitoring…"
+    @Published private(set) var captureMethod = "sck"
+    @Published private var tapOutputChannels = 0
+    @Published private var tapCompensationGainDb = 0.0
+    var outputChannels: Int { captureMethod.hasPrefix("tap-") ? tapOutputChannels : 0 }
+    var compensationGainDb: Double { captureMethod.hasPrefix("tap-") ? tapCompensationGainDb : 0 }
+    private var deviceCompensationStatus: String {
+        captureMethod.hasPrefix("tap-")
+            ? String(format: " · %+.1f dB device compensation (%d ch)", compensationGainDb, outputChannels) : ""
+    }
+    var status: String {
+        get { "\(captureMethod)\(deviceCompensationStatus) · \(statusMessage)" + (fallbackReason.map { " · SCK fallback (\($0))" } ?? "") }
+        set { statusMessage = newValue }
+    }
+    private var processTap: ProcessTapCapture?
+    private var fallbackReason: String?
     @Published private(set) var elapsedSeconds = 0
     var elapsedText: String {
         "\(elapsedSeconds / 60):\(String(format: "%02d", elapsedSeconds % 60))"
@@ -88,7 +103,7 @@ final class AudioCaptureService: NSObject, ObservableObject, SCStreamOutput, SCS
     /// Reference capture sessions only reset the purple-target average and WAV
     /// buffer; they never stop or recreate this stream.
     func startMonitoring() async throws {
-        if isMonitoring, stream != nil { return }
+        if isMonitoring { return }
         if let monitorStartTask {
             try await monitorStartTask.value
             return
@@ -108,6 +123,46 @@ final class AudioCaptureService: NSObject, ObservableObject, SCStreamOutput, SCS
     }
 
     private func startMonitorStream() async throws {
+        if ProcessInfo.processInfo.environment["AIMM_CAPTURE"] != "sck" {
+            if #available(macOS 14.2, *) {
+                let variant = TapVariant(environment: ProcessInfo.processInfo.environment["AIMM_TAP_VARIANT"])
+                captureMethod = "tap-" + variant.rawValue
+                status = "Requesting macOS process audio access…"
+                let tap = CoreAudioProcessTap(variant: variant, receive: { [weak self] buffer in
+                    self?.ingest(buffer)
+                }, failed: { [weak self] error in
+                    guard let self else { return }
+                    self.processTap?.stop()
+                    self.processTap = nil
+                    self.isMonitoring = false
+                    self.fallbackReason = "Tap failed: \(error.localizedDescription)"
+                    Task { @MainActor in
+                        do { try await self.startSCKStream() }
+                        catch { self.status = Self.startFailureStatus(error) }
+                    }
+                }, outputChanged: { [weak self] channels, gainDb in
+                    self?.tapOutputChannels = channels
+                    self?.tapCompensationGainDb = gainDb
+                })
+                do {
+                    try tap.start()
+                    processTap = tap
+                    isMonitoring = true
+                    status = "Live monitoring · Chrome / Spotify process audio."
+                    return
+                } catch {
+                    tap.stop()
+                    fallbackReason = "Tap unavailable: \(error.localizedDescription)"
+                }
+            } else {
+                fallbackReason = "Process taps require macOS 14.2 or later"
+            }
+        }
+        try await startSCKStream()
+    }
+
+    private func startSCKStream() async throws {
+        captureMethod = "sck"
         status = "Requesting macOS system audio access for live monitoring…"
 
         let content: SCShareableContent
@@ -156,7 +211,7 @@ final class AudioCaptureService: NSObject, ObservableObject, SCStreamOutput, SCS
         }
         guard completedSessionID == nil else { throw CaptureError.alreadyInProgress }
         if !isMonitoring { try await startMonitoring() }
-        guard isMonitoring, stream != nil else { throw CaptureError.monitorUnavailable }
+        guard isMonitoring else { throw CaptureError.monitorUnavailable }
         isStarting = true
         defer { isStarting = false }
         spectrumAnalyzer.beginReferenceCapture()

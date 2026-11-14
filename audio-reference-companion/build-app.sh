@@ -13,6 +13,8 @@ swift build -c release --disable-sandbox
 rm -rf "$OUTPUT"
 mkdir -p "$BIN_DIR"
 cp "$ROOT/.build/release/aimm-reference-companion" "$BIN_DIR/aimm-reference-companion"
+mkdir -p "$OUTPUT/Contents/Resources"
+cp "$ROOT/assets/AppIcon.icns" "$OUTPUT/Contents/Resources/AppIcon.icns"
 printf 'APPL????' > "$OUTPUT/Contents/PkgInfo"
 cat > "$OUTPUT/Contents/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
@@ -22,15 +24,16 @@ cat > "$OUTPUT/Contents/Info.plist" <<'PLIST'
   <key>CFBundleName</key><string>AIMM Audio Reference Companion</string>
   <key>CFBundleDisplayName</key><string>AIMM Audio Reference Companion</string>
   <key>CFBundleIdentifier</key><string>com.aimixmasters.audio-reference-companion</string>
+  <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>CFBundleExecutable</key><string>aimm-reference-companion</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>NSPrincipalClass</key><string>NSApplication</string>
   <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
-  <key>CFBundleShortVersionString</key><string>0.2.6</string>
-  <key>CFBundleVersion</key><string>8</string>
+  <key>CFBundleShortVersionString</key><string>0.3.1</string>
+  <key>CFBundleVersion</key><string>10</string>
   <key>LSMinimumSystemVersion</key><string>13.0</string>
   <key>NSScreenCaptureUsageDescription</key><string>AIMM Audio Reference Companion captures system playback so AIMM can monitor the live spectrum and save a reference target when you start capture.</string>
-  <key>NSAudioCaptureUsageDescription</key><string>AIMM Audio Reference Companion captures system playback so AIMM can analyse the song you select as a reference.</string>
+  <key>NSAudioCaptureUsageDescription</key><string>AIMM Audio Reference Companion uses private Core Audio process taps to capture Chrome and Spotify playback for live analysis and reference capture. ScreenCaptureKit system playback capture is available as a fallback.</string>
   <key>LSUIElement</key><false/>
 </dict></plist>
 PLIST

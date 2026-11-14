@@ -98,7 +98,7 @@ final class LocalBridge: @unchecked Sendable {
         switch (request.method, path) {
         case ("GET", "/status"):
             Task { @MainActor in
-                let body = try? JSONSerialization.data(withJSONObject: ["available": true, "monitoring": self.capture.isMonitoring, "capturing": self.capture.isCapturing, "status": self.capture.status, "hasSignal": self.capture.isMonitoring && self.capture.spectrumHasRecentSignal, "elapsedSeconds": self.capture.elapsedSeconds, "audioSamples": self.capture.capturedSampleCount, "audioSeconds": self.capture.capturedAudioSeconds])
+                let body = try? JSONSerialization.data(withJSONObject: ["available": true, "captureMethod": self.capture.captureMethod, "outputChannels": self.capture.outputChannels, "compensationGainDb": self.capture.compensationGainDb, "monitoring": self.capture.isMonitoring, "capturing": self.capture.isCapturing, "status": self.capture.status, "hasSignal": self.capture.isMonitoring && self.capture.spectrumHasRecentSignal, "elapsedSeconds": self.capture.elapsedSeconds, "audioSamples": self.capture.capturedSampleCount, "audioSeconds": self.capture.capturedAudioSeconds])
                 self.send(status: 200, type: "application/json; charset=utf-8", body: body ?? Data("{}".utf8), origin: origin, connection: connection)
             }
         case ("GET", "/monitor/spectrum/live"):
