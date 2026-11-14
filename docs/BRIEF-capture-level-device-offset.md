@@ -26,3 +26,6 @@ Tone -40 dBFS (expected rms -43.0), companion restarted while UA was output:
 - First UA run, BEFORE the companion was restarted (companion had started while built-in was the output): rms -67.2 = about -24 dB. So the offset also depends on whether the output device changed after the companion started. A fixed per-device gain correction is therefore fragile.
 - tonetest.py now acks the capture (/capture/ack); without the ack the next capture returns 409 until the companion is restarted.
 Recommendation: prototype a Core Audio process tap (tap Chrome only) and run the same tone test through UA and built-in; only fall back to a calibrated correction if the tap also scales.
+
+## DECISION (Kevin, 14 Nov 2026)
+No capture-code change. On the Mac mini, Kevin switches the output to "Mac mini Speakers" (built-in) before capturing a Spotify reference; the Universal Audio interface reads about 11 dB low through ScreenCaptureKit. Core Audio tap prototype NOT approved. Caveat: after changing the output device, if the first capture reads oddly low, restart the companion (one early UA run read about 24 dB low after a hot switch).
