@@ -3829,6 +3829,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <button type="button" id="mcSpotifyConnect">Connect Spotify</button>
           <button type="button" id="mcSpotifyRefMatch" disabled>Match Sound</button>
           <button type="button" id="mcSpotifyCapture" hidden>Capture</button>
+          <button type="button" id="mcSpotifyClear" aria-label="Clear Spotify reference" hidden>Clear</button>
           <button type="button" id="mcSpotifyCaptureCancel" hidden>Cancel</button>
           <button type="button" id="mcSpotifyRefStop" aria-label="Stop capture" title="Stop" hidden><span>Stop</span></button>
         </div>
@@ -4409,6 +4410,10 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 
 /* Spotify capture Stop: match the Capture control's 52px height. */
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCapture{margin-left:12px;width:133.4px;min-width:133px;height:52px;flex:0 0 auto;display:inline-flex;justify-content:center;align-items:center;text-align:center}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyClear{background:transparent;border:0;border-radius:11px;box-shadow:none;color:#9aa0a6;font-weight:600;min-width:60px}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyClear:hover{background:#16181b;color:#cfd3d7}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyClear:focus-visible{outline:2px solid #65d3e5;outline-offset:2px}
+#eq.oz-mixcheck .mc-spotify-ref-controls{grid-template-columns:minmax(0,1fr) auto auto auto auto !important}
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;min-width:52px;max-width:52px;min-height:52px;max-height:52px;flex:0 0 52px;justify-self:start;padding:0 !important;border:0;border-radius:50%;background:linear-gradient(135deg,#9442dc,#b970ff);color:#fff;transition:filter 120ms ease,box-shadow 120ms ease,transform 120ms ease}
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop::before{content:"";display:block;width:14px;height:14px;border-radius:3px;background:#fff}
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop>span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0}
@@ -5149,7 +5154,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-14.05';
+const AIMM_BUILD = '2026-11-14.06';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -22352,6 +22357,7 @@ csInit('csPlatform');
         mcSpotifyLivePoints=null;
         if(!LIVE.active)refDrawCanvas(refSpecPoints,null,null,null);
       }
+      mcSpotifyUpdateClear();
       if(mcSpotifyUsingCompanion&&live.capturing&&live.sessionId===mcSpotifyCaptureSessionId){
         const seconds=Number(live.audioSeconds)||0,windows=Number(live.windows)||0;
         if(Array.isArray(live.targetPoints)){
@@ -22629,7 +22635,7 @@ csInit('csPlatform');
   const MC_SPOTIFY_CLIENT_ID='4189bbff45444a28aeb1401e0e9c8db2',MC_SPOTIFY_TOKEN_KEY='aimm_spotify_oauth_v1';
   const mcSpotifyClientId=MC_SPOTIFY_CLIENT_ID;
   let mcSpotifyTokens=null;try{mcSpotifyTokens=JSON.parse(localStorage.getItem(MC_SPOTIFY_TOKEN_KEY)||'null');}catch(_){}
-  let mcSpotifySelectedTrack=null,mcSpotifySearchBusy=false,mcSpotifyNextSearchUrl=null,mcSpotifyIframeApi=null,mcSpotifyIframeApiPromise=null,mcSpotifyArtistController=null,mcSpotifyArtistPlayingId='',mcSpotifyArtistPlayingURI='',mcSpotifyArtistLookupId='',mcSpotifyArtistLookupPromise=null,mcSpotifyArtistSourceActive=false,mcSpotifyIsPlaying=false;
+  let mcSpotifySelectedTrack=null,mcSpotifySearchBusy=false,mcSpotifySearchGeneration=0,mcSpotifyNextSearchUrl=null,mcSpotifyIframeApi=null,mcSpotifyIframeApiPromise=null,mcSpotifyArtistController=null,mcSpotifyArtistPlayingId='',mcSpotifyArtistPlayingURI='',mcSpotifyArtistLookupId='',mcSpotifyArtistLookupPromise=null,mcSpotifyArtistSourceActive=false,mcSpotifyIsPlaying=false;
   const mcSpotifyRedirectUri='https://aimixmasters.com/';
   const mcSpotifyStatus=msg=>{
     const el=document.getElementById('mcSpotifyRefStatus'),settingsStatus=document.getElementById('mcSpotifyCompanionSettingsStatus'),text=String(msg||'');
@@ -22860,7 +22866,8 @@ csInit('csPlatform');
       if(tracks.length){mcSpotifyShowTracks(tracks,false,null,list,{compact:true});listHelp.hidden=false;listHelp.textContent='Press Select on a track, then press Capture.';}
       else showListMessage('No tracks found. Search for the song by name.');
     });
-    try{const api=await mcSpotifyEnsureIframeApi();api.createController(embed,{uri:'spotify:artist:'+artist.id,width:'100%',height:'460'},controller=>{
+    try{const api=await mcSpotifyEnsureIframeApi();if(!embed.isConnected)return;api.createController(embed,{uri:'spotify:artist:'+artist.id,width:'100%',height:'460'},controller=>{
+      if(!embed.isConnected){try{controller.destroy();}catch(_){}return;}
       mcSpotifyArtistController=controller;let lastDuration=null,lastPosition=null,identifying=false,pendingDuration=null,lastCaptureGeneration=mcSpotifyCaptureGeneration;
       const captureActive=()=>mcSpotifyUsingCompanion||(LIVE.active&&LIVE.referenceOnly)||mcSpotifyCaptureStartedAt>0;
       const identify=async(data,eventType)=>{
@@ -22887,12 +22894,14 @@ csInit('csPlatform');
   }
   async function mcSpotifyLoadMore(button){
     if(!mcSpotifyNextSearchUrl||mcSpotifySearchBusy)return;
+    const generation=mcSpotifySearchGeneration;
     mcSpotifySearchBusy=true;mcSpotifyRenderConnection(false);button.disabled=true;button.textContent='Loading…';
     try{const token=await mcSpotifyAccessToken(),response=await fetch(mcSpotifyNextSearchUrl,{headers:{Authorization:'Bearer '+token}}),data=await response.json();if(!response.ok)throw new Error((data.error&&data.error.message)||'Spotify could not load more results.');
+      if(generation!==mcSpotifySearchGeneration)return;
       const tracks=data&&data.tracks&&Array.isArray(data.tracks.items)?data.tracks.items:[];mcSpotifyNextSearchUrl=data.tracks&&data.tracks.next||null;mcSpotifyShowTracks(tracks,true,mcSpotifyNextSearchUrl);
       const count=document.querySelectorAll('#mcSpotifyResults .mc-spotify-result').length;mcSpotifyStatus('Showing '+count+' Spotify search results. Spotify orders these by its search relevance; use Load more to continue.');
-    }catch(error){button.disabled=false;button.textContent='Retry loading results';mcSpotifyStatus(error.message||'Could not load more Spotify results.');}
-    finally{mcSpotifySearchBusy=false;mcSpotifyRenderConnection(false);}
+    }catch(error){if(generation===mcSpotifySearchGeneration){button.disabled=false;button.textContent='Retry loading results';mcSpotifyStatus(error.message||'Could not load more Spotify results.');}}
+    finally{if(generation===mcSpotifySearchGeneration){mcSpotifySearchBusy=false;mcSpotifyRenderConnection(false);}}
   }
   async function mcSpotifySearch(){
     if(mcSpotifyUsingCompanion){mcSpotifyStatus('Stop the current reference capture before searching for another Spotify track.');return;}
@@ -22901,12 +22910,30 @@ csInit('csPlatform');
     if(mcSpotifyArtistController){mcSpotifyIsPlaying=false;try{mcSpotifyArtistController.destroy();}catch(_){}mcSpotifyArtistController=null;}mcSpotifyArtistSourceActive=false;
     const fallback=document.querySelector('#mcSpotifyResults .mc-spotify-artist-fallback');if(fallback)fallback.remove();
     mcSpotifySelectedTrack=null;mcSpotifyNextSearchUrl=null;const capture=document.getElementById('mcSpotifyCapture');if(capture)capture.hidden=true;
+    const generation=++mcSpotifySearchGeneration;
     mcSpotifySearchBusy=true;mcSpotifyRenderConnection();mcSpotifyStatus('Searching Spotify…');
     try{const token=await mcSpotifyAccessToken();let url;if(/^https?:\/\/(?:open\.)?spotify\.com\/(?:intl-[^/]+\/)?track\/([A-Za-z0-9]+)/i.test(q)){const id=q.match(/\/track\/([A-Za-z0-9]+)/i)[1];url='https://api.spotify.com/v1/tracks/'+encodeURIComponent(id);}else url='https://api.spotify.com/v1/search?'+new URLSearchParams({q,type:'track,artist',limit:'10',offset:'0'}).toString();
-      const response=await fetch(url,{headers:{Authorization:'Bearer '+token}}),data=await response.json();if(!response.ok)throw new Error((data.error&&data.error.message)||'Spotify search failed');const tracks=data&&data.tracks&&Array.isArray(data.tracks.items)?data.tracks.items:(data&&data.id?[data]:[]),artists=data&&data.artists&&Array.isArray(data.artists.items)?data.artists.items:[];const exactArtist=artists.find(artist=>String(artist.name||'').trim().toLocaleLowerCase()===q.toLocaleLowerCase());
-      if(exactArtist){mcSpotifyNextSearchUrl=null;await mcSpotifyShowArtistTopTracks(exactArtist);mcSpotifyStatus('Play a track in the list, then press Capture.');}
+      const response=await fetch(url,{headers:{Authorization:'Bearer '+token}}),data=await response.json();if(generation!==mcSpotifySearchGeneration)return;if(!response.ok)throw new Error((data.error&&data.error.message)||'Spotify search failed');const tracks=data&&data.tracks&&Array.isArray(data.tracks.items)?data.tracks.items:(data&&data.id?[data]:[]),artists=data&&data.artists&&Array.isArray(data.artists.items)?data.artists.items:[];const exactArtist=artists.find(artist=>String(artist.name||'').trim().toLocaleLowerCase()===q.toLocaleLowerCase());
+      if(exactArtist){mcSpotifyNextSearchUrl=null;await mcSpotifyShowArtistTopTracks(exactArtist);if(generation===mcSpotifySearchGeneration)mcSpotifyStatus('Play a track in the list, then press Capture.');}
       else{mcSpotifyNextSearchUrl=data&&data.tracks&&data.tracks.next||null;mcSpotifyShowTracks(tracks,false,mcSpotifyNextSearchUrl);mcSpotifyStatus(tracks.length?'Select a Spotify result. Use Load more to continue through Spotify’s relevance-ranked results.':'No matching tracks found.');}
-    }catch(error){mcSpotifyStatus(error.message||'Spotify search failed.');}finally{mcSpotifySearchBusy=false;mcSpotifyRenderConnection(false);}
+    }catch(error){if(generation===mcSpotifySearchGeneration)mcSpotifyStatus(error.message||'Spotify search failed.');}finally{if(generation===mcSpotifySearchGeneration){mcSpotifySearchBusy=false;mcSpotifyRenderConnection(false);}}
+  }
+  function mcSpotifyUpdateClear(){
+    const clear=document.getElementById('mcSpotifyClear'),input=document.getElementById('mcSpotifyRefName'),results=document.getElementById('mcSpotifyResults'),status=document.getElementById('mcSpotifyRefStatus'),saved=document.getElementById('mcSpotifySavedStatus'),captureState=document.getElementById('mcSpotifyCaptureState');
+    if(!clear)return;
+    const hasContent=!!(input&&input.value||results&&results.childElementCount||status&&status.textContent.trim()||saved&&!saved.hidden||captureState&&!captureState.hidden||mcSpotifySelectedTrack||mcSpotifyArtistController||mcSpotifyLivePoints);
+    if(clear.hidden===hasContent)clear.hidden=!hasContent;
+  }
+  async function mcSpotifyClearReference(){
+    ++mcSpotifySearchGeneration;
+    if(mcSpotifyUsingCompanion||LIVE.active&&LIVE.referenceOnly||mcSpotifyCaptureStartedAt||document.getElementById('mcSpotifyCaptureState')?.dataset.state!=='idle')await mcSpotifyCaptureCancel();
+    const input=document.getElementById('mcSpotifyRefName'),results=document.getElementById('mcSpotifyResults'),status=document.getElementById('mcSpotifyRefStatus'),captureName=document.getElementById('mcSpotifyCaptureName');
+    if(mcSpotifyArtistController){try{mcSpotifyArtistController.destroy();}catch(_){}mcSpotifyArtistController=null;}
+    if(input)input.value='';if(results){results.replaceChildren();results.hidden=true;}if(status)status.textContent='';if(captureName)captureName.textContent='';
+    mcSpotifyClearSavedStatus();mcSpotifyCaptureStatusTrail=[];mcSpotifyCaptureReturnToIdle();
+    mcSpotifySelectedTrack=null;mcSpotifyArtistPlayingId='';mcSpotifyArtistPlayingURI='';mcSpotifyArtistSourceActive=false;mcSpotifyIsPlaying=false;mcSpotifyNextSearchUrl=null;mcSpotifySearchBusy=false;mcSpotifyCompanionPoints=null;mcSpotifyLivePoints=null;mcCaptureAccum=null;
+    if(!LIVE.active)refDrawCanvas(refSpecPoints,null,null,null);
+    mcSpotifyRenderConnection(false);mcSpotifyUpdateClear();
   }
   async function mcSpotifyCaptureSelected(){
     if(!(mcSpotifySelectedTrack&&mcSpotifySelectedTrack.id)){mcSpotifyStatus(mcSpotifyArtistSourceActive?'Play a track in the list, then press Capture.':'Select a song first, then press Capture.');return;}
@@ -22917,8 +22944,9 @@ csInit('csPlatform');
     if(!start||!stop){setTimeout(wireSpotifyReference,50);return;}
     const connect=document.getElementById('mcSpotifyConnect'),capture=document.getElementById('mcSpotifyCapture'),input=document.getElementById('mcSpotifyRefName');
     if(connect)connect.addEventListener('click',()=>{if(connect.dataset.connected==='true'){mcSpotifyTokens=null;try{localStorage.removeItem(MC_SPOTIFY_TOKEN_KEY);}catch(_){}mcSpotifyRenderConnection();mcSpotifyStatus('Spotify disconnected.');}else mcSpotifyBeginConnect();});
-    start.addEventListener('click',mcSpotifySearch);if(input){input.addEventListener('input',()=>{if(mcSpotifyUsingCompanion||LIVE.active&&LIVE.referenceOnly){input.value=mcSpotifyTrackLabel(mcSpotifyCaptureTrack||mcSpotifySelectedTrack);mcSpotifyStatus('The selected Spotify track is locked until this reference capture finishes.');return;}if(mcSpotifySelectedTrack&&input.value.trim()!==mcSpotifyTrackLabel(mcSpotifySelectedTrack)){mcSpotifySelectedTrack=null;const capture=document.getElementById('mcSpotifyCapture');if(capture){capture.hidden=!(mcSpotifyTokens&&mcSpotifyTokens.access_token);capture.textContent='Capture';}}});input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();mcSpotifySearch();}});}
+    start.addEventListener('click',mcSpotifySearch);if(input){input.addEventListener('input',()=>{if(mcSpotifyUsingCompanion||LIVE.active&&LIVE.referenceOnly){input.value=mcSpotifyTrackLabel(mcSpotifyCaptureTrack||mcSpotifySelectedTrack);mcSpotifyStatus('The selected Spotify track is locked until this reference capture finishes.');mcSpotifyUpdateClear();return;}if(mcSpotifySelectedTrack&&input.value.trim()!==mcSpotifyTrackLabel(mcSpotifySelectedTrack)){mcSpotifySelectedTrack=null;const capture=document.getElementById('mcSpotifyCapture');if(capture){capture.hidden=!(mcSpotifyTokens&&mcSpotifyTokens.access_token);capture.textContent='Capture';}}mcSpotifyUpdateClear();});input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();mcSpotifySearch();}});}
     if(capture)capture.addEventListener('click',()=>{if(document.getElementById('mcSpotifyCaptureState')?.dataset.state==='idle')mcSpotifyCaptureSelected();});stop.addEventListener('click',refSpotifyCaptureStop);
+    const clear=document.getElementById('mcSpotifyClear');if(clear){clear.addEventListener('click',mcSpotifyClearReference);new MutationObserver(mcSpotifyUpdateClear).observe(document.getElementById('mcSpotifyReference'),{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['hidden','data-state']});mcSpotifyUpdateClear();}
     const cancel=document.getElementById('mcSpotifyCaptureCancel');if(cancel)cancel.addEventListener('click',mcSpotifyCaptureCancel);
     const companionConnect=document.getElementById('mcSpotifyCompanionConnect');if(companionConnect)companionConnect.addEventListener('click',mcSpotifyConnectCompanion);
     const spotifyAuthCallback=new URLSearchParams(location.search).has('code');
