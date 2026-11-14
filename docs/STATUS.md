@@ -1534,3 +1534,7 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 - Audio Specs always show the stems' figures while stems are loaded (Spotify button disabled; Spotify figures return after stems are cleared).
 - Paused stem trace smoothed to match the live line (display only; measurements unchanged).
 - Worker version 74e16f57-1d27-44db-8dda-65fe91b2b78b. Rollback: build .01, Worker 84d51b60-8e9b-4308-9edf-803a3cc8ce1d.
+
+## 2026-11-14 build 2026-11-14.03 LIVE
+- Album thumbnails in the Spotify result lists no longer cut off (art button was inheriting the general result-button padding/border).
+- Worker version 0b64f65f-434d-4fc8-b2cb-a39ab04c08f1. Rollback: build .02, Worker 74e16f57-1d27-44db-8dda-65fe91b2b78b.
