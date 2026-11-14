@@ -1554,3 +1554,9 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 
 ## 2026-11-14 ROLLBACK to build 2026-11-14.05 (Worker a57b98a7-9250-43fc-bcf7-8fc87a4854f0)
 - Kevin reported losing the Spotify player after build .06 (Clear control). Live was rolled back to .05 via `wrangler rollback`. NOTE: git main still contains the .06 source (commit 39b58fa8) until the cause is found and fixed; live and main differ.
+
+## 2026-11-14 BUILD 2026-11-14.06 IS BROKEN — DO NOT REDEPLOY
+- Build .06 (Spotify Clear control, commit 39b58fa8) is broken: Kevin lost the Spotify player after it went live. Cause not yet found. Live is kept on build 2026-11-14.05 (Worker a57b98a7-9250-43fc-bcf7-8fc87a4854f0).
+- standalone/assets/index.html on main is restored to the .05 source so any automatic redeploy ships .05. The .06 source is kept at ~/aimm-previews/clear-preview.html (also in git history, commit 39b58fa8) for diagnosis.
+- Observed: after a `wrangler rollback`, a second automatic deployment ~36 s later put .06 back until the roll-back was repeated; do not push a .06 index.html to main.
+- Clear and "keep the playing track when Select is pressed on another row" must be re-tested against the REAL Spotify embed player before any deploy.
