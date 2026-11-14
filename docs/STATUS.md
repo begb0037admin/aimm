@@ -1529,3 +1529,8 @@ Start with P-A (Mix Check) — smallest risk, highest immediate value.
 Kevin reports build .08 loads on the MacBook but none of the recent additions work. Mini checks (read-only): page byte-identical on both Macs, companion running and answering on both, Person 1 profile has loopback Allow + Spotify token. Cause not found; needs a look on the MacBook itself. Full detail and next steps: `docs/HANDOVER-macbook-2026-11-13.md`. No code or deploy change.
 
 **2026-11-14 — BUILD 2026-11-14.01 LIVE: stems now show the saved Spotify target.** Stem view draws the same smooth purple band + 1px outline as full-mix, blue stem line on top (cause: the stem branch only drew the old haze between corridor bounds, zero-width for Spotify targets and off-scale at absolute dB). Commit c7429f55, Worker 84d51b60-8e9b-4308-9edf-803a3cc8ce1d on aimixmasters.com and aimm.kevinlelitte.workers.dev. Verified in a real-page test with real stems and a real-capture target (full-mix view pixel-identical); not yet tested in Kevin's own Chrome. Rollback: previous build 2026-11-13.08 = Worker e0f388e5-a4b5-4fde-a3b3-0e18e1047359. Companion 0.3.1 (tap capture, see BRIEF-capture-level-device-offset.md) installed on both Macs, committed 1bd37fe6.
+
+## 2026-11-14 build 2026-11-14.02 LIVE
+- Audio Specs always show the stems' figures while stems are loaded (Spotify button disabled; Spotify figures return after stems are cleared).
+- Paused stem trace smoothed to match the live line (display only; measurements unchanged).
+- Worker version 74e16f57-1d27-44db-8dda-65fe91b2b78b. Rollback: build .01, Worker 84d51b60-8e9b-4308-9edf-803a3cc8ce1d.
