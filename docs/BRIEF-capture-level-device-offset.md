@@ -29,3 +29,6 @@ Recommendation: prototype a Core Audio process tap (tap Chrome only) and run the
 
 ## DECISION (Kevin, 14 Nov 2026)
 No capture-code change. On the Mac mini, Kevin switches the output to "Mac mini Speakers" (built-in) before capturing a Spotify reference; the Universal Audio interface reads about 11 dB low through ScreenCaptureKit. Core Audio tap prototype NOT approved. Caveat: after changing the output device, if the first capture reads oddly low, restart the companion (one early UA run read about 24 dB low after a hot switch).
+
+## Update 14 Nov (same companion on both Macs)
+Mini companion replaced with the MacBook's exact file (md5 a8c3b0dd7852eb1c59c2e6b17eb7054e, both Macs). Old mini app, 20261104 backup, "Isolated Preview" app and the ARCHIVED source folder moved to the Trash. New file needed Screen & System Audio Recording re-allowed once (done by Kevin). Capture confirmed working. UA offset on this run: tone -60.7 vs -43 expected, about -17.7 dB (earlier runs -11.6 and -24), so the interface offset is unstable; capture on the built-in output.
