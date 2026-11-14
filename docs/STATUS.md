@@ -1547,3 +1547,7 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 ## 2026-11-14 build 2026-11-14.05 LIVE
 - Hid the capture diagnostic lines (embed / currently playing / track metadata / saved label); only a real audio problem is shown.
 - Rollback: build .04, Worker 5748e214-49c8-4302-962e-bc726cd297d3.
+
+## 2026-11-14 build 2026-11-14.06 LIVE
+- Added a Clear control to the Spotify Reference panel (resets search, results, players, selection, status, live line; cancels a running capture; leaves saved targets and the selected target untouched).
+- Rollback: build .05, Worker a57b98a7-9250-43fc-bcf7-8fc87a4854f0.
