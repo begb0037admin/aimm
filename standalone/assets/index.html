@@ -5149,7 +5149,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-14.01';
+const AIMM_BUILD = '2026-11-14.02';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21792,6 +21792,36 @@ csInit('csPlatform');
     st.ys=out.map(p=>p[1]);
     return out;
   }
+  // Paused stem display only: match stemLiveSpectrumAt's 64 log centres and
+  // f/1.09..f*1.09 power-average window (~0.25 octave). The stored Welch
+  // spectra and all measurements stay untouched. Integrate in Hz because the
+  // live FFT averages equally spaced bins, not equally spaced log samples.
+  function refPausedStemDisplaySpectrum(points){
+    if(!points||points.length<2)return points;
+    const powerAt=f=>{
+      let i=1;while(i<points.length-1&&points[i][0]<f)i++;
+      const a=points[i-1],b=points[i];
+      const t=Math.max(0,Math.min(1,Math.log(f/a[0])/Math.log(b[0]/a[0])));
+      return Math.pow(10,(a[1]+t*(b[1]-a[1]))/10);
+    };
+    const grid=Array.from({length:64},(_,i)=>20*Math.pow(1000,i/63));
+    const curve=grid.map(f=>{
+      const lo=Math.max(20,f/1.09),hi=Math.min(20000,f*1.09);
+      const knots=[lo,...points.filter(p=>p[0]>lo&&p[0]<hi).map(p=>p[0]),hi];
+      let power=0;
+      for(let i=1;i<knots.length;i++)power+=(powerAt(knots[i-1])+powerAt(knots[i]))*.5*(knots[i]-knots[i-1]);
+      return [f,10*Math.log10(power/(hi-lo)+1e-24)];
+    });
+    // Power averaging raises harmonic troughs. Preserve the log-frequency mean
+    // dB level, without per-frame normalisation or changing measured numbers.
+    const meanDb=pts=>{
+      let area=0,width=0;
+      for(let i=1;i<pts.length;i++){const span=Math.log(pts[i][0]/pts[i-1][0]);area+=(pts[i-1][1]+pts[i][1])*.5*span;width+=span;}
+      return area/width;
+    };
+    const shift=meanDb(points)-meanDb(curve);
+    return curve.map(([f,db])=>[f,db+shift]);
+  }
   function refDrawCanvas(pts,livePts,liveWithoutPts,referenceLivePts){
     // Capture lines share coordinates; the saved target remains a separate curve.
     const canvas=document.getElementById('specCanvas');
@@ -21992,7 +22022,7 @@ csInit('csPlatform');
       // the top tick sits at the plot edge, so align this label just to its right.
       ctx.textBaseline='alphabetic';ctx.textAlign='left';ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.fillStyle='rgba(174,181,188,.95)';ctx.fillText('dB rel. · '+(corr.referenceSource||'Spotify')+' reference',7,14);
       for(const f of[20,100,1000,10000,20000]){const px=x(f);ctx.strokeStyle='rgba(255,255,255,.12)';ctx.beginPath();ctx.moveTo(px+.5,plotTop);ctx.lineTo(px+.5,plotBottom);ctx.stroke();ctx.textAlign='center';ctx.fillStyle='rgba(154,160,166,.9)';ctx.fillText(f>=1000?(f/1000)+'k':String(f),px,h-5);}ctx.textAlign='left';
-      const path=(spec,traceOffset=displayOffset)=>{const pts2=spec.map(([f,db])=>[x(f),stemDbToY(db+traceOffset)]);ctx.beginPath();ctx.moveTo(pts2[0][0],pts2[0][1]);for(let i=1;i<pts2.length-1;i++){const mx=(pts2[i][0]+pts2[i+1][0])/2,my=(pts2[i][1]+pts2[i+1][1])/2;ctx.quadraticCurveTo(pts2[i][0],pts2[i][1],mx,my);}ctx.lineTo(pts2[pts2.length-1][0],pts2[pts2.length-1][1]);};
+      const path=(spec,traceOffset=displayOffset)=>{const pts2=(refPlaying?spec:refPausedStemDisplaySpectrum(spec)).map(([f,db])=>[x(f),stemDbToY(db+traceOffset)]);ctx.beginPath();ctx.moveTo(pts2[0][0],pts2[0][1]);for(let i=1;i<pts2.length-1;i++){const mx=(pts2[i][0]+pts2[i+1][0])/2,my=(pts2[i][1]+pts2[i+1][1])/2;ctx.quadraticCurveTo(pts2[i][0],pts2[i][1],mx,my);}ctx.lineTo(pts2[pts2.length-1][0],pts2[pts2.length-1][1]);};
       const legendY=29,legendTextX=69;ctx.lineWidth=2;ctx.setLineDash([]);ctx.strokeStyle='rgba(96,196,248,.98)';ctx.beginPath();ctx.moveTo(48,legendY);ctx.lineTo(65,legendY);ctx.stroke();ctx.fillStyle='rgba(210,216,222,.9)';ctx.font='9.5px Inter,-apple-system,sans-serif';
       const sourceLabel=stemView.isGroup?(refPlaying?'Live group':'Selected group')+' · '+stemView.groupCount+' stems':refPlaying?'Live · '+track:track+' spectrum';
       ctx.fillText(sourceLabel,legendTextX,legendY+3);
@@ -23222,7 +23252,7 @@ csInit('csPlatform');
   window.addEventListener('resize',()=>{if(!refPlaying)refIdleAnimate();});
   window.refTargetChanged=function(){
     const tempoSelect=document.getElementById('refCurveTarget'),tempoTarget=refTrackTargetByKey(tempoSelect&&tempoSelect.value);
-    if((tempoTarget&&tempoTarget.id)!==mcTempoSource)mcClearTappedTempo();
+    if(!mcSpecsHasStems()&&(tempoTarget&&tempoTarget.id)!==mcTempoSource)mcClearTappedTempo();
     if(!refPlaying)refIdleAnimate();
     refRenderSavedTargets();
     const select=document.getElementById('refCurveTarget'),saved=refTrackTargetByKey(select&&select.value);
@@ -23901,6 +23931,8 @@ csInit('csPlatform');
   // block. Called from refLoadFile right after refPopulate (and refSpecPoints
   // — BLOCKER-4), from refManualUpdate (measured rows only), and from the
   // live-stop path.
+  // stemSession is initialised later; init-time source renders can precede it.
+  function mcSpecsHasStems(){try{return !!(stemSession&&stemSession.length);}catch(_){return false;}}
   const MC_SPECS=(function(){
     const set=(id,txt)=>{const e=document.getElementById(id);if(e){e.textContent=txt;if(id==='mcTempo'||id==='mcKey')mcFitTileV(e);}};
     const dot=(id,cls)=>{const e=document.getElementById(id);if(e)e.className='mc-d '+cls;};
@@ -23992,28 +24024,31 @@ csInit('csPlatform');
     }
 
     function renderActive(){
+      const stemsLoaded=mcSpecsHasStems();
+      if(stemsLoaded)activeSource='mix';
       const isSpotify=activeSource==='spotify';
       const r=isSpotify?spotifyAnalysis:mixAnalysis,buffer=isSpotify?spotifyBuffer:mixBuffer;
       const title=document.getElementById('mcSpecsTitle');if(title)title.textContent='Audio Specs';
       const mixButton=document.getElementById('mcSpecsMix'),spotifyButton=document.getElementById('mcSpecsSpotify');
       if(mixButton)mixButton.setAttribute('aria-pressed',String(!isSpotify));
-      if(spotifyButton){spotifyButton.disabled=!spotifyAnalysis;spotifyButton.setAttribute('aria-pressed',String(isSpotify));}
+      if(spotifyButton){spotifyButton.disabled=stemsLoaded||!spotifyAnalysis;spotifyButton.setAttribute('aria-disabled',String(spotifyButton.disabled));spotifyButton.setAttribute('aria-pressed',String(isSpotify));}
       mcSetTempoSource(isSpotify?spotifyTargetId||buffer:buffer);
       if(r){populateMeasured(r);populateClassified(buffer,r,isSpotify?spotifyTargetId:'');}
       else resetValues();
     }
     function resetValues(){
+      _mcKeyGen++; // cancel any key estimate from the previous source
       ['mcRms','mcCrest','mcLra','mcCorr','mcWidth','mcSampleRate','refLufsSt','mcTruePeakDup','mcHeadroom','mcNoiseFloor','mcTempo','mcKey'].forEach(id=>set(id,'– –'));
       ['mcdRms','mcdCrest','mcdLra','mcdCorr','mcdWidth','mcdSr','mcdSt','mcdTp','mcdHeadroom','mcdNoise','mcdTempo','mcdKey'].forEach(id=>dot(id,'na'));
       ['mcTileLoudV','mcTilePeakV','mcTileDrV'].forEach(id=>tcls(id,''));
       { const f=document.getElementById('mcWidthFill'),mk=document.getElementById('mcWidthMark');if(f)f.style.width='0';if(mk)mk.style.display='none'; }
       set('refLufsInt','– –');set('refTruePeak','– –');set('refDynRange','– –');
     }
-    function populate(r,buffer){if((buffer||refBuffer||null)!==mixBuffer)mcClearTappedTempo();mixAnalysis=r||null;mixBuffer=buffer||refBuffer||null;if(activeSource==='mix')renderActive();}
-    function setSpotify(r,buffer,name,targetId){spotifyAnalysis=r||null;spotifyBuffer=buffer||null;spotifyName=String(name||'Spotify reference').slice(0,36);const select=document.getElementById('refCurveTarget'),saved=refTrackTargetByKey(select&&select.value);spotifyTargetId=String(targetId||(saved&&saved.id)||'');activeSource='spotify';renderActive();}
-    function show(source){if(source==='spotify'&&spotifyAnalysis)activeSource='spotify';else activeSource='mix';renderActive();}
+    function populate(r,buffer){if((buffer||refBuffer||null)!==mixBuffer)mcClearTappedTempo();mixAnalysis=r||null;mixBuffer=buffer||refBuffer||null;if(mcSpecsHasStems())activeSource='mix';if(activeSource==='mix')renderActive();}
+    function setSpotify(r,buffer,name,targetId){spotifyAnalysis=r||null;spotifyBuffer=buffer||null;spotifyName=String(name||'Spotify reference').slice(0,36);const select=document.getElementById('refCurveTarget'),saved=refTrackTargetByKey(select&&select.value);spotifyTargetId=String(targetId||(saved&&saved.id)||'');activeSource=mcSpecsHasStems()?'mix':'spotify';renderActive();}
+    function show(source){if(source==='spotify'&&spotifyAnalysis&&!mcSpecsHasStems())activeSource='spotify';else activeSource='mix';renderActive();}
 
-    function reset(){mcClearTappedTempo();mixAnalysis=null;mixBuffer=null;classifyBuf=null;_mcKeyGen++;if(!spotifyAnalysis)activeSource='mix';renderActive();syncGenre();}
+    function reset(){mcClearTappedTempo();mixAnalysis=null;mixBuffer=null;classifyBuf=null;_mcKeyGen++;activeSource=!mcSpecsHasStems()&&spotifyAnalysis?'spotify':'mix';renderActive();syncGenre();}
 
     function mcTapTempo(){
       if(!mcSyncTapTempoVisibility())return;
@@ -25848,6 +25883,7 @@ csInit('csPlatform');
       const stem={key,fileName:file.name,label:stemLabel(file),sourceNote:base,status:'pending',message:'',buffer:null,peaks:null,bits:null,nativeSampleRate:null,nativeChannels:null,fileSize:file.size,lastModified:file.lastModified||0};stemSession.push(stem);fresh.push({file,stem});
     }
     stemRenderRows();
+    MC_SPECS.show('mix'); // lock Audio Specs as soon as the stem session has rows
     if(!fresh.length){stemDecodeProgress='already loaded';stemRenderRows();setTimeout(()=>{if(stemDecodeProgress==='already loaded'){stemDecodeProgress='';stemRenderRows();}},2500);return;}
     const sessionAtQueue=stemSession;
     await stemEnqueue(async()=>{
