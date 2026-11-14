@@ -1564,3 +1564,7 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 ## 2026-11-14 build 2026-11-14.07 LIVE
 - One round purple button in the Spotify Reference row: clears the Spotify panel (search, results, player, selection, white line); greyed out when there is nothing to clear; during a capture it acts as the existing Stop/Cancel (the separate Stop/Cancel buttons are hidden). Minimal change: no player-loading code touched (unlike broken .06).
 - Rollback: build .05, Worker a57b98a7-9250-43fc-bcf7-8fc87a4854f0. Tested only against a stub Spotify; Kevin to verify the real player and a real capture.
+
+## 2026-11-14 build .07 CONFIRMED WORKING by Kevin (real Spotify player + button)
+- Kevin tested .07 live: "this works well". Live = build 2026-11-14.07, Worker 2c3ccc51-e351-421e-8711-88b04b63a0a5. Rollback chain: .07 -> .05 (a57b98a7) -> .04 (5748e214) -> .03 (0b64f65f). Build .06 remains BROKEN: do not redeploy.
+- Open / parked: (1) keep the playing track when Select is pressed on another row (preview ~/aimm-previews/keep-playing-preview.html is built on broken .06 — must be re-done on top of .07 and tested against the real player); (2) cause of the .06 lost-player is unknown (suspects: embed.isConnected guards, search-generation counter); (3) deploys: pushing to main can trigger an automatic redeploy — keep main == intended live build; (4) stems Key/BPM line check, dedupe repeat captures, coach chat bug, tempo accuracy test, tap companion on macOS 26.
