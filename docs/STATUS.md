@@ -1538,3 +1538,8 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 ## 2026-11-14 build 2026-11-14.03 LIVE
 - Album thumbnails in the Spotify result lists no longer cut off (art button was inheriting the general result-button padding/border).
 - Worker version 0b64f65f-434d-4fc8-b2cb-a39ab04c08f1. Rollback: build .02, Worker 74e16f57-1d27-44db-8dda-65fe91b2b78b.
+
+## 2026-11-14 build 2026-11-14.04 LIVE
+- White live line now draws while a Spotify track player (opened via Select) is open and the companion hears sound; not during stem/mix playback.
+- Removed the "Play Spotify to monitor its live spectrum" / "Select a Spotify match to compare" placeholder text; grid and flat line stay.
+- Worker version 5748e214-49c8-4302-962e-bc726cd297d3. Rollback: build .03, Worker 0b64f65f-434d-4fc8-b2cb-a39ab04c08f1.
