@@ -1633,7 +1633,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-artist-embed{width:100%;min-height:460px;border:0;border-radius:8px;overflow:hidden}
 #eq.oz-mixcheck .mc-spotify-result{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0;padding:8px;background:#151a20;border:1px solid #2a3340;border-radius:8px}
 #eq.oz-mixcheck .mc-spotify-result-summary{display:flex;align-items:center;gap:10px;flex:1 1 240px;min-width:0}
-#eq.oz-mixcheck .mc-spotify-result-art{width:44px;height:44px;flex:0 0 44px;padding:0;border:0;border-radius:5px;overflow:hidden;background:#202520;cursor:pointer}
+#eq.oz-mixcheck .mc-spotify-result button.mc-spotify-result-art{box-sizing:border-box;width:44px;height:44px;min-height:44px;flex:0 0 44px;padding:0;border:0;border-radius:5px;overflow:hidden;background:#202520;cursor:pointer}
 #eq.oz-mixcheck .mc-spotify-result-art:hover,#eq.oz-mixcheck .mc-spotify-result-art:focus-visible{outline:2px solid rgba(142,227,161,.72);outline-offset:2px}
 #eq.oz-mixcheck .mc-spotify-result-art img{display:block;width:100%;height:100%;object-fit:cover}
 #eq.oz-mixcheck .mc-spotify-result-summary[hidden]{display:none}
@@ -5149,7 +5149,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-14.02';
+const AIMM_BUILD = '2026-11-14.03';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
