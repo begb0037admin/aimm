@@ -32,3 +32,12 @@ No capture-code change. On the Mac mini, Kevin switches the output to "Mac mini 
 
 ## Update 14 Nov (same companion on both Macs)
 Mini companion replaced with the MacBook's exact file (md5 a8c3b0dd7852eb1c59c2e6b17eb7054e, both Macs). Old mini app, 20261104 backup, "Isolated Preview" app and the ARCHIVED source folder moved to the Trash. New file needed Screen & System Audio Recording re-allowed once (done by Kevin). Capture confirmed working. UA offset on this run: tone -60.7 vs -43 expected, about -17.7 dB (earlier runs -11.6 and -24), so the interface offset is unstable; capture on the built-in output.
+
+## RESULT 14 Nov (Kevin approved a new companion: audio from the player, same on any Mac)
+Test copy: ~/aimm-previews/companion-tap (Codex gpt-6.1-sol medium), build ~/aimm-previews/companion-tap-build/AIMM Companion Tap Test.app, version 0.3.0-taptest, bundle id com.aimixmasters.audio-reference-companion.taptest. Core Audio process tap of Chrome + Spotify (SCK is the fallback; AIMM_CAPTURE=sck).
+Findings (mini, 1 kHz tone at -40 dBFS played from Chrome, expected rms -43.0):
+- Tap, built-in 2 ch: -43.05. Tap, Universal Audio 10 ch: -57.1 in all three tap variants (a, b, c), a clean -14.1 dB = 20*log10(2/10).
+- So macOS scales the tap by 2/outputChannels. Companion now reads the default output's channel count N and multiplies by N/2 (env AIMM_TAP_COMP=off disables). Result: -43.05 on BOTH outputs, including live switching between them. /status shows captureMethod, outputChannels, compensationGainDb.
+- Not yet tested: the MacBook (macOS 26.6.2, 2-ch built-in), real Spotify tracks (Headlines, One Dance) on both Macs, and the unexplained 5-6 dB MacBook vs mini gap. Test copy is NOT installed; the installed companion on the mini was quit while testing.
+- Each rebuild needs Screen/System Audio Recording re-allowed (ad-hoc signature).
+- The purple line pipeline and the page are unchanged.
