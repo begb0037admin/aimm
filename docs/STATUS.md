@@ -1560,3 +1560,7 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 - standalone/assets/index.html on main is restored to the .05 source so any automatic redeploy ships .05. The .06 source is kept at ~/aimm-previews/clear-preview.html (also in git history, commit 39b58fa8) for diagnosis.
 - Observed: after a `wrangler rollback`, a second automatic deployment ~36 s later put .06 back until the roll-back was repeated; do not push a .06 index.html to main.
 - Clear and "keep the playing track when Select is pressed on another row" must be re-tested against the REAL Spotify embed player before any deploy.
+
+## 2026-11-14 build 2026-11-14.07 LIVE
+- One round purple button in the Spotify Reference row: clears the Spotify panel (search, results, player, selection, white line); greyed out when there is nothing to clear; during a capture it acts as the existing Stop/Cancel (the separate Stop/Cancel buttons are hidden). Minimal change: no player-loading code touched (unlike broken .06).
+- Rollback: build .05, Worker a57b98a7-9250-43fc-bcf7-8fc87a4854f0. Tested only against a stub Spotify; Kevin to verify the real player and a real capture.

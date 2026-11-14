@@ -3829,6 +3829,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <button type="button" id="mcSpotifyConnect">Connect Spotify</button>
           <button type="button" id="mcSpotifyRefMatch" disabled>Match Sound</button>
           <button type="button" id="mcSpotifyCapture" hidden>Capture</button>
+          <button type="button" id="mcSpotifyClear" aria-label="Clear Spotify reference, or stop capture" title="Clear / Stop"><span>Clear</span></button>
           <button type="button" id="mcSpotifyCaptureCancel" hidden>Cancel</button>
           <button type="button" id="mcSpotifyRefStop" aria-label="Stop capture" title="Stop" hidden><span>Stop</span></button>
         </div>
@@ -4416,6 +4417,14 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop:active:not(:disabled){transform:scale(.96)}
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop:focus-visible{outline:2px solid #d0a4f2;outline-offset:2px}
 #eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop:disabled{opacity:.5}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop,#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCaptureCancel{display:none !important}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyClear.is-idle{opacity:.35;filter:grayscale(.6);cursor:default;pointer-events:none}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyClear{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;position:relative;width:52px;height:52px;min-width:52px;max-width:52px;min-height:52px;max-height:52px;flex:0 0 52px;justify-self:start;padding:0 !important;border:0;border-radius:50%;background:linear-gradient(135deg,#9442dc,#b970ff);color:#fff;transition:filter 120ms ease,box-shadow 120ms ease,transform 120ms ease}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyClear::before{content:"";display:block;width:14px;height:14px;border-radius:3px;background:#fff}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyClear>span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyClear:hover{filter:brightness(1.1);box-shadow:0 0 0 4px rgba(148,66,220,.25)}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyClear:active{transform:scale(.96)}
+#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyClear:focus-visible{outline:2px solid #d0a4f2;outline-offset:2px}
 @media(max-width:460px){#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCapture{margin-left:2px}#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop{width:52px;min-width:52px;max-width:52px;height:52px;flex:0 0 52px;padding:0 !important}}
 @media(prefers-reduced-motion:reduce){#eq.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop{transition:none}}
 
@@ -5149,7 +5158,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-14.05';
+const AIMM_BUILD = '2026-11-14.07';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -22912,6 +22921,31 @@ csInit('csPlatform');
     if(!(mcSpotifySelectedTrack&&mcSpotifySelectedTrack.id)){mcSpotifyStatus(mcSpotifyArtistSourceActive?'Play a track in the list, then press Capture.':'Select a song first, then press Capture.');return;}
     await refSpotifyCaptureStart();
   }
+  // Grey out the round button when there is nothing to clear and no capture to stop. Light polling only; touches no Spotify loading code.
+  function mcSpotifyClearRefreshState(){
+    const btn=document.getElementById('mcSpotifyClear');if(!btn)return;
+    const input=document.getElementById('mcSpotifyRefName'),results=document.getElementById('mcSpotifyResults'),stopBtn=document.getElementById('mcSpotifyRefStop'),cancelBtn=document.getElementById('mcSpotifyCaptureCancel');
+    const capturing=!!((stopBtn&&!stopBtn.hidden)||(cancelBtn&&!cancelBtn.hidden));
+    const hasContent=!!((input&&input.value)||(results&&results.childElementCount)||mcSpotifySelectedTrack||mcSpotifyArtistController||mcSpotifyLivePoints);
+    const idle=!capturing&&!hasContent;
+    if(btn.classList.contains('is-idle')!==idle){btn.classList.toggle('is-idle',idle);btn.setAttribute('aria-disabled',idle?'true':'false');}
+  }
+  async function mcSpotifyClear(){
+    // One round button: while a capture is starting or running it acts as the existing Stop / Cancel; otherwise it clears the Spotify panel.
+    const stopBtn=document.getElementById('mcSpotifyRefStop'),cancelBtn=document.getElementById('mcSpotifyCaptureCancel');
+    if(stopBtn&&!stopBtn.hidden){stopBtn.click();return;}
+    if(cancelBtn&&!cancelBtn.hidden){cancelBtn.click();return;}
+    // Do nothing while a search/list request is in flight or a capture is being saved. Avoids racing existing async work.
+    if(mcSpotifySearchBusy||mcSpotifyCaptureStartedAt||mcSpotifyUsingCompanion||(LIVE.active&&LIVE.referenceOnly))return;
+    const input=document.getElementById('mcSpotifyRefName'),results=document.getElementById('mcSpotifyResults');
+    if(input)input.value='';
+    if(results){results.replaceChildren();results.hidden=true;}
+    if(mcSpotifyArtistController){mcSpotifyIsPlaying=false;try{mcSpotifyArtistController.destroy();}catch(_){}mcSpotifyArtistController=null;}
+    mcSpotifySelectedTrack=null;mcSpotifyArtistPlayingId='';mcSpotifyArtistPlayingURI='';mcSpotifyArtistSourceActive=false;mcSpotifyIsPlaying=false;
+    mcSpotifyLivePoints=null;mcSpotifyCompanionPoints=null;mcSpotifyNextSearchUrl=null;
+    mcSpotifyClearSavedStatus();mcSpotifyCaptureReturnToIdle();mcSpotifyStatus('');
+    if(!LIVE.active)refDrawCanvas(refSpecPoints,null,null,null);
+  }
   function wireSpotifyReference(){
     const start=document.getElementById('mcSpotifyRefMatch'),stop=document.getElementById('mcSpotifyRefStop');
     if(!start||!stop){setTimeout(wireSpotifyReference,50);return;}
@@ -22919,6 +22953,7 @@ csInit('csPlatform');
     if(connect)connect.addEventListener('click',()=>{if(connect.dataset.connected==='true'){mcSpotifyTokens=null;try{localStorage.removeItem(MC_SPOTIFY_TOKEN_KEY);}catch(_){}mcSpotifyRenderConnection();mcSpotifyStatus('Spotify disconnected.');}else mcSpotifyBeginConnect();});
     start.addEventListener('click',mcSpotifySearch);if(input){input.addEventListener('input',()=>{if(mcSpotifyUsingCompanion||LIVE.active&&LIVE.referenceOnly){input.value=mcSpotifyTrackLabel(mcSpotifyCaptureTrack||mcSpotifySelectedTrack);mcSpotifyStatus('The selected Spotify track is locked until this reference capture finishes.');return;}if(mcSpotifySelectedTrack&&input.value.trim()!==mcSpotifyTrackLabel(mcSpotifySelectedTrack)){mcSpotifySelectedTrack=null;const capture=document.getElementById('mcSpotifyCapture');if(capture){capture.hidden=!(mcSpotifyTokens&&mcSpotifyTokens.access_token);capture.textContent='Capture';}}});input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();mcSpotifySearch();}});}
     if(capture)capture.addEventListener('click',()=>{if(document.getElementById('mcSpotifyCaptureState')?.dataset.state==='idle')mcSpotifyCaptureSelected();});stop.addEventListener('click',refSpotifyCaptureStop);
+    const clearBtn=document.getElementById('mcSpotifyClear');if(clearBtn)clearBtn.addEventListener('click',mcSpotifyClear);mcSpotifyClearRefreshState();setInterval(mcSpotifyClearRefreshState,300);
     const cancel=document.getElementById('mcSpotifyCaptureCancel');if(cancel)cancel.addEventListener('click',mcSpotifyCaptureCancel);
     const companionConnect=document.getElementById('mcSpotifyCompanionConnect');if(companionConnect)companionConnect.addEventListener('click',mcSpotifyConnectCompanion);
     const spotifyAuthCallback=new URLSearchParams(location.search).has('code');
