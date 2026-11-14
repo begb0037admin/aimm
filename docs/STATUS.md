@@ -1543,3 +1543,7 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 - White live line now draws while a Spotify track player (opened via Select) is open and the companion hears sound; not during stem/mix playback.
 - Removed the "Play Spotify to monitor its live spectrum" / "Select a Spotify match to compare" placeholder text; grid and flat line stay.
 - Worker version 5748e214-49c8-4302-962e-bc726cd297d3. Rollback: build .03, Worker 0b64f65f-434d-4fc8-b2cb-a39ab04c08f1.
+
+## 2026-11-14 build 2026-11-14.05 LIVE
+- Hid the capture diagnostic lines (embed / currently playing / track metadata / saved label); only a real audio problem is shown.
+- Rollback: build .04, Worker 5748e214-49c8-4302-962e-bc726cd297d3.
