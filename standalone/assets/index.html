@@ -5149,7 +5149,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-14.04';
+const AIMM_BUILD = '2026-11-14.05';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -22420,7 +22420,9 @@ csInit('csPlatform');
   }
   function mcSpotifyCaptureTrailRender(){
     const status=document.getElementById('mcSpotifyRefStatus');
-    if(status&&mcSpotifyCaptureStatusTrail.length)status.textContent=mcSpotifyCaptureStatusTrail.map(item=>item.message).join('\n');
+    /* Diagnostic trail (embed / currently playing / metadata / saved label) is hidden: noise. Only a real audio problem is shown. */
+    const shown=mcSpotifyCaptureStatusTrail.filter(item=>item.key==='audio');
+    if(status&&shown.length)status.textContent=shown.map(item=>item.message).join('\n');
   }
   async function mcSpotifyNowPlayingTrack(trailKey='currently-playing',trailLabel='Currently playing'){
     try{
