@@ -5149,7 +5149,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-14.03';
+const AIMM_BUILD = '2026-11-14.04';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21966,7 +21966,7 @@ csInit('csPlatform');
       for(const[label,f]of [['Low',Math.sqrt(20*250)],['Low-Mid',Math.sqrt(250*2000)],['High-Mid',Math.sqrt(2000*8000)],['High',Math.sqrt(8000*20000)]])ctx.fillText(label,x(f),h-8);
       ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(174,181,188,.95)';ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.fillText('dB rel. · Spotify reference',7,14);
       drawReferenceLiveTrace(referenceLivePts,x,y,x0,x1,top,bottom);
-      if(!Array.isArray(referenceLivePts)||referenceLivePts.length<2){ctx.font='12px Inter,-apple-system,sans-serif';ctx.fillStyle='rgba(174,181,188,.9)';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(refTrackTargets.length?'Select a Spotify match to compare':'Play Spotify to monitor its live spectrum',w/2,h/2);ctx.textAlign='left';}
+      /* placeholder wording removed (Kevin, 14 Nov): the grid and flat line stay */
       for(const id of ['ozBandLowVal','ozBandMidVal','ozBandHighVal'])refSetHTML(id,'– –<span class="oz-unit"> dB rel.</span>');
       for(const id of ['ozBandLowFill','ozBandMidFill','ozBandHighFill']){refSetStyle(id,'left','50%');refSetStyle(id,'width','0%');}
       for(const id of ['ozBandLowTag','ozBandMidTag','ozBandHighTag'])refSetHTML(id,'');
@@ -22343,7 +22343,7 @@ csInit('csPlatform');
       const spotifyCaptureActive=mcSpotifyUsingCompanion&&!mcSpotifyCaptureCancelled&&live.capturing&&live.sessionId===mcSpotifyCaptureSessionId&&document.getElementById('mcSpotifyCaptureState')?.dataset.state==='capturing';
       const stemState=window.mcStemAnalysis&&window.mcStemAnalysis.playbackState&&window.mcStemAnalysis.playbackState(),playbackView=!!(stemState&&stemState.active);
       const stemOrMixPlaybackActive=refPlaying||!!(stemState&&stemState.playing)||playbackView;
-      const spotifyLiveShouldShow=mcSpotifyIsPlaying&&!stemOrMixPlaybackActive;
+      const spotifyLiveShouldShow=(mcSpotifyIsPlaying||!!document.querySelector('.mc-spotify-result.is-previewing')||!!(mcSpotifySelectedTrack&&nextLivePoints))&&!stemOrMixPlaybackActive;
       const showSpotifyLive=(spotifyLiveShouldShow||spotifyCaptureActive)&&!stemOrMixPlaybackActive;
       if(nextLivePoints&&showSpotifyLive){
         mcSpotifyLivePoints=nextLivePoints;
