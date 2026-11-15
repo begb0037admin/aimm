@@ -358,30 +358,27 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #chain .bus-col{min-width:0;padding:18px 20px;background:linear-gradient(180deg,#171a1f,#101216);border:0;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.4),inset 0 0 0 1px rgba(79,195,232,.10)}
 #chain .bus-col h4{display:flex;align-items:center;gap:12px;min-width:0;margin:0 0 12px;color:#f3f4f6;font:600 22px/1.25 Inter,var(--aimm-font-display,-apple-system,sans-serif);letter-spacing:-.01em;text-transform:none}
 #chain .bus-col h4 .clear-bus-btn{margin-left:auto;cursor:pointer}
-#chain .bus-content{min-width:0;min-height:76px;padding:12px 14px;background:var(--mb-inset);border-radius:12px}
-#chain .chain-list{display:flex;align-items:center;flex-wrap:wrap;min-width:0;width:100%;margin:0;row-gap:10px}
-#chain .chain-item{position:relative;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:3px;flex:0 1 165px;min-width:140px;min-height:86px;padding:10px 16px;background:#1d2126;border:0;border-radius:10px;box-shadow:inset 0 0 0 1px rgba(45,212,191,.35);cursor:grab;user-select:none}
+#chain .bus-content{min-width:0;min-height:76px;padding:16px 18px;background:var(--mb-inset);border-radius:12px}
+#chain .chain-list{display:flex;align-items:stretch;flex-wrap:wrap;min-width:0;width:100%;margin:0;row-gap:16px}
+#chain .chain-item{position:relative;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;flex:0 1 180px;min-width:170px;min-height:104px;padding:14px 18px;background:#1d2126;border:0;border-radius:10px;box-shadow:inset 0 0 0 1px rgba(45,212,191,.35);cursor:grab;user-select:none}
 #chain .chain-item.selected{background:#20262b;box-shadow:inset 0 0 0 2px var(--mb-teal)}
 #chain .chain-item:active{cursor:grabbing}
 #chain .chain-item::after{content:"";position:absolute;left:100%;top:calc(50% - 1px);width:22px;height:2px;background:linear-gradient(90deg,#9442dc,#2dd4bf);pointer-events:none}
-#chain .chain-item{margin-right:22px}
+#chain .chain-item{margin-right:28px}
 #chain .chain-item.no-connector::after{display:none}
 #chain .chain-list .sortable-ghost{opacity:.4;background:#163a39}
 #chain .chain-list .sortable-drag{opacity:.95;background:#25202e;box-shadow:0 8px 24px rgba(0,0,0,.55),inset 0 0 0 1px #b970ff}
-#chain .chain-head .name{display:block;color:#e8ebed;font:600 15px/1.2 Inter,system-ui;overflow-wrap:anywhere}
-#chain .chain-head .maker{display:block;margin-top:3px;color:var(--mb-muted);font:500 12px/1.3 Inter,system-ui}
-#chain .chain-summary{color:#68d3e6;font:700 13px/1.25 ui-monospace,Menlo,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
-#chain .chain-summary.empty{color:#6b7280}
-#chain .chain-actions{position:absolute;right:5px;top:4px;display:flex;gap:0;background:#1d2126;border-radius:6px;opacity:0;transition:opacity .15s}
-#chain .chain-item:hover .chain-actions,#chain .chain-item:focus-within .chain-actions{opacity:1}
-#chain .chain-actions button{width:25px;height:25px;padding:0;border:0;background:transparent;color:#b4bec3;cursor:pointer;font-size:16px}
+#chain .chain-head .name{display:block;padding-right:18px;color:#e8ebed;font:600 16px/1.25 Inter,system-ui;overflow-wrap:anywhere}
+#chain .chain-head .stage{display:block;margin-top:6px;color:#68d3e6;font:600 13px/1.35 Inter,system-ui}
+#chain .chain-head .maker{display:block;margin-top:5px;color:var(--mb-muted);font:500 13px/1.35 Inter,system-ui}
+#chain .chain-actions{position:absolute;right:5px;top:4px;display:flex;gap:0;background:transparent}
+#chain .chain-actions button{width:28px;height:28px;padding:0;border:0;background:transparent;color:#cbd0d6;cursor:pointer;font-size:18px}
 #chain .chain-actions button:hover,#chain .chain-actions button:focus-visible{color:#fff;outline:1px solid var(--mb-teal)}
-#chain .chain-actions .del:hover{color:#ff858c}
-#chain .chain-list>.chain-add{display:inline-flex;align-items:center;justify-content:center;flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:0;border-radius:50%;background:var(--mb-teal);color:var(--mb-ink);font:700 26px/1 Inter,system-ui;cursor:pointer}
+#chain .chain-list>.chain-add{display:inline-flex;align-items:center;justify-content:center;align-self:center;flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:0;border-radius:50%;background:var(--mb-teal);color:var(--mb-ink);font:700 26px/1 Inter,system-ui;cursor:pointer}
 #chain .chain-list>.chain-add,#chain .bus-col.is-empty .empty-add{transition:background .16s ease,color .16s ease,border-color .16s ease}
 #chain .chain-list>.chain-add:hover,#chain .chain-list>.chain-add:focus-visible,#chain .bus-col.is-empty .empty-add:hover,#chain .bus-col.is-empty .empty-add:focus-visible{background:linear-gradient(135deg,#9442dc,#b970ff);color:#fff;border-color:transparent}
-#chain .chain-panel{--mb-panel-side:18px;position:relative;min-width:0;margin-top:12px;padding:16px var(--mb-panel-side);background:#101214;border:0;border-radius:12px;color:#e8ebed}
-#chain .chain-panel-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:28px;margin-bottom:12px}
+#chain .chain-panel{--mb-panel-side:18px;position:relative;min-width:0;margin-top:16px;padding:18px var(--mb-panel-side);background:#101214;border:0;border-radius:12px;color:#e8ebed}
+#chain .chain-panel-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:28px;margin-bottom:18px}
 #chain .chain-panel-title{font:600 16px/1.3 Inter,system-ui}
 #chain .chain-panel-sub{color:var(--mb-muted);font:500 13px/1.3 Inter,system-ui}
 #chain .chain-panel-edit{margin-left:auto;margin-right:calc(-1 * var(--mb-panel-side));cursor:pointer}
@@ -391,7 +388,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #chain .chain-setting-value{color:#e8ebed;font:800 20px/1.2 ui-monospace,Menlo,monospace;overflow-wrap:anywhere}
 #chain .chain-setting-plain{font:400 15px/1.5 Inter,system-ui;white-space:pre-wrap;overflow-wrap:anywhere}
 #chain .chain-settings-empty{color:var(--mb-muted);font-size:14px}
-#chain .chain-panel-meta{display:flex;justify-content:flex-end}
+#chain .chain-panel-meta{display:flex;justify-content:flex-start}
 #chain .chain-panel-meta.has-settings{margin-top:16px}
 #chain .chain-setting-input{box-sizing:border-box;min-width:110px;max-width:100%;width:165px;padding:10px 14px;background:#16181b;border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#e8ebed;font:800 20px ui-monospace,Menlo,monospace}
 #chain .chain-setting-input:focus{outline:2px solid var(--mb-teal)}
@@ -400,8 +397,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #chain .chain-edit-actions button{cursor:pointer}
 #chain .bus-col h4 .clear-bus-btn,#chain .chain-panel-edit,#chain .chain-edit-actions .save,#chain .chain-edit-actions .cancel,#chain .restore{box-sizing:border-box;min-height:40px;padding:10px 15px;border:1px solid #34383d;border-radius:7px;background:#1b1d20;color:#e8ebed;font:600 12px -apple-system,Inter,system-ui,sans-serif;transition:background .16s ease,color .16s ease,border-color .16s ease}
 #chain .chain-edit-actions .save{background:var(--mb-teal);color:var(--mb-ink);border-color:var(--mb-teal)}
-#chain .restore{margin-right:calc(-1 * var(--mb-panel-side));cursor:pointer}
-#chain .chain-edit-actions .restore{margin-left:auto}
+#chain .restore{cursor:pointer}
+#chain .chain-edit-actions .restore{flex-basis:100%;margin-left:0}
 #chain .bus-col h4 .clear-bus-btn:hover,#chain .bus-col h4 .clear-bus-btn:focus-visible,#chain .chain-panel-edit:hover,#chain .chain-panel-edit:focus-visible,#chain .chain-edit-actions .save:hover,#chain .chain-edit-actions .save:focus-visible,#chain .chain-edit-actions .cancel:hover,#chain .chain-edit-actions .cancel:focus-visible,#chain .restore:hover,#chain .restore:focus-visible{background:linear-gradient(135deg,#9442dc,#b970ff);color:#fff;border-color:transparent}
 #chain .bus-col.is-empty{padding:12px 20px}
 #chain .bus-col.is-empty h4{height:48px;margin:0}
@@ -409,9 +406,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #chain .bus-col.is-empty .empty-add{order:3;display:inline-flex;align-items:center;justify-content:center;flex:0 0 40px;width:40px;height:40px;padding:0;border:0;border-radius:50%;background:var(--mb-teal);color:var(--mb-ink);font:700 24px/1 Inter,system-ui;cursor:pointer}
 #chain>.tip-box.alt{background:#16181b;border:0;border-radius:12px;padding:12px 14px;color:#9aa0a6}
 #chain>.tip-box.alt strong{color:#c8d1d2}
-@media(hover:none){#chain .chain-actions{opacity:1;position:static;align-self:flex-end;margin-top:2px}}
 @media(max-width:900px){#chain .chain-toolbar{margin:14px 0 20px;justify-content:flex-start;flex-wrap:wrap}}
-@media(max-width:560px){#chain .chain-toolbar{display:grid;grid-template-columns:1fr;gap:8px}#chain .chain-toolbar button{width:100%}#chain .bus-col{padding:14px 12px}#chain .bus-col h4{font-size:20px}#chain .bus-content{padding:10px}#chain .chain-item{flex-basis:145px;min-width:125px;padding:10px}#chain .chain-panel{--mb-panel-side:14px;padding:14px var(--mb-panel-side)}#chain .chain-settings{gap:12px 18px}}
+@media(max-width:560px){#chain .chain-toolbar{display:grid;grid-template-columns:1fr;gap:8px}#chain .chain-toolbar button{width:100%}#chain .bus-col{padding:14px 12px}#chain .bus-col h4{font-size:20px}#chain .bus-content{padding:14px}#chain .chain-item{flex-basis:170px;min-width:150px;padding:14px 18px}#chain .chain-panel{--mb-panel-side:14px;padding:16px var(--mb-panel-side)}#chain .chain-settings{gap:12px 18px}}
 .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center;padding:20px}
 .modal-backdrop.open{display:flex}
 .modal{background:#1f2937;border:1px solid #374151;border-radius:12px;width:100%;max-width:720px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
@@ -446,6 +442,40 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .plugin-option:hover{background:#374151}
 .plugin-option .name{flex:1;color:#f3f4f6}
 .plugin-option .stage-tag{font-size:calc(var(--inv-text-scale, 1) * 9px);color:#9ca3af;text-transform:uppercase;letter-spacing:.3px}
+/* MixBus plugin choices: shared visual language for Add and Edit. */
+#pickerModal .modal{max-width:720px;background:linear-gradient(180deg,#171a1f,#101216);border:1px solid rgba(79,195,232,.12);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+#pickerModal{z-index:1600}
+#pickerModal .modal-header{padding:20px 24px 14px;border:0}
+#pickerModal .modal-header h3{margin:0;color:#e8ebed;font:600 22px/1.25 Inter,-apple-system,system-ui,sans-serif;letter-spacing:-.01em}
+#pickerModal .modal-header .close-btn{color:#9aa0a6;font-size:26px}
+#pickerModal .modal-header .close-btn:hover,#pickerModal .modal-header .close-btn:focus-visible{color:#e8ebed}
+#pickerModal .modal-filters{padding:0 24px 14px;border:0;flex-wrap:nowrap;gap:10px}
+#pickerModal .modal-body{padding:0 14px 16px}
+#pickerModal .picker-group-title,#chain .replacement-group-title{padding:20px 10px 8px;color:#68d3e6;font:700 20px/1.25 Inter,-apple-system,system-ui,sans-serif;letter-spacing:-.01em}
+#pickerModal .plugin-option,#chain .replacement-option{box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;height:44px;padding:0 10px;border:0;border-radius:9px;background:transparent;color:#e8ebed;text-align:left;font:400 15px Inter,-apple-system,system-ui,sans-serif;cursor:pointer}
+#pickerModal .plugin-option .name,#chain .replacement-option .name{flex:1;min-width:0;color:inherit;overflow-wrap:anywhere}
+#pickerModal .plugin-option .option-meta,#chain .replacement-option .option-meta{flex:0 1 auto;min-width:0;display:flex;align-items:baseline;gap:6px;justify-content:flex-end;text-align:right}
+#pickerModal .plugin-option .stage,#chain .replacement-option .stage{color:#68d3e6;font-size:13px;font-weight:600;white-space:nowrap}
+#pickerModal .plugin-option .publisher,#chain .replacement-option .publisher{color:#9aa0a6;font-size:14px}
+#pickerModal .plugin-option .separator,#chain .replacement-option .separator{color:#9aa0a6}
+#pickerModal .plugin-option:hover,#pickerModal .plugin-option:focus-visible,#chain .replacement-option:hover,#chain .replacement-option:focus-visible{background:linear-gradient(135deg,#9442dc,#b970ff);color:#fff;outline:none}
+#pickerModal .plugin-option:hover .option-meta span,#pickerModal .plugin-option:focus-visible .option-meta span,#chain .replacement-option:hover .option-meta span,#chain .replacement-option:focus-visible .option-meta span{color:#fff}
+#pickerModal .plugin-option:focus-visible,#chain .replacement-option:focus-visible{box-shadow:inset 0 0 0 2px #e8ebed}
+#chain .replacement-option[aria-checked="true"]{background:#173b3a;box-shadow:inset 0 0 0 2px #2dd4bf}
+#chain .replacement-option[aria-checked="true"] .publisher{color:#e8ebed}
+#chain .replacement-option[aria-checked="true"]:hover,#chain .replacement-option[aria-checked="true"]:focus-visible{background:linear-gradient(135deg,#9442dc,#b970ff)}
+#pickerModal .modal-filters input,#pickerModal .modal-filters select,#chain .replacement-filters input,#chain .replacement-filters select{box-sizing:border-box;height:48px;border-radius:12px;color:#e8ebed;font:500 15px Inter,-apple-system,system-ui,sans-serif}
+#pickerModal .modal-filters input,#chain .replacement-filters input{flex:1;min-width:0;padding:0 16px;background:#101214;border:1px solid #34383d}
+#pickerModal .modal-filters input:focus,#chain .replacement-filters input:focus{border-color:#2dd4bf;outline:none;box-shadow:inset 0 0 0 1px #2dd4bf}
+#pickerModal .modal-filters select,#chain .replacement-filters select{flex:0 1 180px;min-width:125px;padding:0 16px;background:#16181b;border:1px solid #34383d;font-weight:600}
+#pickerModal .modal-filters select:focus-visible,#chain .replacement-filters select:focus-visible{outline:2px solid #2dd4bf;outline-offset:2px}
+#chain .replacement-filters{display:flex;gap:10px;min-width:0}
+#chain .replacement-list{box-sizing:border-box;max-height:276px;overflow-y:auto;margin-top:8px;padding:6px;background:#16181b;border:1px solid #34383d;border-radius:12px}
+#chain .chain-settings:has(.chain-setting-input){margin-bottom:16px}
+#chain .replacement-empty{padding:16px;color:#9aa0a6;text-align:center;font-size:14px}
+#chain .chain-edit-actions .save:disabled{opacity:.42;cursor:default}
+#chain .chain-edit-actions .save:disabled:hover{background:var(--mb-teal);color:var(--mb-ink);border-color:var(--mb-teal)}
+@media(max-width:560px){#pickerModal .modal-filters,#chain .replacement-filters{flex-wrap:wrap}#pickerModal .modal-filters select,#chain .replacement-filters select{flex:1 1 100%}}
 .meter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .meter-card{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px}
 .meter-card label{display:block;font-size:calc(var(--inv-text-scale, 1) * 11px);text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;font-weight:600;margin-bottom:6px}
@@ -4966,7 +4996,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 <!-- PICKER MODAL (chain builder) -->
 <div class="modal-backdrop" id="pickerModal">
   <div class="modal">
-    <div class="modal-header"><h3>Add plugin to <span id="pickerBusName">bus</span></h3><button class="close-btn" id="pickerClose">×</button></div>
+    <div class="modal-header"><h3>Add plugin to <span id="pickerBusName">bus</span></h3><button class="close-btn" id="pickerClose" type="button" aria-label="Close plugin picker">×</button></div>
     <div class="modal-filters">
       <input type="text" id="pickerSearch" placeholder="Search your library…">
       <select id="pickerStage"><option value="">All stages</option></select>
@@ -5181,7 +5211,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-14.10';
+const AIMM_BUILD = '2026-11-14.11';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -6392,6 +6422,8 @@ document.getElementById('copyModalSelect').onclick=()=>{const ta=document.getEle
 // References preserve the selected plugin through reorder and whole-grid redraws.
 const chainSelected = Object.create(null);
 const chainEditing = Object.create(null);
+const chainReplacement = Object.create(null);
+function pluginStageLabel(p){return STAGES.find(stage=>stage.id===p.s)?.label||p.s||'Other';}
 function chainParts(notes){
   return String(notes||'').split(/\r?\n/).filter(line=>line.trim()).map(line=>{
     const match=line.match(/^([^:]{1,48}):\s*(.*)$/);
@@ -6400,19 +6432,20 @@ function chainParts(notes){
 }
 function selectChainTile(busId,idx){
   const p=STATE.chain[busId]?.[idx];if(!p)return;
-  chainSelected[busId]=p;delete chainEditing[busId];renderChain();
+  chainSelected[busId]=p;delete chainEditing[busId];delete chainReplacement[busId];renderChain();
 }
 function renderChain(){
   document.getElementById('busGrid').innerHTML=BUSES.map(b=>{
     const items=STATE.chain[b.id]||[];
     if(items.length&&!items.includes(chainSelected[b.id]))chainSelected[b.id]=items[0];
-    if(!items.length){delete chainSelected[b.id];delete chainEditing[b.id];}
+    if(!items.length){delete chainSelected[b.id];delete chainEditing[b.id];delete chainReplacement[b.id];}
     const rows=items.map((p,i)=>renderChainItem(b.id,p,i)).join('');
     const clearBtn=items.length?`<button class="clear-bus-btn" type="button" title="Clear all plugins from this bus" onclick="clearBusFromUI('${escapeJs(b.id)}')">Clear</button>`:'';
     const emptyAdd=items.length?'':`<button class="empty-add" type="button" title="Add plugin to ${escapeHtml(b.label)}" aria-label="Add plugin to ${escapeHtml(b.label)}" onclick="openPicker('${escapeJs(b.id)}')">+</button>`;
     return `<div class="bus-col${items.length?'':' is-empty'}"><h4>${escapeHtml(b.label)} ${emptyAdd}${clearBtn}</h4><div class="bus-content"><div class="chain-list" data-bus="${escapeHtml(b.id)}">${rows}<button class="chain-add" type="button" title="Add plugin to ${escapeHtml(b.label)}" aria-label="Add plugin to ${escapeHtml(b.label)}" onclick="openPicker('${escapeJs(b.id)}')">+</button></div></div>${items.length?renderChainPanel(b.id):''}</div>`;
   }).join('');
   initChainDragDrop();
+  BUSES.forEach(b=>{if(chainEditing[b.id])renderReplacementList(b.id)});
   requestAnimationFrame(updateChainConnectors);
 }
 function updateChainConnectors(){
@@ -6447,9 +6480,7 @@ function clearBusFromUI(busId){
 function renderChainItem(busId,p,idx){
   const pub=PUBS[p.p]||PUBS.other;
   const pubName=p.p==='other'&&p.pLabel?p.pLabel:pub[0];
-  const parts=chainParts(p.notes);
-  const summary=parts.slice(0,2).map(x=>x.value).join(' · ');
-  return `<div class="chain-item${chainSelected[busId]===p?' selected':''}" data-bus="${escapeHtml(busId)}" data-idx="${idx}" role="button" tabindex="0" aria-selected="${chainSelected[busId]===p}" aria-label="${escapeHtml(p.n)} settings" onclick="selectChainTile('${escapeJs(busId)}',${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectChainTile('${escapeJs(busId)}',${idx})}"><div class="chain-head"><span class="name">${escapeHtml(p.n)}</span><span class="maker">${escapeHtml(pubName)}</span></div><span class="chain-summary${summary?'':' empty'}">${summary?escapeHtml(summary):'no settings'}</span><div class="chain-actions"><button type="button" class="del" title="Remove plugin" aria-label="Remove ${escapeHtml(p.n)}" onclick="event.stopPropagation();removeChain('${escapeJs(busId)}',${idx})">×</button></div></div>`;
+  return `<div class="chain-item${chainSelected[busId]===p?' selected':''}" data-bus="${escapeHtml(busId)}" data-idx="${idx}" role="button" tabindex="0" aria-selected="${chainSelected[busId]===p}" aria-label="${escapeHtml(p.n)} settings" onclick="selectChainTile('${escapeJs(busId)}',${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectChainTile('${escapeJs(busId)}',${idx})}"><div class="chain-head"><span class="name">${escapeHtml(p.n)}</span><span class="stage">${escapeHtml(pluginStageLabel(p))}</span><span class="maker">${escapeHtml(pubName)}</span></div><div class="chain-actions"><button type="button" class="del" title="Remove plugin" aria-label="Remove ${escapeHtml(p.n)}" onclick="event.stopPropagation();removeChain('${escapeJs(busId)}',${idx})">×</button></div></div>`;
 }
 function renderChainPanel(busId){
   const arr=STATE.chain[busId],p=chainSelected[busId],idx=arr.indexOf(p);
@@ -6457,22 +6488,37 @@ function renderChainPanel(busId){
   const pub=PUBS[p.p]||PUBS.other,pubName=p.p==='other'&&p.pLabel?p.pLabel:pub[0];
   const editing=chainEditing[busId]===p;
   const parts=chainParts(p.notes);
-  const head=`<div class="chain-panel-head"><span class="chain-panel-title">${escapeHtml(p.n)}</span><span class="chain-panel-sub">${escapeHtml(pubName)} — ${editing?'editing':"Hope's suggestion"}</span>${editing?'':`<button type="button" class="chain-panel-edit" onclick="editChainNotes('${escapeJs(busId)}',${idx})">Edit</button>`}</div>`;
+  const head=`<div class="chain-panel-head"><span class="chain-panel-title">${escapeHtml(p.n)}</span><span class="chain-panel-sub">${escapeHtml(pubName)} · ${escapeHtml(pluginStageLabel(p))}</span>${editing?'':`<button type="button" class="chain-panel-edit" onclick="editChainNotes('${escapeJs(busId)}',${idx})">Edit</button>`}</div>`;
   const settings=editing
-    ?(parts.length?parts:[{value:'',plain:true}]).map((part,i)=>`<label class="${part.plain?'chain-setting-plain':'chain-setting'}">${part.plain?'':`<span class="chain-setting-label">${escapeHtml(part.label)}</span>`}<input class="chain-setting-input" data-label="${part.plain?'':escapeHtml(part.label)}" data-plain="${part.plain?'1':'0'}" value="${escapeHtml(part.value)}" aria-label="${part.plain?'Setting':escapeHtml(part.label)}"></label>`).join('')
+    ?parts.map(part=>`<label class="${part.plain?'chain-setting-plain':'chain-setting'}">${part.plain?'':`<span class="chain-setting-label">${escapeHtml(part.label)}</span>`}<input class="chain-setting-input" data-label="${part.plain?'':escapeHtml(part.label)}" data-plain="${part.plain?'1':'0'}" value="${escapeHtml(part.value)}" aria-label="${part.plain?'Setting':escapeHtml(part.label)}"></label>`).join('')
     :parts.map(part=>part.plain?`<div class="chain-setting-plain">${escapeHtml(part.value)}</div>`:`<div class="chain-setting"><span class="chain-setting-label">${escapeHtml(part.label)}</span><span class="chain-setting-value">${escapeHtml(part.value)}</span></div>`).join('');
   const restore=p.notesOrig!==undefined?`<button type="button" class="restore" onclick="restoreChainNotes('${escapeJs(busId)}',${idx})">Back to Hope's suggestion</button>`:'';
-  const actions=editing?`<div class="chain-edit-actions"><button type="button" class="save" onclick="saveChainNotes('${escapeJs(busId)}',${idx})">Save</button><button type="button" class="cancel" onclick="cancelChainNotes('${escapeJs(busId)}')">Cancel</button>${restore}</div>`:'';
+  const replacement=editing?`<div class="replacement-filters"><input type="text" class="replacement-search" placeholder="Search your library…" aria-label="Search replacement plugins" oninput="renderReplacementList('${escapeJs(busId)}')"><select class="replacement-stage" aria-label="Filter replacement plugins by stage" onchange="renderReplacementList('${escapeJs(busId)}')"><option value="">All stages</option>${STAGES.map(s=>`<option value="${escapeHtml(s.id)}"${s.id===p.s?' selected':''}>${escapeHtml(s.label)}</option>`).join('')}</select></div><div class="replacement-list" role="radiogroup" aria-label="Replacement plugins"></div>`:'';
+  const actions=editing?`<div class="chain-edit-actions"><button type="button" class="save" ${parts.length||chainReplacement[busId]?'':'disabled'} onclick="saveChainNotes('${escapeJs(busId)}',${idx})">Save</button><button type="button" class="cancel" onclick="cancelChainNotes('${escapeJs(busId)}')">Cancel</button>${restore}</div>`:'';
   const meta=editing?'':restore||(!parts.length?'<span class="chain-settings-empty">Waiting for Hope\'s suggestion</span>':'');
-  return `<div class="chain-panel" data-bus="${escapeHtml(busId)}" onkeydown="chainPanelKeydown(event,'${escapeJs(busId)}',${idx})">${head}<div class="chain-settings">${settings}</div>${meta?`<div class="chain-panel-meta${parts.length?' has-settings':''}">${meta}</div>`:''}${actions}</div>`;
+  return `<div class="chain-panel" data-bus="${escapeHtml(busId)}" onkeydown="chainPanelKeydown(event,'${escapeJs(busId)}',${idx})">${head}${settings?`<div class="chain-settings">${settings}</div>`:''}${replacement}${meta?`<div class="chain-panel-meta${parts.length?' has-settings':''}">${meta}</div>`:''}${actions}</div>`;
 }
 function chainPanelKeydown(e,busId,idx){if(e.key==='Escape'){e.preventDefault();cancelChainNotes(busId)}else if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)){e.preventDefault();saveChainNotes(busId,idx)}}
 function moveChain(busId,idx,dir){const arr=STATE.chain[busId],j=idx+dir;if(j<0||j>=arr.length)return;[arr[idx],arr[j]]=[arr[j],arr[idx]];renderChain();saveState()}
 function removeChain(busId,idx){const arr=STATE.chain[busId],p=arr[idx];arr.splice(idx,1);if(chainSelected[busId]===p)chainSelected[busId]=arr[Math.min(idx,arr.length-1)];renderChain();saveState()}
-function editChainNotes(busId,idx){const p=STATE.chain[busId]?.[idx];if(!p)return;chainSelected[busId]=p;chainEditing[busId]=p;renderChain();document.querySelector(`#busGrid .chain-panel[data-bus="${busId}"] input`)?.focus()}
-function cancelChainNotes(busId){delete chainEditing[busId];renderChain()}
+function editChainNotes(busId,idx){const p=STATE.chain[busId]?.[idx];if(!p)return;chainSelected[busId]=p;chainEditing[busId]=p;delete chainReplacement[busId];renderChain();renderReplacementList(busId);document.querySelector(`#busGrid .chain-panel[data-bus="${busId}"] .replacement-search`)?.focus()}
+function cancelChainNotes(busId){delete chainEditing[busId];delete chainReplacement[busId];renderChain()}
+function renderReplacementList(busId){
+  const panel=document.querySelector(`#busGrid .chain-panel[data-bus="${busId}"]`);if(!panel)return;
+  const q=panel.querySelector('.replacement-search').value.trim().toLowerCase(),stage=panel.querySelector('.replacement-stage').value;
+  const matches=allPlugins().map((p,i)=>({p,i})).filter(({p})=>(!stage||p.s===stage)&&(!q||p.n.toLowerCase().includes(q)));
+  panel.querySelector('.replacement-list').innerHTML=matches.length?STAGES.map(s=>{const group=matches.filter(({p})=>p.s===s.id);if(!group.length)return '';return `<section class="replacement-group" aria-label="${escapeHtml(s.label)}"><div class="replacement-group-title">${escapeHtml(s.label)}</div>${group.map(({p,i})=>{const pubName=p.p==='other'&&p.pLabel?p.pLabel:(PUBS[p.p]||PUBS.other)[0];return `<button type="button" class="replacement-option" role="radio" data-plugin-index="${i}" aria-checked="${chainReplacement[busId]===p}" onclick="selectChainReplacement('${escapeJs(busId)}',${i})"><span class="name">${escapeHtml(p.n)}</span><span class="option-meta"><span class="stage">${escapeHtml(s.label)}</span><span class="separator">·</span><span class="publisher">${escapeHtml(pubName)}</span></span></button>`}).join('')}</section>`}).join(''):'<div class="replacement-empty">No plugins match.</div>';
+}
+function selectChainReplacement(busId,pluginIndex){
+  const chosen=allPlugins()[pluginIndex],panel=document.querySelector(`#busGrid .chain-panel[data-bus="${busId}"]`);if(!chosen||!panel)return;
+  chainReplacement[busId]=chosen;panel.querySelectorAll('.replacement-option').forEach(button=>button.setAttribute('aria-checked',String(button.dataset.pluginIndex===String(pluginIndex))));
+  panel.querySelector('.chain-edit-actions .save').disabled=false;
+}
 function saveChainNotes(busId,idx,text){
   const p=STATE.chain[busId]?.[idx];if(!p)return;
+  const replacement=chainReplacement[busId];
+  if(replacement){p.n=replacement.n;p.p=replacement.p;p.s=replacement.s;if(replacement.pLabel)p.pLabel=replacement.pLabel;else delete p.pLabel;delete p.notes;delete p.notesOrig;delete chainReplacement[busId];delete chainEditing[busId];renderChain();saveState();return;}
+  if(!chainParts(p.notes).length)return;
   if(text===undefined){const panel=document.querySelector(`#busGrid .chain-panel[data-bus="${busId}"]`);text=[...panel.querySelectorAll('.chain-setting-input')].map(input=>input.dataset.plain==='1'?input.value:`${input.dataset.label}: ${input.value}`).join('\n')}
   const value=String(text||'').trim(),old=p.notes||'';
   if(value!==old){if(p.notesOrig===undefined)p.notesOrig=old;if(value)p.notes=value;else delete p.notes}
@@ -6689,18 +6735,19 @@ let pickerActiveBus=null;
 function openPicker(busId){pickerActiveBus=busId;document.getElementById('pickerBusName').textContent=BUSES.find(b=>b.id===busId).label;document.getElementById('pickerModal').classList.add('open');document.getElementById('pickerSearch').value='';document.getElementById('pickerStage').value='';renderPickerList();setTimeout(()=>document.getElementById('pickerSearch').focus(),50);}
 function closePicker(){document.getElementById('pickerModal').classList.remove('open');}
 function renderPickerList(){
-  const q=document.getElementById('pickerSearch').value.toLowerCase();
+  const q=document.getElementById('pickerSearch').value.trim().toLowerCase();
   const stage=document.getElementById('pickerStage').value;
   const filtered=allPlugins().filter(p=>{if(stage&&p.s!==stage)return false;if(q&&!p.n.toLowerCase().includes(q))return false;return true;});
   const list=document.getElementById('pickerList');
   if(!filtered.length){list.innerHTML='<div style="padding:20px;text-align:center;color:#6b7280;font-size:13px;">No plugins match.</div>';return;}
-  list.innerHTML=filtered.map(p=>{const pub=PUBS[p.p]||PUBS.other;return `<div class="plugin-option" onclick="addFromPicker('${escapeJs(p.n)}','${p.p}','${p.s}')"><span class="name">${escapeHtml(p.n)}</span><span class="stage-tag">${p.s}</span><span class="chip ${pub[1]}">${pub[0]}</span></div>`;}).join('');
+  list.innerHTML=STAGES.map(s=>{const plugins=filtered.filter(p=>p.s===s.id);if(!plugins.length)return '';return `<section class="picker-group" aria-label="${escapeHtml(s.label)}"><div class="picker-group-title">${escapeHtml(s.label)}</div>${plugins.map(p=>{const pubName=p.p==='other'&&p.pLabel?p.pLabel:(PUBS[p.p]||PUBS.other)[0],i=allPlugins().indexOf(p);return `<button type="button" class="plugin-option" onclick="addFromPicker(${i})"><span class="name">${escapeHtml(p.n)}</span><span class="option-meta"><span class="stage">${escapeHtml(s.label)}</span><span class="separator">·</span><span class="publisher">${escapeHtml(pubName)}</span></span></button>`}).join('')}</section>`}).join('');
 }
-function addFromPicker(n,p,s){STATE.chain[pickerActiveBus].push({n,p,s});renderChain();closePicker();saveState();}
+function addFromPicker(i){const p=allPlugins()[i];if(!p)return;STATE.chain[pickerActiveBus].push({n:p.n,p:p.p,s:p.s,...(p.pLabel?{pLabel:p.pLabel}:{})});renderChain();closePicker();saveState();}
 document.getElementById('pickerClose').onclick=closePicker;
 document.getElementById('pickerModal').onclick=e=>{if(e.target.id==='pickerModal')closePicker();};
 document.getElementById('pickerSearch').oninput=renderPickerList;
 document.getElementById('pickerStage').onchange=renderPickerList;
+document.getElementById('pickerModal').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();closePicker();}});
 
 // ========== LIBRARY RENDER ==========
 // Multi-select publisher filter — comma-separated list of publisher keys in localStorage.
@@ -9569,12 +9616,12 @@ function renderPresetList(){
         const ch = p.chains[b.id];
         if (Array.isArray(ch) && ch.length){
           parts.push(`<span class="preset-card-pill" style="background:#3b1764;color:#e9d5ff;">${escapeHtml(b.label)}:</span>`);
-          ch.forEach(c => parts.push(`<span class="preset-card-pill">${escapeHtml(c.n)}</span>`));
+          ch.forEach(c => parts.push(`<span class="preset-card-pill">${escapeHtml(c.n)} · ${escapeHtml(pluginStageLabel(c))}</span>`));
         }
       });
       pills = parts.join('');
     } else {
-      pills = (p.chain||[]).map(c=>`<span class="preset-card-pill">${escapeHtml(c.n)}</span>`).join('');
+      pills = (p.chain||[]).map(c=>`<span class="preset-card-pill">${escapeHtml(c.n)} · ${escapeHtml(pluginStageLabel(c))}</span>`).join('');
     }
     const genres=(p.genres||[]).map(g=>`<span class="${g===STATE.genre?'match':''}">${escapeHtml(genreLabel(g).replace(/^[^A-Za-z]+/,''))}</span>`).join('');
     const isUser = !!p.user;

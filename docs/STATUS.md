@@ -1581,3 +1581,8 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 ## 2026-11-14 build 2026-11-14.10 — MixBus tiles simplified — deploy approved by Kevin
 - Removed the up/down arrow buttons from MixBus tiles (drag-and-drop reorders; × kept); help/tip text now says drag to reorder. "Waiting for Hope's suggestion" and "Back to Hope's suggestion" combined into one spot (only one shows). Clear, Edit and Back share one right edge. Bus count number and "1 ·" panel prefix removed. Codex Playwright: 0 page errors, right edges equal at 1500/700px, Hope chain context identical to .09.
 - Rollback: build .09, Worker 4d7fe181-986b-4954-b652-c203d0680c75 (then .08 71e510b6, .07 2c3ccc51).
+
+## 2026-11-14 build 2026-11-14.11 — MixBus: new Add plugin window, Edit = replace plugin, stage labels — deploy approved by Kevin
+- Add plugin picker redesigned (Mix Check card, teal search, styled stage select, plugins grouped under blue stage headings, quiet "Stage · Publisher" on each row, no pills, purple/white hover). Edit on a plugin opens search + stage drop-down (defaults to the plugin's own stage) + list to choose a replacement; Save replaces in place and clears its settings (starts "Waiting for Hope's suggestion"); plugins that have settings still show the value boxes above. Tiles show name, stage (blue), maker only (summary line removed, more padding); stage also in panel header; "Waiting for Hope's suggestion" left-aligned; × on tiles clearly visible.
+- Codex Playwright: 0 page errors; Hope chain context identical to .10. Decision to confirm with Kevin: replaced plugin's old settings are cleared (not carried over).
+- Rollback: build .10, Worker c1084784-24fd-4a07-b58f-54172cda2659 (then .09 4d7fe181, .08 71e510b6, .07 2c3ccc51).
