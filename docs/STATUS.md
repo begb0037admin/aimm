@@ -1594,3 +1594,7 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 ## 2026-11-15 build 2026-11-15.2 — Worker serves /docs/* (fixes Hope's video notes) — deploy approved by Kevin
 - Live site (aimixmasters.com / workers.dev) returned 404 for /docs/knowledge/* (kb-search-index.json, index.json, transcript .md) and /docs/ROADMAP.md, because the Worker only serves standalone/assets. Hope could find search snippets but "full transcript won't load". Worker now fetches /docs/* from the GitHub Pages copy (5 min cache; 404 if missing). App page unchanged apart from build stamp. Tested locally with wrangler dev: kb index 200 (10.7 MB), transcript 200, index.json 200, missing file 404.
 - Rollback: build .1, Worker 082e26a3-dcf7-4c8c-b93e-466f35a2bff2 (then .11 4c429a66).
+
+## 2026-11-15 build 2026-11-15.3 — Build number moved to the bottom of the Hope chat panel — deploy approved by Kevin
+- The "AIMM · build ..." stamp moved from the Mix Check specs column to the bottom of the Hope chat rail (#hopeRail), so it shows on every tab. Same element id and JS; only its place and CSS changed. Known: on long tabs (Settings) the rail stretches to page height, so the stamp is at the page bottom (existing rail behaviour, not changed).
+- Rollback: build .2, Worker 026a657c-9f8f-48c4-945e-0c5290ee00af (then .1 082e26a3).

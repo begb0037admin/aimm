@@ -1276,6 +1276,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #railReopen{position:fixed;right:14px;bottom:64px;z-index:1500;width:42px;height:42px;border-radius:50%;background:#1f2937;color:#e5e7eb;border:1px solid #374151;font-size:calc(var(--inv-text-scale, 1) * 18px);cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 #railReopen:hover{border-color:#4fd8ff66}
 #buildStamp{align-self:center;margin:0 auto;font: 600 calc(var(--inv-text-scale, 1) * 9px) ui-monospace,Menlo,monospace;letter-spacing:.02em;color:#3d4650;pointer-events:none;user-select:text}
+#hopeRail #buildStamp{flex:0 0 auto;align-self:stretch;margin:0;padding:10px 0 12px;text-align:center;font:600 calc(var(--inv-text-scale, 1) * 10px) ui-monospace,Menlo,monospace;letter-spacing:.02em;color:#71787e}
 #mcSpecs #buildStamp{align-self:center;margin: auto auto 0;padding:18px 0 14px;text-align:center;font-size:calc(var(--inv-text-scale, 1) * 8px);color:#5a636e}
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -3213,6 +3214,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     <button id="railToggle" title="Collapse — reopen any time with the Chat button">⇥</button>
   </div>
   <div class="rail-body" id="hopeRailBody"></div>
+  <div id="buildStamp"></div>
 </div>
 <!-- R3 step 6 (BLOCKER-3 fallback): the app content (header + tab strip + every
      .panel + the fixed build stamp / rail-reopen) is wrapped in ONE .app-col
@@ -3709,7 +3711,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         <div class="sub" id="refDynRangeSub">no file loaded</div><div id="refDynRangeTag"></div><div class="oz-bar-track"><div id="refDynRangeBar" class="oz-bar-fill" style="width:0%"></div></div>
         <div class="meter-override"><label>Manual DR:</label><input type="number" id="ovDynRange" step="0.1" placeholder="e.g. 6.0" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovDynRange')" title="Clear override">✕</button></div>
       </div>
-      <div id="buildStamp"></div>
     </div>
 
     <!-- Input — the real drop-zone/live-input engine physically relocated
@@ -5212,7 +5213,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-15.2';
+const AIMM_BUILD = '2026-11-15.3';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
