@@ -357,9 +357,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #chain .bus-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 #chain .bus-col{min-width:0;padding:18px 20px;background:linear-gradient(180deg,#171a1f,#101216);border:0;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.4),inset 0 0 0 1px rgba(79,195,232,.10)}
 #chain .bus-col h4{display:flex;align-items:center;gap:12px;min-width:0;margin:0 0 12px;color:#f3f4f6;font:600 22px/1.25 Inter,var(--aimm-font-display,-apple-system,sans-serif);letter-spacing:-.01em;text-transform:none}
-#chain .bus-col h4 .count{order:2;margin-left:auto;color:var(--mb-muted);font:800 28px/1 ui-monospace,"SF Mono",Menlo,monospace}
-#chain .bus-col h4 .clear-bus-btn{order:1;margin-left:auto;cursor:pointer}
-#chain .bus-col h4:has(.clear-bus-btn) .count{margin-left:0}
+#chain .bus-col h4 .clear-bus-btn{margin-left:auto;cursor:pointer}
 #chain .bus-content{min-width:0;min-height:76px;padding:12px 14px;background:var(--mb-inset);border-radius:12px}
 #chain .chain-list{display:flex;align-items:center;flex-wrap:wrap;min-width:0;width:100%;margin:0;row-gap:10px}
 #chain .chain-item{position:relative;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:3px;flex:0 1 165px;min-width:140px;min-height:86px;padding:10px 16px;background:#1d2126;border:0;border-radius:10px;box-shadow:inset 0 0 0 1px rgba(45,212,191,.35);cursor:grab;user-select:none}
@@ -378,41 +376,42 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #chain .chain-item:hover .chain-actions,#chain .chain-item:focus-within .chain-actions{opacity:1}
 #chain .chain-actions button{width:25px;height:25px;padding:0;border:0;background:transparent;color:#b4bec3;cursor:pointer;font-size:16px}
 #chain .chain-actions button:hover,#chain .chain-actions button:focus-visible{color:#fff;outline:1px solid var(--mb-teal)}
-#chain .chain-actions button:disabled{opacity:.35}
 #chain .chain-actions .del:hover{color:#ff858c}
 #chain .chain-list>.chain-add{display:inline-flex;align-items:center;justify-content:center;flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:0;border-radius:50%;background:var(--mb-teal);color:var(--mb-ink);font:700 26px/1 Inter,system-ui;cursor:pointer}
 #chain .chain-list>.chain-add,#chain .bus-col.is-empty .empty-add{transition:background .16s ease,color .16s ease,border-color .16s ease}
 #chain .chain-list>.chain-add:hover,#chain .chain-list>.chain-add:focus-visible,#chain .bus-col.is-empty .empty-add:hover,#chain .bus-col.is-empty .empty-add:focus-visible{background:linear-gradient(135deg,#9442dc,#b970ff);color:#fff;border-color:transparent}
-#chain .chain-panel{position:relative;min-width:0;margin-top:12px;padding:16px 18px;background:#101214;border:0;border-radius:12px;color:#e8ebed}
+#chain .chain-panel{--mb-panel-side:18px;position:relative;min-width:0;margin-top:12px;padding:16px var(--mb-panel-side);background:#101214;border:0;border-radius:12px;color:#e8ebed}
 #chain .chain-panel-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:28px;margin-bottom:12px}
 #chain .chain-panel-title{font:600 16px/1.3 Inter,system-ui}
 #chain .chain-panel-sub{color:var(--mb-muted);font:500 13px/1.3 Inter,system-ui}
-#chain .chain-panel-edit{margin-left:auto;cursor:pointer}
+#chain .chain-panel-edit{margin-left:auto;margin-right:calc(-1 * var(--mb-panel-side));cursor:pointer}
 #chain .chain-settings{display:flex;flex-wrap:wrap;gap:12px 28px}
 #chain .chain-setting{display:flex;flex-direction:column;gap:2px;min-width:0}
 #chain .chain-setting-label{color:var(--mb-muted);font:500 13px/1.3 Inter,system-ui}
 #chain .chain-setting-value{color:#e8ebed;font:800 20px/1.2 ui-monospace,Menlo,monospace;overflow-wrap:anywhere}
 #chain .chain-setting-plain{font:400 15px/1.5 Inter,system-ui;white-space:pre-wrap;overflow-wrap:anywhere}
 #chain .chain-settings-empty{color:var(--mb-muted);font-size:14px}
+#chain .chain-panel-meta{display:flex;justify-content:flex-end}
+#chain .chain-panel-meta.has-settings{margin-top:16px}
 #chain .chain-setting-input{box-sizing:border-box;min-width:110px;max-width:100%;width:165px;padding:10px 14px;background:#16181b;border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#e8ebed;font:800 20px ui-monospace,Menlo,monospace}
 #chain .chain-setting-input:focus{outline:2px solid var(--mb-teal)}
 #chain .chain-setting-plain .chain-setting-input{width:300px}
 #chain .chain-edit-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px}
 #chain .chain-edit-actions button{cursor:pointer}
-#chain .bus-col h4 .clear-bus-btn,#chain .chain-panel-edit,#chain .chain-edit-actions .save,#chain .chain-edit-actions .cancel,#chain .chain-edit-actions .restore{box-sizing:border-box;min-height:40px;padding:10px 15px;border:1px solid #34383d;border-radius:7px;background:#1b1d20;color:#e8ebed;font:600 12px -apple-system,Inter,system-ui,sans-serif;transition:background .16s ease,color .16s ease,border-color .16s ease}
+#chain .bus-col h4 .clear-bus-btn,#chain .chain-panel-edit,#chain .chain-edit-actions .save,#chain .chain-edit-actions .cancel,#chain .restore{box-sizing:border-box;min-height:40px;padding:10px 15px;border:1px solid #34383d;border-radius:7px;background:#1b1d20;color:#e8ebed;font:600 12px -apple-system,Inter,system-ui,sans-serif;transition:background .16s ease,color .16s ease,border-color .16s ease}
 #chain .chain-edit-actions .save{background:var(--mb-teal);color:var(--mb-ink);border-color:var(--mb-teal)}
-#chain .chain-edit-actions .restore{margin-left:auto;cursor:pointer}
-#chain .bus-col h4 .clear-bus-btn:hover,#chain .bus-col h4 .clear-bus-btn:focus-visible,#chain .chain-panel-edit:hover,#chain .chain-panel-edit:focus-visible,#chain .chain-edit-actions .save:hover,#chain .chain-edit-actions .save:focus-visible,#chain .chain-edit-actions .cancel:hover,#chain .chain-edit-actions .cancel:focus-visible,#chain .chain-edit-actions .restore:hover,#chain .chain-edit-actions .restore:focus-visible{background:linear-gradient(135deg,#9442dc,#b970ff);color:#fff;border-color:transparent}
+#chain .restore{margin-right:calc(-1 * var(--mb-panel-side));cursor:pointer}
+#chain .chain-edit-actions .restore{margin-left:auto}
+#chain .bus-col h4 .clear-bus-btn:hover,#chain .bus-col h4 .clear-bus-btn:focus-visible,#chain .chain-panel-edit:hover,#chain .chain-panel-edit:focus-visible,#chain .chain-edit-actions .save:hover,#chain .chain-edit-actions .save:focus-visible,#chain .chain-edit-actions .cancel:hover,#chain .chain-edit-actions .cancel:focus-visible,#chain .restore:hover,#chain .restore:focus-visible{background:linear-gradient(135deg,#9442dc,#b970ff);color:#fff;border-color:transparent}
 #chain .bus-col.is-empty{padding:12px 20px}
 #chain .bus-col.is-empty h4{height:48px;margin:0}
-#chain .bus-col.is-empty h4 .count{font-size:22px;color:#6b7280}
 #chain .bus-col.is-empty .bus-content{display:none}
 #chain .bus-col.is-empty .empty-add{order:3;display:inline-flex;align-items:center;justify-content:center;flex:0 0 40px;width:40px;height:40px;padding:0;border:0;border-radius:50%;background:var(--mb-teal);color:var(--mb-ink);font:700 24px/1 Inter,system-ui;cursor:pointer}
 #chain>.tip-box.alt{background:#16181b;border:0;border-radius:12px;padding:12px 14px;color:#9aa0a6}
 #chain>.tip-box.alt strong{color:#c8d1d2}
 @media(hover:none){#chain .chain-actions{opacity:1;position:static;align-self:flex-end;margin-top:2px}}
 @media(max-width:900px){#chain .chain-toolbar{margin:14px 0 20px;justify-content:flex-start;flex-wrap:wrap}}
-@media(max-width:560px){#chain .chain-toolbar{display:grid;grid-template-columns:1fr;gap:8px}#chain .chain-toolbar button{width:100%}#chain .bus-col{padding:14px 12px}#chain .bus-col h4{font-size:20px}#chain .bus-content{padding:10px}#chain .chain-item{flex-basis:145px;min-width:125px;padding:10px}#chain .chain-panel{padding:14px}#chain .chain-settings{gap:12px 18px}}
+@media(max-width:560px){#chain .chain-toolbar{display:grid;grid-template-columns:1fr;gap:8px}#chain .chain-toolbar button{width:100%}#chain .bus-col{padding:14px 12px}#chain .bus-col h4{font-size:20px}#chain .bus-content{padding:10px}#chain .chain-item{flex-basis:145px;min-width:125px;padding:10px}#chain .chain-panel{--mb-panel-side:14px;padding:14px var(--mb-panel-side)}#chain .chain-settings{gap:12px 18px}}
 .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center;padding:20px}
 .modal-backdrop.open{display:flex}
 .modal{background:#1f2937;border:1px solid #374151;border-radius:12px;width:100%;max-width:720px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
@@ -3360,10 +3359,10 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     <button class="btn ghost sm" id="presetsBtn">Load preset</button>
     <button class="btn ghost sm" id="autoFillBtn" title="Single Claude Haiku call — fills missing settings, revises ones that need updating, keeps the rest. ~$0.02 per click.">Auto-fill settings</button>
     <button class="btn ghost sm" id="revertFillBtn" title="Restore the chain to the state before the last auto-fill" style="display:none">↺ Revert last fill</button>
-    <span class="chain-toolbar-hint" title="Per-source templates: 808, vocals, drums, master, FX returns. Tap the floating mic to start a live call with Hope — she reads and edits the chain in real time.">Per-source templates: 808, vocals, drums, master, FX returns. Tap the floating mic to start a live call with Hope — she reads and edits the chain in real time.</span>
+    <span class="chain-toolbar-hint" title="Drag plugins to reorder within a bus. Hope can read and edit the chain during a live call.">Drag plugins to reorder within a bus. Hope can read and edit the chain during a live call.</span>
   </div>
   <div class="bus-grid" id="busGrid"></div>
-  <div class="tip-box alt"><strong>How to use:</strong> click "+ Add plugin" on any bus, search, click to add. ↑/↓ to reorder, × to remove. Bring the chain into a chat with Claude in Hope's chat, then hit <strong>Snapshot → Claude chat</strong> to save the discussion as a Session Snapshot pill next to START CALL.</div>
+  <div class="tip-box alt"><strong>How to use:</strong> click "+ Add plugin" on any bus, search, click to add. Drag to reorder, × to remove. Bring the chain into a chat with Claude in Hope's chat, then hit <strong>Snapshot → Claude chat</strong> to save the discussion as a Session Snapshot pill next to START CALL.</div>
 </div>
 
 <!-- Repair tab (#meter) retired — Troubleshooter moved to Mix Check (#eq), P-C 2026-06-04 -->
@@ -5182,7 +5181,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-14.09';
+const AIMM_BUILD = '2026-11-14.10';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -6408,10 +6407,10 @@ function renderChain(){
     const items=STATE.chain[b.id]||[];
     if(items.length&&!items.includes(chainSelected[b.id]))chainSelected[b.id]=items[0];
     if(!items.length){delete chainSelected[b.id];delete chainEditing[b.id];}
-    const rows=items.map((p,i)=>renderChainItem(b.id,p,i,items.length)).join('');
+    const rows=items.map((p,i)=>renderChainItem(b.id,p,i)).join('');
     const clearBtn=items.length?`<button class="clear-bus-btn" type="button" title="Clear all plugins from this bus" onclick="clearBusFromUI('${escapeJs(b.id)}')">Clear</button>`:'';
     const emptyAdd=items.length?'':`<button class="empty-add" type="button" title="Add plugin to ${escapeHtml(b.label)}" aria-label="Add plugin to ${escapeHtml(b.label)}" onclick="openPicker('${escapeJs(b.id)}')">+</button>`;
-    return `<div class="bus-col${items.length?'':' is-empty'}"><h4>${escapeHtml(b.label)} <span class="count">${items.length}</span>${emptyAdd}${clearBtn}</h4><div class="bus-content"><div class="chain-list" data-bus="${escapeHtml(b.id)}">${rows}<button class="chain-add" type="button" title="Add plugin to ${escapeHtml(b.label)}" aria-label="Add plugin to ${escapeHtml(b.label)}" onclick="openPicker('${escapeJs(b.id)}')">+</button></div></div>${items.length?renderChainPanel(b.id):''}</div>`;
+    return `<div class="bus-col${items.length?'':' is-empty'}"><h4>${escapeHtml(b.label)} ${emptyAdd}${clearBtn}</h4><div class="bus-content"><div class="chain-list" data-bus="${escapeHtml(b.id)}">${rows}<button class="chain-add" type="button" title="Add plugin to ${escapeHtml(b.label)}" aria-label="Add plugin to ${escapeHtml(b.label)}" onclick="openPicker('${escapeJs(b.id)}')">+</button></div></div>${items.length?renderChainPanel(b.id):''}</div>`;
   }).join('');
   initChainDragDrop();
   requestAnimationFrame(updateChainConnectors);
@@ -6445,12 +6444,12 @@ function clearBusFromUI(busId){
   if(!confirm(`Clear all ${arr.length} plugin${arr.length===1?'':'s'} from ${busLabel}?`))return;
   STATE.chain[busId]=[];renderChain();saveState();toast(`${busLabel} cleared`);
 }
-function renderChainItem(busId,p,idx,total){
+function renderChainItem(busId,p,idx){
   const pub=PUBS[p.p]||PUBS.other;
   const pubName=p.p==='other'&&p.pLabel?p.pLabel:pub[0];
   const parts=chainParts(p.notes);
   const summary=parts.slice(0,2).map(x=>x.value).join(' · ');
-  return `<div class="chain-item${chainSelected[busId]===p?' selected':''}" data-bus="${escapeHtml(busId)}" data-idx="${idx}" role="button" tabindex="0" aria-selected="${chainSelected[busId]===p}" aria-label="${escapeHtml(p.n)} settings" onclick="selectChainTile('${escapeJs(busId)}',${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectChainTile('${escapeJs(busId)}',${idx})}"><div class="chain-head"><span class="name">${escapeHtml(p.n)}</span><span class="maker">${escapeHtml(pubName)}</span></div><span class="chain-summary${summary?'':' empty'}">${summary?escapeHtml(summary):'no settings'}</span><div class="chain-actions"><button type="button" title="Move up" aria-label="Move ${escapeHtml(p.n)} up" onclick="event.stopPropagation();moveChain('${escapeJs(busId)}',${idx},-1)" ${idx===0?'disabled':''}>↑</button><button type="button" title="Move down" aria-label="Move ${escapeHtml(p.n)} down" onclick="event.stopPropagation();moveChain('${escapeJs(busId)}',${idx},1)" ${idx===total-1?'disabled':''}>↓</button><button type="button" class="del" title="Remove plugin" aria-label="Remove ${escapeHtml(p.n)}" onclick="event.stopPropagation();removeChain('${escapeJs(busId)}',${idx})">×</button></div></div>`;
+  return `<div class="chain-item${chainSelected[busId]===p?' selected':''}" data-bus="${escapeHtml(busId)}" data-idx="${idx}" role="button" tabindex="0" aria-selected="${chainSelected[busId]===p}" aria-label="${escapeHtml(p.n)} settings" onclick="selectChainTile('${escapeJs(busId)}',${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectChainTile('${escapeJs(busId)}',${idx})}"><div class="chain-head"><span class="name">${escapeHtml(p.n)}</span><span class="maker">${escapeHtml(pubName)}</span></div><span class="chain-summary${summary?'':' empty'}">${summary?escapeHtml(summary):'no settings'}</span><div class="chain-actions"><button type="button" class="del" title="Remove plugin" aria-label="Remove ${escapeHtml(p.n)}" onclick="event.stopPropagation();removeChain('${escapeJs(busId)}',${idx})">×</button></div></div>`;
 }
 function renderChainPanel(busId){
   const arr=STATE.chain[busId],p=chainSelected[busId],idx=arr.indexOf(p);
@@ -6458,13 +6457,14 @@ function renderChainPanel(busId){
   const pub=PUBS[p.p]||PUBS.other,pubName=p.p==='other'&&p.pLabel?p.pLabel:pub[0];
   const editing=chainEditing[busId]===p;
   const parts=chainParts(p.notes);
-  const head=`<div class="chain-panel-head"><span class="chain-panel-title">${idx+1} · ${escapeHtml(p.n)}</span><span class="chain-panel-sub">${escapeHtml(pubName)} — ${editing?'editing':"Hope's suggestion"}</span>${editing?'':`<button type="button" class="chain-panel-edit" onclick="editChainNotes('${escapeJs(busId)}',${idx})">Edit</button>`}</div>`;
+  const head=`<div class="chain-panel-head"><span class="chain-panel-title">${escapeHtml(p.n)}</span><span class="chain-panel-sub">${escapeHtml(pubName)} — ${editing?'editing':"Hope's suggestion"}</span>${editing?'':`<button type="button" class="chain-panel-edit" onclick="editChainNotes('${escapeJs(busId)}',${idx})">Edit</button>`}</div>`;
   const settings=editing
     ?(parts.length?parts:[{value:'',plain:true}]).map((part,i)=>`<label class="${part.plain?'chain-setting-plain':'chain-setting'}">${part.plain?'':`<span class="chain-setting-label">${escapeHtml(part.label)}</span>`}<input class="chain-setting-input" data-label="${part.plain?'':escapeHtml(part.label)}" data-plain="${part.plain?'1':'0'}" value="${escapeHtml(part.value)}" aria-label="${part.plain?'Setting':escapeHtml(part.label)}"></label>`).join('')
-    :(parts.length?parts.map(part=>part.plain?`<div class="chain-setting-plain">${escapeHtml(part.value)}</div>`:`<div class="chain-setting"><span class="chain-setting-label">${escapeHtml(part.label)}</span><span class="chain-setting-value">${escapeHtml(part.value)}</span></div>`).join(''):'<span class="chain-settings-empty">Waiting for Hope\'s suggestion</span>');
+    :parts.map(part=>part.plain?`<div class="chain-setting-plain">${escapeHtml(part.value)}</div>`:`<div class="chain-setting"><span class="chain-setting-label">${escapeHtml(part.label)}</span><span class="chain-setting-value">${escapeHtml(part.value)}</span></div>`).join('');
   const restore=p.notesOrig!==undefined?`<button type="button" class="restore" onclick="restoreChainNotes('${escapeJs(busId)}',${idx})">Back to Hope's suggestion</button>`:'';
-  const actions=editing?`<div class="chain-edit-actions"><button type="button" class="save" onclick="saveChainNotes('${escapeJs(busId)}',${idx})">Save</button><button type="button" class="cancel" onclick="cancelChainNotes('${escapeJs(busId)}')">Cancel</button>${restore}</div>`:(restore?`<div class="chain-edit-actions">${restore}</div>`:'');
-  return `<div class="chain-panel" data-bus="${escapeHtml(busId)}" onkeydown="chainPanelKeydown(event,'${escapeJs(busId)}',${idx})">${head}<div class="chain-settings">${settings}</div>${actions}</div>`;
+  const actions=editing?`<div class="chain-edit-actions"><button type="button" class="save" onclick="saveChainNotes('${escapeJs(busId)}',${idx})">Save</button><button type="button" class="cancel" onclick="cancelChainNotes('${escapeJs(busId)}')">Cancel</button>${restore}</div>`:'';
+  const meta=editing?'':restore||(!parts.length?'<span class="chain-settings-empty">Waiting for Hope\'s suggestion</span>':'');
+  return `<div class="chain-panel" data-bus="${escapeHtml(busId)}" onkeydown="chainPanelKeydown(event,'${escapeJs(busId)}',${idx})">${head}<div class="chain-settings">${settings}</div>${meta?`<div class="chain-panel-meta${parts.length?' has-settings':''}">${meta}</div>`:''}${actions}</div>`;
 }
 function chainPanelKeydown(e,busId,idx){if(e.key==='Escape'){e.preventDefault();cancelChainNotes(busId)}else if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)){e.preventDefault();saveChainNotes(busId,idx)}}
 function moveChain(busId,idx,dir){const arr=STATE.chain[busId],j=idx+dir;if(j<0||j>=arr.length)return;[arr[idx],arr[j]]=[arr[j],arr[idx]];renderChain();saveState()}

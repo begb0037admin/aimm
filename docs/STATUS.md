@@ -1577,3 +1577,7 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 ## 2026-11-14 build 2026-11-14.09 — MixBus buttons match app style — deploy approved by Kevin
 - MixBus Clear, Edit, Save, Cancel and "Back to Hope's suggestion" changed from pills to the app's usual small rectangular buttons (Settings-tab style, 7px radius); hover/focus = purple gradient with white text; the round teal "+" gets the same purple hover. CSS only. Codex Playwright: 0 page errors, computed normal/hover styles checked.
 - Rollback: build .08, Worker 71e510b6-2a5e-436b-b4ec-4c75f48da9cf (then .07 2c3ccc51).
+
+## 2026-11-14 build 2026-11-14.10 — MixBus tiles simplified — deploy approved by Kevin
+- Removed the up/down arrow buttons from MixBus tiles (drag-and-drop reorders; × kept); help/tip text now says drag to reorder. "Waiting for Hope's suggestion" and "Back to Hope's suggestion" combined into one spot (only one shows). Clear, Edit and Back share one right edge. Bus count number and "1 ·" panel prefix removed. Codex Playwright: 0 page errors, right edges equal at 1500/700px, Hope chain context identical to .09.
+- Rollback: build .09, Worker 4d7fe181-986b-4954-b652-c203d0680c75 (then .08 71e510b6, .07 2c3ccc51).
