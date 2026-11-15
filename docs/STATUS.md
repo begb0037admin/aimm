@@ -1590,3 +1590,7 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 ## 2026-11-15 build 2026-11-15.1 — MixBus: connector lines between plugins — deploy approved by Kevin
 - Line between plugins now touches both tiles (28px, the full gap). Lines touching the selected plugin: 2px solid teal #2dd4bf. All other lines: 1px thin teal, same colour as the tile outlines (rgba(45,212,191,.35)). Was a short purple-to-teal gradient. CSS only; previews checked in the Codex harness.
 - Rollback: build .11, Worker 4c429a66-09c7-4c8c-8a3a-e191a4ae6d99 (then .10 c1084784).
+
+## 2026-11-15 build 2026-11-15.2 — Worker serves /docs/* (fixes Hope's video notes) — deploy approved by Kevin
+- Live site (aimixmasters.com / workers.dev) returned 404 for /docs/knowledge/* (kb-search-index.json, index.json, transcript .md) and /docs/ROADMAP.md, because the Worker only serves standalone/assets. Hope could find search snippets but "full transcript won't load". Worker now fetches /docs/* from the GitHub Pages copy (5 min cache; 404 if missing). App page unchanged apart from build stamp. Tested locally with wrangler dev: kb index 200 (10.7 MB), transcript 200, index.json 200, missing file 404.
+- Rollback: build .1, Worker 082e26a3-dcf7-4c8c-b93e-466f35a2bff2 (then .11 4c429a66).
