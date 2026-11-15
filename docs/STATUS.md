@@ -1598,3 +1598,8 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 ## 2026-11-15 build 2026-11-15.3 — Build number moved to the bottom of the Hope chat panel — deploy approved by Kevin
 - The "AIMM · build ..." stamp moved from the Mix Check specs column to the bottom of the Hope chat rail (#hopeRail), so it shows on every tab. Same element id and JS; only its place and CSS changed. Known: on long tabs (Settings) the rail stretches to page height, so the stamp is at the page bottom (existing rail behaviour, not changed).
 - Rollback: build .2, Worker 026a657c-9f8f-48c4-945e-0c5290ee00af (then .1 082e26a3).
+
+## 2026-11-15.4 — Hope moves the highlight; video-to-chain wording
+- Pinning or clearing a plugin's settings (set_plugin_settings / clear_plugin_settings) now selects that plugin tile, so the highlight follows Hope down the chain.
+- Added HOPE_CHAIN_BUILD_RULES (video chain shown as-is, library check, same-job swap with one-line reason, add in video order, pin then speak per plugin, say swaps vs exact) to both voice (RT_INSTRUCTIONS path) and text chat instructions.
+- Rollback: previous Worker 3229e8f4-62c0-456c-a846-85902a3d3db3 (.3).
