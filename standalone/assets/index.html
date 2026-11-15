@@ -363,7 +363,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #chain .chain-item{position:relative;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;flex:0 1 180px;min-width:170px;min-height:104px;padding:14px 18px;background:#1d2126;border:0;border-radius:10px;box-shadow:inset 0 0 0 1px rgba(45,212,191,.35);cursor:grab;user-select:none}
 #chain .chain-item.selected{background:#20262b;box-shadow:inset 0 0 0 2px var(--mb-teal)}
 #chain .chain-item:active{cursor:grabbing}
-#chain .chain-item::after{content:"";position:absolute;left:100%;top:calc(50% - 1px);width:22px;height:2px;background:linear-gradient(90deg,#9442dc,#2dd4bf);pointer-events:none}
+#chain .chain-item::after{content:"";position:absolute;left:100%;top:calc(50% - .5px);width:28px;height:1px;background:rgba(45,212,191,.35);pointer-events:none}
+#chain .chain-item.selected::after,#chain .chain-item:has(+ .chain-item.selected)::after{top:calc(50% - 1px);height:2px;background:#2dd4bf}
 #chain .chain-item{margin-right:28px}
 #chain .chain-item.no-connector::after{display:none}
 #chain .chain-list .sortable-ghost{opacity:.4;background:#163a39}
@@ -5211,7 +5212,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-14.11';
+const AIMM_BUILD = '2026-11-14.10';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);

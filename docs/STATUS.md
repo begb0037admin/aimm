@@ -1586,3 +1586,7 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 - Add plugin picker redesigned (Mix Check card, teal search, styled stage select, plugins grouped under blue stage headings, quiet "Stage · Publisher" on each row, no pills, purple/white hover). Edit on a plugin opens search + stage drop-down (defaults to the plugin's own stage) + list to choose a replacement; Save replaces in place and clears its settings (starts "Waiting for Hope's suggestion"); plugins that have settings still show the value boxes above. Tiles show name, stage (blue), maker only (summary line removed, more padding); stage also in panel header; "Waiting for Hope's suggestion" left-aligned; × on tiles clearly visible.
 - Codex Playwright: 0 page errors; Hope chain context identical to .10. Decision to confirm with Kevin: replaced plugin's old settings are cleared (not carried over).
 - Rollback: build .10, Worker c1084784-24fd-4a07-b58f-54172cda2659 (then .09 4d7fe181, .08 71e510b6, .07 2c3ccc51).
+
+## 2026-11-15 build 2026-11-15.1 — MixBus: connector lines between plugins — deploy approved by Kevin
+- Line between plugins now touches both tiles (28px, the full gap). Lines touching the selected plugin: 2px solid teal #2dd4bf. All other lines: 1px thin teal, same colour as the tile outlines (rgba(45,212,191,.35)). Was a short purple-to-teal gradient. CSS only; previews checked in the Codex harness.
+- Rollback: build .11, Worker 4c429a66-09c7-4c8c-8a3a-e191a4ae6d99 (then .10 c1084784).
