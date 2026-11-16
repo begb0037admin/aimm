@@ -1628,3 +1628,7 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 ## 2026-11-15.4 restored (Kevin: "go to build 4")
 - App and Worker restored byte-for-byte to the commit 87bb4910 state (build 2026-11-15.4: highlight follows pinned settings, video-to-chain wording, /docs proxy, connector lines, stamp in chat panel). No "all done" line (that was .5).
 - Rollback: Worker f7d5558b-f562-49a6-ab0c-a502651f5484 (pre-2026-11-15 state, app .7).
+
+## 2026-11-16.1 — Hope rail viewport height and quieter controls
+- Desktop Hope rail stays at viewport height with a 16px top offset. The Genre and Target header dropdowns are visually hidden; their select elements and JS remain. The four Hope compose buttons and their container have transparent resting backgrounds; hover and disabled styles remain. CSS matches Kevin's approved rail-mock2 reference.
+- Local preview only; not deployed. Rollback: build 2026-11-15.4.

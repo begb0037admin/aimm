@@ -3163,6 +3163,10 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .aichat-msg.user .aichat-actions-row .aichat-speak-message{display:none !important}
 /* Hide Hope's name labels in chat, Thinking, and the empty greeting. */
 #hopeRail .aichat-msg.ai .who,#hopeRail .aichat-msg.ai.thinking .who,#hopeRail .hope-empty-greeting .who{display:none!important}
+@media (min-width:1024px){.container > #hopeRail{align-self:start !important;position:sticky !important;top:16px !important;height:calc(100vh - 32px) !important;min-height:calc(100vh - 32px) !important}}
+#genreSelect + .cs,#platformSelect + .cs{display:none !important}
+#hopeRail .aichat-compose .send-col{background:transparent !important}
+#hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):not(:hover):not(:disabled){background:transparent !important}
 </style>
 </head>
 <body>
@@ -5213,7 +5217,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-15.4';
+const AIMM_BUILD = '2026-11-16.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
