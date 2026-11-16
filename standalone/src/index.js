@@ -536,16 +536,6 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === '/api/vendor-check') return checkVendorSources(request);
-    if (url.pathname.startsWith('/docs/') && (request.method === 'GET' || request.method === 'HEAD')) {
-      // Knowledge-base and roadmap files live in the repo's docs/ folder, served by GitHub Pages.
-      const upstream = await fetch('https://begb0037admin.github.io/aimm' + url.pathname, { cf: { cacheTtl: 300, cacheEverything: true } });
-      if (upstream.ok) {
-        const headers = new Headers(upstream.headers);
-        headers.set('cache-control', 'public, max-age=300');
-        return new Response(upstream.body, { status: 200, headers });
-      }
-      return new Response('Not found', { status: 404 });
-    }
     return env.ASSETS.fetch(request);
   },
 };

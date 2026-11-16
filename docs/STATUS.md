@@ -1619,3 +1619,8 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 - Kevin: spacebar does nothing on .6 (code compared identical to .11 for the key handler; only connector CSS + stamp placement differed). Restored exact .11 code (only stamp differs) to see if spacebar returns.
 - Pending after Kevin's result: redo approved items (connector lines, /docs proxy is Worker-side and stays, build stamp in chat panel, highlight follows pinned settings, wording incl. "I'm all done - over to you") via Codex + Jules review + Kevin approval, with a spacebar regression test.
 - Rollback chain: .6 Worker 175e54f3-ebc3-42c8-b8a5-3290ca0f457e -> .5 -> .4 ea2d74ee-26b1-4e2b-abdb-48837c78aa79 -> .3 3229e8f4-62c0-456c-a846-85902a3d3db3.
+
+## 2026-11-15.7 (Worker) — removed the /docs/* proxy
+- Kevin: spacebar voice start still dead on the .11 app code, "it was working before you started messing". The only change from the day still live was the Worker /docs/* proxy (added in .2). Removed: Worker source restored to its 2026-11-14.11 state. App code = .11. Everything is now as before 2026-11-15.
+- Consequence: Hope's video-notes lookup returns to 404 on the Worker (the original fault) until it is redone properly (Codex + review + spacebar regression test).
+- Rollback: Worker 564b2b31-b79b-4010-b7fb-566f2d2c9709 (with proxy).
