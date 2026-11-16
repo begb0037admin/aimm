@@ -1603,3 +1603,8 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 - Pinning or clearing a plugin's settings (set_plugin_settings / clear_plugin_settings) now selects that plugin tile, so the highlight follows Hope down the chain.
 - Added HOPE_CHAIN_BUILD_RULES (video chain shown as-is, library check, same-job swap with one-line reason, add in video order, pin then speak per plugin, say swaps vs exact) to both voice (RT_INSTRUCTIONS path) and text chat instructions.
 - Rollback: previous Worker 3229e8f4-62c0-456c-a846-85902a3d3db3 (.3).
+
+## 2026-11-15.5 — Hope says "I'm all done - over to you"
+- Added step 6 to HOPE_CHAIN_BUILD_RULES: after the last plugin Hope must say "I'm all done - over to you."
+- ElevenLabs agent Hope (agent_9001m42hnyrwedts40en5a5npapp): reasoning_effort high -> low to cut reply delay (new version agtvrsn_6701m7j0cdbne6etf5th5t4fnx43; previous agtvrsn_1301m69mdbhxf9ma9dayb6r7sx9b). Revert by setting reasoning_effort back to high.
+- Rollback app: Worker ea2d74ee-26b1-4e2b-abdb-48837c78aa79 (.4).
