@@ -1,5 +1,22 @@
 # HANDOVER.md — AIMM
 
+## CURRENT CHANGE — 2026-11-16, live build 2026-11-16.1 (deployed, Kevin approved)
+
+MixBus Hope rail: fills window height (sticky, desktop), header Genre/Target dropdowns hidden (selects + JS kept), grey block behind the four compose buttons removed (hairlines and outlines kept). 4 CSS lines only. Commit `9ddcf691`, Worker `10b5f61b-4274-476e-96db-6674ff5c2a96`. Rollback: 2026-11-15.4 (commit `14b990d2`, Worker `f9be20ff-23b6-43c5-8adb-ed89422e3247`). Live code includes build .4 (highlight follows pinned settings + video-to-chain wording); build .5 ("all done - over to you") is NOT live.
+
+KEVIN'S RULES THIS SESSION: do NOT change the Hope chat panel layout or buttons ("absolute no"); only change what he asks; show only the tab he asked about; one short step at a time; say deployed vs preview + build number + Cmd+Shift+R. Process: Jules designs/reviews, Codex implements, Kevin approves a preview, then deploy. Never kill a Codex run mid-edit (it leaves uncommitted edits).
+
+OPEN, IN ORDER (Kevin wants Hope to put a master bus chain from a video on the MixBus visibly, one plugin at a time; the feature already exists, it breaks on these):
+1. Luna tool loop cap 4 -> 8 (index.html ~16200/16225).
+2. Garbled-speech check (~15678): allow apostrophes ("I'm", "Let's"); the same flag blocks ElevenLabs tool calls (~19074).
+3. add_plugin_to_bus (~17202): skip/swap an unowned plugin and keep loading, report skips.
+4. Keep a failed request in Hope's context after an error (~16255).
+5. ElevenLabs "Thinking..." state (brief: /Users/admin/aimm-previews/BRIEF-el-thinking.md).
+6. Measure the delay: no call after the change was recorded by ElevenLabs; ask Kevin for one short call on the ElevenLabs route, then read it with agents_get_conversation (turn metrics). ElevenLabs agent reasoning_effort was set high -> medium on 2026-11-16 (revert = high).
+Brief: /Users/admin/aimm-previews/BRIEF-hope-masterchain.md (needs trimming to items 1-3; drop the new set_bus_chain tool).
+
+ALSO OPEN: spacebar not starting Hope's voice (Kevin running Codex via /Users/admin/aimm-previews/BRIEF-spacebar-codex.md); "all done - over to you" wording (.5) needs proper process; live words on the ElevenLabs route undecided; PluginHub bridge connection not approved (bridge running on 127.0.0.1:48321); 4 matched master-bus plugins question unanswered. PARKED: palette placement, master bus Clear failure, garbled-voice gate, keep-playing-on-Select, stems Key/BPM, duplicate captures, "Open Spotify", coach chat bug `activeToolNames is not defined` (~16371), tempo accuracy test, tap companion on macOS 26, true peak 0.8 dB gap.
+
 ## CURRENT CHANGE — 2026-11-14, build 2026-11-14.07 (confirmed by Kevin)
 
 Stem-view purple band, Audio Specs prioritise stems, thumbnails, live white line with track player, hidden diagnostics, and a single round Clear/Stop button. Build .06 is BROKEN (lost Spotify player) — do not redeploy. Pushing to main can auto-deploy; keep main == live. Full detail, rollback chain and open items: `docs/handovers/2026-11-14-spotify-stems-companion.md`. Latest Worker `2c3ccc51-e351-421e-8711-88b04b63a0a5`.

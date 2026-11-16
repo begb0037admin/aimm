@@ -1631,4 +1631,11 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 
 ## 2026-11-16.1 — Hope rail viewport height and quieter controls
 - Desktop Hope rail stays at viewport height with a 16px top offset. The Genre and Target header dropdowns are visually hidden; their select elements and JS remain. The four Hope compose buttons and their container have transparent resting backgrounds; hover and disabled styles remain. CSS matches Kevin's approved rail-mock2 reference.
-- Local preview only; not deployed. Rollback: build 2026-11-15.4.
+- DEPLOYED 2026-11-16 (Worker 10b5f61b-4274-476e-96db-6674ff5c2a96), approved by Kevin, Jules APPROVED. Rollback: build 2026-11-15.4 (commit 14b990d2, Worker f9be20ff-23b6-43c5-8adb-ed89422e3247).
+
+## 2026-11-16 (docs only, no app change) — Hope master-chain faults found; ElevenLabs thinking level
+- Live build stays 2026-11-16.1. Live code includes build .4 (highlight follows pinned settings; HOPE_CHAIN_BUILD_RULES). Build .5 ("I'm all done - over to you") is NOT live.
+- ElevenLabs Hope agent reasoning_effort changed high -> medium (agent version agtvrsn_2701m7k5hyepe1sbqgtf9nfpwtbf). Effect on speed not yet measured (no call recorded by ElevenLabs after the change). To revert: set reasoning_effort back to high.
+- Faults found from Kevin's live chat (Deepgram/Luna route unless stated), none fixed yet: (1) Luna tool loop capped at 4 (`while(loops++<4)` ~line 16200, error at ~16225), (2) hopeTranscriptLooksGarbled (~15678) splits "I'm"/"Let's" so a lone consonant marks speech garbled -> "Could you repeat that?"; on the ElevenLabs route the same flag also blocks client tool calls (~19074), (3) add_plugin_to_bus (~17202) throws on an unowned plugin and the chain stops (ElevenLabs route), (4) a failed Luna turn is saved as Hope's reply and the request is lost from context (history keeps last 5, ~16176/16255), (5) no "Thinking..." state on the ElevenLabs route between Kevin finishing and Hope speaking.
+- Briefs (no code written): /Users/admin/aimm-previews/BRIEF-hope-masterchain.md (Jules: APPROVED with 6 changes; needs trimming to the three fixes 1-3, NO new set_bus_chain tool because chain building already exists) and BRIEF-el-thinking.md.
+- Process still required: Codex implements (gpt-6-sol medium), Jules reviews, Kevin approves a preview, then deploy. Kevin forbade any change to the Hope panel layout/buttons/header.
