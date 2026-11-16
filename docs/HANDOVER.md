@@ -4,7 +4,7 @@
 
 MixBus Hope rail: fills window height (sticky, desktop), header Genre/Target dropdowns hidden (selects + JS kept), grey block behind the four compose buttons removed (hairlines and outlines kept). 4 CSS lines only. Commit `9ddcf691`, Worker `10b5f61b-4274-476e-96db-6674ff5c2a96`. Rollback: 2026-11-15.4 (commit `14b990d2`, Worker `f9be20ff-23b6-43c5-8adb-ed89422e3247`). Live code includes build .4 (highlight follows pinned settings + video-to-chain wording); build .5 ("all done - over to you") is NOT live.
 
-KEVIN'S RULES THIS SESSION: do NOT change the Hope chat panel layout or buttons ("absolute no"); only change what he asks; show only the tab he asked about; one short step at a time; say deployed vs preview + build number + Cmd+Shift+R. Process: Jules designs/reviews, Codex implements, Kevin approves a preview, then deploy. Never kill a Codex run mid-edit (it leaves uncommitted edits).
+KEVIN'S RULES THIS SESSION: before proposing anything, check git log and the live code for what is already built (on 16 Nov a rebuild of the existing chain feature was wrongly proposed); do NOT change the Hope chat panel layout or buttons ("absolute no"); only change what he asks; show only the tab he asked about; one short step at a time; say deployed vs preview + build number + Cmd+Shift+R. Process: Jules designs/reviews, Codex implements, Kevin approves a preview, then deploy. Never kill a Codex run mid-edit (it leaves uncommitted edits).
 
 OPEN, IN ORDER (Kevin wants Hope to put a master bus chain from a video on the MixBus visibly, one plugin at a time; the feature already exists, it breaks on these):
 1. Luna tool loop cap 4 -> 8 (index.html ~16200/16225).
