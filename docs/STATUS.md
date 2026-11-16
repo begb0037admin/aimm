@@ -1608,3 +1608,9 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 - Added step 6 to HOPE_CHAIN_BUILD_RULES: after the last plugin Hope must say "I'm all done - over to you."
 - ElevenLabs agent Hope (agent_9001m42hnyrwedts40en5a5npapp): reasoning_effort high -> low to cut reply delay (new version agtvrsn_6701m7j0cdbne6etf5th5t4fnx43; previous agtvrsn_1301m69mdbhxf9ma9dayb6r7sx9b). Revert by setting reasoning_effort back to high.
 - Rollback app: Worker ea2d74ee-26b1-4e2b-abdb-48837c78aa79 (.4).
+
+## 2026-11-15.6 — REVERT of .4 and .5 (Kevin: spacebar activation broken)
+- App code restored to the 2026-11-15.3 code (only the build stamp differs). Removed: highlight-follows-pinned-settings, HOPE_CHAIN_BUILD_RULES, "I'm all done - over to you".
+- ElevenLabs Hope reasoning_effort set back to high.
+- To be redone properly: Codex implements, Jules reviews, Kevin approves, with a spacebar regression test.
+- Rollback chain: .5 Worker (this deploy's predecessor) -> .4 ea2d74ee-26b1-4e2b-abdb-48837c78aa79 -> .3 3229e8f4-62c0-456c-a846-85902a3d3db3.
