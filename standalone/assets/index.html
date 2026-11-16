@@ -363,7 +363,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #chain .chain-item{position:relative;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;flex:0 1 180px;min-width:170px;min-height:104px;padding:14px 18px;background:#1d2126;border:0;border-radius:10px;box-shadow:inset 0 0 0 1px rgba(45,212,191,.35);cursor:grab;user-select:none}
 #chain .chain-item.selected{background:#20262b;box-shadow:inset 0 0 0 2px var(--mb-teal)}
 #chain .chain-item:active{cursor:grabbing}
-#chain .chain-item::after{content:"";position:absolute;left:100%;top:calc(50% - 1px);width:22px;height:2px;background:linear-gradient(90deg,#9442dc,#2dd4bf);pointer-events:none}
+#chain .chain-item::after{content:"";position:absolute;left:100%;top:calc(50% - .5px);width:28px;height:1px;background:rgba(45,212,191,.35);pointer-events:none}
+#chain .chain-item.selected::after,#chain .chain-item:has(+ .chain-item.selected)::after{top:calc(50% - 1px);height:2px;background:#2dd4bf}
 #chain .chain-item{margin-right:28px}
 #chain .chain-item.no-connector::after{display:none}
 #chain .chain-list .sortable-ghost{opacity:.4;background:#163a39}
@@ -1275,6 +1276,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #railReopen{position:fixed;right:14px;bottom:64px;z-index:1500;width:42px;height:42px;border-radius:50%;background:#1f2937;color:#e5e7eb;border:1px solid #374151;font-size:calc(var(--inv-text-scale, 1) * 18px);cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 #railReopen:hover{border-color:#4fd8ff66}
 #buildStamp{align-self:center;margin:0 auto;font: 600 calc(var(--inv-text-scale, 1) * 9px) ui-monospace,Menlo,monospace;letter-spacing:.02em;color:#3d4650;pointer-events:none;user-select:text}
+#hopeRail #buildStamp{flex:0 0 auto;align-self:stretch;margin:0;padding:10px 0 12px;text-align:center;font:600 calc(var(--inv-text-scale, 1) * 10px) ui-monospace,Menlo,monospace;letter-spacing:.02em;color:#71787e}
 #mcSpecs #buildStamp{align-self:center;margin: auto auto 0;padding:18px 0 14px;text-align:center;font-size:calc(var(--inv-text-scale, 1) * 8px);color:#5a636e}
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -3212,6 +3214,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     <button id="railToggle" title="Collapse — reopen any time with the Chat button">⇥</button>
   </div>
   <div class="rail-body" id="hopeRailBody"></div>
+  <div id="buildStamp"></div>
 </div>
 <!-- R3 step 6 (BLOCKER-3 fallback): the app content (header + tab strip + every
      .panel + the fixed build stamp / rail-reopen) is wrapped in ONE .app-col
@@ -3708,7 +3711,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         <div class="sub" id="refDynRangeSub">no file loaded</div><div id="refDynRangeTag"></div><div class="oz-bar-track"><div id="refDynRangeBar" class="oz-bar-fill" style="width:0%"></div></div>
         <div class="meter-override"><label>Manual DR:</label><input type="number" id="ovDynRange" step="0.1" placeholder="e.g. 6.0" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovDynRange')" title="Clear override">✕</button></div>
       </div>
-      <div id="buildStamp"></div>
     </div>
 
     <!-- Input — the real drop-zone/live-input engine physically relocated
@@ -5211,7 +5213,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-15.7';
+const AIMM_BUILD = '2026-11-15.4';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -15843,6 +15845,7 @@ const HOPE_USAGE_VOICE = {
   sessionTurns:0, sessionInputSeconds:0, sessionSpeechChars:0, sessionSpeechCredits:0,
   sessionSpeechCreditsKnown:true, sessionLlmCost:0, sessionLlmModel:'', sessionLlmInputTokens:0, sessionLlmOutputTokens:0, lunaAbort:null,
 };
+const HOPE_CHAIN_BUILD_RULES = `Building a chain from a video: 1) Search the videos. Name the video and its creator, and read out the plugin list exactly as the video shows it. Never call something "from the video" if it is not. 2) For each plugin, check Kev's library. If he owns it, use it. If he does not, pick the closest plugin he owns for the same job and say in one line why it fits. 3) Clear the bus, then add the plugins in the video's order. 4) Go through the chain one plugin at a time. Pin that plugin's settings first, then say them out loud. The highlight moves to that plugin, so Kev can see its settings as you talk. 5) Tell Kev which plugins are swaps and which are exact matches.`;
 const HOPE_INVENTORY_RULES = `AIMM inventory access: use inventory_navigate to open any requested sidebar item, including Status, Tools, Library and Categories, and report the current unavailable reason for disabled items. Use inventory_search for the local scanned inventory; this is separate from the MixBus recommendation catalogue. Only use inventory_add_to_bus when Kev explicitly asks to add an installed plug-in, after confirming its exact name and publisher in the scan and selecting a valid bus and stage. Never claim the scan is current if no scan rows are available. Menu navigation alone does not authorize scanning folders, downloading installers, sharing the inventory, or changing MixBus.`;
 const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural and complete: lead with the answer, stay under about 120 words, and finish the sentence before stopping; never end mid-sentence. Usually use one or two sentences and 20–35 words. Answer directly; use contractions and producer language. For how-to questions, give the usable steps from the knowledge base directly and in order, using numbered steps (at most five); ask a clarifying question only when the knowledge base has nothing usable. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and MixBus actions; never guess when live state is available. Voice and typed chat are the same Hope and have the same full AIMM tool set. For mixing, production, plugin or factual questions, search the knowledge base first. If Kev names a video title, read that video; for an unnamed video reference, use the shared vague-video candidate list, choose one candidate based on its title, channel, and transcript content, and explain in one sentence in your own words what that video covers; never quote or copy the transcript, and follow the page's closest-match fallback if no candidate title is named. Otherwise read the top-ranked search result. Only if search_yt_knowledge and read_yt_knowledge, where relevant, return nothing that answers the question, call web_search_fallback once, then answer from its result and say it came from the web. Never use web_search_fallback first. When Kev asks for a MixBus action, call the matching tool and report its actual result; do not tell him to do it manually if a tool exists. Use write tools only for what he actually asked you to change; if he says explain only, make no changes. Use set_stem_selection for loaded stem selection and playback control. If a requested action has no matching tool, say so plainly. Do not narrate internal work.`;
 function hopeUsageSelectTools(utterance){
@@ -16172,7 +16175,7 @@ async function hopeUsageSendLunaTurn(options={}){
   }catch(e){ctxBlock='\n\n(workbench context unavailable: '+(e.message||e)+')';}
   const tools=hopeUsageSelectTools(text).map(t=>({type:'function',name:t.name,description:t.description,parameters:t.input_schema,strict:false}));
   const base=AIMM_PROXY_URL.replace(/\/+$/,'');
-  const inputItems=[{role:'system',content:HOPE_USAGE_SYSTEM+'\n\n'+HOPE_INVENTORY_RULES+ctxBlock},...history];
+  const inputItems=[{role:'system',content:HOPE_USAGE_SYSTEM+'\n\n'+HOPE_INVENTORY_RULES+'\n\n'+HOPE_CHAIN_BUILD_RULES+ctxBlock},...history];
   let finalText='',inputTokens=0,outputTokens=0,cachedTokens=0,webSearchRequests=0,loops=0,toolEvents=[];
   let speechRemainder='',speechQueue=Promise.resolve(),speechError='';
   const enqueueSpeech=chunk=>{
@@ -17292,6 +17295,7 @@ async function handleToolCall(name,args){
         const text=(args.settings||'').trim();
         if(text)arr[idx].notes=text;else delete arr[idx].notes;
         delete arr[idx].notesOrig;
+        chainSelected[bus]=arr[idx];delete chainEditing[bus];delete chainReplacement[bus];
         renderChain();saveState();
         return{ok:true,bus,position:idx+1,plugin:arr[idx].n,settings:arr[idx].notes||''};
       }
@@ -17299,7 +17303,7 @@ async function handleToolCall(name,args){
         const bus=args.bus;const arr=STATE.chain[bus];if(!arr)throw new Error('Unknown bus: '+bus);
         const idx=resolveChainIdx(bus,args);
         if(idx<0)throw new Error('Plugin not on '+bus+' bus');
-        delete arr[idx].notes;delete arr[idx].notesOrig;renderChain();saveState();
+        delete arr[idx].notes;delete arr[idx].notesOrig;chainSelected[bus]=arr[idx];delete chainEditing[bus];delete chainReplacement[bus];renderChain();saveState();
         return{ok:true,bus,position:idx+1,plugin:arr[idx].n};
       }
       // -- Mastering Reference (EQ tiles) --
@@ -18428,7 +18432,7 @@ async function rtStart(opts){
       // and stops recommending things from generic training data. Research notes
       // (Insight tab) are appended on top of that so curated reference
       // material is in scope for the whole voice session.
-      let fullInstructions = RT_INSTRUCTIONS + '\n\n' + buildLibraryDigest();
+      let fullInstructions = RT_INSTRUCTIONS + '\n\n' + HOPE_CHAIN_BUILD_RULES + '\n\n' + buildLibraryDigest();
       const research = buildResearchDigest();
       if (research) fullInstructions += '\n\n' + research;
       // Cross-conversation memory — Kev's profile dossier built up over time.

@@ -1624,3 +1624,7 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 - Kevin: spacebar voice start still dead on the .11 app code, "it was working before you started messing". The only change from the day still live was the Worker /docs/* proxy (added in .2). Removed: Worker source restored to its 2026-11-14.11 state. App code = .11. Everything is now as before 2026-11-15.
 - Consequence: Hope's video-notes lookup returns to 404 on the Worker (the original fault) until it is redone properly (Codex + review + spacebar regression test).
 - Rollback: Worker 564b2b31-b79b-4010-b7fb-566f2d2c9709 (with proxy).
+
+## 2026-11-15.4 restored (Kevin: "go to build 4")
+- App and Worker restored byte-for-byte to the commit 87bb4910 state (build 2026-11-15.4: highlight follows pinned settings, video-to-chain wording, /docs proxy, connector lines, stamp in chat panel). No "all done" line (that was .5).
+- Rollback: Worker f7d5558b-f562-49a6-ab0c-a502651f5484 (pre-2026-11-15 state, app .7).
