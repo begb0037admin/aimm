@@ -4629,6 +4629,101 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   #hopeRail .aichat-msg.fixaction .am-acts button,
   #eq.oz-mixcheck .mcs-actions button{transition:none!important}
 }
+/* Plugins tab colours 2026-11-17 */
+#library,#invPopoverLayer,#invProductMenu,#invNoteOverlay,#invProductMetaOverlay,#invTagManagerOverlay,#aimmLocalToolOverlay,.aimm-local-tool{--pm-grad:linear-gradient(135deg,#9442dc,#b970ff);--pm-off:#7b8190;--pm-dim:#9ca3af}
+
+/* A. Strokes removed: border colour goes transparent (fill shows through), width untouched */
+#library :is(.inv-btn,.inv-format,.inv-action,.inv-action.hub,.inv-search,.inv-stat,.inv-note,.inv-folder-summary,.inv-root,.inv-vendor,.inv-table,.inv-layout,.inv-scope-banner,.inv-status-pill,.inv-hidden-badge,.inv-tag-filter-chip,.inv-chip,.inv-vst-filter-menu,.inv-tag-filter-menu,.inv-view-panel,.inv-view-menu>summary,.inv-synthetic-preview,.inv-empty),
+#invPopoverLayer :is(.inv-vst-filter-menu,.inv-tag-filter-menu,.inv-view-panel,.inv-vst-option,.inv-tag-filter-option),
+#library :is(.inv-vst-option,.inv-tag-filter-option,.inv-tag-row),
+#invProductMenu,#invProductMetaOverlay :is(.inv-product-meta-dialog,.inv-product-meta-option,.inv-product-tag-choice,.inv-kept-version,textarea,select,input:not([type=checkbox])),
+#invNoteOverlay :is(.inv-note-dialog,textarea,select,button),
+#invTagManagerOverlay :is(.inv-tag-manager,.inv-tag-done,.inv-tag-action,.inv-tag-row,.inv-tag-icon,.inv-tag-vendor-head,.inv-tag-edit input,.inv-tag-new input,.inv-tag-search,.inv-tag-swatch),
+.aimm-local-tool,.aimm-local-tool :is(button,a,input:not([type=checkbox]),select,.aimm-tool-list article,.aimm-tool-check,.aimm-tool-empty),
+#library .inv-scope-banner{border-color:transparent!important;box-shadow:none!important}
+
+/* B. Rest greys: kept where they already match; gradients and tints made solid grey */
+#library .inv-stat{background:var(--pv-neutral-bg)!important}                         /* was gradient #191d22>#14171a; source: .mc-tile palette-v2 rule (2947) */
+#library :is(.inv-logo,.inv-logo.coral,.inv-logo.gold,.inv-logo.mint,.inv-logo.violet){background:var(--pv-neutral-bd)!important}  /* four tints -> one grey */
+#library .inv-vendor-count{background:var(--pv-neutral-bd)!important}
+#library :is(.inv-chip,.inv-chip.au,.inv-chip.vst,.inv-chip.clap){background:var(--pv-neutral-bd)!important;color:#f3f4f6!important}  /* green/blue/bronze -> grey; bronze/gold removed app-wide */
+#library .inv-hidden-badge{color:var(--pm-dim)!important}
+#library .inv-tag-filter-chip{background:var(--pv-neutral-bg)!important;color:#f3f4f6!important}
+#library .inv-tag-filter-chip button{color:var(--pm-dim)!important}
+#library .inv-user-note{color:var(--pm-dim)!important}
+
+/* C. Selected / primary: solid teal, black text (palette-v2 selected rule; #chain #autoFillBtn) */
+#library :is(.inv-btn.primary,.inv-format.on,.inv-format[aria-pressed="true"],.inv-cards-quick.active,.inv-vst-filter.on>summary,.inv-side-button.active,.inv-vst-option.on,.inv-vst-option[aria-pressed="true"],.inv-action.hub,.inv-fav.on,.inv-product-actions[aria-expanded="true"],.inv-tag-filter-option[aria-pressed="true"]),
+#invPopoverLayer :is(.inv-vst-option.on,.inv-tag-filter-option[aria-pressed="true"]),
+#invNoteOverlay button.primary,#invTagManagerOverlay .inv-tag-row.selected,#invProductMetaOverlay .inv-product-meta-option.selected{background:var(--pv-teal)!important;color:var(--pv-black)!important}
+#library .inv-side-button.active :is(.inv-side-icon,.inv-side-label){color:var(--pv-black)!important}
+#library :is(.inv-vst-option.on,.inv-tag-filter-option[aria-pressed="true"]) :is(.inv-vst-option-state,.inv-tag-filter-count,.inv-tag-filter-name),#invPopoverLayer :is(.inv-vst-option.on,.inv-tag-filter-option[aria-pressed="true"]) :is(.inv-vst-option-state,.inv-tag-filter-count,.inv-tag-filter-name){color:var(--pv-black)!important}
+#invTagManagerOverlay .inv-tag-row.selected :is(.inv-tag-select,.inv-tag-name,.inv-tag-count){color:var(--pv-black)!important}
+
+/* D. Hover and keyboard focus: purple gradient (#chain #presetsBtn, .chain-add:hover) */
+#library :is(.inv-btn,.inv-format,.inv-action,.inv-more,.inv-side-button,.inv-vst-option,.inv-tag-filter-option,.inv-fav,.inv-product-actions,.inv-vendor-toggle,.inv-sidebar-head button,.inv-sidebar-section-toggle,.inv-view-menu>summary):hover:not(:disabled):not(.active):not(.on):not([aria-disabled="true"]),
+#invPopoverLayer :is(.inv-vst-option,.inv-tag-filter-option):hover:not(.on),
+#invProductMenu .inv-menu-row:hover:not(.disabled),
+#invNoteOverlay button:hover:not(.primary),
+#invTagManagerOverlay :is(.inv-tag-done,.inv-tag-action,.inv-tag-icon,.inv-tag-order button):hover:not(:disabled),
+#invProductMetaOverlay .inv-product-meta-option:hover:not(.selected),
+.aimm-local-tool :is(button,a):hover:not(:disabled){background:var(--pm-grad)!important;color:#fff!important;border-color:transparent!important;outline-color:transparent!important}
+#library .inv-sidebar.is-collapsed .inv-side-button:focus-visible{outline-color:transparent!important}
+
+/* E. Greyed out: Mix Check disabled modes (opacity .76) + palette-v2 disabled ink #7b8190 */
+#library :is(.inv-btn,.inv-side-button):is(:disabled,[aria-disabled="true"]),.aimm-local-tool button:disabled,#invProductMenu .inv-menu-row.disabled{color:var(--pm-off)!important;opacity:.76!important}
+#library .inv-sidebar-section,#library .inv-sidebar-head,#library .inv-status-note,#library .inv-tools-note{color:var(--pm-dim)!important}
+
+/* F. Status colours: the page's existing capture-state tokens replace red/green/amber */
+#library .inv-format-status.updates,#library .inv-version-row .inv-version-latest,#library .inv-version-row .inv-version-warning{background-color:#f472b6!important}
+#library .inv-version-row .inv-version-latest,#library .inv-version-row .inv-version-warning{background:none!important;color:#f472b6!important}
+#library .inv-format-status.up-to-date{background:#7ee2a8!important}
+#library .inv-format-status.manual-check{background:#facc15!important}
+#library .inv-format-status.unchecked{background:#7b8190!important}
+#library .inv-version-row.up-to-date .inv-version-current{color:#7ee2a8!important}
+#library .inv-version-row.manual-check .inv-version-current{color:#facc15!important}
+#library .inv-side-button[data-inv-scope="updates"] .inv-side-count{color:#f472b6!important}
+#library .inv-side-button[data-inv-scope="up-to-date"] .inv-side-count{color:#7ee2a8!important}
+#library .inv-side-button[data-inv-scope="manual-check"] .inv-side-count{color:#facc15!important}
+#library .inv-side-button[data-inv-scope="unchecked"] .inv-side-count{color:#7b8190!important}
+#library .inv-side-count{box-shadow:none!important}
+#library .inv-status.error{color:#f472b6!important}#library .inv-status.good{color:#7ee2a8!important}
+
+/* G. Star and icon buttons */
+#library .inv-fav.on{color:var(--pv-black)!important}
+#library .inv-fav:not(.on){color:var(--pm-dim)!important}
+
+/* H. Product menu action tints: solid grey fill, text colour carries meaning */
+#invProductMenu .inv-menu-row.green{background:var(--pv-neutral-bg)!important;color:#7ee2a8!important}
+#invProductMenu .inv-menu-row.gold{background:var(--pv-neutral-bg)!important;color:#facc15!important}
+#invProductMenu .inv-menu-row.red{background:var(--pv-neutral-bg)!important;color:#f472b6!important}
+#invNoteOverlay button.danger{color:#f472b6!important}
+
+/* I. Hover tints that were blue/purple */
+#library .inv-tag-filter-option:hover{background:var(--pm-grad)!important}
+#invTagManagerOverlay .inv-tag-plugin:hover{background:var(--pv-neutral-bg)!important}
+
+/* J. Controls accent */
+#library :is(input[type=checkbox],input[type=range],input[type=radio]),.aimm-local-tool input[type=checkbox],#invProductMetaOverlay input[type=checkbox],#invProductMetaOverlay .inv-product-tag-choice input,#invTagManagerOverlay input[type=checkbox]{accent-color:var(--pv-teal)!important}
+
+/* K. (superseded by M) Focus ring colour (browser default blue) removed; keyboard focus shows the hover gradient instead */
+#library :focus,#library :focus-visible,#invTagManagerOverlay :focus,#invTagManagerOverlay :focus-visible,#invNoteOverlay :focus,#invNoteOverlay :focus-visible,#invProductMetaOverlay :focus,#invProductMetaOverlay :focus-visible,#invProductMenu :focus,#invPopoverLayer :focus,.aimm-local-tool :focus,.aimm-local-tool :focus-visible{outline-color:transparent!important}
+
+/* L. Scope banner tints and status detail rows: solid grey fill, status text in the page's capture-state colours */
+#library :is(.inv-scope-banner.updates,.inv-scope-banner.up-to-date,.inv-scope-banner.manual-check,.inv-scope-banner.unchecked){background:var(--pv-neutral-bg)!important;border-color:transparent!important}
+#library .inv-scope-banner.updates strong,#library .inv-status-detail-row strong{color:#f472b6!important}
+#library .inv-scope-banner.up-to-date strong,#library .inv-status-detail-row.up-to-date{color:#7ee2a8!important}
+#library .inv-scope-banner.manual-check strong,#library .inv-status-detail-row.manual-check{color:#facc15!important}
+#library .inv-scope-banner.unchecked strong,#library .inv-status-detail-row.unchecked{color:var(--pm-off)!important}
+#library .inv-paid-upgrade-badge{background:var(--pv-neutral-bd)!important;border-color:transparent!important;color:#f3f4f6!important}
+
+/* M. NO coloured rings, strokes or lines anywhere in the Plugins tab and the dialogs/menus it opens.
+   Every border colour, outline, ring shadow, drop shadow and underline colour is neutralised. Chevron glyphs (::before/::after) are icons, not lines, and are kept. */
+#library,#library *,#invPopoverLayer,#invPopoverLayer *,#invProductMenu,#invProductMenu *,#invNoteOverlay,#invNoteOverlay *,#invProductMetaOverlay,#invProductMetaOverlay *,#invTagManagerOverlay,#invTagManagerOverlay *,#aimmLocalToolOverlay,#aimmLocalToolOverlay *{border-color:transparent!important;outline:none!important;box-shadow:none!important;text-decoration-color:transparent!important;-webkit-tap-highlight-color:transparent}
+#library :is(textarea,input,select,button,summary,a,details):is(:focus,:focus-visible,:active),#invNoteOverlay :is(textarea,input,select,button):is(:focus,:focus-visible),#invProductMetaOverlay :is(textarea,input,select,button):is(:focus,:focus-visible),#invTagManagerOverlay :is(textarea,input,select,button):is(:focus,:focus-visible),#aimmLocalToolOverlay :is(textarea,input,select,button,a):is(:focus,:focus-visible),#invPopoverLayer :is(input,select,button):is(:focus,:focus-visible){outline:none!important;box-shadow:none!important;border-color:transparent!important}
+#library hr,#invProductMenu hr{border:0!important;background:transparent!important}
+/* Scrollbars: grey thumb on transparent track, no colour */
+#library *,#invPopoverLayer *,#invProductMenu,#invNoteOverlay *,#invProductMetaOverlay *,#invTagManagerOverlay *,#aimmLocalToolOverlay *{scrollbar-color:#2a2e35 transparent}
 </style>
   <div id="pluginInventoryUI" class="inv-shell">
     <div id="invLayout" class="inv-layout">
@@ -5219,7 +5314,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-17.1';
+const AIMM_BUILD = '2026-11-17.2';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);

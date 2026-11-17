@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## 2026-11-17 build 2026-11-17.2 — Plugins tab colours
+
+Approved Plugins colour palette applied to the tab and its menus and dialogs. CSS only: grey resting surfaces, teal selections, purple hover, dim disabled text, and no coloured strokes or divider lines. Local branch plugins-colours, not deployed.
+
 ## 2026-11-17 build 2026-11-17.1 — MixBus empty-row add buttons
 
 Empty MixBus rows place the round + button before the bus name, with the buttons aligned in one column. Rows with plugins are unchanged. Local branch plus-align, not deployed.
