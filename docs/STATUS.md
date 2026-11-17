@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## 2026-11-17 build 2026-11-17.3 — Plugins status and format colours
+
+Status dots, counts, labels and version text use the approved red, green, amber and grey colours. Format badges distinguish AU, VST2, VST3 and CLAP; product dialog buttons use the approved grey, teal and purple states. VST filtering still includes VST2 and VST3. Local branch plugins-status, not deployed.
+
 ## 2026-11-17 build 2026-11-17.2 — Plugins tab colours
 
 Approved Plugins colour palette applied to the tab and its menus and dialogs. CSS only: grey resting surfaces, teal selections, purple hover, dim disabled text, and no coloured strokes or divider lines. DEPLOYED 2026-11-17 (Worker 0507d82a-d592-443e-9f73-ff87b21cff45), approved by Kevin. Rollback: build 2026-11-17.1 (Worker b4f1e41c-317f-4990-9797-69a28afcfefd).

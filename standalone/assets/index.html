@@ -4724,6 +4724,45 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library hr,#invProductMenu hr{border:0!important;background:transparent!important}
 /* Scrollbars: grey thumb on transparent track, no colour */
 #library *,#invPopoverLayer *,#invProductMenu,#invNoteOverlay *,#invProductMetaOverlay *,#invTagManagerOverlay *,#aimmLocalToolOverlay *{scrollbar-color:#2a2e35 transparent}
+/* Plugins tab status and format colours 2026-11-17 */
+#library{--st-red:#f87171;--st-green:#42c995;--st-amber:#facc15;--st-grey:#7b8190}
+#library .inv-format-status.updates{background:var(--st-red)!important}
+#library .inv-format-status.up-to-date{background:var(--st-green)!important}
+#library .inv-format-status.manual-check{background:var(--st-amber)!important}
+#library .inv-format-status.unchecked{background:var(--st-grey)!important}
+#library .inv-side-button[data-inv-scope="updates"] .inv-side-count{color:var(--st-red)!important}
+#library .inv-side-button[data-inv-scope="up-to-date"] .inv-side-count{color:var(--st-green)!important}
+#library .inv-side-button[data-inv-scope="manual-check"] .inv-side-count{color:var(--st-amber)!important}
+#library .inv-side-button[data-inv-scope="unchecked"] .inv-side-count{color:var(--st-grey)!important}
+#library .inv-scope-banner.updates strong,#library .inv-status-detail-row strong{color:var(--st-red)!important}
+#library .inv-scope-banner.up-to-date strong,#library .inv-status-detail-row.up-to-date{color:var(--st-green)!important}
+#library .inv-scope-banner.manual-check strong,#library .inv-status-detail-row.manual-check{color:var(--st-amber)!important}
+#library .inv-scope-banner.unchecked strong,#library .inv-status-detail-row.unchecked{color:var(--st-grey)!important}
+#library .inv-version-row .inv-version-latest,#library .inv-version-row .inv-version-warning{color:var(--st-red)!important}
+#library .inv-version-row.updates .inv-version-current{color:var(--pm-dim,#9ca3af)!important}
+#library .inv-version-row.up-to-date .inv-version-current{color:var(--st-green)!important}
+#library .inv-version-row.manual-check .inv-version-current{color:var(--st-amber)!important}
+#library .inv-version-row.unchecked .inv-version-current{color:var(--st-grey)!important}
+#library .inv-status.error{color:var(--st-red)!important}#library .inv-status.good{color:var(--st-green)!important}
+/* status pills (list "All plugins" view): label text takes the status colour; Mixed stays neutral */
+#library .inv-status-pill[aria-label^="Updates"]{color:var(--st-red)!important}
+#library .inv-status-pill[aria-label^="Up to date"]{color:var(--st-green)!important}
+#library .inv-status-pill[aria-label^="Manual"]{color:var(--st-amber)!important}
+#library .inv-status-pill[aria-label^="Unchecked"]{color:var(--st-grey)!important}
+#library .inv-status-pill[aria-label*=" · "]{color:#f3f4f6!important}
+/* Product dialogs (Vendor status, Tags, Keep, Mark): their buttons are unstyled white in live; same rest/primary/hover as the Note dialog */
+#invProductMetaOverlay button{background:var(--pv-neutral-bg)!important;color:#d5d8dc!important;border-color:transparent!important}
+#invProductMetaOverlay button.primary{background:var(--pv-teal)!important;color:var(--pv-black)!important}
+#invProductMetaOverlay button:hover:not(.primary):not(:disabled){background:linear-gradient(135deg,#9442dc,#b970ff)!important;color:#fff!important}
+#invProductMetaOverlay button:disabled{color:#7b8190!important;opacity:.76}
+/* product menu action text */
+#invProductMenu .inv-menu-row.green{color:var(--st-green)!important}
+#invProductMenu .inv-menu-row.red{color:var(--st-red)!important}
+/* Format badges (Kevin's pick): AU blue, VST2 navy, VST3 purple, CLAP cyan. None is red, amber, green or grey. */
+#library .inv-chip.au{background:#60a5fa!important;color:#0b0d10!important}
+#library .inv-chip.vst2{background:#1e3a6b!important;color:#f3f4f6!important}
+#library .inv-chip.vst3,#library .inv-chip.vst:not(.vst2):not(.vst3){background:#b970ff!important;color:#0b0d10!important}
+#library .inv-chip.clap{background:#68d3e6!important;color:#0b0d10!important}
 </style>
   <div id="pluginInventoryUI" class="inv-shell">
     <div id="invLayout" class="inv-layout">
@@ -5314,7 +5353,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-17.2';
+const AIMM_BUILD = '2026-11-17.3';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8603,7 +8642,7 @@ function invRenderInventory(){
     const hubUrl=installerHubs[key]||"",officialWebsite=vendorHomepages[key]||(brandDomains[normalized]?"https://www."+brandDomains[normalized]+"/":"");
     return {hubUrl,websiteUrl:officialWebsite||"https://www.google.com/search?q="+encodeURIComponent('"'+String(vendor||"").trim()+'" official plug-in installer download'),websiteLabel:officialWebsite?"Website":"Search for installer"};
   };
-  const formatTone={AU:"au",VST2:"vst",VST3:"vst",CLAP:"clap"};
+  const formatTone={AU:"au",VST2:"vst2",VST3:"vst3",CLAP:"clap"};
   if(INV_VIEW!=="cards"){
     const ledger=INV_VIEW==="ledger",allPluginsFlat=INV_LIBRARY_ALL,columns=ledger
       ?'<span data-col="vendor">Vendor</span><span>Plug-in</span><span data-col="category">Category</span><span>Version</span><span data-col="format">Formats</span><span class="ledger-only">Tags &amp; notes</span><span aria-hidden="true"></span>'
