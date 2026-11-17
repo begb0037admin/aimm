@@ -4763,6 +4763,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library .inv-chip.vst2{background:#1e3a6b!important;color:#f3f4f6!important}
 #library .inv-chip.vst3,#library .inv-chip.vst:not(.vst2):not(.vst3){background:#b970ff!important;color:#0b0d10!important}
 #library .inv-chip.clap{background:#68d3e6!important;color:#0b0d10!important}
+#library .inv-side-button.active .inv-side-count,
+#library .inv-side-button.active[data-inv-scope] .inv-side-count,
+#library .inv-side-button.active[data-inv-open-all-plugins] .inv-side-count{background:transparent!important;box-shadow:none!important;border-color:transparent!important;color:#0b0d10!important}
 </style>
   <div id="pluginInventoryUI" class="inv-shell">
     <div id="invLayout" class="inv-layout">
@@ -5353,7 +5356,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-17.3';
+const AIMM_BUILD = '2026-11-17.4';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);

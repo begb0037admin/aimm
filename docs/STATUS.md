@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## 2026-11-17 build 2026-11-17.4 — Plugins selected sidebar count
+
+The selected teal sidebar row shows its count as a plain black number (#0b0d10), matching the row label. The badge box keeps its size, and unselected counts retain their status colours. Local branch plugins-status, not deployed.
+
 ## 2026-11-17 build 2026-11-17.3 — Plugins status and format colours
 
 Status dots, counts, labels and version text use the approved red, green, amber and grey colours. Format badges distinguish AU, VST2, VST3 and CLAP; product dialog buttons use the approved grey, teal and purple states. VST filtering still includes VST2 and VST3. Local branch plugins-status, not deployed.
