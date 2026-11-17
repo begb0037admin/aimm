@@ -2,15 +2,15 @@
 
 ## 2026-11-17 build 2026-11-17.6 — Plugins sidebar section headers
 
-Tools and Library sidebar headers are now 40px rows with spacing (were 11px and squashed). Local branch plugins-sections, not deployed. Rollback: build 2026-11-17.5.
+Tools and Library sidebar headers are now 40px rows with spacing (were 11px and squashed). DEPLOYED 2026-11-17 (Worker d794467a-8ec1-42a4-9f73-8b8ffdb4ef3f, commit 308dfb6a). Rollback: build 2026-11-17.5.
 
 ## 2026-11-17 build 2026-11-17.5 — Plugins hovered sidebar count
 
-Hovered (purple) Plugins sidebar rows show a plain white count with no dark block. Local branch plugins-hovercount, not deployed. Rollback: build 2026-11-17.4.
+Hovered (purple) Plugins sidebar rows show a plain white count with no dark block. DEPLOYED 2026-11-17 (Worker a61a0bf7-12d8-4728-954f-0e7836f9dd7d, commit 0fca4484). Rollback: build 2026-11-17.4.
 
 ## 2026-11-17 build 2026-11-17.4 — Plugins selected sidebar count
 
-The selected teal sidebar row shows its count as a plain black number (#0b0d10), matching the row label. The badge box keeps its size, and unselected counts retain their status colours. Local branch plugins-status, not deployed.
+The selected teal sidebar row shows its count as a plain black number (#0b0d10), matching the row label. The badge box keeps its size, and unselected counts retain their status colours. DEPLOYED 2026-11-17 together with .3 (Worker 0e155444-c4da-4286-b683-8deab477b3ce, commit 435bfd51; an unexplained deploy 2bd32682 followed 13 s later but live still showed .4). Rollback: build 2026-11-17.2 (Worker 0507d82a).
 
 ## 2026-11-17 build 2026-11-17.3 — Plugins status and format colours
 
