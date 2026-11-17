@@ -2,11 +2,11 @@
 
 ## 2026-11-17 build 2026-11-17.2 — Plugins tab colours
 
-Approved Plugins colour palette applied to the tab and its menus and dialogs. CSS only: grey resting surfaces, teal selections, purple hover, dim disabled text, and no coloured strokes or divider lines. Local branch plugins-colours, not deployed.
+Approved Plugins colour palette applied to the tab and its menus and dialogs. CSS only: grey resting surfaces, teal selections, purple hover, dim disabled text, and no coloured strokes or divider lines. DEPLOYED 2026-11-17 (Worker 0507d82a-d592-443e-9f73-ff87b21cff45), approved by Kevin. Rollback: build 2026-11-17.1 (Worker b4f1e41c-317f-4990-9797-69a28afcfefd).
 
 ## 2026-11-17 build 2026-11-17.1 — MixBus empty-row add buttons
 
-Empty MixBus rows place the round + button before the bus name, with the buttons aligned in one column. Rows with plugins are unchanged. Local branch plus-align, not deployed.
+Empty MixBus rows place the round + button before the bus name, with the buttons aligned in one column. Rows with plugins are unchanged. DEPLOYED 2026-11-17 (Worker b4f1e41c-317f-4990-9797-69a28afcfefd; an unexplained deploy 25 s earlier, f8000557, briefly overwrote an earlier deploy 12355775 and was replaced). Rollback: build 2026-11-16.1 (Worker 10b5f61b-4274-476e-96db-6674ff5c2a96).
 
 ## Tempo/Key tiles, tap tempo, capture-state fix, button changes — 2026-11-13, build 2026-11-13.08
 
