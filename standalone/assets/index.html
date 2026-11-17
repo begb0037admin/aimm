@@ -405,6 +405,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #chain .bus-col.is-empty h4{height:48px;margin:0}
 #chain .bus-col.is-empty .bus-content{display:none}
 #chain .bus-col.is-empty .empty-add{order:3;display:inline-flex;align-items:center;justify-content:center;flex:0 0 40px;width:40px;height:40px;padding:0;border:0;border-radius:50%;background:var(--mb-teal);color:var(--mb-ink);font:700 24px/1 Inter,system-ui;cursor:pointer}
+#chain .bus-col.is-empty h4{display:grid;grid-template-columns:40px 1fr;column-gap:14px}
+#chain .bus-col.is-empty .empty-add{order:-1}
 #chain>.tip-box.alt{background:#16181b;border:0;border-radius:12px;padding:12px 14px;color:#9aa0a6}
 #chain>.tip-box.alt strong{color:#c8d1d2}
 @media(max-width:900px){#chain .chain-toolbar{margin:14px 0 20px;justify-content:flex-start;flex-wrap:wrap}}
@@ -5217,7 +5219,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-16.1';
+const AIMM_BUILD = '2026-11-17.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
