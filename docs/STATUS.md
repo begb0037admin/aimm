@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## 2026-11-17 build 2026-11-17.6 — Plugins sidebar section headers
+
+Tools and Library sidebar headers are now 40px rows with spacing (were 11px and squashed). Local branch plugins-sections, not deployed. Rollback: build 2026-11-17.5.
+
 ## 2026-11-17 build 2026-11-17.5 — Plugins hovered sidebar count
 
 Hovered (purple) Plugins sidebar rows show a plain white count with no dark block. Local branch plugins-hovercount, not deployed. Rollback: build 2026-11-17.4.
