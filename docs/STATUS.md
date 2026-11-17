@@ -2,7 +2,7 @@
 
 ## 2026-11-17 build 2026-11-17.7 — Plugins sidebar rounded headers
 
-Tools and Library sidebar headers have 9px rounded corners (the hover purple box was square). Local branch `plugins-rounded`, not deployed. Rollback: build 2026-11-17.6.
+Tools and Library sidebar headers have 9px rounded corners (the hover purple box was square). DEPLOYED 2026-11-17 (Worker 584d1768-f6bc-4758-826e-e56ef93f24ca, commit da9cbc60). Rollback: build 2026-11-17.6.
 
 ## 2026-11-17 build 2026-11-17.6 — Plugins sidebar section headers
 
