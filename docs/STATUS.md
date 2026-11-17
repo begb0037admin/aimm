@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## 2026-11-17 build 2026-11-17.7 — Plugins sidebar rounded headers
+
+Tools and Library sidebar headers have 9px rounded corners (the hover purple box was square). Local branch `plugins-rounded`, not deployed. Rollback: build 2026-11-17.6.
+
 ## 2026-11-17 build 2026-11-17.6 — Plugins sidebar section headers
 
 Tools and Library sidebar headers are now 40px rows with spacing (were 11px and squashed). DEPLOYED 2026-11-17 (Worker d794467a-8ec1-42a4-9f73-8b8ffdb4ef3f, commit 308dfb6a). Rollback: build 2026-11-17.5.
