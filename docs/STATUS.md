@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## 2026-11-17 build 2026-11-17.5 — Plugins hovered sidebar count
+
+Hovered (purple) Plugins sidebar rows show a plain white count with no dark block. Local branch plugins-hovercount, not deployed. Rollback: build 2026-11-17.4.
+
 ## 2026-11-17 build 2026-11-17.4 — Plugins selected sidebar count
 
 The selected teal sidebar row shows its count as a plain black number (#0b0d10), matching the row label. The badge box keeps its size, and unselected counts retain their status colours. Local branch plugins-status, not deployed.
