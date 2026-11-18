@@ -202,15 +202,15 @@ test('Luna keeps web search behind KB results, charges the fee, and Worker proxi
       appFetchCalls.push({ url: parsedUrl, options });
       return Response.json({ answer: 'Current supported answer.', sources: ['https://example.test/source'], web_search_requests: 2 });
     }
-    if (parsedUrl === 'https://api.anthropic.com/v1/messages') {
+    if (parsedUrl === 'https://api.openai.com/v1/responses') {
       const payload = JSON.parse(options.body);
       upstreamCalls.push({ url: parsedUrl, options, payload });
       return Response.json({
-        content: [
-          { type: 'text', text: 'Current supported answer.' },
-          { type: 'web_search_tool_result', content: [{ type: 'web_search_result', url: 'https://example.test/source' }] }
-        ],
-        usage: { server_tool_use: { web_search_requests: 2 } }
+        output: [
+          { type: 'web_search_call', action: { type: 'search', queries: ['release date'] } },
+          { type: 'web_search_call', action: { type: 'search', queries: ['current release'] } },
+          { type: 'message', content: [{ type: 'output_text', text: 'Current supported answer.', annotations: [{ type: 'url_citation', url: 'https://example.test/source' }] }] }
+        ]
       });
     }
     throw new Error(`Unexpected network call: ${parsedUrl}`);
@@ -296,14 +296,14 @@ test('Luna keeps web search behind KB results, charges the fee, and Worker proxi
       body: JSON.stringify({ query: 'Which release date is current?' })
     });
     const response = await workerModule.default.fetch(request, {
-      HOPE_STT_TOKEN: 'test-token', ANTHROPIC_API_KEY: 'mock-key',
+      HOPE_STT_TOKEN: 'test-token', OPENAI_API_KEY: 'mock-key',
       HOPE_STT_LIMIT: { limit: async () => ({ success: true }) }
     });
     const result = await response.json();
     assert.equal(response.status, 200);
     assert.equal(upstreamCalls.length, 1);
-    assert.equal(upstreamCalls[0].payload.messages[0].content, 'Which release date is current?');
-    assert.deepEqual(upstreamCalls[0].payload.tools, [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3 }]);
+    assert.equal(upstreamCalls[0].payload.input, 'Which release date is current?');
+    assert.deepEqual(upstreamCalls[0].payload.tools, [{ type: 'web_search' }]);
     assert.equal(result.answer, 'Current supported answer.');
     assert.deepEqual(result.sources, ['https://example.test/source']);
     assert.equal(result.web_search_requests, 2);

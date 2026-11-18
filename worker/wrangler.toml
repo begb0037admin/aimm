@@ -16,11 +16,10 @@ namespace_id = "20261020"
   period = 60
 
 # Secrets (NOT in this file — set via `npx wrangler secret put <NAME>`):
-#   ANTHROPIC_API_KEY
 #   ELEVENLABS_API_KEY
 #   HOPE_STT_TOKEN (private bearer token required by POST /hope/stt)
 #   HOPE_USAGE_TTS_API_KEY (TTS-only ElevenLabs key for POST /hope/tts)
-#   OPENAI_API_KEY (GPT-6 Luna Responses API for POST /hope/luna)
+#   OPENAI_API_KEY (GPT-6 Luna Responses API for /hope/luna, /hope/ai, and /hope/web-search)
 
 # Semantic search — index created 2026-10-03, secrets (VOYAGE_API_KEY,
 # COHERE_API_KEY, AIMM_INGEST_KEY) already set via `wrangler secret put`.

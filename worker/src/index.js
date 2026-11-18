@@ -1,17 +1,16 @@
 // AIMM key relay — Cloudflare Worker
 //
-// Holds the real Anthropic + ElevenLabs API keys as Worker secrets and
+// Holds the real OpenAI + ElevenLabs API keys as Worker secrets and
 // forwards requests from the AIMM app, so no API key ever lives in the
 // (public) GitHub repo, on GitHub Pages, or in browser localStorage.
 //
 // Routes:
-//   /anthropic/<path>  → https://api.anthropic.com/<path>   (injects x-api-key)
+//   /hope/ai           → OpenAI Responses API (non-streaming Luna)
 //   /elevenlabs/<path> → https://api.elevenlabs.io/<path>   (injects xi-api-key)
 //
 // Deploy + secrets: see worker/README.md.
 
 const UPSTREAMS = {
-  anthropic:  { base: 'https://api.anthropic.com',  header: 'x-api-key',  secret: 'ANTHROPIC_API_KEY' },
   elevenlabs: { base: 'https://api.elevenlabs.io',  header: 'xi-api-key', secret: 'ELEVENLABS_API_KEY' },
 };
 
@@ -213,7 +212,7 @@ function corsHeaders(origin, request){
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
     'Access-Control-Allow-Headers':
-      request.headers.get('Access-Control-Request-Headers') || 'Content-Type, anthropic-version',
+      request.headers.get('Access-Control-Request-Headers') || 'Content-Type, Authorization',
     // Let the browser read ElevenLabs' actual per-request character charge for
     // Hope's optional usage-based TTS path. The Worker still passes upstream
     // billing headers through unchanged.
@@ -226,20 +225,18 @@ function corsHeaders(origin, request){
 export default {
   async fetch(request, env){
     // /health — visit in any browser tab (no Origin gate, no DevTools needed).
-    // Probes both upstreams with their free endpoints (Anthropic model list,
-    // ElevenLabs subscription) so it validates the secrets at zero cost.
+    // Probes ElevenLabs subscription; OpenAI is checked for configuration.
     // Reveals nothing but "key valid / not valid".
     if (new URL(request.url).pathname === '/health'){
       const lines = [];
+      lines.push(env.OPENAI_API_KEY ? '✅ OPENAI_API_KEY — configured' : '❌ OPENAI_API_KEY — secret not set');
       for (const [name, up] of Object.entries(UPSTREAMS)){
         const key = env[up.secret];
         if (!key){ lines.push('❌ ' + up.secret + ' — secret not set'); continue; }
         try {
           const probe = await fetch(
-            up.base + (name === 'anthropic' ? '/v1/models' : '/v1/user/subscription'),
-            { headers: name === 'anthropic'
-                ? { [up.header]: key, 'anthropic-version': '2023-06-01' }
-                : { [up.header]: key } });
+            up.base + '/v1/user/subscription',
+            { headers: { [up.header]: key } });
           lines.push(probe.ok
             ? '✅ ' + up.secret + ' — OK'
             : '❌ ' + up.secret + ' — rejected by ' + name + ' (HTTP ' + probe.status + ') — check the key value');
@@ -549,7 +546,7 @@ export default {
         return corsJsonResponse({error:'Luna request is empty or too large',code:'luna_request_too_large'},413,origin,request);
       const safeBody={
         model:'gpt-6-luna',reasoning:{effort:'low'},input:body.input,
-        max_output_tokens:Math.max(64,Math.min(512,Number(body.max_output_tokens)||220)),
+        max_output_tokens:Math.max(64,Math.min(1200,Number(body.max_output_tokens)||220)),
         stream:true,store:false,
         ...(Array.isArray(body.tools)&&body.tools.length?{tools:body.tools.slice(0,40),tool_choice:'auto'}:{})
       };
@@ -569,8 +566,43 @@ export default {
       }catch(_){return corsJsonResponse({error:'Could not reach GPT-6 Luna',code:'luna_unavailable'},502,origin,request);}
     }
 
-    // /hope/web-search — one Claude web-search call for Luna's KB fallback.
-    // Anthropic credentials stay in Worker Secrets; callers use the same
+    // /hope/ai — small, non-streaming Luna tasks for page features.
+    if (url.pathname === '/hope/ai'){
+      if(request.method!=='POST')return corsJsonResponse({error:'Method not allowed'},405,origin,request);
+      if(!env.HOPE_STT_TOKEN)return corsJsonResponse({error:'Hope speech access is not configured',code:'no_stt_auth'},503,origin,request);
+      const supplied=(request.headers.get('Authorization')||'').replace(/^Bearer\s+/i,'');
+      const expected=String(env.HOPE_STT_TOKEN);
+      let mismatch=supplied.length^expected.length;
+      for(let i=0;i<Math.max(supplied.length,expected.length);i++)mismatch|=(supplied.charCodeAt(i)||0)^(expected.charCodeAt(i)||0);
+      if(!supplied||mismatch!==0)return corsJsonResponse({error:'Hope speech access token is missing or invalid',code:'invalid_stt_auth'},401,origin,request);
+      if(!env.OPENAI_API_KEY)return corsJsonResponse({error:'GPT-6 Luna is not configured on the AIMM Worker',code:'no_openai_key'},503,origin,request);
+      if(!env.HOPE_STT_LIMIT)return corsJsonResponse({error:'Hope speech rate limit is not configured',code:'no_rate_limit'},503,origin,request);
+      const {success}=await env.HOPE_STT_LIMIT.limit({key:request.headers.get('CF-Connecting-IP')||'unknown'});
+      if(!success)return corsJsonResponse({error:'Hope AI is being used too quickly. Wait a minute and try again.',code:'rate_limited'},429,origin,request);
+      let body;
+      try{body=await readJson(request);}catch(_){return corsJsonResponse({error:'Expected a JSON Luna request',code:'invalid_luna_request'},400,origin,request);}
+      const userIsText=typeof body?.user==='string'&&!!body.user.trim();
+      const userIsParts=Array.isArray(body?.user)&&body.user.length>0&&body.user.every(part=>part&&((part.type==='text'&&typeof part.text==='string')||(part.type==='image'&&typeof part.data_url==='string'&&/^data:image\/(png|jpeg|webp);base64,/.test(part.data_url))));
+      if(!body||typeof body.system!=='string'||(!userIsText&&!userIsParts)||body.system.length+JSON.stringify(body.user).length>100000)
+        return corsJsonResponse({error:'Luna input must be text and no more than 100000 characters',code:'invalid_luna_request'},400,origin,request);
+      const requested=Number(body.max_output_tokens);
+      const maxOutput=Number.isFinite(requested)?Math.max(64,Math.min(2000,Math.floor(requested))):1000;
+      try{
+        const input=userIsText?body.user:[{role:'user',content:body.user.map(part=>part.type==='text'?{type:'input_text',text:part.text}:{type:'input_image',image_url:part.data_url})}];
+        const payload={model:'gpt-6-luna',reasoning:{effort:'low'},store:false,stream:false,instructions:body.system,input,max_output_tokens:maxOutput};
+        if(body.web_search===true){payload.tools=[{type:'web_search'}];payload.tool_choice='required';}
+        const upstream=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:'Bearer '+String(env.OPENAI_API_KEY).trim(),'Content-Type':'application/json'},body:JSON.stringify(payload)});
+        if(!upstream.ok){const detail=(await upstream.text().catch(()=>'' )).slice(0,300);return corsJsonResponse({error:'Luna request failed (HTTP '+upstream.status+')'+(detail?': '+detail:''),code:'luna_failed'},502,origin,request);}
+        const result=await upstream.json();
+        const content=(result.output||[]).filter(item=>item.type==='message').flatMap(item=>item.content||[]);
+        const text=content.filter(part=>part.type==='output_text').map(part=>part.text||'').join('\n').trim();
+        const sources=[...new Set(content.flatMap(part=>part.annotations||[]).filter(annotation=>annotation.type==='url_citation'&&/^https?:\/\//i.test(annotation.url||'')).map(annotation=>annotation.url))].slice(0,10);
+        return corsJsonResponse({text,usage:result.usage||{},sources},200,origin,request);
+      }catch(_){return corsJsonResponse({error:'Could not reach Luna',code:'luna_unavailable'},502,origin,request);}
+    }
+
+    // /hope/web-search — one Luna web-search call for Luna's KB fallback.
+    // OpenAI credentials stay in Worker Secrets; callers use the same
     // short-lived Hope usage token and per-IP rate limit as /hope/luna.
     if (url.pathname === '/hope/web-search'){
       if(request.method!=='POST')return corsJsonResponse({error:'Method not allowed'},405,origin,request);
@@ -580,39 +612,25 @@ export default {
       let mismatch=supplied.length^expected.length;
       for(let i=0;i<Math.max(supplied.length,expected.length);i++)mismatch|=(supplied.charCodeAt(i)||0)^(expected.charCodeAt(i)||0);
       if(!supplied||mismatch!==0)return corsJsonResponse({error:'Hope speech access token is missing or invalid',code:'invalid_stt_auth'},401,origin,request);
-      if(!env.ANTHROPIC_API_KEY)return corsJsonResponse({error:'Web search is not configured on the AIMM Worker',code:'no_anthropic_key'},503,origin,request);
+      if(!env.OPENAI_API_KEY)return corsJsonResponse({error:'GPT-6 Luna is not configured on the AIMM Worker',code:'no_openai_key'},503,origin,request);
       if(!env.HOPE_STT_LIMIT)return corsJsonResponse({error:'Hope web-search rate limit is not configured',code:'no_rate_limit'},503,origin,request);
-      const ip=request.headers.get('CF-Connecting-IP')||'unknown';
-      const {success}=await env.HOPE_STT_LIMIT.limit({key:ip});
+      const {success}=await env.HOPE_STT_LIMIT.limit({key:request.headers.get('CF-Connecting-IP')||'unknown'});
       if(!success)return corsJsonResponse({error:'Hope web search is being used too quickly. Wait a minute and try again.',code:'rate_limited'},429,origin,request);
       let body;
-      try{body=await readJson(request);}
-      catch(_){return corsJsonResponse({error:'Expected a JSON web-search request',code:'invalid_web_search_request'},400,origin,request);}
+      try{body=await readJson(request);}catch(_){return corsJsonResponse({error:'Expected a JSON web-search request',code:'invalid_web_search_request'},400,origin,request);}
       const query=String(body&&body.query||'').trim();
       if(!query||query.length>1000)return corsJsonResponse({error:'Query must contain 1–1000 characters',code:'invalid_web_search_query'},400,origin,request);
       try{
-        const upstream=await fetch('https://api.anthropic.com/v1/messages',{
-          method:'POST',headers:{'x-api-key':String(env.ANTHROPIC_API_KEY).trim(),'anthropic-version':'2023-06-01','Content-Type':'application/json'},
-          body:JSON.stringify({model:'claude-haiku-5-5',max_tokens:700,system:'Answer the question briefly using web search. Include relevant current facts and cite source URLs. Do not answer from memory when the search does not provide support.',tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],messages:[{role:'user',content:query}]})
-        });
-        if(!upstream.ok){
-          const detail=(await upstream.text().catch(()=>'' )).replace(/\s+/g,' ').slice(0,300);
-          return corsJsonResponse({error:'Claude web search failed (HTTP '+upstream.status+')'+(detail?': '+detail:''),code:'web_search_failed'},502,origin,request);
-        }
+        const upstream=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:'Bearer '+String(env.OPENAI_API_KEY).trim(),'Content-Type':'application/json'},body:JSON.stringify({model:'gpt-6-luna',reasoning:{effort:'low'},store:false,stream:false,instructions:'Answer the question briefly using web search. Include relevant current facts and cite source URLs. Do not answer from memory when the search does not provide support.',input:query,max_output_tokens:700,tools:[{type:'web_search'}],tool_choice:'required'})});
+        if(!upstream.ok){const detail=(await upstream.text().catch(()=>'' )).replace(/\s+/g,' ').slice(0,300);return corsJsonResponse({error:'Luna web search failed (HTTP '+upstream.status+')'+(detail?': '+detail:''),code:'web_search_failed'},502,origin,request);}
         const result=await upstream.json();
-        const content=Array.isArray(result.content)?result.content:[];
-        const answer=content.filter(block=>block&&block.type==='text').map(block=>String(block.text||'')).join('\n').trim().slice(0,5000);
+        const content=(result.output||[]).filter(item=>item.type==='message').flatMap(item=>item.content||[]);
+        const answer=content.filter(part=>part.type==='output_text').map(part=>String(part.text||'')).join('\n').trim().slice(0,5000);
         const urls=new Set();
-        const collectUrls=value=>{
-          if(!value)return;
-          if(Array.isArray(value)){for(const item of value)collectUrls(item);return;}
-          if(typeof value!=='object')return;
-          if(typeof value.url==='string'&&/^https?:\/\//i.test(value.url))urls.add(value.url);
-          for(const child of Object.values(value))if(child&&typeof child==='object')collectUrls(child);
-        };
-        collectUrls(content);
-        return corsJsonResponse({answer,sources:Array.from(urls).slice(0,10),web_search_requests:Number(result.usage&&result.usage.server_tool_use&&result.usage.server_tool_use.web_search_requests)||0},200,origin,request);
-      }catch(_){return corsJsonResponse({error:'Could not reach Claude web search',code:'web_search_unavailable'},502,origin,request);}
+        for(const part of content)for(const annotation of part.annotations||[])if(annotation.type==='url_citation'&&/^https?:\/\//i.test(annotation.url||''))urls.add(annotation.url);
+        const searches=(result.output||[]).filter(item=>item.type==='web_search_call'&&item.action?.type==='search').length;
+        return corsJsonResponse({answer,sources:Array.from(urls).slice(0,10),web_search_requests:searches},200,origin,request);
+      }catch(_){return corsJsonResponse({error:'Could not reach Luna web search',code:'web_search_unavailable'},502,origin,request);}
     }
 
     // /hope/tts — private Flash speech endpoint for the optional Usage route.
@@ -773,7 +791,7 @@ export default {
       }
     }
 
-    const m = url.pathname.match(/^\/(anthropic|elevenlabs)(\/.*)$/);
+    const m = url.pathname.match(/^\/(elevenlabs)(\/.*)$/);
     if (!m){
       return new Response('Not found', { status: 404, headers: corsHeaders(origin, request) });
     }

@@ -1,14 +1,13 @@
 # AIMM key relay (Cloudflare Worker)
 
-Moves the Anthropic + ElevenLabs API keys off the browser and out of the repo.
-The Worker holds the real keys as **server-side secrets** and relays the app's
-`api.anthropic.com` / `api.elevenlabs.io` calls. Once it's deployed and wired
-in, a fresh browser or device runs AIMM with **zero Settings entry** — no keys,
-no agent ID.
+The Worker holds OpenAI and ElevenLabs keys as **server-side secrets**. The
+page calls `/hope/ai` for small Luna tasks and `/hope/luna` for Hope chat. It
+relays ElevenLabs REST calls. The browser needs the AIMM access token for Luna;
+provider keys and agent IDs stay out of the browser.
 
 Why not just commit the keys to GitHub? The repo is **public**, and GitHub
 Pages serves every file in it publicly — anyone who found the URL could drain
-the ElevenLabs/Anthropic accounts. Secrets must live server-side; this Worker
+the ElevenLabs/OpenAI accounts. Secrets must live server-side; this Worker
 is that server. Cloudflare's free tier (100k requests/day) is far more than
 AIMM will ever use.
 
@@ -18,12 +17,12 @@ Kev's Cloudflare account already exists (kevinlelitte.workers.dev — hr-kb-ai,
 cc-tasks-writer and github-proxy live on it), and `AIMM_PROXY_URL` in
 `index.html` is already set to `https://aimm-proxy.kevinlelitte.workers.dev`
 — the name this config deploys to. So the only remaining work is deploying
-the Worker and storing the two secrets, either route below.
+the Worker and storing the required secrets, either route below.
 
 ### Route A — Terminal (wrangler)
 
 ```bash
-cd ~/Documents/Claude/Artifacts/aimm/worker
+cd /Users/admin/github/aimm/worker
 
 # 1. Authenticate (opens a browser window, click Allow)
 npx wrangler login
@@ -33,9 +32,9 @@ npx wrangler deploy
 
 # 3. Store the real keys as Worker secrets (each prompts for the value —
 #    paste the key, press Enter; nothing is written to disk or the repo)
-npx wrangler secret put ANTHROPIC_API_KEY
 npx wrangler secret put ELEVENLABS_API_KEY
 npx wrangler secret put OPENAI_API_KEY
+npx wrangler secret put HOPE_STT_TOKEN
 ```
 
 ### Route B — Dashboard (no terminal)
@@ -44,22 +43,17 @@ npx wrangler secret put OPENAI_API_KEY
    Worker → name it exactly **`aimm-proxy`** → Deploy.
 2. Edit code → replace the hello-world with the contents of
    `worker/src/index.js` → Save and deploy.
-3. Worker → Settings → Variables and Secrets → add **`ANTHROPIC_API_KEY`**
-   and **`ELEVENLABS_API_KEY`**, type **Secret** → paste each key → Deploy.
+3. Worker → Settings → Variables and Secrets → add **`OPENAI_API_KEY`**,
+   **`ELEVENLABS_API_KEY`**, and **`HOPE_STT_TOKEN`** as Secrets.
 
 > If the deployed URL ends up different from
 > `https://aimm-proxy.kevinlelitte.workers.dev` (e.g. a different worker
 > name), update `AIMM_PROXY_URL` in `index.html` to match and push — the URL
 > is not a secret.
 
-That's it. On any browser/device, the app now: routes all Claude and
-ElevenLabs REST calls through the Worker (which adds the real keys
-server-side), and uses the baked-in agent IDs. The Settings key fields are
-auto-filled with an `aimm-proxy-managed` placeholder so the existing
-"key saved?" gates pass — they're never sent upstream.
-
-Optional cleanup on browsers that have real keys saved: Settings → Clear on
-the Anthropic and ElevenLabs key fields (the placeholder reseeds on reload).
+On each browser, enter the AIMM access token in Settings → API Keys. The
+ElevenLabs key field uses an `aimm-proxy-managed` placeholder; the Worker adds
+the provider key server-side.
 
 ## Durable captures (KV) — Hope's roadmap inbox, cross-device
 
@@ -89,7 +83,7 @@ gracefully to the old per-browser behaviour.
 The optional **Usage test** voice mode streams microphone audio through
 `/hope/stt/stream` to Deepgram Flux (`/v2/listen`). Flux interim transcripts
 appear in AIMM while Kev speaks; its end-of-turn event sends the transcript to
-the existing Claude/tool loop. Cloudflare holds `DEEPGRAM_API_KEY` as a Worker
+the Luna/tool loop. Cloudflare holds `DEEPGRAM_API_KEY` as a Worker
 secret. The browser authenticates to `POST /hope/stt/ticket` with the existing
 private `HOPE_STT_TOKEN`; the Worker returns a signed ticket that expires after
 60 seconds, then uses it to authorize the streaming WebSocket. The permanent

@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## 2026-11-18 build 2026-11-18.2 — Luna for AIMM page AI (preview only)
+
+The page's profile extraction, chain auto-fill, top-pick re-rank, note summary and metadata, plugin import, research, typed chat, snapshot summary, and Fix Queue move generation now use GPT-6 Luna through the AIMM Worker. The Worker adds authenticated, rate-limited non-streaming `/hope/ai` and moves `/hope/web-search` to Luna with the OpenAI Responses `web_search` tool. The Anthropic proxy route and Worker key use are removed; existing secrets have not been deleted. Settings no longer shows the Anthropic key, research model selector, or cost card. Page feature calls return usage but their Luna spend is not displayed, because these non-streaming calls are not yet included in a single reliable session total; the existing typed Luna route still shows its calculated cost. The Hope chat panel layout, buttons, header, and Settings colour scheme were not redesigned. Syntax, route stub, and seven page feature request tests passed. NOT DEPLOYED. A real `/hope/web-search` call remains required after Kevin approves the preview and the Worker is deployed; the page deploy follows only if that call succeeds. Rollback target: build 2026-11-18.1.
+
 ## 2026-11-18 build 2026-11-18.1 — Insight, Snapshots and Settings tab colours
 
 Insight, Snapshots and Settings tabs restyled to the approved palette (colours only, scoped to each tab and its dialogs, plus 9px radius on hover rows). DEPLOYED 2026-11-18 (Worker dd73bc42-f9ad-445c-95b3-d9d7271848ea, commit b34e48ef). Rollback: build 2026-11-17.7.
