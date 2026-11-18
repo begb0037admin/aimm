@@ -4768,6 +4768,255 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library .inv-side-button.active[data-inv-open-all-plugins] .inv-side-count{background:transparent!important;box-shadow:none!important;border-color:transparent!important;color:#0b0d10!important}
 #library .inv-side-button:hover:not(.active):not(:disabled) .inv-side-count{color:#fff!important;background:transparent!important;box-shadow:none!important;border-color:transparent!important}
 #library .inv-sidebar-section-toggle[data-inv-section-toggle="tools"],#library .inv-sidebar-section-toggle[data-inv-section-toggle="library"]{min-height:40px;margin:8px 0 4px;padding:0 10px;font-size:11px;border-radius:9px}
+
+/* Insight tab colours 2026-11-18 */
+/* PREVIEW ONLY. Insight tab (#knowledge) and its note dialog (#kbModal), COLOURS ONLY.
+   Same rules as the approved Plugins tab: solid fills, no coloured strokes/rings/dashes/side bars/lines,
+   rest = grey, selected/primary = teal with black text, hover = purple gradient, greyed-out = dim text.
+   Palette v2 only: teal #2dd4bf, black #0b0d10, greys #1a1d21 #2a2e35 #9ca3af #7b8190, white #f3f4f6,
+   gradient #9442dc to #b970ff, status green #42c995 / yellow #facc15 / red #f87171, blue #60a5fa.
+   Grey steps: a control is the opposite step of what it sits on. On the black page = #1a1d21; on a #1a1d21 card = #2a2e35; on a #2a2e35 card = #1a1d21.
+   Every selector starts with #knowledge or #kbModal. No other tab, no Hope rail. */
+#knowledge,#kbModal{--k1:#1a1d21;--k2:#2a2e35;--kink:#f3f4f6;--kdim:#9ca3af;--koff:#7b8190;--kblk:#0b0d10;--kteal:#2dd4bf;--kgrad:linear-gradient(135deg,#9442dc,#b970ff)}
+
+/* A. No strokes, rings, dashes, side bars, drop shadows or focus rings anywhere (width untouched, colour goes transparent) */
+#knowledge,#knowledge *,#kbModal,#kbModal *{border-color:transparent!important;outline:none!important;box-shadow:none!important;text-decoration-color:transparent!important;-webkit-tap-highlight-color:transparent;scrollbar-color:#2a2e35 transparent}
+#knowledge :is(.kb-empty,.kb-cat-list-empty,.fact-chip.sortable-ghost,.kb-card.sortable-ghost){border-style:solid!important}
+#knowledge.kb-drag-over{outline:none!important}
+#knowledge.kb-drag-over::before{background:var(--k1)!important;border-color:transparent!important;box-shadow:none!important;color:var(--kink)!important}
+
+/* B. Headings, text */
+#knowledge .section-head h2,#knowledge .fact-cat-label,#knowledge .kb-title,#knowledge .fact-text{color:var(--kink)!important}
+#knowledge .section-head .blurb,#knowledge .kb-meta,#knowledge .fact-cat-count,#knowledge .collapse-chev,#knowledge .hope-status{color:var(--kdim)!important}
+#knowledge .kb-counts,#knowledge .kb-grip,#knowledge .kb-cat-list-empty,#knowledge .facts-list-empty,#knowledge .kb-empty,#knowledge .kb-meta span{color:var(--koff)!important}
+#knowledge .kb-empty strong{color:var(--kink)!important}
+#knowledge .kb-card .kb-meta a{color:#60a5fa!important}
+#knowledge .hope-status.ok{color:#42c995!important}
+#knowledge .hope-status.busy,#knowledge .kb-card .kb-summary-status.busy{color:#facc15!important}
+#knowledge .hope-status.err,#knowledge .kb-card .kb-summary-status.err{color:#f87171!important}
+#knowledge .section-head .sec-ico{color:var(--kink)!important}
+
+/* C. Surfaces. Directly on the black page: #1a1d21 */
+#knowledge :is(.kb-empty,.fact-cat-card,.hope-memory-meta,.kb-toolbar .btn,.kb-bytes-meter,.kb-stats){background:var(--k1)!important}
+#knowledge :is(.kb-toolbar .btn.ghost,.kb-bytes-meter,.kb-stats){color:var(--kdim)!important}
+#knowledge .kb-toolbar .btn.ghost{color:var(--kink)!important}
+/* On a #1a1d21 card: #2a2e35 */
+#knowledge :is(.kb-card,.fact-chip,.kb-cat-list-empty,.fact-add-mini,.hope-memory-meta .btn.ghost,.hope-bytes-meter){background:var(--k2)!important}
+#knowledge .hope-memory-meta .btn.ghost,#knowledge .hope-bytes-meter{color:var(--kdim)!important}
+#knowledge .hope-memory-meta .btn.ghost{color:var(--kink)!important}
+#knowledge .fact-add-mini{color:var(--kink)!important}
+/* On a #2a2e35 card: #1a1d21 */
+#knowledge :is(.kb-body,.kb-tag,.kb-mode-pill,.kb-active-toggle,.kb-card .btn.ghost,.fact-action-btn,.fact-edit-form textarea,.fact-edit-actions .btn.ghost){background:var(--k1)!important}
+#knowledge .kb-body{color:var(--kdim)!important}
+#knowledge .kb-tag{color:var(--kdim)!important}
+#knowledge .kb-mode-pill,#knowledge .kb-active-toggle{color:var(--kdim)!important}
+#knowledge .kb-card .btn.ghost,#knowledge .fact-edit-actions .btn.ghost{color:var(--kink)!important}
+#knowledge .fact-action-btn{color:var(--kdim)!important}
+#knowledge .fact-edit-form textarea{color:var(--kink)!important}
+#knowledge .fact-cat-head{background:transparent!important}
+
+/* D. Bytes meters: status colour on the text only (yellow at the amber threshold, red at the red one) */
+#knowledge :is(.kb-bytes-meter,.hope-bytes-meter).amber{color:#facc15!important}
+#knowledge :is(.kb-bytes-meter,.hope-bytes-meter).red{color:#f87171!important}
+
+/* E. Selected / primary: solid teal, black text */
+#knowledge :is(.kb-toolbar .btn.amber,.hope-memory-meta .btn.purple,.fact-edit-actions .btn.purple,.kb-active-toggle.on,.kb-mode-pill.on,.fact-action-btn.pin.on),
+#kbModal .btn.green{background:var(--kteal)!important;color:var(--kblk)!important}
+#knowledge :is(.kb-toolbar .btn.amber,.hope-memory-meta .btn.purple,.fact-edit-actions .btn.purple,.kb-active-toggle.on,.kb-mode-pill.on,.fact-action-btn.pin.on) *{color:var(--kblk)!important}
+
+/* F. Hover and keyboard focus: purple gradient, white text (selected toggles stay teal) */
+#knowledge :is(.btn,.kb-active-toggle,.kb-mode-pill,.fact-add-mini,.fact-action-btn,.fact-cat-head):is(:hover,:focus-visible):not(:disabled):not(.on),
+#kbModal :is(.btn,.close-btn):is(:hover,:focus-visible):not(:disabled){background:var(--kgrad)!important;color:#fff!important}
+#knowledge :is(.btn,.kb-active-toggle,.kb-mode-pill,.fact-add-mini,.fact-action-btn,.fact-cat-head):is(:hover,:focus-visible):not(:disabled):not(.on) *{color:#fff!important}
+#knowledge .fact-cat-head:hover{border-radius:9px}
+#knowledge .kb-grip:hover{color:var(--kink)!important}
+
+/* G. Greyed out: dim text, same grey */
+#knowledge :is(.btn,.kb-mode-pill):disabled{color:var(--koff)!important;opacity:.76!important}
+#knowledge .fact-chip.inactive{opacity:.76!important}
+#knowledge .fact-chip.inactive .fact-text,#knowledge .fact-action-btn.active-toggle.off{color:var(--koff)!important}
+#knowledge .fact-chip.inactive .fact-text{text-decoration-color:var(--koff)!important}
+
+/* H. Destructive actions: red text on the grey (Delete note, Delete fact, Clear all) */
+#knowledge .kb-card .btn.ghost[onclick^="kbDelete"],#knowledge .fact-action-btn.danger,#knowledge .hope-memory-meta .btn.ghost[onclick^="clearAllFacts"]{color:#f87171!important}
+#knowledge .fact-action-btn.danger:hover,#knowledge .hope-memory-meta .btn.ghost[onclick^="clearAllFacts"]:hover,#knowledge .kb-card .btn.ghost[onclick^="kbDelete"]:hover{background:var(--kgrad)!important;color:#fff!important}
+
+/* I. Inputs and the note dialog */
+#kbModal .modal{background:var(--k1)!important}
+#kbModal .modal-header h3{color:var(--kink)!important}
+#kbModal .modal-header .close-btn{color:var(--kdim)!important;background:transparent!important}
+#kbModal .modal-form label{color:var(--kdim)!important}
+#kbModal :is(input[type=text],textarea){background:var(--k2)!important;color:var(--kink)!important}
+#kbModal :is(input,textarea)::placeholder{color:var(--koff)!important}
+#kbModal .btn.ghost,#kbModal .btn.secondary{background:var(--k2)!important;color:var(--kink)!important}
+#kbModal :is(input[type=checkbox]){accent-color:var(--kteal)!important}
+#knowledge input[type=checkbox]{accent-color:var(--kteal)!important}
+#kbModal .btn.ghost:hover,#kbModal .btn.secondary:hover{background:var(--kgrad)!important;color:#fff!important}
+
+/* Snapshots tab colours 2026-11-18 */
+/* PREVIEW ONLY. Snapshots tab (#snapshots) and its two dialogs (#editPillModal, #applyPillModal), COLOURS ONLY.
+   Same rules as the approved Plugins tab: solid fills, no coloured strokes/rings/dashes/side bars/lines,
+   rest = grey, selected/primary = teal with black text, hover = purple gradient, greyed-out = dim text.
+   Palette v2 only: teal #2dd4bf, black #0b0d10, greys #1a1d21 #2a2e35 #9ca3af #7b8190, white #f3f4f6,
+   gradient #9442dc to #b970ff, status red #f87171, yellow #facc15.
+   Grey steps: a control is the opposite step of what it sits on. On the black page = #1a1d21; on a #1a1d21 card = #2a2e35; on a #2a2e35 card = #1a1d21.
+   Every selector starts with #snapshots, #editPillModal or #applyPillModal. No other tab, no Hope rail. */
+#snapshots,#editPillModal,#applyPillModal{--s1:#1a1d21;--s2:#2a2e35;--sink:#f3f4f6;--sdim:#9ca3af;--soff:#7b8190;--sblk:#0b0d10;--steal:#2dd4bf;--sgrad:linear-gradient(135deg,#9442dc,#b970ff)}
+
+/* A. No strokes, rings, dashes, side bars, drop shadows or focus rings (width untouched, colour goes transparent) */
+#snapshots,#snapshots *,#editPillModal,#editPillModal *,#applyPillModal,#applyPillModal *{border-color:transparent!important;outline:none!important;box-shadow:none!important;text-decoration-color:transparent!important;-webkit-tap-highlight-color:transparent;scrollbar-color:#2a2e35 transparent}
+#snapshots :is(.rt-pill.empty,.journal-empty,.rt-pill.sortable-ghost){border-style:solid!important}
+
+/* B. Headings and text */
+#snapshots .section-head h2,#snapshots .section-head .sec-ico,#snapshots .journal-subject{color:var(--sink)!important}
+#snapshots .section-head .blurb,#snapshots .snapshot-pills-hint,#snapshots .journal-time,#snapshots .journal-preview,#snapshots .journal-empty{color:var(--sdim)!important}
+#snapshots .journal-empty strong{color:var(--sink)!important}
+
+/* C. Surfaces. Directly on the black page: #1a1d21 */
+#snapshots :is(.snapshot-pills-toolbar,.rt-pill,.journal-toolbar,.journal-list){background:var(--s1)!important}
+#snapshots .rt-pill.populated{color:var(--sink)!important}
+/* Greyed-out empty slots: dim text, same grey */
+#snapshots .rt-pill.empty{color:var(--soff)!important;opacity:.76!important}
+/* On a #1a1d21 card: #2a2e35 */
+#snapshots :is(.journal-toolbar .btn,.journal-entry,.journal-empty,.snapshot-pills-toolbar .hint-ico.apply){background:var(--s2)!important}
+#snapshots .journal-toolbar .btn{color:var(--sink)!important}
+/* On a #2a2e35 entry: #1a1d21 */
+#snapshots :is(.journal-type,.journal-genre,.journal-platform,.journal-body pre,.journal-entry .btn.ghost){background:var(--s1)!important}
+#snapshots :is(.journal-type,.journal-genre){color:var(--sink)!important}
+#snapshots .journal-platform,#snapshots .journal-body pre{color:var(--sdim)!important}
+#snapshots .journal-entry .btn.ghost{color:var(--sdim)!important}
+#snapshots .journal-entry .btn.ghost:not(.journal-star){color:var(--sink)!important}
+
+/* D. Hover hint row (icons mirror the pill's action icons: one neutral colour, delete in red) */
+#snapshots .snapshot-pills-toolbar .hint-ico{color:var(--sink)!important}
+#snapshots .snapshot-pills-toolbar .hint-ico:last-of-type{color:#f87171!important}
+#snapshots .snapshot-pills-toolbar .hint-ico.apply{color:var(--sink)!important}
+
+/* E. Pill action icons (shown on hover). They sit on the hovered purple pill, so they are dark chips with light icons */
+#snapshots .rt-pill .rt-pill-act{background:var(--s1)!important;color:var(--sink)!important}
+#snapshots .rt-pill .rt-pill-act.fav{background:var(--steal)!important;color:var(--sblk)!important}
+#snapshots .rt-pill .rt-pill-act.delete{color:#f87171!important}
+#snapshots .rt-pill .rt-pill-act:hover{background:var(--sink)!important;color:var(--sblk)!important;transform:none}
+#snapshots .rt-pill .rt-pill-act.delete:hover{background:#f87171!important;color:var(--sblk)!important}
+#snapshots .rt-pill .rt-pill-act.fav:hover{background:var(--sink)!important;color:var(--sblk)!important}
+
+/* F. Selected / primary: solid teal, black text. Favourite star on = selected (same as the Plugins star) */
+#snapshots .journal-entry .journal-star.on{background:var(--steal)!important;color:var(--sblk)!important}
+#snapshots .journal-entry .journal-star:not(.on):hover{color:#fff!important}
+
+/* G. Hover and keyboard focus: purple gradient, white text */
+#snapshots .rt-pill.populated:is(:hover,:focus-visible),
+#snapshots .journal-toolbar .btn:is(:hover,:focus-visible),
+#snapshots .journal-entry-head:hover,
+#editPillModal :is(.btn,.close-btn):is(:hover,:focus-visible),
+#applyPillModal :is(.btn,.close-btn):is(:hover,:focus-visible){background:var(--sgrad)!important;color:#fff!important}
+#snapshots .rt-pill.populated:is(:hover,:focus-visible) .rt-pill-label{color:#fff!important}
+#snapshots .journal-entry-head:hover{border-radius:9px}
+#snapshots .journal-entry-head:hover :is(.journal-time,.journal-subject,.journal-preview){color:#fff!important}
+/* Buttons inside a hovered entry row: white chip, black text (a gradient on a gradient would vanish) */
+#snapshots .journal-entry-head .btn:is(:hover,:focus-visible){background:var(--sink)!important;color:var(--sblk)!important}
+#snapshots .journal-entry-head .journal-star.on:hover{background:var(--steal)!important;color:var(--sblk)!important}
+
+/* H. Destructive: red text on the grey (Clear snapshots, delete icon) */
+#snapshots #journalClear{color:#f87171!important}
+#snapshots #journalClear:hover{color:#fff!important}
+#snapshots .journal-entry .btn.ghost[onclick^="event.stopPropagation();deleteJournal"]{color:#f87171!important}
+
+/* I. Dialogs */
+#editPillModal .modal,#applyPillModal .modal{background:var(--s1)!important}
+#editPillModal .modal-header h3,#applyPillModal .modal-header h3,#applyPillModal #applyPillTitle{color:var(--sink)!important}
+#editPillModal .close-btn,#applyPillModal .close-btn{color:var(--sdim)!important;background:transparent!important}
+#editPillModal label,#applyPillModal label,#applyPillModal #applyPillSummary{color:var(--sdim)!important}
+#editPillModal label span,#applyPillModal label span span{color:var(--soff)!important}
+#applyPillModal label span span:first-child{color:var(--sink)!important}
+#editPillModal :is(input[type=text],textarea){background:var(--s2)!important;color:var(--sink)!important}
+#editPillModal :is(input,textarea)::placeholder{color:var(--soff)!important}
+#editPillModal .btn.ghost,#applyPillModal .btn.ghost{background:var(--s2)!important;color:var(--sink)!important}
+#editPillModal .btn.green,#applyPillModal .btn.purple{background:var(--steal)!important;color:var(--sblk)!important}
+#editPillModal .btn.green:hover,#applyPillModal .btn.purple:hover{background:var(--sgrad)!important;color:#fff!important}
+#applyPillModal .modal-form>div[style*="background"]{background:var(--s2)!important}
+#applyPillModal .modal-form>div[style*="background"] label{color:var(--sink)!important}
+#applyPillModal .modal-form>div[style*="fbbf24"]{color:#facc15!important}
+#applyPillModal input[type=checkbox]{accent-color:var(--steal)!important}
+
+/* Settings tab colours 2026-11-18 */
+/* PREVIEW ONLY. Settings tab (#settings), COLOURS ONLY.
+   Same rules as the approved Plugins tab: solid fills, no coloured strokes/rings/dashes/side bars/lines,
+   rest = grey, selected/primary = teal with black text, hover = purple gradient, greyed-out = dim text.
+   Palette v2 only: teal #2dd4bf, black #0b0d10, greys #1a1d21 #2a2e35 #9ca3af #7b8190, white #f3f4f6,
+   gradient #9442dc to #b970ff, status green #42c995 / yellow #facc15 / red #f87171.
+   Grey steps: a control is the opposite step of what it sits on. On the black page = #1a1d21; on a #1a1d21 card = #2a2e35; on a #2a2e35 panel = #1a1d21.
+   Every selector starts with #settings. No other tab, no Hope rail. */
+#settings{--g1:#1a1d21;--g2:#2a2e35;--gink:#f3f4f6;--gdim:#9ca3af;--goff:#7b8190;--gblk:#0b0d10;--gteal:#2dd4bf;--ggrad:linear-gradient(135deg,#9442dc,#b970ff);--set-card:#1a1d21;--set-card-bd:transparent;--set-inset:#1a1d21;--set-inset-bd:transparent;--set-accent-a:#2dd4bf;--set-accent-b:#b970ff}
+
+/* A. No strokes, rings, dashes, side bars, drop shadows or focus rings (width untouched, colour goes transparent) */
+#settings,#settings *{border-color:transparent!important;outline:none!important;box-shadow:none!important;text-decoration-color:transparent!important;-webkit-tap-highlight-color:transparent;scrollbar-color:#2a2e35 transparent}
+/* The guide's open/close arrow is drawn with two borders: it is an icon, so it stays (grey) */
+#settings .settings-guide-toggle{border-right-color:var(--gdim)!important;border-bottom-color:var(--gdim)!important}
+
+/* B. Headings and text */
+#settings .settings-section h3,#settings .settings-guide-heading strong,#settings .settings-route-card h4,#settings .settings-guide-grid h4,#settings #settingsSafety .rt-tools-panel h4,#settings #aimm-account-preview :is(h2,h3),#settings .rt-cost-card h5{color:var(--gink)!important}
+#settings :is(.settings-guide-heading small,.settings-guide-grid p,.settings-route-card p,#settingsNotes .settings-route-card p,.settings-companion-copy,#settingsModels>.sub,#aimm-account-preview>p,#aimm-account-preview .account-preview-content>p,#mcSpotifyCompanionConnectionStatus,#mcSpotifyCompanionSettingsStatus,.rt-key-status,.rt-keys-col label,.rt-opts label,.rt-tool-card .label,#settingsSafety .rt-tool-card .sub,.rt-cost-card .row>span:first-child,.rt-typedchat-cost div,.aichat-foot){color:var(--gdim)!important}
+#settings :is(.rt-keylabel-hint,.rt-typedchat-cost .aichat-foot span[style*="6b7280"],.rt-cost-card h5>span[style]){color:var(--goff)!important}
+#settings .rt-cost-card h5>span[style]{color:var(--gdim)!important}
+#settings .rt-tool-card label.tog{color:var(--gink)!important}
+#settings .rt-key-status.ok{color:#42c995!important}
+#settings .rt-key-status.err{color:#f87171!important}
+
+/* C. Surfaces. Directly on the black page: #1a1d21 */
+#settings :is(.settings-nav a,.settings-guide,.settings-section,#aimm-account-preview){background:var(--g1)!important}
+#settings .settings-nav a{color:var(--gink)!important}
+/* Inside a #1a1d21 card: #2a2e35 panels */
+#settings :is(.rt-key-wrap,.rt-opts,.rt-tools-panel,.settings-route-card,.settings-guide-grid article,.rt-cost-card,#mcSpotifyCompanionSettingsStatus,.tip-box.warn,#aimm-account-preview .account-preview-content,.settings-guide-icon,.settings-companion-connect-row button,#settingsReset #resetBtn){background:var(--g2)!important}
+#settings .settings-guide-icon{color:var(--gink)!important}
+/* On a #2a2e35 panel: #1a1d21 controls and tiles */
+#settings :is(.rt-key-inputs input,.rt-key-inputs button,.rt-opts select,.rt-tool-card,.rt-cost-metrics .row,.rt-cost-card .actions button,#aimm-account-preview .account-row input,#aimm-account-preview .account-row button,#aimm-account-preview .account-result){background-color:var(--g1)!important}
+#settings :is(.rt-key-inputs input,.rt-opts select,#aimm-account-preview .account-row input){color:var(--gink)!important}
+#settings :is(.rt-key-inputs button,.rt-cost-card .actions button,#aimm-account-preview .account-row button){color:var(--gink)!important}
+#settings :is(input,select)::placeholder{color:var(--goff)!important}
+/* On a #1a1d21 tool tile: #2a2e35 select */
+#settings #settingsSafety .rt-tool-card select{background-color:var(--g2)!important;color:var(--gink)!important}
+#settings .settings-guide-grid p,#settings .settings-guide-heading small{color:var(--gdim)!important}
+
+/* D. Cost tiles: one surface, no side bars, no coloured numbers */
+#settings .rt-cost-card .rt-cost-metrics .row .v,#settings .rt-cost-card .row.balance .v,#settings .rt-cost-card .row.session .v,#settings .rt-cost-card .row.spent .v,#settings .aichat-cost{color:var(--gink)!important}
+#settings .rt-cost-card .row.left .v{color:#42c995!important}
+#settings .rt-cost-card .row.left.warn .v{color:#facc15!important}
+#settings .rt-cost-card .row.left.danger .v{color:#f87171!important}
+#settings .rt-cost-card :is(.elevenlabs-dot,.anthropic-dot,.openai-dot){background:var(--gdim)!important}
+#settings .rt-cost-card .row.balance .v:hover{color:#fff!important}
+
+/* E. Selected / primary: solid teal, black text (one teal primary per row) */
+#settings :is(#rtAntKeySave,#elKeySave,#hopeUsageSttTokenSave,#rtKeySave,.settings-companion-connect-row button,#aimm-account-preview .account-row button:nth-of-type(2),#settingsSafety #autoPause:checked){background:var(--gteal)!important;background-color:var(--gteal)!important;color:var(--gblk)!important}
+#settings #settingsSafety #autoPause{background:var(--g2)!important}
+#settings #settingsSafety #autoPause:checked{background:var(--gteal)!important}
+#settings #settingsSafety #autoPause::after{border-color:var(--gblk)!important}
+#settings :is(input[type=checkbox],input[type=radio],input[type=range]){accent-color:var(--gteal)!important}
+
+/* F. Hover and keyboard focus: purple gradient, white text */
+#settings :is(.settings-nav a,.rt-key-inputs button,.rt-cost-card .actions button,.settings-companion-connect-row button,#settingsReset #resetBtn,#aimm-account-preview>button,#aimm-account-preview .account-row button):is(:hover,:focus-visible):not(:disabled),
+#settings .settings-guide summary:is(:hover,:focus-visible){background:var(--ggrad)!important;background-color:transparent!important;background-image:var(--ggrad)!important;color:#fff!important}
+#settings .settings-guide summary:is(:hover,:focus-visible){border-radius:9px}
+#settings .settings-guide summary:is(:hover,:focus-visible) :is(strong,small,.settings-guide-icon){color:#fff!important}
+#settings .settings-guide summary:is(:hover,:focus-visible) .settings-guide-icon{background:rgba(11,13,16,.35)!important}
+#settings .settings-guide summary:is(:hover,:focus-visible) .settings-guide-toggle{border-right-color:#fff!important;border-bottom-color:#fff!important}
+
+/* G. Greyed out: dim text, same grey */
+#settings :is(button,input,select):disabled{color:var(--goff)!important;opacity:.76!important}
+
+/* H. Destructive actions: red text on the grey (Remove key, Reset) */
+#settings :is(#rtAntKeyClear,#elKeyClear,#hopeUsageSttTokenClear,#rtKeyClear,#settingsReset #resetBtn){color:#f87171!important}
+#settings :is(#rtAntKeyClear,#elKeyClear,#hopeUsageSttTokenClear,#rtKeyClear,#settingsReset #resetBtn):hover{color:#fff!important}
+
+/* I. Reset warning box: solid grey, no yellow bar */
+#settings #settingsReset .tip-box.warn,#settings #browserWarn{background:var(--g2)!important;color:var(--gink)!important}
+#settings #settingsReset .tip-box.warn strong,#settings #browserWarn strong{color:var(--gink)!important}
+/* F2. Save buttons are matched by id above, so their hover is matched by id too */
+#settings :is(#rtAntKeySave,#elKeySave,#hopeUsageSttTokenSave,#rtKeySave):is(:hover,:focus-visible){background:var(--ggrad)!important;background-color:transparent!important;background-image:var(--ggrad)!important;color:#fff!important}
+/* G2. A disabled teal button goes back to grey */
+#settings :is(#rtAntKeySave,#elKeySave,#hopeUsageSttTokenSave,#rtKeySave):disabled{background:var(--g1)!important;background-color:var(--g1)!important;color:var(--goff)!important}
+/* F3. Guide row hover: every line of text white on the gradient */
+#settings .settings-guide summary:is(:hover,:focus-visible) .settings-guide-heading small,#settings .settings-guide summary:is(:hover,:focus-visible) .settings-guide-heading strong{color:#fff!important}
 </style>
   <div id="pluginInventoryUI" class="inv-shell">
     <div id="invLayout" class="inv-layout">
@@ -5358,7 +5607,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-17.7';
+const AIMM_BUILD = '2026-11-18.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
