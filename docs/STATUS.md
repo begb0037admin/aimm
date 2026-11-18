@@ -2,7 +2,7 @@
 
 ## 2026-11-18 build 2026-11-18.1 — Insight, Snapshots and Settings tab colours
 
-Insight, Snapshots and Settings tabs restyled to the approved palette (colours only, scoped to each tab and its dialogs, plus 9px radius on hover rows). Local branch `tabs-colours`; not deployed. Rollback: build 2026-11-17.7.
+Insight, Snapshots and Settings tabs restyled to the approved palette (colours only, scoped to each tab and its dialogs, plus 9px radius on hover rows). DEPLOYED 2026-11-18 (Worker dd73bc42-f9ad-445c-95b3-d9d7271848ea, commit b34e48ef). Rollback: build 2026-11-17.7.
 
 ## 2026-11-17 build 2026-11-17.7 — Plugins sidebar rounded headers
 
