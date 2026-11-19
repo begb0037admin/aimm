@@ -1,3 +1,9 @@
+## 2026-11-19 — AIMM Plugin Companion step 1 (local branch only)
+
+Added the read-only macOS companion in `plugin-companion/`: AU/VST2/VST3/CLAP metadata scanner, single-instance lock, loopback JSON bridge on port 41736, CLI JSON scan, app build script, and fixture/origin tests. No page or Worker changes; app not installed or deployed. Release build passed. The fixture and origin assertions passed in a direct runner. `swift test --disable-sandbox` builds the test bundle but this Command Line Tools installation does not discover/execute Swift Testing cases; plain `swift test` also fails its own sandbox setup.
+
+Real Mac scan: 1,647 bundles, 1,964 rows, 1,482 name/publisher products, 0 unreadable, no truncation. Rows by format: AU 858, VST2 563, VST3 541, CLAP 2. Bundle roots: system AU 540, VST 563, VST3 541, CLAP 2; user AU 1. The brief's ~540/65/304/2 figures were approximate top-level observations; this scan recurses into vendor folders (direct top-level counts here are VST 56 and VST3 295). AU has 541 bundles but 858 rows because multi-component bundles produce one row per plug-in.
+
 ## 2026-11-19 build 2026-11-19.6 — DEPLOYED: Plugins sidebar headers (page Worker version ed12b071-a807-4c8e-bf80-8b1d4338fb58; rollback 2026-11-19.5)
 
 Status and Categories now have the same rounded, 40px section headers as Tools and Library. Categories can be expanded and collapsed, with its state saved alongside the other sections. Section headers use a soft highlight on hover; other button hover styles are unchanged. Not pushed or deployed.
