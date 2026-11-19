@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## 2026-11-19 build 2026-11-19.2 — Costs account labels (local commit only)
+
+The live standalone Costs card now shows each account's email on its Primary/Backup button. Removed the two text lines beneath the buttons while retaining the in-card backup connection and fetch error status. The switch styling and account behaviour are unchanged. Not pushed or deployed.
+
 ## 2026-11-19 build 2026-11-19.1 — Costs switch moved to live standalone page (local commit only)
 
 Restored the root `index.html` to its content before `50b0a93c` and added the Primary/Backup ElevenLabs Costs switch to `standalone/assets/index.html`, which serves the live app. The card identifies the selected account, keeps each account's last fetched values separately, shows both remaining credit totals, and displays an in-card message if the backup key is absent. The existing Worker route is unchanged; the page test now reads the standalone asset. Not pushed or deployed.
