@@ -5286,13 +5286,13 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     <div hidden><span id="sessionCurrentDate"></span><span id="sessionPrevDate"></span></div>
     <div class="rt-tools-panel"><h4>Hope voice safeguards</h4>
       <div class="rt-tools-grid" id="rtToolsGrid">
-        <div class="rt-tool-card" data-tile-id="budget-cap"><div class="label">Auto session reminder</div>
+        <div class="rt-tool-card" data-tile-id="budget-cap"><div class="label">Remind me when a call reaches this length</div>
           <select id="budgetCap"><option value="0">Off</option><option value="5">5 minutes</option><option value="10" selected>10 minutes</option><option value="15">15 minutes</option><option value="20">20 minutes</option><option value="30">30 minutes</option></select>
-          <div class="sub" id="budgetSub">Shows a reminder during an Auto (ElevenLabs) call at this time. It does not end the call. Deepgram calls are unaffected.</div>
+          <div class="sub" id="budgetSub">Pops up a message and pulses the mic button once, when an Auto (ElevenLabs) call reaches this length. Watch the running clock at the top of Hope's chat. It does not end the call. Deepgram calls are unaffected.</div>
         </div>
-        <div class="rt-tool-card" data-tile-id="auto-pause"><div class="label">End an idle Auto call</div>
-          <label class="tog"><input type="checkbox" id="autoPause" /> End after 2 minutes without a conversation turn</label>
-          <div class="sub">Warns first, then ends an unattended ElevenLabs Live Agent call. This does not apply to the separate Deepgram route.</div>
+        <div class="rt-tool-card" data-tile-id="auto-pause"><div class="label">Hang up after 2 minutes of silence</div>
+          <label class="tog"><input type="checkbox" id="autoPause" /> Hang up an Auto call if nobody speaks for 2 minutes</label>
+          <div class="sub">Warns at 1:45, then ends the call so an empty call is not billed. Never cuts in while Hope is replying. Does not apply to Deepgram.</div>
         </div>
       </div>
     </div>
@@ -5573,7 +5573,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-19.4';
+const AIMM_BUILD = '2026-11-19.5';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);

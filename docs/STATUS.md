@@ -1,3 +1,7 @@
+## 2026-11-19 build 2026-11-19.5 — Session safety wording (local commit only)
+
+Updated the standalone Settings → Session safety labels and explanations for the Auto call reminder and two-minute idle hang-up. No layout or call behaviour changed. Not pushed or deployed.
+
 ## 2026-11-19 build 2026-11-19.4 — DEPLOYED: Costs Primary/Backup switch + Account link
 Live on aimixmasters.com and aimm.kevinlelitte.workers.dev (page Worker version 55104294-f87c-4b2e-8487-1f0f5226e945). Rollback: build 2026-11-18.4. Builds .1–.3 above were folded into this deploy.
 
