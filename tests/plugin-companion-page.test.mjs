@@ -21,8 +21,8 @@ const ok = body => ({ok:true,json:async()=>body});
 
 function harness(reply = async path => path === '/status' ? ok({lastScanAt:inventory.scannedAt}) : ok(inventory), permission='granted') {
   const elements = new Map();
-  for (const id of ['pcCompanionConnectionStatus','pcCompanionSettingsStatus','pcCompanionConnect','pcCompanionRescan','invScanBtn'])
-    elements.set(id,{textContent:'',disabled:false,hidden:id==='pcCompanionRescan',listeners:{},addEventListener(type,fn){this.listeners[type]=fn;}});
+  for (const id of ['pcCompanionConnectionStatus','pcCompanionSettingsStatus','pcCompanionConnect','invScanBtn'])
+    elements.set(id,{textContent:'',disabled:false,hidden:false,listeners:{},addEventListener(type,fn){this.listeners[type]=fn;}});
   const calls=[]; const settingsTab={listeners:{},addEventListener(type,fn){this.listeners[type]=fn;}}; let chromeScans=0, renders=0, saves=0;
   const context={
     fetch: async (url,options) => {calls.push({url,options});assert.ok(url.startsWith('http://127.0.0.1:41736/'));return reply(new URL(url).pathname,options);},
@@ -42,7 +42,7 @@ test('connected companion adopts rows for the existing inventory pipeline', asyn
   const h=harness();await h.pc.check();
   assert.equal(h.pc.connected(),true);
   assert.equal(h.elements.get('pcCompanionConnectionStatus').textContent,'Connected');
-  assert.match(h.elements.get('pcCompanionSettingsStatus').textContent,/2 products \(AU 1 · VST2 0 · VST3 2 · CLAP 0\)/);
+  assert.equal(h.elements.get('pcCompanionSettingsStatus').textContent,'');
   assert.equal(h.context.INV_SCAN_ROWS.length,3);
   assert.ok(h.context.INV_SCAN_ROWS.every(r=>r.source==='companion'));
   assert.equal(h.context.INV_SCAN_INFO.bundles,3);
@@ -56,8 +56,8 @@ test('quiet check shows the real disconnected state', async()=>{
   const h=harness(async()=>{throw new TypeError('Failed to fetch');},'prompt');
   await h.pc.check();
   assert.equal(h.pc.connected(),false);
-  assert.equal(h.elements.get('pcCompanionConnectionStatus').textContent,'Not connected');
-  assert.equal(h.elements.get('pcCompanionSettingsStatus').textContent,'Open AIMM Plugin Companion on this Mac, then press Connect companion.');
+  assert.equal(h.elements.get('pcCompanionConnectionStatus').textContent,'Disconnected');
+  assert.equal(h.elements.get('pcCompanionSettingsStatus').textContent,'');
   assert.equal(h.elements.get('invScanBtn').disabled,true);
 });
 
@@ -81,7 +81,17 @@ test('403 and CORS failures show connection guidance', async()=>{
   assert.match(forbidden.elements.get('pcCompanionSettingsStatus').textContent,/Chrome blocked AIMM’s loopback connection/);
   const cors=harness(async()=>{throw new TypeError('Failed to fetch');},'prompt');
   await cors.pc.check(true);
-  assert.match(cors.elements.get('pcCompanionSettingsStatus').textContent,/Chrome’s Loopback network permission/);
+  assert.match(cors.elements.get('pcCompanionSettingsStatus').textContent,/Loopback network access/);
+});
+
+test('Settings cards use the short labels and hide normal status boxes',()=>{
+  assert.match(html, /id="mcSpotifyCompanionConnect" aria-label="Connect audio reference">Connect<\/button>/);
+  assert.match(html, /id="pcCompanionConnect" aria-label="Connect plugins">Connect<\/button>/);
+  assert.match(html, /id="mcSpotifyCompanionConnectionStatus"[^>]*>Disconnected<\/span>/);
+  assert.match(html, /id="pcCompanionConnectionStatus"[^>]*>Disconnected<\/span>/);
+  assert.doesNotMatch(html, /id="pcCompanionRescan"/);
+  assert.match(html, /#pcCompanionSettingsStatus\):empty\{display:none\}/);
+  assert.match(html, /Connect plugins in Settings\./);
 });
 
 test('page load and Settings open each check quietly', async()=>{

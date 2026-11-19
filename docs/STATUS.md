@@ -1730,3 +1730,8 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 - The Plugins tab adopts `GET /inventory` rows into its existing grouping, counts, filters, tags, favourites, hidden state and vendor-check pipeline, with `source: companion`. Its scan button uses local `POST /scan` while connected and retains the Chrome folder scan when disconnected. No Plugins tab chip or banner was added.
 - Companion requests go only to `127.0.0.1:41736`. Inventory rows are stored in this browser and are not sent to the Worker. The existing `/api/vendor-check` action still sends only grouped product names, vendors, formats and versions; companion rows use that same grouping when the user runs the check. Companion adoption does not initiate a new automatic vendor check.
 - Not deployed. No companion installation or Worker change.
+
+## 2026-11-19 build 2026-11-19.8 — Companion card wording (not deployed)
+- Both Settings cards now show Connect and a Connected/Disconnected state. Their status boxes stay empty during normal operation and show a short line for connection or permission errors.
+- The Plugin card no longer shows scan counts or a Rescan button; scanning remains in the Plugins tab. Its empty-state hint says “Connect plugins in Settings.”
+- Audio reference capture and permission handling remain in place. No deployment or companion installation.
