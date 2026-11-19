@@ -49,3 +49,25 @@ test('cost page chooses the Worker subscription URL for each account',()=>{
   assert.equal(url('primary'),'https://worker.test/elevenlabs/v1/user/subscription');
   assert.equal(url('backup'),'https://worker.test/elevenlabs-backup/v1/user/subscription');
 });
+
+test('ElevenLabs account action opens settings in a new tab',()=>{
+  const actions=html.match(/<div class="actions">\s*(<button[^>]+>[^<]*<\/button>\s*){3}<\/div>/g)
+    ?.find(block=>block.includes('id="elAccountLink"'));
+  assert.ok(actions);
+  assert.ok(actions.indexOf('id="elTopup"')<actions.indexOf('id="elAccountLink"'));
+  assert.ok(actions.indexOf('id="elAccountLink"')<actions.indexOf('id="elUpdate"'));
+  assert.match(actions,/id="elAccountLink" title="Open your ElevenLabs account settings in a new tab">Account ↗<\/button>/);
+
+  const start=html.indexOf("const elAccountLink=document.getElementById('elAccountLink');");
+  const end=html.indexOf("const elUpdate=document.getElementById('elUpdate');",start);
+  assert.ok(start>=0&&end>start);
+  const accountButton={};
+  const calls=[];
+  const context=vm.createContext({
+    document:{getElementById:id=>id==='elAccountLink'?accountButton:null},
+    window:{open:(...args)=>calls.push(args)}
+  });
+  vm.runInContext(html.slice(start,end),context);
+  accountButton.onclick();
+  assert.deepEqual(calls,[['https://elevenlabs.io/app/settings','_blank','noopener']]);
+});

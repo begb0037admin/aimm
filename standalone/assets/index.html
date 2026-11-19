@@ -245,6 +245,12 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .settings-cost-row .rt-cost-card .rt-cost-metrics .row.left.danger .v{color:#f87171}
 .settings-cost-row .rt-cost-card .actions{gap:10px;margin-top:4px}
 .settings-cost-row .rt-cost-card .actions button{font-size:calc(var(--inv-text-scale, 1) * 12px);padding:10px 16px;letter-spacing:.4px;font-weight:600}
+#costCardEleven .actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+#costCardEleven .actions button{min-width:0}
+@media (max-width:480px){
+  #costCardEleven .actions{gap:5px}
+  #costCardEleven .actions button{padding:8px 3px;font-size:calc(var(--inv-text-scale, 1) * 10px);letter-spacing:0}
+}
 #costCardEleven .el-account-switch{display:flex;gap:8px}
 #costCardEleven .el-account-switch button{background:#374151;color:#e5e7eb;border:0;outline:0;border-radius:9px;padding:8px 16px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer}
 #costCardEleven .el-account-switch button[aria-pressed="true"]{background:#2dd4bf;color:#0b0d10}
@@ -5259,6 +5265,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         </div>
         <div class="actions">
           <button class="topup" id="elTopup" title="Open your ElevenLabs subscription in a new tab">Top up ↗</button>
+          <button class="topup" id="elAccountLink" title="Open your ElevenLabs account settings in a new tab">Account ↗</button>
           <button class="update-balance" id="elUpdate" title="Fetch your subscription headroom from /v1/user/subscription">Update balance</button>
         </div>
       </div>
@@ -5565,7 +5572,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-19.3';
+// STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
+const AIMM_BUILD = '2026-11-19.4';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -20547,6 +20555,7 @@ loadFloatMicPos();
 const elUsageLink=document.getElementById('elUsageLink');
 if(elUsageLink)elUsageLink.onclick=()=>window.open('https://elevenlabs.io/app/usage','_blank','noopener');
 const elTopup=document.getElementById('elTopup');if(elTopup)elTopup.onclick=()=>window.open('https://elevenlabs.io/app/subscription','_blank','noopener');
+const elAccountLink=document.getElementById('elAccountLink');if(elAccountLink)elAccountLink.onclick=()=>window.open('https://elevenlabs.io/app/settings','_blank','noopener');
 const elUpdate=document.getElementById('elUpdate');if(elUpdate)elUpdate.onclick=()=>updateBalance('el');
 document.getElementById('elAccountPrimary').onclick=()=>elSelectCostAccount('primary');
 document.getElementById('elAccountBackup').onclick=()=>elSelectCostAccount('backup');
