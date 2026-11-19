@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## 2026-11-19 build 2026-11-19.3 — Plain Costs account labels (local commit only)
+
+The Costs account buttons now read only “Primary” and “Backup”, with matching account aria-labels. Neither account email appears in the standalone page. Button styling and behaviour are unchanged. Not pushed or deployed.
+
 ## 2026-11-19 build 2026-11-19.2 — Costs account labels (local commit only)
 
 The live standalone Costs card now shows each account's email on its Primary/Backup button. Removed the two text lines beneath the buttons while retaining the in-card backup connection and fetch error status. The switch styling and account behaviour are unchanged. Not pushed or deployed.
