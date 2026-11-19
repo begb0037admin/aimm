@@ -1,4 +1,4 @@
-## 2026-11-19 build 2026-11-19.6 — Plugins sidebar section headers (local commit only)
+## 2026-11-19 build 2026-11-19.6 — DEPLOYED: Plugins sidebar headers (page Worker version ed12b071-a807-4c8e-bf80-8b1d4338fb58; rollback 2026-11-19.5)
 
 Status and Categories now have the same rounded, 40px section headers as Tools and Library. Categories can be expanded and collapsed, with its state saved alongside the other sections. Section headers use a soft highlight on hover; other button hover styles are unchanged. Not pushed or deployed.
 
