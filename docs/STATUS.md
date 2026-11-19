@@ -1,4 +1,4 @@
-## 2026-11-19 build 2026-11-19.5 — Session safety wording (local commit only)
+## 2026-11-19 build 2026-11-19.5 — DEPLOYED: Session safety wording (page Worker version e48c4beb-6113-4c70-a1e2-43d94422c642; rollback 2026-11-19.4)
 
 Updated the standalone Settings → Session safety labels and explanations for the Auto call reminder and two-minute idle hang-up. No layout or call behaviour changed. Not pushed or deployed.
 
