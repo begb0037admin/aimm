@@ -1,3 +1,7 @@
+## 2026-11-19 — Vendor check fixes (not deployed)
+
+The Worker now matches eligible compact companion vendor names, keeps unsupported vendors unmatched, and treats Waves V16 against the V17 suite page as a manual major-upgrade check. Waves V17 compares as current; Wavesfactory Trackspacer still uses its own product version. Added regression tests. `index.html` was unchanged, so AIMM_BUILD remains 2026-11-19.9. Not pushed or deployed.
+
 ## 2026-11-19 — AIMM Plugin Companion step 1 (local branch only)
 
 Added the read-only macOS companion in `plugin-companion/`: AU/VST2/VST3/CLAP metadata scanner, single-instance lock, loopback JSON bridge on port 41736, CLI JSON scan, app build script, and fixture/origin tests. No page or Worker changes; app not installed or deployed. Release build passed. The fixture and origin assertions passed in a direct runner. `swift test --disable-sandbox` builds the test bundle but this Command Line Tools installation does not discover/execute Swift Testing cases; plain `swift test` also fails its own sandbox setup.

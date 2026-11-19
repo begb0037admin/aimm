@@ -314,6 +314,11 @@ function compareVersions(left, right) {
   }
   return 0;
 }
+function vendorMatches(vendor, match) {
+  const compactMatch = match.replace(/ /g, '');
+  return vendor === match || vendor.startsWith(match + ' ')
+    || vendor === compactMatch || vendor.startsWith(compactMatch + ' ');
+}
 async function fetchSource(source) {
   const cached = SOURCE_CACHE.get(source.url);
   if (cached && Date.now() - cached.at < 60 * 60 * 1000) return { text: cached.text, raw: cached.raw, title: cached.title };
@@ -373,9 +378,9 @@ function sourceFor(product) {
     if (!hasMajorFive) return null;
     return VENDOR_SOURCES.find(item => item.id === 'celemony');
   }
-  if ((vendor === 'scaler music' || vendor.startsWith('scaler music ')) && normalize(product.name) === 'scaler 3') return VENDOR_SOURCES.find(item => item.id === 'scaler-music');
+  if (vendorMatches(vendor, 'scaler music') && normalize(product.name) === 'scaler 3') return VENDOR_SOURCES.find(item => item.id === 'scaler-music');
   if (vendor === 'liquidsonics' || vendor.startsWith('liquidsonics ')) return VENDOR_SOURCES.find(item => item.id === 'liquidsonics');
-  if (vendor === 'plugin alliance' || vendor.startsWith('plugin alliance ')) {
+  if (vendorMatches(vendor, 'plugin alliance')) {
     const name = String(product.name || '').replace(/^plugin alliance\s*[:—-]?\s*/i, '').trim().toLowerCase();
     const slug = name.replace(/[^a-z0-9_-]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
     if (!slug) return null;
@@ -419,7 +424,7 @@ function sourceFor(product) {
     if (name.includes('limiter')) return VENDOR_SOURCES.find(item => item.id === 'altitude-limiter');
     return null;
   }
-  const source = VENDOR_SOURCES.find(item => item.id !== 'altitude-crossfeed' && item.id !== 'altitude-limiter' && item.matches.some(match => vendor === match || vendor.startsWith(match + ' '))) || null;
+  const source = VENDOR_SOURCES.find(item => item.id !== 'altitude-crossfeed' && item.id !== 'altitude-limiter' && item.matches.some(match => vendorMatches(vendor, match))) || null;
   if (source?.parser === 'product-query') {
     const queryName = String(product.name || '').replace(/^eventide\s*[:—-]?\s*/i, '').trim();
     const officialName = EVENTIDE_PRODUCTS.get(normalize(queryName));
@@ -521,6 +526,11 @@ async function checkVendorSources(request) {
       : source.parser === 'softube-suite'
         ? compareVersions((String(version).match(/\d+(?:\.\d+){1,3}/) || [''])[0], latestVersion)
       : compareVersions(version, latestVersion));
+    const olderWavesIndex = source.parser === 'waves-suite' ? installedComparisons.findIndex(value => value === -1) : -1;
+    if (olderWavesIndex !== -1) {
+      const installedMajor = (String(versions[olderWavesIndex]).match(/\d+/) || [''])[0];
+      return { ...product, latestVersion, sourceUrl: source.url, checkedAt, attempted: true, status: 'manual-check', reason: `Waves V${latestVersion} is a new major version (V${installedMajor} installed). Check your Waves Update Plan.` };
+    }
     const status = installedComparisons.some(value => value === -1) ? 'updates'
       : installedComparisons.every(value => value === 0) ? 'up-to-date'
       : 'manual-check';
