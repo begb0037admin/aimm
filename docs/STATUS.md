@@ -3,6 +3,7 @@
 ## 2026-11-19 build 2026-11-19.1 — ElevenLabs Costs account switch (local commit only)
 
 The Settings → Costs ElevenLabs card now switches between Primary and Backup subscriptions, retaining each account's fetched balance and credits independently in browser storage and showing both remaining credit totals. Update balance uses the selected account's Worker route; an unconfigured backup secret shows an in-card message. The Worker adds a GET-only backup subscription route backed by the optional `ELEVENLABS_API_KEY_BACKUP` secret. Tests cover route restrictions and account URL selection. NOT PUSHED OR DEPLOYED; the new Worker secret has not been set.
+Commit `50b0a93c`: the Costs Primary/Backup switch is build `2026-11-18.4`.
 
 ## 2026-11-18 build 2026-11-18.3 — Settings key tiles (preview only)
 
