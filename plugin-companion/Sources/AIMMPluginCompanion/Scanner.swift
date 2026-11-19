@@ -85,7 +85,7 @@ enum PluginScanner {
                         if entries >= 50_000 { truncated = true; return }
                         entries += 1
                         let name = child.lastPathComponent
-                        if name.hasPrefix(".") || name.hasSuffix(" (Unused)") || child.deletingPathExtension().lastPathComponent.hasSuffix(" (Unused)") || name.caseInsensitiveCompare("Unused") == .orderedSame || name.lowercased().hasSuffix(".aaxplugin") { continue }
+                        if name.hasPrefix(".") || name.hasPrefix("AIMMFoundationSyntheticTest") || name.hasSuffix(" (Unused)") || child.deletingPathExtension().lastPathComponent.hasSuffix(" (Unused)") || name.caseInsensitiveCompare("Unused") == .orderedSame || name.lowercased().hasSuffix(".aaxplugin") { continue }
                         guard isDirectoryWithoutSymlink(child) else { continue }
                         if let format = formats[child.pathExtension.lowercased()] {
                             rootBundles += 1

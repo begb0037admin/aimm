@@ -1735,3 +1735,7 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 - Both Settings cards now show Connect and a Connected/Disconnected state. Their status boxes stay empty during normal operation and show a short line for connection or permission errors.
 - The Plugin card no longer shows scan counts or a Rescan button; scanning remains in the Plugins tab. Its empty-state hint says “Connect plugins in Settings.”
 - Audio reference capture and permission handling remain in place. No deployment or companion installation.
+
+## 2026-11-19 build 2026-11-19.9 — Plugin Companion polish (not deployed)
+- The Plugins scan status and connected empty state no longer ask for folders; disconnected Chrome folder guidance remains. The companion scanner excludes leftover `AIMMFoundationSyntheticTest` bundles.
+- Not deployed.
