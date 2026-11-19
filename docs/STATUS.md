@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## 2026-11-19 build 2026-11-19.1 — Costs switch moved to live standalone page (local commit only)
+
+Restored the root `index.html` to its content before `50b0a93c` and added the Primary/Backup ElevenLabs Costs switch to `standalone/assets/index.html`, which serves the live app. The card identifies the selected account, keeps each account's last fetched values separately, shows both remaining credit totals, and displays an in-card message if the backup key is absent. The existing Worker route is unchanged; the page test now reads the standalone asset. Not pushed or deployed.
+
 ## 2026-11-19 build 2026-11-18.4 — DEPLOYED: Luna for all AI jobs, Settings key tiles, Costs Primary/Backup
 
 **Live on aimixmasters.com and aimm.kevinlelitte.workers.dev.** Page Worker version `4cd4b0d6-5c57-4ca7-ba86-c1bc8426d0f1` (main = live, commit `970bf8c6`). Proxy Worker (`aimm-proxy`) deployed first as version `95e767ec-f8ec-4db8-b50d-005e8139d6de`. Rollback: page build 2026-11-18.1; proxy version `89042e00-1802-4e99-92b8-b15fb6ed933d`.

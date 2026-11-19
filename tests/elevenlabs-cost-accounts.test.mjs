@@ -5,7 +5,7 @@ import vm from 'node:vm';
 
 const workerSource=await readFile(new URL('../worker/src/index.js',import.meta.url),'utf8');
 const worker=(await import(`data:text/javascript;base64,${Buffer.from(workerSource).toString('base64')}`)).default;
-const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
+const html=await readFile(new URL('../standalone/assets/index.html',import.meta.url),'utf8');
 const origin='https://aimixmasters.com';
 const request=(path,method='GET',requestOrigin=origin)=>new Request('https://worker.test'+path,{method,headers:{Origin:requestOrigin}});
 
