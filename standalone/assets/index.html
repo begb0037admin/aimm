@@ -210,7 +210,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
    labelled block that groups related controls (keys, models, costs, etc.). */
 .settings-section{margin:18px 0 28px}
 #settings.active{display:flex;flex-direction:column}
-#settingsKeys{order:2}#settingsModels{order:3}#settingsSafety{order:4}#settingsNotes{order:5}#settingsReset{order:6}
+#settingsKeys{order:2}#settingsSafety{order:4}#settingsNotes{order:5}#settingsReset{order:6}
 .settings-section h3{font-size:calc(var(--inv-text-scale, 1) * 13px);font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#cbd5e1;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #1f2937}
 .settings-route-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px;margin-top:10px}
 .settings-route-card{padding:16px;border:1px solid #374151;border-radius:10px;background:#111827;line-height:1.55}
@@ -2423,7 +2423,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #settings .settings-section h3{margin:0 0 15px;padding:0;border:0;color:#e8ebed;font-size:calc(var(--inv-text-scale, 1) * 15px);font-weight:700;letter-spacing:-.01em;text-transform:none}
 #settings #aimm-account-preview{order:1!important;margin:0;padding:18px 20px;border:1px solid var(--set-card-bd);border-radius:12px;background:var(--set-card);box-shadow:none}
 #settings #settingsKeys{order:2!important}
-#settings #settingsModels{order:3!important}
 #settings #settingsSafety{order:4!important}
 #settings #settingsNotes{order:5!important}
 #settings #settingsAudioReference{order:6!important}
@@ -2443,20 +2442,18 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #settings #aimm-account-preview .account-result{margin-top:12px;padding:12px;border:1px solid #2c3034;border-radius:9px;background:#17191c}
 #settings #aimm-account-preview .account-result:empty{display:none}
 #settings #settingsKeys .rt-keys-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-#settings #settingsKeys .rt-key-wrap{min-width:0;padding:14px;border:1px solid #30353a;border-radius:9px;background:#16181b}
-#settings #settingsKeys .rt-key-wrap:has(#hopeUsageSttToken),#settings #settingsKeys .rt-key-wrap:has(#regInboxToolBtn){grid-column:1/-1}
-#settings #settingsKeys .rt-key-wrap label,#settings #settingsModels .rt-opts label{margin-bottom:8px;color:#b9c0c8;font-size:calc(var(--inv-text-scale, 1) * 11px);letter-spacing:.035em}
+#settings #settingsKeys .rt-key-wrap{min-width:0;height:100%;box-sizing:border-box;display:flex;flex-direction:column;padding:14px;border:1px solid #30353a;border-radius:9px;background:#16181b}
+#settings #settingsKeys .rt-key-wrap label{margin-bottom:8px;color:#b9c0c8;font-size:calc(var(--inv-text-scale, 1) * 11px);letter-spacing:.035em}
+#settings #settingsKeys .rt-key-wrap:has(#elAgentId) label,#settings #settingsKeys .rt-key-wrap:has(#elBackupAgentId) label{min-height:2.6em}
 #settings #settingsKeys .rt-keylabel-hint{color:#7f8993;font-size:calc(var(--inv-text-scale, 1) * 11px)}
-#settings #settingsKeys .rt-key-inputs{gap:10px;flex-wrap:wrap}
+#settings #settingsKeys .rt-key-inputs{gap:10px;flex-wrap:wrap;margin-top:auto}
+#settings #settingsKeys .rt-key-wrap:has(#elAgentId) .rt-key-inputs,#settings #settingsKeys .rt-key-wrap:has(#elBackupAgentId) .rt-key-inputs{margin-top:0}
 #settings #settingsKeys .rt-key-inputs input{min-width:0;min-height:42px;border-radius:7px;background:#101214;border-color:#34383d}
 #settings #settingsKeys .rt-key-inputs button{min-height:40px;padding:8px 14px;border:1px solid #34383d;border-radius:7px;background:#1b1d20;color:#cbd0d6}
 #settings #settingsKeys .rt-key-inputs button:hover{border-color:#4484aa;background:#202b34}
 #settings .rt-key-status{margin-top:8px;color:#9aa0a6;font-size:calc(var(--inv-text-scale, 1) * 11px);line-height:1.5}
 #settings .rt-key-status.ok{color:#34d399}
 #settings .rt-key-status.err{color:#f87171}
-#settings #settingsModels>.sub{margin:-3px 0 13px;color:#9aa0a6;font-size:calc(var(--inv-text-scale, 1) * 12px);line-height:1.55}
-#settings #settingsModels .rt-opts{max-width:720px;padding:14px;border:1px solid #30353a;border-radius:9px;background:#16181b}
-#settings #settingsModels .rt-opts select{appearance:none;min-height:48px;padding:10px 48px 10px 14px;border-radius:7px;background-color:#101214;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23aeb8c2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;background-size:11px 7px;border-color:#34383d}
 #settings #settingsSafety .rt-tools-panel{margin:0;padding:14px;border:1px solid #30353a;border-radius:9px;background:#16181b}
 #settings #settingsSafety .rt-tools-panel h4{margin-bottom:12px;color:#cbd0d6}
 #settings #settingsSafety .rt-tools-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
@@ -2489,7 +2486,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #settings a:focus-visible,#settings button:focus-visible,#settings input:focus-visible,#settings select:focus-visible{outline:2px solid #2fa1e6;outline-offset:2px}
 #settings [id]{scroll-margin-top:18px}
 @media(max-width:980px){#settings #settingsNotes .settings-route-grid{grid-template-columns:1fr}#settings #settingsSafety .rt-tools-grid{grid-template-columns:1fr}}
-@media(max-width:680px){#settings{padding-bottom:30px}#settings>.section-head{display:block;padding-bottom:10px}#settings>.section-head h2{font-size:calc(var(--inv-text-scale, 1) * 22px)}#settings .settings-section,#settings #aimm-account-preview{padding:15px}#settings #settingsKeys .rt-keys-col{grid-template-columns:1fr}#settings #settingsKeys .rt-key-wrap:has(#hopeUsageSttToken),#settings #settingsKeys .rt-key-wrap:has(#regInboxToolBtn){grid-column:auto}#settings #aimm-account-preview .account-preview-content{padding:12px}#settings #aimm-account-preview .account-row input{flex-basis:100%}#settings #aimm-account-preview .account-row button{flex:1 1 auto}#settings #settingsModels .rt-opts{max-width:none}#settings #settingsReset .tip-box.warn{padding:12px}}
+@media(max-width:680px){#settings{padding-bottom:30px}#settings>.section-head{display:block;padding-bottom:10px}#settings>.section-head h2{font-size:calc(var(--inv-text-scale, 1) * 22px)}#settings .settings-section,#settings #aimm-account-preview{padding:15px}#settings #settingsKeys .rt-keys-col{grid-template-columns:1fr}#settings #aimm-account-preview .account-preview-content{padding:12px}#settings #aimm-account-preview .account-row input{flex-basis:100%}#settings #aimm-account-preview .account-row button{flex:1 1 auto}#settings #settingsReset .tip-box.warn{padding:12px}}
 @media(prefers-reduced-motion:reduce){.settings-nav a{transition:none}}
 
 .settings-guide{order:0;margin:0 0 22px;background:#1b1d20;border:1px solid #2c3034;border-radius:12px;overflow:hidden;color:#e7e9ec}
@@ -4953,7 +4950,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 
 /* B. Headings and text */
 #settings .settings-section h3,#settings .settings-guide-heading strong,#settings .settings-route-card h4,#settings .settings-guide-grid h4,#settings #settingsSafety .rt-tools-panel h4,#settings #aimm-account-preview :is(h2,h3),#settings .rt-cost-card h5{color:var(--gink)!important}
-#settings :is(.settings-guide-heading small,.settings-guide-grid p,.settings-route-card p,#settingsNotes .settings-route-card p,.settings-companion-copy,#settingsModels>.sub,#aimm-account-preview>p,#aimm-account-preview .account-preview-content>p,#mcSpotifyCompanionConnectionStatus,#mcSpotifyCompanionSettingsStatus,.rt-key-status,.rt-keys-col label,.rt-opts label,.rt-tool-card .label,#settingsSafety .rt-tool-card .sub,.rt-cost-card .row>span:first-child,.rt-typedchat-cost div,.aichat-foot){color:var(--gdim)!important}
+#settings :is(.settings-guide-heading small,.settings-guide-grid p,.settings-route-card p,#settingsNotes .settings-route-card p,.settings-companion-copy,#aimm-account-preview>p,#aimm-account-preview .account-preview-content>p,#mcSpotifyCompanionConnectionStatus,#mcSpotifyCompanionSettingsStatus,.rt-key-status,.rt-keys-col label,.rt-opts label,.rt-tool-card .label,#settingsSafety .rt-tool-card .sub,.rt-cost-card .row>span:first-child,.rt-typedchat-cost div,.aichat-foot){color:var(--gdim)!important}
 #settings :is(.rt-keylabel-hint,.rt-typedchat-cost .aichat-foot span[style*="6b7280"],.rt-cost-card h5>span[style]){color:var(--goff)!important}
 #settings .rt-cost-card h5>span[style]{color:var(--gdim)!important}
 #settings .rt-tool-card label.tog{color:var(--gink)!important}
@@ -5121,11 +5118,10 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 <div class="panel" id="settings">
   <div class="section-head">
     <h2>⚙ Settings</h2>
-    <span class="blurb">Manage Hope’s voice routes and agents, provider access, research model, and session safeguards.</span>
+    <span class="blurb">Manage Hope’s voice routes and agents, provider access, and session safeguards.</span>
   </div>
   <nav class="settings-nav" aria-label="Settings sections">
     <a href="#settingsKeys">API keys &amp; agents</a>
-    <a href="#settingsModels">Models</a>
     <a href="#settingsSafety">Session safety</a>
     <a href="#settingsNotes">Voice routes</a>
     <a href="#settingsAudioReference">Audio reference</a>
@@ -5138,10 +5134,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
       <span class="settings-guide-toggle" aria-hidden="true"></span>
     </summary>
     <div class="settings-guide-grid">
-      <article><h4>API keys &amp; Agent access</h4><p>Manage optional provider access and the two ElevenLabs Agent IDs. The preferred Agent is tried first; the backup is retried once only after a clear quota or credit error. “Update tools” changes both Agents at ElevenLabs.</p></article>
-      <article><h4>Models</h4><p>Auto uses the model configured on its ElevenLabs Agent. Typed chat, research and Deepgram use GPT-6 Luna through the Worker.</p></article>
+      <article><h4>API keys &amp; Agent access</h4><p>Manage optional provider access and the two ElevenLabs Agent IDs. The preferred Agent is tried first; the backup is retried once only after a clear quota or credit error. Agent tools are managed through the ElevenLabs connector.</p></article>
       <article><h4>Session safety</h4><p>Choose when Hope reminds you about an idle Auto call and whether an unattended Auto call ends after two minutes. These safeguards do not affect the separate Deepgram route.</p></article>
-      <article><h4>Voice routes</h4><p>Auto uses an ElevenLabs Live Agent, with one backup attempt for clear quota or credit exhaustion. Deepgram is separate: Flux transcribes, GPT-6 Luna replies, then ElevenLabs Flash speaks.</p></article>
+      <article><h4>Voice routes</h4><p>Auto uses the model configured on its ElevenLabs Live Agent, with one backup attempt for clear quota or credit exhaustion. Deepgram is separate: Flux transcribes, GPT-6 Luna replies, then ElevenLabs Flash speaks. Typed chat and research also use GPT-6 Luna through the Worker.</p></article>
       <article><h4>Reset</h4><p>Reset clears this browser’s MixBus chains, meters, symptom flags, favourites, and custom plug-ins. It keeps provider access and Hope settings.</p></article>
     </div>
   </details>
@@ -5175,13 +5170,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         <div class="rt-key-inputs"><input type="text" id="elBackupAgentId" aria-label="Backup ElevenLabs Agent ID, Default" placeholder="agent_…" autocomplete="off" spellcheck="false" readonly></div>
         <div class="rt-key-status ok" id="elAgentStatus">Agent IDs are public identifiers. Fallback is preferred; Default is backup. Retry occurs only for clear quota or credit exhaustion.</div>
       </div>
-      <div class="rt-key-wrap">
-        <label>Hope Agent Tools <span class="rt-keylabel-hint">— adds the current AIMM tool set to both Agents</span></label>
-        <div class="rt-key-inputs">
-          <button class="btn secondary sm" id="regInboxToolBtn" onclick="registerInboxTool()">Update tools on both Agents</button>
-        </div>
-        <div class="rt-key-status" id="regInboxToolStatus">Use this only when you intend to update ElevenLabs. The action is idempotent and applies to Fallback and Default.</div>
-      </div>
       <!-- DORMANT post-Batch-1 (OpenAI removal): OpenAI key UI hidden but kept
            in the DOM so rtLoadKey/rtSaveKey/rtClearKey + rtSetKeyStatus still
            work without guards. RT_KEY_STORAGE legacy data stays readable. To
@@ -5200,10 +5188,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
       </div>
     </div>
   </div>
-  <div class="settings-section" id="settingsModels">
-    <h3>Models</h3>
-    <p class="sub">Auto uses the model configured on the ElevenLabs Agent. Deepgram uses GPT-6 Luna through the Worker. Typed chat and research use GPT-6 Luna.</p>
-    <div class="rt-opts">
+  <div hidden data-dormant="openai-realtime-models">
       <!-- DORMANT post-Batch-1: OpenAI Realtime model + voice selectors. Hidden
            but in the DOM so rtSavePrefs/rtLoadPrefs keep working without null
            guards. Same for the provider toggle below. -->
@@ -5231,7 +5216,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <option value="elevenlabs" selected>ElevenLabs (Hope + GPT-6 Luna)</option>
         </select>
       </div>
-    </div>
   </div>
 <div class="settings-section" id="settingsCosts">
     <h3>Costs</h3>
@@ -5572,7 +5556,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-18.2';
+const AIMM_BUILD = '2026-11-18.3';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -13107,12 +13091,11 @@ MARKETING TAB — currently sparse (placeholder for the Katie persona). No notab
 
 COMMUNITY TAB — currently sparse (placeholder for social features). No notable buttons yet.
 
-SETTINGS TAB (accessed from the top navigation) — 5 sections, full inventory
-1. **API Keys section.** Each editable key has: input field, Show/Hide (ghost), Save (secondary grey), Clear (ghost). OpenAI and ElevenLabs keys are editable; Hope's Agent ID is displayed read-only from source. The OpenAI and persona agent infrastructure remains dormant.
-2. **Models section.** Research brain dropdown defaults to gpt-6-luna; gpt-6-luna remains optional. Dormant OpenAI Realtime model + voice + provider selectors.
-3. **Costs section.** ElevenLabs subscription card plus typed Luna session cost.
-4. **Session safety section.** Auto call reminder, idle auto-pause, and ElevenLabs usage link.
-5. **Notes section.** Browser warning banner (#browserWarn — appears when not in secure context, mic blocked). How-it-works tip box.
+SETTINGS TAB (accessed from the top navigation) — current controls
+1. **API keys & Agent access.** ElevenLabs key and Deepgram route token are editable. The preferred and backup ElevenLabs Agent IDs are displayed read-only. Agent tools are managed through the ElevenLabs connector. OpenAI Realtime controls remain hidden and dormant.
+2. **Costs.** ElevenLabs subscription card plus typed Luna session cost.
+3. **Session safety.** Auto call reminder, idle auto-pause, and ElevenLabs usage link.
+4. **Voice routes.** Auto uses the configured ElevenLabs Agent model; Deepgram uses GPT-6 Luna through the Worker.
 
 MODALS — full catalog
 • Plugin Picker (id #pickerModal) — opens from "+ Add plugin" on a bus. Search + filter by stage. Click plugin = adds to bus.
@@ -16693,9 +16676,9 @@ async function buildDashboardDigest(){
 // agent if the id isn't already attached. Payload shapes mirror
 // register_elevenlabs_tools.py (tool_config POST → id; PATCH
 // conversation_config.agent.prompt.tool_ids with the FULL list).
-// Tools added after the original bulk registration. The Settings button
-// registers any of these that are missing — idempotent (reuses same-name
-// workspace tools, append-only PATCH of the agent's tool_ids).
+// Tools added after the original bulk registration. This retained helper
+// registers any that are missing — idempotent (reuses same-name workspace
+// tools, append-only PATCH of the agent's tool_ids).
 const AIMM_NEW_AGENT_TOOLS = ['manage_roadmap_inbox', 'propose_mix_move', 'set_stem_selection', 'list_symptom_tiles', 'add_symptom_tile', 'delete_symptom_tile', 'inventory_navigate', 'inventory_search', 'inventory_add_to_bus'];
 async function registerInboxTool(){
   const sts=document.getElementById('regInboxToolStatus');

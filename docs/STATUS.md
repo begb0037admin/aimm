@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## 2026-11-18 build 2026-11-18.3 — Settings key tiles (preview only)
+
+Settings now shows four equal API key and Agent access tiles in a two-column grid, matching Kevin's approved preview. The Hope Agent Tools tile, empty Models section, Models navigation link and guide article are removed. Agent tool syncs are handled through the ElevenLabs connector; the unused `registerInboxTool()` helper and hidden OpenAI selectors remain in the source. The Settings guide reflects the current routes. Colours, fonts and Hope chat panel are unchanged. NOT DEPLOYED.
+
 ## 2026-11-18 build 2026-11-18.2 — Luna for AIMM page AI (preview only)
 
 The page's profile extraction, chain auto-fill, top-pick re-rank, note summary and metadata, plugin import, research, typed chat, snapshot summary, and Fix Queue move generation now use GPT-6 Luna through the AIMM Worker. The Worker adds authenticated, rate-limited non-streaming `/hope/ai` and moves `/hope/web-search` to Luna with the OpenAI Responses `web_search` tool. The Anthropic proxy route and Worker key use are removed; existing secrets have not been deleted. Settings no longer shows the Anthropic key, research model selector, or cost card. Page feature calls return usage but their Luna spend is not displayed, because these non-streaming calls are not yet included in a single reliable session total; the existing typed Luna route still shows its calculated cost. The Hope chat panel layout, buttons, header, and Settings colour scheme were not redesigned. Syntax, route stub, and seven page feature request tests passed. NOT DEPLOYED. A real `/hope/web-search` call remains required after Kevin approves the preview and the Worker is deployed; the page deploy follows only if that call succeeds. Rollback target: build 2026-11-18.1.
