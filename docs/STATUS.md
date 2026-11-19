@@ -1,3 +1,7 @@
+## 2026-11-19 build 2026-11-19.6 — Plugins sidebar section headers (local commit only)
+
+Status and Categories now have the same rounded, 40px section headers as Tools and Library. Categories can be expanded and collapsed, with its state saved alongside the other sections. Section headers use a soft highlight on hover; other button hover styles are unchanged. Not pushed or deployed.
+
 ## 2026-11-19 build 2026-11-19.5 — DEPLOYED: Session safety wording (page Worker version e48c4beb-6113-4c70-a1e2-43d94422c642; rollback 2026-11-19.4)
 
 Updated the standalone Settings → Session safety labels and explanations for the Auto call reminder and two-minute idle hang-up. No layout or call behaviour changed. Not pushed or deployed.

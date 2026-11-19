@@ -4665,7 +4665,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #invTagManagerOverlay .inv-tag-row.selected :is(.inv-tag-select,.inv-tag-name,.inv-tag-count){color:var(--pv-black)!important}
 
 /* D. Hover and keyboard focus: purple gradient (#chain #presetsBtn, .chain-add:hover) */
-#library :is(.inv-btn,.inv-format,.inv-action,.inv-more,.inv-side-button,.inv-vst-option,.inv-tag-filter-option,.inv-fav,.inv-product-actions,.inv-vendor-toggle,.inv-sidebar-head button,.inv-sidebar-section-toggle,.inv-view-menu>summary):hover:not(:disabled):not(.active):not(.on):not([aria-disabled="true"]),
+#library :is(.inv-btn,.inv-format,.inv-action,.inv-more,.inv-side-button,.inv-vst-option,.inv-tag-filter-option,.inv-fav,.inv-product-actions,.inv-vendor-toggle,.inv-sidebar-head button,.inv-view-menu>summary):hover:not(:disabled):not(.active):not(.on):not([aria-disabled="true"]),
 #invPopoverLayer :is(.inv-vst-option,.inv-tag-filter-option):hover:not(.on),
 #invProductMenu .inv-menu-row:hover:not(.disabled),
 #invNoteOverlay button:hover:not(.primary),
@@ -4771,7 +4771,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library .inv-side-button.active[data-inv-scope] .inv-side-count,
 #library .inv-side-button.active[data-inv-open-all-plugins] .inv-side-count{background:transparent!important;box-shadow:none!important;border-color:transparent!important;color:#0b0d10!important}
 #library .inv-side-button:hover:not(.active):not(:disabled) .inv-side-count{color:#fff!important;background:transparent!important;box-shadow:none!important;border-color:transparent!important}
-#library .inv-sidebar-section-toggle[data-inv-section-toggle="tools"],#library .inv-sidebar-section-toggle[data-inv-section-toggle="library"]{min-height:40px;margin:8px 0 4px;padding:0 10px;font-size:11px;border-radius:9px}
+#library .inv-sidebar-section-toggle[data-inv-section-toggle="status"],#library .inv-sidebar-section-toggle[data-inv-section-toggle="tools"],#library .inv-sidebar-section-toggle[data-inv-section-toggle="library"],#library .inv-sidebar-section-toggle[data-inv-section-toggle="categories"]{min-height:40px;margin:8px 0 4px;padding:0 10px;font-size:11px;border-radius:9px}
+#library .inv-sidebar .inv-sidebar-section-toggle:hover:not(:disabled){background:rgba(255,255,255,.07);color:#fff!important}
 
 /* Insight tab colours 2026-11-18 */
 /* PREVIEW ONLY. Insight tab (#knowledge) and its note dialog (#kbModal), COLOURS ONLY.
@@ -5056,7 +5057,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <button class="inv-side-button" type="button" data-inv-tag-manager aria-label="Plugin Tag Manager" title="Manage tags on this browser"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 13 11 22l-9-9V3h10l8 10Z"/><circle cx="7" cy="7" r="1"/></svg></span><span class="inv-side-label">Tag Manager</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="hidden" aria-label="Hidden plug-ins" title="Show plug-ins hidden from the main library"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c5.5 0 9 7 9 7a16 16 0 0 1-3.1 3.8M6.2 6.2C4.1 7.6 3 12 3 12s3.5 7 9 7a10 10 0 0 0 3-.5"/></svg></span><span class="inv-side-label">Hidden</span><span class="inv-side-count" id="invSidebarHiddenCount">0</span></button>
         </nav>
-        <div class="inv-sidebar-section">CATEGORIES</div>
+        <button class="inv-sidebar-section inv-sidebar-section-toggle" type="button" data-inv-section-toggle="categories" aria-expanded="true" aria-controls="invBrowseSectionCategories">CATEGORIES</button>
         <nav class="inv-sidebar-nav" aria-label="Plug-in categories">
           <button class="inv-side-button" type="button" data-inv-category="EQ &amp; Filter" aria-label="EQ and Filter" title="EQ &amp; Filter"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="7" cy="18" r="2"/></svg></span><span class="inv-side-label">EQ &amp; Filter</span></button>
           <button class="inv-side-button" type="button" data-inv-category="Dynamics" aria-label="Dynamics" title="Dynamics"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h3l3-7 4 14 3-7h5"/></svg></span><span class="inv-side-label">Dynamics</span></button>
@@ -5573,7 +5574,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-19.5';
+const AIMM_BUILD = '2026-11-19.6';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
