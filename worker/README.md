@@ -5,6 +5,13 @@ page calls `/hope/ai` for small Luna tasks and `/hope/luna` for Hope chat. It
 relays ElevenLabs REST calls. The browser needs the AIMM access token for Luna;
 provider keys and agent IDs stay out of the browser.
 
+The Settings → Costs ElevenLabs card can read a second account through
+`GET /elevenlabs-backup/v1/user/subscription`. Configure the optional Worker
+secret `ELEVENLABS_API_KEY_BACKUP` for that account. The route accepts only
+that GET path, uses the same allowed origins as the primary relay, and returns
+`503` with `code: no_backup_key` until the secret is configured. No backup
+account key belongs in the page or localStorage.
+
 Why not just commit the keys to GitHub? The repo is **public**, and GitHub
 Pages serves every file in it publicly — anyone who found the URL could drain
 the ElevenLabs/OpenAI accounts. Secrets must live server-side; this Worker

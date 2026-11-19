@@ -17,6 +17,7 @@ namespace_id = "20261020"
 
 # Secrets (NOT in this file — set via `npx wrangler secret put <NAME>`):
 #   ELEVENLABS_API_KEY
+#   ELEVENLABS_API_KEY_BACKUP (optional, GET /elevenlabs-backup/v1/user/subscription)
 #   HOPE_STT_TOKEN (private bearer token required by POST /hope/stt)
 #   HOPE_USAGE_TTS_API_KEY (TTS-only ElevenLabs key for POST /hope/tts)
 #   OPENAI_API_KEY (GPT-6 Luna Responses API for /hope/luna, /hope/ai, and /hope/web-search)

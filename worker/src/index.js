@@ -7,6 +7,7 @@
 // Routes:
 //   /hope/ai           → OpenAI Responses API (non-streaming Luna)
 //   /elevenlabs/<path> → https://api.elevenlabs.io/<path>   (injects xi-api-key)
+//   /elevenlabs-backup/v1/user/subscription → backup account (GET only)
 //
 // Deploy + secrets: see worker/README.md.
 
@@ -367,6 +368,18 @@ export default {
     const origin = request.headers.get('Origin') || '';
     if (!ALLOWED_ORIGINS.includes(origin)){
       return new Response('Forbidden origin', { status: 403 });
+    }
+    if (url.pathname === '/elevenlabs-backup/v1/user/subscription'){
+      if (request.method !== 'GET') return corsJsonResponse({ error:'Method not allowed' },405,origin,request);
+      if (!env.ELEVENLABS_API_KEY_BACKUP) return corsJsonResponse({ error:'Backup account is not connected yet',code:'no_backup_key' },503,origin,request);
+      const headers = new Headers({ 'xi-api-key': env.ELEVENLABS_API_KEY_BACKUP });
+      const upstream = await fetch('https://api.elevenlabs.io/v1/user/subscription', { method:'GET', headers });
+      const respHeaders = new Headers(upstream.headers);
+      for (const [k, v] of Object.entries(corsHeaders(origin, request))) respHeaders.set(k, v);
+      return new Response(upstream.body, { status:upstream.status, headers:respHeaders });
+    }
+    if (url.pathname.startsWith('/elevenlabs-backup/')){
+      return new Response('Not found', { status:404, headers:corsHeaders(origin,request) });
     }
     if (request.method === 'OPTIONS'){
       return new Response(null, { status: 204, headers: corsHeaders(origin, request) });

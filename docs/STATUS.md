@@ -1,5 +1,9 @@
 # STATUS.md — AIMM
 
+## 2026-11-19 build 2026-11-19.1 — ElevenLabs Costs account switch (local commit only)
+
+The Settings → Costs ElevenLabs card now switches between Primary and Backup subscriptions, retaining each account's fetched balance and credits independently in browser storage and showing both remaining credit totals. Update balance uses the selected account's Worker route; an unconfigured backup secret shows an in-card message. The Worker adds a GET-only backup subscription route backed by the optional `ELEVENLABS_API_KEY_BACKUP` secret. Tests cover route restrictions and account URL selection. NOT PUSHED OR DEPLOYED; the new Worker secret has not been set.
+
 ## 2026-11-18 build 2026-11-18.3 — Settings key tiles (preview only)
 
 Settings now shows four equal API key and Agent access tiles in a two-column grid, matching Kevin's approved preview. The Hope Agent Tools tile, empty Models section, Models navigation link and guide article are removed. Agent tool syncs are handled through the ElevenLabs connector; the unused `registerInboxTool()` helper and hidden OpenAI selectors remain in the source. The Settings guide reflects the current routes. Colours, fonts and Hope chat panel are unchanged. NOT DEPLOYED.

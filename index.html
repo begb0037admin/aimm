@@ -245,6 +245,11 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .settings-cost-row .rt-cost-card .rt-cost-metrics .row.left.danger .v{color:#f87171}
 .settings-cost-row .rt-cost-card .actions{gap:10px;margin-top:4px}
 .settings-cost-row .rt-cost-card .actions button{font-size:calc(var(--inv-text-scale, 1) * 12px);padding:10px 16px;letter-spacing:.4px;font-weight:600}
+#costCardEleven .el-account-switch{display:flex;gap:8px}
+#costCardEleven .el-account-switch button{background:#374151;color:#e5e7eb;border:0;outline:0;border-radius:9px;padding:8px 16px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer}
+#costCardEleven .el-account-switch button[aria-pressed="true"]{background:#2dd4bf;color:#0b0d10}
+#costCardEleven .el-account-summary{color:#9ca3af;font-size:12px}
+#costCardEleven .el-account-status{color:#fbbf24;font-size:12px}
 @media (max-width:720px){
   .rt-cost-metrics{grid-template-columns:repeat(2,1fr)}
 }
@@ -4303,11 +4308,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   </div>
 <div class="settings-section" id="settingsCosts">
     <h3>Costs</h3>
-    <!-- Two cost cards side by side. .settings-cost-row is the simpler 2-col
-         grid (no START CALL button between them like the Voice Chat layout
-         once had). The card markup is unchanged from Batch 4 — same IDs
-         (elSession / elBalance / elSpent / elLeft / anSession etc.) so
-         renderCostPanels and elRenderLiveCost still find their targets. -->
+    <!-- Keep the existing metric IDs so cost rendering and other callers
+         continue to find their targets while the ElevenLabs card switches accounts. -->
     <div class="settings-cost-row">
       <!-- LEFT: ElevenLabs cost card. Replaces the OpenAI cost card after
            Batch 4. Three sources of EL spend feed addSpend('el', cost):
@@ -4326,6 +4328,12 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
            balance button — plan headroom rather than a manual dollar figure. -->
       <div class="rt-cost-card elevenlabs" id="costCardEleven">
         <h5><span class="elevenlabs-dot"></span>ElevenLabs <span style="margin-left:auto;color:#9ca3af;font-weight:500;font-size:10px;">Conversational AI</span></h5>
+        <div class="el-account-switch" role="group" aria-label="ElevenLabs cost account">
+          <button id="elAccountPrimary" type="button" aria-pressed="true">Primary</button>
+          <button id="elAccountBackup" type="button" aria-pressed="false">Backup</button>
+        </div>
+        <div class="el-account-summary" id="elAccountSummary">Primary: — left · Backup: — left</div>
+        <div class="el-account-status" id="elAccountStatus" role="status" hidden></div>
         <div class="rt-cost-metrics">
           <div class="row balance"><span>Balance</span><span class="v" id="elBalance" title="Click to update balance">— set —</span></div>
           <div class="row session"><span>Total credits</span><span class="v" id="elSession">— update —</span></div>
@@ -4656,7 +4664,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-11-06.283';
+const AIMM_BUILD = '2026-11-19.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11171,6 +11179,24 @@ const SPEND_KEY_ANT='trapMasterSpendAnthropic_v1';
 // path; renderCostPanels no longer reads it. addSpend('oai', …) still works
 // if anyone calls it.
 const SPEND_KEY_EL='aiMixMastersSpendEleven_v1';
+const SPEND_KEY_EL_BACKUP='aiMixMastersSpendElevenBackup_v1';
+let elCostAccount='primary';
+let elBackupNotConnected=false;
+function elCostKey(account){return account==='backup'?SPEND_KEY_EL_BACKUP:SPEND_KEY_EL;}
+function elSubscriptionUrl(account){
+  const base=AIMM_PROXY_URL.replace(/\/+$/,'');
+  return base+(account==='backup'?'/elevenlabs-backup':'/elevenlabs')+'/v1/user/subscription';
+}
+function elSelectCostAccount(account){
+  elCostAccount=account==='backup'?'backup':'primary';
+  renderCostPanels();
+}
+function elSaveCostAccount(account,data){
+  try{saveSpend(elCostKey(account),data);}catch(_){/* Storage may be unavailable. Keep the fetched values in memory. */}
+  elCostCache[account]=data;
+}
+const elCostCache={primary:null,backup:null};
+function elLoadCostAccount(account){return elCostCache[account]||loadSpend(elCostKey(account));}
 // ElevenLabs Conversational AI billing rate. Creator plan is $22/mo for
 // roughly 250 included minutes → ≈ $0.088/min. This is the rate used for the
 // live in-call estimate; the post-disconnect API call from
@@ -11296,7 +11322,9 @@ function rtRenderCost(){
 }
 
 function renderCostPanels(){
-  const el=loadSpend(SPEND_KEY_EL);
+  const el=elLoadCostAccount(elCostAccount);
+  const primary=elLoadCostAccount('primary');
+  const backup=elLoadCostAccount('backup');
   const an=loadSpend(SPEND_KEY_ANT);
   const fmt=v=>v==null?'— set —':'$'+v.toFixed(2);
   const fmt3=v=>'$'+v.toFixed(3);
@@ -11304,6 +11332,15 @@ function renderCostPanels(){
   // Balance = $ subscription value. Total/Remaining/Used = character credits
   // from GET /v1/user/subscription (character_limit / character_count).
   const fmtCr=n=>n!=null?Number(n).toLocaleString()+' cr':'— update —';
+  for(const account of ['primary','backup']){
+    const button=document.getElementById(account==='primary'?'elAccountPrimary':'elAccountBackup');
+    button.setAttribute('aria-pressed',String(elCostAccount===account));
+  }
+  const leftText=d=>d.creditsLimit!=null&&d.creditsUsed!=null?fmtCr(d.creditsLimit-d.creditsUsed):'—';
+  document.getElementById('elAccountSummary').textContent=`Primary: ${leftText(primary)} left · Backup: ${leftText(backup)} left`;
+  const accountStatus=document.getElementById('elAccountStatus');
+  accountStatus.hidden=!(elCostAccount==='backup'&&elBackupNotConnected);
+  accountStatus.textContent=accountStatus.hidden?'':'Backup account not connected yet';
   document.getElementById('elBalance').textContent=fmt(el.balance);
   document.getElementById('elSession').textContent=fmtCr(el.creditsLimit);   // Total credits
   document.getElementById('elSpent').textContent=fmtCr(el.creditsUsed);      // Used
@@ -11351,12 +11388,8 @@ function renderHistoryBars(){
   void days; void data; void max; void total;
 }
 
-// Prompt the user for a new balance and store it. Resetting `spent` to 0 anchors the
-// "left" calculation to whatever they read off the website moments ago.
-// Providers: 'oai' (legacy, dormant), 'an'/'ant' (Anthropic), 'el' (ElevenLabs).
-// For 'el' the button hits /v1/user/subscription first to auto-derive a dollar
-// figure from plan headroom; falls back to manual prompt if the API call fails
-// (no key saved, network down, etc.).
+// Anthropic retains manual balance entry; ElevenLabs fetches the selected
+// account's subscription through the Worker.
 function updateBalance(provider){
   if (provider === 'el') return updateElBalance();
   const isOai = provider === 'oai';
@@ -11376,81 +11409,37 @@ function updateBalance(provider){
   toast(label + ' balance set to $' + num.toFixed(2));
 }
 
-// ElevenLabs balance — auto-fetched from /v1/user/subscription. Returns plan
-// headroom translated into a dollar equivalent so the existing balance/spent/
-// left math still works. Falls back to a manual prompt if the key isn't saved
-// or the fetch fails.
-//
-// The subscription endpoint returns character count + voice limits; we don't
-// get a direct "minutes remaining" field for Conversational AI on most plans.
-// As a pragmatic stand-in we treat the plan's monthly $ equivalent as the
-// balance (e.g. Creator = $22) and let the running spend tally subtract from
-// it. User can always override manually via the prompt fallback.
+// Read the selected account's subscription through its dedicated Worker route.
+// Each account keeps its last fetched plan and credits independently.
 async function updateElBalance(){
-  const apiKey = localStorage.getItem(EL_KEY_STORAGE);
-  if (!apiKey){
-    // No key saved — fall back to manual entry, same shape as the others.
-    const cur = loadSpend(SPEND_KEY_EL);
-    const v = window.prompt(
-      'Save an ElevenLabs API key on the Hope tab to auto-fetch — for now, enter your plan budget manually (e.g. 22 for Creator):',
-      cur.balance != null ? String(cur.balance) : ''
-    );
-    if (v == null) return;
-    const num = parseFloat(v);
-    if (!isFinite(num) || num < 0){ toast('Not a valid number', true); return; }
-    cur.balance = num; cur.spent = 0;
-    saveSpend(SPEND_KEY_EL, cur);
-    renderCostPanels();
-    toast('ElevenLabs balance set to $' + num.toFixed(2));
-    return;
-  }
-  try {
-    const resp = await fetch('https://api.elevenlabs.io/v1/user/subscription', {
-      headers: { 'xi-api-key': apiKey }
-    });
-    if (!resp.ok){
-      const errTxt = await resp.text();
-      toast(`ElevenLabs subscription fetch ${resp.status}: ${errTxt.slice(0,160)}`, true);
+  const account=elCostAccount;
+  try{
+    const resp=await fetch(elSubscriptionUrl(account));
+    if(!resp.ok){
+      const error=await resp.json().catch(()=>({}));
+      if(account==='backup'&&error.code==='no_backup_key'){
+        elBackupNotConnected=true;
+        renderCostPanels();
+        return;
+      }
+      toast(`ElevenLabs ${account} subscription fetch failed (HTTP ${resp.status})`,true);
       return;
     }
-    const data = await resp.json();
-    // Map known plan tiers to monthly $ budgets. ElevenLabs returns a `tier`
-    // string like 'free' | 'starter' | 'creator' | 'pro' | 'scale'. If we
-    // hit an unrecognised tier, fall back to a manual prompt so Kev can put
-    // in the right number.
-    const TIER_BUDGETS = {
-      free: 0, starter: 5, creator: 22, pro: 99, scale: 330, business: 1320
-    };
-    const tier = (data.tier || '').toLowerCase();
-    const budget = TIER_BUDGETS[tier];
-    const cur = loadSpend(SPEND_KEY_EL);
-    if (typeof budget === 'number' && budget > 0){
-      cur.balance = budget; cur.spent = 0;
-      cur.creditsUsed = data.character_count || 0;
-      cur.creditsLimit = data.character_limit || 0;
-      saveSpend(SPEND_KEY_EL, cur);
-      renderCostPanels();
-      const crUsed = cur.creditsUsed.toLocaleString();
-      const crTotal = cur.creditsLimit.toLocaleString();
-      const crLeft = (cur.creditsLimit - cur.creditsUsed).toLocaleString();
-      toast(`ElevenLabs ${tier}: $${budget}/mo · ${crUsed} / ${crTotal} credits used · ${crLeft} remaining`);
-    } else {
-      // Unknown tier — prompt manual.
-      const v = window.prompt(
-        `ElevenLabs returned tier "${tier}" — I don't have a $ budget mapping for that. Enter your monthly plan budget manually (e.g. 22 for Creator):`,
-        cur.balance != null ? String(cur.balance) : ''
-      );
-      if (v == null) return;
-      const num = parseFloat(v);
-      if (!isFinite(num) || num < 0){ toast('Not a valid number', true); return; }
-      cur.balance = num; cur.spent = 0;
-      saveSpend(SPEND_KEY_EL, cur);
-      renderCostPanels();
-      toast('ElevenLabs balance set to $' + num.toFixed(2));
-    }
-  } catch (e){
-    console.error('updateElBalance failed', e);
-    toast('ElevenLabs balance fetch failed — try again or use manual entry', true);
+    const data=await resp.json();
+    const TIER_BUDGETS={free:0,starter:5,creator:22,pro:99,scale:330,business:1320};
+    const tier=String(data.tier||'').toLowerCase();
+    const budget=TIER_BUDGETS[tier];
+    const cur=elLoadCostAccount(account);
+    if(typeof budget==='number')cur.balance=budget;
+    cur.creditsUsed=Number(data.character_count)||0;
+    cur.creditsLimit=Number(data.character_limit)||0;
+    elSaveCostAccount(account,cur);
+    if(account==='backup')elBackupNotConnected=false;
+    renderCostPanels();
+    toast(`ElevenLabs ${account}: ${(cur.creditsLimit-cur.creditsUsed).toLocaleString()} credits remaining`);
+  }catch(e){
+    console.error('updateElBalance failed',e);
+    toast('ElevenLabs balance fetch failed — try again',true);
   }
 }
 
@@ -20261,10 +20250,8 @@ applyFloatMicVisibility();
 loadFloatMicPos();
 
 // ========== COST PANEL WIRING ==========
-// EL replaces the old OpenAI cost card after Batch 4. Top-up opens the EL
-// subscription page; Update balance hits /v1/user/subscription via
-// updateElBalance() and translates plan tier → $ headroom; clicking the
-// balance value also fires the same fetch.
+// Top-up opens the ElevenLabs subscription page. Update balance and the
+// balance value both fetch the selected cost account through the Worker.
 const elUsageLink=document.getElementById('elUsageLink');
 if(elUsageLink)elUsageLink.onclick=()=>window.open('https://elevenlabs.io/app/usage','_blank','noopener');
 const anUsageLink=document.getElementById('anUsageLink');
@@ -20272,6 +20259,8 @@ if(anUsageLink)anUsageLink.onclick=()=>window.open('https://console.anthropic.co
 const elTopup=document.getElementById('elTopup');if(elTopup)elTopup.onclick=()=>window.open('https://elevenlabs.io/app/subscription','_blank','noopener');
 const anTopup=document.getElementById('anTopup');if(anTopup)anTopup.onclick=()=>window.open('https://console.anthropic.com/settings/billing','_blank','noopener');
 const elUpdate=document.getElementById('elUpdate');if(elUpdate)elUpdate.onclick=()=>updateBalance('el');
+document.getElementById('elAccountPrimary').onclick=()=>elSelectCostAccount('primary');
+document.getElementById('elAccountBackup').onclick=()=>elSelectCostAccount('backup');
 const anUpdate=document.getElementById('anUpdate');if(anUpdate)anUpdate.onclick=()=>updateBalance('an');
 const elBalance=document.getElementById('elBalance');if(elBalance)elBalance.onclick=()=>updateBalance('el');
 const anBalance=document.getElementById('anBalance');if(anBalance)anBalance.onclick=()=>updateBalance('an');
