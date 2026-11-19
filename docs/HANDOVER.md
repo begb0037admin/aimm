@@ -2,6 +2,12 @@
 
 ## CURRENT CHANGE — 2026-11-19, live build 2026-11-18.4 (deployed, Kevin approved each)
 
+## ElevenLabs accounts (recorded 2026-11-19, from Kevin)
+
+- **Primary:** kevin@lelitte.co.uk — the "Hope Voice" 1Password item; owns the Preferred (Fallback) Agent `agent_2601kqm4g7txfsvv0pkvpe02389p`. Worker secret `ELEVENLABS_API_KEY`.
+- **Backup:** begb0037@ox.ac.uk — owns the Backup (Default) Agent `agent_9001m42hnyrwedts40en5a5npapp`. Worker secret `ELEVENLABS_API_KEY_BACKUP`.
+- The Settings → Costs card shows these as plain "Primary" and "Backup" buttons (Kevin does not want emails on the buttons). Keys were set from 1Password into the Worker without printing them.
+
 Latest (2026-11-19): all AI jobs now on Luna (`/hope/ai`), Settings key tiles tidied, Costs card has Primary/Backup ElevenLabs. See STATUS.md top entry for versions, rollback and open items. Earlier tab restyle work below (live build 2026-11-18.1 at the time).
 
 Plugins tab and MixBus restyle, all CSS (plus one `formatTone` JS line), deployed in order: .1 MixBus empty-row round + button before the name, aligned (Worker b4f1e41c); .2 Plugins tab colours: grey surfaces, teal selected, purple hover, no coloured strokes (Worker 0507d82a); .3 status colours (green up to date, red updates, amber manual check, grey unchecked), format badges (AU blue, VST2 navy, VST3 purple, CLAP cyan), dialog buttons grey/teal/purple; .4 selected teal sidebar row shows a plain black count, no box (Worker 0e155444); .5 hovered purple sidebar row shows a plain white count, no box (Worker a61a0bf7); .6 Tools and Library sidebar headers 40px rows with spacing, were 11px and squashed (Worker d794467a, commit 308dfb6a); .7 Tools and Library headers get 9px rounded corners, the hover box was square (Worker 584d1768, commit da9cbc60). 2026-11-18.1: Insight, Snapshots and Settings tabs restyled to the palette, colours only, scoped per tab (Jules specs in aimm-previews/SPEC-insight-snapshots-settings.md; Worker dd73bc42, commit b34e48ef; rollback 2026-11-17.7). Undecided Jules items: divider lines removed, Update balance grey, destructive buttons red text, grey cost-card dots. Pre-existing: Insight Delete note and Snapshots Copy buttons have no label. Rollback chain: each build rolls back to the one before it; .1 rolls back to 2026-11-16.1.
