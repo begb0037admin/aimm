@@ -1,5 +1,16 @@
 # STATUS.md — AIMM
 
+## 2026-11-19 build 2026-11-18.4 — DEPLOYED: Luna for all AI jobs, Settings key tiles, Costs Primary/Backup
+
+**Live on aimixmasters.com and aimm.kevinlelitte.workers.dev.** Page Worker version `4cd4b0d6-5c57-4ca7-ba86-c1bc8426d0f1` (main = live, commit `970bf8c6`). Proxy Worker (`aimm-proxy`) deployed first as version `95e767ec-f8ec-4db8-b50d-005e8139d6de`. Rollback: page build 2026-11-18.1; proxy version `89042e00-1802-4e99-92b8-b15fb6ed933d`.
+
+- Every Anthropic/Haiku job moved to GPT-6 Luna through the new `POST /hope/ai` Worker route (same access-token auth as `/hope/luna`); `/hope/web-search` now uses Luna. Anthropic key field, model picker, cost card and the `/anthropic/*` proxy route are removed. `ANTHROPIC_API_KEY` secret still exists in the Worker (unused).
+- Settings: four equal key tiles (ElevenLabs key, Deepgram/AIMM access token, Preferred Agent, Backup Agent). The Update-tools tile and the empty Models section are removed (tool sync is run through the ElevenLabs connector; `registerInboxTool()` stays in the script, unused by UI).
+- Costs: ElevenLabs card switches Primary | Backup. New GET-only Worker route `/elevenlabs-backup/v1/user/subscription` uses secret `ELEVENLABS_API_KEY_BACKUP`. Primary = "Hope Voice" account (owns Fallback agent); Backup = begb0037 account (owns Default agent). Both read live after deploy.
+- Worker secret `ELEVENLABS_API_KEY` was invalid before 2026-11-19 (health showed 401); replaced from the Hope Voice 1Password item. Both set from 1Password without printing.
+- **Not yet tested live:** Luna web search and `/hope/ai` with a real token (needs Kevin's browser token). Typed-chat cost display needs a Luna price check.
+- Open: rename the Deepgram token tile to "AIMM access token"; decide whether to remove the ElevenLabs API key tile (unused, key lives in the Worker); explanation guide for Settings kept at /Users/admin/aimm-previews/settings-guide-v1.html.
+
 ## 2026-11-19 build 2026-11-19.1 — ElevenLabs Costs account switch (local commit only)
 
 The Settings → Costs ElevenLabs card now switches between Primary and Backup subscriptions, retaining each account's fetched balance and credits independently in browser storage and showing both remaining credit totals. Update balance uses the selected account's Worker route; an unconfigured backup secret shows an in-card message. The Worker adds a GET-only backup subscription route backed by the optional `ELEVENLABS_API_KEY_BACKUP` secret. Tests cover route restrictions and account URL selection. NOT PUSHED OR DEPLOYED; the new Worker secret has not been set.
