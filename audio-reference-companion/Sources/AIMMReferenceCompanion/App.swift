@@ -18,7 +18,7 @@ struct AIMMReferenceCompanionApp: App {
     }
 
     var body: some Scene {
-        Window("AIMM Audio Reference Companion", id: "main") {
+        Window("AIMM Audio Companion", id: "main") {
             if isPrimaryInstance {
                 CompanionWindow(model: model)
                     .frame(minWidth: 420, minHeight: 300)
@@ -27,7 +27,7 @@ struct AIMMReferenceCompanionApp: App {
             }
         }
         .defaultSize(width: 680, height: 600)
-        MenuBarExtra("AIMM Audio Reference", systemImage: "waveform") {
+        MenuBarExtra("AIMM Audio Companion", systemImage: "waveform") {
             Text(model.capture.status)
                 .lineLimit(3)
             Divider()
@@ -83,7 +83,7 @@ struct CompanionWindow: View {
 
     var body: some View {
         CompanionWindowLayout(
-            title: "AIMM Audio Reference",
+            title: "AIMM Audio Companion",
             subtitle: "Live system-audio monitor for AIMM",
             statusText: capture.status,
             statusDot: capture.isCapturing ? .red : capture.isMonitoring ? .green : .yellow,
