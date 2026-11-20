@@ -6,6 +6,13 @@ struct AIMMReferenceCompanionApp: App {
     @StateObject private var model: CompanionModel
     private let isPrimaryInstance: Bool
 
+    private var menuBarIcon: NSImage {
+        let icon = NSApp.applicationIconImage.copy() as! NSImage
+        icon.size = NSSize(width: 18, height: 18)
+        icon.isTemplate = false
+        return icon
+    }
+
     init() {
         let primary = CompanionInstanceLock.shared.isPrimary
         isPrimaryInstance = primary
@@ -27,7 +34,7 @@ struct AIMMReferenceCompanionApp: App {
             }
         }
         .defaultSize(width: 680, height: 600)
-        MenuBarExtra("AIMM Audio Companion", systemImage: "waveform") {
+        MenuBarExtra {
             Text(model.capture.status)
                 .lineLimit(3)
             Divider()
@@ -38,6 +45,8 @@ struct AIMMReferenceCompanionApp: App {
                     NSWorkspace.shared.open(URL(string: "https://aimixmasters.com/")!)
                 }
             }
+        } label: {
+            Image(nsImage: menuBarIcon)
         }
         .menuBarExtraStyle(.window)
     }
