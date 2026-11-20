@@ -25,19 +25,19 @@ Live on aimixmasters.com and aimm.kevinlelitte.workers.dev (page Worker version 
 
 # STATUS.md — AIMM
 
-## 2026-11-20 build 2026-11-20.7 — Single Tools dialogs (UNDEPLOYED)
+## 2026-11-20 build 2026-11-20.7 — Single Tools dialogs (DEPLOYED, Worker 225ece75; rollback 8246a125)
 
 Unused plug-ins and Check for Duplicates now open one dialog per click when the actions-capable Plugin Companion is connected. Without the companion, Unused shows connection guidance and Duplicates retains its existing browser scan dialog. Move confirmations now use the singular “plug-in” for one item. Added mocked click and title regression tests. Not pushed or deployed.
 
-## 2026-11-20 build 2026-11-20.6 — Plugin Companion actions (UNDEPLOYED)
+## 2026-11-20 build 2026-11-20.6 — Plugin Companion actions (DEPLOYED, Worker 8246a125; rollback 92dfb7ea). Real end-to-end test on this Mac through the live page: Move to Unused, Restore and Move to Trash worked on a test plugin in ~/Library/Audio/Plug-Ins/VST3; the macOS administrator-password path for system Components/VST folders is NOT tested yet; duplicates on this Mac = 0 groups (Waves V16/V17 shells shown as side-by-side info)
 
 Wired companion capability status and row IDs into product actions. Move to Unused, Move to Trash and Reveal in Finder use IDs, with confirmation and per-item results. Added connected duplicate review and Unused restore dialogs; action responses refresh and save the inventory. The companion now reports version 0.2.0 and `actions: true`. Mocked page tests and the Swift release self-test passed. Headless Chrome previews are in `/Users/admin/aimm-previews/p3-*.png`; the duplicates capture shows two groups because its mock returned two, while the approved sample has three. Not pushed or deployed.
 
-## 2026-11-20 build 2026-11-20.5 — Plugins frame alignment (UNDEPLOYED)
+## 2026-11-20 build 2026-11-20.5 — Plugins frame alignment (DEPLOYED, Worker 92dfb7ea; rollback 1fb7612c)
 
 Removed the Plugins frame's 1520px width cap so its edges align with the page heading and tab bar. No height, colour, sidebar or copy changes. Not pushed or deployed.
 
-## 2026-11-20 build 2026-11-20.4 — Plugins list height (UNDEPLOYED)
+## 2026-11-20 build 2026-11-20.4 — Plugins list height (DEPLOYED, Worker 1fb7612c; rollback 5822cac1 build .3 is 4273c5e2)
 
 The Plugins frame ended at the last sidebar item. With Tools, Library and Categories collapsed, that left only about 110px for the inventory list. The frame now uses the greatest of the sidebar height, the distance to 24px above the viewport bottom (at least 640px), and the list's position within the frame plus 420px and its existing bottom inset. This keeps at least 420px of usable list even when the page needs to scroll. Fitting is scheduled after tab activation, section changes, status updates, renders and window resizes. Not pushed or deployed.
 
