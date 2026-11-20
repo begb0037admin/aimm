@@ -25,6 +25,10 @@ Live on aimixmasters.com and aimm.kevinlelitte.workers.dev (page Worker version 
 
 # STATUS.md — AIMM
 
+## 2026-11-20 build 2026-11-20.3 — Product dialog buttons (not deployed)
+
+Added spacing, padding and rounded corners to the action buttons in Plugins product dialogs, including Mark all as checked, Mark version, Record vendor status and Keep version. Existing button colours remain. Not pushed or deployed.
+
 ## 2026-11-19 build 2026-11-19.3 — Plain Costs account labels (local commit only)
 
 The Costs account buttons now read only “Primary” and “Backup”, with matching account aria-labels. Neither account email appears in the standalone page. Button styling and behaviour are unchanged. Not pushed or deployed.

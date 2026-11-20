@@ -4766,6 +4766,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library .inv-scope-banner.vendor-app strong,#library .inv-status-detail-row.vendor-app,#library .inv-version-row.vendor-app .inv-version-current,#library .inv-status-pill[aria-label^="Vendor app"]{color:var(--st-grey)!important}
 #library .inv-status-pill[aria-label*=" · "]{color:#f3f4f6!important}
 /* Product dialogs (Vendor status, Tags, Keep, Mark): their buttons are unstyled white in live; same rest/primary/hover as the Note dialog */
+#invProductMetaOverlay .inv-note-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+#invProductMetaOverlay .inv-note-actions button{padding:8px 12px;border-radius:7px;font:600 calc(var(--inv-text-scale, 1) * 12px) -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
 #invProductMetaOverlay button{background:var(--pv-neutral-bg)!important;color:#d5d8dc!important;border-color:transparent!important}
 #invProductMetaOverlay button.primary{background:var(--pv-teal)!important;color:var(--pv-black)!important}
 #invProductMetaOverlay button:hover:not(.primary):not(:disabled){background:linear-gradient(135deg,#9442dc,#b970ff)!important;color:#fff!important}
@@ -5599,7 +5601,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-20.2';
+const AIMM_BUILD = '2026-11-20.3';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
