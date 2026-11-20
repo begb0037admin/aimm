@@ -14,7 +14,7 @@ struct AIMMPluginCompanionApp: App {
         Window("AIMM Plugin Companion", id: "main") {
             if primary {
                 WindowView(model: model)
-                    .frame(minWidth: 640, minHeight: 500)
+                    .frame(minWidth: 420, minHeight: 300)
                     .onAppear { model.start() }
             } else { EmptyView() }
         }
