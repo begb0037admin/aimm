@@ -1,8 +1,8 @@
-## 2026-11-20 build 2026-11-20.1 — Vendor app status (not deployed)
+## 2026-11-20 build 2026-11-20.1 — Vendor app status (DEPLOYED, Worker 5822cac1; rollback .0 = 8c4f686c build .9)
 
 Added a separate Vendor app status for manual results from publishers whose versions AIMM cannot read automatically. The Plugins sidebar, product labels, counts, filter and banner now use this bucket; real update and up-to-date results remain in their existing buckets. Added a mocked regression test for vendor aliases, result precedence and count totals. Not pushed or deployed.
 
-## 2026-11-19 — Vendor check fixes (not deployed)
+## 2026-11-19 — Vendor check fixes (DEPLOYED, Worker af6b2061; rollback b3d5ee3a). Note: Waves V16 now shows Manual Check/Vendor app and V17 shows up to date; the suite latest build is not readable from the Waves page, so V17 up to date is unverified
 
 The Worker now matches eligible compact companion vendor names, keeps unsupported vendors unmatched, and treats Waves V16 against the V17 suite page as a manual major-upgrade check. Waves V17 compares as current; Wavesfactory Trackspacer still uses its own product version. Added regression tests. `index.html` was unchanged, so AIMM_BUILD remains 2026-11-19.9. Not pushed or deployed.
 
@@ -25,7 +25,7 @@ Live on aimixmasters.com and aimm.kevinlelitte.workers.dev (page Worker version 
 
 # STATUS.md — AIMM
 
-## 2026-11-20 build 2026-11-20.3 — Product dialog buttons (not deployed)
+## 2026-11-20 build 2026-11-20.3 — Product dialog buttons (DEPLOYED, Worker 4273c5e2; rollback 67c95ece; Kevin approved)
 
 Added spacing, padding and rounded corners to the action buttons in Plugins product dialogs, including Mark all as checked, Mark version, Record vendor status and Keep version. Existing button colours remain. Not pushed or deployed.
 
@@ -1737,22 +1737,22 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 - Briefs (no code written): /Users/admin/aimm-previews/BRIEF-hope-masterchain.md (Jules: APPROVED with 6 changes; needs trimming to the three fixes 1-3, NO new set_bus_chain tool because chain building already exists) and BRIEF-el-thinking.md.
 - Process still required: Codex implements (gpt-6-sol medium), Jules reviews, Kevin approves a preview, then deploy. Kevin forbade any change to the Hope panel layout/buttons/header.
 
-## 2026-11-19 build 2026-11-19.7 — Plugin Companion page integration (not deployed)
+## 2026-11-19 build 2026-11-19.7 — Plugin Companion page integration (DEPLOYED with .8, Worker 7967f4e6; rollback .6 d2f3aa0a)
 - Settings now has matching Audio Reference and Plugin Companion cards with embedded 128 px icons. The Plugin Companion card checks the local app quietly on load and on Settings open, shows real connection and last-scan counts, and offers Connect and Rescan.
 - The Plugins tab adopts `GET /inventory` rows into its existing grouping, counts, filters, tags, favourites, hidden state and vendor-check pipeline, with `source: companion`. Its scan button uses local `POST /scan` while connected and retains the Chrome folder scan when disconnected. No Plugins tab chip or banner was added.
 - Companion requests go only to `127.0.0.1:41736`. Inventory rows are stored in this browser and are not sent to the Worker. The existing `/api/vendor-check` action still sends only grouped product names, vendors, formats and versions; companion rows use that same grouping when the user runs the check. Companion adoption does not initiate a new automatic vendor check.
 - Not deployed. No companion installation or Worker change.
 
-## 2026-11-19 build 2026-11-19.8 — Companion card wording (not deployed)
+## 2026-11-19 build 2026-11-19.8 — Companion card wording (DEPLOYED, Worker 7967f4e6)
 - Both Settings cards now show Connect and a Connected/Disconnected state. Their status boxes stay empty during normal operation and show a short line for connection or permission errors.
 - The Plugin card no longer shows scan counts or a Rescan button; scanning remains in the Plugins tab. Its empty-state hint says “Connect plugins in Settings.”
 - Audio reference capture and permission handling remain in place. No deployment or companion installation.
 
-## 2026-11-19 build 2026-11-19.9 — Plugin Companion polish (not deployed)
+## 2026-11-19 build 2026-11-19.9 — Plugin Companion polish (DEPLOYED, Worker b3d5ee3a; rollback 7967f4e6)
 - The Plugins scan status and connected empty state no longer ask for folders; disconnected Chrome folder guidance remains. The companion scanner excludes leftover `AIMMFoundationSyntheticTest` bundles.
 - Not deployed.
 
-## 2026-11-20 build 2026-11-20.2 — Vendor app checks (not deployed)
+## 2026-11-20 build 2026-11-20.2 — Vendor app checks (DEPLOYED, Worker 67c95ece; rollback 5822cac1; 120-day expiry, bulk clear)
 - Vendor app now supports marking every currently visible product at once, with a count in the confirmation dialog, as well as per-vendor and per-product actions. An inline Undo restores the previous local records; individual checks can be removed later from Up to date.
 - Checks are saved per vendor and product in `aimm.pluginInventory.vendorAppChecks.v1` with the installed version signature and check date. They move matching products to Up to date, expire after 120 days or an installed version change, and show the check date with expiry help. Sidebar status counts still count each product once.
 - Corrected the Vendor app explanatory wording and removed the stale Plugins connection prompt beneath the scan controls. All `tests/*.test.mjs` reported zero failures. Not deployed or pushed.
