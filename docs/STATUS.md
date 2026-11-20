@@ -1,3 +1,7 @@
+## 2026-11-20 build 2026-11-20.9 — Hope Plugins tools (NOT DEPLOYED)
+
+Hope can read companion status, duplicates and Unused, reveal and rescan, and use the existing page handlers for moves, restore, Trash, vendor app checks and duplicate cleanup. State-changing tools return a confirmation summary before execution; Trash requires a second explicit flag. Companion requests use row or move IDs, with per-item results returned. See `docs/HOPE_PLUGIN_TOOLS.md`. Page only; no Worker, deployment or ElevenLabs change. Committed on `hope-inventory` only.
+
 ## 2026-11-20 build 2026-11-20.1 — Vendor app status (DEPLOYED, Worker 5822cac1; rollback .0 = 8c4f686c build .9)
 
 Added a separate Vendor app status for manual results from publishers whose versions AIMM cannot read automatically. The Plugins sidebar, product labels, counts, filter and banner now use this bucket; real update and up-to-date results remain in their existing buckets. Added a mocked regression test for vendor aliases, result precedence and count totals. Not pushed or deployed.
