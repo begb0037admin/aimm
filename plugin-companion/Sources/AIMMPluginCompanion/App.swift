@@ -18,7 +18,6 @@ struct AIMMPluginCompanionApp: App {
                     .onAppear { model.start() }
             } else { EmptyView() }
         }
-        .defaultSize(width: 640, height: 500)
     }
 }
 
