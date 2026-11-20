@@ -8696,14 +8696,16 @@ function invOpenProductNote(vendor,name){
   overlay.querySelector("#invNoteText").focus();
 }
 function invFitFrame(){
-  const layout=document.querySelector("#library .inv-layout"),sidebar=document.querySelector("#library .inv-sidebar");
-  if(!layout||!sidebar||!layout.getClientRects().length)return;
+  const layout=document.querySelector("#library .inv-layout"),sidebar=document.querySelector("#library .inv-sidebar"),inventory=document.getElementById("invInventory");
+  if(!layout||!sidebar||!inventory||!layout.getClientRects().length)return;
   const children=Array.from(sidebar.children).filter(child=>getComputedStyle(child).display!=="none");
   if(!children.length)return;
   const last=children[children.length-1],style=getComputedStyle(sidebar),lastStyle=getComputedStyle(last);
   const browseEnd=last.getBoundingClientRect().bottom- sidebar.getBoundingClientRect().top +(Number.parseFloat(lastStyle.marginBottom)||0)+(Number.parseFloat(style.paddingBottom)||0)+(Number.parseFloat(style.borderBottomWidth)||0);
   const viewportHeight=Math.max(640,window.innerHeight-layout.getBoundingClientRect().top-24);
-  const nextHeight=Math.ceil(Math.max(browseEnd+2,viewportHeight))+"px";
+  const layoutRect=layout.getBoundingClientRect(),inventoryRect=inventory.getBoundingClientRect();
+  const listHeight=inventoryRect.top-layoutRect.top+420+layoutRect.bottom-inventoryRect.bottom;
+  const nextHeight=Math.ceil(Math.max(browseEnd+2,viewportHeight,listHeight))+"px";
   if(layout.style.getPropertyValue("--inv-layout-height")!==nextHeight)layout.style.setProperty("--inv-layout-height",nextHeight);
 }
 let invFrameFitRAF=0;
