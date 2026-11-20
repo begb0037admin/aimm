@@ -25,11 +25,9 @@ struct WindowView: View {
 
             VStack(alignment: .leading, spacing: 14) {
                 HStack(spacing: 12) {
-                    Image(systemName: "powerplug.fill")
-                        .font(.system(size: 17))
-                        .foregroundStyle(.white)
-                        .frame(width: 34, height: 34)
-                        .background(Color(red: 157/255, green: 87/255, blue: 231/255), in: Circle())
+                    Image(nsImage: NSApp.applicationIconImage)
+                        .resizable()
+                        .frame(width: 44, height: 44)
                     VStack(alignment: .leading, spacing: 3) {
                         Text("AIMM Plugin Companion")
                             .font(.title2.weight(.semibold))
