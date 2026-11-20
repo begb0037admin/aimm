@@ -25,6 +25,10 @@ Live on aimixmasters.com and aimm.kevinlelitte.workers.dev (page Worker version 
 
 # STATUS.md — AIMM
 
+## 2026-11-20 build 2026-11-20.7 — Single Tools dialogs (UNDEPLOYED)
+
+Unused plug-ins and Check for Duplicates now open one dialog per click when the actions-capable Plugin Companion is connected. Without the companion, Unused shows connection guidance and Duplicates retains its existing browser scan dialog. Move confirmations now use the singular “plug-in” for one item. Added mocked click and title regression tests. Not pushed or deployed.
+
 ## 2026-11-20 build 2026-11-20.6 — Plugin Companion actions (UNDEPLOYED)
 
 Wired companion capability status and row IDs into product actions. Move to Unused, Move to Trash and Reveal in Finder use IDs, with confirmation and per-item results. Added connected duplicate review and Unused restore dialogs; action responses refresh and save the inventory. The companion now reports version 0.2.0 and `actions: true`. Mocked page tests and the Swift release self-test passed. Headless Chrome previews are in `/Users/admin/aimm-previews/p3-*.png`; the duplicates capture shows two groups because its mock returned two, while the approved sample has three. Not pushed or deployed.

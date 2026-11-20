@@ -47,7 +47,9 @@ test('menu enables action rows only when the companion advertises actions',()=>{
 });
 test('confirmation uses system admin wording only for system plug-in paths',()=>{
   const h=harness();h.api.confirm('unuse',rows);assert.match(h.dialogs[0].title,/Move 2 plug-ins to Unused/);assert.match(h.dialogs[0].body,/administrator password/);
-  h.api.confirm('trash',[rows[1]]);assert.doesNotMatch(h.dialogs[1].body,/administrator password/);assert.match(h.dialogs[1].body,/macOS Trash/);
+  h.api.confirm('trash',[rows[1]]);assert.equal(h.dialogs[1].title,'Move 1 plug-in to Trash?');assert.doesNotMatch(h.dialogs[1].body,/administrator password/);assert.match(h.dialogs[1].body,/macOS Trash/);
+  h.api.confirm('unuse',[rows[1]]);assert.equal(h.dialogs[2].title,'Move 1 plug-in to Unused?');
+  h.api.confirm('trash',rows);assert.equal(h.dialogs[3].title,'Move 2 plug-ins to Trash?');
 });
 test('action posts IDs only and shows individual failure reasons',async()=>{
   const h=harness({'/action/unuse':{results:[{id:'au-id',ok:false,reason:'administrator approval cancelled'}],inventory:{rows:[]}}});

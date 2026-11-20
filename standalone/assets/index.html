@@ -5610,7 +5610,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-20.6';
+const AIMM_BUILD = '2026-11-20.7';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8328,7 +8328,7 @@ function pcCompanionConfirm(action,rows){
   const admin=unique.find(row=>/^\/Library\/Audio\/Plug-Ins\/(?:Components|VST(?:3)?|CLAP)(?:\/|$)/.test(row.path||''));
   const adminFolder=admin?.path?.match(/^\/Library\/Audio\/Plug-Ins\/(?:Components|VST3?|CLAP)/)?.[0];
   const adminText=admin?'<p class="inv-meta-help">The '+invEsc(admin.format)+' copy is in '+invEsc(adminFolder)+', so macOS will ask for your administrator password once.</p>':'';
-  pcCompanionDialog('Move '+unique.length+' plug-ins to '+target+'?','<p class="inv-meta-help">'+list+'. '+description+'</p>'+adminText,[{label:'Cancel',run:overlay=>overlay.remove()},{label:'Move to '+target,primary:true,run:async overlay=>{overlay.remove();await pcCompanionAction(action,unique.map(row=>row.id));}}],'inv-companion-confirm');
+  pcCompanionDialog('Move '+unique.length+' plug-in'+(unique.length===1?'':'s')+' to '+target+'?','<p class="inv-meta-help">'+list+'. '+description+'</p>'+adminText,[{label:'Cancel',run:overlay=>overlay.remove()},{label:'Move to '+target,primary:true,run:async overlay=>{overlay.remove();await pcCompanionAction(action,unique.map(row=>row.id));}}],'inv-companion-confirm');
 }
 async function pcCompanionOpenDuplicates(){
   if(!pcCompanionConnected)return;
@@ -9254,8 +9254,6 @@ function invInitSidebarSections(sidebar){
 function invScanButtonAction(){return pcCompanionConnected?pcCompanionScan():invScanNow({allowPrompt:true});}
 function invInit(){
   const scan=document.getElementById("invScanBtn");
-  document.querySelector('[data-inv-local-tool="duplicates"]')?.addEventListener('click',()=>{if(pcCompanionConnected)pcCompanionOpenDuplicates();});
-  document.querySelector('[data-inv-local-tool="unused"]')?.addEventListener('click',pcCompanionOpenUnused);
   const add=document.getElementById("invAddRootBtn");
   if(add)add.addEventListener("click",()=>invAddRoot());
   if(scan)scan.addEventListener("click",invScanButtonAction);
@@ -26618,7 +26616,7 @@ csInit('csPlatform');
 })();
 </script>
 
-<script src="/standalone-tools.js?v=2026-11-02.89" defer></script>
+<script src="/standalone-tools.js?v=2026-11-20.7" defer></script>
 <style id="stems-candidate-final">
 /* Consolidated stem panel look (replaces earlier stacked patches) */
 #eq.oz-mixcheck #mcStemRows{display:flex!important;flex-direction:column!important}
