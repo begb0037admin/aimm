@@ -1,6 +1,6 @@
-# Hope Plugins tools — build 2026-11-20.9
+# Hope Plugins tools — build 2026-11-20.9 (registered)
 
-Hope's Plugins tools run in the page through the same handlers as the Plugins controls. They do not change the Worker or ElevenLabs agent registration. Read results are JSON. A disconnected companion is reported explicitly.
+Hope's 15 `inventory_*` tools are registered on the ElevenLabs agent (version `agtvrsn_5101m7wwhq0pe5e9nagavh7txsz8`): three old `pluginhub_*` tools were renamed in place and 12 are new. They run in the page through the same handlers as the Plugins controls. Read results are JSON. A disconnected companion is reported explicitly. Agent rollback is the previous agent version in ElevenLabs history; voice test pending.
 
 | Tool | Arguments | Action | Confirmation |
 | --- | --- | --- | --- |
