@@ -25,6 +25,10 @@ Live on aimixmasters.com and aimm.kevinlelitte.workers.dev (page Worker version 
 
 # STATUS.md — AIMM
 
+## 2026-11-20 build 2026-11-20.5 — Plugins frame alignment (UNDEPLOYED)
+
+Removed the Plugins frame's 1520px width cap so its edges align with the page heading and tab bar. No height, colour, sidebar or copy changes. Not pushed or deployed.
+
 ## 2026-11-20 build 2026-11-20.4 — Plugins list height (UNDEPLOYED)
 
 The Plugins frame ended at the last sidebar item. With Tools, Library and Categories collapsed, that left only about 110px for the inventory list. The frame now uses the greatest of the sidebar height, the distance to 24px above the viewport bottom (at least 640px), and the list's position within the frame plus 420px and its existing bottom inset. This keeps at least 420px of usable list even when the page needs to scroll. Fitting is scheduled after tab activation, section changes, status updates, renders and window resizes. Not pushed or deployed.
