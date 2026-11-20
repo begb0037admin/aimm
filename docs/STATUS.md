@@ -1756,3 +1756,8 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 - Vendor app now supports marking every currently visible product at once, with a count in the confirmation dialog, as well as per-vendor and per-product actions. An inline Undo restores the previous local records; individual checks can be removed later from Up to date.
 - Checks are saved per vendor and product in `aimm.pluginInventory.vendorAppChecks.v1` with the installed version signature and check date. They move matching products to Up to date, expire after 120 days or an installed version change, and show the check date with expiry help. Sidebar status counts still count each product once.
 - Corrected the Vendor app explanatory wording and removed the stale Plugins connection prompt beneath the scan controls. All `tests/*.test.mjs` reported zero failures. Not deployed or pushed.
+
+## 2026-11-20 — Plugin Companion actions (UNDEPLOYED)
+- Added stable inventory row IDs, Reveal, Move to Unused, Restore and Trash endpoints, plus Unused and Duplicates views of the companion data. Write actions use last-scan IDs, validate bundle paths, return per-ID results and rescan after completion.
+- Move history is atomic and persisted locally. System-folder moves use a single macOS administrator prompt per privileged batch; fixture tests disable the prompt.
+- Release build and the temporary-directory `--self-test` pass. The page, standalone assets, deployed Worker and installed companion were not changed. This branch is not pushed or deployed.

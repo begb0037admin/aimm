@@ -1,6 +1,8 @@
 import Foundation
 
-if CommandLine.arguments.dropFirst().contains("--scan-json") {
+if CommandLine.arguments.dropFirst().contains("--self-test") {
+    exit(SelfTest.run() == 0 ? 0 : 1)
+} else if CommandLine.arguments.dropFirst().contains("--scan-json") {
     let inventory = PluginScanner.scan()
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.sortedKeys]

@@ -7,9 +7,17 @@ final class InventoryStore: @unchecked Sendable {
     private var current = Inventory.empty
     private var busy = false
     private var waiters: [(Inventory) -> Void] = []
+    let roots: [PluginRoot]
+    init(roots: [PluginRoot] = PluginRoot.standard()) { self.roots = roots }
     var onScan: ((Inventory) -> Void)?
 
     func snapshot() -> (Inventory, Bool) { lock.lock(); defer { lock.unlock() }; return (current, busy) }
+
+    func scanAfterWrite(completion: @escaping (Inventory) -> Void) {
+        lock.lock(); let wasBusy = busy; lock.unlock()
+        if wasBusy { scan { _ in self.scan(completion: completion) } }
+        else { scan(completion: completion) }
+    }
 
     func scan(completion: ((Inventory) -> Void)? = nil) {
         lock.lock()
@@ -19,7 +27,7 @@ final class InventoryStore: @unchecked Sendable {
         let generation = current.generation + 1
         lock.unlock()
         scanQueue.async {
-            let result = PluginScanner.scan(generation: generation)
+            let result = PluginScanner.scan(roots: self.roots, generation: generation)
             self.lock.lock()
             self.current = result
             self.busy = false
@@ -34,6 +42,7 @@ final class InventoryStore: @unchecked Sendable {
 
 final class LocalBridge: @unchecked Sendable {
     private let store: InventoryStore
+    private let actions: PluginActions
     private let queue = DispatchQueue(label: "com.aimixmasters.plugin-bridge")
     private var listener: NWListener?
     static let allowedOrigins: Set<String> = [
@@ -42,9 +51,10 @@ final class LocalBridge: @unchecked Sendable {
     ]
     var onDuplicateInstance: (() -> Void)?
 
-    init(store: InventoryStore) { self.store = store }
+    init(store: InventoryStore, actions: PluginActions) { self.store = store; self.actions = actions }
 
     static func accepts(origin: String?) -> Bool { origin.map { allowedOrigins.contains($0) } ?? false }
+    static func validBatch(_ ids: [String]) -> Bool { ids.count <= 500 }
 
     func start() {
         do {
@@ -80,6 +90,7 @@ final class LocalBridge: @unchecked Sendable {
         let method: String
         let path: String
         let headers: [String: String]
+        let body: Data
     }
 
     private static func parse(_ data: Data) -> Request? {
@@ -93,7 +104,10 @@ final class LocalBridge: @unchecked Sendable {
             guard let colon = line.firstIndex(of: ":") else { continue }
             headers[String(line[..<colon]).lowercased()] = line[line.index(after: colon)...].trimmingCharacters(in: .whitespaces)
         }
-        return Request(method: String(parts[0]), path: String(parts[1]), headers: headers)
+        guard let length = Int(headers["content-length"] ?? "0"), length >= 0, length <= 65_536 else { return nil }
+        let bodyStart = marker.upperBound
+        guard data.count >= bodyStart + length else { return nil }
+        return Request(method: String(parts[0]), path: String(parts[1]), headers: headers, body: Data(data[bodyStart..<(bodyStart + length)]))
     }
 
     private func receive(_ connection: NWConnection, data: Data) {
@@ -101,7 +115,7 @@ final class LocalBridge: @unchecked Sendable {
             guard let self else { connection.cancel(); return }
             var requestData = data
             if let chunk { requestData.append(chunk) }
-            if requestData.count > 65_536 { self.send(400, body: ["error": "request too large"], origin: nil, connection: connection); return }
+            if requestData.count > 73_728 { self.send(400, body: ["error": "request too large"], origin: nil, connection: connection); return }
             if let request = Self.parse(requestData) { self.route(request, connection: connection) }
             else if error != nil || complete { self.send(400, body: ["error": "invalid request"], origin: nil, connection: connection) }
             else { self.receive(connection, data: requestData) }
@@ -123,7 +137,28 @@ final class LocalBridge: @unchecked Sendable {
         case ("GET", "/inventory"):
             send(200, body: store.snapshot().0, origin: origin, connection: connection)
         case ("POST", "/scan"):
-            store.scan { [weak self] inventory in self?.send(200, body: inventory, origin: origin, connection: connection) }
+            store.scan { [weak self] inventory in
+                self?.actions.update(inventory)
+                self?.send(200, body: inventory, origin: origin, connection: connection)
+            }
+        case ("GET", "/unused"):
+            send(200, body: actions.unused(), origin: origin, connection: connection)
+        case ("GET", "/duplicates"):
+            send(200, body: actions.duplicates(), origin: origin, connection: connection)
+        case ("POST", "/action/reveal"), ("POST", "/action/unuse"), ("POST", "/action/restore"), ("POST", "/action/trash"):
+            guard let object = try? JSONSerialization.jsonObject(with: request.body) as? [String: Any],
+                  let ids = object[path == "/action/restore" ? "moveIds" : "ids"] as? [String], Self.validBatch(ids) else {
+                send(400, body: ["error": "invalid ids or batch exceeds 500"], origin: origin, connection: connection); return
+            }
+            guard actions.begin() else { send(409, body: ["error": "action busy"], origin: origin, connection: connection); return }
+            DispatchQueue.global(qos: .userInitiated).async {
+                let result = self.actions.perform(String(path.dropFirst("/action/".count)), ids: ids)
+                self.store.scanAfterWrite { inventory in
+                    self.actions.update(inventory)
+                    self.actions.end()
+                    self.send(200, body: ActionResponse(results: result, counts: inventory.counts, inventory: inventory), origin: origin, connection: connection)
+                }
+            }
         default: send(404, body: ["error": "not found"], origin: origin, connection: connection)
         }
     }
@@ -137,7 +172,7 @@ final class LocalBridge: @unchecked Sendable {
 
     private func send<T: Encodable>(_ status: Int, body: T, origin: String?, connection: NWConnection) {
         let data = status == 204 ? Data() : ((try? JSONEncoder().encode(body)) ?? Data("{}".utf8))
-        let reason = [200: "OK", 204: "No Content", 400: "Bad Request", 403: "Forbidden", 404: "Not Found"][status] ?? "Error"
+        let reason = [200: "OK", 204: "No Content", 400: "Bad Request", 403: "Forbidden", 404: "Not Found", 409: "Conflict"][status] ?? "Error"
         var header = "HTTP/1.1 \(status) \(reason)\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: \(data.count)\r\nConnection: close\r\nCache-Control: no-store\r\n"
         if let origin, Self.accepts(origin: origin) {
             header += "Access-Control-Allow-Origin: \(origin)\r\nVary: Origin\r\nAccess-Control-Allow-Methods: GET, POST, OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type\r\nAccess-Control-Allow-Private-Network: true\r\n"
