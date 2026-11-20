@@ -1747,3 +1747,8 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 ## 2026-11-19 build 2026-11-19.9 — Plugin Companion polish (not deployed)
 - The Plugins scan status and connected empty state no longer ask for folders; disconnected Chrome folder guidance remains. The companion scanner excludes leftover `AIMMFoundationSyntheticTest` bundles.
 - Not deployed.
+
+## 2026-11-20 build 2026-11-20.2 — Vendor app checks (not deployed)
+- Vendor app now supports marking every currently visible product at once, with a count in the confirmation dialog, as well as per-vendor and per-product actions. An inline Undo restores the previous local records; individual checks can be removed later from Up to date.
+- Checks are saved per vendor and product in `aimm.pluginInventory.vendorAppChecks.v1` with the installed version signature and check date. They move matching products to Up to date, expire after 120 days or an installed version change, and show the check date with expiry help. Sidebar status counts still count each product once.
+- Corrected the Vendor app explanatory wording and removed the stale Plugins connection prompt beneath the scan controls. All `tests/*.test.mjs` reported zero failures. Not deployed or pushed.
