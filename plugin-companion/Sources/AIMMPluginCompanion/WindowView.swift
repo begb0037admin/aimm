@@ -24,7 +24,7 @@ struct WindowView: View {
             let connected = model.lastStatusRequestAt.map { context.date.timeIntervalSince($0) < 60 } ?? false
 
             VStack(alignment: .leading, spacing: 0) {
-                ScrollView {
+                ScrollView(.vertical, showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 22) {
                 HStack(spacing: 12) {
                     Image(nsImage: NSApp.applicationIconImage)
@@ -90,6 +90,7 @@ struct WindowView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 22)
                 }
+                .background(VerticalScrollerHider())
 
                 HStack {
                     Text("Listening service: 127.0.0.1:41736 · v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.2.0")")
@@ -116,5 +117,28 @@ struct WindowView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)
         .background(.quaternary.opacity(0.55), in: RoundedRectangle(cornerRadius: 10))
+    }
+}
+
+private struct VerticalScrollerHider: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView()
+        DispatchQueue.main.async { hideScroller(above: view) }
+        return view
+    }
+
+    func updateNSView(_ view: NSView, context: Context) {
+        DispatchQueue.main.async { hideScroller(above: view) }
+    }
+
+    private func hideScroller(above view: NSView) {
+        var ancestor = view.superview
+        while let current = ancestor {
+            if let scrollView = current as? NSScrollView {
+                scrollView.hasVerticalScroller = false
+                return
+            }
+            ancestor = current.superview
+        }
     }
 }
