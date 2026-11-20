@@ -26,6 +26,7 @@ struct AIMMReferenceCompanionApp: App {
                 EmptyView()
             }
         }
+        .defaultSize(width: 680, height: 600)
         MenuBarExtra("AIMM Audio Reference", systemImage: "waveform") {
             Text(model.capture.status)
                 .lineLimit(3)
@@ -81,61 +82,18 @@ struct CompanionWindow: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(spacing: 12) {
-                Image(nsImage: NSApp.applicationIconImage)
-                    .resizable()
-                    .frame(width: 56, height: 56)
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("AIMM Audio Reference")
-                        .font(.title2.weight(.semibold))
-                    Text("Live system-audio monitor for AIMM")
-                        .foregroundStyle(.secondary)
-                }
-            }
-
-            Text(capture.status)
-                .font(.body)
-                .frame(maxWidth: .infinity, minHeight: 54, alignment: .leading)
-                .padding(12)
-                .background(.quaternary.opacity(0.55), in: RoundedRectangle(cornerRadius: 10))
-
-            HStack {
-                Circle()
-                    .fill(capture.isCapturing ? .red : capture.isMonitoring ? .green : .yellow)
-                    .frame(width: 9, height: 9)
-                Text(capture.isCapturing ? "Capturing reference" : capture.isMonitoring ? "Live monitoring for AIMM" : "Live monitor unavailable")
-                    .foregroundStyle(.secondary)
-                Spacer()
-                if capture.isCapturing {
-                    Text(capture.elapsedText)
-                        .monospacedDigit()
-                        .foregroundStyle(.secondary)
-                }
-            }
-
-            Text(model.bridgeStatus)
-                .font(.caption)
-                .foregroundStyle(model.bridgeStatus.contains("failed") ? .red : .secondary)
-
-            Text("Keep this companion open. Play a song in Spotify and the white live spectrum in AIMM follows it automatically. Press Capture reference to average the purple target, then stop to save the target and audio specs.")
-                .font(.callout)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-
-            Spacer(minLength: 0)
-
-            HStack {
-                Text("Listening service: 127.0.0.1:41735")
-                    .font(.caption.monospaced())
-                    .foregroundStyle(.tertiary)
-                Spacer()
-                Button("Open AIMM") {
-                    NSWorkspace.shared.open(URL(string: "https://aimixmasters.com/")!)
-                }
-                .buttonStyle(.borderedProminent)
-            }
-        }
-        .padding(24)
+        CompanionWindowLayout(
+            title: "AIMM Audio Reference",
+            subtitle: "Live system-audio monitor for AIMM",
+            statusText: capture.status,
+            statusDot: capture.isCapturing ? .red : capture.isMonitoring ? .green : .yellow,
+            statusLabel: capture.isCapturing ? "Capturing reference" : capture.isMonitoring ? "Live monitoring for AIMM" : "Live monitor unavailable",
+            statusTrailing: capture.isCapturing ? capture.elapsedText : nil,
+            address: "127.0.0.1:41735",
+            caption: model.bridgeStatus,
+            captionColor: model.bridgeStatus.contains("failed") ? .red : .secondary,
+            explainer: "Keep this companion open. Play a song in Spotify and the white live spectrum in AIMM follows it automatically. Press Capture reference to average the purple target, then stop to save the target and audio specs.",
+            extra: EmptyView()
+        )
     }
 }
