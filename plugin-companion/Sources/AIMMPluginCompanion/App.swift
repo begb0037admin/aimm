@@ -38,15 +38,17 @@ final class CompanionModel: ObservableObject {
     @Published var scannedAt: String?
     @Published var counts = Inventory.empty.counts
     private let store = InventoryStore()
+    private let actions = PluginActions()
     private var bridge: LocalBridge?
 
     func start() {
         guard bridge == nil else { return }
-        let server = LocalBridge(store: store)
+        let server = LocalBridge(store: store, actions: actions)
         server.onDuplicateInstance = { DispatchQueue.main.async { NSApplication.shared.terminate(nil) } }
         bridge = server
         server.start()
         store.onScan = { [weak self] inventory in
+            self?.actions.update(inventory)
             Task { @MainActor in
                 self?.scannedAt = inventory.scannedAt
                 self?.counts = inventory.counts

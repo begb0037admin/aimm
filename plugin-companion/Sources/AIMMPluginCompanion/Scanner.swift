@@ -1,6 +1,8 @@
 import Foundation
+import CryptoKit
 
 struct PluginRow: Codable, Equatable {
+    let id: String
     let name: String
     let vendor: String
     let format: String
@@ -45,6 +47,11 @@ struct PluginRoot {
     let url: URL
 
     static func standard() -> [PluginRoot] {
+        if let json = ProcessInfo.processInfo.environment["AIMM_PLUGIN_ROOTS_JSON"],
+           let data = json.data(using: .utf8),
+           let paths = try? JSONDecoder().decode([String].self, from: data) {
+            return paths.enumerated().map { PluginRoot(id: "fixture-\($0.offset)", url: URL(fileURLWithPath: $0.element, isDirectory: true)) }
+        }
         let bases: [(String, URL)] = [
             ("system", URL(fileURLWithPath: "/Library/Audio/Plug-Ins", isDirectory: true)),
             ("user", FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Audio/Plug-Ins", isDirectory: true))
@@ -110,6 +117,11 @@ enum PluginScanner {
                          truncated: truncated, rows: rows)
     }
 
+    static func rowID(path: String, name: String, format: String) -> String {
+        let digest = SHA256.hash(data: Data("\(path)\0\(name)\0\(format)".utf8))
+        return digest.prefix(8).map { String(format: "%02x", $0) }.joined()
+    }
+
     private static func normalize(_ string: String) -> String {
         let folded = string.decomposedStringWithCompatibilityMapping
             .folding(options: .diacriticInsensitive, locale: Locale(identifier: "en_US_POSIX"))
@@ -173,7 +185,7 @@ enum PluginScanner {
                 let component = audio.first(where: { componentName($0) == name })
                 let type = string(component?["type"])
                 let category = type == "aumu" ? "Instrument" : (type == "aufx" || type == "aumf" ? "Effect" : "")
-                return PluginRow(name: name.isEmpty ? fallback : name, vendor: vendor, format: format, version: version, bundleId: bundleId, rootId: rootId, category: category, bundleName: fallback, path: url.path)
+                return PluginRow(id: rowID(path: url.path, name: name.isEmpty ? fallback : name, format: format), name: name.isEmpty ? fallback : name, vendor: vendor, format: format, version: version, bundleId: bundleId, rootId: rootId, category: category, bundleName: fallback, path: url.path)
             }
         } catch { unreadable += 1; return [] }
     }
