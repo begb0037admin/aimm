@@ -25,6 +25,10 @@ Live on aimixmasters.com and aimm.kevinlelitte.workers.dev (page Worker version 
 
 # STATUS.md — AIMM
 
+## 2026-11-20 build 2026-11-20.4 — Plugins list height (UNDEPLOYED)
+
+The Plugins frame ended at the last sidebar item. With Tools, Library and Categories collapsed, that left only about 110px for the inventory list. The frame now uses the distance to 24px above the viewport bottom or 640px, whichever is greater, while retaining the sidebar height when it is taller. Fitting is scheduled after tab activation, section changes, status updates, renders and window resizes. Not pushed or deployed.
+
 ## 2026-11-20 build 2026-11-20.3 — Product dialog buttons (DEPLOYED, Worker 4273c5e2; rollback 67c95ece; Kevin approved)
 
 Added spacing, padding and rounded corners to the action buttons in Plugins product dialogs, including Mark all as checked, Mark version, Record vendor status and Keep version. Existing button colours remain. Not pushed or deployed.

@@ -4050,8 +4050,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   <style>
     #library [hidden]{display:none!important}
     #library .inv-shell{max-width:1520px;margin:0 auto;color:#f2f4f5}
-    /* The full Browse list sets the frame's end. Only the inventory records
-       scroll; more plug-ins must not extend the page below Browse. */
+    /* The frame fits the viewport or the Browse list, whichever is taller.
+       Inventory records scroll inside the frame. */
     #library .inv-layout{display:grid;grid-template-columns:236px minmax(0,1fr);grid-template-rows:minmax(0,1fr);height:var(--inv-layout-height,auto);min-height:0;max-height:none;border:1px solid #2c3034;border-radius:12px;overflow:hidden;background:#101214}
     #library .inv-layout.is-collapsed{grid-template-columns:64px minmax(0,1fr)}
     #library .inv-sidebar{min-height:0;background:#17191c;border-right:1px solid #30343a;border-radius:11px 0 0 11px;padding:16px 11px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;transition:width .2s ease}
@@ -5601,7 +5601,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-20.3';
+const AIMM_BUILD = '2026-11-20.4';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7249,6 +7249,7 @@ function invStatus(message, kind){
   if (!node) return;
   node.textContent = message;
   node.className = "inv-status" + (kind ? " " + kind : "");
+  invScheduleFrameFit();
 }
 function invVendorReasonForDisplay(reason){
   const value=String(reason||"");
@@ -8701,9 +8702,8 @@ function invFitFrame(){
   if(!children.length)return;
   const last=children[children.length-1],style=getComputedStyle(sidebar),lastStyle=getComputedStyle(last);
   const browseEnd=last.getBoundingClientRect().bottom- sidebar.getBoundingClientRect().top +(Number.parseFloat(lastStyle.marginBottom)||0)+(Number.parseFloat(style.paddingBottom)||0)+(Number.parseFloat(style.borderBottomWidth)||0);
-  /* End the frame immediately after the final Browse item (Scan Folders).
-     The inventory list scrolls inside this fixed endpoint regardless of count. */
-  const nextHeight=Math.ceil(browseEnd+2)+"px";
+  const viewportHeight=Math.max(640,window.innerHeight-layout.getBoundingClientRect().top-24);
+  const nextHeight=Math.ceil(Math.max(browseEnd+2,viewportHeight))+"px";
   if(layout.style.getPropertyValue("--inv-layout-height")!==nextHeight)layout.style.setProperty("--inv-layout-height",nextHeight);
 }
 let invFrameFitRAF=0;
@@ -9051,7 +9051,7 @@ function invRenderInventory(){
   }));
   invLayoutTiles(host);
   invScheduleFrameFit();
-  if(!window.__aimmInvTileResizeBound){window.addEventListener("resize",()=>{invTileScheduleLayout(true);invFitFrame();},{passive:true});window.__aimmInvTileResizeBound=true;}
+  if(!window.__aimmInvTileResizeBound){window.addEventListener("resize",()=>{invTileScheduleLayout(true);invScheduleFrameFit();},{passive:true});window.__aimmInvTileResizeBound=true;}
 }
 function invRenderLibrary(){
   const installed=document.getElementById("pluginInventoryUI");
@@ -10997,7 +10997,7 @@ function updateTabLabels(activeTab){
     titleSub.textContent=activeTab.dataset.label||'';
   }
 }
-document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));t.classList.add('active');document.getElementById(t.dataset.tab).classList.add('active');updateTabLabels(t);if(typeof applyFloatMicVisibility==='function')applyFloatMicVisibility();if(typeof notifyTabChangeIfActive==='function')notifyTabChangeIfActive(t.dataset.tab);});});
+document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));t.classList.add('active');document.getElementById(t.dataset.tab).classList.add('active');updateTabLabels(t);if(t.dataset.tab==='library')invScheduleFrameFit();if(typeof applyFloatMicVisibility==='function')applyFloatMicVisibility();if(typeof notifyTabChangeIfActive==='function')notifyTabChangeIfActive(t.dataset.tab);});});
 // Tab order persistence — replay Kev's saved order BEFORE the active-tab
 // init IIFE so the initial render lays the tabs out the way he left them.
 // Stored as a JSON array of data-tab ids under aimmTabOrder_v2. Any tabs
