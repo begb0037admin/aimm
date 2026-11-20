@@ -1,0 +1,556 @@
+{
+  "version": 1,
+  "source": "Vocal-chain video report and inventory scan, 20 November 2026; Logic Pro 13 only",
+  "owned": [
+    {
+      "name": "H-Delay (s)",
+      "publisher": "Waves",
+      "videos": 17,
+      "match": "exact"
+    },
+    {
+      "name": "RVox (s)",
+      "publisher": "Waves",
+      "videos": 12,
+      "match": "exact"
+    },
+    {
+      "name": "RCompressor (s)",
+      "publisher": "Waves",
+      "videos": 9,
+      "match": "exact"
+    },
+    {
+      "name": "Waves Tune Real-Time (s)",
+      "publisher": "Waves",
+      "videos": 5,
+      "match": "exact"
+    },
+    {
+      "name": "Decapitator",
+      "publisher": "Soundtoys",
+      "videos": 4,
+      "match": "exact"
+    },
+    {
+      "name": "DeEsser (s)",
+      "publisher": "Waves",
+      "videos": 4,
+      "match": "exact"
+    },
+    {
+      "name": "MV2 (s)",
+      "publisher": "Waves",
+      "videos": 4,
+      "match": "exact"
+    },
+    {
+      "name": "Pro-MB",
+      "publisher": "FabFilter",
+      "videos": 3,
+      "match": "exact"
+    },
+    {
+      "name": "S1 Imager (s)",
+      "publisher": "Waves",
+      "videos": 3,
+      "match": "exact"
+    },
+    {
+      "name": "Vitamin (s)",
+      "publisher": "Waves",
+      "videos": 3,
+      "match": "exact"
+    },
+    {
+      "name": "Vocal Rider (s)",
+      "publisher": "Waves",
+      "videos": 3,
+      "match": "exact"
+    },
+    {
+      "name": "Melodyne",
+      "publisher": "Celemony",
+      "videos": 2,
+      "match": "exact"
+    },
+    {
+      "name": "Fresh Air",
+      "publisher": "Slate Digital",
+      "videos": 2,
+      "match": "exact"
+    },
+    {
+      "name": "Virtual Tape Machines",
+      "publisher": "Slate Digital",
+      "videos": 2,
+      "match": "exact"
+    },
+    {
+      "name": "Oxford Inflator",
+      "publisher": "Sonnox",
+      "videos": 2,
+      "match": "exact"
+    },
+    {
+      "name": "C4 (s)",
+      "publisher": "Waves",
+      "videos": 2,
+      "match": "exact"
+    },
+    {
+      "name": "soothe2",
+      "publisher": "oeksound",
+      "videos": 2,
+      "match": "exact"
+    },
+    {
+      "name": "Pro-Q 4",
+      "publisher": "FabFilter",
+      "videos": 1,
+      "match": "exact"
+    },
+    {
+      "name": "ValhallaVintageVerb",
+      "publisher": "Valhalla DSP, LLC",
+      "videos": 1,
+      "match": "exact"
+    },
+    {
+      "name": "Scheps 73 (s)",
+      "publisher": "Waves",
+      "videos": 1,
+      "match": "exact"
+    },
+    {
+      "name": "UAD Antares Auto-Tune Realtime",
+      "publisher": "Universal Audio",
+      "videos": 19,
+      "match": "close"
+    },
+    {
+      "name": "UADx 1176 FET Compressor",
+      "publisher": "Universal Audio (UADx)",
+      "videos": 8,
+      "match": "close"
+    },
+    {
+      "name": "Pro-Q 4",
+      "publisher": "FabFilter",
+      "videos": 6,
+      "match": "close"
+    },
+    {
+      "name": "Pro-Q 4",
+      "publisher": "FabFilter",
+      "videos": 4,
+      "match": "close"
+    },
+    {
+      "name": "Ozone 12",
+      "publisher": "iZotope",
+      "videos": 4,
+      "match": "close"
+    },
+    {
+      "name": "Doubler2 (s)",
+      "publisher": "Waves",
+      "videos": 3,
+      "match": "close"
+    }
+  ],
+  "stock": {
+    "logic": [
+      {
+        "name": "Stereo Delay",
+        "videos": 8
+      },
+      {
+        "name": "Space Designer",
+        "videos": 3
+      },
+      {
+        "name": "Tape Delay",
+        "videos": 2
+      },
+      {
+        "name": "Compressor",
+        "videos": 1
+      },
+      {
+        "name": "DeEsser 2",
+        "videos": 1
+      },
+      {
+        "name": "Multipressor",
+        "videos": 1
+      },
+      {
+        "name": "Vintage Console EQ",
+        "videos": 1
+      }
+    ]
+  },
+  "missing": [
+    {
+      "name": "Slate Virtual Mix Rack",
+      "videos": 8,
+      "equivalents": [
+        {
+          "name": "Console 1",
+          "publisher": "Softube"
+        }
+      ]
+    },
+    {
+      "name": "Waves H-Verb",
+      "videos": 2,
+      "equivalents": [
+        {
+          "name": "ValhallaVintageVerb",
+          "publisher": "Valhalla DSP, LLC"
+        },
+        {
+          "name": "Lustrous Plates",
+          "publisher": "LiquidSonics"
+        },
+        {
+          "name": "EchoBoy Jr",
+          "publisher": "Soundtoys"
+        }
+      ]
+    },
+    {
+      "name": "Valhalla Room",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "ValhallaVintageVerb",
+          "publisher": "Valhalla DSP, LLC"
+        },
+        {
+          "name": "Lustrous Plates",
+          "publisher": "LiquidSonics"
+        },
+        {
+          "name": "EchoBoy Jr",
+          "publisher": "Soundtoys"
+        }
+      ]
+    },
+    {
+      "name": "Valhalla Delay",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "ValhallaVintageVerb",
+          "publisher": "Valhalla DSP, LLC"
+        },
+        {
+          "name": "Lustrous Plates",
+          "publisher": "LiquidSonics"
+        },
+        {
+          "name": "EchoBoy Jr",
+          "publisher": "Soundtoys"
+        }
+      ]
+    },
+    {
+      "name": "Waves C6",
+      "videos": 5,
+      "equivalents": [
+        {
+          "name": "C4 (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "Ozone 12 Dynamic EQ",
+          "publisher": "iZotope"
+        },
+        {
+          "name": "Pro-MB",
+          "publisher": "FabFilter"
+        }
+      ]
+    },
+    {
+      "name": "Waves F6",
+      "videos": 3,
+      "equivalents": [
+        {
+          "name": "C4 (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "Ozone 12 Dynamic EQ",
+          "publisher": "iZotope"
+        },
+        {
+          "name": "Pro-MB",
+          "publisher": "FabFilter"
+        }
+      ]
+    },
+    {
+      "name": "Slate FG-116",
+      "videos": 3,
+      "equivalents": [
+        {
+          "name": "UAD UA 1176LN Rev E",
+          "publisher": "Universal Audio"
+        },
+        {
+          "name": "UAD Teletronix LA-2A Gray",
+          "publisher": "Universal Audio"
+        },
+        {
+          "name": "UAD Fairchild 670",
+          "publisher": "Universal Audio"
+        }
+      ]
+    },
+    {
+      "name": "Slate FG-2A",
+      "videos": 2,
+      "equivalents": [
+        {
+          "name": "UAD UA 1176LN Rev E",
+          "publisher": "Universal Audio"
+        },
+        {
+          "name": "UAD Teletronix LA-2A Gray",
+          "publisher": "Universal Audio"
+        },
+        {
+          "name": "UAD Fairchild 670",
+          "publisher": "Universal Audio"
+        }
+      ]
+    },
+    {
+      "name": "Waves CLA-2A",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "UAD UA 1176LN Rev E",
+          "publisher": "Universal Audio"
+        },
+        {
+          "name": "UAD Teletronix LA-2A Gray",
+          "publisher": "Universal Audio"
+        },
+        {
+          "name": "UAD Fairchild 670",
+          "publisher": "Universal Audio"
+        }
+      ]
+    },
+    {
+      "name": "Tube-Tech CL 1B",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "UAD UA 1176LN Rev E",
+          "publisher": "Universal Audio"
+        },
+        {
+          "name": "UAD Teletronix LA-2A Gray",
+          "publisher": "Universal Audio"
+        },
+        {
+          "name": "UAD Fairchild 670",
+          "publisher": "Universal Audio"
+        }
+      ]
+    },
+    {
+      "name": "FabFilter Pro-DS",
+      "videos": 3,
+      "equivalents": [
+        {
+          "name": "soothe2",
+          "publisher": "oeksound"
+        },
+        {
+          "name": "DeEsser (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "Weiss Deess",
+          "publisher": "Softube"
+        }
+      ]
+    },
+    {
+      "name": "Baby Audio Smooth Operator",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "soothe2",
+          "publisher": "oeksound"
+        },
+        {
+          "name": "DeEsser (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "Weiss Deess",
+          "publisher": "Softube"
+        }
+      ]
+    },
+    {
+      "name": "oeksound spiff",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "soothe2",
+          "publisher": "oeksound"
+        },
+        {
+          "name": "DeEsser (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "Weiss Deess",
+          "publisher": "Softube"
+        }
+      ]
+    },
+    {
+      "name": "Crane Song Phoenix II",
+      "videos": 3,
+      "equivalents": [
+        {
+          "name": "Decapitator",
+          "publisher": "Soundtoys"
+        },
+        {
+          "name": "Virtual Tape Machines",
+          "publisher": "Slate Digital"
+        }
+      ]
+    },
+    {
+      "name": "Slate Infinity EQ",
+      "videos": 2,
+      "equivalents": [
+        {
+          "name": "Pro-Q 4",
+          "publisher": "FabFilter"
+        },
+        {
+          "name": "EQ-73",
+          "publisher": "IK Multimedia"
+        }
+      ]
+    },
+    {
+      "name": "Waves Manny Marroquin EQ",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "Pro-Q 4",
+          "publisher": "FabFilter"
+        },
+        {
+          "name": "EQ-73",
+          "publisher": "IK Multimedia"
+        }
+      ]
+    },
+    {
+      "name": "Waves Tune",
+      "videos": 3,
+      "equivalents": [
+        {
+          "name": "Waves Tune Real-Time (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "UAD Auto-Tune Realtime Advanced",
+          "publisher": "Universal Audio"
+        },
+        {
+          "name": "RCompressor (s)",
+          "publisher": "Waves"
+        }
+      ]
+    },
+    {
+      "name": "Antares AVOX",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "Waves Tune Real-Time (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "UAD Auto-Tune Realtime Advanced",
+          "publisher": "Universal Audio"
+        },
+        {
+          "name": "RCompressor (s)",
+          "publisher": "Waves"
+        }
+      ]
+    },
+    {
+      "name": "FabFilter Pro-C 2",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "Waves Tune Real-Time (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "UAD Auto-Tune Realtime Advanced",
+          "publisher": "Universal Audio"
+        },
+        {
+          "name": "RCompressor (s)",
+          "publisher": "Waves"
+        }
+      ]
+    },
+    {
+      "name": "T-RackS One",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "Waves Tune Real-Time (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "UAD Auto-Tune Realtime Advanced",
+          "publisher": "Universal Audio"
+        },
+        {
+          "name": "RCompressor (s)",
+          "publisher": "Waves"
+        }
+      ]
+    },
+    {
+      "name": "Eventide H3000",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "UAD Eventide H910 Harmonizer",
+          "publisher": "Universal Audio"
+        }
+      ]
+    },
+    {
+      "name": "Eventide H910",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "UAD Eventide H910 Harmonizer",
+          "publisher": "Universal Audio"
+        }
+      ]
+    }
+  ]
+}

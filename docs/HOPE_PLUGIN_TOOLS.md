@@ -1,4 +1,16 @@
-# Hope Plugins tools — build 2026-11-20.11 (DEPLOYED)
+# Hope Plugins tools — build 2026-11-20.12 (BUILT, NOT DEPLOYED)
+
+Vocal-chain favourites are available locally in the Plugins Library. `vocal_favorites_read` returns owned scan products, Logic Pro 13 stock products, and missing video products with scanned equivalents. `vocal_favorites_apply` follows the inventory confirmation pattern: call with `confirmed:false`, read the counts aloud, wait for Kevin's yes, then call with `confirmed:true`. It uses the existing Plugins star action for scanned products and a separate saved list for Logic stock. The result reports verified `starred`, `already`, `unresolved`, and `not_saved`. These new schemas have **not** been registered on ElevenLabs.
+
+```json
+{"name":"vocal_favorites_read","description":"Read vocal-chain favourites from the video report: scanned owned plug-ins, Logic Pro 13 stock plug-ins, and not-installed video plug-ins with owned equivalents.","parameters":{"type":"object","properties":{"section":{"type":"string","enum":["owned","stock","missing","all"],"description":"Section to read; defaults to all."}},"required":[]}}
+```
+
+```json
+{"name":"vocal_favorites_apply","description":"Prepare or apply vocal-chain favourites. First call with confirmed false, read the scanned and Logic stock counts aloud, get Kevin's clear yes, then call with confirmed true.","parameters":{"type":"object","properties":{"confirmed":{"type":"boolean","description":"True only after Kevin clearly confirms the proposed count."}},"required":["confirmed"]}}
+```
+
+# Previous build — 2026-11-20.11 (DEPLOYED)
 
 Hope's 16 `inventory_*` tools are registered on the ElevenLabs agent: the first 15 were registered in agent version `agtvrsn_5101m7wwhq0pe5e9nagavh7txsz8` (three old `pluginhub_*` tools renamed in place and 12 new tools). They run in the page through the same handlers as the Plugins controls. Read results are JSON. A disconnected companion is reported explicitly. Agent rollback is the previous agent version in ElevenLabs history; voice test pending. Build .11 is deployed as Worker `761a1406-7d93-419c-92ae-1d15c2b17143`; rollback is build .10, Worker `9a3c5675-84e7-4bff-b74f-c3b53c9cf446`.
 
