@@ -2,6 +2,7 @@ import AppKit
 import SwiftUI
 
 struct AIMMPluginCompanionApp: App {
+    @Environment(\.openWindow) private var openWindow
     @StateObject private var model = CompanionModel()
     private let primary: Bool
 
@@ -19,6 +20,20 @@ struct AIMMPluginCompanionApp: App {
             } else { EmptyView() }
         }
         .defaultSize(width: 680, height: 600)
+        MenuBarExtra("AIMM Plugin Companion", systemImage: "powerplug") {
+            Text(model.menuStatus)
+                .lineLimit(3)
+            Divider()
+            Button("Scan now") { model.scan() }
+            Button("Show window") {
+                NSApplication.shared.activate(ignoringOtherApps: true)
+                openWindow(id: "main")
+            }
+            Button("Open AIMM") {
+                NSWorkspace.shared.open(URL(string: "https://aimixmasters.com/")!)
+            }
+        }
+        .menuBarExtraStyle(.window)
     }
 }
 
@@ -32,6 +47,15 @@ final class CompanionModel: ObservableObject {
     private let store = InventoryStore()
     private let actions = PluginActions()
     private var bridge: LocalBridge?
+
+    var menuStatus: String {
+        let counts = inventory.counts
+        let total = counts.AU + counts.VST2 + counts.VST3 + counts.CLAP
+        let scanTime = inventory.scannedAt
+            .flatMap { ISO8601DateFormatter().date(from: $0) }
+            .map(Self.localTime) ?? "pending"
+        return "\(total.formatted()) plug-ins · last scan \(scanTime)"
+    }
 
     func start() {
         guard bridge == nil else { return }
