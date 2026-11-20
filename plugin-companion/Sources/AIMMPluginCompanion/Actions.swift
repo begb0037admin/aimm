@@ -21,7 +21,9 @@ struct UnusedEntry: Codable {
 struct DuplicateItem: Codable { let path: String; let rootId: String; let version: String; let keep: Bool; let rowIds: [String] }
 struct DuplicateGroup: Codable { let vendor: String; let name: String; let format: String; let needsReview: Bool; let items: [DuplicateItem] }
 struct AlreadyUnused: Codable { let name: String; let path: String }
-struct DuplicateResponse: Codable { let groups: [DuplicateGroup]; let alreadyUnused: [AlreadyUnused] }
+struct SideBySideVersion: Codable { let bundleName: String; let path: String; let rootId: String; let version: String }
+struct SideBySideGroup: Codable { let vendor: String; let family: String; let format: String; let items: [SideBySideVersion] }
+struct DuplicateResponse: Codable { let groups: [DuplicateGroup]; let sideBySideVersions: [SideBySideGroup]; let alreadyUnused: [AlreadyUnused] }
 
 final class PluginActions {
     private let fm = FileManager.default
@@ -190,24 +192,60 @@ final class PluginActions {
     }
     func duplicates() -> DuplicateResponse {
         mutex.lock(); let live = inventory; mutex.unlock()
-        let groups = Dictionary(grouping: live.rows) { "\($0.vendor.lowercased())|\($0.name.lowercased())|\($0.format.lowercased())" }
+        func normalized(_ value: String) -> String { value.lowercased().filter { !$0.isWhitespace } }
+        func versionParts(_ value: String) -> [Int]? {
+            let parts = value.split(separator: ".", omittingEmptySubsequences: false)
+            guard !parts.isEmpty else { return nil }
+            let numbers = parts.compactMap { part -> Int? in
+                guard !part.isEmpty, part.allSatisfy(\.isNumber) else { return nil }
+                return Int(part)
+            }
+            return numbers.count == parts.count ? numbers : nil
+        }
+        func compare(_ a: [Int], _ b: [Int]) -> Int {
+            for i in 0..<max(a.count, b.count) {
+                let x = i < a.count ? a[i] : 0, y = i < b.count ? b[i] : 0
+                if x != y { return x > y ? 1 : -1 }
+            }
+            return 0
+        }
+        let groups = Dictionary(grouping: live.rows) { "\($0.format.lowercased())|\(normalized($0.bundleName))" }
         var output: [DuplicateGroup] = []
         for rows in groups.values {
             let paths = Dictionary(grouping: rows, by: \.path)
-            guard paths.count > 1, let first = rows.first else { continue }
+            guard paths.count > 1,
+                  Set(paths.keys.map { URL(fileURLWithPath: $0).deletingLastPathComponent().standardizedFileURL.path }).count > 1,
+                  let first = rows.first else { continue }
             let distinct = paths.values.compactMap(\.first)
-            let review = distinct.contains { $0.version.isEmpty }
+            let versions = distinct.compactMap { versionParts($0.version) }
+            let newest = versions.max { compare($0, $1) < 0 }
+            let review = versions.count != distinct.count || newest == nil || versions.filter { compare($0, newest!) == 0 }.count != 1
             let sorted = distinct.sorted { a, b in
-                let av = a.version.split(separator: ".").map { Int($0) ?? 0 }, bv = b.version.split(separator: ".").map { Int($0) ?? 0 }
-                for i in 0..<max(av.count, bv.count) {
-                    let x = i < av.count ? av[i] : 0, y = i < bv.count ? bv[i] : 0
-                    if x != y { return x > y }
-                }
-                if a.rootId.hasPrefix("system") != b.rootId.hasPrefix("system") { return a.rootId.hasPrefix("system") }
+                if let av = versionParts(a.version), let bv = versionParts(b.version), compare(av, bv) != 0 { return compare(av, bv) > 0 }
                 return a.path < b.path
             }
             output.append(DuplicateGroup(vendor: first.vendor, name: first.name, format: first.format, needsReview: review,
-                items: sorted.map { DuplicateItem(path: $0.path, rootId: $0.rootId, version: $0.version, keep: !review && $0.path == sorted.first?.path, rowIds: paths[$0.path]!.map(\.id)) }))
+                items: sorted.map { DuplicateItem(path: $0.path, rootId: $0.rootId, version: $0.version, keep: !review && versionParts($0.version).map { compare($0, newest!) == 0 } == true, rowIds: paths[$0.path]!.map(\.id)) }))
+        }
+        // Only a dotted numeric suffix after a space is treated as a version of the same family.
+        func family(_ name: String) -> String? {
+            guard let space = name.lastIndex(of: " ") else { return nil }
+            let suffix = String(name[name.index(after: space)...])
+            guard suffix.contains("."), versionParts(suffix) != nil else { return nil }
+            let prefix = String(name[..<space]).trimmingCharacters(in: .whitespaces)
+            return prefix.isEmpty ? nil : prefix
+        }
+        let versionRows = live.rows.compactMap { row -> (String, PluginRow)? in
+            guard let name = family(row.bundleName) else { return nil }
+            return ("\(row.format.lowercased())|\(normalized(row.vendor))|\(normalized(name))", row)
+        }
+        let families = Dictionary(grouping: versionRows, by: { $0.0 })
+        let sideBySide: [SideBySideGroup] = families.values.compactMap { entries in
+            let distinct = Dictionary(grouping: entries.map(\.1), by: \.path).values.compactMap(\.first)
+            guard Set(distinct.map { normalized($0.bundleName) }).count > 1, let first = distinct.first,
+                  let name = family(first.bundleName) else { return nil }
+            return SideBySideGroup(vendor: first.vendor, family: name, format: first.format,
+                items: distinct.map { SideBySideVersion(bundleName: $0.bundleName, path: $0.path, rootId: $0.rootId, version: $0.version) }.sorted { $0.path < $1.path })
         }
         var unused: [AlreadyUnused] = []
         for root in roots {
@@ -216,6 +254,6 @@ final class PluginActions {
                 if ["component", "vst", "vst3", "clap"].contains(url.pathExtension.lowercased()) { unused.append(AlreadyUnused(name: url.deletingPathExtension().lastPathComponent, path: url.path)) }
             }
         }
-        return DuplicateResponse(groups: output.sorted { $0.name < $1.name }, alreadyUnused: unused.sorted { $0.path < $1.path })
+        return DuplicateResponse(groups: output.sorted { $0.name < $1.name }, sideBySideVersions: sideBySide.sorted { $0.family < $1.family }, alreadyUnused: unused.sorted { $0.path < $1.path })
     }
 }

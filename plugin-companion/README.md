@@ -12,7 +12,7 @@ From this folder, run `swift build -c release --disable-sandbox` and `.build/rel
 - `POST /action/restore` with `{ "moveIds": [...] }`: restore recorded moves if their original locations are empty.
 - `POST /action/trash` with `{ "ids": [...] }`: move bundles to the macOS Trash. It never permanently deletes them.
 - `GET /unused`: recorded moves whose Unused bundles still exist, with move IDs for restore.
-- `GET /duplicates`: live duplicate groups by vendor, name and format, plus existing Unused bundles. The newest numeric dot-segment version is marked `keep`; ties prefer the system root. Missing versions require review.
+- `GET /duplicates`: live duplicate groups only when bundles share a format and the same bundle file name (case and whitespace ignored) across different folders. Each physical bundle appears once even if it exposes several plug-in rows. The unique newest numeric dot-segment version is marked `keep`; equal, missing or nonnumeric versions set `needsReview` and mark no item to keep. `sideBySideVersions` lists clear dotted-version suffix variants from the same vendor and product family for information only; it never recommends an action. `alreadyUnused` lists existing Unused bundles.
 
 Action requests accept JSON bodies up to 64 KB and batches of up to 500 IDs. Responses contain a result for each ID and a fresh scan with counts. Concurrent write actions return HTTP 409. The move history is written atomically to `~/Library/Application Support/AIMM/plugin-companion-moves.json`.
 

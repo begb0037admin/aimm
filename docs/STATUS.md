@@ -1761,3 +1761,7 @@ Kevin reports build .08 loads on the MacBook but none of the recent additions wo
 - Added stable inventory row IDs, Reveal, Move to Unused, Restore and Trash endpoints, plus Unused and Duplicates views of the companion data. Write actions use last-scan IDs, validate bundle paths, return per-ID results and rescan after completion.
 - Move history is atomic and persisted locally. System-folder moves use a single macOS administrator prompt per privileged batch; fixture tests disable the prompt.
 - Release build and the temporary-directory `--self-test` pass. The page, standalone assets, deployed Worker and installed companion were not changed. This branch is not pushed or deployed.
+
+## 2026-11-20 — Plugin Companion duplicate correction (UNDEPLOYED)
+- Duplicate groups now require matching format and bundle file name across different folders. Display name, vendor and bundle ID no longer group intentional variants. Only a unique newest numeric version is marked to keep; ties and missing versions require review.
+- `sideBySideVersions` reports clear dotted-version suffix variants such as Waves shells as read-only information. Temporary-directory fixtures cover UAD mono/stereo, Scaler Audio/Control, two-root version differences and ties, Waves shells, and same-folder spacing variants. Release build and self-test pass. Not pushed, installed or launched.
