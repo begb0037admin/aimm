@@ -6,13 +6,6 @@ struct AIMMPluginCompanionApp: App {
     @StateObject private var model = CompanionModel()
     private let primary: Bool
 
-    private var menuBarIcon: NSImage {
-        let icon = NSApp.applicationIconImage.copy() as! NSImage
-        icon.size = NSSize(width: 18, height: 18)
-        icon.isTemplate = false
-        return icon
-    }
-
     init() {
         primary = CompanionInstanceLock.shared.isPrimary
         if !primary { DispatchQueue.main.async { NSApplication.shared.terminate(nil) } }
@@ -40,7 +33,7 @@ struct AIMMPluginCompanionApp: App {
                 NSWorkspace.shared.open(URL(string: "https://aimixmasters.com/")!)
             }
         } label: {
-            Image(nsImage: menuBarIcon)
+            Image(nsImage: MenuBarGlyph.image)
         }
         .menuBarExtraStyle(.window)
     }
