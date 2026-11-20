@@ -25,6 +25,10 @@ Live on aimixmasters.com and aimm.kevinlelitte.workers.dev (page Worker version 
 
 # STATUS.md — AIMM
 
+## 2026-11-20 build 2026-11-20.8 — Hope inventory reads (NOT DEPLOYED)
+
+Hope's inventory_search now reads scanned products without switching tabs or changing Plugins filters. It returns the sidebar's product update status, known latest version and loaded duplicate membership, and supports a status filter. The new read-only inventory_summary returns product, format, status and leading vendor counts with scan provenance. Unused-only products are outside the active scan, so search omits the unused field. Added regression tests; no Worker, deployment or ElevenLabs changes. Committed on `hope-inventory` only.
+
 ## 2026-11-20 build 2026-11-20.7 — Single Tools dialogs (DEPLOYED, Worker 225ece75; rollback 8246a125)
 
 Unused plug-ins and Check for Duplicates now open one dialog per click when the actions-capable Plugin Companion is connected. Without the companion, Unused shows connection guidance and Duplicates retains its existing browser scan dialog. Move confirmations now use the singular “plug-in” for one item. Added mocked click and title regression tests. Not pushed or deployed.
