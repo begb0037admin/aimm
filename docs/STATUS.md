@@ -1,3 +1,7 @@
+## 2026-11-20 build 2026-11-20.10 — Hope installed plug-in rule (BUILT, NOT DEPLOYED)
+
+Hope's Luna route and typed chat now distinguish the MixBus recommendation catalogue from the installed Plugin Companion scan. Installed counts, updates, duplicates, Unused, vendor apps and companion questions use inventory tools; no scan means Hope says no scan is loaded. Inventory changes require a summary and explicit confirmation, with separate Trash approval. The MixBus count in model context is labelled as a catalogue count. All 15 `inventory_*` tools remain available on both routes and route through the shared handler. Regression test: `tests/hope-installed-rule.test.mjs`. Local branch `hope-installed-rule`; no push or deployment.
+
 ## 2026-11-20 build 2026-11-20.9 — Hope Plugins tools (DEPLOYED, Worker d5c3c828-99d1-43c2-bdce-4be1e4006a7a; rollback 225ece75 = build .7)
 
 Hope can read companion status, duplicates and Unused, reveal and rescan, and use the existing page handlers for moves, restore, Trash, vendor app checks and duplicate cleanup. State-changing tools return a confirmation summary before execution; Trash requires a second explicit flag. Companion requests use row or move IDs, with per-item results returned. See `docs/HOPE_PLUGIN_TOOLS.md`. Hope's ElevenLabs agent now has 15 `inventory_*` tools: three old `pluginhub_*` tools renamed in place and 12 new tools (agent version `agtvrsn_5101m7wwhq0pe5e9nagavh7txsz8`). Agent rollback: previous agent version in ElevenLabs history. Voice test pending.
