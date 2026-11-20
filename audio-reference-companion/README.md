@@ -1,4 +1,4 @@
-# AIMM Audio Reference Companion
+# AIMM Audio Companion
 
 The macOS companion captures system playback for AIMM's Spotify reference workflow. Spotify search and mix/stem analysis remain in AIMM.
 

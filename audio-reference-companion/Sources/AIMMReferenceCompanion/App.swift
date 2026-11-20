@@ -28,15 +28,23 @@ struct AIMMReferenceCompanionApp: App {
         }
         .defaultSize(width: 680, height: 600)
         MenuBarExtra {
-            Text(model.capture.status)
-                .lineLimit(3)
-            Divider()
-            Button(model.capture.isCapturing ? "Stop capture" : "Open AIMM Audio Reference") {
+            CompanionMenuLayout(status: model.capture.status) {
                 if model.capture.isCapturing {
-                    Task { await model.stopFromMenu() }
-                } else {
-                    NSWorkspace.shared.open(URL(string: "https://aimixmasters.com/")!)
+                    Button {
+                        Task { await model.stopFromMenu() }
+                    } label: {
+                        Text("Stop capture").frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                    .frame(maxWidth: .infinity)
                 }
+                Button {
+                    NSWorkspace.shared.open(URL(string: "https://aimixmasters.com/")!)
+                } label: {
+                    Text("Open AIMM Audio Companion").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .frame(maxWidth: .infinity)
             }
         } label: {
             Image(nsImage: MenuBarGlyph.image)

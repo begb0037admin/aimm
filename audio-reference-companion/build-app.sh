@@ -21,8 +21,8 @@ cat > "$OUTPUT/Contents/Info.plist" <<'PLIST'
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
   <key>CFBundleDevelopmentRegion</key><string>en</string>
-  <key>CFBundleName</key><string>AIMM Audio Reference Companion</string>
-  <key>CFBundleDisplayName</key><string>AIMM Audio Reference Companion</string>
+  <key>CFBundleName</key><string>AIMM Audio Companion</string>
+  <key>CFBundleDisplayName</key><string>AIMM Audio Companion</string>
   <key>CFBundleIdentifier</key><string>com.aimixmasters.audio-reference-companion</string>
   <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>CFBundleExecutable</key><string>aimm-reference-companion</string>
@@ -32,8 +32,8 @@ cat > "$OUTPUT/Contents/Info.plist" <<'PLIST'
   <key>CFBundleShortVersionString</key><string>0.3.1</string>
   <key>CFBundleVersion</key><string>10</string>
   <key>LSMinimumSystemVersion</key><string>13.0</string>
-  <key>NSScreenCaptureUsageDescription</key><string>AIMM Audio Reference Companion captures system playback so AIMM can monitor the live spectrum and save a reference target when you start capture.</string>
-  <key>NSAudioCaptureUsageDescription</key><string>AIMM Audio Reference Companion uses private Core Audio process taps to capture Chrome and Spotify playback for live analysis and reference capture. ScreenCaptureKit system playback capture is available as a fallback.</string>
+  <key>NSScreenCaptureUsageDescription</key><string>AIMM Audio Companion captures system playback so AIMM can monitor the live spectrum and save a reference target when you start capture.</string>
+  <key>NSAudioCaptureUsageDescription</key><string>AIMM Audio Companion uses private Core Audio process taps to capture Chrome and Spotify playback for live analysis and reference capture. ScreenCaptureKit system playback capture is available as a fallback.</string>
   <key>LSUIElement</key><false/>
 </dict></plist>
 PLIST
@@ -41,7 +41,7 @@ codesign --force --deep --sign - "$OUTPUT"
 
 # Never interrupt an in-progress capture to install an update.
 if lsof -nP -iTCP:41735 -sTCP:LISTEN 2>/dev/null | rg -q 'aimm-refe'; then
-  echo "Quit AIMM Audio Reference Companion before updating it; installation stopped without interrupting its capture session." >&2
+  echo "Quit AIMM Audio Companion before updating it; installation stopped without interrupting its capture session." >&2
   exit 1
 fi
 

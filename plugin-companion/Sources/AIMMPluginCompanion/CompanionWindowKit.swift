@@ -1,6 +1,30 @@
 import AppKit
 import SwiftUI
 
+struct CompanionMenuLayout<Buttons: View>: View {
+    let status: String
+    @ViewBuilder let buttons: Buttons
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(status)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .lineLimit(3)
+                .fixedSize(horizontal: false, vertical: true)
+            Divider()
+                .padding(.vertical, 4)
+            VStack(spacing: 8) {
+                buttons
+            }
+            .frame(maxWidth: .infinity)
+            .controlSize(.regular)
+        }
+        .frame(width: 248, alignment: .leading)
+        .padding(16)
+    }
+}
+
 struct CompanionWindowLayout<Extra: View>: View {
     let title: String
     let subtitle: String

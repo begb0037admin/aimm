@@ -21,16 +21,29 @@ struct AIMMPluginCompanionApp: App {
         }
         .defaultSize(width: 680, height: 600)
         MenuBarExtra {
-            Text(model.menuStatus)
-                .lineLimit(3)
-            Divider()
-            Button("Scan now") { model.scan() }
-            Button("Show window") {
-                NSApplication.shared.activate(ignoringOtherApps: true)
-                openWindow(id: "main")
-            }
-            Button("Open AIMM") {
-                NSWorkspace.shared.open(URL(string: "https://aimixmasters.com/")!)
+            CompanionMenuLayout(status: model.menuStatus) {
+                Button {
+                    model.scan()
+                } label: {
+                    Text("Scan now").frame(maxWidth: .infinity)
+                }
+                    .buttonStyle(.bordered)
+                    .frame(maxWidth: .infinity)
+                Button {
+                    NSApplication.shared.activate(ignoringOtherApps: true)
+                    openWindow(id: "main")
+                } label: {
+                    Text("Show window").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .frame(maxWidth: .infinity)
+                Button {
+                    NSWorkspace.shared.open(URL(string: "https://aimixmasters.com/")!)
+                } label: {
+                    Text("Open AIMM").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .frame(maxWidth: .infinity)
             }
         } label: {
             Image(nsImage: MenuBarGlyph.image)

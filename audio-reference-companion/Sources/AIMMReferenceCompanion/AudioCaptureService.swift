@@ -18,7 +18,7 @@ enum CaptureError: LocalizedError, Equatable {
         case .tooShort: "Capture at least eight seconds of playback before stopping."
         case .alreadyInProgress: "A reference capture is already starting, running, or being saved in another AIMM tab."
         case .invalidSession: "This AIMM tab does not own the active reference capture. Start a new capture from the selected Spotify track."
-        case .monitorUnavailable: "Live system-audio monitoring is not ready. Keep AIMM Audio Reference Companion open and try again."
+        case .monitorUnavailable: "Live system-audio monitoring is not ready. Keep AIMM Audio Companion open and try again."
         }
     }
 }
@@ -434,7 +434,7 @@ final class AudioCaptureService: NSObject, ObservableObject, SCStreamOutput, SCS
         let message = error.localizedDescription
         let lower = message.lowercased()
         if lower.contains("tcc") || lower.contains("declined") || lower.contains("permission") || lower.contains("application, window, display capture") {
-            return "macOS blocked system-audio capture. Enable AIMM Audio Reference Companion in System Settings → Privacy & Security → Screen & System Audio Recording, then quit and reopen the companion."
+            return "macOS blocked system-audio capture. Enable AIMM Audio Companion in System Settings → Privacy & Security → Screen & System Audio Recording, then quit and reopen the companion."
         }
         return "System-audio capture could not start: \(message)"
     }
