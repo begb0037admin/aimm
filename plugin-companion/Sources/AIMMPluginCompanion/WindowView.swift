@@ -23,7 +23,9 @@ struct WindowView: View {
         TimelineView(.periodic(from: .now, by: 5)) { context in
             let connected = model.lastStatusRequestAt.map { context.date.timeIntervalSince($0) < 60 } ?? false
 
-            VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 0) {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 22) {
                 HStack(spacing: 12) {
                     Image(nsImage: NSApp.applicationIconImage)
                         .resizable()
@@ -71,21 +73,23 @@ struct WindowView: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                HStack(spacing: 8) {
+                HStack(spacing: 12) {
                     chip("AU", model.inventory.counts.AU)
                     chip("VST2", model.inventory.counts.VST2)
                     chip("VST3", model.inventory.counts.VST3)
                     chip("CLAP", model.inventory.counts.CLAP)
                 }
 
-                HStack(spacing: 8) {
+                HStack(spacing: 12) {
                     Button("Scan now") { model.scan() }
                     Button("Show Unused folder") { model.showUnusedFolder() }
                 }
-                .font(.callout)
+                .controlSize(.large)
                 .buttonStyle(.bordered)
-
-                Spacer(minLength: 0)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 22)
+                }
 
                 HStack {
                     Text("Listening service: 127.0.0.1:41736 · v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.2.0")")
@@ -96,19 +100,21 @@ struct WindowView: View {
                         NSWorkspace.shared.open(URL(string: "https://aimixmasters.com")!)
                     }
                     .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
                 }
+                .padding(.top, 12)
             }
             .padding(24)
         }
     }
 
     private func chip(_ label: String, _ count: Int) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text(count.formatted()).font(.callout.weight(.semibold))
+        VStack(alignment: .leading, spacing: 4) {
+            Text(count.formatted()).font(.system(size: 26, weight: .semibold))
             Text(label).font(.caption).foregroundStyle(.secondary)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .background(.quaternary.opacity(0.55), in: RoundedRectangle(cornerRadius: 8))
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(14)
+        .background(.quaternary.opacity(0.55), in: RoundedRectangle(cornerRadius: 10))
     }
 }
