@@ -5,7 +5,7 @@ import vm from 'node:vm';
 
 const html=readFileSync(new URL('../standalone/assets/index.html',import.meta.url),'utf8');
 const inventoryNames=[...new Set([...html.slice(html.indexOf('const TOOL_DEFS=['),html.indexOf('function buildContextSummary()')).matchAll(/name:'(inventory_[^']+)'/g)].map(match=>match[1]))];
-const expected=['inventory_summary','inventory_status','inventory_duplicates','inventory_unused','inventory_reveal','inventory_move_to_unused','inventory_restore','inventory_move_to_trash','inventory_rescan','inventory_mark_vendor_app_checked','inventory_unmark_vendor_check','inventory_keep_newest_duplicates','inventory_navigate','inventory_search','inventory_add_to_bus'];
+const expected=['inventory_set_favorite','inventory_summary','inventory_status','inventory_duplicates','inventory_unused','inventory_reveal','inventory_move_to_unused','inventory_restore','inventory_move_to_trash','inventory_rescan','inventory_mark_vendor_app_checked','inventory_unmark_vendor_check','inventory_keep_newest_duplicates','inventory_navigate','inventory_search','inventory_add_to_bus'];
 
 function sourceBetween(start,end){
   const from=html.indexOf(start),to=html.indexOf(end,from);
@@ -54,5 +54,5 @@ test('installed scan guidance cannot use MixBus counts and requires confirmation
   assert.match(sourceBetween('const HOPE_USAGE_SYSTEM =','function hopeUsageSelectTools('),/For installed-plug-in questions, use the inventory tools/);
   assert.match(html,/=== MIXBUS CATALOGUE \(\$\{all.length\} recommendations — NOT AN INSTALLED COUNT\) ===/);
   assert.match(html,/mixbus_catalogue_size:allPlugins\(\)\.length/);
-  assert.match(html,/const AIMM_BUILD = '2026-11-20\.10'/);
+  assert.match(html,/const AIMM_BUILD = '2026-11-20\.11'/);
 });

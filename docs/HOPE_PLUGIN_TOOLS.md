@@ -1,12 +1,15 @@
-# Hope Plugins tools — build 2026-11-20.9 (registered)
+# Hope Plugins tools — build 2026-11-20.11 (favourites built, not deployed)
 
 Hope's 15 `inventory_*` tools are registered on the ElevenLabs agent (version `agtvrsn_5101m7wwhq0pe5e9nagavh7txsz8`): three old `pluginhub_*` tools were renamed in place and 12 are new. They run in the page through the same handlers as the Plugins controls. Read results are JSON. A disconnected companion is reported explicitly. Agent rollback is the previous agent version in ElevenLabs history; voice test pending.
+
+`inventory_set_favorite` is a new sixteenth tool in build .11. It is in the page catalogue for Hope's Luna and typed chat routes, but has **not** been registered on the ElevenLabs agent or deployed. It matches the exact normalised product name in the scanned inventory. Supply `publisher` if several products share a name. It uses the Plugins star action and the existing `trapMasterState_v1` favourite persistence, with publisher-qualified keys for scanned products and existing name-only favourites recognised when that scanned name is unique. It returns `changed: false` if the requested state is already set; `ambiguous`, `not_found`, or `not_saved` errors must be spoken as failures. It does not switch tabs or change filters. The legacy `toggle_favorite` remains for MixBus catalogue hearts; an installed request marked `installed: true` routes to the inventory action.
 
 | Tool | Arguments | Action | Confirmation |
 | --- | --- | --- | --- |
 | `inventory_navigate` | `item` | Opens a Plugins sidebar item and reports its live view or disabled reason. | No |
 | `inventory_search` | `query`, `format`, `status`, `offset`, `limit` (optional) | Searches the cached scan without changing the view. | No |
 | `inventory_summary` | None | Returns product, format, status and vendor totals. | No |
+| `inventory_set_favorite` | `plugin`, optional `publisher`, `favorite` (boolean) | Stars or unstars an exact scanned product; saves and refreshes the Plugins Favorites count and open list. | No |
 | `inventory_status` | None | Reports companion connection, version, scan, vendor checks, last action and warnings. | No |
 | `inventory_duplicates` | None | Loads and returns duplicate groups and side by side versions. | No |
 | `inventory_unused` | None | Loads and returns the Unused list. | No |

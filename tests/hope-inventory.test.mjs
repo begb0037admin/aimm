@@ -33,7 +33,7 @@ function harness(rows=[]){
     invPrimaryProductStatus(counts){return ['updates','manual-check','vendor-app','unchecked','up-to-date'].find(key=>counts[key])||'unchecked';},
     invKnownVendorRelease:row=>row.latestVersion?{latestVersion:row.latestVersion}:null,
     invCompareVersions:(a,b)=>a.localeCompare(b,undefined,{numeric:true}),
-    resolvePubKey:()=> 'other',allPlugins:()=>[],PUBS:{},
+    resolvePubKey:()=> 'other',allPlugins:()=>[],PUBS:{},invIsFavorite:()=>false,
   };
   vm.runInNewContext(code,context);
   return {call:context.call,state,context,get sideEffects(){return {renders,clicks,fetches};}};
