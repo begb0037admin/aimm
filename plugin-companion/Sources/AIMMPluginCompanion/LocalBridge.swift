@@ -45,6 +45,9 @@ final class LocalBridge: @unchecked Sendable {
     private let actions: PluginActions
     private let queue = DispatchQueue(label: "com.aimixmasters.plugin-bridge")
     private var listener: NWListener?
+    private var lastAllowedRequestAt: Date?
+    var onStatusRequest: ((Date) -> Void)?
+    var onAction: ((String, Int) -> Void)?
     static let allowedOrigins: Set<String> = [
         "https://aimixmasters.com", "https://www.aimixmasters.com",
         "http://127.0.0.1:8765", "http://127.0.0.1:8001"
@@ -128,10 +131,12 @@ final class LocalBridge: @unchecked Sendable {
             send(403, body: ["error": "AIMM origin required"], origin: nil, connection: connection)
             return
         }
+        lastAllowedRequestAt = Date()
         if request.method == "OPTIONS" { send(204, body: [String: String](), origin: origin, connection: connection); return }
         let path = URLComponents(string: "http://127.0.0.1\(request.path)")?.path ?? request.path
         switch (request.method, path) {
         case ("GET", "/status"):
+            if let lastAllowedRequestAt { onStatusRequest?(lastAllowedRequestAt) }
             let (inventory, scanning) = store.snapshot()
             send(200, body: Status(app: "AIMM Plugin Companion", version: "0.2.0", actions: true, scanning: scanning, lastScanAt: inventory.scannedAt), origin: origin, connection: connection)
         case ("GET", "/inventory"):
@@ -153,6 +158,10 @@ final class LocalBridge: @unchecked Sendable {
             guard actions.begin() else { send(409, body: ["error": "action busy"], origin: origin, connection: connection); return }
             DispatchQueue.global(qos: .userInitiated).async {
                 let result = self.actions.perform(String(path.dropFirst("/action/".count)), ids: ids)
+                if path != "/action/reveal" {
+                    let successful = result.filter { $0.ok && $0.reason == nil }.count
+                    if successful > 0 { self.onAction?(String(path.dropFirst("/action/".count)), successful) }
+                }
                 self.store.scanAfterWrite { inventory in
                     self.actions.update(inventory)
                     self.actions.end()

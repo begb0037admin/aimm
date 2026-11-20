@@ -35,6 +35,7 @@ final class PluginActions {
     private var busy = false
     private var rows: [String: PluginRow] = [:]
     private var inventory = Inventory.empty
+    var onAdminPrompt: (() -> Void)?
 
     init(roots: [PluginRoot] = PluginRoot.standard(), movesURL: URL? = nil, trashURL: URL? = nil, noAdminPrompt: Bool = ProcessInfo.processInfo.environment["AIMM_NO_ADMIN_PROMPT"] == "1") {
         self.roots = roots
@@ -104,6 +105,7 @@ final class PluginActions {
     private func quote(_ s: String) -> String { "'" + s.replacingOccurrences(of: "'", with: "'\\''") + "'" }
     private func privileged(_ moves: [(String, URL, URL)], createParent: Bool) -> [String: String] {
         if moves.isEmpty { return [:] }
+        onAdminPrompt?()
         if noAdminPrompt { return Dictionary(uniqueKeysWithValues: moves.map { ($0.0, "needs administrator rights") }) }
         let lines = moves.map { id, from, to in
             let mkdir = createParent ? "/bin/mkdir -p \(quote(to.deletingLastPathComponent().path)) && " : ""

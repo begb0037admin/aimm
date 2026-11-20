@@ -13,30 +13,22 @@ struct AIMMPluginCompanionApp: App {
     var body: some Scene {
         Window("AIMM Plugin Companion", id: "main") {
             if primary {
-                VStack(alignment: .leading, spacing: 14) {
-                    Text("AIMM Plugin Companion").font(.title2.weight(.semibold))
-                    Text("Listening on 127.0.0.1:41736")
-                    Text("Last scan: \(model.scannedAt ?? "Scanning…")")
-                    HStack(spacing: 18) {
-                        Text("AU \(model.counts.AU)")
-                        Text("VST2 \(model.counts.VST2)")
-                        Text("VST3 \(model.counts.VST3)")
-                        Text("CLAP \(model.counts.CLAP)")
-                    }
-                    .font(.system(.body, design: .monospaced))
-                }
-                .padding(24)
-                .frame(minWidth: 430, minHeight: 160, alignment: .leading)
-                .onAppear { model.start() }
+                WindowView(model: model)
+                    .frame(minWidth: 640, minHeight: 500)
+                    .onAppear { model.start() }
             } else { EmptyView() }
         }
+        .defaultSize(width: 640, height: 500)
     }
 }
 
 @MainActor
 final class CompanionModel: ObservableObject {
-    @Published var scannedAt: String?
-    @Published var counts = Inventory.empty.counts
+    @Published var inventory = Inventory.empty
+    @Published var lastAction: String?
+    @Published var lastStatusRequestAt: Date?
+    @Published var needsAdministratorApproval = false
+
     private let store = InventoryStore()
     private let actions = PluginActions()
     private var bridge: LocalBridge?
@@ -45,15 +37,44 @@ final class CompanionModel: ObservableObject {
         guard bridge == nil else { return }
         let server = LocalBridge(store: store, actions: actions)
         server.onDuplicateInstance = { DispatchQueue.main.async { NSApplication.shared.terminate(nil) } }
+        server.onStatusRequest = { [weak self] date in
+            Task { @MainActor in self?.lastStatusRequestAt = date }
+        }
+        server.onAction = { [weak self] action, count in
+            Task { @MainActor in
+                let verb = ["unuse": "moved", "restore": "restored", "trash": "moved"][action] ?? action
+                let destination = ["unuse": " to Unused", "trash": " to Trash"][action] ?? ""
+                let time = Self.localTime(Date())
+                self?.lastAction = "\(verb) \(count) plug-in\(count == 1 ? "" : "s")\(destination), \(time)"
+                self?.needsAdministratorApproval = false
+            }
+        }
+        actions.onAdminPrompt = { [weak self] in
+            Task { @MainActor in self?.needsAdministratorApproval = true }
+        }
         bridge = server
         server.start()
         store.onScan = { [weak self] inventory in
             self?.actions.update(inventory)
-            Task { @MainActor in
-                self?.scannedAt = inventory.scannedAt
-                self?.counts = inventory.counts
-            }
+            Task { @MainActor in self?.inventory = inventory }
         }
         store.scan()
+    }
+
+    func scan() { store.scan() }
+
+    func showUnusedFolder() {
+        let fm = FileManager.default
+        let userBase = fm.homeDirectoryForCurrentUser.appendingPathComponent("Library/Audio/Plug-Ins", isDirectory: true)
+        let unused = store.roots.filter { $0.id.hasPrefix("user-") }
+            .map { $0.url.appendingPathComponent("Unused", isDirectory: true) }
+            .first { fm.fileExists(atPath: $0.path) }
+        NSWorkspace.shared.open(unused ?? userBase)
+    }
+
+    static func localTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: date)
     }
 }
