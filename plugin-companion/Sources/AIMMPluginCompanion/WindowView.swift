@@ -29,7 +29,7 @@ struct WindowView: View {
                 HStack(spacing: 12) {
                     Image(nsImage: NSApp.applicationIconImage)
                         .resizable()
-                        .frame(width: 60, height: 60)
+                        .frame(width: 56, height: 56)
                     VStack(alignment: .leading, spacing: 3) {
                         Text("AIMM Plugin Companion")
                             .font(.title2.weight(.semibold))

@@ -83,11 +83,9 @@ struct CompanionWindow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 12) {
-                Image(systemName: "waveform.circle.fill")
+                Image(nsImage: NSApp.applicationIconImage)
                     .resizable()
-                    .frame(width: 68, height: 68)
-                    .font(.system(size: 48))
-                    .foregroundStyle(Color(red: 38/255, green: 206/255, blue: 183/255))
+                    .frame(width: 56, height: 56)
                 VStack(alignment: .leading, spacing: 3) {
                     Text("AIMM Audio Reference")
                         .font(.title2.weight(.semibold))
