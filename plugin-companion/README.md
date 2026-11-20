@@ -6,7 +6,7 @@ From this folder, run `swift build -c release --disable-sandbox` and `.build/rel
 
 ## API
 
-- `GET /status`, `GET /inventory`, `POST /scan`: connection status and live inventory. Every inventory row has a stable 16-character SHA-256-derived `id`.
+- `GET /status`, `GET /inventory`, `POST /scan`: connection status and live inventory. Status reports version `0.2.0` and `actions: true`. Every inventory row has a stable 16-character SHA-256-derived `id`.
 - `POST /action/reveal` with `{ "ids": [...] }`: show bundles in Finder.
 - `POST /action/unuse` with `{ "ids": [...] }`: move each bundle into an `Unused` folder in its format folder. Name collisions receive ` (2)`, ` (3)`, and so on.
 - `POST /action/restore` with `{ "moveIds": [...] }`: restore recorded moves if their original locations are empty.

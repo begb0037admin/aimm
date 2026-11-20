@@ -4347,6 +4347,14 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #invProductMetaOverlay textarea,#invProductMetaOverlay select,#invProductMetaOverlay input{width:100%;box-sizing:border-box;border:1px solid #3a414b;border-radius:6px;background:#15181c;color:#e6e9ed;padding:9px;font: calc(var(--inv-text-scale, 1) * 12px) -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     #invProductMetaOverlay .inv-kept-version{padding:9px;border:1px solid #353c46;border-radius:6px;background:#181b20}
     #invProductMetaOverlay .inv-meta-help{margin:10px 0;color:#89939f;font-size:calc(var(--inv-text-scale, 1) * 11px)}
+    #invProductMetaOverlay .inv-companion-dialog{width:min(720px,100%)}
+    #invProductMetaOverlay .inv-companion-confirm{width:min(720px,100%)}
+    #invProductMetaOverlay .inv-companion-unused{width:min(720px,100%)}
+    #invProductMetaOverlay .inv-companion-group{border:1px solid #2a2e35;border-radius:10px;padding:12px 14px;margin:10px 0;background:#1a1d21}
+    #invProductMetaOverlay .inv-companion-group h4{margin:0 0 6px;font-size:13px;color:#e6e9ed}
+    #invProductMetaOverlay .inv-companion-row{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:#9ca3af;padding:3px 0}
+    #invProductMetaOverlay .inv-companion-row b{color:var(--pv-teal);font-weight:600}
+    #invProductMetaOverlay .inv-companion-note{margin:14px 0 0;color:#89939f;font-size:11px}
     #invNoteOverlay textarea,#invNoteOverlay select{width:100%;box-sizing:border-box;border:1px solid #3a414b;border-radius:6px;background:#15181c;color:#e6e9ed;padding:9px;font: calc(var(--inv-text-scale, 1) * 12px) inherit}
     #invNoteOverlay textarea{min-height:100px;resize:vertical}
     #invNoteOverlay .inv-note-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
@@ -5055,6 +5063,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <button class="inv-side-button" type="button" data-inv-local-tool="batch-management" aria-label="Batch Plug-in Management" title="Apply reversible hide and favourite changes to selected plug-ins in this browser."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg></span><span class="inv-side-label">Batch Plugin Management</span></button>
           <button class="inv-side-button" type="button" data-inv-local-tool="remove-old-installers" aria-label="Remove Old Installers" title="Choose a folder, review installer files, then explicitly select what to remove."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="m6 7 1 13h10l1-13"/><path d="M10 11v5M14 11v5"/></svg></span><span class="inv-side-label">Remove Old Installers</span></button>
           <button class="inv-side-button" type="button" data-inv-local-tool="duplicates" aria-label="Check for Duplicates" title="Review duplicate bundle identifiers in your current AIMM scan."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="13" height="15" rx="2"/><rect x="8" y="3" width="12" height="15" rx="2"/><path d="M11 8h6M11 11h6"/></svg></span><span class="inv-side-label">Check for Duplicates</span></button>
+          <button class="inv-side-button" type="button" data-inv-local-tool="unused" aria-label="Unused plug-ins" title="Review and restore plug-ins moved to Unused."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h16v14H4z"/><path d="M9 10h6M12 10v6"/></svg></span><span class="inv-side-label">Unused plug-ins</span></button>
           <button class="inv-side-button" type="button" data-inv-local-tool="ilok-license-manager" aria-label="iLok License Manager" title="Open the official iLok License Manager download page."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="4"/><path d="m11 11 9 9m-4-4 3-3m-6 0 3-3"/></svg></span><span class="inv-side-label">iLok License Manager</span></button>
           <button class="inv-side-button" type="button" data-inv-local-tool="license-vault" aria-label="License Key Vault" title="Store vendor licence details in an encrypted vault in this browser."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="8" cy="10" r="4"/><path d="m11 13 8 8 2-2-2-2 2-2-2-2-2 2-3-3"/></svg></span><span class="inv-side-label">License Key Vault</span></button>
           <button class="inv-side-button" type="button" data-inv-local-tool="share-plugin-list" aria-label="Share Plugin List" title="Export the locally scanned inventory as a CSV file."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.7 6.8-4.4M8.6 13.3l6.8 4.4"/></svg></span><span class="inv-side-label">Share Plugin List</span></button>
@@ -5601,7 +5610,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-20.5';
+const AIMM_BUILD = '2026-11-20.6';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7257,7 +7266,7 @@ function invVendorReasonForDisplay(reason){
     ? "The vendor page could not be checked. This product remains in Manual Check."
     : value;
 }
-const INV_LOCAL_TOOL_LABELS={"install-manager":"Install Manager","batch-management":"Batch Plug-in Management","remove-old-installers":"Remove Old Installers","license-vault":"License Key Vault","share-plugin-list":"Share Plug-in List","compare-profiles":"Compare Plug-in Profiles","duplicates":"Check for Duplicates","license":"AIMM License"};
+const INV_LOCAL_TOOL_LABELS={"install-manager":"Install Manager","batch-management":"Batch Plug-in Management","remove-old-installers":"Remove Old Installers","license-vault":"License Key Vault","share-plugin-list":"Share Plug-in List","compare-profiles":"Compare Plug-in Profiles","duplicates":"Check for Duplicates","unused":"Unused plug-ins","license":"AIMM License"};
 function invInitStandaloneToolButtons(){
   if(INV_SYNTHETIC_PREVIEW)return;
   const note=document.querySelector("[data-inv-tools-note]");if(note)note.textContent="AIMM scans the folders you choose and stores your inventory and settings in this browser.";
@@ -7400,7 +7409,7 @@ function invRenderRoots(){
   invRenderSidebar(invBuildGroups(INV_SCAN_ROWS),invStageMap());
 }
 const PLUGIN_COMPANION_URL='http://127.0.0.1:41736';
-let pcCompanionConnected=false,pcCompanionBusy=false,pcCompanionRequest=0;
+let pcCompanionConnected=false,pcCompanionActions=false,pcCompanionBusy=false,pcCompanionRequest=0,pcCompanionMoveNames=new Map();
 const PC_DENIED_MESSAGE='Chrome blocked AIMM’s loopback connection. In Chrome Site settings for aimixmasters.com, set Loopback network to Allow, then reconnect.';
 const PC_FETCH_MESSAGE='Could not connect to plugins. Check that the local app is open and Chrome allows Loopback network access.';
 function pcCompanionFetch(path,options={}){
@@ -7430,16 +7439,19 @@ async function pcCompanionCheck(interactive=false){
   try{
     const status=await pcCompanionFetch('/status',{cache:'no-store'});
     if(!status.ok)throw new Error('The companion returned HTTP '+status.status+'.');
+    const capability=await status.json();
     const inventoryResponse=await pcCompanionFetch('/inventory',{cache:'no-store'});
     if(!inventoryResponse.ok)throw new Error('The companion returned HTTP '+inventoryResponse.status+'.');
     const inventory=await inventoryResponse.json();
     if(request!==pcCompanionRequest)return;
     pcCompanionConnected=true;
+    pcCompanionActions=capability?.actions===true;
     pcCompanionAdopt(inventory);
     pcCompanionRender('Connected','');
   }catch(error){
     if(request!==pcCompanionRequest)return;
     pcCompanionConnected=false;
+    pcCompanionActions=false;
     const denied=await pcCompanionPermissionState()==='denied';
     const reason=String(error?.message||'');
     pcCompanionRender('Disconnected',denied||/HTTP 403/.test(reason)?PC_DENIED_MESSAGE:interactive?PC_FETCH_MESSAGE:'');
@@ -7455,6 +7467,7 @@ async function pcCompanionScan(){
     await pcCompanionCheck(true);
   }catch(error){
     pcCompanionConnected=false;
+    pcCompanionActions=false;
     pcCompanionRender('Disconnected',/HTTP 403/.test(String(error?.message||''))?PC_DENIED_MESSAGE:'Plugin scan failed. Try scanning again from the Plugins tab.');
     invStatus('Plugin Companion scan failed. '+String(error?.message||''),'error');
   }finally{pcCompanionBusy=false;pcCompanionRender(document.getElementById('pcCompanionConnectionStatus')?.textContent||'Disconnected',document.getElementById('pcCompanionSettingsStatus')?.textContent||'');}
@@ -8278,6 +8291,76 @@ function invProductMenuKey(event){
 function invSafeExternalUrl(value){
   try{const url=new URL(String(value||""),location.href);return url.protocol==="https:"?url.href:"";}catch(_){return "";}
 }
+function pcCompanionRows(vendor,name){
+  return INV_SCAN_ROWS.filter(row=>row.source==='companion'&&row.id&&invNorm(row.vendor)===invNorm(vendor)&&invNorm(row.name)===invNorm(name));
+}
+function pcCompanionDialog(title,body,actions,kind=''){
+  document.getElementById('invProductMetaOverlay')?.remove();
+  const overlay=document.createElement('div');overlay.id='invProductMetaOverlay';
+  overlay.innerHTML='<div class="inv-product-meta-dialog inv-companion-dialog '+kind+'" role="dialog" aria-modal="true" aria-labelledby="invProductMetaTitle"><h3 id="invProductMetaTitle">'+invEsc(title)+'</h3>'+body+'<div class="inv-note-actions"></div></div>';
+  const footer=overlay.querySelector('.inv-note-actions');
+  actions.forEach(({label,primary,run})=>{const button=document.createElement('button');button.type='button';button.textContent=label;if(primary)button.className='primary';button.addEventListener('click',()=>run(overlay));footer.appendChild(button);});
+  document.body.appendChild(overlay);invTrapDialogFocus(overlay);return overlay;
+}
+function pcCompanionUnavailable(error){
+  pcCompanionConnected=false;pcCompanionActions=false;
+  pcCompanionRender('Disconnected','The Plugin Companion is not running.');
+  invStatus('The Plugin Companion is not running.','error');
+}
+async function pcCompanionAction(action,ids,field='ids'){
+  try{
+    const names=new Map([...INV_SCAN_ROWS.map(row=>[row.id,row.name]),...pcCompanionMoveNames]);
+    const response=await pcCompanionFetch('/action/'+action,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({[field]:[...new Set(ids)]})});
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    const data=await response.json();
+    if(data.inventory)pcCompanionAdopt(data.inventory);
+    const results=Array.isArray(data.results)?data.results:[];
+    invStatus(results.map(result=>(names.get(result.id)||result.id)+': '+(result.ok?'Done':result.reason||'Failed')).join('; ')||'No plug-ins were changed.',results.some(result=>!result.ok)?'error':'good');
+    return true;
+  }catch(error){pcCompanionUnavailable(error);return false;}
+}
+function pcCompanionConfirm(action,rows){
+  const unique=[...new Map(rows.filter(row=>row.id).map(row=>[row.id,row])).values()];if(!unique.length)return;
+  const target=action==='trash'?'Trash':'Unused';
+  const names=unique.map(row=>invEsc(row.name)+' ('+invEsc(row.format)+(row.version?', '+invEsc(row.version):'')+')');
+  const list=names.length===2?names.join(' and '):names.join(', ');
+  const description=action==='trash'?'They move to the macOS Trash, so DAWs stop loading them. You can put them back from Trash. Projects that use them will show them as missing until restored.':'They move to an Unused folder next to the originals, so DAWs stop loading them. You can restore them any time from the Unused view. Projects that use them will show them as missing until restored.';
+  const admin=unique.find(row=>/^\/Library\/Audio\/Plug-Ins\/(?:Components|VST(?:3)?|CLAP)(?:\/|$)/.test(row.path||''));
+  const adminFolder=admin?.path?.match(/^\/Library\/Audio\/Plug-Ins\/(?:Components|VST3?|CLAP)/)?.[0];
+  const adminText=admin?'<p class="inv-meta-help">The '+invEsc(admin.format)+' copy is in '+invEsc(adminFolder)+', so macOS will ask for your administrator password once.</p>':'';
+  pcCompanionDialog('Move '+unique.length+' plug-ins to '+target+'?','<p class="inv-meta-help">'+list+'. '+description+'</p>'+adminText,[{label:'Cancel',run:overlay=>overlay.remove()},{label:'Move to '+target,primary:true,run:async overlay=>{overlay.remove();await pcCompanionAction(action,unique.map(row=>row.id));}}],'inv-companion-confirm');
+}
+async function pcCompanionOpenDuplicates(){
+  if(!pcCompanionConnected)return;
+  try{
+    const response=await pcCompanionFetch('/duplicates',{cache:'no-store'});if(!response.ok)throw new Error('HTTP '+response.status);
+    const data=await response.json(),groups=Array.isArray(data.groups)?data.groups:[];
+    const ids=[];let moveCount=0;
+    const blocks=groups.map(group=>{
+      const actionable=!group.needsReview&&group.items?.some(item=>item.keep);
+      const items=(group.items||[]).map(item=>{if(actionable&&!item.keep){ids.push(...(item.rowIds||[]));moveCount++;}return '<div class="inv-companion-row"><span>'+invEsc(item.path)+' · '+invEsc(item.version||'Version unknown')+'</span>'+(item.keep?'<b>Keep</b>':'<span>'+(actionable?'Move to Unused':'Check manually')+'</span>')+'</div>';}).join('');
+      return '<div class="inv-companion-group"><h4>'+invEsc(group.name)+' · '+invEsc(group.format)+'</h4>'+items+'</div>';
+    }).join('');
+    const sides=Array.isArray(data.sideBySideVersions)?data.sideBySideVersions:[];
+    const note=sides.length?'<p class="inv-companion-note">Installed side by side on purpose (for example Waves V16 and V17). Not duplicates. '+invEsc(sides.map(group=>group.family||group.items?.map(item=>item.bundleName).join(', ')||'').filter(Boolean).join(', '))+'</p>':'';
+    const body='<p class="inv-meta-help">Same product and format installed in more than one place. The newest version is kept; older copies move to Unused (not Trash), so you can restore them.</p>'+(groups.length?blocks:'<p class="inv-meta-help">No duplicates found on this Mac.</p>')+note;
+    const unique=[...new Set(ids)];
+    const actions=[{label:'Close',run:overlay=>overlay.remove()}];
+    if(unique.length&&pcCompanionActions)actions.push({label:'Keep newest, move '+moveCount+' others to Unused',primary:true,run:async overlay=>{overlay.remove();await pcCompanionAction('unuse',unique);}});
+    pcCompanionDialog('Duplicates',body,actions);
+  }catch(error){pcCompanionUnavailable(error);}
+}
+async function pcCompanionOpenUnused(){
+  if(!pcCompanionConnected){invStatus('The Plugin Companion is not running.','error');return;}
+  try{
+    const response=await pcCompanionFetch('/unused',{cache:'no-store'});if(!response.ok)throw new Error('HTTP '+response.status);
+    const entries=await response.json();if(!Array.isArray(entries))throw new Error('Invalid Unused list');
+    pcCompanionMoveNames=new Map(entries.map(entry=>[entry.moveId,entry.name]));
+    const blocks=entries.map((entry,index)=>'<div class="inv-companion-group"><div class="inv-companion-row"><span><strong>'+invEsc(entry.name)+'</strong> · '+invEsc(entry.format)+' · '+invEsc(entry.version)+'</span><button type="button" data-inv-restore="'+index+'">Restore</button></div><div class="inv-companion-row"><span>from '+invEsc(entry.originalPath)+' · moved '+invEsc(new Date(entry.movedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}))+'</span></div></div>').join('');
+    const overlay=pcCompanionDialog('Unused','<p class="inv-meta-help">Plug-ins you moved out of your DAW folders. They are not loaded and not shown in the main list.</p>'+(blocks||'<p class="inv-meta-help">Nothing in Unused.</p>'),[{label:'Close',run:overlay=>overlay.remove()},...(entries.length&&pcCompanionActions?[{label:'Restore all',run:async overlay=>{overlay.remove();if(await pcCompanionAction('restore',entries.map(entry=>entry.moveId),'moveIds'))await pcCompanionOpenUnused();}}]:[])],'inv-companion-unused');
+    overlay.querySelectorAll('[data-inv-restore]').forEach(button=>{button.disabled=!pcCompanionActions;button.addEventListener('click',async()=>{const entry=entries[Number(button.dataset.invRestore)];overlay.remove();if(await pcCompanionAction('restore',[entry.moveId],'moveIds'))await pcCompanionOpenUnused();});});
+  }catch(error){pcCompanionUnavailable(error);}
+}
 function invOpenProductActionMenu(button){
   invCloseProductActionMenu();
   let context={};
@@ -8294,9 +8377,7 @@ function invOpenProductActionMenu(button){
     +row("note","Note &amp; rating…")
     +(context.version?row("mark",state.marked?("Remove local marker"+(state.marked.version?" · "+invEsc(state.marked.version):"")):("Mark as up to date"+(context.versions.length>1?"…":context.version?" · "+invEsc(context.version):"")),"green"):disabled("Mark as up to date","Version data is not available for this item"))
     +row("status","Record vendor status…","", "›")
-    +disabled("Move to Unused…","Requires native Companion actions")
-    +disabled("Uninstall (Move to Trash)…","Requires native Companion actions")
-    +disabled("Reveal in Finder","Requires native Companion actions")
+    +(pcCompanionConnected&&pcCompanionActions&&pcCompanionRows(context.vendor,context.name).length?row('unuse','Move to Unused…')+row('trash','Move to Trash…')+row('reveal','Reveal in Finder'):disabled("Move to Unused…","Requires native Companion actions")+disabled("Uninstall (Move to Trash)…","Requires native Companion actions")+disabled("Reveal in Finder","Requires native Companion actions"))
     +row("hide",state.hidden?"Show in library":"Hide plug-in","gold")
     +row("rescan","Rescan plugin folders")
     +row("copy","Copy plugin name")
@@ -8319,6 +8400,7 @@ function invOpenProductActionMenu(button){
     const linkEl=event.target.closest("a");if(linkEl){invCloseProductActionMenu();return;}
     const actionEl=event.target.closest("[data-inv-action]");if(!actionEl)return;
     const action=actionEl.getAttribute("data-inv-action"),key=invActionKey(context.vendor,context.name);
+    if(['unuse','trash','reveal'].includes(action)){invCloseProductActionMenu();const rows=pcCompanionRows(context.vendor,context.name);if(action==='reveal')pcCompanionAction('reveal',rows.map(row=>row.id));else pcCompanionConfirm(action,rows);return;}
     if(action==="note"){invCloseProductActionMenu();invOpenProductNote(context.vendor,context.name);return;}
     if(action==="status"){invCloseProductActionMenu();invOpenVendorStatus(context);return;}
     if(action==="category"){invCloseProductActionMenu();invOpenProductCategory(context.vendor,context.name,context.category||"");return;}
@@ -9172,6 +9254,8 @@ function invInitSidebarSections(sidebar){
 function invScanButtonAction(){return pcCompanionConnected?pcCompanionScan():invScanNow({allowPrompt:true});}
 function invInit(){
   const scan=document.getElementById("invScanBtn");
+  document.querySelector('[data-inv-local-tool="duplicates"]')?.addEventListener('click',()=>{if(pcCompanionConnected)pcCompanionOpenDuplicates();});
+  document.querySelector('[data-inv-local-tool="unused"]')?.addEventListener('click',pcCompanionOpenUnused);
   const add=document.getElementById("invAddRootBtn");
   if(add)add.addEventListener("click",()=>invAddRoot());
   if(scan)scan.addEventListener("click",invScanButtonAction);

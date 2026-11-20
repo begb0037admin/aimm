@@ -25,6 +25,10 @@ Live on aimixmasters.com and aimm.kevinlelitte.workers.dev (page Worker version 
 
 # STATUS.md — AIMM
 
+## 2026-11-20 build 2026-11-20.6 — Plugin Companion actions (UNDEPLOYED)
+
+Wired companion capability status and row IDs into product actions. Move to Unused, Move to Trash and Reveal in Finder use IDs, with confirmation and per-item results. Added connected duplicate review and Unused restore dialogs; action responses refresh and save the inventory. The companion now reports version 0.2.0 and `actions: true`. Mocked page tests and the Swift release self-test passed. Headless Chrome previews are in `/Users/admin/aimm-previews/p3-*.png`; the duplicates capture shows two groups because its mock returned two, while the approved sample has three. Not pushed or deployed.
+
 ## 2026-11-20 build 2026-11-20.5 — Plugins frame alignment (UNDEPLOYED)
 
 Removed the Plugins frame's 1520px width cap so its edges align with the page heading and tab bar. No height, colour, sidebar or copy changes. Not pushed or deployed.

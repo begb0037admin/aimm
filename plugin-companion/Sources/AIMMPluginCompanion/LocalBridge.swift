@@ -133,7 +133,7 @@ final class LocalBridge: @unchecked Sendable {
         switch (request.method, path) {
         case ("GET", "/status"):
             let (inventory, scanning) = store.snapshot()
-            send(200, body: Status(app: "AIMM Plugin Companion", version: "0.1.0", scanning: scanning, lastScanAt: inventory.scannedAt), origin: origin, connection: connection)
+            send(200, body: Status(app: "AIMM Plugin Companion", version: "0.2.0", actions: true, scanning: scanning, lastScanAt: inventory.scannedAt), origin: origin, connection: connection)
         case ("GET", "/inventory"):
             send(200, body: store.snapshot().0, origin: origin, connection: connection)
         case ("POST", "/scan"):
@@ -166,6 +166,7 @@ final class LocalBridge: @unchecked Sendable {
     private struct Status: Codable {
         let app: String
         let version: String
+        let actions: Bool
         let scanning: Bool
         let lastScanAt: String?
     }
