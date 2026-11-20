@@ -1,3 +1,7 @@
+## 2026-11-20 build 2026-11-20.1 — Vendor app status (not deployed)
+
+Added a separate Vendor app status for manual results from publishers whose versions AIMM cannot read automatically. The Plugins sidebar, product labels, counts, filter and banner now use this bucket; real update and up-to-date results remain in their existing buckets. Added a mocked regression test for vendor aliases, result precedence and count totals. Not pushed or deployed.
+
 ## 2026-11-19 — Vendor check fixes (not deployed)
 
 The Worker now matches eligible compact companion vendor names, keeps unsupported vendors unmatched, and treats Waves V16 against the V17 suite page as a manual major-upgrade check. Waves V17 compares as current; Wavesfactory Trackspacer still uses its own product version. Added regression tests. `index.html` was unchanged, so AIMM_BUILD remains 2026-11-19.9. Not pushed or deployed.

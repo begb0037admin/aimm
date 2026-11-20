@@ -4091,9 +4091,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-side-button[data-inv-scope="updates"] .inv-side-count{color:#ee7777;font-weight:700}
     #library .inv-side-button[data-inv-scope="up-to-date"] .inv-side-count{color:#42c995;font-weight:700}
     #library .inv-side-button[data-inv-scope="manual-check"] .inv-side-count{color:#e8b45a;font-weight:700}
-    #library .inv-side-button[data-inv-scope="unchecked"] .inv-side-count{color:#a0a8b1;font-weight:700}
+    #library .inv-side-button[data-inv-scope="vendor-app"] .inv-side-count,#library .inv-side-button[data-inv-scope="unchecked"] .inv-side-count{color:#a0a8b1;font-weight:700}
     #library .inv-sidebar.is-collapsed .inv-side-count{display:none!important}
-    #library .inv-side-button.active[data-inv-scope="updates"] .inv-side-count,#library .inv-side-button.active[data-inv-scope="up-to-date"] .inv-side-count,#library .inv-side-button.active[data-inv-scope="manual-check"] .inv-side-count,#library .inv-side-button.active[data-inv-scope="unchecked"] .inv-side-count{display:inline-flex;align-items:center;justify-content:center;min-width:28px;min-height:22px;padding:1px 5px;border-radius:6px;background:rgba(9,11,15,.72);box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+    #library .inv-side-button.active[data-inv-scope="updates"] .inv-side-count,#library .inv-side-button.active[data-inv-scope="up-to-date"] .inv-side-count,#library .inv-side-button.active[data-inv-scope="manual-check"] .inv-side-count,#library .inv-side-button.active[data-inv-scope="vendor-app"] .inv-side-count,#library .inv-side-button.active[data-inv-scope="unchecked"] .inv-side-count{display:inline-flex;align-items:center;justify-content:center;min-width:28px;min-height:22px;padding:1px 5px;border-radius:6px;background:rgba(9,11,15,.72);box-shadow:0 0 0 1px rgba(255,255,255,.08)}
     #library .inv-side-button.active[data-inv-open-all-plugins] .inv-side-count{display:inline-flex;align-items:center;justify-content:center;min-width:28px;min-height:22px;padding:1px 5px;border-radius:6px;background:rgba(9,11,15,.72);color:#eef4fb;font-weight:700;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
     #library .inv-folder-summary{margin:18px 5px 0;padding:12px;border:1px solid #30353a;border-radius:9px;color:#9aa3ad;font-size:calc(var(--inv-text-scale, 1) * 11px);line-height:1.5}
     #library .inv-folder-summary strong{display:block;color:#dce2e8;font-size:calc(var(--inv-text-scale, 1) * 11px);letter-spacing:.06em;margin-bottom:4px}
@@ -4230,7 +4230,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-version-row .inv-version-warning{color:#ff6b70;font-weight:700}
     #library .inv-version-row.up-to-date .inv-version-current{color:#42c995;font-weight:700}
     #library .inv-version-row.manual-check .inv-version-current{color:#e8b45a;font-weight:700}
-    #library .inv-version-row.unchecked .inv-version-current{color:#a0a8b1}
+    #library .inv-version-row.vendor-app .inv-version-current,#library .inv-version-row.unchecked .inv-version-current{color:#a0a8b1}
     @media(max-width:680px){#library .inv-product-line{grid-template-columns:minmax(0,1fr) auto auto;row-gap:4px}#library .inv-version{grid-column:1/-1;grid-row:2}#library .inv-version-status{justify-content:flex-start}}
     #library .inv-meta{margin-top:3px;color:#87919b;font-size:calc(var(--inv-text-scale, 1) * 9px)}#library .inv-hidden-badge{display:inline-flex;align-items:center;margin-left:5px;padding:1px 5px;border:1px solid #8a6a35;border-radius:999px;color:#f2c879;font-size:calc(var(--inv-text-scale, 1) * 8px);line-height:1.35;vertical-align:middle}#library .inv-paid-upgrade-badge{display:inline-flex;align-items:center;margin-left:5px;padding:1px 5px;border:1px solid #8a6a35;border-radius:999px;color:#f2c879;background:rgba(138,106,53,.12);font-size:calc(var(--inv-text-scale, 1) * 8px);font-weight:700;line-height:1.35;vertical-align:middle}
     #library .inv-formats{display:flex;gap:8px 10px;flex-wrap:wrap;margin-top:7px}
@@ -4239,7 +4239,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-format-status.updates{background:#ee7777}
     #library .inv-format-status.up-to-date{background:#42c995}
     #library .inv-format-status.manual-check{background:#e8b45a}
-    #library .inv-format-status.unchecked{background:#77818b}
+    #library .inv-format-status.vendor-app,#library .inv-format-status.unchecked{background:#77818b}
     #library .inv-chip{font: calc(var(--inv-text-scale, 1) * 8px) ui-monospace,Menlo,monospace;color:#fff;border:1px solid #414955;background:#303741;border-radius:3px;padding:2px 4px}
     #library .inv-chip.au{border-color:#397255;background:#24553f}
     #library .inv-chip.vst{border-color:#2d76a6;background:#1f5f86}
@@ -4757,6 +4757,10 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library .inv-status-pill[aria-label^="Up to date"]{color:var(--st-green)!important}
 #library .inv-status-pill[aria-label^="Manual"]{color:var(--st-amber)!important}
 #library .inv-status-pill[aria-label^="Unchecked"]{color:var(--st-grey)!important}
+#library .inv-format-status.vendor-app{background:var(--st-grey)!important}
+#library .inv-side-button[data-inv-scope="vendor-app"] .inv-side-count{color:var(--st-grey)!important}
+#library .inv-scope-banner.vendor-app{background:var(--pv-neutral-bg)!important;border-color:transparent!important}
+#library .inv-scope-banner.vendor-app strong,#library .inv-status-detail-row.vendor-app,#library .inv-version-row.vendor-app .inv-version-current,#library .inv-status-pill[aria-label^="Vendor app"]{color:var(--st-grey)!important}
 #library .inv-status-pill[aria-label*=" · "]{color:#f3f4f6!important}
 /* Product dialogs (Vendor status, Tags, Keep, Mark): their buttons are unstyled white in live; same rest/primary/hover as the Note dialog */
 #invProductMetaOverlay button{background:var(--pv-neutral-bg)!important;color:#d5d8dc!important;border-color:transparent!important}
@@ -5037,6 +5041,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <button class="inv-side-button" type="button" data-inv-scope="updates" aria-label="Updates available" title="No vendor update observations are connected to this inventory yet"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 7v5h-5"/><path d="M20 12a8 8 0 1 1-2.3-5.7L20 9"/></svg></span><span class="inv-side-label">Updates available</span><span class="inv-side-count" id="invSidebarUpdatesCount">0</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="up-to-date" aria-label="Up to date" title="No vendor update observations are connected to this inventory yet"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg></span><span class="inv-side-label">Up to date</span><span class="inv-side-count" id="invSidebarUpToDateCount">0</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="manual-check" aria-label="Manual check" title="No manual vendor check observations are connected to this inventory yet"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></span><span class="inv-side-label">Manual check</span><span class="inv-side-count" id="invSidebarManualCount">0</span></button>
+          <button class="inv-side-button" type="button" data-inv-scope="vendor-app" aria-label="Vendor app" title="Check updates in the publisher's own app"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 10h8M8 14h5"/></svg></span><span class="inv-side-label">Vendor app</span><span class="inv-side-count" id="invSidebarVendorAppCount">0</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="unchecked" aria-label="Unchecked — no vendor status result is connected" title="Items without a current vendor observation remain unchecked"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></span><span class="inv-side-label">Unchecked</span><span class="inv-side-count" id="invSidebarUncheckedCount">—</span></button>
         </nav>
         <button class="inv-sidebar-section inv-sidebar-section-toggle" type="button" data-inv-section-toggle="tools" aria-expanded="true" aria-controls="invBrowseSectionTools">TOOLS</button>
@@ -5590,7 +5595,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-19.9';
+const AIMM_BUILD = '2026-11-20.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7258,6 +7263,8 @@ const INV_VENDOR_STATUS_ALIASES={
   "universalaudiouadx":"universal audio native","universalaudionative":"universal audio native","spectralayers":"steinberg","steinberg":"steinberg"
 };
 function invVendorStatusCanonicalVendor(value){const key=invNorm(value).replace(/[^a-z0-9]/g,"");return INV_VENDOR_STATUS_ALIASES[key]||invNorm(value);}
+const INV_VENDOR_APP_VENDORS=new Set(["universalaudio","universalaudiouadx","uaudio","ikmultimedia","waves","valhalladsp","acondigital","slatedigital","ujam"]);
+function invVendorAppVendor(value){return INV_VENDOR_APP_VENDORS.has(invNorm(value).replace(/[^a-z0-9]/g,""));}
 function invVendorStatusIdentityKeys(vendor,value){
   const canonical=invVendorStatusCanonicalVendor(vendor),original=String(value||""),names=new Set([original]);
   const add=name=>{name=String(name||"").trim();if(name)names.add(name);};
@@ -7827,7 +7834,7 @@ function invSavedVendorStatus(actions,row){
   const legacy=actions&&actions.vendorStatus;
   return legacy&&Array.isArray(legacy.installedVersions)&&legacy.installedVersions.includes(version)?legacy:null;
 }
-function invEffectiveRowStatus(row,providedActions){
+function invComputedRowStatus(row,providedActions){
   const valid=new Set(["updates","up-to-date","manual-check","unchecked"]);
   if(INV_SYNTHETIC_PREVIEW)return valid.has(row.status)?row.status:"unchecked";
   const actions=providedActions||invGetProductActions(row.vendor||"",row.name||""),record=invSavedVendorStatus(actions,row);
@@ -7841,22 +7848,26 @@ function invEffectiveRowStatus(row,providedActions){
   if(valid.has(row.status)&&row.status!=="unchecked")return row.status;
   return version?"manual-check":"unchecked";
 }
+function invEffectiveRowStatus(row,providedActions){
+  const status=invComputedRowStatus(row,providedActions);
+  return status==="manual-check"&&invVendorAppVendor(row.vendor)?"vendor-app":status;
+}
 function invBuildGroups(rows){
   const groups=new Map();
-  const statusNames=["updates","up-to-date","manual-check","unchecked"],actionCache=new Map(Object.entries(invReadProductActions()));
+  const statusNames=["updates","up-to-date","manual-check","vendor-app","unchecked"],actionCache=new Map(Object.entries(invReadProductActions()));
   rows.forEach(row=>{
     const key=invNorm(row.vendor)+"|"+invNorm(row.name);
     if(!actionCache.has(key))actionCache.set(key,{});
     const actions=actionCache.get(key);
     let group=groups.get(key);
-    if(!group){group={name:row.name,vendor:row.vendor,statusActions:actions,formats:new Set(),versions:new Set(),records:0,bundleIds:new Set(),category:row.category||"",formatRows:new Map(),statusCounts:{updates:0,"up-to-date":0,"manual-check":0,unchecked:0},formatStatusCounts:new Map()};groups.set(key,group);}
+    if(!group){group={name:row.name,vendor:row.vendor,statusActions:actions,formats:new Set(),versions:new Set(),records:0,bundleIds:new Set(),category:row.category||"",formatRows:new Map(),statusCounts:{updates:0,"up-to-date":0,"manual-check":0,"vendor-app":0,unchecked:0},formatStatusCounts:new Map()};groups.set(key,group);}
     const effectiveStatus=invEffectiveRowStatus(row,actions);
     const status=statusNames.includes(effectiveStatus)?effectiveStatus:"unchecked";
     group.statusCounts[status]++;
     const rowFormats=(Array.isArray(row.formats)?row.formats:[row.format]).filter(format=>format&&format!=="AAX");
     rowFormats.forEach(format=>{
       const normalizedFormat=String(format).toUpperCase();group.formats.add(normalizedFormat);
-      if(!group.formatStatusCounts.has(normalizedFormat))group.formatStatusCounts.set(normalizedFormat,{updates:0,"up-to-date":0,"manual-check":0,unchecked:0});
+      if(!group.formatStatusCounts.has(normalizedFormat))group.formatStatusCounts.set(normalizedFormat,{updates:0,"up-to-date":0,"manual-check":0,"vendor-app":0,unchecked:0});
       group.formatStatusCounts.get(normalizedFormat)[status]++;
       if(!group.formatRows.has(normalizedFormat))group.formatRows.set(normalizedFormat,[]);
       const formattedRow={...row,format:normalizedFormat,version:String(row.format_versions&&row.format_versions[format]||row.version||"")};
@@ -7871,11 +7882,11 @@ function invBuildGroups(rows){
   return Array.from(groups.values());
 }
 function invStatusLabel(status){
-  return status==="updates"?"Updates available":status==="up-to-date"?"Up to date":status==="manual-check"?"Manual check":"Unchecked";
+  return status==="updates"?"Updates available":status==="up-to-date"?"Up to date":status==="manual-check"?"Manual check":status==="vendor-app"?"Vendor app":"Unchecked";
 }
 function invGroupStatusSummary(group){
   const counts=group.statusCounts||{};
-  const states=["updates","up-to-date","manual-check","unchecked"].filter(status=>(counts[status]||0)>0);
+  const states=["updates","up-to-date","manual-check","vendor-app","unchecked"].filter(status=>(counts[status]||0)>0);
   const detail=states.map(status=>invStatusLabel(status)+(counts[status]>1?" ×"+counts[status]:"")).join(" · ")||"Unchecked";
   return {label:states.length>1?"Mixed":invStatusLabel(states[0]||"unchecked"),detail:(INV_SYNTHETIC_PREVIEW?"Synthetic sample · ":"")+detail};
 }
@@ -7883,17 +7894,18 @@ function invPrimaryProductStatus(counts){
   const statusCounts=counts||{};
   if(statusCounts.updates>0)return "updates";
   if(statusCounts["manual-check"]>0)return "manual-check";
+  if(statusCounts["vendor-app"]>0)return "vendor-app";
   if(statusCounts.unchecked>0)return "unchecked";
   return statusCounts["up-to-date"]>0?"up-to-date":"unchecked";
 }
 function invFormatStatusDots(group,format){
   const counts=group.formatStatusCounts.get(format)||{};
-  return ["updates","up-to-date","manual-check","unchecked"].filter(status=>counts[status]>0&&(status!=="unchecked"||INV_SYNTHETIC_PREVIEW)).map(status=>{
+  return ["updates","up-to-date","manual-check","vendor-app","unchecked"].filter(status=>counts[status]>0&&(status!=="unchecked"||INV_SYNTHETIC_PREVIEW)).map(status=>{
     const label=INV_SYNTHETIC_PREVIEW?"Synthetic sample · "+invStatusLabel(status):invStatusLabel(status);
     return '<span class="inv-format-status '+status+'" role="img" aria-label="'+invEsc(label)+'" title="'+invEsc(label)+'"></span>';
   }).join("");
 }
-function invStatusScope(){return ["updates","up-to-date","manual-check","unchecked"].includes(INV_SCOPE);}
+function invStatusScope(){return ["updates","up-to-date","manual-check","vendor-app","unchecked"].includes(INV_SCOPE);}
 function invProductStatusDetailHTML(group){
   if(!invStatusScope())return "";
   const details=[],actions=group.statusActions||{};
@@ -7912,6 +7924,7 @@ function invProductStatusDetailHTML(group){
     }else if(status==="updates")detail="Installed v"+invEsc(row.version||"unknown")+' <span aria-hidden="true">→</span> <strong>Vendor v'+invEsc(record&&record.latestVersion||"newer version")+'</strong> · checked '+invEsc(record&&record.checkedAt?new Date(record.checkedAt).toLocaleDateString():"date unavailable")+' · <a href="'+invEsc(invSafeExternalUrl(record&&record.sourceUrl))+'" target="_blank" rel="noopener noreferrer">source ↗</a>';
     else if(status==="up-to-date")detail=actions.marked&&!record?.checkedAt?"v"+invEsc(row.version||"unknown")+" — marked up to date locally":"v"+invEsc(row.version||"unknown")+' — checked '+invEsc(record&&record.checkedAt?new Date(record.checkedAt).toLocaleDateString():"against vendor")+' · <a href="'+invEsc(invSafeExternalUrl(record&&record.sourceUrl))+'" target="_blank" rel="noopener noreferrer">source ↗</a>';
     else if(status==="manual-check")detail="v"+invEsc(row.version||"unknown")+" — "+invEsc(invVendorReasonForDisplay(record&&record.reason||"vendor version not checked yet"));
+    else if(status==="vendor-app")detail="v"+invEsc(row.version||"unknown")+" — Check updates in the publisher's own app";
     else detail="Version unavailable — no status can be checked";
     details.push('<span class="inv-status-detail-row '+status+'"><b>'+invEsc(format)+':</b> '+detail+'</span>');
   }));
@@ -7951,6 +7964,7 @@ function invRenderScopeBanner(groups){
     updates:INV_SYNTHETIC_PREVIEW?"Red version numbers show installed → sample latest where an update is available; red dots identify the affected formats. Green, amber and grey dots show the other format statuses. Use a vendor's Installer Hub to update a real plug-in; these sample products have no live vendor links.":"Red dots mark installed versions below the latest version in AIMM's verified vendor records or a vendor check you saved. Review the versions, then use the vendor's installer to update.",
     "up-to-date":INV_SYNTHETIC_PREVIEW?"Green dots mark formats with no update needed in this sample. A product can also have another format with a different status; its dot and version stay visible. This does not confirm real plug-ins are current.":"Green dots mark versions matching an AIMM verified vendor record or a current vendor check you recorded. A product may have another format with a different status.",
     "manual-check":INV_SYNTHETIC_PREVIEW?"Amber dots mark formats to compare with the vendor's release page. Product details say what to check. Another format of the same product can have a different status.":"Amber dots are installed versions without a current AIMM vendor version match. Use the plug-in actions menu to record a check.",
+    "vendor-app":"These publishers do not offer a version list AIMM can read. Check updates in the publisher's own app (for example UA Connect, IK Product Manager, Waves Central).",
     unchecked:INV_SYNTHETIC_PREVIEW?"Grey dots mean no check was made. These sample formats have no vendor result; do not assume they are current. Other formats of the same product may have a status.":"Grey dots mean the scan has no installed version to compare with AIMM's vendor records."
   };
   if(copy)copy.textContent=messages[INV_SCOPE];
@@ -8027,7 +8041,7 @@ function invRenderSidebar(groups,stageMap){
   const tagCount=groups.filter(group=>{const state=invGetProductActions(group.vendor,group.name);return Array.isArray(state.tags)&&state.tags.length>0}).length;
   invRenderTagFilter(groups);
   const hiddenCount=groups.filter(group=>invGetProductActions(group.vendor,group.name).hidden===true).length;
-  const statusCounts={"updates":0,"up-to-date":0,"manual-check":0,"unchecked":0};
+  const statusCounts={"updates":0,"up-to-date":0,"manual-check":0,"vendor-app":0,"unchecked":0};
   groups.forEach(group=>{statusCounts[invPrimaryProductStatus(group.statusCounts)]++;});
   const uncheckedCount=statusCounts.unchecked;
   const categoryCounts=new Map();groups.forEach(group=>{const category=invResolvedBrowseCategory(group,stageMap);if(Object.keys(INV_CATEGORY_STAGES).includes(category))categoryCounts.set(category,(categoryCounts.get(category)||0)+1);});
@@ -8036,9 +8050,10 @@ function invRenderSidebar(groups,stageMap){
   setStatusCount("invSidebarUpdatesCount",statusCounts.updates);
   setStatusCount("invSidebarUpToDateCount",statusCounts["up-to-date"]);
   setStatusCount("invSidebarManualCount",statusCounts["manual-check"]);
+  setStatusCount("invSidebarVendorAppCount",statusCounts["vendor-app"]);
   const statusNote=sidebar.querySelector(".inv-status-note");if(statusNote)statusNote.textContent=INV_SYNTHETIC_PREVIEW?"Sample product counts":"Counts are products";
   const statusNotice=INV_SYNTHETIC_PREVIEW?" — synthetic sample only; not live vendor status":" — AIMM folder scan and AIMM vendor records";
-  [["updates","Updates available"],["up-to-date","Up to date"],["manual-check","Manual check"],["unchecked","Unchecked"]].forEach(([scope,label])=>{
+  [["updates","Updates available"],["up-to-date","Up to date"],["manual-check","Manual check"],["vendor-app","Vendor app"],["unchecked","Unchecked"]].forEach(([scope,label])=>{
     const button=sidebar.querySelector('[data-inv-scope="'+scope+'"]');
     if(button){const unit=" products";button.setAttribute("aria-label",label+": "+statusCounts[scope].toLocaleString()+unit+statusNotice);button.title=label+": "+statusCounts[scope].toLocaleString()+unit+statusNotice;}
   });
@@ -8559,7 +8574,7 @@ function invOpenVendorStatus(context){
   const vendor=String(context.vendor||""),name=String(context.name||""),versions=Array.isArray(context.versions)?context.versions.filter(Boolean):[],state=invGetProductActions(vendor,name);
   const versionOptions=versions.map(version=>'<option value="'+invEsc(version)+'">'+invEsc(version)+'</option>').join("");
   const overlay=document.createElement("div");overlay.id="invProductMetaOverlay";
-  overlay.innerHTML='<div class="inv-product-meta-dialog" role="dialog" aria-modal="true" aria-labelledby="invVendorStatusTitle"><h3 id="invVendorStatusTitle">Record vendor status</h3><div class="inv-note-context">'+invEsc(name)+' · '+invEsc(vendor)+'</div><p class="inv-meta-help">Compare an installed version with the vendor’s official release page. AIMM stores a manual check locally; supported public sources can also be checked with Check AIMM vendor sources.</p><label class="inv-meta-label" for="invVendorInstalledVersion">Installed version</label><select id="invVendorInstalledVersion">'+(versionOptions||'<option value="">Version unavailable</option>')+'</select><label class="inv-meta-label" for="invVendorStatusChoice">Result</label><select id="invVendorStatusChoice"><option value="manual-check">Needs manual check</option><option value="updates">Update available</option><option value="up-to-date">Up to date</option></select><label class="inv-meta-label" for="invVendorLatest">Latest vendor version</label><input id="invVendorLatest" type="text" maxlength="80" placeholder="Required for an available update"><label class="inv-meta-label" for="invVendorSource">Official vendor page</label><input id="invVendorSource" type="url" maxlength="500" placeholder="https://…"><div class="inv-note-actions"><button type="button" data-vendor-status-cancel>Cancel</button><button type="button" class="primary" data-vendor-status-save>Save status</button></div></div>';
+  overlay.innerHTML='<div class="inv-product-meta-dialog" role="dialog" aria-modal="true" aria-labelledby="invVendorStatusTitle"><h3 id="invVendorStatusTitle">Record vendor status</h3><div class="inv-note-context">'+invEsc(name)+' · '+invEsc(vendor)+'</div><p class="inv-meta-help">Compare an installed version with the vendor’s official release page. AIMM stores a manual check locally; supported public sources can also be checked with Check AIMM vendor sources.</p><label class="inv-meta-label" for="invVendorInstalledVersion">Installed version</label><select id="invVendorInstalledVersion">'+(versionOptions||'<option value="">Version unavailable</option>')+'</select><label class="inv-meta-label" for="invVendorStatusChoice">Result</label><select id="invVendorStatusChoice"><option value="manual-check">'+(invVendorAppVendor(vendor)?'Vendor app':'Needs manual check')+'</option><option value="updates">Update available</option><option value="up-to-date">Up to date</option></select><label class="inv-meta-label" for="invVendorLatest">Latest vendor version</label><input id="invVendorLatest" type="text" maxlength="80" placeholder="Required for an available update"><label class="inv-meta-label" for="invVendorSource">Official vendor page</label><input id="invVendorSource" type="url" maxlength="500" placeholder="https://…"><div class="inv-note-actions"><button type="button" data-vendor-status-cancel>Cancel</button><button type="button" class="primary" data-vendor-status-save>Save status</button></div></div>';
   const installed=overlay.querySelector("#invVendorInstalledVersion"),choice=overlay.querySelector("#invVendorStatusChoice"),latest=overlay.querySelector("#invVendorLatest"),source=overlay.querySelector("#invVendorSource");
   function loadVersionState(){
     const version=installed.value,perVersion=state.vendorStatuses&&state.vendorStatuses[version],legacy=state.vendorStatus&&Array.isArray(state.vendorStatus.installedVersions)&&state.vendorStatus.installedVersions.includes(version)?state.vendorStatus:null,saved=perVersion||legacy;
@@ -8587,7 +8602,7 @@ function invOpenVendorStatus(context){
       if(next.marked&&String(next.marked.version||"")===version)delete next.marked;
     }
     all[key]=next;
-    if(invWriteProductActions(all)){overlay.remove();invRenderInventory();invStatus(status==="manual-check"?(version?"Moved "+name+" v"+version+" back to Manual check.":"Cleared the saved vendor status for "+name+"."):"Saved "+invStatusLabel(status).toLowerCase()+" for "+name+" v"+version+" from the vendor page.");}
+    if(invWriteProductActions(all)){overlay.remove();invRenderInventory();invStatus(status==="manual-check"?(version?"Moved "+name+" v"+version+" back to "+(invVendorAppVendor(vendor)?"Vendor app":"Manual check")+".":"Cleared the saved vendor status for "+name+"."):"Saved "+invStatusLabel(status).toLowerCase()+" for "+name+" v"+version+" from the vendor page.");}
     else invStatus("The vendor status could not be saved in this browser.","error");
   });
 }
@@ -8670,7 +8685,7 @@ function invRenderInventory(){
     const searchOK=!query||invNorm([group.name,group.vendor,invDisplayCategory(group),Array.from(group.versions).join(" "),Array.from(group.formats).join(" ")].join(" ")).includes(query);
     const actionState=invGetProductActions(group.vendor,group.name);
     const hidden=actionState.hidden===true;
-    const hiddenOK=INV_SCOPE==="hidden"?hidden:(INV_SHOW_HIDDEN||!hidden);const statusScope=["updates","up-to-date","manual-check","unchecked"].includes(INV_SCOPE);const statusMatch=!statusScope||invPrimaryProductStatus(group.statusCounts)===INV_SCOPE;const scopeOK=hiddenOK&&(INV_SCOPE==="favorites"?invIsFavorite(group.name):INV_SCOPE==="tags"?(Array.isArray(actionState.tags)&&actionState.tags.length>0):statusMatch);
+    const hiddenOK=INV_SCOPE==="hidden"?hidden:(INV_SHOW_HIDDEN||!hidden);const statusScope=invStatusScope();const statusMatch=!statusScope||invPrimaryProductStatus(group.statusCounts)===INV_SCOPE;const scopeOK=hiddenOK&&(INV_SCOPE==="favorites"?invIsFavorite(group.name):INV_SCOPE==="tags"?(Array.isArray(actionState.tags)&&actionState.tags.length>0):statusMatch);
     const categoryOK=!INV_CATEGORIES.size||INV_CATEGORIES.has(invDisplayCategory(group));
     const tagOK=!INV_TAG_FILTERS.size||(Array.isArray(actionState.tags)&&actionState.tags.some(tag=>INV_TAG_FILTERS.has(tag)));
     return formatOK&&searchOK&&scopeOK&&categoryOK&&tagOK;
@@ -8689,7 +8704,7 @@ function invRenderInventory(){
     return;
   }
   if(!filtered.length){
-    const message=INV_TAG_FILTERS.size?"No plug-ins with the selected tags match this view.":INV_SCOPE==="favorites"?"No favourited installed plug-ins match this view.":INV_SCOPE==="tags"?"No tagged installed plug-ins match this view.":INV_SCOPE==="hidden"?"No hidden plug-ins match this view.":INV_SCOPE==="updates"?"No plug-ins are marked with an update from a vendor page yet. Use the plug-in actions menu to record one.":INV_SCOPE==="up-to-date"?"No versions have been recorded as current yet. Check a vendor page, then record the result from the plug-in actions menu.":INV_SCOPE==="manual-check"?"No versioned plug-ins need a manual check in this view.":"No installed plug-ins match this search and filter.";
+    const message=INV_TAG_FILTERS.size?"No plug-ins with the selected tags match this view.":INV_SCOPE==="favorites"?"No favourited installed plug-ins match this view.":INV_SCOPE==="tags"?"No tagged installed plug-ins match this view.":INV_SCOPE==="hidden"?"No hidden plug-ins match this view.":INV_SCOPE==="updates"?"No plug-ins are marked with an update from a vendor page yet. Use the plug-in actions menu to record one.":INV_SCOPE==="up-to-date"?"No versions have been recorded as current yet. Check a vendor page, then record the result from the plug-in actions menu.":INV_SCOPE==="manual-check"?"No versioned plug-ins need a manual check in this view.":INV_SCOPE==="vendor-app"?"No plug-ins need a check in the publisher's app in this view.":"No installed plug-ins match this search and filter.";
     host.innerHTML='<div class="inv-empty">'+message+'</div>';
     return;
   }
@@ -16863,7 +16878,7 @@ async function handleToolCall(name,args){
         const item=String(args.item||'').trim().toLowerCase();
         const targets={
           status_section:{section:'status',label:'Status'},tools_section:{section:'tools',label:'Tools'},library_section:{section:'library',label:'Library'},
-          all_plugins:{selector:'[data-inv-scope="all"]',label:'All plugins'},updates_available:{selector:'[data-inv-scope="updates"]',label:'Updates available'},up_to_date:{selector:'[data-inv-scope="up-to-date"]',label:'Up to date'},manual_check:{selector:'[data-inv-scope="manual-check"]',label:'Manual check'},unchecked:{selector:'[data-inv-scope="unchecked"]',label:'Unchecked'},stale_results:{selector:'[data-inv-scope="stale"]',label:'Stale results'},check_errors:{selector:'[data-inv-scope="error"]',label:'Check errors'},
+          all_plugins:{selector:'[data-inv-scope="all"]',label:'All plugins'},updates_available:{selector:'[data-inv-scope="updates"]',label:'Updates available'},up_to_date:{selector:'[data-inv-scope="up-to-date"]',label:'Up to date'},manual_check:{selector:'[data-inv-scope="manual-check"]',label:'Manual check'},vendor_app:{selector:'[data-inv-scope="vendor-app"]',label:'Vendor app'},unchecked:{selector:'[data-inv-scope="unchecked"]',label:'Unchecked'},stale_results:{selector:'[data-inv-scope="stale"]',label:'Stale results'},check_errors:{selector:'[data-inv-scope="error"]',label:'Check errors'},
           install_manager:{selector:'[data-inv-local-tool="install-manager"]',label:'Install Manager'},batch_management:{selector:'[data-inv-local-tool="batch-management"]',label:'Batch Plug-in Management'},remove_old_installers:{selector:'[data-inv-local-tool="remove-old-installers"]',label:'Remove Old Installers'},duplicates:{selector:'[data-inv-local-tool="duplicates"]',label:'Check for Duplicates'},license_vault:{selector:'[data-inv-local-tool="license-vault"]',label:'License Key Vault'},share_plugin_list:{selector:'[data-inv-local-tool="share-plugin-list"]',label:'Share Plugin List'},compare_profiles:{selector:'[data-inv-local-tool="compare-profiles"]',label:'Compare Plugin Profiles'},aimm_license:{selector:'[data-inv-local-tool="license"]',label:'AIMM License'},ilok_license_manager:{selector:'[data-inv-local-tool="ilok-license-manager"]',label:'iLok License Manager'},
           library_all_plugins:{selector:'[data-inv-open-all-plugins]',label:'All Plugins'},plugin_compatibility:{label:'Plugin Compatibility'},favorites:{selector:'[data-inv-scope="favorites"]',label:'Favorites'},my_tags:{selector:'[data-inv-scope="tags"]',label:'My tags'},tag_manager:{selector:'[data-inv-tag-manager]',label:'Tag Manager'},hidden:{selector:'[data-inv-scope="hidden"]',label:'Hidden'},
           eq_filter:{category:'EQ & Filter',label:'EQ & Filter'},dynamics:{category:'Dynamics',label:'Dynamics'},pitch_modulation:{category:'Pitch & Modulation',label:'Pitch & Modulation'},reverb:{category:'Reverb',label:'Reverb'},delay:{category:'Delay',label:'Delay'},distortion_amps:{category:'Distortion & Amps',label:'Distortion & Amps'},utility_metering:{category:'Utility & Metering',label:'Utility & Metering'},imaging:{category:'Imaging',label:'Imaging'},instruments_midi:{category:'Instruments & MIDI',label:'Instruments & MIDI'},restoration:{category:'Restoration',label:'Restoration'},channel_strips_multi_fx:{category:'Channel Strips & Multi-FX',label:'Channel Strips & Multi-FX'}
