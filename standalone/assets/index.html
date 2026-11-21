@@ -4874,6 +4874,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library #invSidebar .inv-sidebar-chevron{background:var(--pv-black)}
 #library #invSidebar .inv-sidebar-chevron::after{border-color:var(--section-colour)!important}
 #library #invSidebar .inv-sidebar-card{border-color:var(--section-colour)!important}
+/* Counts: numbers only, no box (Kevin, 21 Nov 2026) */
+#library #invSidebar .inv-side-count,#library #invSidebar .inv-sidebar-heading-count,#library .inv-side-count,#library .inv-sidebar-card.is-current .inv-sidebar-heading-count{background:none!important;border:0!important;box-shadow:none!important;padding:0 2px!important;border-radius:0!important;min-width:0!important}
 #library #invSidebar .inv-sidebar-section-content{display:grid;grid-template-rows:1fr;min-width:0;transition:grid-template-rows .28s cubic-bezier(.4,0,.2,1),visibility 0s}
 #library #invSidebar .inv-sidebar-section-content.is-closed{grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .28s cubic-bezier(.4,0,.2,1),visibility 0s .28s}
 #library #invSidebar .inv-sidebar-section-inner{min-height:0;overflow:hidden;padding:6px}
@@ -5722,7 +5724,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-20.24';
+const AIMM_BUILD = '2026-11-20.25';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
