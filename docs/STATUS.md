@@ -1,4 +1,4 @@
-## 2026-11-20 build 2026-11-20.19 — Chain favourites redesign (BUILT, NOT DEPLOYED)
+## 2026-11-20 build 2026-11-20.20 — Chain favourites redesign (BUILT, NOT DEPLOYED)
 
 Plugins has a responsive three-column Chain favourites card grid for vocal, drums, 808 and master bus, with view, search, sort and subset selection. Selected items apply through verified existing favourite storage; a star applies one immediately. Starred Plugins stars use the Favourites purple glow without a background. Hope tools keep their names and support matching chains and exact-name subsets. The v2 data ships only scan matched, licensed equivalents and Logic Pro 13 stock. No push or deploy.
 
