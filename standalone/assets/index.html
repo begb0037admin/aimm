@@ -5124,7 +5124,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <button class="inv-side-button" type="button" data-inv-open-all-plugins aria-label="All Plugins" title="Show every installed plug-in in a flat list" aria-pressed="false"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></span><span class="inv-side-label">All Plugins</span><span class="inv-side-count" id="invLibraryAllCount">—</span></button>
           <button class="inv-side-button" type="button" disabled aria-label="Plugin Compatibility — unavailable until plug-in architecture metadata and current vendor evidence are connected" title="Compatibility is unavailable until this Library has source-backed architecture metadata and current vendor evidence."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/><path d="m8 11 2.5 2.5L16 8"/></svg></span><span class="inv-side-label">Plugin Compatibility</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="favorites" aria-label="Favorites" title="Favorites"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg></span><span class="inv-side-label">Favorites</span><span class="inv-side-count" id="invSidebarFavCount">0</span></button>
-          <div class="inv-sidebar-section" aria-label="Chain favourites">CHAIN FAVOURITES <span id="vocalFavCount">0</span></div>
+          <div class="inv-sidebar-section" aria-label="Chain favourites">CHAIN FAVOURITES</div>
           <button class="inv-side-button" type="button" data-vocal-view="owned"><span class="inv-side-label">Owned</span></button>
           <button class="inv-side-button" type="button" data-vocal-view="stock"><span class="inv-side-label">Stock Plugins (Logic Pro 13)</span></button>
           <button class="inv-side-button" type="button" data-vocal-view="missing"><span class="inv-side-label">Not installed</span></button>
@@ -5666,7 +5666,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-20.21';
+const AIMM_BUILD = '2026-11-20.22';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8198,7 +8198,6 @@ function invRenderSidebar(groups,stageMap){
   const notLicensedCount=split.notLicensed.length;
   const allCount=groups.length;
   const favCount=groups.filter(group=>invIsFavorite(group.name,group.vendor)).length;
-  const vocalCount=document.getElementById('vocalFavCount');if(vocalCount&&VOCAL_FAV_DATA){const chain=VocalFavs.getChain(VOCAL_FAV_DATA,INV_FAV_CHAIN);vocalCount.textContent=VocalFavs.targets(chain).filter(item=>invIsFavorite(item.name,item.publisher)).length+vocalReadStock().filter(name=>chain.stock.logic.some(item=>item.name===name)).length;}
   const tagCount=groups.filter(group=>{const state=invGetProductActions(group.vendor,group.name);return Array.isArray(state.tags)&&state.tags.length>0}).length;
   invRenderTagFilter(groups);
   const hiddenCount=groups.filter(group=>invGetProductActions(group.vendor,group.name).hidden===true).length;
@@ -17187,7 +17186,7 @@ function invRenderVocalFavorites(){
   document.querySelectorAll('[data-vocal-view]').forEach(button=>{button.classList.toggle('active',button.dataset.vocalView===INV_VOCAL_VIEW);button.setAttribute('aria-pressed',String(button.dataset.vocalView===INV_VOCAL_VIEW));});
   if(!VOCAL_FAV_DATA){panel.textContent='Loading chain favourites…';vocalLoadData().then(()=>invRenderInventory()).catch(error=>{panel.textContent=error.message});return;}
   const esc=invEsc,chain=VocalFavs.getChain(VOCAL_FAV_DATA,INV_FAV_CHAIN),view=INV_VOCAL_VIEW;
-  const count=document.getElementById('vocalFavCount');if(count)count.textContent=VocalFavs.targets(chain).filter(item=>invIsFavorite(item.name,item.publisher)).length+vocalReadStock().filter(name=>chain.stock.logic.some(item=>item.name===name)).length;
+  const starredHere=VocalFavs.targets(chain).filter(item=>invIsFavorite(item.name,item.publisher)).length+vocalReadStock().filter(name=>chain.stock.logic.some(item=>item.name===name)).length;
   const key=item=>item.publisher+'|'+item.name,stockKey=item=>'Logic Pro 13 stock|'+item.name;
   const all=view==='owned'?chain.owned:view==='stock'?chain.stock.logic:chain.missing;
   const rows=all.filter(item=>!INV_FAV_QUERY||[item.name,item.publisher||'',...(item.equivalents||[]).map(eq=>eq.name)].join(' ').toLowerCase().includes(INV_FAV_QUERY.toLowerCase())).filter((item,index,array)=>view!=='owned'||array.findIndex(other=>other.name===item.name&&other.publisher===item.publisher)===index).slice();
@@ -17197,7 +17196,7 @@ function invRenderVocalFavorites(){
   const star=(item,stock=false)=>{const on=stock?vocalReadStock().includes(item.name):invIsFavorite(item.name,item.publisher);return '<button type="button" class="inv-fav fav-card-star'+(on?' on':'')+'" data-fav-star="'+esc(stock?stockKey(item):key(item))+'" aria-pressed="'+on+'" aria-label="'+(on?'Remove':'Add')+' '+esc(item.name)+' '+(on?'from':'to')+' Favorites">'+(on?'★':'☆')+'</button>'};
   const tick=itemKey=>'<input type="checkbox" data-fav-pick="'+esc(itemKey)+'" aria-label="Select '+esc(itemKey.split('|').slice(1).join('|'))+'"'+(INV_FAV_SELECTED.has(itemKey)?' checked':'')+'>';
   const tag=(label,kind='')=>'<span class="fav-tag '+kind+'">'+esc(label)+'</span>';
-  let html='<div class="vocal-fav-head"><div><h2>Chain favourites</h2><small>Video picks and installed alternatives</small></div></div><div class="fav-switch" aria-label="Chain">'+[['vocal','Vocal'],['drums','Drums'],['808','808'],['master','Master bus']].map(([k,label])=>'<button type="button" data-fav-chain="'+k+'" class="'+(k===INV_FAV_CHAIN?'on':'')+'">'+label+'</button>').join('')+'</div><div class="fav-toolbar"><div class="fav-switch" aria-label="View">'+[['owned','Owned'],['stock','Stock Plugins (Logic Pro 13)'],['missing','Not installed']].map(([k,label])=>'<button type="button" data-fav-view="'+k+'" class="'+(k===view?'on':'')+'">'+label+'</button>').join('')+'</div><input id="favSearch" type="search" placeholder="Search plug-ins" aria-label="Search chain favourites" value="'+esc(INV_FAV_QUERY)+'"><select id="favSort" aria-label="Sort chain favourites"><option value="videos"'+(INV_FAV_SORT==='videos'?' selected':'')+'>Most-used videos first</option><option value="name"'+(INV_FAV_SORT==='name'?' selected':'')+'>Name A–Z</option></select></div>';
+  let html='<div class="vocal-fav-head"><div><h2>Chain favourites</h2><small>Video picks and installed alternatives <span id="vocalFavCount" class="fav-starred-note">&middot; '+starredHere+' starred on '+({vocal:'Vocal',drums:'Drums','808':'808',master:'Master bus'}[INV_FAV_CHAIN]||'this chain')+'</span></small></div></div><div class="fav-switch" aria-label="Chain">'+[['vocal','Vocal'],['drums','Drums'],['808','808'],['master','Master bus']].map(([k,label])=>'<button type="button" data-fav-chain="'+k+'" class="'+(k===INV_FAV_CHAIN?'on':'')+'">'+label+'</button>').join('')+'</div><div class="fav-toolbar"><div class="fav-switch" aria-label="View">'+[['owned','Owned'],['stock','Stock Plugins (Logic Pro 13)'],['missing','Not installed']].map(([k,label])=>'<button type="button" data-fav-view="'+k+'" class="'+(k===view?'on':'')+'">'+label+'</button>').join('')+'</div><input id="favSearch" type="search" placeholder="Search plug-ins" aria-label="Search chain favourites" value="'+esc(INV_FAV_QUERY)+'"><select id="favSort" aria-label="Sort chain favourites"><option value="videos"'+(INV_FAV_SORT==='videos'?' selected':'')+'>Most-used videos first</option><option value="name"'+(INV_FAV_SORT==='name'?' selected':'')+'>Name A–Z</option></select></div>';
   html+='<div class="fav-selection"><button type="button" data-fav-group="select">Select all</button><button type="button" data-fav-group="clear">Clear</button><span id="favSelectedCount">'+selected.length+' selected</span><button type="button" class="inv-btn primary" id="vocalFavApply"'+(selected.length?'':' disabled')+'>Apply '+selected.length+' selected to Favorites</button></div><div id="vocalFavStatus" role="status"></div>';
   html+='<div class="fav-grid">';
   for(const item of rows){
