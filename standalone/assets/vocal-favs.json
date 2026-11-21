@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "source": "Vocal-chain video report and inventory scan, 20 November 2026; Logic Pro 13 only",
+  "source": "Vocal-chain video report and inventory scan, 20 November 2026; Logic Pro 13 stock names from installed Logic Pro Creator Studio.app MADSP plug-in plists and Plug-In Settings directories",
   "owned": [
     {
       "name": "H-Delay (s)",
@@ -107,8 +107,8 @@
     {
       "name": "Pro-Q 4",
       "publisher": "FabFilter",
-      "videos": 1,
-      "match": "exact"
+      "videos": 11,
+      "match": "close"
     },
     {
       "name": "ValhallaVintageVerb",
@@ -135,18 +135,6 @@
       "match": "close"
     },
     {
-      "name": "Pro-Q 4",
-      "publisher": "FabFilter",
-      "videos": 6,
-      "match": "close"
-    },
-    {
-      "name": "Pro-Q 4",
-      "publisher": "FabFilter",
-      "videos": 4,
-      "match": "close"
-    },
-    {
       "name": "Ozone 12",
       "publisher": "iZotope",
       "videos": 4,
@@ -157,21 +145,71 @@
       "publisher": "Waves",
       "videos": 3,
       "match": "close"
+    },
+    {
+      "name": "UAD UA 1176LN Rev E",
+      "publisher": "Universal Audio",
+      "videos": 8,
+      "match": "close"
+    },
+    {
+      "name": "UAD Auto-Tune Realtime Advanced",
+      "publisher": "Universal Audio",
+      "videos": 19,
+      "match": "close"
+    },
+    {
+      "name": "Ozone 12 Equalizer",
+      "publisher": "iZotope",
+      "videos": 4,
+      "match": "close"
+    },
+    {
+      "name": "Ozone 12 Dynamic EQ",
+      "publisher": "iZotope",
+      "videos": 4,
+      "match": "close"
+    },
+    {
+      "name": "Doubler4 (s)",
+      "publisher": "Waves",
+      "videos": 3,
+      "match": "close"
     }
   ],
   "stock": {
     "logic": [
       {
-        "name": "Stereo Delay",
-        "videos": 8
+        "name": "Adaptive Limiter",
+        "videos": 0
       },
       {
-        "name": "Space Designer",
-        "videos": 3
+        "name": "AutoFilter",
+        "videos": 0
       },
       {
-        "name": "Tape Delay",
-        "videos": 2
+        "name": "Bitcrusher",
+        "videos": 0
+      },
+      {
+        "name": "Channel EQ",
+        "videos": 0
+      },
+      {
+        "name": "Chorus",
+        "videos": 0
+      },
+      {
+        "name": "ChromaGlow",
+        "videos": 0
+      },
+      {
+        "name": "ChromaVerb",
+        "videos": 0
+      },
+      {
+        "name": "Clip Distortion",
+        "videos": 0
       },
       {
         "name": "Compressor",
@@ -182,12 +220,192 @@
         "videos": 1
       },
       {
+        "name": "Delay Designer",
+        "videos": 0
+      },
+      {
+        "name": "Direction Mixer",
+        "videos": 0
+      },
+      {
+        "name": "Distortion",
+        "videos": 0
+      },
+      {
+        "name": "Distortion II",
+        "videos": 0
+      },
+      {
+        "name": "Echo",
+        "videos": 0
+      },
+      {
+        "name": "EnVerb",
+        "videos": 0
+      },
+      {
+        "name": "Ensemble",
+        "videos": 0
+      },
+      {
+        "name": "Enveloper",
+        "videos": 0
+      },
+      {
+        "name": "Exciter",
+        "videos": 0
+      },
+      {
+        "name": "Expander",
+        "videos": 0
+      },
+      {
+        "name": "Flanger",
+        "videos": 0
+      },
+      {
+        "name": "Gain",
+        "videos": 0
+      },
+      {
+        "name": "Graphic EQ",
+        "videos": 0
+      },
+      {
+        "name": "Limiter",
+        "videos": 0
+      },
+      {
+        "name": "Linear Phase EQ",
+        "videos": 0
+      },
+      {
+        "name": "Match EQ",
+        "videos": 0
+      },
+      {
+        "name": "Microphaser",
+        "videos": 0
+      },
+      {
+        "name": "Modulation Delay",
+        "videos": 0
+      },
+      {
+        "name": "MultiMeter",
+        "videos": 0
+      },
+      {
         "name": "Multipressor",
         "videos": 1
       },
       {
+        "name": "Noise Gate",
+        "videos": 0
+      },
+      {
+        "name": "Overdrive",
+        "videos": 0
+      },
+      {
+        "name": "Pedalboard",
+        "videos": 0
+      },
+      {
+        "name": "Phase Distortion",
+        "videos": 0
+      },
+      {
+        "name": "Phaser",
+        "videos": 0
+      },
+      {
+        "name": "Phat FX",
+        "videos": 0
+      },
+      {
+        "name": "Pitch Correction",
+        "videos": 0
+      },
+      {
+        "name": "Pitch Shifter",
+        "videos": 0
+      },
+      {
+        "name": "PlatinumVerb",
+        "videos": 0
+      },
+      {
+        "name": "Ringshifter",
+        "videos": 0
+      },
+      {
+        "name": "Rotor Cabinet",
+        "videos": 0
+      },
+      {
+        "name": "Sample Delay",
+        "videos": 0
+      },
+      {
+        "name": "SilverVerb",
+        "videos": 0
+      },
+      {
+        "name": "Single Band EQ",
+        "videos": 0
+      },
+      {
+        "name": "Space Designer",
+        "videos": 3
+      },
+      {
+        "name": "Spectral Gate",
+        "videos": 0
+      },
+      {
+        "name": "Spreader",
+        "videos": 0
+      },
+      {
+        "name": "Stereo Delay",
+        "videos": 8
+      },
+      {
+        "name": "Stereo Spread",
+        "videos": 0
+      },
+      {
+        "name": "SubBass",
+        "videos": 0
+      },
+      {
+        "name": "Tape Delay",
+        "videos": 2
+      },
+      {
+        "name": "Tremolo",
+        "videos": 0
+      },
+      {
+        "name": "Tru-Tape Delay",
+        "videos": 0
+      },
+      {
         "name": "Vintage Console EQ",
         "videos": 1
+      },
+      {
+        "name": "Vintage Graphic EQ",
+        "videos": 0
+      },
+      {
+        "name": "Vintage Tube EQ",
+        "videos": 0
+      },
+      {
+        "name": "Vocal Transformer",
+        "videos": 0
       }
     ]
   },

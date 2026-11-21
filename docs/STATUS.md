@@ -1,3 +1,7 @@
+## 2026-11-20 build 2026-11-20.15 — Vocal favourites data gaps (BUILT, NOT DEPLOYED)
+
+Expanded the vocal favourites data from 26 to 29 unique owned products and from 7 to 57 Logic stock plug-ins; the 22 missing items are unchanged. Added scanned UAD 1176LN Rev E, a second UAD Auto-Tune, Ozone 12 Equalizer and Dynamic EQ, and Waves Doubler4. Consolidated Pro-Q 4 into one row (11 source-video mentions). Every owned name/publisher resolves against `/Users/admin/aimm-previews/inventory-scan.json`; unresolved: none. Logic stock names came from the installed Logic Pro Creator Studio app’s `Contents/Frameworks/MADSP.framework/Versions/A/Resources/*.plist` and `Contents/Resources/Plug-In Settings/`; the existing seven video counts are retained and new stock rows have zero. All `tests/*.test.mjs` passed. No push, deploy or ElevenLabs change.
+
 ## 2026-11-20 build 2026-11-20.14 — Settings status honesty fix (BUILT, NOT DEPLOYED)
 
 `settings_status` now returns the ElevenLabs credits used, limit and remaining shown in Settings for each account. Unknown values are `null`. It no longer reads or returns hidden dollar spend estimates, and Hope's instruction limits her answer to returned credits. The page, manifest and registration subset descriptions match. Not pushed, deployed or registered on ElevenLabs.
