@@ -57,5 +57,5 @@ test('Hope exposes both tool schemas and routes through shared handler',()=>{
   assert.match(html,/const AICHAT_TOOL_DEFS = TOOL_DEFS\.map/);
   assert.match(html,/section:\{type:'string',enum:\['owned','stock','missing','all'\]/);
   assert.match(html,/confirmed:\{type:'boolean'/);
-  assert.match(html,/const AIMM_BUILD = '2026-11-20\.15'/);
+  assert.match(html,/const AIMM_BUILD = '2026-11-20\.16'/);
 });

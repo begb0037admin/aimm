@@ -5628,7 +5628,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-20.15';
+const AIMM_BUILD = '2026-11-20.16';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -16066,12 +16066,10 @@ function hopeWebSearchBeginTurn(text,confidence,source='chat'){
 }
 function hopeTranscriptLooksGarbled(text, confidence){
   if(confidence!==undefined&&confidence!==null&&confidence!==''&&Number.isFinite(Number(confidence))&&Number(confidence)<0.45)return true;
-  const value=String(text||'').trim();
-  // Repeat only for low confidence or text with neither a question/request cue nor a readable phrase.
-  const cues=/\b(?:what|how|why|where|when|which|who|can|could|would|will|is|are|does|do|did|show|find|search|explain|tell|play|open|add|set|help)\b/i;
-  if(value.includes('?')||cues.test(value))return false;
-  const words=value.match(/[a-z]+/gi)||[];
-  return words.length===0||!words.every(word=>/[aeiouy]/i.test(word));
+  const words=String(text||'').match(/[a-z]+(?:['’][a-z]+)*/gi)||[];
+  if(!words.length)return true;
+  const readable=words.filter(word=>/[aeiou]|y$/i.test(word)||/^(?:hmm|mm|shh|nth|tv|dj|eq)$/i.test(word)).length;
+  return readable<words.length/2;
 }
 function hopeQuestionNeedsKnowledge(text){
   return !/^(?:are you there|you there|hello|hi|hey|thanks|thank you|good morning|good afternoon|good evening)[?.! ]*$/i.test(String(text||'').trim());
@@ -16152,7 +16150,7 @@ function hopeVagueVideoApplyModelReply(vagueVideo,reply){
 function hopeKnowledgeDecision({tool,result,route='typed',confidence}={}){
   const question=String(HOPE_KB_DECISION.question||'');
   if(HOPE_KB_DECISION.garbled)return{allow:false,usable:false,action:'repeat',message:'I heard “'+question+'”. Could you repeat that?'};
-  if(tool==='transcript')return{allow:false,usable:false,action:'repeat',message:'I heard “'+question+'”. Could you repeat that?'};
+  if(tool==='transcript')return{allow:true,usable:HOPE_KB_DECISION.usable,action:'continue'};
   if(tool==='search_yt_knowledge'||tool==='read_yt_knowledge'){
     const hits=tool==='read_yt_knowledge'
       ? (result?.result?[{title:result.video||'',text:result.result,video_id:result.video_id||''}]:[])
