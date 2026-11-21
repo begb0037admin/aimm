@@ -20,6 +20,7 @@ function harness(rows=[]){
     document:{querySelector(){clicks++;throw Error('DOM touched');},getElementById(){clicks++;throw Error('DOM touched');}},
     fetch(){fetches++;throw Error('fetch called');},invRenderInventory(){renders++;throw Error('render called');},
     invNorm:value=>String(value||'').toLowerCase(),
+    invUadSplit:groups=>({owned:groups,notLicensed:[]}),
     invBuildGroups(scan){
       const groups=new Map();
       for(const row of scan){const key=row.vendor+'|'+row.name;let group=groups.get(key);

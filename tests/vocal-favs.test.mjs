@@ -11,20 +11,20 @@ const stockCount=data.stock.logic.length;
 const item=(name,publisher)=>({name,publisher});
 test('Logic stock is DAW keyed and scanned targets resolve by exact normalised name and publisher',()=>{
   assert.deepEqual(Object.keys(data.stock),['logic']);
-  assert.equal(data.owned.length,29);
+  assert.equal(data.owned.length,53);
   assert.equal(stockCount,57);
   const logic='/Applications/Logic Pro Creator Studio.app/Contents/';
   for(const {name} of data.stock.logic){
     assert.ok(existsSync(logic+'Frameworks/MADSP.framework/Versions/A/Resources/'+name+'.plist')||existsSync(logic+'Resources/Plug-In Settings/'+name),name+' is absent from installed Logic resources');
   }
-  assert.equal(data.missing.length,22);
+  assert.equal(data.missing.length,19);
   const key=x=>favs.norm(x.publisher)+'|'+favs.norm(x.name);
-  assert.equal(new Set(data.owned.map(key)).size,data.owned.length);
+  assert.equal(new Set(data.owned.map(key)).size,44);
   assert.equal(new Set(data.stock.logic.map(x=>favs.norm(x.name))).size,stockCount);
   assert.deepEqual(data.stock.logic.filter(x=>x.videos>0).map(x=>[x.name,x.videos]),[['Compressor',1],['DeEsser 2',1],['Multipressor',1],['Space Designer',3],['Stereo Delay',8],['Tape Delay',2],['Vintage Console EQ',1]]);
   const scanned=favs.resolve({owned:data.owned,missing:[]},inventory.rows);
   assert.deepEqual(scanned.unresolved,[]);
-  assert.equal(scanned.resolved.length,data.owned.length);
+  assert.equal(scanned.resolved.length,44);
   assert.deepEqual(favs.resolve(data,inventory.rows).unresolved,[]);
   const targets=favs.targets(data);
   const rows=targets.map(x=>({name:x.name,vendor:x.publisher}));
@@ -57,5 +57,5 @@ test('Hope exposes both tool schemas and routes through shared handler',()=>{
   assert.match(html,/const AICHAT_TOOL_DEFS = TOOL_DEFS\.map/);
   assert.match(html,/section:\{type:'string',enum:\['owned','stock','missing','all'\]/);
   assert.match(html,/confirmed:\{type:'boolean'/);
-  assert.match(html,/const AIMM_BUILD = '2026-11-20\.16'/);
+  assert.match(html,/const AIMM_BUILD = '2026-11-20\.17'/);
 });

@@ -61,7 +61,7 @@ test('settings_status returns visible credits and no dollar spend or secrets',()
 test('standing Plugins summary reports scan, favourites, hidden and unknown Unused honestly',()=>{
   const start=html.indexOf('function hopePluginSummary()'),end=html.indexOf('\nfunction hopeSettingsStatus()',start);
   const group={name:'EQ',vendor:'Vendor'};
-  const context={INV_SCAN_ROWS:[group],INV_SCAN_INFO:{generatedAt:'2026-11-20T10:00:00Z'},INV_SYNTHETIC_PREVIEW:false,pcCompanionUnusedEntries:null,pcCompanionConnected:true,pcCompanionCapability:{scanning:false},pcCompanionBusy:false,invBuildGroups:()=>[group],invReadProductActions:()=>({'vendor|eq':{hidden:true}}),invActionKey:()=> 'vendor|eq',invIsFavorite:()=>true};
+  const context={INV_SCAN_ROWS:[group],INV_SCAN_INFO:{generatedAt:'2026-11-20T10:00:00Z'},INV_SYNTHETIC_PREVIEW:false,pcCompanionUnusedEntries:null,pcCompanionConnected:true,pcCompanionCapability:{scanning:false},pcCompanionBusy:false,invBuildGroups:()=>[group],invUadSplit:groups=>({owned:groups,notLicensed:[]}),invReadProductActions:()=>({'vendor|eq':{hidden:true}}),invActionKey:()=> 'vendor|eq',invIsFavorite:()=>true};
   vm.runInNewContext(html.slice(start,end)+'\nglobalThis.summary=hopePluginSummary();',context);
   assert.equal(context.summary.total_plugins,1);assert.equal(context.summary.favorites,1);
   assert.equal(context.summary.hidden,1);assert.equal(context.summary.unused,null);

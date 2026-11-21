@@ -1,3 +1,7 @@
+## 2026-11-20 build 2026-11-20.17 — UAD account licence filter (BUILT, NOT DEPLOYED)
+
+The Plugins library uses the 62-product UA account map to keep certain, probable and unsure matches visible. The latest scan groups 169 other UAD products in the read-only Not licensed (UAD) view, separate from the 1,145 owned or non-UAD products. Its sidebar count and view now use the same full product grouping as All plugins; Treat as licensed is saved per product in browser state. Hope's standing Plugins context, search and summary exclude these products, and inventory_summary reports `uad_installed_not_licensed`. Vocal favourites follow the final ownership data. The uninstall review list is at `/Users/admin/aimm-previews/uad-uninstall-list.md`; no files were removed. All `tests/*.test.mjs` passed. Not pushed or deployed. Screenshot is assigned to Claude under the follow-up brief.
+
 ## 2026-11-20 build 2026-11-20.16 — Hope garbled speech fix (BUILT, NOT DEPLOYED)
 
 Hope now keeps contractions and possessives intact when checking voice transcripts. It asks for a repeat only for low confidence, no readable words, or fewer than half readable words; common vowel-less speech and abbreviations count as readable. Readable conversational statements continue to the normal reply path, and the ElevenLabs client-tool gate no longer blocks them. Added `tests/hope-garbled-speech.test.mjs` and ran all `tests/*.test.mjs`. Committed on `garbled-fix`; not pushed, deployed or changed on ElevenLabs.

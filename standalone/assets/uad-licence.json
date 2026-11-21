@@ -1,0 +1,549 @@
+{
+  "version": 1,
+  "source": "UA account products and local plug-in scan, 21 November 2026",
+  "accounts": [
+    {
+      "account_name": "Ampex ATR-102 Mastering Tape Recorder",
+      "scanned_names": [
+        "UAD Ampex ATR-102",
+        "UADx Ampex ATR-102 Master Tape",
+        "Universal Audio: UAD Ampex ATR-102"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Studer A800 Multichannel Tape Recorder",
+      "scanned_names": [
+        "UAD Studer A800",
+        "UADx Studer A800 Tape Recorder",
+        "Universal Audio: UAD Studer A800"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "API Summing",
+      "scanned_names": [],
+      "confidence": "unsure"
+    },
+    {
+      "account_name": "Opal Morphing Synthesizer",
+      "scanned_names": [
+        "UADx Opal Morphing Synth"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "PolyMAX Synth",
+      "scanned_names": [
+        "UADx PolyMAX Synth"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Ravel",
+      "scanned_names": [
+        "UADx Ravel Grand Piano"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Topline Key-Finder",
+      "scanned_names": [
+        "UADx Topline Key Finder"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Topline Vocal Suite",
+      "scanned_names": [
+        "UADx Topline Vocal Suite"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Waterfall B3 Organ",
+      "scanned_names": [
+        "UADx Waterfall B3 Organ"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "1176LN & SE Legacy",
+      "scanned_names": [
+        "UAD UA 1176LN Legacy",
+        "UAD UA 1176SE Legacy",
+        "Universal Audio: UAD UA 1176LN Legacy",
+        "Universal Audio: UAD UA 1176SE Legacy"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "1176SE Legacy Classic Limiting Amplifier",
+      "scanned_names": [
+        "UAD UA 1176SE Legacy",
+        "Universal Audio: UAD UA 1176SE Legacy"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Ampeg SVT-VR Classic Bass Amp",
+      "scanned_names": [
+        "UAD Ampeg SVTVR Classic",
+        "Universal Audio: UAD Ampeg SVTVR Classic"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "API Preamp",
+      "scanned_names": [
+        "UAD API Preamp",
+        "Universal Audio: UAD API Preamp"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "API Vision Channel Strip",
+      "scanned_names": [
+        "UAD API Vision Channel Strip",
+        "UADx API Vision Channel Strip",
+        "Universal Audio: UAD API Vision Channel Strip"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Chandler Limited Curve Bender Mastering EQ",
+      "scanned_names": [
+        "UAD Chandler Limited Curve Bender",
+        "Universal Audio: UAD Chandler Limited Curve Bender"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Precision Mix Rack Collection",
+      "scanned_names": [
+        "UAD Precision Channel Strip",
+        "UAD Precision Delay Mod",
+        "UAD Precision Delay Mod L",
+        "UAD Precision Enhancer Hz",
+        "UAD Precision Enhancer kHz",
+        "Universal Audio: UAD Precision Channel Strip",
+        "Universal Audio: UAD Precision Delay Mod",
+        "Universal Audio: UAD Precision Delay Mod L",
+        "Universal Audio: UAD Precision Enhancer Hz",
+        "Universal Audio: UAD Precision Enhancer kHz"
+      ],
+      "confidence": "unsure"
+    },
+    {
+      "account_name": "Precision Enhancer Hz",
+      "scanned_names": [
+        "UAD Precision Enhancer Hz",
+        "Universal Audio: UAD Precision Enhancer Hz"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "UAD Explore FREE",
+      "scanned_names": [],
+      "confidence": "unsure"
+    },
+    {
+      "account_name": "Fairchild 670 Legacy Compressor",
+      "scanned_names": [
+        "UAD Fairchild 670 Legacy",
+        "Universal Audio: UAD Fairchild 670 Legacy"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Teletronix LA-2A Legacy Classic Leveling Amplifier",
+      "scanned_names": [
+        "UAD Teletronix LA-2A Legacy",
+        "Universal Audio: UAD Teletronix LA-2A Legacy"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Manley Variable Mu Limiter Compressor (UAD DSP)",
+      "scanned_names": [
+        "UAD Manley Variable Mu",
+        "Universal Audio: UAD Manley Variable Mu"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Marshall Plexi Classic Amplifier",
+      "scanned_names": [
+        "UAD Marshall Plexi Classic",
+        "Universal Audio: UAD Marshall Plexi Classic"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Pultec EQP-1A Legacy",
+      "scanned_names": [
+        "UAD Pultec EQP-1A Legacy",
+        "Universal Audio: UAD Pultec EQP-1A Legacy"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Pultec Legacy EQs",
+      "scanned_names": [
+        "UAD Pultec EQP-1A Legacy",
+        "UAD Pultec-Pro Legacy",
+        "Universal Audio: UAD Pultec EQP-1A Legacy",
+        "Universal Audio: UAD Pultec-Pro Legacy"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Raw Distortion",
+      "scanned_names": [
+        "UAD Raw",
+        "Universal Audio: UAD Raw"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "RealVerb Pro Custom Room Modeler",
+      "scanned_names": [
+        "UAD RealVerb-Pro",
+        "Universal Audio: UAD RealVerb-Pro"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Topline Vocal Tune (UAD DSP)",
+      "scanned_names": [
+        "UAD Topline Vocal Tune",
+        "Universal Audio: UAD Topline Vocal Tune"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Tube-Tech CL 1B Compressor",
+      "scanned_names": [
+        "UAD Tube-Tech CL 1B",
+        "Universal Audio: UAD Tube-Tech CL 1B"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Tube-Tech CL 1B MkII Compressor",
+      "scanned_names": [
+        "UAD Tube-Tech CL 1B mk II",
+        "Universal Audio: UAD Tube-Tech CL 1B mk II"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "A-Type Multiband Dynamic Enhancer",
+      "scanned_names": [
+        "UAD A-Type Multiband Enhancer",
+        "UADx A-Type Multiband Enhancer",
+        "Universal Audio: UAD A-Type Multiband Enhancer"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "API 2500 Bus Compressor",
+      "scanned_names": [
+        "UAD API 2500",
+        "UADx API 2500 Bus Compressor",
+        "Universal Audio: UAD API 2500"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "API Vision Channel Strip Collection",
+      "scanned_names": [
+        "UAD API Vision Channel Strip",
+        "UAD API Vision Channel Strip Legacy",
+        "UADx API Vision Channel Strip",
+        "Universal Audio: UAD API Vision Channel Strip",
+        "Universal Audio: UAD API Vision Channel Strip Legacy"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Avalon VT-737 Tube Channel Strip",
+      "scanned_names": [
+        "UAD Avalon VT-737sp",
+        "UADx Avalon VT-737 Channel Strip",
+        "Universal Audio: UAD Avalon VT-737sp"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Brigade Chorus",
+      "scanned_names": [
+        "UAD Brigade Chorus",
+        "UADx Brigade Chorus",
+        "Universal Audio: UAD Brigade Chorus"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Century Tube Channel Strip",
+      "scanned_names": [
+        "UAD Century Tube Channel Strip",
+        "UADx Century Tube Channel Strip",
+        "Universal Audio: UAD Century Tube Channel Strip"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Empirical Labs EL8 Distressor Compressor",
+      "scanned_names": [
+        "UAD Empirical Labs Distressor",
+        "UADx Empirical Labs Distressor",
+        "Universal Audio: UAD Empirical Labs Distressor"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Fairchild Tube Limiter Collection",
+      "scanned_names": [
+        "UAD Fairchild 660",
+        "UAD Fairchild 670",
+        "UADx Fairchild 660 Compressor",
+        "UADx Fairchild 670 Compressor",
+        "Universal Audio: UAD Fairchild 660",
+        "Universal Audio: UAD Fairchild 670"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Galaxy Tape Echo",
+      "scanned_names": [
+        "UAD Galaxy Tape Echo",
+        "UADx Galaxy Tape Echo",
+        "Universal Audio: UAD Galaxy Tape Echo"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Hitsville Reverb Chambers",
+      "scanned_names": [
+        "UAD Hitsville Reverb Chambers",
+        "UADx Hitsville Reverb Chambers",
+        "Universal Audio: UAD Hitsville Reverb Chambers"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "LA-6176 Signature Channel Strip",
+      "scanned_names": [
+        "UAD LA-6176 Channel Strip",
+        "UADx LA-6176 Channel Strip",
+        "Universal Audio: UAD LA-6176 Channel Strip"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Teletronix LA-3A Classic Audio Leveler",
+      "scanned_names": [
+        "UAD Teletronix LA-3A",
+        "UADx LA-3A Compressor",
+        "Universal Audio: UAD Teletronix LA-3A"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Lexicon 224 Digital Reverb",
+      "scanned_names": [
+        "UAD Lexicon 224",
+        "UADx Lexicon 224 Digital Reverb",
+        "Universal Audio: UAD Lexicon 224"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Manley Massive Passive EQ",
+      "scanned_names": [
+        "UAD Manley Massive Passive",
+        "UAD Manley Massive Passive MST",
+        "UADx Manley Massive Passive EQ",
+        "UADx Manley Massive Passive MST",
+        "Universal Audio: UAD Manley Massive Passive",
+        "Universal Audio: UAD Manley Massive Passive MST"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Manley Variable Mu Limiter Compressor",
+      "scanned_names": [
+        "UAD Manley Variable Mu",
+        "UADx Manley Variable Mu Compressor",
+        "Universal Audio: UAD Manley Variable Mu"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Oxide Tape Recorder",
+      "scanned_names": [
+        "UAD Oxide Tape",
+        "UADx Oxide Tape Recorder",
+        "Universal Audio: UAD Oxide Tape"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Pultec Passive EQ Collection",
+      "scanned_names": [
+        "UAD Pultec EQP-1A",
+        "UAD Pultec HLF-3C",
+        "UAD Pultec MEQ-5",
+        "UADx Pultec EQP-1A EQ",
+        "UADx Pultec HLF-3C EQ",
+        "UADx Pultec MEQ-5 EQ",
+        "Universal Audio: UAD Pultec EQP-1A",
+        "Universal Audio: UAD Pultec HLF-3C",
+        "Universal Audio: UAD Pultec MEQ-5"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Pure Plate Reverb",
+      "scanned_names": [
+        "UAD Pure Plate",
+        "UADx Pure Plate Reverb",
+        "Universal Audio: UAD Pure Plate"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "UAD Ruby '63 Top Boost Amplifier",
+      "scanned_names": [
+        "UADx Ruby 63 Top Boost Amp"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "UAD Showtime '64 Tube Amp",
+      "scanned_names": [
+        "UADx Showtime 64 Tube Amp"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Studio D Chorus",
+      "scanned_names": [
+        "UAD Studio D Chorus",
+        "UADx Studio D Chorus",
+        "Universal Audio: UAD Studio D Chorus"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Topline Vocal Tune",
+      "scanned_names": [
+        "UAD Topline Vocal Tune",
+        "Universal Audio: UAD Topline Vocal Tune"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Teletronix LA-2A Leveler Collection",
+      "scanned_names": [
+        "UAD Teletronix LA-2A Gray",
+        "UAD Teletronix LA-2A Silver",
+        "UAD Teletronix LA-2",
+        "UADx LA-2A Gray Compressor",
+        "UADx LA-2A Silver Compressor",
+        "UADx LA-2 Compressor",
+        "Universal Audio: UAD Teletronix LA-2A Gray",
+        "Universal Audio: UAD Teletronix LA-2A Silver",
+        "Universal Audio: UAD Teletronix LA-2"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Teletronix LA-2A Tube Compressor",
+      "scanned_names": [
+        "UADx LA-2A Tube Compressor"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "1176 Classic Limiter Collection",
+      "scanned_names": [
+        "UAD UA 1176 Rev A",
+        "UAD UA 1176AE",
+        "UAD UA 1176LN Rev E",
+        "UADx 1176 Rev A Compressor",
+        "UADx 1176AE Compressor",
+        "UADx 1176LN Rev E Compressor",
+        "Universal Audio: UAD UA 1176 Rev A",
+        "Universal Audio: UAD UA 1176AE",
+        "Universal Audio: UAD UA 1176LN Rev E"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "UA 1176 Classic FET Compressor",
+      "scanned_names": [
+        "UADx 1176 FET Compressor"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "UA 175B & 176 Tube Compressor Collection",
+      "scanned_names": [
+        "UAD UA 175-B",
+        "UAD UA 176",
+        "UADx 175-B Compressor",
+        "UADx 176 Compressor",
+        "Universal Audio: UAD UA 175-B",
+        "Universal Audio: UAD UA 176"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Vibe Analog Machines",
+      "scanned_names": [
+        "UADx Vibe Analog Machines"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Vibe Analog Machines Essentials",
+      "scanned_names": [
+        "UADx Vibe Analog Machines Essentials"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "Waterfall Rotary Speaker",
+      "scanned_names": [
+        "UADx Waterfall Rotary Speaker"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "UAD Woodrow '55 Instrument Amplifier",
+      "scanned_names": [
+        "UADx Woodrow 55 Instrument Amp"
+      ],
+      "confidence": "certain"
+    },
+    {
+      "account_name": "LUNA API Vision Console Emulation Bundle",
+      "scanned_names": [],
+      "confidence": "unsure"
+    },
+    {
+      "account_name": "UA 610 Tube Preamp & EQ Collection",
+      "scanned_names": [
+        "UAD UA 610-A",
+        "UAD UA 610-B",
+        "UADx 610-A Preamp and EQ",
+        "UADx 610-B Preamp and EQ",
+        "Universal Audio: UAD UA 610-A",
+        "Universal Audio: UAD UA 610-B"
+      ],
+      "confidence": "certain"
+    }
+  ]
+}

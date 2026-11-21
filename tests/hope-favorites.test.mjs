@@ -11,6 +11,7 @@ function harness({initial=[],fail=false,scope='favorites'}={}){
   const context={INV_SCAN_ROWS:rows,INV_SCOPE:scope,STORAGE_KEY:'trapMasterState_v1',STATE:{favorites},
     invNorm:value=>String(value||'').trim().toLowerCase(),
     invBuildGroups:scan=>scan.map(row=>({...row})),
+    invUadSplit:groups=>({owned:groups,notLicensed:[]}),
     invFavoriteKey:(name,vendor)=>'inventory:'+vendor.toLowerCase()+'|'+name.toLowerCase(),
     invIsFavorite:(name,vendor)=>favorites.has('inventory:'+vendor.toLowerCase()+'|'+name.toLowerCase()),
     async invToggleFavorite(name,vendor){const key='inventory:'+vendor.toLowerCase()+'|'+name.toLowerCase();calls.toggle++;favorites.has(key)?favorites.delete(key):favorites.add(key);if(!fail)storage.set('trapMasterState_v1',JSON.stringify({favorites:[...favorites]}));return !fail;},
@@ -74,6 +75,7 @@ test('the Plugins star control keeps publishers separate and honours unique lega
   const favorites=new Set(['Pro-Q']);
   const ctx={STATE:{favorites},INV_SCAN_ROWS:rows,INV_SYNTHETIC_PREVIEW:false,INV_SYNTHETIC_FAVORITES:new Set(),
     invNorm:value=>String(value||'').toLowerCase(),invRenderInventory:()=>{},
+    UadLicence:{licensed:()=>true},UAD_LICENCE_DATA:null,invGetProductActions:()=>({}),
     toggleFav:key=>{favorites.has(key)?favorites.delete(key):favorites.add(key);return Promise.resolve(true);},Promise};
   vm.runInNewContext(source+'globalThis.star={get:invIsFavorite,toggle:invToggleFavorite};',ctx);
   assert.equal(ctx.star.get('Pro-Q','FabFilter'),true);
