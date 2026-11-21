@@ -5,11 +5,11 @@
 #library .inv-layout:not(.is-collapsed){grid-template-columns:clamp(236px,calc(236px * var(--inv-text-scale,1)),34vw) minmax(0,1fr)}
 }
 #library #invSidebar{padding:14px 12px 16px;min-width:0}
-/* 2. Header: a title and the collapse arrow on one slim row, no divider, no empty block */
-#library #invSidebar:not(.is-collapsed) .inv-sidebar-head{min-height:32px;margin:0 0 10px;padding:0 0 0 4px;border:0;gap:8px}
-#library #invSidebar:not(.is-collapsed) .inv-sidebar-head>span{font:600 calc(var(--inv-text-scale,1) * 15px)/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;letter-spacing:-.01em;color:#c4cad3!important;font-size:0;line-height:0}
-#library #invSidebar:not(.is-collapsed) .inv-sidebar-head>span::before{content:"Filters";font:600 calc(var(--inv-text-scale,1) * 15px)/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;letter-spacing:-.01em}
+/* 2. Header: collapse arrow alone, right-aligned, slim row; no title (Kevin 21 Nov) */
+#library #invSidebar:not(.is-collapsed) .inv-sidebar-head{min-height:28px;margin:0 0 8px;padding:0;border:0;gap:0;justify-content:flex-end}
+#library #invSidebar:not(.is-collapsed) .inv-sidebar-head>span{display:none!important}
 #library #invSidebar .inv-sidebar-head button,#library #invSidebar .inv-sidebar-head button:hover:not(:disabled){background:transparent!important;border:0!important;box-shadow:none!important}
+#library #invSidebar:not(.is-collapsed) .inv-sidebar-head button{min-width:36px;min-height:28px;margin-right:-4px;display:inline-flex;align-items:center;justify-content:center}
 #library #invSidebar .inv-sidebar-head button:hover{color:#eef2f6}
 /* 3. Section heading: sentence case, wraps, number gone, arrow sits plain at the right edge */
 #library #invSidebar .inv-sidebar-section-toggle{min-height:calc(var(--inv-text-scale,1) * 42px);padding:8px 12px 8px 14px;gap:8px;align-items:center;font:700 calc(var(--inv-text-scale,1) * 14px)/1.25 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;letter-spacing:0;text-transform:none}
@@ -23,7 +23,17 @@
 #library #invSidebar .inv-sidebar-subgroup,#library #invSidebar .inv-status-note{display:none!important}
 #library #invSidebar .inv-sidebar-section-inner{padding:8px 6px 8px}
 #library #invSidebar .inv-sidebar-section-inner .inv-sidebar-nav{gap:2px}
-#library #invSidebar .inv-tools-note{margin:8px 8px 2px;font-size:calc(var(--inv-text-scale,1) * 12px);line-height:1.4;color:var(--pm-dim)}
+/* Kevin 21 Nov: remove the Tools note entirely (preview hides it; Codex deletes markup + JS line ~7410) */
+#library #invSidebar .inv-tools-note{display:none!important}
+/* Kevin 21 Nov: hide the disabled Plugin Compatibility row until the feature exists (Codex removes the markup) */
+#library #invSidebar .inv-side-button[disabled][aria-label^="Plugin Compatibility"]{display:none!important}
+/* SELECTED ROW: owns its background. No JS pill. Always the size of the row, so it follows wrapping and text size. */
+#library #invSidebar .inv-sidebar-pill{display:none!important}
+#library #invSidebar .inv-side-button.active,
+#library #invSidebar .inv-sidebar-section-inner .inv-side-button.active,
+#library #invSidebar .inv-side-button.active:hover{background:var(--pv-teal)!important;border:0!important;border-radius:9px;box-shadow:none!important;color:var(--pv-black)!important;font-weight:700}
+#library #invSidebar .inv-side-button.active :is(.inv-side-icon,.inv-side-label,.inv-side-count){color:var(--pv-black)!important}
+#library #invSidebar .inv-side-button.active .inv-side-icon svg{stroke:currentColor}
 /* 5. Rows: icon + label (wraps) + count; no fixed heights, no ellipsis */
 #library #invSidebar:not(.is-collapsed) .inv-side-button{min-height:calc(var(--inv-text-scale,1) * 38px);height:auto;padding:7px 10px;gap:10px;align-items:center;white-space:normal;font-size:calc(var(--inv-text-scale,1) * 13.5px);line-height:1.25}
 #library #invSidebar:not(.is-collapsed) .inv-side-label{overflow:visible;text-overflow:clip;white-space:normal;overflow-wrap:break-word;word-break:normal;hyphens:auto;min-width:0;flex:1 1 0}
@@ -33,4 +43,36 @@
 #library #invSidebar:not(.is-collapsed) .inv-folder-summary{margin:12px 0 0;padding:12px 14px;background:var(--pv-neutral-bg);border:1px solid var(--pv-neutral-bd);border-radius:12px;font-size:calc(var(--inv-text-scale,1) * 12.5px);line-height:1.45;overflow-wrap:anywhere}
 #library #invSidebar:not(.is-collapsed) .inv-folder-summary strong{font-size:0;letter-spacing:0;margin-bottom:4px}
 #library #invSidebar:not(.is-collapsed) .inv-folder-summary strong::before{content:"Scan folders";font:600 calc(var(--inv-text-scale,1) * 13.5px)/1.3 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;color:#dce2e8}
+/* Label: "Stock Plugins (Logic Pro 13)" -> "Logic Pro stock" (preview via CSS; Codex changes the markup text ~line 5199) */
+#library #invSidebar [data-vocal-view="stock"] .inv-side-label{font-size:0;line-height:0}
+#library #invSidebar [data-vocal-view="stock"] .inv-side-label::before{content:"Logic Pro stock";font-size:calc(var(--inv-text-scale,1) * 13.5px);line-height:1.25}
+/* Wrap quality sweep (21 Nov): balanced lines, no hyphenation of words like Multi-FX */
+#library #invSidebar:not(.is-collapsed) .inv-side-label,#library #invSidebar .inv-sidebar-heading-label{text-wrap:balance;hyphens:manual}
+#library #invSidebar:not(.is-collapsed) .inv-folder-summary span{text-wrap:pretty}
+/* Kevin 21 Nov: remove "Not licensed (UAD)" row (preview hides it; Codex removes the button markup only) */
+#library #invSidebar .inv-side-button[data-inv-scope="not-licensed-uad"]{display:none!important}
+/* Kevin 21 Nov: Scan folders leaves the sidebar (Codex moves it to Settings, see SPEC) */
+#library #invSidebar .inv-folder-summary{display:none!important}
+/* SETTINGS PREVIEW (mock only): a "Scan folders" sub-block inside the Plugin companion card, built from pseudo-elements on the empty status div. Real build uses real elements. */
+#settings #settingsPluginCompanion .settings-companion-controls::after{content:"Scan folders";flex:0 0 100%;margin-top:16px;color:#e8ebed;font:700 calc(var(--inv-text-scale,1) * 15px)/1.3 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;letter-spacing:-.01em}
+#settings #settingsPluginCompanion::after{content:"No folders connected";display:block;margin-top:6px;color:#9aa0a6;font-size:calc(var(--inv-text-scale,1) * 13px);line-height:1.55}
+/* Header button: panel-with-left-bar icon, same line style as the row icons (Kevin 21 Nov). Open = left pane tinted; closed = outline only. Codex: inline SVG in the button, currentColor, replace ::before chevron CSS ~4253-4254. */
+#library #invSidebar .inv-sidebar-head button::before{content:"";display:block;width:20px;height:20px;margin:0;border:0;transform:none;background:currentColor;-webkit-mask:var(--inv-panel-icon-open) center/20px 20px no-repeat;mask:var(--inv-panel-icon-open) center/20px 20px no-repeat}
+#library #invSidebar .inv-sidebar-head button[aria-expanded="false"]::before{transform:none;margin:0;-webkit-mask-image:var(--inv-panel-icon-closed);mask-image:var(--inv-panel-icon-closed)}
+#library #invSidebar .inv-sidebar-head button[aria-expanded="true"]::before{transform:none;margin:0}
+#library #invSidebar .inv-sidebar-head button{color:#aab2bd}
+#library #invSidebar .inv-sidebar-head button:hover,#library #invSidebar .inv-sidebar-head button:focus-visible{color:#eef2f6}
+#library #invSidebar .inv-sidebar-head button:focus-visible{outline:2px solid #36a8ed;outline-offset:1px;border-radius:6px}
+#library #invSidebar{--inv-panel-icon-open:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.6%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M6 5h3v14H6a2.5 2.5 0 0 1-2.5-2.5v-9A2.5 2.5 0 0 1 6 5Z%22 fill=%22%23000%22 fill-opacity=%22.45%22 stroke=%22none%22/%3E%3Crect x=%223.5%22 y=%224.5%22 width=%2217%22 height=%2215%22 rx=%222.5%22/%3E%3Cpath d=%22M9 5v14%22/%3E%3C/svg%3E");--inv-panel-icon-closed:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.6%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Crect x=%223.5%22 y=%224.5%22 width=%2217%22 height=%2215%22 rx=%222.5%22/%3E%3Cpath d=%22M9 5v14%22/%3E%3C/svg%3E")}
+/* Section fold icons (Kevin 21 Nov): minus = open, plus = closed. Plain glyph in black on the coloured bar, line style as row icons. Codex: inline SVG in .inv-sidebar-chevron, delete the ::after chevron CSS. */
+#library #invSidebar .inv-sidebar-chevron{width:18px!important;height:18px!important;flex:none;background:none!important;box-shadow:none!important}
+#library #invSidebar .inv-sidebar-chevron::after,#library #invSidebar [aria-expanded] .inv-sidebar-chevron::after,#library #invSidebar [aria-expanded="true"] .inv-sidebar-chevron::after,#library #invSidebar [aria-expanded="false"] .inv-sidebar-chevron::after{content:""!important;position:absolute;inset:0;left:0;top:0;width:18px;height:18px;border:0!important;transform:none!important;background:var(--pv-black);-webkit-mask:var(--inv-fold-open) center/18px 18px no-repeat;mask:var(--inv-fold-open) center/18px 18px no-repeat}
+#library #invSidebar [aria-expanded="false"] .inv-sidebar-chevron::after{-webkit-mask-image:var(--inv-fold-closed);mask-image:var(--inv-fold-closed)}
+#library #invSidebar{--inv-fold-open:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M5 12h14%22/%3E%3C/svg%3E");--inv-fold-closed:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M5 12h14%22/%3E%3Cpath d=%22M12 5v14%22/%3E%3C/svg%3E")}
+/* Video chain picks icons (Kevin 21 Nov): Owned = circle + check, Logic Pro stock = box, Not installed = dashed circle. Preview via ::before mask; Codex adds inline SVG in a .inv-side-icon span like the other rows (then delete this block). In the 64px rail the label is hidden and the button is centred with gap 0, so the icon shows with no extra CSS. */
+#library #invSidebar [data-vocal-view]::before{content:"";flex:none;width:20px;height:20px;background:currentColor;color:#aab2bd;-webkit-mask:var(--vp-icon) center/18px 18px no-repeat;mask:var(--vp-icon) center/18px 18px no-repeat}
+#library #invSidebar [data-vocal-view].active::before{color:var(--pv-black)}
+#library #invSidebar [data-vocal-view="owned"]{--vp-icon:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.6%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%228%22/%3E%3Cpath d=%22m8.5 12.3 2.4 2.4 4.6-5%22/%3E%3C/svg%3E")}
+#library #invSidebar [data-vocal-view="stock"]{--vp-icon:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.6%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M12 3.5 19.5 7.5v9L12 20.5l-7.5-4v-9Z%22/%3E%3Cpath d=%22M4.8 7.7 12 11.8l7.2-4.1M12 11.8v8.4%22/%3E%3C/svg%3E")}
+#library #invSidebar [data-vocal-view="missing"]{--vp-icon:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.6%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%228%22 stroke-dasharray=%223 3%22/%3E%3C/svg%3E")}
 </style>
