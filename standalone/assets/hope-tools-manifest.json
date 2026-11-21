@@ -1,0 +1,1638 @@
+[
+  {
+    "name": "get_context",
+    "description": "Get the current MixBus state and complete Mix Check session. Includes full-mix spectrum and corridor, all imported Logic stem names/status, every decoded stem's measurements/full-record spectrum/leave-one-out comparison/Fix Queue, current selected-group PCM sum and remainder, plus chart legend colours and line styles. Use this evidence without treating the full-mix corridor as a validated solo-stem or group target.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "set_genre",
+    "description": "Switch the active genre (changes which plugins are starred as top picks).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "genre": {
+          "type": "string",
+          "enum": [
+            "hiphop",
+            "rnb",
+            "pop",
+            "afrobeats",
+            "trap",
+            "lofi"
+          ]
+        }
+      },
+      "required": [
+        "genre"
+      ]
+    }
+  },
+  {
+    "name": "switch_tab",
+    "description": "Navigate the app to a different tab so Kev physically sees what you're working on with him. Call this when he asks to \"look at\", \"open\", \"go to\", \"check\", or \"switch to\" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to Plugins; he wants to capture a frequency note so you go to Reference; he wants to dig through saved research so you go to Insight). The visual switch is the point — it confirms to Kev that you're collaborating with him on the same screen.\n\nTabs:\n- library (Plugins tab) — installed Plugin Companion scan plus separate MixBus recommendation catalogue\n- chain (MixBus) — bus chains, plugin slots, settings notes\n- meter (Repair) — meter readings + troubleshooter symptom pills\n- knowledge (Insight) — research notes, producer techniques, plugin habits\n- snapshots (Snapshots) — favourited pill grid + full Session Snapshots list (chronological saved chats)\n- eq (Reference) — frequency map, loudness targets, true peak, stereo width\n- marketing (Marketing) — release strategy + Pop A&R thinking\n- community (Community) — social presence\n\nBrief Kev verbally as you do it: \"ok, hopping over to Insight\" or \"let me pull up the Plugin Library\" — keep it natural, ONE short phrase. Do NOT say \"I'm calling switch_tab\" or any other meta narration. Don't switch tabs gratuitously — only when it's genuinely the right surface for what he asked.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "tab": {
+          "type": "string",
+          "enum": [
+            "chain",
+            "knowledge",
+            "eq",
+            "library",
+            "marketing",
+            "community",
+            "snapshots"
+          ],
+          "description": "The tab id to switch to."
+        }
+      },
+      "required": [
+        "tab"
+      ]
+    }
+  },
+  {
+    "name": "inventory_navigate",
+    "description": "Navigate the live AIMM inventory sidebar. This opens the Plugins tab if needed, then selects the requested status, Library filter, category, or tool. Returns a snapshot of the whole sidebar plus the selected live view. This changes only the visible view; it does not scan, download, share, or add anything. Use it whenever Kev asks to open or inspect one of the AIMM inventory menu items. Disabled items return their current unavailable reason; connected items can open their existing screen.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "string",
+          "enum": [
+            "all_plugins",
+            "updates_available",
+            "up_to_date",
+            "manual_check",
+            "vendor_app",
+            "unchecked",
+            "stale_results",
+            "check_errors",
+            "install_manager",
+            "batch_management",
+            "remove_old_installers",
+            "duplicates",
+            "unused",
+            "license_vault",
+            "share_plugin_list",
+            "compare_profiles",
+            "aimm_license",
+            "ilok_license_manager",
+            "library_all_plugins",
+            "plugin_compatibility",
+            "favorites",
+            "my_tags",
+            "tag_manager",
+            "hidden",
+            "eq_filter",
+            "dynamics",
+            "pitch_modulation",
+            "reverb",
+            "delay",
+            "distortion_amps",
+            "utility_metering",
+            "imaging",
+            "instruments_midi",
+            "restoration",
+            "channel_strips_multi_fx",
+            "status_section",
+            "tools_section",
+            "library_section"
+          ],
+          "description": "The exact AIMM inventory sidebar item to open."
+        }
+      },
+      "required": [
+        "item"
+      ]
+    }
+  },
+  {
+    "name": "inventory_search",
+    "description": "Read the current local AIMM scan without changing the visible Plugins view. Returns product status and known latest versions; synthetic preview rows are not proof of installed plug-ins. Use scan results to verify an installed plug-in before discussing it or adding it to a MixBus.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Words from the plug-in or publisher name; an empty query lists the current scanned inventory."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "AU",
+            "VST2",
+            "VST3",
+            "CLAP"
+          ],
+          "description": "Optional exact plug-in format filter."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "updates_available",
+            "up_to_date",
+            "manual_check",
+            "vendor_app",
+            "unchecked"
+          ],
+          "description": "Optional product update status filter."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based result offset for paging."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Number of product results to return, maximum 50."
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "name": "inventory_summary",
+    "description": "Read the current local AIMM scan totals, formats, update statuses and leading vendors without changing the visible Plugins view. Does not scan folders.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "inventory_set_favorite",
+    "description": "Star or unstar an exact scanned plug-in in the Plugins tab Favorites. If a name matches several publishers, supply the publisher from inventory_search. Report the returned result accurately; no confirmation is needed.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "plugin": {
+          "type": "string",
+          "description": "Exact scanned plug-in name returned by inventory_search."
+        },
+        "publisher": {
+          "type": "string",
+          "description": "Exact publisher returned by inventory_search; required when the plug-in name is ambiguous."
+        },
+        "favorite": {
+          "type": "boolean",
+          "description": "True to star, false to unstar."
+        }
+      },
+      "required": [
+        "plugin",
+        "favorite"
+      ]
+    }
+  },
+  {
+    "name": "vocal_favorites_read",
+    "description": "Read vocal-chain favourites from the video report: scanned owned plug-ins, Logic Pro 13 stock plug-ins, and not-installed video plug-ins with owned equivalents. For video chains prefer owned, then close versions, then equivalents, then Logic stock; say plainly which video plug-in was swapped.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "section": {
+          "type": "string",
+          "enum": [
+            "owned",
+            "stock",
+            "missing",
+            "all"
+          ],
+          "description": "Section to read; defaults to all."
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "name": "vocal_favorites_apply",
+    "description": "Prepare or apply vocal-chain favourites. First call with confirmed false, read the scanned and Logic stock counts aloud, get Kev’s clear yes, then call with confirmed true. Returns verified starred, already and unresolved counts.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "confirmed": {
+          "type": "boolean",
+          "description": "True only after Kev clearly confirms the proposed count."
+        }
+      },
+      "required": [
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "inventory_status",
+    "description": "Read companion connection, version, scan, vendor-check and last-action state without changing Plugins.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "inventory_duplicates",
+    "description": "Read the companion duplicate groups, loading them if needed; does not move anything.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "inventory_unused",
+    "description": "Read plug-ins in the companion Unused list without restoring anything.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "inventory_reveal",
+    "description": "Reveal exact installed plug-in rows in Finder using the companion.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "plugin": {
+          "type": "string"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "AU",
+            "VST2",
+            "VST3",
+            "CLAP"
+          ]
+        }
+      },
+      "required": [
+        "plugin",
+        "publisher"
+      ]
+    }
+  },
+  {
+    "name": "inventory_move_to_unused",
+    "description": "Move exact installed plug-in rows to Unused. First call with confirmed false to get a summary; read it aloud, get Kev’s yes, then call with confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "plugin": {
+          "type": "string"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "AU",
+            "VST2",
+            "VST3",
+            "CLAP"
+          ]
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "plugin",
+        "publisher",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "inventory_restore",
+    "description": "Restore an exact plug-in from Unused. First get the confirmation summary, read it aloud and get Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "plugin": {
+          "type": "string"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "AU",
+            "VST2",
+            "VST3",
+            "CLAP"
+          ]
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "plugin",
+        "publisher",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "inventory_move_to_trash",
+    "description": "Move exact installed plug-in rows to macOS Trash. Read the summary aloud and get Kev’s yes; requires confirmed true and confirmed_trash true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "plugin": {
+          "type": "string"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "AU",
+            "VST2",
+            "VST3",
+            "CLAP"
+          ]
+        },
+        "confirmed": {
+          "type": "boolean"
+        },
+        "confirmed_trash": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "plugin",
+        "publisher",
+        "confirmed",
+        "confirmed_trash"
+      ]
+    }
+  },
+  {
+    "name": "inventory_rescan",
+    "description": "Run the existing Plugins scan control. This may scan connected folders and does not need confirmation.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "inventory_mark_vendor_app_checked",
+    "description": "Record that an exact Vendor app product was checked. Read summary aloud and get Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "plugin": {
+          "type": "string"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "plugin",
+        "publisher",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "inventory_unmark_vendor_check",
+    "description": "Remove an exact product’s saved vendor-app check. Read summary aloud and get Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "plugin": {
+          "type": "string"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "plugin",
+        "publisher",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "inventory_keep_newest_duplicates",
+    "description": "Keep newest copies in actionable companion duplicate groups and move older copies to Unused. Read summary aloud and get Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "inventory_add_to_bus",
+    "description": "Add an exact plug-in from the current local AIMM scan to a MixBus. Requires its exact installed name and publisher, one of the five buses, and a valid MixBus stage id. Read the confirmation summary aloud and get Kev’s yes before confirmed true. The scan is checked first; no unscanned or invented product can be added through this tool.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "plugin": {
+          "type": "string",
+          "description": "Exact plug-in name returned by inventory_search."
+        },
+        "publisher": {
+          "type": "string",
+          "description": "Exact publisher returned by inventory_search."
+        },
+        "bus": {
+          "type": "string",
+          "enum": [
+            "master",
+            "vocal",
+            "808",
+            "drums",
+            "fx"
+          ]
+        },
+        "stage": {
+          "type": "string",
+          "description": "MixBus stage id from get_library (for example eq-clean, bus-comp, reverb). Use a confident functional match; if uncertain, ask Kev before adding."
+        },
+        "position": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Optional 1-based position on the bus; omit to append."
+        },
+        "confirmed": {
+          "type": "boolean",
+          "description": "True only after reading the returned summary aloud and getting Kev’s yes."
+        }
+      },
+      "required": [
+        "plugin",
+        "publisher",
+        "bus",
+        "stage",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "snapshots_list",
+    "description": "List saved Session Snapshots and their IDs without changing them.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "snapshots_read",
+    "description": "Read one saved Session Snapshot by ID.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    }
+  },
+  {
+    "name": "snapshots_apply",
+    "description": "Restore a saved workbench snapshot, creating the same backup pill as the Apply button. Read the summary aloud and wait for Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "snapshots_add_note",
+    "description": "Append a note to a saved snapshot. Read the summary aloud and wait for Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "note",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "plugin_tags_read",
+    "description": "Read saved Plugins tags and their scanned product memberships.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "plugin_tag_set",
+    "description": "Replace the tags on one exact scanned product. Supply id from plugin_tags_read or exact name and publisher. Read the summary aloud and wait for Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "tags",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "hidden_list",
+    "description": "List plug-ins hidden from the main Plugins library.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "plugin_hide",
+    "description": "Hide or show one scanned plug-in by product id. Read the summary aloud and wait for Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "hidden": {
+          "type": "boolean"
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "hidden",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "reference_status",
+    "description": "Read Mix Check reference capture and selected target status. Loading an audio file remains manual through the browser file picker.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "saved_targets_list",
+    "description": "List saved Mix Check reference targets.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "saved_target_apply",
+    "description": "Select one saved Mix Check reference target. Read the summary aloud and wait for Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "mixbus_load_preset",
+    "description": "Replace the relevant MixBus chain with a saved or built-in preset matched by exact name. Read the summary aloud and wait for Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "mixbus_auto_fill",
+    "description": "Run the existing MixBus Auto-fill settings action. Read the summary aloud and wait for Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "settings_status",
+    "description": "Read provider configuration booleans, spend and usage totals, selected models, and companion status. Never returns keys, tokens, agent IDs or secret values. Settings cannot be opened or changed through this tool.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "set_stem_selection",
+    "description": "Control Mix Check stem selection and transport. Use exact loaded track labels or filenames. Actions: set/add/remove/clear the audition group; play/pause/stop; seek to an absolute position; skip by a relative offset; set playback volume; or read status. For play, tracks is optional: if supplied it selects that exact group before playback; if omitted, play the current audition or full mix. All track names are validated before changing selection. This never imports or removes audio files. Return the actual selected tracks, playhead, duration, playback state and volume; do not make another call just to confirm.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "set",
+            "add",
+            "remove",
+            "clear",
+            "play",
+            "pause",
+            "stop",
+            "seek",
+            "skip",
+            "volume",
+            "status"
+          ]
+        },
+        "tracks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Exact loaded labels or filenames. Required for set/add/remove; optional for play to select a group before starting; empty for clear."
+        },
+        "position_seconds": {
+          "type": "number",
+          "description": "Absolute playhead position for seek."
+        },
+        "offset_seconds": {
+          "type": "number",
+          "description": "Relative seek offset for skip; negative rewinds, positive fast-forwards."
+        },
+        "volume_percent": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Monitor playback volume from 0 to 100."
+        }
+      },
+      "required": [
+        "action"
+      ]
+    }
+  },
+  {
+    "name": "set_platform",
+    "description": "Change the loudness target / platform (master bus reference).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "platform": {
+          "type": "string",
+          "enum": [
+            "trap",
+            "spotify",
+            "apple",
+            "soundcloud"
+          ]
+        }
+      },
+      "required": [
+        "platform"
+      ]
+    }
+  },
+  {
+    "name": "add_plugin_to_bus",
+    "description": "Add a plugin to a bus. First verify ownership with list_plugins or get_library; the plugin list is not preloaded in the voice context. If it is a new plugin Kev named, call add_custom_plugin first. Position is 1-indexed; omit to append at end.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bus": {
+          "type": "string",
+          "enum": [
+            "master",
+            "vocal",
+            "808",
+            "drums",
+            "fx"
+          ]
+        },
+        "plugin": {
+          "type": "string",
+          "description": "Plugin name; verify it is in Kev’s library with list_plugins or get_library before adding."
+        },
+        "position": {
+          "type": "integer",
+          "description": "1-indexed insertion point; omit to append"
+        }
+      },
+      "required": [
+        "bus",
+        "plugin"
+      ]
+    }
+  },
+  {
+    "name": "remove_plugin_from_bus",
+    "description": "Remove a plugin from a bus by its 1-indexed position.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bus": {
+          "type": "string",
+          "enum": [
+            "master",
+            "vocal",
+            "808",
+            "drums",
+            "fx"
+          ]
+        },
+        "position": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "bus",
+        "position"
+      ]
+    }
+  },
+  {
+    "name": "move_plugin",
+    "description": "Reorder a plugin within a bus. Positions are 1-indexed.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bus": {
+          "type": "string",
+          "enum": [
+            "master",
+            "vocal",
+            "808",
+            "drums",
+            "fx"
+          ]
+        },
+        "from": {
+          "type": "integer"
+        },
+        "to": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "bus",
+        "from",
+        "to"
+      ]
+    }
+  },
+  {
+    "name": "clear_bus",
+    "description": "Remove all plugins from a bus. Read the summary aloud and wait for Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bus": {
+          "type": "string",
+          "enum": [
+            "master",
+            "vocal",
+            "808",
+            "drums",
+            "fx"
+          ]
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "bus",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "toggle_symptom",
+    "description": "Toggle a flagged mix symptom in the Troubleshooter. Use the symptom id from list_symptoms.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "symptom": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "symptom"
+      ]
+    }
+  },
+  {
+    "name": "list_symptoms",
+    "description": "List available symptom ids and their labels.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "toggle_favorite",
+    "description": "Toggle a MixBus catalogue heart (fuzzy name match). For scanned or installed plug-ins, use inventory_set_favorite instead; set installed true only for a legacy installed-plug-in request.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "plugin": {
+          "type": "string"
+        },
+        "installed": {
+          "type": "boolean",
+          "description": "True when this legacy request refers to an installed plug-in in the Plugins scan."
+        }
+      },
+      "required": [
+        "plugin"
+      ]
+    }
+  },
+  {
+    "name": "record_meter",
+    "description": "Record a meter reading. meter is one of: iLufs, tp, lra, corr, crest.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "meter": {
+          "type": "string",
+          "enum": [
+            "iLufs",
+            "tp",
+            "lra",
+            "corr",
+            "crest"
+          ]
+        },
+        "value": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "meter",
+        "value"
+      ]
+    }
+  },
+  {
+    "name": "add_custom_plugin",
+    "description": "Add a plugin to the library that isn't already built in. stage must be one of the known stage ids.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "publisher": {
+          "type": "string",
+          "description": "slate, ssl, ua, softube, sonnox, sonible, sndtoys, izotope, eiosis, weiss, oek, waves, ni, pa, ant, cele, liq, or other"
+        },
+        "publisher_label": {
+          "type": "string",
+          "description": "If publisher is \"other\", supply a label like \"FabFilter\""
+        },
+        "stage": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "publisher",
+        "stage"
+      ]
+    }
+  },
+  {
+    "name": "remove_custom_plugin",
+    "description": "Remove a CUSTOM plugin from Kev's library. Built-in plugins cannot be removed — only ones added via add_custom_plugin. Match by name (fuzzy match supported). Use this from the Plugin Library tab when Kev says things like \"drop X\" or \"I never use Y, get rid of it\".",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Plugin name. Fuzzy match — but only custom plugins are eligible."
+        }
+      },
+      "required": [
+        "name"
+      ]
+    }
+  },
+  {
+    "name": "list_plugins",
+    "description": "Search the plugin library. Pass stage_id or search text.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "stage": {
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "name": "get_library",
+    "description": "Return Kev’s full plugin library grouped by stage. Plugin ownership is not preloaded in the voice context; call this before recommending or adding a plugin. Use list_plugins for a targeted lookup.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "set_plugin_settings",
+    "description": "Pin concrete setting notes to a specific plugin on a bus so they appear directly under the plugin in the chain view. USE THIS EVERY TIME you give specific parameter values (drive/threshold/Q/freq/attack/release/mix%/etc.) — the notes persist in the UI so Kev doesn't have to scroll the transcript. Replaces existing notes for that plugin. Target by plugin name (fuzzy match) OR by 1-indexed position.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bus": {
+          "type": "string",
+          "enum": [
+            "master",
+            "vocal",
+            "808",
+            "drums",
+            "fx"
+          ]
+        },
+        "plugin": {
+          "type": "string",
+          "description": "Plugin name — fuzzy match. Use this OR position."
+        },
+        "position": {
+          "type": "integer",
+          "description": "1-indexed position on the bus. Use this OR plugin."
+        },
+        "settings": {
+          "type": "string",
+          "description": "Terse, actionable notes. Prefer one parameter per line like \"Drive: 3–4\" or \"HPF: 80 Hz, 12 dB/oct\". Include mix% if parallel. Max ~6 lines."
+        }
+      },
+      "required": [
+        "bus",
+        "settings"
+      ]
+    }
+  },
+  {
+    "name": "clear_plugin_settings",
+    "description": "Remove settings notes from a plugin on a bus.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bus": {
+          "type": "string",
+          "enum": [
+            "master",
+            "vocal",
+            "808",
+            "drums",
+            "fx"
+          ]
+        },
+        "plugin": {
+          "type": "string"
+        },
+        "position": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "bus"
+      ]
+    }
+  },
+  {
+    "name": "research",
+    "description": "Look up specific knowledge using Luna with live web search. USE THIS when you might bluff: specific producer/engineer techniques (Jaycen Joshua, Mike Dean, Murda Beatz, Wheezy, Cubeatz, Metro Boomin, etc.), exact plugin parameters/control names, current 2024–2026 plugin releases or trends, signature chains documented online, gear interviews. Returns a grounded answer with citations. Brief Kev with \"hold on, let me check…\" before calling. Do NOT use for stuff you obviously know (basic mixing concepts, his workbench state, common plugin features).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "question": {
+          "type": "string",
+          "description": "Focused, specific question. \"What is Jaycen Joshua's vocal bus chain?\" beats \"How do I mix vocals?\". Include specific names/plugins where relevant."
+        },
+        "context": {
+          "type": "string",
+          "description": "Optional: 1-2 sentences of conversation context that help narrow the answer (genre, what Kev is trying to achieve, plugins he has)."
+        }
+      },
+      "required": [
+        "question"
+      ]
+    }
+  },
+  {
+    "name": "inspect_app",
+    "description": "Search the live AI Mix Masters source code (index.html) for a term — function name, button id, CSS class, label text, anything. Returns matching lines with up to 5 lines of leading + trailing context each. USE THIS when Kev asks \"what does X button actually do?\" / \"how does Y work under the hood?\" / \"find me where Z is defined\" — drill into the actual handler code instead of guessing or relying on the digest. Capped at 30 matches and ~3KB output. Use inspect_app on demand for app questions; use read_doc for stored process or roadmap documentation. Briefly tell Kev you're checking (\"one sec, looking at the code…\") before calling — it takes about a second.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Case-insensitive search term. A function name, button id, CSS class, label, plugin name, comment marker. Avoid ultra-generic terms (\"the\", \"function\", \"div\") that flood the result."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "read_doc",
+    "description": "Read one of Kev's project docs — CLAUDE.md, ROADMAP.md, README.md, or DASHBOARD.html. Optionally grep within it. USE THIS when Kev asks \"what's on the roadmap?\", \"what did we ship recently?\", \"what does CLAUDE.md say about X?\", \"what's the handover say?\", \"what's the state of personas?\" Answer from the actual doc, not training memory. Whitelist: only the four named docs. Output cap ~5KB. Pair with inspect_app (which reads the source) — this reads the human-curated docs that explain the why.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": [
+            "CLAUDE.md",
+            "ROADMAP.md",
+            "README.md",
+            "DASHBOARD.html"
+          ],
+          "description": "Which doc to read. CLAUDE.md = technical handover + session log. ROADMAP.md = ideas, bugs, shipped log. README.md = user-facing project intro. DASHBOARD.html = visual snapshot."
+        },
+        "query": {
+          "type": "string",
+          "description": "Optional case-insensitive search term. If provided, returns matching lines with 5 lines of leading + trailing context (up to 30 matches, ~5KB cap). If omitted, returns the whole doc (capped at ~5KB from the top)."
+        }
+      },
+      "required": [
+        "name"
+      ]
+    }
+  },
+  {
+    "name": "search_yt_knowledge",
+    "description": "Search the YouTube Knowledge Base when Kev asks about a specific source, named technique or producer/engineer, or when live workbench evidence and established knowledge do not answer the question. Do not search for routine mix questions already answered by the measurements. Returns relevant transcript chunks with video, title and channel. For more detail from a promising result, call read_yt_knowledge(video_id, query). Cite the source when using it.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The topic or question to search for, e.g. \"sidechain kick and bass\", \"Logic Pro file organization\", \"de-essing harsh vocals\"."
+        },
+        "n": {
+          "type": "number",
+          "description": "Optional number of chunks to return (default 6, max 10)."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "read_yt_knowledge",
+    "description": "Fetch the full transcript of an ingested YouTube video from the YOUTUBE KNOWLEDGE BASE. Call this AFTER search_yt_knowledge has identified a relevant video_id, to pull more of that specific video's transcript — mandatory before telling Kev you don't have a specific detail when a relevant video_id (especially one starting with \"mwtm-\") was already returned. Optionally pass a query to get back only the most relevant chunks (recommended — keeps output lean). Returns up to ~4KB of transcript content. Brief Kev before calling: \"hold on, checking my notes from that video…\". Cite the video title and channel when you draw from the result.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "video_id": {
+          "type": "string",
+          "description": "The video_id — from a prior search_yt_knowledge result, or the YOUTUBE TOPIC INDEX fast-path list, e.g. \"6WPtHxWkY2k\"."
+        },
+        "query": {
+          "type": "string",
+          "description": "Optional keyword or phrase to find the most relevant chunks. E.g. \"quantise\", \"drum pattern\", \"recording audio\". If omitted, returns the first few chunks."
+        }
+      },
+      "required": [
+        "video_id"
+      ]
+    }
+  },
+  {
+    "name": "emit_notebooklm_prompt",
+    "description": "Drop a NotebookLM prompt for a producer or technique into the Conversation transcript as a separate copyable bubble — without you reading the whole template aloud and burning TTS credits. USE THIS whenever you offer a NotebookLM prompt and Kev says yes. After calling, speak only a brief intro and topic line (e.g. \"alright, here you go — copy from the transcript. Topic is Wheezy synthesising his 808 signal flow\"), then a short closing reminder (\"paste the NotebookLM summary into Insight as a new KB note when you are back, and I will have it next call\"). DO NOT read the prompt body itself out loud — the tool puts it in the transcript so Kev can copy it directly via the Copy button.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string",
+          "description": "Short, specific topic from Kev's question — producer or technique name. Examples: \"Wheezy 808 signal flow\", \"Mike Dean low-end mixing\", \"Pierre Bourne signature sound\", \"Murda Beatz vocal chain\". Use Kev's phrasing where possible."
+        }
+      },
+      "required": [
+        "topic"
+      ]
+    }
+  },
+  {
+    "name": "capture_to_roadmap",
+    "description": "Capture a concrete idea, bug, polish item, or feature request to Kev's project dashboard inbox so it survives the call. CRITICAL: NEVER say \"I will add it to the roadmap\" or \"I have added that to the roadmap\" verbally without calling this tool — saying it without calling the tool is confabulation. The tool is the ONLY way to actually persist a capture. After calling, briefly confirm to Kev: \"Captured — it will show up in your dashboard's Captured from voice section.\" The captured entry lands in localStorage and renders on DASHBOARD.html with Promote / Edit / Dismiss buttons.\n\nDEDUP — automatic. The tool fuzzy-checks the proposed title against existing captures AND active ROADMAP.md entries before persisting. If it finds a near-duplicate the response is `{ok:false, duplicate_found:true, match:{...}, message:\"...\"}` — when you see this, SPEAK the message to Kev verbatim (\"looks like that's already on the roadmap as P10...\"), then ask if he wants to log it anyway. If he says yes, call again with `force:true` to override. If he says skip, just acknowledge and move on. NEVER silently retry without his ok.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "bug",
+            "backlog",
+            "polish",
+            "followup",
+            "idea"
+          ],
+          "description": "What kind of capture: bug = something broken, backlog = a bigger feature, polish = small improvement, followup = something to revisit, idea = early-stage exploration."
+        },
+        "title": {
+          "type": "string",
+          "description": "Punchy 5-10 word headline. Plain language, no jargon. E.g. \"OpenAI balance helper — open billing page on click\" or \"Hope vague about Settings tab\"."
+        },
+        "body": {
+          "type": "string",
+          "description": "2-4 sentence description: what the problem is, what the fix would look like, why it matters. Capture concrete details Kev mentioned in conversation — names, error messages, exact behaviours. The next Luna session reads this when Kev promotes the capture."
+        },
+        "effort": {
+          "type": "string",
+          "description": "Optional rough effort estimate. E.g. \"~15 min\", \"~1 hour\", \"~half day\", or \"TBD\" if uncertain."
+        },
+        "force": {
+          "type": "boolean",
+          "description": "Set to true ONLY after Kev has explicitly confirmed he wants to log a near-duplicate anyway (e.g. \"yeah log it anyway\", \"yes, capture it\"). Leave unset or false on first call so the dedup check runs."
+        }
+      },
+      "required": [
+        "type",
+        "title",
+        "body"
+      ]
+    }
+  },
+  {
+    "name": "open_dashboard",
+    "description": "Show the live AIMM project dashboard in a full-screen overlay inside the app (Kev closes it with the Close button or Esc). Use when Kev wants to review the roadmap, check what's in flight, or scan the backlog together.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "manage_roadmap_inbox",
+    "description": "Manage the dashboard's \"Captured from voice\" inbox — the same list Kev sees on DASHBOARD.html. Actions: list (always call this first to get ids), remove (delete an entry — confirm with Kev before removing), promote (mark an entry ✓ Promoted, i.e. done/actioned), edit (change title/body). Adding new entries is capture_to_roadmap, not this tool. Changes appear on the dashboard immediately.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "list",
+            "remove",
+            "promote",
+            "edit"
+          ],
+          "description": "What to do with the inbox."
+        },
+        "id": {
+          "type": "string",
+          "description": "Entry id from the list action (cap_…). Preferred way to target an entry for remove/promote/edit."
+        },
+        "title_match": {
+          "type": "string",
+          "description": "Fallback when the id is unknown: case-insensitive substring of the entry title."
+        },
+        "new_title": {
+          "type": "string",
+          "description": "For edit: the replacement title."
+        },
+        "new_body": {
+          "type": "string",
+          "description": "For edit: the replacement body text."
+        }
+      },
+      "required": [
+        "action"
+      ]
+    }
+  },
+  {
+    "name": "propose_mix_move",
+    "description": "Show Kev a structured MIX MOVE CARD in the transcript: one concrete processing recommendation with an Apply button that adds the plugin to the bus and pins the settings. Call this EVERY time you recommend a specific move (an EQ cut, a compressor setting, a plugin to add) instead of only describing it in speech. Verify the plugin is in Kev’s library with list_plugins or get_library before proposing the move. After calling, speak ONE short line (\"card's up — want me to apply it?\") and never read the card contents aloud. Several distinct moves = several cards.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bus": {
+          "type": "string",
+          "enum": [
+            "master",
+            "vocal",
+            "808",
+            "drums",
+            "fx"
+          ],
+          "description": "Which bus the move applies to."
+        },
+        "plugin": {
+          "type": "string",
+          "description": "Plugin name; verify ownership with list_plugins or get_library before proposing a move."
+        },
+        "move": {
+          "type": "string",
+          "description": "Terse parameter summary of the move, e.g. \"+2.5 dB bell @ 3.2 kHz, Q 1.4\" or \"4:1, attack 30ms, release auto, 2-3dB GR\"."
+        },
+        "why": {
+          "type": "string",
+          "description": "One sentence: why this move fixes what Kev described."
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "description": "How confident you are this is the right move for the symptom described."
+        },
+        "settings": {
+          "type": "string",
+          "description": "Optional multi-line settings note (one parameter per line) that Apply pins under the plugin in the chain view."
+        }
+      },
+      "required": [
+        "bus",
+        "plugin",
+        "move",
+        "confidence"
+      ]
+    }
+  },
+  {
+    "name": "list_eq_tiles",
+    "description": "List the cards on the Reference tab, optionally filtered by section. Returns built-in tile slugs and any user-added custom tiles. Use this before adding to know what's already there.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "section": {
+          "type": "string",
+          "enum": [
+            "freqMap",
+            "loudness",
+            "truePeak",
+            "stereoWidth"
+          ],
+          "description": "Optional section filter — freqMap (frequency map), loudness (loudness targets), truePeak (true peak ceilings), stereoWidth (stereo width by band)."
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "name": "add_eq_tile",
+    "description": "Add a custom reference tile to the Reference tab. Use this when Kev wants to capture a frequency/loudness/peak/stereo-width insight as a permanent reference card.\n\nCRITICAL: lead with your audio mastering knowledge. When Kev says \"add a tile about <topic>\", suggest the right SECTION (freqMap, loudness, truePeak, stereoWidth) and propose a concrete title + body grounded in real ranges (e.g. \"Spotify -14 LUFS integrated, -1 dBTP\" / \"Sub-bass = 20–60 Hz, mono below 100 Hz\"). Don't ask Kev to spec the body — offer one, then refine.\n\nbody: short and scannable. One key fact per line; up to 6 lines. Plain text — bullets become a list automatically.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "section": {
+          "type": "string",
+          "enum": [
+            "freqMap",
+            "loudness",
+            "truePeak",
+            "stereoWidth"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "description": "Short title shown as the card heading. Max 80 chars."
+        },
+        "body": {
+          "type": "string",
+          "description": "1–6 lines of notes. Newline-separated lines render as bullets. Max ~600 chars."
+        }
+      },
+      "required": [
+        "section",
+        "title",
+        "body"
+      ]
+    }
+  },
+  {
+    "name": "remove_eq_tile",
+    "description": "Remove a custom Reference tile by title or id (fuzzy match on title supported). Built-in tiles cannot be deleted via this tool.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "section": {
+          "type": "string",
+          "enum": [
+            "freqMap",
+            "loudness",
+            "truePeak",
+            "stereoWidth"
+          ],
+          "description": "Optional — narrows the search."
+        },
+        "title": {
+          "type": "string",
+          "description": "Tile title to remove (fuzzy match). Either title or id required."
+        },
+        "id": {
+          "type": "string",
+          "description": "Tile id (e.g. custom-l3a1bc). Either title or id required."
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "name": "list_knowledge_notes",
+    "description": "List Knowledge Base notes — id, title, source, tags, ts, active flag. Use to find an existing note before adding/exporting.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "active_only": {
+          "type": "boolean",
+          "description": "If true, only notes currently injected into session context are returned."
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "name": "add_knowledge_note",
+    "description": "Add a research/technique note to Kev's Knowledge Base. Use when Kev dictates a takeaway from a producer interview, a plugin technique, a meter reading habit, or anything mix-related he wants to keep.\n\nKeep titles concise (under 80 chars) and content focused — Kev reviews these later, not real-time. If Kev rambles, condense his words into a clean note rather than transcribing verbatim.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string",
+          "description": "The note body — what he wants to remember. Plain text, can be multi-line."
+        },
+        "source": {
+          "type": "string",
+          "description": "Optional citation — producer name, interview URL, video timestamp, etc."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional tags like [\"vocals\",\"jaycen joshua\",\"saturation\"]."
+        },
+        "activate": {
+          "type": "boolean",
+          "description": "If true, the note becomes part of the voice session context immediately. Default false — Kev usually activates manually."
+        }
+      },
+      "required": [
+        "title",
+        "content"
+      ]
+    }
+  },
+  {
+    "name": "export_knowledge_note",
+    "description": "Export a Knowledge Base note to disk (file download) or to the system clipboard. Use after Kev says \"download that note\" / \"copy that one to clipboard\". Identify the target by id or by fuzzy title match.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Note title — fuzzy match. Either title or id required."
+        },
+        "id": {
+          "type": "string",
+          "description": "Note id. Either title or id required."
+        },
+        "target": {
+          "type": "string",
+          "enum": [
+            "download",
+            "clipboard"
+          ],
+          "description": "download = save a .md file. clipboard = copy text to system clipboard."
+        }
+      },
+      "required": [
+        "target"
+      ]
+    }
+  },
+  {
+    "name": "save_preset",
+    "description": "Save the current chain as a named user preset that Kev can reload later from the Load Preset modal. Use this whenever Kev says \"save this\", \"save this as a preset\", \"save this chain\", \"save this as my master chain\", etc. If he doesn't specify which bus, default to \"all\" (saves every non-empty bus as a single multi-bus preset — best for when you've been collaborating on a full session).\n\nCRITICAL: if Kev has NOT said what to call the preset, DO NOT call this tool yet. Ask him out loud first — something natural like \"What would you like to call this preset?\" or \"Sure, what should I name it?\" — then wait for his answer and use what he says as the name. Never invent a name yourself, never use a date as a fallback. Only call this tool once you have an actual name from him.\n\nOnce saved, quote the name back so he knows it landed.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The exact name Kev told you to use, e.g. \"Jaycen Joshua master\", \"My trap vocal\", \"Friday session\". Required — never auto-generate; ask Kev first."
+        },
+        "bus": {
+          "type": "string",
+          "enum": [
+            "master",
+            "vocal",
+            "808",
+            "drums",
+            "fx",
+            "all"
+          ],
+          "description": "Which bus to save. Default \"all\" saves every non-empty bus together. Single-bus values save just that one bus."
+        }
+      },
+      "required": [
+        "name"
+      ]
+    }
+  },
+  {
+    "name": "mark_fix_applied",
+    "description": "Mark the CURRENT Mix Check fix as applied and advance the Fix Queue to the next item. Call this ONLY after Kev confirms he has handled the fix you were discussing (you asked something like \"want me to mark that done and bring in #02?\" and he said yes). Do NOT call it pre-emptively, and do NOT use it to skip a fix Kev has not acted on — skipping is what he does himself by dismissing the card in the panel. After calling, confirm in ONE short line and name the next fix. Operates on the active fix by default; pass fix_id only to target a specific queued item by its id.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "fix_id": {
+          "type": "string",
+          "description": "Optional fix id such as \"#01\" or \"#02\". Omit to mark the current active fix — that is the normal case."
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "name": "list_symptom_tiles",
+    "description": "List all troubleshooting tiles currently shown on the Repair tab — built-in and custom (Luna-generated). Use this to find a tile id before deleting, or to check what already exists before adding a similar tile.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "add_symptom_tile",
+    "description": "Add a new custom troubleshooting tile to the Repair tab. The tile shows up as a clickable pill — when toggled, it displays a recipe with a diagnosis, a numbered chain of plugins with starting settings, and an alternative suggestion.\n\nUse this whenever Kev asks for a new troubleshooting recipe (\"create a tile for low end mud on phone speakers\", \"add a tile for vocal too dark\"). Build:\n- A 1-2 sentence diagnosis on the technical cause\n- A 3-5 step plugin chain in signal-flow order — every plugin MUST be in Kev's library (check the LIBRARY DIGEST section in your system prompt)\n- Concrete starting settings for each plugin: frequencies (Hz), gain (dB), ratios, attack/release (ms), mix (%) — punchy, not vague\n- A short alternative suggestion (one line)\n\nAdds happen silently — tile appears immediately on the Repair tab, no confirmation.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Short pill label, < 60 chars"
+        },
+        "diagnosis": {
+          "type": "string",
+          "description": "1-2 sentence technical cause"
+        },
+        "chain": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "description": "3-5 plugin steps in order",
+          "items": {
+            "type": "object",
+            "properties": {
+              "n": {
+                "type": "string",
+                "description": "Exact plugin name from the library digest"
+              },
+              "p": {
+                "type": "string",
+                "description": "Publisher key — one of: waves, pa, izotope, ni, sndtoys, ua, slate, softube, sonnox, sonible, ssl, oek, ant, cele, eiosis, liq, weiss, other"
+              },
+              "set": {
+                "type": "string",
+                "description": "Concrete starting settings (Hz/dB/ratio/ms/%)"
+              }
+            },
+            "required": [
+              "n",
+              "p",
+              "set"
+            ]
+          }
+        },
+        "alt": {
+          "type": "string",
+          "description": "One-line alternative plugin or technique"
+        }
+      },
+      "required": [
+        "label",
+        "diagnosis",
+        "chain"
+      ]
+    }
+  },
+  {
+    "name": "delete_symptom_tile",
+    "description": "Remove a custom troubleshooting tile by its id. Only Luna-generated (custom) tiles can be deleted — built-in tiles are protected. Kev will be prompted to confirm in a browser dialog; if he declines, the tool returns an error and the tile stays.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Custom tile id (starts with \"custom-\"). Use list_symptom_tiles first if unknown."
+        }
+      },
+      "required": [
+        "id"
+      ]
+    }
+  }
+]

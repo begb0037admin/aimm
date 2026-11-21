@@ -1,3 +1,7 @@
+## 2026-11-20 build 2026-11-20.13 — Hope workbench coverage (BUILT, NOT DEPLOYED)
+
+Added standing Plugins context, completed-scan rescan results, Snapshots list/read/apply/note, Plugins tags/Hidden, Mix Check reference status and saved targets, MixBus preset load/Auto-fill and read-only Settings status. Writes use a spoken confirmation summary and verify persisted state. Added manifest drift guard, agent-name comparison script, and read-only smoke runner. Audio capture, Match Sound, file loading, and Settings changes are outside this build. ElevenLabs registration, push, and deployment are pending. See `docs/HOPE_PLUGIN_TOOLS.md`.
+
 ## 2026-11-20 build 2026-11-20.12 — Vocal-chain favourites (BUILT, NOT DEPLOYED)
 
 Added Logic Pro 13-only vocal-chain favourites from the approved report and scan snapshot. The Plugins Library has Owned, Stock Plugins and Not installed — equivalents views and an Apply to Favorites button. Hope can read the lists and request confirmed application on both local routes; new ElevenLabs tool schemas are documented but not registered. The data resolves 26 owned entries (24 unique scanned products) and every listed equivalent against the scan snapshot; unresolved items are reported at runtime. Applying uses the existing scanned-product star path, saves Logic stock separately, and verifies stored results. No push or deploy.

@@ -5628,7 +5628,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-20.12';
+const AIMM_BUILD = '2026-11-20.13';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -6961,7 +6961,7 @@ function buildAutoFillPrompt(){
 async function autoFillChainSettings(){
   // Bail if every bus is empty.
   const total = BUSES.reduce((n,b) => n + (STATE.chain[b.id]||[]).length, 0);
-  if (!total){ toast('Add some plugins first', true); return; }
+  if (!total){ toast('Add some plugins first', true); return {ok:false,reason:'MixBus is empty.'}; }
 
   const btn = document.getElementById('autoFillBtn');
   const origLabel = btn.textContent;
@@ -7014,7 +7014,7 @@ Include EVERY plugin you were given, in the same order. Use action="keep" libera
       parsed = JSON.parse(cleaned);
     } catch(_){
       toast('Auto-fill response wasn\'t valid JSON — nothing changed.', true);
-      return;
+      return {ok:false,reason:'Auto-fill returned invalid JSON.'};
     }
 
     // Apply per-bus, build a change log.
@@ -7049,9 +7049,11 @@ Include EVERY plugin you were given, in the same order. Use action="keep" libera
     renderChain();
     document.getElementById('revertFillBtn').style.display = '';
     showFillSummary(changes);
+    return {ok:true,changes};
   } catch(err){
     console.error('autoFill failed', err);
     toast('Auto-fill failed: ' + (err.message||err), true);
+    return {ok:false,reason:String(err.message||err)};
   } finally {
     btn.disabled = false;
     btn.textContent = origLabel;
@@ -7482,6 +7484,8 @@ async function pcCompanionCheck(interactive=false){
     pcCompanionActions=capability?.actions===true;
     pcCompanionCapability=capability;
     pcCompanionAdopt(inventory);
+    try{await pcCompanionReadUnused();}catch(_){}
+    hopePushPluginSummary();
     pcCompanionRender('Connected','');
   }catch(error){
     if(request!==pcCompanionRequest)return;
@@ -12713,12 +12717,26 @@ Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull u
   {type:'function',name:'inventory_unmark_vendor_check',description:'Remove an exact product’s saved vendor-app check. Read summary aloud and get Kev’s yes before confirmed true.',parameters:{type:'object',properties:{plugin:{type:'string'},publisher:{type:'string'},confirmed:{type:'boolean'}},required:['plugin','publisher','confirmed']}},
   {type:'function',name:'inventory_keep_newest_duplicates',description:'Keep newest copies in actionable companion duplicate groups and move older copies to Unused. Read summary aloud and get Kev’s yes before confirmed true.',parameters:{type:'object',properties:{confirmed:{type:'boolean'}},required:['confirmed']}},
   {type:'function',name:'inventory_add_to_bus',description:'Add an exact plug-in from the current local AIMM scan to a MixBus. Requires its exact installed name and publisher, one of the five buses, and a valid MixBus stage id. Read the confirmation summary aloud and get Kev’s yes before confirmed true. The scan is checked first; no unscanned or invented product can be added through this tool.',parameters:{type:'object',properties:{plugin:{type:'string',description:'Exact plug-in name returned by inventory_search.'},publisher:{type:'string',description:'Exact publisher returned by inventory_search.'},bus:{type:'string',enum:['master','vocal','808','drums','fx']},stage:{type:'string',description:'MixBus stage id from get_library (for example eq-clean, bus-comp, reverb). Use a confident functional match; if uncertain, ask Kev before adding.'},position:{type:'integer',minimum:1,description:'Optional 1-based position on the bus; omit to append.'},confirmed:{type:'boolean',description:'True only after reading the returned summary aloud and getting Kev’s yes.'}},required:['plugin','publisher','bus','stage','confirmed']}},
+  {type:'function',name:'snapshots_list',description:'List saved Session Snapshots and their IDs without changing them.',parameters:{type:'object',properties:{},required:[]}},
+  {type:'function',name:'snapshots_read',description:'Read one saved Session Snapshot by ID.',parameters:{type:'object',properties:{id:{type:'string'}},required:['id']}},
+  {type:'function',name:'snapshots_apply',description:'Restore a saved workbench snapshot, creating the same backup pill as the Apply button. Read the summary aloud and wait for Kev’s yes before confirmed true.',parameters:{type:'object',properties:{id:{type:'string'},confirmed:{type:'boolean'}},required:['id','confirmed']}},
+  {type:'function',name:'snapshots_add_note',description:'Append a note to a saved snapshot. Read the summary aloud and wait for Kev’s yes before confirmed true.',parameters:{type:'object',properties:{id:{type:'string'},note:{type:'string'},confirmed:{type:'boolean'}},required:['id','note','confirmed']}},
+  {type:'function',name:'plugin_tags_read',description:'Read saved Plugins tags and their scanned product memberships.',parameters:{type:'object',properties:{},required:[]}},
+  {type:'function',name:'plugin_tag_set',description:'Replace the tags on one exact scanned product. Supply id from plugin_tags_read or exact name and publisher. Read the summary aloud and wait for Kev’s yes before confirmed true.',parameters:{type:'object',properties:{id:{type:'string'},name:{type:'string'},publisher:{type:'string'},tags:{type:'array',items:{type:'string'}},confirmed:{type:'boolean'}},required:['tags','confirmed']}},
+  {type:'function',name:'hidden_list',description:'List plug-ins hidden from the main Plugins library.',parameters:{type:'object',properties:{},required:[]}},
+  {type:'function',name:'plugin_hide',description:'Hide or show one scanned plug-in by product id. Read the summary aloud and wait for Kev’s yes before confirmed true.',parameters:{type:'object',properties:{id:{type:'string'},hidden:{type:'boolean'},confirmed:{type:'boolean'}},required:['id','hidden','confirmed']}},
+  {type:'function',name:'reference_status',description:'Read Mix Check reference capture and selected target status. Loading an audio file remains manual through the browser file picker.',parameters:{type:'object',properties:{},required:[]}},
+  {type:'function',name:'saved_targets_list',description:'List saved Mix Check reference targets.',parameters:{type:'object',properties:{},required:[]}},
+  {type:'function',name:'saved_target_apply',description:'Select one saved Mix Check reference target. Read the summary aloud and wait for Kev’s yes before confirmed true.',parameters:{type:'object',properties:{id:{type:'string'},confirmed:{type:'boolean'}},required:['id','confirmed']}},
+  {type:'function',name:'mixbus_load_preset',description:'Replace the relevant MixBus chain with a saved or built-in preset matched by exact name. Read the summary aloud and wait for Kev’s yes before confirmed true.',parameters:{type:'object',properties:{name:{type:'string'},confirmed:{type:'boolean'}},required:['name','confirmed']}},
+  {type:'function',name:'mixbus_auto_fill',description:'Run the existing MixBus Auto-fill settings action. Read the summary aloud and wait for Kev’s yes before confirmed true.',parameters:{type:'object',properties:{confirmed:{type:'boolean'}},required:['confirmed']}},
+  {type:'function',name:'settings_status',description:'Read provider configuration booleans, spend and usage totals, selected models, and companion status. Never returns keys, tokens, agent IDs or secret values. Settings cannot be opened or changed through this tool.',parameters:{type:'object',properties:{},required:[]}},
   {type:'function',name:'set_stem_selection',description:'Control Mix Check stem selection and transport. Use exact loaded track labels or filenames. Actions: set/add/remove/clear the audition group; play/pause/stop; seek to an absolute position; skip by a relative offset; set playback volume; or read status. For play, tracks is optional: if supplied it selects that exact group before playback; if omitted, play the current audition or full mix. All track names are validated before changing selection. This never imports or removes audio files. Return the actual selected tracks, playhead, duration, playback state and volume; do not make another call just to confirm.',parameters:{type:'object',properties:{action:{type:'string',enum:['set','add','remove','clear','play','pause','stop','seek','skip','volume','status']},tracks:{type:'array',items:{type:'string'},description:'Exact loaded labels or filenames. Required for set/add/remove; optional for play to select a group before starting; empty for clear.'},position_seconds:{type:'number',description:'Absolute playhead position for seek.'},offset_seconds:{type:'number',description:'Relative seek offset for skip; negative rewinds, positive fast-forwards.'},volume_percent:{type:'integer',minimum:0,maximum:100,description:'Monitor playback volume from 0 to 100.'}},required:['action']}},
   {type:'function',name:'set_platform',description:'Change the loudness target / platform (master bus reference).',parameters:{type:'object',properties:{platform:{type:'string',enum:['trap','spotify','apple','soundcloud']}},required:['platform']}},
   {type:'function',name:'add_plugin_to_bus',description:'Add a plugin to a bus. First verify ownership with list_plugins or get_library; the plugin list is not preloaded in the voice context. If it is a new plugin Kev named, call add_custom_plugin first. Position is 1-indexed; omit to append at end.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},plugin:{type:'string',description:'Plugin name; verify it is in Kev’s library with list_plugins or get_library before adding.'},position:{type:'integer',description:'1-indexed insertion point; omit to append'}},required:['bus','plugin']}},
   {type:'function',name:'remove_plugin_from_bus',description:'Remove a plugin from a bus by its 1-indexed position.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},position:{type:'integer'}},required:['bus','position']}},
   {type:'function',name:'move_plugin',description:'Reorder a plugin within a bus. Positions are 1-indexed.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},from:{type:'integer'},to:{type:'integer'}},required:['bus','from','to']}},
-  {type:'function',name:'clear_bus',description:'Remove all plugins from a bus.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']}},required:['bus']}},
+  {type:'function',name:'clear_bus',description:'Remove all plugins from a bus. Read the summary aloud and wait for Kev’s yes before confirmed true.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},confirmed:{type:'boolean'}},required:['bus','confirmed']}},
   {type:'function',name:'toggle_symptom',description:'Toggle a flagged mix symptom in the Troubleshooter. Use the symptom id from list_symptoms.',parameters:{type:'object',properties:{symptom:{type:'string'}},required:['symptom']}},
   {type:'function',name:'list_symptoms',description:'List available symptom ids and their labels.',parameters:{type:'object',properties:{},required:[]}},
   {type:'function',name:'toggle_favorite',description:'Toggle a MixBus catalogue heart (fuzzy name match). For scanned or installed plug-ins, use inventory_set_favorite instead; set installed true only for a legacy installed-plug-in request.',parameters:{type:'object',properties:{plugin:{type:'string'},installed:{type:'boolean',description:'True when this legacy request refers to an installed plug-in in the Plugins scan.'}},required:['plugin']}},
@@ -12838,6 +12856,7 @@ function buildContextSummary(){
     custom_plugins_count:STATE.customPlugins.length,
     mixbus_catalogue_size:allPlugins().length,
     mixbus_catalogue_reminder:'This MixBus catalogue is for recommendations, not an installed plug-in count. Use inventory_summary or inventory_search for Kev’s installed scan.',
+    plugins_inventory:hopePluginSummary(),
     // R3 post-ship (Markey): the Mix Check tab's measured analysis + the ranked
     // Fix Queue. This is the surface Kev asks "about fix #02" against — the data
     // is right here, never ask him where he saw a fix.
@@ -13067,13 +13086,14 @@ function buildMixCheckContextBlock(){
 // Cost-bounded analysis context for ElevenLabs voice sessions. The complete
 // spectra remain available through get_context when Kevin asks for exact detail.
 function buildHopeVoiceMixContextBlock(){
+  const pluginLine='=== PLUGINS — LIVE SUMMARY ===\n'+JSON.stringify(hopePluginSummary())+'\n';
   const slimFix = f => ({
     id:f.id,title:f.title,focus_band:f.focusBand||f.focus_band||null,
     impact:f.impact||null,confidence:f.confidence||null,
     why:f.why||null,move:f.move||null
   });
   const stem=buildSelectedStemAnalysisState();
-  if(stem&&stem.status==='unavailable')return '=== MIX CHECK — COMPACT VOICE STATE ===\nThe previously selected stem is no longer loaded. Discard its earlier measurements and queue.';
+  if(stem&&stem.status==='unavailable')return pluginLine+'=== MIX CHECK — COMPACT VOICE STATE ===\nThe previously selected stem is no longer loaded. Discard its earlier measurements and queue.';
   if(stem){
     const sources=(stem.all_sources||[]).map(source=>{
       const fixes=Array.isArray(source.fix_queue)?source.fix_queue:[];
@@ -13086,7 +13106,7 @@ function buildHopeVoiceMixContextBlock(){
         fix_queue:{total:fixes.length,items:fixes.filter(f=>!f.applied&&!f.dismissed).map(slimFix)}
       };
     });
-    return '=== MIX CHECK — COMPACT VOICE STATE ===\n'+JSON.stringify({
+    return pluginLine+'=== MIX CHECK — COMPACT VOICE STATE ===\n'+JSON.stringify({
       target:'selected stem or stem group; the corridor is a full-mix reference, not a solo target',
       source_status:stem.status,track_name:stem.track_name,file_name:stem.file_name,
       analysis_revision:stem.analysis_revision,
@@ -13104,7 +13124,7 @@ function buildHopeVoiceMixContextBlock(){
     })+'\nUse get_context only for exact spectrum points, corridor curve samples, or other detail not represented here. A source or group is not expected to match the full-mix corridor.';
   }
   const s=buildMixCheckState();
-  if(!s)return '';
+  if(!s)return pluginLine;
   const sb=s.spectral_balance||{}, corridor=sb.target_corridor||null;
   const sources=(s.stem_sources||[]).map(source=>{
     const fixes=Array.isArray(source.fix_queue)?source.fix_queue:[];
@@ -13122,7 +13142,7 @@ function buildHopeVoiceMixContextBlock(){
     current:queue.current?slimFix(queue.current):null,
     all:(queue.all||[]).map(slimFix)
   };
-  return '=== MIX CHECK — COMPACT VOICE STATE ===\n'+JSON.stringify({
+  return pluginLine+'=== MIX CHECK — COMPACT VOICE STATE ===\n'+JSON.stringify({
     file_loaded:s.file_loaded,file_name:s.file_name,
     spectral_balance:{
       status:sb.status,basis:sb.basis,chart_legend:sb.chart_legend,
@@ -15930,6 +15950,7 @@ const AICHAT_TOOL_DEFS = TOOL_DEFS.map(t => ({
   input_schema:t.parameters
 }));
 const AICHAT_TOOL_NAMES = new Set(TOOL_DEFS.map(t => t.name));
+const AIMM_AGENT_TOOL_NAMES = TOOL_DEFS.filter(t=>t.name!=='research').map(t=>t.name);
 
 async function executeAichatTool(name, input){
   const decision=hopeKnowledgeDecision({tool:name,route:'typed'});
@@ -16219,6 +16240,7 @@ const HOPE_USAGE_VOICE = {
 };
 const HOPE_CHAIN_BUILD_RULES = `Building a chain from a video: 1) Search the videos. Name the video and its creator, and read out the plugin list exactly as the video shows it. Never call something "from the video" if it is not. 2) For each plugin, read vocal_favorites_read and prefer owned, then close version, then owned equivalent, then Logic Pro 13 stock. Verify scanned ownership. If a video plug-in is swapped, say plainly which favourite replaces it and why. 3) Clear the bus, then add the plugins in the video's order. 4) Go through the chain one plugin at a time. Pin that plugin's settings first, then say them out loud. The highlight moves to that plugin, so Kev can see its settings as you talk. 5) Tell Kev which plugins are swaps and which are exact matches.`;
 const HOPE_INVENTORY_RULES = `Two separate plug-in lists exist. The MixBus library/catalogue in context is what AIMM recommends from; it is not an installed inventory or installed count. Kev's INSTALLED plug-ins are the Plugin Companion scan shown in the Plugins tab. For any question about what he has installed, how many plug-ins he has, updates, duplicates, Unused, vendor apps, a vendor's plug-ins, or the companion, use inventory_summary, inventory_search, inventory_status, inventory_duplicates or inventory_unused as appropriate. Never answer these questions from MixBus catalogue numbers and never guess a number. If no scan is available, say the Plugins tab has no scan loaded and the companion may not be connected. Synthetic preview rows are not installed plug-ins. Use inventory_navigate to open a requested inventory sidebar item and report disabled items' unavailable reason. inventory_search and inventory_summary leave the visible view unchanged. Use inventory_set_favorite for scanned or installed plug-ins, and toggle_favorite only for the MixBus catalogue; say whether the saved change succeeded, was already set, was ambiguous, was not found, or was not saved. Starring needs no confirmation. vocal_favorites_read reads the video favourites; for vocal_favorites_apply, read the proposed counts aloud with confirmed false, wait for Kev’s clear yes, then call confirmed true and report verified starred, already and unresolved counts. When building a chain from a video prefer vocal favourites in order: owned, close version, equivalent, Logic stock; say which video plug-in was swapped for which favourite. inventory_reveal and inventory_rescan use the existing controls. For every inventory change tool — inventory_move_to_unused, inventory_restore, inventory_move_to_trash, inventory_mark_vendor_app_checked, inventory_unmark_vendor_check, inventory_keep_newest_duplicates and inventory_add_to_bus — call with confirmed false first, read the returned summary aloud briefly, wait for Kev's clear yes, then call with confirmed true. Trash needs a separate yes before setting confirmed_trash true. For inventory_add_to_bus, first verify the exact installed name and publisher in the scan and choose a valid bus and stage; only use it when Kev explicitly asks. Menu navigation alone does not authorize scanning folders, downloading installers, sharing the inventory, or changing MixBus.`;
+const HOPE_COVERAGE_RULES = `The Plugins summary in your live context is the installed scan, not the MixBus catalogue. After inventory_rescan, use its completed before_total, after_total and lastScanAt; if timed_out, say the scan was not verified. For snapshots_apply, snapshots_add_note, plugin_tag_set, plugin_hide, saved_target_apply, mixbus_load_preset, mixbus_auto_fill and clear_bus, call with confirmed false, read the summary aloud, wait for Kev's clear yes, then repeat with confirmed true. Report a write as successful only when its result says ok true. Mix Check audio-file loading stays manual through the browser file picker. settings_status is read-only; never open Settings or reveal any key, token or secret value.`;
 const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural and complete: lead with the answer, stay under about 120 words, and finish the sentence before stopping; never end mid-sentence. Usually use one or two sentences and 20–35 words. Answer directly; use contractions and producer language. For how-to questions, give the usable steps from the knowledge base directly and in order, using numbered steps (at most five); ask a clarifying question only when the knowledge base has nothing usable. For recommendations, use only plug-ins confirmed in the MixBus library/catalogue. For installed-plug-in questions, use the inventory tools and their live scan. Use available AIMM tools for live measurements and MixBus actions; never guess when live state is available. Voice and typed chat are the same Hope and have the same full AIMM tool set. For mixing, production, plugin or factual questions, search the knowledge base first. If Kev names a video title, read that video; for an unnamed video reference, use the shared vague-video candidate list, choose one candidate based on its title, channel, and transcript content, and explain in one sentence in your own words what that video covers; never quote or copy the transcript, and follow the page's closest-match fallback if no candidate title is named. Otherwise read the top-ranked search result. Only if search_yt_knowledge and read_yt_knowledge, where relevant, return nothing that answers the question, call web_search_fallback once, then answer from its result and say it came from the web. Never use web_search_fallback first. When Kev asks for a MixBus action, call the matching tool and report its actual result; do not tell him to do it manually if a tool exists. Use write tools only for what he actually asked you to change; if he says explain only, make no changes. Use set_stem_selection for loaded stem selection and playback control. If a requested action has no matching tool, say so plainly. Do not narrate internal work.`;
 function hopeUsageSelectTools(utterance){
   // Keep every AIMM capability available on every Hope route. Tool selection
@@ -16546,7 +16568,7 @@ async function hopeUsageSendLunaTurn(options={}){
   let ctxBlock='';
   try{
     const ctx=buildContextSummary();
-    const compact={genre:ctx.genre,genre_label:ctx.genre_label,platform:ctx.platform,platform_label:ctx.platform_label,chain:ctx.chain,meters:ctx.meters,flagged_symptoms:ctx.flagged_symptoms,active_tab:activeTabId()};
+    const compact={genre:ctx.genre,genre_label:ctx.genre_label,platform:ctx.platform,platform_label:ctx.platform_label,chain:ctx.chain,meters:ctx.meters,flagged_symptoms:ctx.flagged_symptoms,plugins_inventory:ctx.plugins_inventory,active_tab:activeTabId()};
     ctxBlock='\n\n=== COMPACT LIVE AIMM STATE ===\n'+JSON.stringify(compact)+'\nUse get_context when Kev asks about detailed measurements, stem selection, playback or Fix Queue. Use plugin lookup tools before recommending or applying a plugin.';
   }catch(e){ctxBlock='\n\n(workbench context unavailable: '+(e.message||e)+')';}
   const tools=(options.noTools?[]:hopeUsageSelectTools(text)).map(t=>({type:'function',name:t.name,description:t.description,parameters:t.input_schema,strict:false}));
@@ -16555,7 +16577,7 @@ async function hopeUsageSendLunaTurn(options={}){
     const last=history[history.length-1];
     if(last)last.content=[{type:'input_text',text:String(last.content||'See attached screenshot.')},{type:'input_image',image_url:imageUrl}];
   }
-  const inputItems=[{role:'system',content:HOPE_USAGE_SYSTEM+'\n\n'+HOPE_INVENTORY_RULES+'\n\n'+HOPE_CHAIN_BUILD_RULES+ctxBlock},...history];
+  const inputItems=[{role:'system',content:HOPE_USAGE_SYSTEM+'\n\n'+HOPE_INVENTORY_RULES+'\n\n'+HOPE_COVERAGE_RULES+'\n\n'+HOPE_CHAIN_BUILD_RULES+ctxBlock},...history];
   let finalText='',inputTokens=0,outputTokens=0,cachedTokens=0,webSearchRequests=0,loops=0,toolEvents=[];
   let speechRemainder='',speechQueue=Promise.resolve(),speechError='';
   const enqueueSpeech=chunk=>{
@@ -17015,7 +17037,7 @@ async function buildDashboardDigest(){
 // Tools added after the original bulk registration. This retained helper
 // registers any that are missing — idempotent (reuses same-name workspace
 // tools, append-only PATCH of the agent's tool_ids).
-const AIMM_NEW_AGENT_TOOLS = ['manage_roadmap_inbox', 'propose_mix_move', 'set_stem_selection', 'list_symptom_tiles', 'add_symptom_tile', 'delete_symptom_tile', 'inventory_navigate', 'inventory_search', 'inventory_summary', 'inventory_set_favorite', 'vocal_favorites_read', 'vocal_favorites_apply', 'inventory_add_to_bus', 'inventory_status', 'inventory_duplicates', 'inventory_unused', 'inventory_reveal', 'inventory_move_to_unused', 'inventory_restore', 'inventory_move_to_trash', 'inventory_rescan', 'inventory_mark_vendor_app_checked', 'inventory_unmark_vendor_check', 'inventory_keep_newest_duplicates'];
+const AIMM_NEW_AGENT_TOOLS = ['manage_roadmap_inbox', 'propose_mix_move', 'set_stem_selection', 'list_symptom_tiles', 'add_symptom_tile', 'delete_symptom_tile', 'inventory_navigate', 'inventory_search', 'inventory_summary', 'inventory_set_favorite', 'vocal_favorites_read', 'vocal_favorites_apply', 'inventory_add_to_bus', 'inventory_status', 'inventory_duplicates', 'inventory_unused', 'inventory_reveal', 'inventory_move_to_unused', 'inventory_restore', 'inventory_move_to_trash', 'inventory_rescan', 'inventory_mark_vendor_app_checked', 'inventory_unmark_vendor_check', 'inventory_keep_newest_duplicates', 'snapshots_list', 'snapshots_read', 'snapshots_apply', 'snapshots_add_note', 'plugin_tags_read', 'plugin_tag_set', 'hidden_list', 'plugin_hide', 'reference_status', 'saved_targets_list', 'saved_target_apply', 'mixbus_load_preset', 'mixbus_auto_fill', 'settings_status'];
 async function registerInboxTool(){
   const sts=document.getElementById('regInboxToolStatus');
   const set=(m,ok)=>{if(sts){sts.textContent=m;sts.className='rt-key-status'+(ok===true?' ok':ok===false?' err':'');}};
@@ -17136,8 +17158,31 @@ async function hopeInventorySetFavorite(args){
   if(!saved||!stored)return {ok:false,code:'not_saved',message:'The favourite change could not be verified in saved storage.'};
   return {ok:true,changed:true,plugin:group.name,publisher:group.vendor,favorite,favorites_count:count()};
 }
+async function hopeStoredState(predicate){
+  await saveState();
+  try{return !!predicate(JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'));}catch(_){return false;}
+}
+function hopeProductById(args){
+  const id=String(args.id||''),name=String(args.name||''),publisher=String(args.publisher||'');
+  const matches=invBuildGroups(INV_SCAN_ROWS).filter(g=>id?invActionKey(g.vendor,g.name)===id:invNorm(g.name)===invNorm(name)&&invNorm(g.vendor)===invNorm(publisher));
+  return matches.length===1?matches[0]:null;
+}
+function hopePushPluginSummary(){
+  try{if(EL?.active&&EL.conversation?.sendContextualUpdate)EL.conversation.sendContextualUpdate('Plugins inventory updated: '+JSON.stringify(hopePluginSummary()));}catch(_){}
+}
+function hopePluginSummary(){
+  const groups=invBuildGroups(INV_SCAN_ROWS),actions=invReadProductActions();
+  return {total_plugins:groups.length,last_scan_at:INV_SCAN_INFO.generatedAt||null,favorites:groups.filter(g=>invIsFavorite(g.name,g.vendor)).length,hidden:groups.filter(g=>actions[invActionKey(g.vendor,g.name)]?.hidden===true).length,unused:Array.isArray(pcCompanionUnusedEntries)?pcCompanionUnusedEntries.length:null,companion_connected:pcCompanionConnected===true,companion_scanning:!!(pcCompanionCapability?.scanning||pcCompanionBusy),synthetic:INV_SYNTHETIC_PREVIEW};
+}
+function hopeSettingsStatus(){
+  const selected=document.getElementById('aiChatModel')?.value||null;
+  const spend=account=>{const item=elLoadCostAccount(account);return {spent:Number(item.spent)||0,credits_used:item.creditsUsed??null,credits_limit:item.creditsLimit??null};};
+  return {ok:true,providers:{luna:!!AIMM_PROXY_URL,elevenlabs:!!(AIMM_PROXY_URL||localStorage.getItem(EL_KEY_STORAGE)),luna_usage_access:!!localStorage.getItem(RT_KEY_STORAGE),companion:pcCompanionConnected===true},spend:{elevenlabs_primary:spend('primary'),elevenlabs_backup:spend('backup'),luna_estimated:Number(loadSpend(SPEND_KEY_OAI).spent)||0},models:{typed_chat:selected,tts:document.getElementById('aiChatTtsModel')?.value||null},companion:{connected:pcCompanionConnected===true,scanning:!!(pcCompanionCapability?.scanning||pcCompanionBusy),last_scan_at:INV_SCAN_INFO.generatedAt||null}};
+}
+let hopeReferenceBridge=null;
 async function handleToolCall(name,args){
   try{
+    args=args||{};
     const previousInventoryNames={pluginhub_navigate:'inventory_navigate',pluginhub_search_inventory:'inventory_search',pluginhub_add_to_bus:'inventory_add_to_bus'};
     if(previousInventoryNames[name])name=previousInventoryNames[name];
     // These three Repair tile helpers pre-date the shared workbench catalog.
@@ -17148,6 +17193,84 @@ async function handleToolCall(name,args){
     }
     switch(name){
       case 'get_context':return buildContextSummary();
+      case 'snapshots_list':return {ok:true,snapshots:(STATE.journal||[]).map(e=>({id:e.id,title:e.subject||'Untitled snapshot',type:e.type||'snapshot',created_at:e.ts,has_workbench:!!(e.workbenchSnapshot?.chain||e.chain)}))};
+      case 'snapshots_read':{
+        const e=(STATE.journal||[]).find(x=>x.id===args.id);if(!e)return {ok:false,reason:'Snapshot not found.'};
+        return {ok:true,id:e.id,title:e.subject||'Untitled snapshot',text:e.text||'',created_at:e.ts,workbench_summary:summariseSnapshot(e.workbenchSnapshot||e)};
+      }
+      case 'snapshots_apply':{
+        const e=(STATE.journal||[]).find(x=>x.id===args.id);if(!e)return {ok:false,reason:'Snapshot not found.'};
+        const snap=e.workbenchSnapshot||e.chain&&e;if(!snap?.chain)return {ok:false,reason:'This is a text-only snapshot.'};
+        const summary='Apply '+(e.subject||'snapshot')+'. '+summariseSnapshot(snap)+' A backup pill will be saved first.';
+        if(args.confirmed!==true)return {ok:true,needs_confirmation:true,summary};
+        const backup=createWorkbenchBackupPill(e.subject||'snapshot');
+        if(!await hopeStoredState(entry=>entry.journal?.some(x=>x.id===backup.id)))return {ok:false,reason:'The pre-apply backup could not be verified; snapshot was not applied.'};
+        const beforeGenre=STATE.genre,beforePlatform=document.getElementById('platformSelect')?.value;
+        applyCapturedSnap(snap);
+        const verified=await hopeStoredState(entry=>BUSES.every(b=>JSON.stringify(entry.chain?.[b.id]||[])===JSON.stringify(snap.chain[b.id]||[]))&&entry.genre===(snap.genre&&TOP_PICKS[snap.genre]?snap.genre:beforeGenre)&&entry.platform===(snap.platform||beforePlatform)&&JSON.stringify(entry.meters||{})===JSON.stringify(snap.meters||{})&&JSON.stringify(entry.symptoms||[])===JSON.stringify(snap.symptoms||[]));
+        return verified?{ok:true,summary,backup_id:backup.id}:{ok:false,reason:'Snapshot apply could not be verified in saved storage.',backup_id:backup.id};
+      }
+      case 'snapshots_add_note':{
+        const e=(STATE.journal||[]).find(x=>x.id===args.id),note=String(args.note||'').trim();if(!e||!note)return {ok:false,reason:'Snapshot and non-empty note required.'};
+        const summary='Add this note to '+(e.subject||'snapshot')+': '+note;
+        if(args.confirmed!==true)return {ok:true,needs_confirmation:true,summary};
+        e.text=(e.text||'')+'\n\n'+note;saveState();renderJournal();renderFavouritePills();
+        return await hopeStoredState(state=>state.journal?.find(x=>x.id===e.id)?.text===e.text)?{ok:true,id:e.id,summary}:{ok:false,reason:'Snapshot note could not be verified in saved storage.'};
+      }
+      case 'plugin_tags_read':{
+        const actions=invReadProductActions();return {ok:true,tags:invReadUserTags(),memberships:invTagGroups().filter(g=>actions[invActionKey(g.vendor,g.name)]?.tags?.length).map(g=>({id:invActionKey(g.vendor,g.name),name:g.name,publisher:g.vendor,tags:actions[invActionKey(g.vendor,g.name)].tags}))};
+      }
+      case 'plugin_tag_set':{
+        if(INV_SYNTHETIC_PREVIEW)return {ok:false,reason:'Tags cannot be edited in the synthetic preview.'};
+        const group=hopeProductById(args);if(!group)return {ok:false,reason:'No exact scanned product matched; supply its id or exact name and publisher.'};
+        const tags=[...new Set((Array.isArray(args.tags)?args.tags:[]).map(t=>String(t).trim()).filter(Boolean))];
+        if(tags.some(t=>t.length>32)||tags.length>20)return {ok:false,reason:'Use at most 20 tags of 32 characters each.'};
+        const summary='Set tags for '+group.name+' ('+group.vendor+'): '+(tags.join(', ')||'none')+'.';
+        if(args.confirmed!==true)return {ok:true,needs_confirmation:true,summary};
+        const actions=invReadProductActions(),key=invActionKey(group.vendor,group.name),record={...(actions[key]||{})};
+        if(tags.length)record.tags=tags;else delete record.tags;
+        if(Object.keys(record).length)actions[key]=record;else delete actions[key];
+        const all=[...new Set([...invReadUserTags(),...tags])];
+        if(!invTagCommit(all,actions,invReadTagColors()))return {ok:false,reason:'The tag change could not be saved.'};
+        invRenderInventory();
+        const verified=JSON.stringify(invReadProductActions()[key]?.tags||[])===JSON.stringify(tags)&&tags.every(t=>invReadUserTags().includes(t));
+        return verified?{ok:true,id:key,tags,summary}:{ok:false,reason:'The tag change could not be verified in saved storage.'};
+      }
+      case 'hidden_list':{
+        const actions=invReadProductActions();return {ok:true,products:invTagGroups().filter(g=>actions[invActionKey(g.vendor,g.name)]?.hidden===true).map(g=>({id:invActionKey(g.vendor,g.name),name:g.name,publisher:g.vendor}))};
+      }
+      case 'plugin_hide':{
+        const group=hopeProductById(args),hidden=args.hidden===true;if(!group)return {ok:false,reason:'No scanned product matched that id.'};
+        const key=invActionKey(group.vendor,group.name),summary=(hidden?'Hide ':'Show ')+group.name+' ('+group.vendor+') in Plugins.';
+        if(args.confirmed!==true)return {ok:true,needs_confirmation:true,summary};
+        const actions=invReadProductActions(),record={...(actions[key]||{})};if(hidden)record.hidden=true;else delete record.hidden;
+        if(Object.keys(record).length)actions[key]=record;else delete actions[key];
+        if(!invWriteProductActions(actions,true))return {ok:false,reason:'Hidden setting could not be saved.'};
+        invRenderInventory();
+        return (!!invReadProductActions()[key]?.hidden===hidden)?{ok:true,id:key,hidden,summary}:{ok:false,reason:'Hidden setting could not be verified.'};
+      }
+      case 'reference_status':return hopeReferenceBridge?.status()||{ok:false,reason:'Mix Check reference controls are unavailable.'};
+      case 'saved_targets_list':return hopeReferenceBridge?.list()||{ok:false,reason:'Saved targets are unavailable.'};
+      case 'saved_target_apply':return hopeReferenceBridge?.apply(args)||{ok:false,reason:'Saved targets are unavailable.'};
+      case 'mixbus_load_preset':{
+        const matches=(STATE.userPresets||[]).concat(PRESETS).filter(p=>p.label.toLowerCase()===String(args.name||'').trim().toLowerCase());
+        if(matches.length!==1)return {ok:false,reason:matches.length?'Preset name is ambiguous.':'Preset not found.',available:(STATE.userPresets||[]).concat(PRESETS).map(p=>p.label)};
+        const p=matches[0],summary='Replace '+(p.bus==='all'?'saved buses':p.bus+' bus')+' with preset '+p.label+'.';
+        if(args.confirmed!==true)return {ok:true,needs_confirmation:true,summary};
+        const before=cloneWorkbenchState();document.getElementById('presetReplace').checked=true;applyPreset(p.id);
+        const buses=p.bus==='all'?BUSES.filter(b=>p.chains?.[b.id]?.length).map(b=>b.id):[p.bus];
+        const verified=await hopeStoredState(state=>buses.every(bus=>JSON.stringify(state.chain?.[bus]||[])===JSON.stringify((p.bus==='all'?p.chains?.[bus]:p.chain)||[])));
+        return verified?{ok:true,name:p.label,summary}:{ok:false,reason:'Preset load could not be verified in saved storage.',previous:before.chain};
+      }
+      case 'mixbus_auto_fill':{
+        const count=BUSES.reduce((n,b)=>n+(STATE.chain[b.id]||[]).length,0);if(!count)return {ok:false,reason:'MixBus has no plug-ins to fill.'};
+        const summary='Auto-fill settings for '+count+' MixBus plug-ins.';
+        if(args.confirmed!==true)return {ok:true,needs_confirmation:true,summary};
+        const result=await autoFillChainSettings();
+        if(!result?.ok)return {ok:false,reason:result?.reason||'Auto-fill did not complete.'};
+        return await hopeStoredState(state=>BUSES.every(b=>JSON.stringify(state.chain?.[b.id]||[])===JSON.stringify(STATE.chain[b.id]||[])))?{ok:true,summary,changes:result.changes}:{ok:false,reason:'Auto-fill could not be verified in saved storage.'};
+      }
+      case 'settings_status':return hopeSettingsStatus();
       case 'vocal_favorites_read':await vocalLoadData();return vocalRead(args.section||'all');
       case 'vocal_favorites_apply':return await vocalApply(args.confirmed===true);
       case 'open_dashboard':{
@@ -17267,8 +17390,27 @@ async function handleToolCall(name,args){
       }
       case 'inventory_rescan':{
         const scan=document.getElementById('invScanBtn');
-        if(!scan||scan.disabled)return {ok:false,reason:'Scan connected folders is unavailable.'};
-        scan.click();return {ok:true,message:'Started the existing Plugins scan.'};
+        if(!scan||scan.disabled||!pcCompanionConnected)return {ok:false,reason:'Connected Plugins scan is unavailable.'};
+        const before_total=invBuildGroups(INV_SCAN_ROWS).length,before_scan=INV_SCAN_INFO.generatedAt||pcCompanionCapability?.lastScanAt||null;
+        scan.click();
+        const deadline=Date.now()+120000;
+        while(Date.now()<deadline){
+          await new Promise(resolve=>setTimeout(resolve,1000));
+          try{
+            const response=await pcCompanionFetch('/status',{cache:'no-store'});
+            if(!response.ok)continue;
+            const status=await response.json();pcCompanionCapability=status;
+            if(status.scanning===false&&status.lastScanAt&&status.lastScanAt!==before_scan){
+              const inventoryResponse=await pcCompanionFetch('/inventory',{cache:'no-store'});
+              if(!inventoryResponse.ok)continue;
+              pcCompanionAdopt(await inventoryResponse.json());
+              try{await pcCompanionReadUnused();}catch(_){}
+              hopePushPluginSummary();
+              return {ok:true,before_total,after_total:invBuildGroups(INV_SCAN_ROWS).length,lastScanAt:INV_SCAN_INFO.generatedAt||status.lastScanAt,timed_out:false};
+            }
+          }catch(_){}
+        }
+        return {ok:false,before_total,after_total:invBuildGroups(INV_SCAN_ROWS).length,lastScanAt:INV_SCAN_INFO.generatedAt||null,timed_out:true};
       }
       case 'inventory_mark_vendor_app_checked':
       case 'inventory_unmark_vendor_check':{
@@ -17317,7 +17459,8 @@ async function handleToolCall(name,args){
         const position=args.position==null?STATE.chain[bus].length+1:Math.max(1,Math.min(Math.floor(Number(args.position)||1),STATE.chain[bus].length+1));STATE.chain[bus].splice(position-1,0,entry);
         renderLibrary();renderChain();saveState();
         const tab=document.querySelector('.tab[data-tab="chain"]');if(tab&&!tab.classList.contains('active')){if(typeof EL!=='undefined')EL.suppressNextTabChange=true;tab.click();}
-        return {ok:true,bus,plugin:plugin.n,publisher:group.vendor,added_to_library:!existing,stage:entry.s,position,chain:STATE.chain[bus].map((entry,index)=>`${index+1}. ${entry.n}`),message:'Added the scanned plug-in to MixBus.'};
+        const verified=await hopeStoredState(state=>JSON.stringify(state.chain?.[bus]||[])===JSON.stringify(STATE.chain[bus])&&(!!existing||state.customPlugins?.some(p=>p.n===plugin.n&&p.p===plugin.p)));
+        return verified?{ok:true,bus,plugin:plugin.n,publisher:group.vendor,added_to_library:!existing,stage:entry.s,position,chain:STATE.chain[bus].map((entry,index)=>`${index+1}. ${entry.n}`),message:'Added the scanned plug-in to MixBus.'}:{ok:false,reason:'Installed plug-in addition could not be verified in saved MixBus state.'};
       }
       case 'set_stem_selection':{
         const api=window.mcStemAnalysis;
@@ -17397,7 +17540,7 @@ async function handleToolCall(name,args){
           ? `full chain (${Object.keys(preset.chains).length} bus${Object.keys(preset.chains).length===1?'':'es'})`
           : (BUSES.find(b=>b.id===preset.bus)?.label || preset.bus);
         toast(`Saved "${preset.label}" — ${scope}`);
-        return {ok:true, name: preset.label, bus: preset.bus, scope};
+        return await hopeStoredState(state=>state.userPresets?.some(p=>p.id===preset.id&&JSON.stringify(p)===JSON.stringify(preset)))?{ok:true, name: preset.label, bus: preset.bus, scope}:{ok:false,reason:'Preset save could not be verified.'};
       }
       case 'set_platform':{
         const p=args.platform;if(!METER_TARGETS[p])throw new Error('Unknown platform: '+p);
@@ -17420,24 +17563,27 @@ async function handleToolCall(name,args){
           STATE.chain[bus].splice(idx,0,entry);
         }else{STATE.chain[bus].push(entry);}
         renderChain();saveState();
-        return{ok:true,bus,added:pl.n,chain:STATE.chain[bus].map((p,i)=>`${i+1}. ${p.n}`)};
+        return await hopeStoredState(state=>JSON.stringify(state.chain?.[bus])===JSON.stringify(STATE.chain[bus]))?{ok:true,bus,added:pl.n,chain:STATE.chain[bus].map((p,i)=>`${i+1}. ${p.n}`)}:{ok:false,reason:'MixBus add could not be verified.'};
       }
       case 'remove_plugin_from_bus':{
         const bus=args.bus;const arr=STATE.chain[bus];if(!arr)throw new Error('Unknown bus: '+bus);
         const i=(args.position|0)-1;if(i<0||i>=arr.length)throw new Error('Position out of range');
         const removed=arr.splice(i,1)[0];renderChain();saveState();
-        return{ok:true,bus,removed:removed.n,chain:arr.map((p,i)=>`${i+1}. ${p.n}`)};
+        return await hopeStoredState(state=>JSON.stringify(state.chain?.[bus])===JSON.stringify(arr))?{ok:true,bus,removed:removed.n,chain:arr.map((p,i)=>`${i+1}. ${p.n}`)}:{ok:false,reason:'MixBus remove could not be verified.'};
       }
       case 'move_plugin':{
         const bus=args.bus;const arr=STATE.chain[bus];if(!arr)throw new Error('Unknown bus: '+bus);
         const from=(args.from|0)-1,to=(args.to|0)-1;
         if(from<0||from>=arr.length||to<0||to>=arr.length)throw new Error('Position out of range');
         const [item]=arr.splice(from,1);arr.splice(to,0,item);renderChain();saveState();
-        return{ok:true,bus,chain:arr.map((p,i)=>`${i+1}. ${p.n}`)};
+        return await hopeStoredState(state=>JSON.stringify(state.chain?.[bus])===JSON.stringify(arr))?{ok:true,bus,chain:arr.map((p,i)=>`${i+1}. ${p.n}`)}:{ok:false,reason:'MixBus move could not be verified.'};
       }
       case 'clear_bus':{
         const bus=args.bus;if(!STATE.chain[bus])throw new Error('Unknown bus: '+bus);
-        STATE.chain[bus]=[];renderChain();saveState();return{ok:true,bus,cleared:true};
+        const summary='Clear '+STATE.chain[bus].length+' plug-ins from the '+bus+' bus.';
+        if(args.confirmed!==true)return {ok:true,needs_confirmation:true,summary};
+        STATE.chain[bus]=[];renderChain();saveState();
+        return await hopeStoredState(state=>Array.isArray(state.chain?.[bus])&&state.chain[bus].length===0)?{ok:true,bus,cleared:true}:{ok:false,reason:'MixBus clear could not be verified.'};
       }
       case 'list_symptoms':
         return SYMPTOMS.map(s=>({id:s.id,label:s.label}));
@@ -17475,7 +17621,7 @@ async function handleToolCall(name,args){
         const entry={n:name,p:pub,s:stage,custom:true};
         if(pub==='other'&&args.publisher_label)entry.pLabel=args.publisher_label;
         STATE.customPlugins.push(entry);STATE.favorites.add(name);renderLibrary();saveState();
-        return{ok:true,added:name,stage};
+        return await hopeStoredState(state=>state.customPlugins?.some(p=>p.n===name&&p.s===stage))?{ok:true,added:name,stage}:{ok:false,reason:'Custom MixBus plug-in could not be verified.'};
       }
       case 'remove_custom_plugin':{
         const q=String(args.name||'').toLowerCase().trim();
@@ -17492,7 +17638,7 @@ async function handleToolCall(name,args){
           throw new Error(`No custom plugin matched "${args.name}". Custom plugins: ${customs.map(p=>p.n).join(', ')||'(none yet)'}.`);
         }
         removeCustom(target.n);
-        return{ok:true,removed:target.n,custom_count:STATE.customPlugins.length};
+        return await hopeStoredState(state=>!state.customPlugins?.some(p=>p.n===target.n))?{ok:true,removed:target.n,custom_count:STATE.customPlugins.length}:{ok:false,reason:'Custom MixBus plug-in removal could not be verified.'};
       }
       case 'list_plugins':{
         const stage=args.stage;const q=(args.search||'').toLowerCase().trim();
@@ -17514,14 +17660,14 @@ async function handleToolCall(name,args){
         delete arr[idx].notesOrig;
         chainSelected[bus]=arr[idx];delete chainEditing[bus];delete chainReplacement[bus];
         renderChain();saveState();
-        return{ok:true,bus,position:idx+1,plugin:arr[idx].n,settings:arr[idx].notes||''};
+        return await hopeStoredState(state=>(state.chain?.[bus]?.[idx]?.notes||'')===(arr[idx].notes||''))?{ok:true,bus,position:idx+1,plugin:arr[idx].n,settings:arr[idx].notes||''}:{ok:false,reason:'MixBus settings could not be verified.'};
       }
       case 'clear_plugin_settings':{
         const bus=args.bus;const arr=STATE.chain[bus];if(!arr)throw new Error('Unknown bus: '+bus);
         const idx=resolveChainIdx(bus,args);
         if(idx<0)throw new Error('Plugin not on '+bus+' bus');
         delete arr[idx].notes;delete arr[idx].notesOrig;chainSelected[bus]=arr[idx];delete chainEditing[bus];delete chainReplacement[bus];renderChain();saveState();
-        return{ok:true,bus,position:idx+1,plugin:arr[idx].n};
+        return await hopeStoredState(state=>!state.chain?.[bus]?.[idx]?.notes)?{ok:true,bus,position:idx+1,plugin:arr[idx].n}:{ok:false,reason:'MixBus settings clear could not be verified.'};
       }
       // -- Mastering Reference (EQ tiles) --
       case 'list_eq_tiles':{
@@ -18649,7 +18795,7 @@ async function rtStart(opts){
       // and stops recommending things from generic training data. Research notes
       // (Insight tab) are appended on top of that so curated reference
       // material is in scope for the whole voice session.
-      let fullInstructions = RT_INSTRUCTIONS + '\n\n' + HOPE_CHAIN_BUILD_RULES + '\n\n' + buildLibraryDigest();
+      let fullInstructions = RT_INSTRUCTIONS + '\n\n' + HOPE_COVERAGE_RULES + '\n\n' + HOPE_CHAIN_BUILD_RULES + '\n\n' + buildLibraryDigest();
       const research = buildResearchDigest();
       if (research) fullInstructions += '\n\n' + research;
       // Cross-conversation memory — Kev's profile dossier built up over time.
@@ -23589,6 +23735,18 @@ csInit('csPlatform');
     if(saved&&saved.analysis&&window.MC_SPECS)window.MC_SPECS.setSpotify(saved.analysis,null,saved.name,saved.id);
     if(typeof stemReviewRetarget==='function')stemReviewRetarget();
     if(typeof ozPopulateBands==='function')ozPopulateBands();
+  };
+  hopeReferenceBridge={
+    status(){return {ok:true,capture_state:document.getElementById('mcSpotifyCaptureState')?.dataset.state||'idle',selected_spotify_track:mcSpotifyTrackLabel(mcSpotifySelectedTrack)||null,selected_target:refTrackTargetByKey(document.getElementById('refCurveTarget')?.value)?.name||null,loaded_audio:!!refActivePlaybackBuffers().length};},
+    list(){return {ok:true,targets:refTrackTargets.map(item=>({id:item.id,name:item.name,source:refTargetSourceLabel(item)})),selected_id:refTrackTargetByKey(document.getElementById('refCurveTarget')?.value)?.id||null};},
+    apply(args){
+      const item=refTrackTargets.find(x=>x.id===args.id);if(!item)return {ok:false,reason:'Saved target not found.'};
+      const summary='Select saved Mix Check target '+item.name+'.';
+      if(args.confirmed!==true)return {ok:true,needs_confirmation:true,summary};
+      const select=document.getElementById('refCurveTarget');select.value='trackref:'+item.id;window.refTargetChanged();
+      return select.value==='trackref:'+item.id&&localStorage.getItem(MC_TRACK_TARGET_SELECTED_KEY)===item.id?{ok:true,id:item.id,name:item.name}:{ok:false,reason:'Saved target selection could not be verified.'};
+    },
+
   };
   window.addEventListener('aimm:stem-analysis-changed',()=>{
     let selected=false;try{selected=window.mcStemAnalysis&&window.mcStemAnalysis.snapshot().selectedTarget==='stem';}catch(_){}

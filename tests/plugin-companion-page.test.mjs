@@ -33,6 +33,7 @@ function harness(reply = async path => path === '/status' ? ok({lastScanAt:inven
     invBuildGroups:rows=>[...new Set(rows.map(r=>r.vendor+'|'+r.name))].map(name=>({name})),
     invSaveScan:()=>{saves++;return true;},invRenderInventory:()=>{renders++;},
     invStatus:()=>{},invScanNow:async()=>{chromeScans++;},
+    pcCompanionReadUnused:async()=>[],hopePushPluginSummary:()=>{},
   };
   vm.runInNewContext(code,context);
   return {pc:context.pc,context,elements,settingsTab,calls,get chromeScans(){return chromeScans;},get renders(){return renders;},get saves(){return saves;}};
