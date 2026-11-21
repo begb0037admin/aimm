@@ -4054,7 +4054,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
        Inventory records scroll inside the frame. */
     #library .inv-layout{display:grid;grid-template-columns:236px minmax(0,1fr);grid-template-rows:minmax(0,1fr);height:var(--inv-layout-height,auto);min-height:0;max-height:none;border:1px solid #2c3034;border-radius:12px;overflow:hidden;background:#101214}
     #library .inv-layout.is-collapsed{grid-template-columns:64px minmax(0,1fr)}
-    #library .inv-sidebar{min-height:0;background:#17191c;border-right:1px solid #30343a;border-radius:11px 0 0 11px;padding:16px 11px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;transition:width .2s ease}
+    #library .inv-sidebar{position:relative;min-height:0;background:#17191c;border-right:1px solid #30343a;border-radius:11px 0 0 11px;padding:16px 11px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;transition:width .2s ease}
     /* Keep the native scroll affordance functional, but blend its track and thumb
        into the dark panes so it does not read as a bright divider. */
     #library .inv-sidebar,#library #invInventory{scrollbar-width:thin;scrollbar-color:#000 #000}
@@ -4843,6 +4843,52 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library .inv-sidebar-section-toggle[data-inv-section-toggle="status"],#library .inv-sidebar-section-toggle[data-inv-section-toggle="tools"],#library .inv-sidebar-section-toggle[data-inv-section-toggle="library"],#library .inv-sidebar-section-toggle[data-inv-section-toggle="categories"]{min-height:40px;margin:8px 0 4px;padding:0 10px;font-size:11px;border-radius:9px}
 #library .inv-sidebar .inv-sidebar-section-toggle:hover:not(:disabled){background:rgba(255,255,255,.07);color:#fff!important}
 
+/* Option C: Plugins Browse accordion cards. Existing palette only. */
+#library #invSidebar .inv-sidebar-card{--section-colour:#36a8ed;position:relative;margin:0 0 12px;background:var(--pv-neutral-bg);border:1px solid var(--pv-neutral-bd)!important;border-radius:12px;overflow:hidden;transition:border-color .25s ease,box-shadow .35s ease}
+#library #invSidebar .inv-sidebar-card[data-inv-section="tools"]{--section-colour:#e8b45a}
+#library #invSidebar .inv-sidebar-card[data-inv-section="library"]{--section-colour:#b970ff}
+#library #invSidebar .inv-sidebar-card[data-inv-section="video-chain-picks"]{--section-colour:#f472b6}
+#library #invSidebar .inv-sidebar-card[data-inv-section="categories"]{--section-colour:#68d3e6}
+#library #invSidebar .inv-sidebar-card:has(.inv-sidebar-section-toggle[aria-expanded="true"]){border-color:var(--section-colour)!important}
+#library #invSidebar .inv-sidebar-card.is-current{box-shadow:0 0 18px -4px var(--section-colour)!important}
+#library #invSidebar .inv-sidebar-section-toggle{min-height:48px;margin:0;padding:0 10px 0 14px;display:flex;gap:7px;width:100%;border:0!important;border-radius:0;background:#0b0d10;color:var(--section-colour)!important;font:800 calc(var(--inv-text-scale,1) * 15px)/1.15 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.035em;text-align:left;transition:background .25s ease,color .25s ease,box-shadow .35s ease}
+#library #invSidebar .inv-sidebar-section-toggle:hover:not(:disabled){background:#24272c!important;color:var(--section-colour)!important}
+#library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-section-toggle,#library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-section-toggle:hover{background:var(--section-colour)!important;color:var(--pv-black)!important}
+#library #invSidebar .inv-sidebar-heading-label{flex:1;min-width:0;overflow-wrap:anywhere}
+#library #invSidebar .inv-sidebar-heading-count{min-width:24px;padding:4px 5px;border-radius:6px;background:rgba(9,11,15,.72);font:700 11px/1 ui-monospace,Menlo,monospace;text-align:center;color:var(--pm-dim)}
+#library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-heading-count{color:var(--pv-black);background:rgba(11,13,16,.16)}
+#library #invSidebar .inv-sidebar-selected-dot{width:7px;height:7px;flex:none;border-radius:50%;background:var(--pv-teal);opacity:0;transform:scale(.4);transition:opacity .2s,transform .2s}
+#library #invSidebar .inv-sidebar-card.is-current:has(.inv-sidebar-section-toggle[aria-expanded="false"]) .inv-sidebar-selected-dot{opacity:1;transform:scale(1)}
+#library #invSidebar .inv-sidebar-chevron{position:relative;flex:none;width:26px;height:26px;border-radius:7px;background:var(--section-colour)}
+#library #invSidebar .inv-sidebar-chevron::after{content:"";position:absolute;left:8px;top:6px;width:8px;height:8px;border-right:2.5px solid var(--pv-black)!important;border-bottom:2.5px solid var(--pv-black)!important;transform:rotate(-45deg);transition:transform .28s cubic-bezier(.4,0,.2,1)}
+#library #invSidebar [aria-expanded="true"] .inv-sidebar-chevron::after{transform:translate(1px,2px) rotate(45deg) translate(-1px,-1px)}
+#library #invSidebar [aria-expanded="false"] .inv-sidebar-chevron{background:transparent;box-shadow:inset 0 0 0 2px var(--pv-neutral-bd)!important}
+#library #invSidebar [aria-expanded="false"] .inv-sidebar-chevron::after{border-color:var(--pm-dim)!important}
+#library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-chevron{background:var(--pv-black)}
+#library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-chevron::after{border-color:var(--section-colour)!important}
+#library #invSidebar .inv-sidebar-section-content{display:grid;grid-template-rows:1fr;min-width:0;transition:grid-template-rows .28s cubic-bezier(.4,0,.2,1),visibility 0s}
+#library #invSidebar .inv-sidebar-section-content.is-closed{grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .28s cubic-bezier(.4,0,.2,1),visibility 0s .28s}
+#library #invSidebar .inv-sidebar-section-inner{min-height:0;overflow:hidden;padding:6px}
+#library #invSidebar .inv-sidebar-section-content.is-closed .inv-sidebar-section-inner{padding-top:0;padding-bottom:0}
+#library #invSidebar .inv-sidebar-subgroup{display:flex;align-items:center;gap:7px;padding:7px 5px;color:var(--section-colour);font:700 calc(var(--inv-text-scale,1) * 12.5px) -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.04em}
+#library #invSidebar .inv-sidebar-subgroup::before{content:"";width:8px;height:8px;flex:none;border-radius:2px;background:var(--section-colour)}
+#library #invSidebar .inv-sidebar-subgroup::after{content:"";height:1px;flex:1;background:var(--section-colour);opacity:.45}
+#library #invSidebar .inv-sidebar-section-inner .inv-sidebar-nav{gap:2px}
+#library #invSidebar .inv-sidebar-section-inner .inv-side-button{position:relative;z-index:1;min-height:38px;font-weight:500}
+#library #invSidebar .inv-sidebar-section-inner .inv-side-button.active{background:transparent!important;border:0!important;box-shadow:none!important;color:var(--pv-black)!important;font-weight:700}
+#library #invSidebar .inv-sidebar-section-inner .inv-side-button.active .inv-side-count{color:var(--pv-black)!important}
+#library #invSidebar .inv-sidebar-pill{position:absolute;top:0;left:0;z-index:0;border-radius:9px;background:var(--pv-teal);opacity:0;pointer-events:none;transition:transform .28s cubic-bezier(.4,0,.2,1),width .28s,height .28s,opacity .15s}
+#library #invSidebar .inv-sidebar-pill.is-visible{opacity:1;animation:invPillBreathe 2.6s ease-in-out infinite}
+@keyframes invPillBreathe{0%,100%{filter:brightness(1)}50%{filter:brightness(1.18)}}
+#library #invSidebar .inv-sidebar-section-toggle:focus-visible,#library #invSidebar .inv-side-button:focus-visible{outline:2px solid #36a8ed!important;outline-offset:-2px!important}
+#library #invSidebar.is-collapsed .inv-sidebar-card{display:contents}
+#library #invSidebar.is-collapsed .inv-sidebar-section-toggle{display:none}
+#library #invSidebar.is-collapsed .inv-sidebar-section-content{display:block}
+#library #invSidebar.is-collapsed .inv-sidebar-section-inner{overflow:visible;padding:0}
+#library #invSidebar.is-collapsed .inv-sidebar-subgroup,#library #invSidebar.is-collapsed .inv-sidebar-pill{display:none}
+@media(max-width:760px){#library #invSidebar .inv-sidebar-card{display:contents}#library #invSidebar .inv-sidebar-section-toggle{display:none}#library #invSidebar .inv-sidebar-section-content{display:block}#library #invSidebar .inv-sidebar-section-inner{overflow:visible;padding:0}#library #invSidebar .inv-sidebar-subgroup,#library #invSidebar .inv-sidebar-pill,#library #invSidebar .inv-status-note,#library #invSidebar .inv-tools-note{display:none}}
+@media(prefers-reduced-motion:reduce){#library #invSidebar .inv-sidebar-card,#library #invSidebar .inv-sidebar-section-toggle,#library #invSidebar .inv-sidebar-selected-dot,#library #invSidebar .inv-sidebar-chevron::after,#library #invSidebar .inv-sidebar-section-content,#library #invSidebar .inv-sidebar-pill{transition:none!important;animation:none!important}}
+
 /* Insight tab colours 2026-11-18 */
 /* PREVIEW ONLY. Insight tab (#knowledge) and its note dialog (#kbModal), COLOURS ONLY.
    Same rules as the approved Plugins tab: solid fills, no coloured strokes/rings/dashes/side bars/lines,
@@ -5124,14 +5170,16 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <button class="inv-side-button" type="button" data-inv-open-all-plugins aria-label="All Plugins" title="Show every installed plug-in in a flat list" aria-pressed="false"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></span><span class="inv-side-label">All Plugins</span><span class="inv-side-count" id="invLibraryAllCount">—</span></button>
           <button class="inv-side-button" type="button" disabled aria-label="Plugin Compatibility — unavailable until plug-in architecture metadata and current vendor evidence are connected" title="Compatibility is unavailable until this Library has source-backed architecture metadata and current vendor evidence."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/><path d="m8 11 2.5 2.5L16 8"/></svg></span><span class="inv-side-label">Plugin Compatibility</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="favorites" aria-label="Favorites" title="Favorites"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg></span><span class="inv-side-label">Favorites</span><span class="inv-side-count" id="invSidebarFavCount">0</span></button>
-          <div class="inv-sidebar-section" aria-label="Chain favourites">CHAIN FAVOURITES</div>
-          <button class="inv-side-button" type="button" data-vocal-view="owned"><span class="inv-side-label">Owned</span></button>
-          <button class="inv-side-button" type="button" data-vocal-view="stock"><span class="inv-side-label">Stock Plugins (Logic Pro 13)</span></button>
-          <button class="inv-side-button" type="button" data-vocal-view="missing"><span class="inv-side-label">Not installed</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="tags" aria-label="My tags" title="Show plug-ins with saved tags"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m20 13-7 7-9-9V4h7l9 9Z"/><circle cx="8.5" cy="8.5" r=".8"/></svg></span><span class="inv-side-label">My tags</span></button>
           <button class="inv-side-button" type="button" data-inv-tag-manager aria-label="Plugin Tag Manager" title="Manage tags on this browser"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 13 11 22l-9-9V3h10l8 10Z"/><circle cx="7" cy="7" r="1"/></svg></span><span class="inv-side-label">Tag Manager</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="not-licensed-uad" aria-label="Not licensed UAD" title="UAD products outside the account ownership map"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 8l8 8M16 8l-8 8"/></svg></span><span class="inv-side-label">Not licensed (UAD)</span><span class="inv-side-count" id="invSidebarNotLicensedCount">0</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="hidden" aria-label="Hidden plug-ins" title="Show plug-ins hidden from the main library"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c5.5 0 9 7 9 7a16 16 0 0 1-3.1 3.8M6.2 6.2C4.1 7.6 3 12 3 12s3.5 7 9 7a10 10 0 0 0 3-.5"/></svg></span><span class="inv-side-label">Hidden</span><span class="inv-side-count" id="invSidebarHiddenCount">0</span></button>
+        </nav>
+        <button class="inv-sidebar-section inv-sidebar-section-toggle" type="button" data-inv-section-toggle="video-chain-picks" aria-expanded="true" aria-controls="invBrowseSectionVideoChainPicks">VIDEO CHAIN PICKS</button>
+        <nav class="inv-sidebar-nav" aria-label="Video chain picks">
+          <button class="inv-side-button" type="button" data-vocal-view="owned"><span class="inv-side-label">Owned</span></button>
+          <button class="inv-side-button" type="button" data-vocal-view="stock"><span class="inv-side-label">Stock Plugins (Logic Pro 13)</span></button>
+          <button class="inv-side-button" type="button" data-vocal-view="missing"><span class="inv-side-label">Not installed</span></button>
         </nav>
         <button class="inv-sidebar-section inv-sidebar-section-toggle" type="button" data-inv-section-toggle="categories" aria-expanded="true" aria-controls="invBrowseSectionCategories">CATEGORIES</button>
         <nav class="inv-sidebar-nav" aria-label="Plug-in categories">
@@ -5666,7 +5714,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-20.22';
+const AIMM_BUILD = '2026-11-20.23';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8190,6 +8238,30 @@ function invRenderTagFilter(groups){
   });
   chips.hidden=INV_TAG_FILTERS.size===0;
 }
+function invSidebarPlacePill(){
+  const sidebar=document.getElementById("invSidebar"),pill=sidebar?.querySelector(".inv-sidebar-pill"),active=sidebar?.querySelector(".inv-sidebar-card .inv-side-button.active");
+  if(!pill)return;
+  const content=active?.closest(".inv-sidebar-section-content");
+  if(!active||sidebar.classList.contains("is-collapsed")||content?.classList.contains("is-closed")){pill.classList.remove("is-visible");return;}
+  const row=active.getBoundingClientRect(),host=sidebar.getBoundingClientRect();
+  pill.style.width=row.width+"px";pill.style.height=row.height+"px";
+  pill.style.transform="translate("+(row.left-host.left+sidebar.scrollLeft)+"px,"+(row.top-host.top+sidebar.scrollTop)+"px)";
+  pill.classList.add("is-visible");
+}
+function invSidebarTrackPill(){
+  const start=performance.now();
+  const frame=()=>{invSidebarPlacePill();if(performance.now()-start<320)requestAnimationFrame(frame);};
+  requestAnimationFrame(frame);
+}
+function invSidebarSyncSelection(){
+  const sidebar=document.getElementById("invSidebar");if(!sidebar)return;
+  const selected=Array.from(sidebar.querySelectorAll(".inv-sidebar-card .inv-side-button.active"));
+  const preferred=INV_SIDEBAR_TOOL_ACTIVE?sidebar.querySelector('[data-inv-local-tool="'+INV_SIDEBAR_TOOL_ACTIVE+'"]'):INV_VOCAL_VIEW?sidebar.querySelector('[data-vocal-view="'+INV_VOCAL_VIEW+'"]'):INV_CATEGORIES.size?selected.find(button=>button.hasAttribute("data-inv-category")):INV_LIBRARY_ALL?sidebar.querySelector("[data-inv-open-all-plugins]"):selected[0];
+  selected.forEach(button=>{if(button!==preferred)button.classList.remove("active");});
+  if(preferred)preferred.classList.add("active");
+  sidebar.querySelectorAll(".inv-sidebar-card").forEach(card=>card.classList.toggle("is-current",Boolean(preferred&&card.contains(preferred))));
+  invSidebarPlacePill();
+}
 function invRenderSidebar(groups,stageMap){
   const sidebar=document.getElementById("invSidebar");
   const layout=document.getElementById("invLayout");
@@ -8244,6 +8316,8 @@ function invRenderSidebar(groups,stageMap){
   }
   sidebar.querySelectorAll("[data-inv-scope]").forEach(button=>{const active=!INV_CATEGORIES.size&&!(INV_LIBRARY_ALL&&button.getAttribute("data-inv-scope")==="all")&&button.getAttribute("data-inv-scope")===INV_SCOPE;button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active));});
   sidebar.querySelectorAll("[data-inv-category]").forEach(button=>{const active=INV_CATEGORIES.has(button.getAttribute("data-inv-category"));button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active));button.title="Click to filter this category; Shift-click to combine categories.";button.setAttribute("aria-description","Shift-click to combine this category with other categories.");});
+  invApplySidebarSectionState(sidebar);
+  invSidebarSyncSelection();
 }
 var invTileResizeObserver=null,invTileIntersectionObserver=null,invTileRAF=0,invTileForce=false;
 function invTileScheduleLayout(force){
@@ -8886,7 +8960,7 @@ function invOpenProductNote(vendor,name){
 function invFitFrame(){
   const layout=document.querySelector("#library .inv-layout"),sidebar=document.querySelector("#library .inv-sidebar"),inventory=document.getElementById("invInventory");
   if(!layout||!sidebar||!inventory||!layout.getClientRects().length)return;
-  const children=Array.from(sidebar.children).filter(child=>getComputedStyle(child).display!=="none");
+  const children=Array.from(sidebar.children).filter(child=>!child.classList.contains("inv-sidebar-pill")&&getComputedStyle(child).display!=="none");
   if(!children.length)return;
   const last=children[children.length-1],style=getComputedStyle(sidebar),lastStyle=getComputedStyle(last);
   const browseEnd=last.getBoundingClientRect().bottom- sidebar.getBoundingClientRect().top +(Number.parseFloat(lastStyle.marginBottom)||0)+(Number.parseFloat(style.paddingBottom)||0)+(Number.parseFloat(style.borderBottomWidth)||0);
@@ -8903,7 +8977,7 @@ function invRenderInventory(){
   const inventoryHost=document.getElementById('invInventory');
   if(vocalPanel){vocalPanel.hidden=!INV_VOCAL_VIEW;vocalPanel.parentElement.classList.toggle('vocal-view',Boolean(INV_VOCAL_VIEW));}
   if(inventoryHost)inventoryHost.hidden=Boolean(INV_VOCAL_VIEW);
-  if(INV_VOCAL_VIEW){invRenderVocalFavorites();invRenderSidebar(invBuildGroups(INV_SCAN_ROWS),invStageMap());document.querySelectorAll('#invSidebar [data-inv-scope],#invSidebar [data-inv-open-all-plugins]').forEach(button=>{button.classList.remove('active');button.setAttribute('aria-pressed','false')});return;}
+  if(INV_VOCAL_VIEW){invRenderVocalFavorites();invRenderSidebar(invBuildGroups(INV_SCAN_ROWS),invStageMap());document.querySelectorAll('#invSidebar [data-inv-scope],#invSidebar [data-inv-open-all-plugins]').forEach(button=>{button.classList.remove('active');button.setAttribute('aria-pressed','false')});invSidebarSyncSelection();return;}
   const host=document.getElementById("invInventory");
   if(!host)return;
   invSetVendorCheckButtonState();
@@ -9337,22 +9411,24 @@ function renderLibrary(){
 }
 const INV_BROWSE_SECTIONS_KEY="aimmPluginBrowseSections_v1";
 let INV_BROWSE_SECTIONS_MEMORY={};
+let INV_SIDEBAR_TOOL_ACTIVE="";
 function invSidebarSetSection(name,open){
   const sidebar=document.getElementById("invSidebar"),toggle=sidebar?.querySelector('[data-inv-section-toggle="'+name+'"]');
   const content=toggle&&document.getElementById(toggle.getAttribute("aria-controls"));if(!toggle||!content)return false;
   const expanded=open===undefined?toggle.getAttribute("aria-expanded")!=="true":Boolean(open);
-  toggle.setAttribute("aria-expanded",String(expanded));content.hidden=!expanded;
+  toggle.setAttribute("aria-expanded",String(expanded));content.classList.toggle("is-closed",!expanded);content.inert=!expanded;
   if(INV_SYNTHETIC_PREVIEW)INV_BROWSE_SECTIONS_MEMORY[name]=!expanded;else try{const state=JSON.parse(localStorage.getItem(INV_BROWSE_SECTIONS_KEY)||"{}");state[name]=!expanded;localStorage.setItem(INV_BROWSE_SECTIONS_KEY,JSON.stringify(state));}catch(_){}
   if(typeof invScheduleFrameFit==="function")invScheduleFrameFit();
+  invSidebarTrackPill();
   return true;
 }
 function invApplySidebarSectionState(sidebar){
   let state=INV_SYNTHETIC_PREVIEW?INV_BROWSE_SECTIONS_MEMORY:{};if(!INV_SYNTHETIC_PREVIEW)try{state=JSON.parse(localStorage.getItem(INV_BROWSE_SECTIONS_KEY)||"{}");}catch(_){}
   const compact=window.matchMedia("(max-width:760px)").matches;
   sidebar.querySelectorAll("[data-inv-section-toggle]").forEach(toggle=>{
-    const collapsed=!compact&&state&&state[toggle.dataset.invSectionToggle]===true;
+    const collapsed=!compact&&!INV_SIDEBAR_COLLAPSED&&state&&state[toggle.dataset.invSectionToggle]===true;
     toggle.setAttribute("aria-expanded",String(!collapsed));
-    const content=document.getElementById(toggle.getAttribute("aria-controls"));if(content)content.hidden=collapsed;
+    const content=document.getElementById(toggle.getAttribute("aria-controls"));if(content){content.classList.toggle("is-closed",collapsed);content.inert=collapsed;}
   });
 }
 function invInitSidebarSections(sidebar){
@@ -9365,11 +9441,25 @@ function invInitSidebarSections(sidebar){
     while(node&&!node.classList.contains("inv-sidebar-section")){
       const next=node.nextElementSibling;content.appendChild(node);node=next;
     }
-    sidebar.insertBefore(content,node);
+    const card=document.createElement("div");card.className="inv-sidebar-card";card.dataset.invSection=name;
+    sidebar.insertBefore(card,toggle);card.append(toggle,content);
+    const inner=document.createElement("div");inner.className="inv-sidebar-section-inner";
+    while(content.firstChild)inner.appendChild(content.firstChild);
+    content.appendChild(inner);
+    const labels={status:"Update status",tools:"Actions",library:"Saved views","video-chain-picks":"Video picks",categories:"Effects"};
+    const subgroup=document.createElement("div");subgroup.className="inv-sidebar-subgroup";subgroup.textContent=labels[name];
+    const nav=inner.querySelector(".inv-sidebar-nav");if(nav)nav.prepend(subgroup);
+    const count=document.createElement("span");count.className="inv-sidebar-heading-count";count.textContent=String(inner.querySelectorAll(".inv-side-button").length);
+    toggle.innerHTML='<span class="inv-sidebar-heading-label">'+toggle.textContent+'</span><span class="inv-sidebar-selected-dot" aria-hidden="true"></span>';
+    toggle.append(count);
+    const chevron=document.createElement("span");chevron.className="inv-sidebar-chevron";chevron.setAttribute("aria-hidden","true");toggle.append(chevron);
     toggle.addEventListener("click",()=>invSidebarSetSection(name));
+    content.addEventListener("transitionend",invSidebarPlacePill);
   });
+  const pill=document.createElement("span");pill.className="inv-sidebar-pill";pill.setAttribute("aria-hidden","true");sidebar.appendChild(pill);
   invApplySidebarSectionState(sidebar);
-  window.addEventListener("resize",()=>invApplySidebarSectionState(sidebar),{passive:true});
+  window.addEventListener("resize",()=>{invApplySidebarSectionState(sidebar);invSidebarPlacePill();},{passive:true});
+  sidebar.addEventListener("scroll",invSidebarPlacePill,{passive:true});
 }
 function invScanButtonAction(){return pcCompanionConnected?pcCompanionScan():invScanNow({allowPrompt:true});}
 function invInit(){
@@ -9388,11 +9478,14 @@ function invInit(){
     invRenderInventory();
   });
   if(sidebar)sidebar.addEventListener("click",event=>{
+    const toolButton=event.target.closest('[data-inv-local-tool]');
+    if(toolButton){INV_SIDEBAR_TOOL_ACTIVE=toolButton.dataset.invLocalTool;invSidebarSyncSelection();return;}
     const vocalButton=event.target.closest('[data-vocal-view]');
-    if(vocalButton){INV_VOCAL_VIEW=vocalButton.dataset.vocalView;INV_LIBRARY_ALL=false;INV_SCOPE='all';INV_CATEGORIES.clear();invRenderInventory();return;}
+    if(vocalButton){INV_SIDEBAR_TOOL_ACTIVE="";INV_VOCAL_VIEW=vocalButton.dataset.vocalView;INV_LIBRARY_ALL=false;INV_SCOPE='all';INV_CATEGORIES.clear();invRenderInventory();return;}
     const managerButton=event.target.closest("[data-inv-tag-manager]");if(managerButton){invOpenTagManager();return;}
     const button=event.target.closest("[data-inv-scope],[data-inv-category],[data-inv-open-all-plugins]");
     if(!button||button.disabled)return;
+    INV_SIDEBAR_TOOL_ACTIVE="";
     INV_VOCAL_VIEW="";document.querySelectorAll("[data-vocal-view]").forEach(b=>{b.classList.remove("active");b.setAttribute("aria-pressed","false")});
     if(button.hasAttribute("data-inv-open-all-plugins")){INV_LIBRARY_ALL=true;INV_SCOPE="all";INV_CATEGORIES.clear();INV_TAG_FILTERS.clear();invRenderInventory();return;}
     INV_LIBRARY_ALL=false;
@@ -17196,7 +17289,7 @@ function invRenderVocalFavorites(){
   const star=(item,stock=false)=>{const on=stock?vocalReadStock().includes(item.name):invIsFavorite(item.name,item.publisher);return '<button type="button" class="inv-fav fav-card-star'+(on?' on':'')+'" data-fav-star="'+esc(stock?stockKey(item):key(item))+'" aria-pressed="'+on+'" aria-label="'+(on?'Remove':'Add')+' '+esc(item.name)+' '+(on?'from':'to')+' Favorites">'+(on?'★':'☆')+'</button>'};
   const tick=itemKey=>'<input type="checkbox" data-fav-pick="'+esc(itemKey)+'" aria-label="Select '+esc(itemKey.split('|').slice(1).join('|'))+'"'+(INV_FAV_SELECTED.has(itemKey)?' checked':'')+'>';
   const tag=(label,kind='')=>'<span class="fav-tag '+kind+'">'+esc(label)+'</span>';
-  let html='<div class="vocal-fav-head"><div><h2>Chain favourites</h2><small>Video picks and installed alternatives <span id="vocalFavCount" class="fav-starred-note">&middot; '+starredHere+' starred on '+({vocal:'Vocal',drums:'Drums','808':'808',master:'Master bus'}[INV_FAV_CHAIN]||'this chain')+'</span></small></div></div><div class="fav-switch" aria-label="Chain">'+[['vocal','Vocal'],['drums','Drums'],['808','808'],['master','Master bus']].map(([k,label])=>'<button type="button" data-fav-chain="'+k+'" class="'+(k===INV_FAV_CHAIN?'on':'')+'">'+label+'</button>').join('')+'</div><div class="fav-toolbar"><div class="fav-switch" aria-label="View">'+[['owned','Owned'],['stock','Stock Plugins (Logic Pro 13)'],['missing','Not installed']].map(([k,label])=>'<button type="button" data-fav-view="'+k+'" class="'+(k===view?'on':'')+'">'+label+'</button>').join('')+'</div><input id="favSearch" type="search" placeholder="Search plug-ins" aria-label="Search chain favourites" value="'+esc(INV_FAV_QUERY)+'"><select id="favSort" aria-label="Sort chain favourites"><option value="videos"'+(INV_FAV_SORT==='videos'?' selected':'')+'>Most-used videos first</option><option value="name"'+(INV_FAV_SORT==='name'?' selected':'')+'>Name A–Z</option></select></div>';
+  let html='<div class="vocal-fav-head"><div><h2>Video chain picks</h2><small>Video picks and installed alternatives <span id="vocalFavCount" class="fav-starred-note">&middot; '+starredHere+' starred on '+({vocal:'Vocal',drums:'Drums','808':'808',master:'Master bus'}[INV_FAV_CHAIN]||'this chain')+'</span></small></div></div><div class="fav-switch" aria-label="Chain">'+[['vocal','Vocal'],['drums','Drums'],['808','808'],['master','Master bus']].map(([k,label])=>'<button type="button" data-fav-chain="'+k+'" class="'+(k===INV_FAV_CHAIN?'on':'')+'">'+label+'</button>').join('')+'</div><div class="fav-toolbar"><div class="fav-switch" aria-label="View">'+[['owned','Owned'],['stock','Stock Plugins (Logic Pro 13)'],['missing','Not installed']].map(([k,label])=>'<button type="button" data-fav-view="'+k+'" class="'+(k===view?'on':'')+'">'+label+'</button>').join('')+'</div><input id="favSearch" type="search" placeholder="Search plug-ins" aria-label="Search chain favourites" value="'+esc(INV_FAV_QUERY)+'"><select id="favSort" aria-label="Sort chain favourites"><option value="videos"'+(INV_FAV_SORT==='videos'?' selected':'')+'>Most-used videos first</option><option value="name"'+(INV_FAV_SORT==='name'?' selected':'')+'>Name A–Z</option></select></div>';
   html+='<div class="fav-selection"><button type="button" data-fav-group="select">Select all</button><button type="button" data-fav-group="clear">Clear</button><span id="favSelectedCount">'+selected.length+' selected</span><button type="button" class="inv-btn primary" id="vocalFavApply"'+(selected.length?'':' disabled')+'>Apply '+selected.length+' selected to Favorites</button></div><div id="vocalFavStatus" role="status"></div>';
   html+='<div class="fav-grid">';
   for(const item of rows){
