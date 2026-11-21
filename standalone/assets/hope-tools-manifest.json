@@ -711,7 +711,7 @@
   },
   {
     "name": "settings_status",
-    "description": "Read provider configuration booleans, spend and usage totals, selected models, and companion status. Never returns keys, tokens, agent IDs or secret values. Settings cannot be opened or changed through this tool.",
+    "description": "Read provider configured booleans, ElevenLabs credits used, limit and remaining per account, selected models, and companion status. Never returns keys, tokens, agent IDs or secret values. Settings cannot be opened or changed through this tool.",
     "parameters": {
       "type": "object",
       "properties": {},

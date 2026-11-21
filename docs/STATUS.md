@@ -1,3 +1,7 @@
+## 2026-11-20 build 2026-11-20.14 — Settings status honesty fix (BUILT, NOT DEPLOYED)
+
+`settings_status` now returns the ElevenLabs credits used, limit and remaining shown in Settings for each account. Unknown values are `null`. It no longer reads or returns hidden dollar spend estimates, and Hope's instruction limits her answer to returned credits. The page, manifest and registration subset descriptions match. Not pushed, deployed or registered on ElevenLabs.
+
 ## 2026-11-20 build 2026-11-20.13 — Hope workbench coverage (BUILT, NOT DEPLOYED)
 
 Added standing Plugins context, completed-scan rescan results, Snapshots list/read/apply/note, Plugins tags/Hidden, Mix Check reference status and saved targets, MixBus preset load/Auto-fill and read-only Settings status. Writes use a spoken confirmation summary and verify persisted state. Added manifest drift guard, agent-name comparison script, and read-only smoke runner. Audio capture, Match Sound, file loading, and Settings changes are outside this build. ElevenLabs registration, push, and deployment are pending. See `docs/HOPE_PLUGIN_TOOLS.md`.

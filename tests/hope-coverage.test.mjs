@@ -46,14 +46,17 @@ test('rescan times out after 120 seconds without claiming a new count',async()=>
   const result=await run(rescan,context)('inventory_rescan',{});
   assert.equal(result.timed_out,true);assert.equal(result.ok,false);assert.equal(result.after_total,1);assert.equal(clock,120000);
 });
-test('settings_status returns only provider booleans and safe spend/model fields',()=>{
+test('settings_status returns visible credits and no dollar spend or secrets',()=>{
   const start=html.indexOf('function hopeSettingsStatus()'),end=html.indexOf('\nlet hopeReferenceBridge=',start);
   const store={secret:'SUPER_SECRET_KEY'};
-  const context={AIMM_PROXY_URL:'https://example.invalid',EL_KEY_STORAGE:'eleven',RT_KEY_STORAGE:'openai',localStorage:{getItem:()=>store.secret},document:{getElementById:()=>({value:'selected-model'})},elLoadCostAccount:()=>({spent:5,creditsUsed:20,creditsLimit:100}),loadSpend:()=>({spent:3}),SPEND_KEY_OAI:'spend',pcCompanionConnected:false,pcCompanionCapability:null,pcCompanionBusy:false,INV_SCAN_INFO:{generatedAt:null}};
+  const context={AIMM_PROXY_URL:'https://example.invalid',EL_KEY_STORAGE:'eleven',RT_KEY_STORAGE:'openai',localStorage:{getItem:()=>store.secret},document:{getElementById:()=>({value:'selected-model'})},elLoadCostAccount:account=>account==='primary'?{spent:5,creditsUsed:20,creditsLimit:100}:{spent:8,creditsUsed:null,creditsLimit:50},loadSpend:()=>{throw Error('Hidden spend must not be read');},pcCompanionConnected:false,pcCompanionCapability:null,pcCompanionBusy:false,INV_SCAN_INFO:{generatedAt:null}};
   vm.runInNewContext(html.slice(start,end)+'\nglobalThis.result=hopeSettingsStatus();',context);
   assert.equal(context.result.providers.elevenlabs,true);
-  assert.equal(JSON.stringify(context.result).includes('SUPER_SECRET_KEY'),false);
-  assert.equal(JSON.stringify(context.result).includes('https://example.invalid'),false);
+  assert.deepEqual(JSON.parse(JSON.stringify(context.result.credits)),{elevenlabs_primary:{credits_used:20,credits_limit:100,credits_remaining:80},elevenlabs_backup:{credits_used:null,credits_limit:50,credits_remaining:null}});
+  const result=JSON.stringify(context.result);
+  assert.equal(/spent|luna_estimated/i.test(result),false);
+  assert.equal(result.includes('SUPER_SECRET_KEY'),false);
+  assert.equal(result.includes('https://example.invalid'),false);
 });
 test('standing Plugins summary reports scan, favourites, hidden and unknown Unused honestly',()=>{
   const start=html.indexOf('function hopePluginSummary()'),end=html.indexOf('\nfunction hopeSettingsStatus()',start);
