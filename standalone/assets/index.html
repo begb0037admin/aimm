@@ -4851,8 +4851,10 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library #invSidebar .inv-sidebar-card[data-inv-section="categories"]{--section-colour:#68d3e6}
 #library #invSidebar .inv-sidebar-card:has(.inv-sidebar-section-toggle[aria-expanded="true"]){border-color:var(--section-colour)!important}
 #library #invSidebar .inv-sidebar-card.is-current{box-shadow:0 0 18px -4px var(--section-colour)!important}
-#library #invSidebar .inv-sidebar-section-toggle{min-height:48px;margin:0;padding:0 10px 0 14px;display:flex;gap:7px;width:100%;border:0!important;border-radius:0;background:#0b0d10;color:var(--section-colour)!important;font:800 calc(var(--inv-text-scale,1) * 15px)/1.15 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.035em;text-align:left;transition:background .25s ease,color .25s ease,box-shadow .35s ease}
+#library #invSidebar .inv-sidebar-section-toggle{min-height:48px;margin:0;padding:0 10px 0 14px;display:flex;gap:7px;width:100%;border:0!important;border-radius:0;background:#0b0d10;color:var(--section-colour)!important;font:800 calc(var(--inv-text-scale,1) * 13px)/1.15 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.01em;word-break:keep-all;overflow-wrap:normal;text-align:left;transition:background .25s ease,color .25s ease,box-shadow .35s ease}
 #library #invSidebar .inv-sidebar-section-toggle:hover:not(:disabled){background:#24272c!important;color:var(--section-colour)!important}
+#library #invSidebar .inv-sidebar-section-toggle::after{display:none!important}
+#library #invSidebar .inv-sidebar-section-toggle{gap:5px;padding-right:8px}
 #library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-section-toggle,#library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-section-toggle:hover{background:var(--section-colour)!important;color:var(--pv-black)!important}
 #library #invSidebar .inv-sidebar-heading-label{flex:1;min-width:0;overflow-wrap:anywhere}
 #library #invSidebar .inv-sidebar-heading-count{min-width:24px;padding:4px 5px;border-radius:6px;background:rgba(9,11,15,.72);font:700 11px/1 ui-monospace,Menlo,monospace;text-align:center;color:var(--pm-dim)}
