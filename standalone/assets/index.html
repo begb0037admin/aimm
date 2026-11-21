@@ -4879,6 +4879,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library #invSidebar .inv-sidebar-chevron::after,#library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-chevron::after{border-color:var(--pv-black)!important;left:4px;top:3px}
 #library #invSidebar [aria-expanded="false"] .inv-sidebar-chevron,#library #invSidebar .inv-sidebar-card.is-current [aria-expanded="false"] .inv-sidebar-chevron{box-shadow:none!important;background:none!important}
 #library #invSidebar [aria-expanded="false"] .inv-sidebar-chevron::after,#library #invSidebar .inv-sidebar-card.is-current [aria-expanded="false"] .inv-sidebar-chevron::after{border-color:var(--pv-black)!important}
+#library #invSidebar .inv-side-count{font-size:calc(var(--inv-text-scale,1) * 15px)!important;font-weight:700!important;line-height:1!important}
+#library #invSidebar .inv-sidebar-heading-count{font-size:calc(var(--inv-text-scale,1) * 16px)!important;font-weight:800!important;line-height:1!important}
 /* Counts: numbers only, no box (Kevin, 21 Nov 2026) */
 #library #invSidebar .inv-side-count,#library #invSidebar .inv-sidebar-heading-count,#library .inv-side-count,#library .inv-sidebar-card.is-current .inv-sidebar-heading-count{background:none!important;border:0!important;box-shadow:none!important;padding:0 2px!important;border-radius:0!important;min-width:0!important}
 #library #invSidebar .inv-sidebar-section-content{display:grid;grid-template-rows:1fr;min-width:0;transition:grid-template-rows .28s cubic-bezier(.4,0,.2,1),visibility 0s}
@@ -5729,7 +5731,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-20.26';
+const AIMM_BUILD = '2026-11-20.27';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);

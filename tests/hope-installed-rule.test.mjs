@@ -54,5 +54,5 @@ test('installed scan guidance cannot use MixBus counts and requires confirmation
   assert.match(sourceBetween('const HOPE_USAGE_SYSTEM =','function hopeUsageSelectTools('),/For installed-plug-in questions, use the inventory tools/);
   assert.match(html,/=== MIXBUS CATALOGUE \(\$\{all.length\} recommendations — NOT AN INSTALLED COUNT\) ===/);
   assert.match(html,/mixbus_catalogue_size:allPlugins\(\)\.length/);
-  assert.match(html,/const AIMM_BUILD = '2026-11-20\.26'/);
+  assert.match(html,/const AIMM_BUILD = '2026-11-20\.27'/);
 });
