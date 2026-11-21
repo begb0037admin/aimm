@@ -9393,7 +9393,7 @@ function invInit(){
     const managerButton=event.target.closest("[data-inv-tag-manager]");if(managerButton){invOpenTagManager();return;}
     const button=event.target.closest("[data-inv-scope],[data-inv-category],[data-inv-open-all-plugins]");
     if(!button||button.disabled)return;
-    INV_VOCAL_VIEW="";
+    INV_VOCAL_VIEW="";document.querySelectorAll("[data-vocal-view]").forEach(b=>{b.classList.remove("active");b.setAttribute("aria-pressed","false")});
     if(button.hasAttribute("data-inv-open-all-plugins")){INV_LIBRARY_ALL=true;INV_SCOPE="all";INV_CATEGORIES.clear();INV_TAG_FILTERS.clear();invRenderInventory();return;}
     INV_LIBRARY_ALL=false;
     if(button.hasAttribute("data-inv-scope")){INV_SCOPE=button.getAttribute("data-inv-scope")||"all";INV_CATEGORIES.clear();INV_TAG_FILTERS.clear();}
@@ -17182,8 +17182,8 @@ async function vocalApply(confirmed,chain='vocal',names){
   return {...result,message:'starred '+result.starred+', already '+result.already+', unresolved '+result.unresolved+(result.unresolved_items.length?' ('+result.unresolved_items.map(x=>x.name).join(', ')+')':'')+(result.not_saved.length?', not saved '+result.not_saved.map(x=>x.name).join(', '):'')};
 }
 function invRenderVocalFavorites(){
-  const panel=document.getElementById('vocalFavPanel');if(!panel)return;
   document.querySelectorAll('[data-vocal-view]').forEach(button=>{button.classList.toggle('active',button.dataset.vocalView===INV_VOCAL_VIEW);button.setAttribute('aria-pressed',String(button.dataset.vocalView===INV_VOCAL_VIEW));});
+  const panel=document.getElementById('vocalFavPanel');if(!panel)return;
   if(!VOCAL_FAV_DATA){panel.textContent='Loading chain favourites…';vocalLoadData().then(()=>invRenderInventory()).catch(error=>{panel.textContent=error.message});return;}
   const esc=invEsc,chain=VocalFavs.getChain(VOCAL_FAV_DATA,INV_FAV_CHAIN),view=INV_VOCAL_VIEW;
   const starredHere=VocalFavs.targets(chain).filter(item=>invIsFavorite(item.name,item.publisher)).length+vocalReadStock().filter(name=>chain.stock.logic.some(item=>item.name===name)).length;
