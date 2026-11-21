@@ -1,3 +1,7 @@
+## 2026-11-20 build 2026-11-20.19 — Chain favourites redesign (BUILT, NOT DEPLOYED)
+
+Plugins has a responsive three-column Chain favourites card grid for vocal, drums, 808 and master bus, with view, search, sort and subset selection. Selected items apply through verified existing favourite storage; a star applies one immediately. Starred Plugins stars use the Favourites purple glow without a background. Hope tools keep their names and support matching chains and exact-name subsets. The v2 data ships only scan matched, licensed equivalents and Logic Pro 13 stock. No push or deploy.
+
 ## 2026-11-20 build 2026-11-20.18 — Maker-first plug-in equivalents (BUILT, NOT DEPLOYED)
 
 Reordered vocal-chain Not installed equivalents to prefer a scanned, licensed product from the same maker and effect type. Valhalla Room now starts with ValhallaVintageVerb; Valhalla Delay starts with ValhallaSupermassive; Waves H-Verb also lists ValhallaVintageVerb. Applied the same rule to corrected drums, 808 and master chain data under `/tmp/chain-research-maker/`. Every vocal equivalent is checked against the inventory scan and UAD licence map in `tests/vocal-favs.test.mjs`; all 151 `tests/*.test.mjs` tests passed. No push or deploy.

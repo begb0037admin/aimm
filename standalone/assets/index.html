@@ -4103,14 +4103,42 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .vocal-fav-panel{flex:1 1 auto;min-height:0;overflow:auto;padding:18px;color:var(--text,#e2e7ec)}
     #library .vocal-fav-panel[hidden]{display:none}
     #library .inv-content.vocal-view > :not(#vocalFavPanel){display:none!important}
-    #library .vocal-fav-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+    #library .vocal-fav-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
     #library .vocal-fav-head h2{margin:0;font-size:20px}
-    #library .vocal-fav-row{display:flex;justify-content:space-between;gap:12px;align-items:start;padding:12px;border:1px solid #343b45;border-radius:7px;margin:7px 0;background:#1b1e22}
-    #library .vocal-fav-row strong{display:block;overflow-wrap:anywhere}
-    #library .vocal-fav-row small{display:block;color:#9aa4ae;margin-top:3px}
-    #library .vocal-fav-badge{border:1px solid #3a414b;border-radius:6px;padding:3px 7px;white-space:nowrap;font-size:11px}
-    #library .vocal-fav-equivalents{margin-top:8px;padding-left:12px;border-left:1px solid #3a414b}
-    #library .vocal-fav-equivalents div{margin-top:5px}
+    #library .vocal-fav-head small{color:#8a939d;font-size:12px}
+    #library .fav-switch{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+    #library .fav-switch button{background:#1a1d21;color:#cbd0d6;border:1px solid #2a2e35;border-radius:7px;padding:7px 13px;font:600 12px -apple-system,BlinkMacSystemFont,sans-serif;cursor:pointer}
+    #library .fav-switch button.on{background:var(--pv-teal);border-color:var(--pv-teal);color:var(--pv-black)}
+    #library .fav-toolbar{display:flex;align-items:start;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+    #library .fav-toolbar .fav-switch{margin:0}
+    #library .fav-toolbar input,#library .fav-toolbar select{background:#14171a;color:#e2e7ec;border:1px solid #2a2e35;border-radius:7px;padding:7px 10px;font:12px -apple-system,BlinkMacSystemFont,sans-serif;min-height:32px}
+    #library .fav-toolbar input{width:220px}
+    #library .fav-selection{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:4px 0 12px}
+    #library .fav-selection>button:not(.primary),#library .fav-eq-head button{background:none;border:0;color:#9aa4ae;cursor:pointer;font:600 11px -apple-system,BlinkMacSystemFont,sans-serif;padding:4px}
+    #library .fav-selection>button:hover:not(.primary),#library .fav-eq-head button:hover{color:#e2e7ec}
+    #library #favSelectedCount{color:var(--pv-teal);font-weight:700;font-size:13px;margin-right:auto}
+    #library #vocalFavApply:disabled{opacity:.4;cursor:default}
+    #library #vocalFavStatus{min-height:18px;color:#7ee8d9;font-size:12px}
+    #library .fav-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;width:100%}
+    @container (max-width:950px){#library .fav-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @container (max-width:620px){#library .fav-grid{grid-template-columns:minmax(0,1fr)}}
+    #library .fav-card{background:#14171a;border:1px solid #2a2e35;border-radius:9px;padding:12px 14px 10px;min-width:0}
+    #library .fav-card:hover{border-color:#3a414b}
+    #library .fav-card-top{display:flex;align-items:start;gap:8px}
+    #library .fav-card-top h3{margin:0;flex:1;min-width:0;overflow-wrap:anywhere;font-size:14px;line-height:1.25}
+    #library .fav-card input[type=checkbox]{accent-color:var(--pv-teal);cursor:pointer}
+    #library .fav-card-top small{color:#8a939d;white-space:nowrap}
+    #library .fav-meta{display:flex;gap:7px;align-items:center;flex-wrap:wrap;color:#8a939d;font-size:11px;margin:7px 0}
+    #library .fav-tag{display:inline-block;border:1px solid #3a414b;border-radius:5px;padding:1px 6px;color:#b8c0ca;font-size:10px;white-space:nowrap}
+    #library .fav-tag.owned{border-color:rgba(45,212,191,.6);color:var(--pv-teal)}
+    #library .fav-tag.best,#library .fav-tag.maker{border-color:rgba(45,212,191,.45);color:#7ee8d9}
+    #library .fav-eq-head{display:flex;align-items:center;gap:5px;margin:10px 0 4px;padding-top:8px;border-top:1px solid #2a2e35;color:#8a939d;font-size:11px}
+    #library .fav-eq-head button:first-child{margin-left:auto}
+    #library .fav-eq{display:flex;align-items:center;gap:5px;flex-wrap:wrap;min-width:0;padding:5px 0;border-top:1px solid #20242a;font-size:11px}
+    #library .fav-eq strong{overflow-wrap:anywhere;font-size:12px}
+    #library .fav-eq small{color:#8a939d}
+    #library .fav-eq .fav-card-star{margin-left:auto}
+    #library .fav-empty{padding:40px;text-align:center;color:#8a939d}
 
     #library .inv-controls,#library .inv-stats{box-sizing:border-box;padding-inline:14px}
 
@@ -4725,7 +4753,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library .inv-status.error{color:#f472b6!important}#library .inv-status.good{color:#7ee2a8!important}
 
 /* G. Star and icon buttons */
-#library .inv-fav.on{color:var(--pv-black)!important}
+#library .inv-fav.on{color:#b970ff!important;background:none!important;border:0!important;box-shadow:none!important;text-shadow:0 0 5px rgba(185,112,255,.8),0 0 12px rgba(148,66,220,.5)!important}
+#library .inv-fav.on:is(:hover,:focus-visible){color:#b970ff!important;background:none!important;border:0!important;outline:none!important;box-shadow:none!important;text-shadow:0 0 5px rgba(185,112,255,1),0 0 14px rgba(148,66,220,.8)!important}
 #library .inv-fav:not(.on){color:var(--pm-dim)!important}
 
 /* H. Product menu action tints: solid grey fill, text colour carries meaning */
@@ -5092,10 +5121,10 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <button class="inv-side-button" type="button" data-inv-open-all-plugins aria-label="All Plugins" title="Show every installed plug-in in a flat list" aria-pressed="false"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></span><span class="inv-side-label">All Plugins</span><span class="inv-side-count" id="invLibraryAllCount">—</span></button>
           <button class="inv-side-button" type="button" disabled aria-label="Plugin Compatibility — unavailable until plug-in architecture metadata and current vendor evidence are connected" title="Compatibility is unavailable until this Library has source-backed architecture metadata and current vendor evidence."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/><path d="m8 11 2.5 2.5L16 8"/></svg></span><span class="inv-side-label">Plugin Compatibility</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="favorites" aria-label="Favorites" title="Favorites"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg></span><span class="inv-side-label">Favorites</span><span class="inv-side-count" id="invSidebarFavCount">0</span></button>
-          <div class="inv-sidebar-section" aria-label="Vocal chain favourites">VOCAL CHAIN FAVOURITES <span id="vocalFavCount">0</span></div>
-          <button class="inv-side-button" type="button" data-vocal-view="owned"><span class="inv-side-label">Owned (starred)</span></button>
+          <div class="inv-sidebar-section" aria-label="Chain favourites">CHAIN FAVOURITES <span id="vocalFavCount">0</span></div>
+          <button class="inv-side-button" type="button" data-vocal-view="owned"><span class="inv-side-label">Owned</span></button>
           <button class="inv-side-button" type="button" data-vocal-view="stock"><span class="inv-side-label">Stock Plugins (Logic Pro 13)</span></button>
-          <button class="inv-side-button" type="button" data-vocal-view="missing"><span class="inv-side-label">Not installed — equivalents</span></button>
+          <button class="inv-side-button" type="button" data-vocal-view="missing"><span class="inv-side-label">Not installed</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="tags" aria-label="My tags" title="Show plug-ins with saved tags"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m20 13-7 7-9-9V4h7l9 9Z"/><circle cx="8.5" cy="8.5" r=".8"/></svg></span><span class="inv-side-label">My tags</span></button>
           <button class="inv-side-button" type="button" data-inv-tag-manager aria-label="Plugin Tag Manager" title="Manage tags on this browser"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 13 11 22l-9-9V3h10l8 10Z"/><circle cx="7" cy="7" r="1"/></svg></span><span class="inv-side-label">Tag Manager</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="not-licensed-uad" aria-label="Not licensed UAD" title="UAD products outside the account ownership map"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 8l8 8M16 8l-8 8"/></svg></span><span class="inv-side-label">Not licensed (UAD)</span><span class="inv-side-count" id="invSidebarNotLicensedCount">0</span></button>
@@ -5634,7 +5663,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-20.18';
+const AIMM_BUILD = '2026-11-20.19';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8166,7 +8195,7 @@ function invRenderSidebar(groups,stageMap){
   const notLicensedCount=split.notLicensed.length;
   const allCount=groups.length;
   const favCount=groups.filter(group=>invIsFavorite(group.name,group.vendor)).length;
-  const vocalCount=document.getElementById('vocalFavCount');if(vocalCount&&VOCAL_FAV_DATA)vocalCount.textContent=VocalFavs.targets(VOCAL_FAV_DATA).filter(item=>invIsFavorite(item.name,item.publisher)).length+vocalReadStock().filter(name=>VOCAL_FAV_DATA.stock.logic.some(item=>item.name===name)).length;
+  const vocalCount=document.getElementById('vocalFavCount');if(vocalCount&&VOCAL_FAV_DATA){const chain=VocalFavs.getChain(VOCAL_FAV_DATA,INV_FAV_CHAIN);vocalCount.textContent=VocalFavs.targets(chain).filter(item=>invIsFavorite(item.name,item.publisher)).length+vocalReadStock().filter(name=>chain.stock.logic.some(item=>item.name===name)).length;}
   const tagCount=groups.filter(group=>{const state=invGetProductActions(group.vendor,group.name);return Array.isArray(state.tags)&&state.tags.length>0}).length;
   invRenderTagFilter(groups);
   const hiddenCount=groups.filter(group=>invGetProductActions(group.vendor,group.name).hidden===true).length;
@@ -12729,8 +12758,8 @@ Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull u
   {type:'function',name:'inventory_search',description:'Read the current local AIMM scan without changing the visible Plugins view. Returns product status and known latest versions; synthetic preview rows are not proof of installed plug-ins. Use scan results to verify an installed plug-in before discussing it or adding it to a MixBus.',parameters:{type:'object',properties:{query:{type:'string',description:'Words from the plug-in or publisher name; an empty query lists the current scanned inventory.'},format:{type:'string',enum:['AU','VST2','VST3','CLAP'],description:'Optional exact plug-in format filter.'},status:{type:'string',enum:['updates_available','up_to_date','manual_check','vendor_app','unchecked'],description:'Optional product update status filter.'},offset:{type:'integer',minimum:0,description:'Zero-based result offset for paging.'},limit:{type:'integer',minimum:1,maximum:50,description:'Number of product results to return, maximum 50.'}},required:[]}},
   {type:'function',name:'inventory_summary',description:'Read the current local AIMM scan totals, formats, update statuses and leading vendors without changing the visible Plugins view. Does not scan folders.',parameters:{type:'object',properties:{},required:[]}},
   {type:'function',name:'inventory_set_favorite',description:'Star or unstar an exact scanned plug-in in the Plugins tab Favorites. If a name matches several publishers, supply the publisher from inventory_search. Report the returned result accurately; no confirmation is needed.',parameters:{type:'object',properties:{plugin:{type:'string',description:'Exact scanned plug-in name returned by inventory_search.'},publisher:{type:'string',description:'Exact publisher returned by inventory_search; required when the plug-in name is ambiguous.'},favorite:{type:'boolean',description:'True to star, false to unstar.'}},required:['plugin','favorite']}},
-  {type:'function',name:'vocal_favorites_read',description:'Read vocal-chain favourites from the video report: scanned owned plug-ins, Logic Pro 13 stock plug-ins, and not-installed video plug-ins with owned equivalents. For video chains prefer owned, then close versions, then equivalents, then Logic stock; say plainly which video plug-in was swapped.',parameters:{type:'object',properties:{section:{type:'string',enum:['owned','stock','missing','all'],description:'Section to read; defaults to all.'}},required:[]}},
-  {type:'function',name:'vocal_favorites_apply',description:'Prepare or apply vocal-chain favourites. First call with confirmed false, read the scanned and Logic stock counts aloud, get Kev’s clear yes, then call with confirmed true. Returns verified starred, already and unresolved counts.',parameters:{type:'object',properties:{confirmed:{type:'boolean',description:'True only after Kev clearly confirms the proposed count.'}},required:['confirmed']}},
+  {type:'function',name:'vocal_favorites_read',description:'Read matching chain favourites from the video report. For a requested bus choose its chain, prefer owned, then close versions, equivalents and Logic stock; say which video plug-in was swapped.',parameters:{type:'object',properties:{chain:{type:'string',enum:['vocal','drums','808','master','all'],description:'Matching chain; defaults to vocal.'},section:{type:'string',enum:['owned','stock','missing','all'],description:'Section to read; defaults to all.'}},required:[]}},
+  {type:'function',name:'vocal_favorites_apply',description:'Prepare or apply matching chain favourites. First call with confirmed false, read the exact counts aloud, get Kev’s clear yes, then call with confirmed true. Returns verified starred, already and unresolved counts.',parameters:{type:'object',properties:{chain:{type:'string',enum:['vocal','drums','808','master','all'],description:'Matching chain; defaults to vocal.'},names:{type:'array',items:{type:'string'},description:'Exact item names to apply; omit for the whole chain view.'},confirmed:{type:'boolean',description:'True only after Kev clearly confirms the proposed count.'}},required:['confirmed']}},
   {type:'function',name:'inventory_status',description:'Read companion connection, version, scan, vendor-check and last-action state without changing Plugins.',parameters:{type:'object',properties:{},required:[]}},
   {type:'function',name:'inventory_duplicates',description:'Read the companion duplicate groups, loading them if needed; does not move anything.',parameters:{type:'object',properties:{},required:[]}},
   {type:'function',name:'inventory_unused',description:'Read plug-ins in the companion Unused list without restoring anything.',parameters:{type:'object',properties:{},required:[]}},
@@ -16262,8 +16291,8 @@ const HOPE_USAGE_VOICE = {
   sessionTurns:0, sessionInputSeconds:0, sessionSpeechChars:0, sessionSpeechCredits:0,
   sessionSpeechCreditsKnown:true, sessionLlmCost:0, sessionLlmModel:'', sessionLlmInputTokens:0, sessionLlmOutputTokens:0, lunaAbort:null,
 };
-const HOPE_CHAIN_BUILD_RULES = `Building a chain from a video: 1) Search the videos. Name the video and its creator, and read out the plugin list exactly as the video shows it. Never call something "from the video" if it is not. 2) For each plugin, read vocal_favorites_read and prefer owned, then close version, then owned equivalent, then Logic Pro 13 stock. Verify scanned ownership. If a video plug-in is swapped, say plainly which favourite replaces it and why. 3) Clear the bus, then add the plugins in the video's order. 4) Go through the chain one plugin at a time. Pin that plugin's settings first, then say them out loud. The highlight moves to that plugin, so Kev can see its settings as you talk. 5) Tell Kev which plugins are swaps and which are exact matches.`;
-const HOPE_INVENTORY_RULES = `Two separate plug-in lists exist. The MixBus library/catalogue in context is what AIMM recommends from; it is not an installed inventory or installed count. Kev's INSTALLED plug-ins are the Plugin Companion scan shown in the Plugins tab. For any question about what he has installed, how many plug-ins he has, updates, duplicates, Unused, vendor apps, a vendor's plug-ins, or the companion, use inventory_summary, inventory_search, inventory_status, inventory_duplicates or inventory_unused as appropriate. Never answer these questions from MixBus catalogue numbers and never guess a number. If no scan is available, say the Plugins tab has no scan loaded and the companion may not be connected. Synthetic preview rows are not installed plug-ins. Use inventory_navigate to open a requested inventory sidebar item and report disabled items' unavailable reason. inventory_search and inventory_summary leave the visible view unchanged. Use inventory_set_favorite for scanned or installed plug-ins, and toggle_favorite only for the MixBus catalogue; say whether the saved change succeeded, was already set, was ambiguous, was not found, or was not saved. Starring needs no confirmation. vocal_favorites_read reads the video favourites; for vocal_favorites_apply, read the proposed counts aloud with confirmed false, wait for Kev’s clear yes, then call confirmed true and report verified starred, already and unresolved counts. When building a chain from a video prefer vocal favourites in order: owned, close version, equivalent, Logic stock; say which video plug-in was swapped for which favourite. inventory_reveal and inventory_rescan use the existing controls. For every inventory change tool — inventory_move_to_unused, inventory_restore, inventory_move_to_trash, inventory_mark_vendor_app_checked, inventory_unmark_vendor_check, inventory_keep_newest_duplicates and inventory_add_to_bus — call with confirmed false first, read the returned summary aloud briefly, wait for Kev's clear yes, then call with confirmed true. Trash needs a separate yes before setting confirmed_trash true. For inventory_add_to_bus, first verify the exact installed name and publisher in the scan and choose a valid bus and stage; only use it when Kev explicitly asks. Menu navigation alone does not authorize scanning folders, downloading installers, sharing the inventory, or changing MixBus.`;
+const HOPE_CHAIN_BUILD_RULES = `Building a chain from a video: 1) Search the videos. Name the video and its creator, and read out the plugin list exactly as the video shows it. Never call something "from the video" if it is not. 2) For each plugin, read vocal_favorites_read for the matching bus chain (vocal, drums, 808 or master) and prefer owned, then close version, then owned equivalent, then Logic Pro 13 stock. Verify scanned ownership. If a video plug-in is swapped, say plainly which favourite replaces it and why. 3) Clear the bus, then add the plugins in the video's order. 4) Go through the chain one plugin at a time. Pin that plugin's settings first, then say them out loud. The highlight moves to that plugin, so Kev can see its settings as you talk. 5) Tell Kev which plugins are swaps and which are exact matches.`;
+const HOPE_INVENTORY_RULES = `Two separate plug-in lists exist. The MixBus library/catalogue in context is what AIMM recommends from; it is not an installed inventory or installed count. Kev's INSTALLED plug-ins are the Plugin Companion scan shown in the Plugins tab. For any question about what he has installed, how many plug-ins he has, updates, duplicates, Unused, vendor apps, a vendor's plug-ins, or the companion, use inventory_summary, inventory_search, inventory_status, inventory_duplicates or inventory_unused as appropriate. Never answer these questions from MixBus catalogue numbers and never guess a number. If no scan is available, say the Plugins tab has no scan loaded and the companion may not be connected. Synthetic preview rows are not installed plug-ins. Use inventory_navigate to open a requested inventory sidebar item and report disabled items' unavailable reason. inventory_search and inventory_summary leave the visible view unchanged. Use inventory_set_favorite for scanned or installed plug-ins, and toggle_favorite only for the MixBus catalogue; say whether the saved change succeeded, was already set, was ambiguous, was not found, or was not saved. Starring needs no confirmation. vocal_favorites_read reads the video favourites; for vocal_favorites_apply, read the proposed counts aloud with confirmed false, wait for Kev’s clear yes, then call confirmed true and report verified starred, already and unresolved counts. When building a chain from a video read the matching bus chain favourites first (vocal, drums, 808 or master) and prefer in order: owned, close version, equivalent, Logic stock; say which video plug-in was swapped for which favourite. inventory_reveal and inventory_rescan use the existing controls. For every inventory change tool — inventory_move_to_unused, inventory_restore, inventory_move_to_trash, inventory_mark_vendor_app_checked, inventory_unmark_vendor_check, inventory_keep_newest_duplicates and inventory_add_to_bus — call with confirmed false first, read the returned summary aloud briefly, wait for Kev's clear yes, then call with confirmed true. Trash needs a separate yes before setting confirmed_trash true. For inventory_add_to_bus, first verify the exact installed name and publisher in the scan and choose a valid bus and stage; only use it when Kev explicitly asks. Menu navigation alone does not authorize scanning folders, downloading installers, sharing the inventory, or changing MixBus.`;
 const HOPE_COVERAGE_RULES = `Unlicensed UAD products are excluded from the installed library and inventory counts because UA installs products the account may not own. The Plugins summary in your live context is the installed scan, not the MixBus catalogue. After inventory_rescan, use its completed before_total, after_total and lastScanAt; if timed_out, say the scan was not verified. For snapshots_apply, snapshots_add_note, plugin_tag_set, plugin_hide, saved_target_apply, mixbus_load_preset, mixbus_auto_fill and clear_bus, call with confirmed false, read the summary aloud, wait for Kev's clear yes, then repeat with confirmed true. Report a write as successful only when its result says ok true. Mix Check audio-file loading stays manual through the browser file picker. settings_status is read-only; never open Settings or reveal any key, token or secret value. Report only the credits returned by settings_status, never state a dollar spent figure, and say you can't see anything the tool does not return.`;
 const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural and complete: lead with the answer, stay under about 120 words, and finish the sentence before stopping; never end mid-sentence. Usually use one or two sentences and 20–35 words. Answer directly; use contractions and producer language. For how-to questions, give the usable steps from the knowledge base directly and in order, using numbered steps (at most five); ask a clarifying question only when the knowledge base has nothing usable. For recommendations, use only plug-ins confirmed in the MixBus library/catalogue. For installed-plug-in questions, use the inventory tools and their live scan. Use available AIMM tools for live measurements and MixBus actions; never guess when live state is available. Voice and typed chat are the same Hope and have the same full AIMM tool set. For mixing, production, plugin or factual questions, search the knowledge base first. If Kev names a video title, read that video; for an unnamed video reference, use the shared vague-video candidate list, choose one candidate based on its title, channel, and transcript content, and explain in one sentence in your own words what that video covers; never quote or copy the transcript, and follow the page's closest-match fallback if no candidate title is named. Otherwise read the top-ranked search result. Only if search_yt_knowledge and read_yt_knowledge, where relevant, return nothing that answers the question, call web_search_fallback once, then answer from its result and say it came from the web. Never use web_search_fallback first. When Kev asks for a MixBus action, call the matching tool and report its actual result; do not tell him to do it manually if a tool exists. Use write tools only for what he actually asked you to change; if he says explain only, make no changes. Use set_stem_selection for loaded stem selection and playback control. If a requested action has no matching tool, say so plainly. Do not narrate internal work.`;
 function hopeUsageSelectTools(utterance){
@@ -17112,56 +17141,77 @@ function hopeInventoryGroups(){
   });
 }
 let INV_VOCAL_VIEW='';
+let INV_FAV_CHAIN='vocal';
+let INV_FAV_QUERY='';
+let INV_FAV_SORT='videos';
 let VOCAL_FAV_DATA=null;
+const INV_FAV_SELECTED=new Set();
 const VOCAL_STOCK_KEY='aimmVocalLogicStockFavorites_v1';
 function vocalReadStock(){try{const value=JSON.parse(localStorage.getItem(VOCAL_STOCK_KEY)||'[]');return Array.isArray(value)?value:[]}catch(_){return []}}
 function vocalSaveStock(names){try{localStorage.setItem(VOCAL_STOCK_KEY,JSON.stringify(names));return JSON.stringify(vocalReadStock())===JSON.stringify(names)}catch(_){return false}}
 async function vocalLoadData(){
   if(VOCAL_FAV_DATA)return VOCAL_FAV_DATA;
   const response=await fetch('./vocal-favs.json');
-  if(!response.ok)throw new Error('Vocal favourites data is unavailable.');
+  if(!response.ok)throw new Error('Chain favourites data is unavailable.');
   VOCAL_FAV_DATA=await response.json();return VOCAL_FAV_DATA;
 }
-function vocalRead(section='all'){
-  if(!VOCAL_FAV_DATA)return {ok:false,message:'Vocal favourites are loading.'};
-  const data=VOCAL_FAV_DATA;
+function vocalRead(section='all',chain='vocal'){
+  if(!VOCAL_FAV_DATA)return {ok:false,message:'Chain favourites are loading.'};
   if(!['all','owned','stock','missing'].includes(section))return {ok:false,message:'Unknown section.'};
-  const result={ok:true,version:data.version,source:data.source};
-  if(section==='all'||section==='owned')result.owned=data.owned;
-  if(section==='all'||section==='stock')result.stock=data.stock;
-  if(section==='all'||section==='missing')result.missing=data.missing;
-  return result;
+  if(!['all','vocal','drums','808','master'].includes(chain))return {ok:false,message:'Unknown chain.'};
+  const one=(key)=>{const data=VocalFavs.getChain(VOCAL_FAV_DATA,key),result={chain:key};if(section==='all'||section==='owned')result.owned=data.owned;if(section==='all'||section==='stock')result.stock=data.stock;if(section==='all'||section==='missing')result.missing=data.missing;return result};
+  return chain==='all'?{ok:true,version:VOCAL_FAV_DATA.version,chains:Object.fromEntries(['vocal','drums','808','master'].map(key=>[key,one(key)]))}:{ok:true,version:VOCAL_FAV_DATA.version,...one(chain)};
 }
-async function vocalApply(confirmed){
+async function vocalApply(confirmed,chain='vocal',names){
   const data=await vocalLoadData();
-  const plan=VocalFavs.resolve(data,INV_SCAN_ROWS);
-  const stock=data.stock.logic||[];
-  if(!confirmed)return {ok:true,requires_confirmation:true,scanned_targets:plan.resolved.length,stock_targets:stock.length,unresolved:plan.unresolved.length,unresolved_items:plan.unresolved,message:'Please confirm applying '+plan.resolved.length+' scanned favourites and '+stock.length+' Logic stock favourites.'};
+  if(!['vocal','drums','808','master','all'].includes(chain))return {ok:false,message:'Unknown chain.'};
+  if(names!==undefined&&(!Array.isArray(names)||names.some(name=>typeof name!=='string')))return {ok:false,message:'names must be an array of exact item names.'};
+  const keys=chain==='all'?['vocal','drums','808','master']:[chain];
+  const known=new Set(keys.flatMap(key=>{const section=VocalFavs.getChain(data,key);return [...VocalFavs.targets(section),...section.stock.logic].map(item=>item.name)}));
+  const unknown=names===undefined?[]:[...new Set(names)].filter(name=>!known.has(name)).map(name=>({name}));
+  const plans=keys.map(key=>{const section=VocalFavs.getChain(data,key),localNames=names===undefined?undefined:names.filter(name=>VocalFavs.selections(section,[name]).unknown.length===0),chosen=VocalFavs.selections(section,localNames),scan=VocalFavs.resolve(section,INV_SCAN_ROWS,localNames);return {key,section,localNames,chosen,scan}});
+  const scanned=plans.reduce((n,p)=>n+p.scan.resolved.length,0),stock=plans.reduce((n,p)=>n+p.chosen.stock.length,0),unresolved=[...plans.flatMap(p=>p.scan.unresolved),...unknown];
+  if(!confirmed)return {ok:true,requires_confirmation:true,scanned_targets:scanned,stock_targets:stock,unresolved:unresolved.length,unresolved_items:unresolved,message:'Please confirm applying '+scanned+' scanned favourites and '+stock+' Logic stock favourites.'};
   if(INV_SYNTHETIC_PREVIEW)return {ok:false,message:'Synthetic sample rows cannot be starred.'};
-  const result=await VocalFavs.apply(data,INV_SCAN_ROWS,{
-    setFavorite:item=>hopeInventorySetFavorite({plugin:item.name,publisher:item.publisher,favorite:true}),
-    isFavorite:item=>invIsFavorite(item.name,item.publisher),
-    saveStock:vocalSaveStock,readStock:vocalReadStock
-  });
+  const results=[];
+  for(const p of plans)results.push(await VocalFavs.apply(p.section,INV_SCAN_ROWS,{setFavorite:item=>hopeInventorySetFavorite({plugin:item.name,publisher:item.publisher,favorite:true}),isFavorite:item=>invIsFavorite(item.name,item.publisher),saveStock:vocalSaveStock,readStock:vocalReadStock},p.localNames));
+  const result={ok:results.every(r=>r.ok)&&unknown.length===0,starred:results.reduce((n,r)=>n+r.starred,0),already:results.reduce((n,r)=>n+r.already,0),unresolved:results.reduce((n,r)=>n+r.unresolved,0)+unknown.length,unresolved_items:[...results.flatMap(r=>r.unresolved_items),...unknown],not_saved:results.flatMap(r=>r.not_saved)};
   invRenderInventory();
-  return {...result,message:'starred '+result.starred+', already '+result.already+', unresolved '+result.unresolved+(result.not_saved.length?', not saved '+result.not_saved.length:'')};
+  return {...result,message:'starred '+result.starred+', already '+result.already+', unresolved '+result.unresolved+(result.unresolved_items.length?' ('+result.unresolved_items.map(x=>x.name).join(', ')+')':'')+(result.not_saved.length?', not saved '+result.not_saved.map(x=>x.name).join(', '):'')};
 }
 function invRenderVocalFavorites(){
   const panel=document.getElementById('vocalFavPanel');if(!panel)return;
-  const data=VOCAL_FAV_DATA;
-  const count=document.getElementById('vocalFavCount');
-  if(count&&data)count.textContent=VocalFavs.targets(data).filter(item=>invIsFavorite(item.name,item.publisher)).length+vocalReadStock().filter(name=>data.stock.logic.some(item=>item.name===name)).length;
   document.querySelectorAll('[data-vocal-view]').forEach(button=>{button.classList.toggle('active',button.dataset.vocalView===INV_VOCAL_VIEW);button.setAttribute('aria-pressed',String(button.dataset.vocalView===INV_VOCAL_VIEW));});
-  if(!data){panel.textContent='Loading vocal chain favourites…';vocalLoadData().then(()=>invRenderInventory()).catch(error=>{panel.textContent=error.message});return;}
-  const esc=invEsc;
-  const row=(item,badge,publisher)=>'<div class="vocal-fav-row"><div><strong>'+esc(item.name)+'</strong><small>'+esc(publisher||item.publisher||'Logic Pro 13 stock')+' · in '+Number(item.videos||0)+' videos</small></div><span class="vocal-fav-badge">'+esc(badge)+'</span></div>';
-  const title={owned:'Owned (starred)',stock:'Stock Plugins — Logic Pro 13',missing:'Not installed — equivalents'}[INV_VOCAL_VIEW]||'';
-  let html='<div class="vocal-fav-head"><h2>'+esc(title)+'</h2><button class="inv-btn primary" type="button" id="vocalFavApply">Apply to Favorites</button></div><div id="vocalFavStatus" role="status"></div>';
-  if(INV_VOCAL_VIEW==='owned')html+=data.owned.map(item=>row(item,item.match==='close'?'Close version':'Owned')).join('');
-  if(INV_VOCAL_VIEW==='stock')html+=data.stock.logic.map(item=>row(item,'Logic stock')).join('');
-  if(INV_VOCAL_VIEW==='missing')html+=data.missing.map(item=>'<div class="vocal-fav-row"><div><strong>'+esc(item.name)+'</strong><small>Not installed · in '+Number(item.videos)+' videos</small><div class="vocal-fav-equivalents">'+item.equivalents.map(eq=>'<div>'+esc(eq.name)+' · '+esc(eq.publisher)+' <span class="vocal-fav-badge">Equivalent</span></div>').join('')+'</div></div></div>').join('');
-  panel.innerHTML=html;
-  panel.querySelector('#vocalFavApply').onclick=async()=>{const button=panel.querySelector('#vocalFavApply'),status=panel.querySelector('#vocalFavStatus');button.disabled=true;try{const result=await vocalApply(true);status.textContent=result.message;invRenderVocalFavorites();const current=panel.querySelector('#vocalFavStatus');if(current)current.textContent=result.message;}catch(error){status.textContent=error.message}finally{const current=panel.querySelector('#vocalFavApply');if(current)current.disabled=false}};
+  if(!VOCAL_FAV_DATA){panel.textContent='Loading chain favourites…';vocalLoadData().then(()=>invRenderInventory()).catch(error=>{panel.textContent=error.message});return;}
+  const esc=invEsc,chain=VocalFavs.getChain(VOCAL_FAV_DATA,INV_FAV_CHAIN),view=INV_VOCAL_VIEW;
+  const count=document.getElementById('vocalFavCount');if(count)count.textContent=VocalFavs.targets(chain).filter(item=>invIsFavorite(item.name,item.publisher)).length+vocalReadStock().filter(name=>chain.stock.logic.some(item=>item.name===name)).length;
+  const key=item=>item.publisher+'|'+item.name,stockKey=item=>'Logic Pro 13 stock|'+item.name;
+  const all=view==='owned'?chain.owned:view==='stock'?chain.stock.logic:chain.missing;
+  const rows=all.filter(item=>!INV_FAV_QUERY||[item.name,item.publisher||'',...(item.equivalents||[]).map(eq=>eq.name)].join(' ').toLowerCase().includes(INV_FAV_QUERY.toLowerCase())).filter((item,index,array)=>view!=='owned'||array.findIndex(other=>other.name===item.name&&other.publisher===item.publisher)===index).slice();
+  rows.sort((a,b)=>INV_FAV_SORT==='name'?a.name.localeCompare(b.name):b.videos-a.videos||a.name.localeCompare(b.name));
+  const visible=[...new Set(rows.flatMap(item=>view==='missing'?(item.equivalents||[]).map(key):[view==='stock'?stockKey(item):key(item)]))];
+  const selected=visible.filter(k=>INV_FAV_SELECTED.has(k));
+  const star=(item,stock=false)=>{const on=stock?vocalReadStock().includes(item.name):invIsFavorite(item.name,item.publisher);return '<button type="button" class="inv-fav fav-card-star'+(on?' on':'')+'" data-fav-star="'+esc(stock?stockKey(item):key(item))+'" aria-pressed="'+on+'" aria-label="'+(on?'Remove':'Add')+' '+esc(item.name)+' '+(on?'from':'to')+' Favorites">'+(on?'★':'☆')+'</button>'};
+  const tick=itemKey=>'<input type="checkbox" data-fav-pick="'+esc(itemKey)+'" aria-label="Select '+esc(itemKey.split('|').slice(1).join('|'))+'"'+(INV_FAV_SELECTED.has(itemKey)?' checked':'')+'>';
+  const tag=(label,kind='')=>'<span class="fav-tag '+kind+'">'+esc(label)+'</span>';
+  let html='<div class="vocal-fav-head"><div><h2>Chain favourites</h2><small>Video picks and installed alternatives</small></div></div><div class="fav-switch" aria-label="Chain">'+[['vocal','Vocal'],['drums','Drums'],['808','808'],['master','Master bus']].map(([k,label])=>'<button type="button" data-fav-chain="'+k+'" class="'+(k===INV_FAV_CHAIN?'on':'')+'">'+label+'</button>').join('')+'</div><div class="fav-toolbar"><div class="fav-switch" aria-label="View">'+[['owned','Owned'],['stock','Stock Plugins (Logic Pro 13)'],['missing','Not installed']].map(([k,label])=>'<button type="button" data-fav-view="'+k+'" class="'+(k===view?'on':'')+'">'+label+'</button>').join('')+'</div><input id="favSearch" type="search" placeholder="Search plug-ins" aria-label="Search chain favourites" value="'+esc(INV_FAV_QUERY)+'"><select id="favSort" aria-label="Sort chain favourites"><option value="videos"'+(INV_FAV_SORT==='videos'?' selected':'')+'>Most-used videos first</option><option value="name"'+(INV_FAV_SORT==='name'?' selected':'')+'>Name A–Z</option></select></div>';
+  html+='<div class="fav-selection"><button type="button" data-fav-group="select">Select all</button><button type="button" data-fav-group="clear">Clear</button><span id="favSelectedCount">'+selected.length+' selected</span><button type="button" class="inv-btn primary" id="vocalFavApply"'+(selected.length?'':' disabled')+'>Apply '+selected.length+' selected to Favorites</button></div><div id="vocalFavStatus" role="status"></div>';
+  html+='<div class="fav-grid">';
+  for(const item of rows){
+    if(view==='missing'){
+      const eq=item.equivalents||[],eqKeys=eq.map(key);html+='<article class="fav-card"><div class="fav-card-top"><h3>'+esc(item.name)+'</h3><small>'+eqKeys.filter(k=>INV_FAV_SELECTED.has(k)).length+' of '+eq.length+'</small></div><div class="fav-meta">'+tag('Not installed')+' <span>'+item.videos+' videos</span></div><div class="fav-eq-head">Equivalents <button type="button" data-fav-card="'+esc(item.name)+'" data-fav-mode="select">Select all</button><button type="button" data-fav-card="'+esc(item.name)+'" data-fav-mode="clear">Clear</button></div>'+eq.map((e,i)=>'<div class="fav-eq">'+tick(key(e))+'<strong>'+esc(e.name)+'</strong><small>'+esc(e.publisher)+'</small>'+(i===0?tag('Best','best'):'')+(e.sameMaker?tag('same maker','maker'):'')+tag('Owned','owned')+star(e)+'</div>').join('')+'</article>';
+    }else{const k=view==='stock'?stockKey(item):key(item);html+='<article class="fav-card"><div class="fav-card-top">'+tick(k)+'<h3>'+esc(item.name)+'</h3>'+star(item,view==='stock')+'</div><div class="fav-meta"><span>'+esc(item.publisher||'Logic Pro 13')+'</span><span>·</span><span>'+item.videos+' videos</span></div>'+tag(view==='stock'?'Logic stock':item.match==='exact'?'Owned':'Close version',view==='owned'?'owned':'')+'</article>';}
+  }
+  html+='</div>'+(rows.length?'':'<div class="fav-empty">No matching plug-ins.</div>');panel.innerHTML=html;
+  panel.querySelectorAll('[data-fav-chain]').forEach(button=>button.onclick=()=>{INV_FAV_CHAIN=button.dataset.favChain;INV_FAV_SELECTED.clear();invRenderInventory()});
+  panel.querySelectorAll('[data-fav-view]').forEach(button=>button.onclick=()=>{INV_VOCAL_VIEW=button.dataset.favView;INV_FAV_SELECTED.clear();invRenderInventory()});
+  panel.querySelector('#favSearch').oninput=event=>{INV_FAV_QUERY=event.target.value;const pos=event.target.selectionStart;invRenderVocalFavorites();const next=panel.querySelector('#favSearch');next.focus();next.setSelectionRange(pos,pos)};
+  panel.querySelector('#favSort').onchange=event=>{INV_FAV_SORT=event.target.value;invRenderVocalFavorites()};
+  panel.querySelectorAll('[data-fav-pick]').forEach(input=>input.onchange=()=>{input.checked?INV_FAV_SELECTED.add(input.dataset.favPick):INV_FAV_SELECTED.delete(input.dataset.favPick);invRenderVocalFavorites()});
+  panel.querySelectorAll('[data-fav-group]').forEach(button=>button.onclick=()=>{for(const k of visible)button.dataset.favGroup==='select'?INV_FAV_SELECTED.add(k):INV_FAV_SELECTED.delete(k);invRenderVocalFavorites()});
+  panel.querySelectorAll('[data-fav-card]').forEach(button=>button.onclick=()=>{const row=rows.find(item=>item.name===button.dataset.favCard);for(const eq of row?.equivalents||[])button.dataset.favMode==='select'?INV_FAV_SELECTED.add(key(eq)):INV_FAV_SELECTED.delete(key(eq));invRenderVocalFavorites()});
+  panel.querySelectorAll('[data-fav-star]').forEach(button=>button.onclick=async()=>{const k=button.dataset.favStar,stock=k.startsWith('Logic Pro 13 stock|');if(stock){const name=k.slice('Logic Pro 13 stock|'.length),set=new Set(vocalReadStock());set.has(name)?set.delete(name):set.add(name);vocalSaveStock([...set]);invRenderVocalFavorites()}else{const item=VocalFavs.targets(chain).find(x=>key(x)===k);if(item)await hopeInventorySetFavorite({plugin:item.name,publisher:item.publisher,favorite:!invIsFavorite(item.name,item.publisher)});invRenderVocalFavorites()}});
+  panel.querySelector('#vocalFavApply').onclick=async()=>{const button=panel.querySelector('#vocalFavApply');button.disabled=true;const names=[...new Set(selected.map(k=>k.split('|').slice(1).join('|')))];try{const result=await vocalApply(true,INV_FAV_CHAIN,names);const current=panel.querySelector('#vocalFavStatus');if(current)current.textContent=result.message}catch(error){const current=panel.querySelector('#vocalFavStatus');if(current)current.textContent=error.message}};
 }
 async function hopeInventorySetFavorite(args){
   const plugin=String(args.plugin||'').trim(),publisher=String(args.publisher||'').trim();
@@ -17295,8 +17345,8 @@ async function handleToolCall(name,args){
         return await hopeStoredState(state=>BUSES.every(b=>JSON.stringify(state.chain?.[b.id]||[])===JSON.stringify(STATE.chain[b.id]||[])))?{ok:true,summary,changes:result.changes}:{ok:false,reason:'Auto-fill could not be verified in saved storage.'};
       }
       case 'settings_status':return hopeSettingsStatus();
-      case 'vocal_favorites_read':await vocalLoadData();return vocalRead(args.section||'all');
-      case 'vocal_favorites_apply':return await vocalApply(args.confirmed===true);
+      case 'vocal_favorites_read':await vocalLoadData();return vocalRead(args.section||'all',args.chain||'vocal');
+      case 'vocal_favorites_apply':return await vocalApply(args.confirmed===true,args.chain||'vocal',args.names);
       case 'open_dashboard':{
         // NEW TAB first (Kev's request 2026-06-11 — the full-screen overlay
         // hid the chat and felt like the call was lost). Tool calls have no
@@ -18571,7 +18621,7 @@ When to switch:
 
 Brief him verbally as you switch — ONE short natural phrase like "ok, hopping over to Insight" or "let me pull up the Plugin Library." Do NOT narrate the tool name. Don't switch gratuitously — only when the destination tab is genuinely the right surface for what he just said. If you're on the right tab already, stay put.
 
-AIMM PLUG-IN INVENTORY: Two separate plug-in lists exist. The MixBus library/catalogue in context is what AIMM recommends from; it is not an installed inventory or installed count. Kev's INSTALLED plug-ins are the Plugin Companion scan shown in the Plugins tab. For questions about what he has installed, how many plug-ins he has, updates, duplicates, Unused, vendor apps, a vendor's plug-ins or the companion, use inventory_summary, inventory_search, inventory_status, inventory_duplicates or inventory_unused as appropriate. Never answer these questions from MixBus catalogue numbers and never guess a number. If no scan is available, say the Plugins tab has no scan loaded and the companion may not be connected. Synthetic preview rows are not installed plug-ins. Use inventory_navigate to open requested sidebar items and report disabled items' unavailable reason. inventory_search and inventory_summary leave the visible view unchanged; use inventory_set_favorite for scanned or installed plug-ins and toggle_favorite only for the MixBus catalogue, reporting failed, ambiguous and already-set results accurately. Starring needs no confirmation. vocal_favorites_read reads the video favourites; for vocal_favorites_apply, read the proposed counts aloud with confirmed false, wait for Kev’s clear yes, then call confirmed true and report verified starred, already and unresolved counts. When building a chain from a video prefer vocal favourites in order: owned, close version, equivalent, Logic stock; say which video plug-in was swapped for which favourite. inventory_reveal and inventory_rescan use existing controls. For every inventory change tool — inventory_move_to_unused, inventory_restore, inventory_move_to_trash, inventory_mark_vendor_app_checked, inventory_unmark_vendor_check, inventory_keep_newest_duplicates and inventory_add_to_bus — call with confirmed false first, read the returned summary aloud briefly, wait for Kev's clear yes, then call with confirmed true. Trash needs a separate yes before setting confirmed_trash true. For inventory_add_to_bus, first verify exact installed name and publisher in the scan and choose a valid bus and stage; only use it when Kev explicitly asks. Menu navigation alone does not authorize scanning folders, downloading installers, sharing the inventory or changing MixBus.
+AIMM PLUG-IN INVENTORY: Two separate plug-in lists exist. The MixBus library/catalogue in context is what AIMM recommends from; it is not an installed inventory or installed count. Kev's INSTALLED plug-ins are the Plugin Companion scan shown in the Plugins tab. For questions about what he has installed, how many plug-ins he has, updates, duplicates, Unused, vendor apps, a vendor's plug-ins or the companion, use inventory_summary, inventory_search, inventory_status, inventory_duplicates or inventory_unused as appropriate. Never answer these questions from MixBus catalogue numbers and never guess a number. If no scan is available, say the Plugins tab has no scan loaded and the companion may not be connected. Synthetic preview rows are not installed plug-ins. Use inventory_navigate to open requested sidebar items and report disabled items' unavailable reason. inventory_search and inventory_summary leave the visible view unchanged; use inventory_set_favorite for scanned or installed plug-ins and toggle_favorite only for the MixBus catalogue, reporting failed, ambiguous and already-set results accurately. Starring needs no confirmation. vocal_favorites_read reads the video favourites; for vocal_favorites_apply, read the proposed counts aloud with confirmed false, wait for Kev’s clear yes, then call confirmed true and report verified starred, already and unresolved counts. When building a chain from a video read the matching bus chain favourites first (vocal, drums, 808 or master) and prefer in order: owned, close version, equivalent, Logic stock; say which video plug-in was swapped for which favourite. inventory_reveal and inventory_rescan use existing controls. For every inventory change tool — inventory_move_to_unused, inventory_restore, inventory_move_to_trash, inventory_mark_vendor_app_checked, inventory_unmark_vendor_check, inventory_keep_newest_duplicates and inventory_add_to_bus — call with confirmed false first, read the returned summary aloud briefly, wait for Kev's clear yes, then call with confirmed true. Trash needs a separate yes before setting confirmed_trash true. For inventory_add_to_bus, first verify exact installed name and publisher in the scan and choose a valid bus and stage; only use it when Kev explicitly asks. Menu navigation alone does not authorize scanning folders, downloading installers, sharing the inventory or changing MixBus.
 
 When Kev asks to control loaded stems or playback, use set_stem_selection. Use exact loaded names. You can set, add, remove or clear the audition group; play, pause, stop, seek, skip, set monitor volume, or report status. Play can select tracks and start in one call. Report only the confirmed state returned by the tool. Never claim an action that failed.
 

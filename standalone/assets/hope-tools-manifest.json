@@ -194,10 +194,21 @@
   },
   {
     "name": "vocal_favorites_read",
-    "description": "Read vocal-chain favourites from the video report: scanned owned plug-ins, Logic Pro 13 stock plug-ins, and not-installed video plug-ins with owned equivalents. For video chains prefer owned, then close versions, then equivalents, then Logic stock; say plainly which video plug-in was swapped.",
+    "description": "Read matching chain favourites from the video report. For a requested bus choose its chain, prefer owned, then close versions, equivalents and Logic stock; say which video plug-in was swapped.",
     "parameters": {
       "type": "object",
       "properties": {
+        "chain": {
+          "type": "string",
+          "enum": [
+            "vocal",
+            "drums",
+            "808",
+            "master",
+            "all"
+          ],
+          "description": "Matching chain; defaults to vocal."
+        },
         "section": {
           "type": "string",
           "enum": [
@@ -214,10 +225,28 @@
   },
   {
     "name": "vocal_favorites_apply",
-    "description": "Prepare or apply vocal-chain favourites. First call with confirmed false, read the scanned and Logic stock counts aloud, get Kev’s clear yes, then call with confirmed true. Returns verified starred, already and unresolved counts.",
+    "description": "Prepare or apply matching chain favourites. First call with confirmed false, read the exact counts aloud, get Kev’s clear yes, then call with confirmed true. Returns verified starred, already and unresolved counts.",
     "parameters": {
       "type": "object",
       "properties": {
+        "chain": {
+          "type": "string",
+          "enum": [
+            "vocal",
+            "drums",
+            "808",
+            "master",
+            "all"
+          ],
+          "description": "Matching chain; defaults to vocal."
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Exact item names to apply; omit for the whole chain view."
+        },
         "confirmed": {
           "type": "boolean",
           "description": "True only after Kev clearly confirms the proposed count."

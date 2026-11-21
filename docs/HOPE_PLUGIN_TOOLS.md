@@ -6,17 +6,9 @@ The 14 new tool schemas are in `standalone/assets/hope-tools-manifest.json`; the
 
 Every new write takes `confirmed`: Hope first reads its summary aloud with `confirmed:false`, waits for Kev's yes, then repeats with `confirmed:true`. A failed saved-state check returns `ok:false`. Typed chat and Luna use the shared page catalogue and handler; the ElevenLabs agent has not been changed. `tests/tool-sync.test.mjs` checks the page catalogue against the manifest and handler. `scripts/hope-tool-sync.mjs live-agent-tools.json` reports missing/extra live names. `scripts/hope-smoke.mjs` attempts a served-page headless read-only pass and prints the manual checklist if Chrome or loopback access is unavailable.
 
-# Hope Plugins tools — build 2026-11-20.12 (BUILT, NOT DEPLOYED)
+# Hope chain favourites — build 2026-11-20.19 (BUILT, NOT DEPLOYED)
 
-Vocal-chain favourites are available locally in the Plugins Library. `vocal_favorites_read` returns owned scan products, Logic Pro 13 stock products, and missing video products with scanned equivalents. `vocal_favorites_apply` follows the inventory confirmation pattern: call with `confirmed:false`, read the counts aloud, wait for Kevin's yes, then call with `confirmed:true`. It uses the existing Plugins star action for scanned products and a separate saved list for Logic stock. The result reports verified `starred`, `already`, `unresolved`, and `not_saved`. These new schemas have **not** been registered on ElevenLabs.
-
-```json
-{"name":"vocal_favorites_read","description":"Read vocal-chain favourites from the video report: scanned owned plug-ins, Logic Pro 13 stock plug-ins, and not-installed video plug-ins with owned equivalents.","parameters":{"type":"object","properties":{"section":{"type":"string","enum":["owned","stock","missing","all"],"description":"Section to read; defaults to all."}},"required":[]}}
-```
-
-```json
-{"name":"vocal_favorites_apply","description":"Prepare or apply vocal-chain favourites. First call with confirmed false, read the scanned and Logic stock counts aloud, get Kevin's clear yes, then call with confirmed true.","parameters":{"type":"object","properties":{"confirmed":{"type":"boolean","description":"True only after Kevin clearly confirms the proposed count."}},"required":["confirmed"]}}
-```
+`vocal_favorites_read` and `vocal_favorites_apply` keep their names. Both accept `chain` (`vocal`, `drums`, `808`, `master`, or `all`); read also accepts `section`, while apply accepts `names`, an optional array of exact item names. Omitting `names` applies the whole chain view. Apply still requires the spoken `confirmed:false` summary, Kevin’s clear yes, then `confirmed:true`, and returns verified starred, already, unresolved and not-saved results. The four chain lists use scan matched, licensed products and Logic Pro 13 stock only. For a bus build Hope reads the matching chain first, prefers owned, close versions, equivalents, then stock, and says what was swapped. The exact registration schemas are in `standalone/assets/hope-tools-manifest.json`. ElevenLabs registration is pending.
 
 # Previous build — 2026-11-20.11 (DEPLOYED)
 

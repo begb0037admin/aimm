@@ -1,0 +1,285 @@
+[
+  {
+    "name": "snapshots_list",
+    "description": "List saved Session Snapshots and their IDs without changing them.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "snapshots_read",
+    "description": "Read one saved Session Snapshot by ID.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    }
+  },
+  {
+    "name": "snapshots_apply",
+    "description": "Restore a saved workbench snapshot, creating the same backup pill as the Apply button. Read the summary aloud and wait for Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "snapshots_add_note",
+    "description": "Append a note to a saved snapshot. Read the summary aloud and wait for Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "note",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "plugin_tags_read",
+    "description": "Read saved Plugins tags and their scanned product memberships.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "plugin_tag_set",
+    "description": "Replace the tags on one exact scanned product. Supply id from plugin_tags_read or exact name and publisher. Read the summary aloud and wait for Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "tags",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "hidden_list",
+    "description": "List plug-ins hidden from the main Plugins library.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "plugin_hide",
+    "description": "Hide or show one scanned plug-in by product id. Read the summary aloud and wait for Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "hidden": {
+          "type": "boolean"
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "hidden",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "reference_status",
+    "description": "Read Mix Check reference capture and selected target status. Loading an audio file remains manual through the browser file picker.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "saved_targets_list",
+    "description": "List saved Mix Check reference targets.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "saved_target_apply",
+    "description": "Select one saved Mix Check reference target. Read the summary aloud and wait for Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "mixbus_load_preset",
+    "description": "Replace the relevant MixBus chain with a saved or built-in preset matched by exact name. Read the summary aloud and wait for Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "mixbus_auto_fill",
+    "description": "Run the existing MixBus Auto-fill settings action. Read the summary aloud and wait for Kev’s yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "settings_status",
+    "description": "Read provider configured booleans, ElevenLabs credits used, limit and remaining per account, selected models, and companion status. Never returns keys, tokens, agent IDs or secret values. Settings cannot be opened or changed through this tool.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "vocal_favorites_read",
+    "description": "Read matching chain favourites from the video report. For a requested bus choose its chain, prefer owned, then close versions, equivalents and Logic stock; say which video plug-in was swapped.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "chain": {
+          "type": "string",
+          "enum": [
+            "vocal",
+            "drums",
+            "808",
+            "master",
+            "all"
+          ],
+          "description": "Matching chain; defaults to vocal."
+        },
+        "section": {
+          "type": "string",
+          "enum": [
+            "owned",
+            "stock",
+            "missing",
+            "all"
+          ],
+          "description": "Section to read; defaults to all."
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "name": "vocal_favorites_apply",
+    "description": "Prepare or apply matching chain favourites. First call with confirmed false, read the exact counts aloud, get Kev’s clear yes, then call with confirmed true. Returns verified starred, already and unresolved counts.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "chain": {
+          "type": "string",
+          "enum": [
+            "vocal",
+            "drums",
+            "808",
+            "master",
+            "all"
+          ],
+          "description": "Matching chain; defaults to vocal."
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Exact item names to apply; omit for the whole chain view."
+        },
+        "confirmed": {
+          "type": "boolean",
+          "description": "True only after Kev clearly confirms the proposed count."
+        }
+      },
+      "required": [
+        "confirmed"
+      ]
+    }
+  }
+]
