@@ -35,6 +35,7 @@ AIMM is a governed repository. Before any named phase begins:
   - If a task looks like it will need multiple manual steps, stop and search harder for a tool/API path *before* presenting any steps to Kevin.
   - Never ask him to paste a credential/secret into chat, ever, even if he offers repeatedly — but the correct response when hitting that wall is to go find an OAuth/connector-based path, not to re-ask for the same secret a different way, and not to cycle through many alternative manual workarounds one after another (that cycling is itself what caused the harm in the 2026-09-06 incident, independent of the credential problem).
   - If genuinely stuck with no possible agentic path: say so plainly once, and stop. Don't keep generating new manual approaches.
+- **No boxes around small elements (Kevin, 21 Nov 2026).** No box, tile, border or pill behind count numbers, dropdown arrows, icons or markers anywhere in the app: show the number or plain glyph directly on the background. Colour and size carry hierarchy, not enclosing boxes. Starred items are a plain purple star with a soft glow. Full rule in `docs/UI_DESIGN_STANDARD.md`; Jules designs to it, Codex builds to it, review against it.
 - ElevenLabs SDK pinned at @elevenlabs/client@0.1.7 — never upgrade
 - versions/ is gitignored — never touch
 - Batch commits end-of-session only (index.html changes)

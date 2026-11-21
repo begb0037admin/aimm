@@ -55,5 +55,5 @@ test('Hope schemas match page tools and both routes use shared handler',()=>{
     assert.match(html,new RegExp("AIMM_NEW_AGENT_TOOLS = \\[([^\\]]*)'"+name+"'"));assert.match(html,new RegExp("case '"+name+"':"));
   }
   assert.deepEqual(pageTools.find(t=>t.name==='vocal_favorites_apply').parameters.properties.names,{type:'array',items:{type:'string'},description:'Exact item names to apply; omit for the whole chain view.'});
-  assert.match(html,/const AICHAT_TOOL_DEFS = TOOL_DEFS\.map/);assert.match(html,/const AIMM_BUILD = '2026-11-20\.25'/);
+  assert.match(html,/const AICHAT_TOOL_DEFS = TOOL_DEFS\.map/);assert.match(html,/const AIMM_BUILD = '2026-11-20\.26'/);
 });

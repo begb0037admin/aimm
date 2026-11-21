@@ -1,4 +1,4 @@
-## 2026-11-20 build 2026-11-20.25 — Plugins sidebar Option C (BUILT, NOT DEPLOYED)
+## 2026-11-20 build 2026-11-20.26 — Plugins sidebar Option C (BUILT, NOT DEPLOYED)
 
 The Plugins Browse sidebar now has five accordion cards with coloured section headings, subgroup labels and a sliding teal selection pill. Video chain picks is its own section, with Owned, Stock Plugins (Logic Pro 13) and Not installed; the card grid window title matches. Existing filter hooks, counts, saved section state, Hope tool names and purple stars remain. All `tests/*.test.mjs` passed. No server, screenshot, commit, push or deploy.
 
