@@ -1,0 +1,10 @@
+# BRIEF — Companion card wording (repo /Users/admin/github/aimm, branch `plugin-companion`, on top of commit 1c27fa91)
+Kevin's decision 2026-11-19: the Settings companion cards say only **Connected** or **Disconnected**, and the button says **Connect**. The word "companion" is not used in the button, the state text or status messages.
+Edit ONLY standalone/assets/index.html, tests/, docs/STATUS.md.
+For BOTH cards (`#settingsAudioReference` and `#settingsPluginCompanion`):
+1. Button text: "Connect companion" -> "Connect" (keep ids and aria-labels meaningful, e.g. aria-label "Connect audio reference" / "Connect plugins"; aria-labels may name the thing, visible text may not say companion).
+2. State text beside the button: only "Connected" or "Disconnected" ("Not connected" is replaced everywhere in these cards, including the audio card's existing `#mcSpotifyCompanionConnectionStatus` initial text and any code that sets it; check every place that writes or compares that string, and tests).
+3. Status box under the button: show NOTHING when Connected or Disconnected normally (hide it when empty). Only show a short error line if something actually fails (for example loopback permission denied), with plain wording and no "companion" noise. For the plugin card remove the counts line and the Rescan button from Settings (the Plugins tab's scan button already rescans). Do not remove audio card logic that existing audio flows need; keep its error/permission messages but reword visible text to avoid "companion" where it is a simple label.
+4. Card titles and intro lines stay as they are ("Audio reference companion", "Plugin companion" titles are the app names, leave them).
+5. The Plugins tab empty-state hint: "Connect the Plugin Companion in Settings." -> "Connect plugins in Settings."
+Update the Settings guide text if it quotes the old strings. Update tests. Run all tests (`for f in tests/*.test.mjs; do node $f | grep "^ℹ fail"; done`) with 0 failures. Bump AIMM_BUILD to 2026-11-19.8, STATUS.md entry, commit on the branch. Do not push, deploy or install anything.

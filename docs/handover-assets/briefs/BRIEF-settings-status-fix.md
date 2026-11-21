@@ -1,0 +1,7 @@
+# BRIEF — settings_status honesty fix (repo /Users/admin/github/aimm, branch settings-status-fix from main)
+Kevin: the "$0 spent" figure is meaningless (a hidden per-browser dollar estimate, never shown in Settings). Drop it.
+1. hopeSettingsStatus() in standalone/assets/index.html: remove every `spent` dollar field and the luna_estimated value. For each ElevenLabs account return only what Settings shows: credits_used, credits_limit, credits_remaining (null if unknown). If Settings shows a Luna cost row, return exactly that value labelled estimate:true; otherwise omit Luna spend.
+2. Update tool description (page TOOL_DEFS, AICHAT_TOOL_DEFS and /Users/admin/aimm-previews/new-hope-tools.json) to say: provider configured booleans, ElevenLabs credits used/limit/remaining per account, selected models, companion status. No dollar spend.
+3. HOPE_COVERAGE_RULES: add that she reports only the credits returned, never states a dollar spent figure, and says she can't see anything not returned.
+4. Bump AIMM_BUILD to 2026-11-20.14. Update tests/hope-coverage.test.mjs (no `spent` key anywhere in settings_status, credits fields present, no secrets), docs/HOPE_PLUGIN_TOOLS.md, docs/STATUS.md, DASHBOARD.html, hope-tools-manifest.json if the description is listed there.
+5. Run ALL tests/*.test.mjs; all must pass. Commit on the branch. Do NOT push, deploy, or touch ElevenLabs. Report files changed and test results.

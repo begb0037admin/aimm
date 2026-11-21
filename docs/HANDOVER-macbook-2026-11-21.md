@@ -15,7 +15,7 @@ Repo: begb0037admin/aimm, branch main (pull first: `git pull origin main`). Live
 1. Sweep the whole app for boxed counts/tiles/pills that break the new no-boxes rule (only the Plugins sidebar was done). Design via Jules, build via Codex, preview first.
 2. Voice tests Kevin should run after hard refresh: "how many plug-ins do I have?", "list my snapshots", "show me my drum favourites", "apply just my 808 favourites" (count aloud, yes, verify), Settings credits, hide/show with confirm.
 3. Optional: merge duplicate format entries into one card per product (Valhalla shows "4 plug-ins" for 2 products) - offered, not approved.
-4. Verify whether Shape / Shape Expansion (LUNA content, ~8 GB) are licensed; Kevin uninstalls unlicensed UAD himself (list: /Users/admin/aimm-previews/uad-uninstall-list.md on the Mac mini).
+4. Verify whether Shape / Shape Expansion (LUNA content, ~8 GB) are licensed; Kevin uninstalls unlicensed UAD himself (list: docs/handover-assets/uad-uninstall-list.md; licences: docs/handover-assets/uad-owned.json).
 5. Fender Studio Pro 8 / Ableton / Pro Tools stock lists deferred. Settings tile rename note. companion-window branch stays unmerged (Kevin likes current companion look; backed up on origin).
 6. Pill hover star in Snapshots is still gold (action button, left alone) - ask Kevin if it should be purple.
 
@@ -25,6 +25,9 @@ Repo: begb0037admin/aimm, branch main (pull first: `git pull origin main`). Live
 - Design goes to Jules; Codex implements (`codex exec -s workspace-write -m gpt-6-sol -c model_reasoning_effort=medium "Read <brief> and carry it out"` from inside the repo; Codex cannot commit or run servers/screenshots, so the coordinator commits and previews). Bump AIMM_BUILD on every index.html commit (tests assert it: hope-installed-rule, vocal-favs, sidebar-option-c). Keep DASHBOARD.html, STATUS.md in step. Run ALL tests/*.test.mjs before commit.
 - Keep replies short and plain (Kevin is dyslexic). No emoji in the UI.
 - YouTube KB ingest: `python3 scripts/ingest_yt.py <url> --channel "<name>"` (needs VPN, check public IP first); semantic embeddings via scripts/backfill_kb_embeddings.py with AIMM_PROXY_URL=https://aimm-proxy.kevinlelitte.workers.dev and AIMM_INGEST_KEY piped from 1Password item "AIMM Ingest Key".
+
+## Files copied into the repo so nothing is Mac-mini-only
+All in docs/handover-assets/: briefs/ (every build brief incl. sidebar, chain favourites, equivalents), jules-sidebar/ and jules-card-grid/ (Jules designs), chain-research/ (drums/808/master research data), uad-owned.json, uad-uninstall-list.md, inventory-scan.json (the Mac mini plugin scan snapshot).
 
 ## MacBook differences to expect
 - The plugin scan, UAD licence map and uninstall lists were made on the Mac mini; the MacBook may have a different plugin set and no companion app. Local preview: `python3 -m http.server 8765 --bind 127.0.0.1 --directory standalone/assets` (companion allows that origin).

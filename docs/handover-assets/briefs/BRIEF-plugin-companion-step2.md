@@ -1,0 +1,20 @@
+# BRIEF — Plugin companion step 2: the page (repo /Users/admin/github/aimm, branch `plugin-companion`, continue on it)
+Kevin approved the Settings design 2026-11-19. Reference preview (open its HTML to see exact look): /Users/admin/aimm-previews/preview-settings-big.html and screenshot /Users/admin/aimm-previews/preview-big-crop.png. Edit ONLY standalone/assets/index.html (NOT root index.html), tests/, docs/STATUS.md. Do not touch plugin-companion/ Swift code, worker/, or the audio companion app.
+
+## 1. Settings: two companion cards (same format)
+- `#settingsAudioReference` (existing, ~line 5317): keep ALL existing ids and logic (mcSpotifyCompanion*). Change only the look to match the preview: a 64x64 rounded (radius 14px) app icon left of the title (h3 20px), title "Audio reference companion". Icon = /Users/admin/github/aimm/audio-reference-companion/assets/AppIcon-1024.png downsized to 128px, embedded as a data: URI (keep page size small).
+- New `#settingsPluginCompanion` section placed right after it (CSS order 7 like the audio card's order:6 rule at ~2438), same markup/classes/styles as the audio card. Title "Plugin companion". Icon = /Users/admin/github/aimm/plugin-companion/assets/AppIcon-1024.png at 128px data URI. Copy: "Connect the local AIMM Plugin Companion so the Plugins tab can list the plug-ins installed on this Mac." Button `#pcCompanionConnect` "Connect companion", state text `#pcCompanionConnectionStatus`, status box `#pcCompanionSettingsStatus`.
+- Add nav link `<a href="#settingsPluginCompanion">Plugin companion</a>` after the Audio reference link (~5138). Keep the new section styled like the rest (tokens, no emoji). Update the in-app Settings guide text if it lists sections.
+- Do NOT show invented sample status. Real states only: "Not connected", "Connected", error text.
+
+## 2. Page logic (plugin companion)
+- `const PLUGIN_COMPANION_URL='http://127.0.0.1:41736'`. Fetch like the audio companion does (copy `mcSpotifyCompanionFetch` with `targetAddressSpace:'loopback'`, and reuse its Chrome loopback-permission handling/wording pattern, ~line 22022+ and 22075).
+- On Settings open and on page load (quiet, no prompt spam): GET /status. If ok -> state "Connected", status box: "Last scan HH:MM. N products (AU a · VST2 b · VST3 c · CLAP d)" from GET /inventory counts. Add a small "Rescan" button in the card that POSTs /scan then refreshes. If not reachable: "Not connected" and status box says "Open AIMM Plugin Companion on this Mac, then press Connect companion."
+- Connect button triggers the loopback permission flow then re-checks.
+- Plugins tab: when the companion is connected, load rows from GET /inventory and feed them into the SAME inventory pipeline the Chrome scan uses (rows have the same fields; study invScanNow ~8897, invSaveScan ~7370, INV_ROWS_KEY, how rows get grouped/ counted, vendor-check). Mark them as source "companion" so the existing counts, filters, tags, favourites, hidden and vendor checks work unchanged. "Scan connected folders" button: when companion connected, POST /scan and reload rows; otherwise the existing Chrome folder scan. Keep Chrome scan as fallback, unchanged.
+- Empty-state text on Plugins tab when nothing loaded and companion not connected: "Connect the Plugin Companion in Settings." plus keep the existing Chrome folder hint. NO chip/banner on the Plugins tab (Kevin rejected it).
+- Never fetch from any other host; never send inventory anywhere (no Worker calls with rows beyond what vendor-check already sends today — check what /api/vendor-check receives and say if rows now flow differently).
+
+## 3. Tests and finish
+- New tests/plugin-companion-page.test.mjs (mocked fetch): connected/not connected states, rescan, rows adopted into inventory with correct counts, fallback to Chrome path when companion down, 403/CORS failure message. Run all tests (`for f in tests/*.test.mjs; do node $f | grep "^ℹ fail"; done`), 0 failures.
+- Bump AIMM_BUILD to 2026-11-19.7, add STATUS.md entry (not deployed). Commit on the branch. Do NOT push, deploy, install the companion app, or change anything outside the files named above.

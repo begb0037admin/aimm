@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AIMM Plugins sidebar - heading options A / B / C</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+/* Real AIMM tokens (standalone/assets/index.html): no new colours */
+:root{
+  --pv-black:#0b0d10; --pv-teal:#2dd4bf; --pv-neutral-bg:#1a1d21; --pv-neutral-bd:#2a2e35;
+  --pm-grad:linear-gradient(135deg,#9442dc,#b970ff); --fav:#b970ff; --pm-dim:#9ca3af; --pm-off:#7b8190;
+  --side-bg:#17191c; --side-line:#30343a; --hover-bg:#24272c; --ink:#c4cad3; --ink-hi:#eef2f6;
+  --focus:#36a8ed;
+  --state-fill:linear-gradient(110deg,#173c52 0%,#183d43 56%,#173b37 100%); --state-line:#347e91; --state-ink:#edf6f8;
+  --red:#ee7777; --green:#42c995; --amber:#e8b45a; --grey:#a0a8b1;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; --mono:ui-monospace,Menlo,monospace;
+  --dur:.28s; --ease:cubic-bezier(.4,0,.2,1);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--pv-black);color:var(--ink);font:14px var(--sans);padding:28px 24px 40px}
+h1{font:700 20px var(--sans);color:var(--ink-hi);margin:0 0 4px}
+.sub{color:var(--pm-dim);margin:0 0 26px}
+.row{display:flex;gap:70px;align-items:flex-start;flex-wrap:wrap}
+.opt{width:300px;position:relative}
+.opt h2{font:800 16px var(--sans);color:var(--ink-hi);margin:0 0 2px}
+.opt p{margin:0 0 12px;color:var(--pm-dim);font-size:13px;min-height:54px;line-height:1.35}
+body.only .opt:not(.show){display:none}
+body.only .row{gap:0}
+.callout{position:absolute;left:304px;font:700 11px var(--mono);letter-spacing:.06em;color:var(--pm-dim);white-space:nowrap;pointer-events:none}
+.callout::before{content:"\2190 ";color:var(--pv-teal)}
+
+/* ---------- shared sidebar skeleton ---------- */
+.sb{position:relative;width:300px;background:var(--side-bg);border:1px solid var(--side-line);border-radius:11px;padding:14px 11px 18px}
+.hd,.it{font-family:var(--sans);text-align:left;cursor:pointer;border:0;background:transparent;width:100%;display:flex;align-items:center}
+.bd{display:grid;grid-template-rows:1fr;transition:grid-template-rows var(--dur) var(--ease)}
+.grp:not(.open) .bd{grid-template-rows:0fr}
+.bd>.in{overflow:hidden;min-height:0}
+.grp:not(.open) .bd>.in{visibility:hidden;transition:visibility 0s var(--dur)}
+.chev{flex:none;width:8px;height:8px;border-right:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:rotate(-45deg);transition:transform var(--dur) var(--ease)}
+.grp.open .chev{transform:rotate(45deg)}
+.it{min-height:38px;gap:10px;padding:0 10px;border-radius:9px;color:var(--ink);font-size:13px;font-weight:500;position:relative}
+.it .lb{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ct{flex:none;min-width:28px;min-height:22px;padding:1px 5px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;background:rgba(9,11,15,.72);box-shadow:0 0 0 1px rgba(255,255,255,.08);font:700 11px/1 var(--mono);color:#8993a2}
+.ct.red{color:var(--red)} .ct.green{color:var(--green)} .ct.amber{color:var(--amber)} .ct.grey{color:var(--grey)} .ct.fav{color:var(--fav)}
+.it:hover,.it.is-hover{background:var(--pm-grad);color:#fff}
+.it:focus-visible,.hd:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.ind{position:absolute;pointer-events:none;opacity:0;transition:transform var(--dur) var(--ease),height var(--dur) var(--ease),opacity .15s}
+.ind.on{opacity:1}
+.ind.follow{transition:opacity .15s}
+.hd .n{flex:none;margin-left:auto;font:700 11px/1 var(--mono);min-width:24px;padding:4px 6px;border-radius:6px;text-align:center;background:rgba(9,11,15,.72);box-shadow:0 0 0 1px rgba(255,255,255,.08);color:var(--pm-dim)}
+.dot{flex:none;width:7px;height:7px;border-radius:50%;background:var(--pv-teal);box-shadow:0 0 0 2px var(--side-bg);margin-left:8px;opacity:0;transform:scale(.4);transition:opacity .2s,transform .2s}
+.grp.has-active:not(.open) .dot{opacity:1;transform:none}
+
+/* ---------- OPTION A: bordered heading bars + guide line, accent bar slides ---------- */
+.A .grp{margin:0 0 14px}
+.A .hd{min-height:46px;padding:0 12px 0 14px;gap:10px;font-size:16px;font-weight:800;color:var(--ink-hi);background:var(--pv-neutral-bg);border:1px solid var(--pv-neutral-bd);border-radius:10px;transition:background .15s,border-color .15s}
+.A .grp:not(.cur) .hd:hover{background:var(--hover-bg)}
+.A .hd .chev{order:3;width:9px;height:9px;color:var(--c)}
+.A .hd{border-left:5px solid var(--c)}
+.A .grp.cur .hd{background:var(--c);color:var(--pv-black);border-color:var(--c)}
+.A .grp.cur .hd .chev{color:var(--pv-black)}
+.A .grp.cur .hd .n{background:rgba(11,13,16,.16);color:var(--pv-black);box-shadow:none}
+.A .grp.cur .bd>.in::before{background:var(--c)}
+.A .hd .n{order:2}
+.A .grp.open:not(.cur) .hd{border-color:#3a3f47;border-left-color:var(--c)}
+
+.A .bd>.in{padding:6px 0 2px 14px;position:relative}
+.A .bd>.in::before{content:"";position:absolute;left:5px;top:6px;bottom:2px;width:2px;background:var(--pv-neutral-bd);border-radius:2px}
+.A .it.active{background:var(--pv-teal);color:var(--pv-black);font-weight:700}
+.A .it.active .ct{color:var(--pv-black);background:rgba(11,13,16,.14);box-shadow:none}
+.A .ind{left:12px;width:4px;border-radius:3px;background:var(--pv-teal);box-shadow:0 0 10px rgba(45,212,191,.55)}
+
+/* ---------- OPTION B: tree-style headings with leading chevron, teal rule, tint active + sliding bar ---------- */
+.B .grp{margin:0;padding:16px 0 12px;border-top:1px solid var(--side-line)}
+.B .grp:first-of-type{border-top:0;padding-top:4px}
+.B .hd{min-height:40px;padding:0 6px;gap:10px;font-size:17px;font-weight:800;color:var(--ink-hi);border-radius:8px;letter-spacing:.005em;transition:background .15s}
+.B .hd:hover{background:var(--hover-bg)}
+.B .hd .chev{order:0;width:9px;height:9px;color:var(--c);margin:0 4px 0 2px}
+.B .hd .ttl{order:1}
+.B .hd .dot{order:2}
+.B .hd .n{order:4}
+.B .grp{border-top-color:var(--side-line)}
+.B .grp.cur{border-top:3px solid var(--c);margin-top:-1px}
+.B .grp.cur .hd{color:var(--c);background:var(--hover-bg)}
+.B .grp.cur .bd>.in{border-left:2px solid var(--c);margin-left:12px;padding-left:0}
+.B .grp:first-of-type .hd{margin-top:0}
+.B .bd>.in{padding:4px 0 0 10px}
+.B .it{font-weight:500;padding-left:16px}
+.B .it.active{background:var(--state-fill);box-shadow:inset 0 0 0 1px var(--state-line);color:var(--state-ink);font-weight:700}
+.B .ind{left:11px;width:5px;border-radius:0 4px 4px 0;background:var(--pv-teal);box-shadow:0 0 12px rgba(45,212,191,.6)}
+
+/* ---------- OPTION C: accordion cards, sliding teal pill ---------- */
+.C .grp{margin:0 0 12px;border:1px solid var(--pv-neutral-bd);border-radius:12px;background:var(--pv-neutral-bg);overflow:hidden;transition:border-color .2s}
+.C .grp.open{border-color:var(--c)}
+.C .grp.cur{box-shadow:0 0 0 1px var(--c)}
+.C .grp.cur .hd{background:var(--c);color:var(--pv-black)}
+.C .grp.cur .hd .n{background:rgba(11,13,16,.16);color:var(--pv-black);box-shadow:none}
+.C .grp.cur .hd .chev{background:var(--pv-black)}
+.C .grp.cur .hd .chev::after{border-color:var(--c)}
+.C .hd{min-height:48px;padding:0 10px 0 14px;gap:10px;font-size:15px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-hi);background:var(--pv-black);transition:background .15s}
+.C .hd:hover{background:var(--hover-bg)}
+.C .hd .chev{order:3;color:var(--pv-black);background:var(--c);width:26px;height:26px;border:0;border-radius:7px;transform:none;position:relative;transition:none}
+.C .hd .chev::after{content:"";position:absolute;left:8px;top:6px;width:8px;height:8px;border-right:2.5px solid var(--pv-black);border-bottom:2.5px solid var(--pv-black);transform:rotate(-45deg);transition:transform var(--dur) var(--ease)}
+.C .grp.open .hd .chev::after{transform:translate(1px,2px) rotate(45deg) translate(-1px,-1px)}
+.C .grp:not(.open) .hd .chev{background:transparent;box-shadow:inset 0 0 0 2px var(--pv-neutral-bd)}
+.C .grp:not(.open) .hd .chev::after{border-color:var(--ink-hi)}
+.C .hd .n{order:2}
+.C .bd>.in{padding:6px;position:relative}
+.C .it{font-weight:500;position:relative;z-index:1}
+.C .it.active{color:var(--pv-black);font-weight:700}
+.C .it.active .ct{color:var(--pv-black);background:rgba(11,13,16,.14);box-shadow:none}
+.C .ind{left:6px;right:6px;border-radius:9px;background:var(--pv-teal);z-index:0}
+
+/* LEVEL 2: sub-group = 12.5px / 700 label in the section colour, own rule + indented items */
+.sg{margin:8px 0 6px}
+.sgl{display:flex;align-items:center;gap:8px;padding:6px 10px 6px 6px;font:700 12.5px var(--sans);letter-spacing:.04em;color:var(--c);text-transform:none}
+.sgl::after{content:"";flex:1;height:1px;background:var(--c);opacity:.45}
+.sgm{width:8px;height:8px;border-radius:2px;background:var(--c);flex:none}
+.sg .it{margin-left:14px;width:calc(100% - 14px);min-height:36px;position:relative}
+.sg::before{content:"";position:absolute;margin-left:9px;width:2px;background:var(--c);opacity:.45;border-radius:2px;height:var(--h,0)}
+.sg{position:relative}
+.sg::before{top:30px;bottom:6px;height:auto}
+/* motion: heading glow eases in, active marker breathes gently */
+.grp .hd{transition:background .25s var(--ease),box-shadow .35s var(--ease),border-color .25s,color .25s}
+.grp.cur .hd{box-shadow:0 0 18px -4px var(--c)}
+@keyframes breathe{0%,100%{filter:brightness(1)}50%{filter:brightness(1.22)}}
+.ind.on{animation:breathe 2.6s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:.001s!important;transition-delay:0s!important;animation:none!important}
+}
+.note{margin-top:30px;color:var(--pm-dim);font-size:13px}
+.callout{max-width:none;white-space:nowrap;line-height:1.25}
+</style>
+</head>
+<body>
+<h1>Plugins sidebar - heading options</h1>
+<p class="sub">Three levels: <b>1 heading</b> (17px / 800, section colour), <b>2 sub-group</b> (12.5px / 700, section colour with a line), <b>3 item</b> (13px / 500, white; selected = teal). Interactive: click a heading to open/close it, click an item to light it, Tab to see keyboard focus. Headings are 16-17px / weight 800 against 13px / 500 items (today: 10px mono vs 13px).</p>
+<div class="row" id="row"></div>
+<p class="note">Colours: --pv-teal #2dd4bf, Favourites #b970ff, --pm-grad hover, neutral surfaces #1a1d21 / #2a2e35 / #17191c. No emoji, no new colours.</p>
+
+<script>
+const DATA=[
+ {t:"Status",c:"#36a8ed",open:true,items:[["All plugins","412"],["Updates available","7","red"],["Up to date","286","green"],["Manual check","31","amber"],["Vendor app","44","grey"],["Unchecked","44","grey"]]},
+ {t:"Tools",c:"#e8b45a",open:false,items:[["Install Manager"],["Batch Plugin Management"],["Duplicate review"]]},
+ {t:"Library",c:"#b970ff",open:true,items:[["All Plugins","412"],["Plugin Compatibility"],["Favorites","12","fav"],{sub:"Ownership",items:[["Owned","368"],["Stock Plugins (Logic Pro 13)","92"],["Not installed","44"]]},["Hidden","5"]]},
+ {t:"Video Chain Picks",c:"#ee7777",open:false,fav:true,items:[["Vocal chain","6","fav"],["Drum bus","4","fav"],["Master","3","fav"]]},
+ {t:"Categories",c:"#42c995",open:false,items:[["EQ","58"],["Compressor","41"],["Reverb","33"],["Saturation","27"]]}
+];
+const OPTS=[
+ {k:"A",name:"A. Heading bars",desc:"Each heading is a bordered bar with a teal chevron button on the right. Items hang off a guide line; a teal bar slides to the lit item."},
+ {k:"B",name:"B. Tree headings",desc:"Big open headings, chevron on the left like a folder tree, thick dividers between groups. Open heading turns teal. Tinted active row + sliding bar."},
+ {k:"C",name:"C. Accordion cards",desc:"Each group is a card with a dark header band and a chunky chevron tile. Open card gets a teal outline. A solid teal pill slides to the active item."}
+];
+const btn=i=>`<button class="it"><span class="lb">${i[0]}</span>${i[1]?`<span class="ct ${i[2]||""}">${i[1]}</span>`:""}</button>`;
+const flat=g=>g.items.reduce((n,i)=>n+(i.sub?i.items.length:1),0);
+const row=document.getElementById("row");
+const only=new URLSearchParams(location.search).get("only");
+if(only)document.body.classList.add("only");
+OPTS.forEach((o,oi)=>{
+  const wrap=document.createElement("div");wrap.className="opt"+(only&&only.toUpperCase()===o.k?" show":"");
+  wrap.innerHTML=`<h2>${o.name}</h2><p>${o.desc}</p><div class="sb ${o.k}"></div>`;
+  row.appendChild(wrap);
+  const sb=wrap.querySelector(".sb");
+  let favCls="";
+  DATA.forEach((g,gi)=>{
+    const id=`${o.k}-g${gi}`;
+    const grp=document.createElement("div");grp.style.setProperty("--c",g.c);grp.className="grp"+(g.open?" open":"")+(g.fav?" fav":"");
+    grp.innerHTML=`<button class="hd" aria-expanded="${!!g.open}" aria-controls="${id}"><span class="chev" aria-hidden="true"></span><span class="ttl">${g.t}</span><span class="dot" aria-hidden="true"></span><span class="n">${flat(g)}</span></button>
+    <div class="bd" id="${id}"><div class="in">${g.items.map(i=>i.sub?`<div class="sg"><div class="sgl"><span class="sgm"></span>${i.sub}</div>${i.items.map(btn).join("")}</div>`:btn(i)).join("")}</div></div>`;
+    sb.appendChild(grp);
+  });
+  const ind=document.createElement("div");ind.className="ind";sb.appendChild(ind);
+  const items=[...sb.querySelectorAll(".it")];
+  let active=items.find(b=>b.textContent.startsWith("Updates available"));
+  // pre-selected active item + pinned hover item for the static screenshot
+  function place(){
+    if(!active||!active.closest(".grp").classList.contains("open")){ind.classList.remove("on");return}
+    const r=active.getBoundingClientRect(),s=sb.getBoundingClientRect();
+    const inset=(o.k==="A"||o.k==="B")?8:0;
+    ind.style.height=(r.height-inset*2)+"px";
+    ind.style.transform=`translateY(${r.top-s.top+inset-1}px)`;
+    if(o.k==="C"){ind.style.top="0";ind.style.left=(r.left-s.left-1)+"px";ind.style.width=r.width+"px";ind.style.right="auto"}
+    else ind.style.top="0";
+    ind.classList.add("on");
+  }
+  function setActive(b){
+    items.forEach(x=>x.classList.remove("active"));
+    active=b;b.classList.add("active");
+    sb.querySelectorAll(".grp").forEach(g=>{g.classList.toggle("has-active",g.contains(b));g.classList.toggle("cur",g.contains(b))});
+    place();
+  }
+  function track(){ind.classList.add("follow");const t0=performance.now();(function f(){place();if(performance.now()-t0<380)requestAnimationFrame(f);else ind.classList.remove("follow")})()}
+  items.forEach(b=>b.addEventListener("click",()=>setActive(b)));
+  sb.querySelectorAll(".hd").forEach(h=>h.addEventListener("click",()=>{
+    const g=h.parentElement,open=!g.classList.contains("open");
+    g.classList.toggle("open",open);h.setAttribute("aria-expanded",open);
+    g.classList.toggle("has-active",g.contains(active)); track();
+  }));
+  setActive(active);
+  const hov=items.find(b=>b.textContent.startsWith("Manual check"));
+  hov.classList.add("is-hover");
+  // callouts (positioned after layout)
+  requestAnimationFrame(()=>{
+    const mk=(el,txt)=>{const c=document.createElement("div");c.className="callout";c.textContent=txt;
+      c.style.top=(el.getBoundingClientRect().top-wrap.getBoundingClientRect().top+10)+"px";wrap.appendChild(c)};
+    mk(active,"ACTIVE ITEM");mk(hov,"HOVER");
+    mk(sb.querySelectorAll(".hd")[1],"CLOSED");mk(sb.querySelectorAll(".hd")[2],"LEVEL 1 HEADING");mk(sb.querySelector(".sgl"),"LEVEL 2 SUB-GROUP");mk(sb.querySelector(".sg .it"),"LEVEL 3 ITEM");
+    mk(sb.querySelectorAll(".hd")[3],"OWN COLOUR");mk(sb.querySelectorAll(".hd")[0],"IN USE");
+  });
+  window.addEventListener("resize",place);
+});
+</script>
+</body>
+</html>

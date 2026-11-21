@@ -1,0 +1,308 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Option C: card grid</title><style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#050607;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#e2e7ec}
+.win{width:1440px;height:900px;display:grid;grid-template-columns:56px 1fr 84px;background:#0b0d10;overflow:hidden}
+.side{background:#0f1215;border-right:1px solid #1c2026;padding:14px 10px;display:flex;flex-direction:column;gap:8px}
+.side i{display:block;height:34px;border-radius:8px;background:#171a1e}
+.side i.on{background:#2dd4bf}
+.rail{background:#0f1215;border-left:1px solid #1c2026;padding:14px 10px;font-size:11px;color:#6b7280}
+.rail b{display:block;color:#9aa4ae;margin-bottom:10px;font-size:12px}
+.rail i{display:block;height:46px;border-radius:12px;background:#2b1a4a;margin-bottom:8px;opacity:.7}
+.main{display:flex;flex-direction:column;min-width:0;min-height:0;padding:20px 24px 0}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+h2{margin:0;font-size:20px;letter-spacing:-.01em}
+.sub{color:#8a939d;font-size:12px;margin-top:3px}
+.btn{background:#1b1d20;color:#cbd0d6;border:1px solid #34383d;border-radius:7px;padding:8px 12px;font:600 12px -apple-system,BlinkMacSystemFont,sans-serif;cursor:pointer}
+.btn.primary{background:#2dd4bf;color:#0b0d10;border-color:#2dd4bf}
+.btn:hover:not(.primary){border-color:#9442dc;background:linear-gradient(135deg,#9442dc22,#b970ff22)}
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.seg{display:inline-flex;gap:6px}
+.seg button{background:#1a1d21;color:#cbd0d6;border:1px solid #2a2e35;border-radius:7px;padding:7px 13px;font:600 12px -apple-system,BlinkMacSystemFont,sans-serif;cursor:pointer}
+.seg button:hover:not(.on){border-color:#9442dc}
+.seg button.on{background:#2dd4bf;color:#0b0d10;border-color:#2dd4bf}
+.seg.chain button{padding:8px 16px;font-size:13px}
+.seg button em{font-style:normal;opacity:.65;margin-left:6px;font-weight:500}
+.search{display:flex;align-items:center;gap:7px;background:#14171a;border:1px solid #2a2e35;border-radius:7px;padding:0 10px;height:32px;width:250px;color:#7b8190}
+.search input{background:none;border:0;outline:0;color:#e2e7ec;font:12px -apple-system,sans-serif;width:100%}
+.search svg{width:14px;height:14px;flex:none}
+select{background:#14171a;color:#cbd0d6;border:1px solid #2a2e35;border-radius:7px;height:32px;padding:0 10px;font:12px -apple-system,sans-serif}
+.spacer{flex:1}
+.legend{display:flex;gap:6px;align-items:center;color:#6b7280;font-size:11px}
+.status{color:#7ee8d9;font-size:12px;min-height:16px;margin:-4px 0 6px}
+.body{flex:1;min-height:0;overflow:auto;padding-bottom:24px}
+.tag{display:inline-block;font-size:10px;line-height:14px;padding:1px 6px;border-radius:5px;border:1px solid #3a414b;color:#b8c0ca;white-space:nowrap;font-style:normal;font-weight:500}
+.tag.own{border-color:rgba(45,212,191,.6);color:#2dd4bf}
+.tag.mk{background:rgba(45,212,191,.14);border-color:rgba(45,212,191,.45);color:#7ee8d9}
+.tag.close{border-style:dashed}
+.tag.miss{color:#9aa4ae;background:#16191d}
+.star{background:none;border:0;padding:3px;cursor:pointer;color:#4b525c;display:inline-flex;line-height:0}
+.star svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}
+.star.on{color:#2dd4bf}.star.on svg{fill:#2dd4bf}
+.star:hover{color:#b970ff}
+.muted{color:#8a939d}
+.vbar{display:inline-block;height:4px;border-radius:2px;background:#2a2e35;width:56px;vertical-align:middle;position:relative;overflow:hidden}
+.vbar b{position:absolute;left:0;top:0;bottom:0;background:#8a939d;border-radius:2px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#1a1d21;border:1px solid #2a2e35;border-radius:7px;padding:3px 8px;font-size:12px;margin:2px 4px 2px 0}
+.chip.best{border-color:rgba(45,212,191,.55);background:rgba(45,212,191,.07)}
+.panel{background:#14171a;border:1px solid #2a2e35;border-radius:9px}
+.empty{padding:40px;text-align:center;color:#8a939d}
+
+/* A table */
+.tbl{background:#14171a;border:1px solid #2a2e35;border-radius:9px;overflow:hidden}
+.tr{display:grid;grid-template-columns:34px 230px 128px 1fr 104px;gap:10px;align-items:center;padding:6px 12px;border-top:1px solid #20242a;min-height:42px}
+.tr.th{border-top:0;background:#101316;color:#8a939d;font-size:11px;text-transform:uppercase;letter-spacing:.05em;min-height:32px;position:sticky;top:0;z-index:2}
+.tr:not(.th):hover{background:#181c20}
+.tr .n{font-weight:650;font-size:13px;line-height:1.25}
+.tr .n small{display:block;color:#8a939d;font-weight:400;font-size:11px;margin-top:1px}
+.tr .v{font-size:12px;color:#cbd0d6;display:flex;align-items:center;gap:8px;white-space:nowrap}
+/* B grouped */
+.jobs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.jobs button{background:#1a1d21;color:#cbd0d6;border:1px solid #2a2e35;border-radius:999px;padding:5px 11px;font:600 12px -apple-system,sans-serif;cursor:pointer}
+.jobs button em{font-style:normal;opacity:.6;margin-left:5px;font-weight:500}
+.jobs button.on{background:#2dd4bf;color:#0b0d10;border-color:#2dd4bf}
+.groups{columns:2;column-gap:16px}
+.grp{break-inside:avoid;margin-bottom:14px;background:#14171a;border:1px solid #2a2e35;border-radius:9px;overflow:hidden}
+.gh{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:#101316;font-weight:700;font-size:13px}
+.gh span{font-weight:500;color:#8a939d;font-size:11px}
+.sw{display:grid;grid-template-columns:26px minmax(0,1fr) 16px minmax(0,1.25fr) 36px;gap:8px;align-items:center;padding:8px 12px;border-top:1px solid #20242a}
+.sw .n{font-weight:650;font-size:13px;line-height:1.25}.sw .n small{display:block;color:#8a939d;font-weight:400;font-size:11px}
+.sw .ar{color:#5b6470;font-size:14px;text-align:center}
+.sw .chip{margin:0;flex-wrap:wrap}
+.sw .more{background:#1a1d21;border:1px solid #2a2e35;color:#cbd0d6;border-radius:6px;font:600 11px sans-serif;padding:3px 0;cursor:pointer;width:34px}
+.sw .more:hover{border-color:#9442dc}
+.sw .more.on{background:#2dd4bf;color:#0b0d10;border-color:#2dd4bf}
+.ex{grid-column:2/5;padding:0 0 2px;display:flex;flex-wrap:wrap}
+/* C cards */
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.card{background:#14171a;border:1px solid #2a2e35;border-radius:9px;padding:12px 14px 10px}
+.card:hover{border-color:#3a414b}
+.card h3{margin:0;font-size:14px;line-height:1.25}
+.ch{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.cm{display:flex;align-items:center;gap:8px;margin:6px 0 8px;font-size:11px;color:#8a939d}
+.cm .vbar{width:70px}
+.eqh{display:flex;align-items:center;gap:6px;font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.eql{display:flex;align-items:center;gap:6px;padding:4px 0;border-top:1px solid #1e2227;font-size:12px}
+.eql b{font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.eql .mkr{color:#8a939d;font-size:11px;max-width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* D master-detail */
+.md{display:grid;grid-template-columns:410px minmax(0,1fr);gap:16px;height:100%;min-height:0}
+.lst{overflow:auto;min-height:0;padding-bottom:20px}
+.li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 10px;border:1px solid transparent;border-radius:8px;cursor:pointer}
+.li:hover{background:#181c20}
+.li.sel{background:#1a1d21;border-color:#2dd4bf}
+.li .n{font-weight:650;font-size:13px}.li .n small{display:block;color:#8a939d;font-weight:400;font-size:11px}
+.li .cnt{font-size:12px;color:#cbd0d6;text-align:right}.li .cnt small{display:block;color:#8a939d;font-size:10px}
+.det{padding:20px 22px;overflow:auto;min-height:0}
+.det h3{margin:0;font-size:22px;letter-spacing:-.01em}
+.dm{display:flex;gap:10px;align-items:center;margin:8px 0 18px;color:#9aa4ae;font-size:12px}
+.eqrow{display:grid;grid-template-columns:30px 34px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 12px;border:1px solid #2a2e35;border-radius:9px;margin-bottom:8px;background:#171a1e}
+.eqrow.best{border-color:rgba(45,212,191,.55);background:rgba(45,212,191,.06)}
+.eqrow .rk{width:26px;height:26px;border-radius:50%;background:#22262b;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#cbd0d6}
+.eqrow .nm{font-weight:650;font-size:15px}.eqrow .nm small{display:block;color:#8a939d;font-weight:400;font-size:12px;margin-top:2px}
+.eqrow .tg{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.dh{font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin:18px 0 8px;display:flex;gap:8px;align-items:center}
+.cb{width:16px;height:16px;border-radius:4px;border:1.5px solid #5b6470;background:#14171a;display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:pointer;flex:none;color:#0b0d10}
+.cb svg{width:11px;height:11px;stroke:currentColor;stroke-width:3;fill:none;opacity:0}
+.cb.on,.cb.part{background:#2dd4bf;border-color:#2dd4bf}.cb.on svg,.cb.part svg{opacity:1}
+.cb:hover{border-color:#b970ff}
+.chip{cursor:pointer;gap:7px}
+.chip:hover{border-color:#5b6470}
+.chip.best{border-color:#7b8190;background:#1d2126}.chip.best>b{font-weight:700}
+.chip>b{font-weight:500}
+.chip.sel{border-color:#2dd4bf;background:rgba(45,212,191,.13)}
+.chip .star{padding:0 0 0 2px}.chip .star svg{width:13px;height:13px}
+.selbar{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:12px;min-height:30px}
+.btn.sm{padding:5px 10px;font-size:11px}
+.cnt2{font-weight:700;color:#2dd4bf;font-size:13px;margin:0 6px 0 4px}
+.cnt2.zero{color:#8a939d}
+.btn.primary[disabled]{opacity:.4;cursor:default;background:#2dd4bf}
+.mini{background:none;border:0;color:#9aa4ae;font:600 11px -apple-system,sans-serif;padding:2px 5px;cursor:pointer;border-radius:5px}
+.mini:hover{color:#e2e7ec;background:#22262b}
+.tr.m{grid-template-columns:240px 128px 1fr 118px}
+.tr.o{grid-template-columns:54px 240px 128px 1fr 104px}
+.tr.sl{background:rgba(45,212,191,.05)}
+.sw{grid-template-columns:minmax(0,.85fr) 16px minmax(0,1.3fr) 40px}
+.sw.o{grid-template-columns:44px minmax(0,1fr) auto auto}
+.sw .more.has{border-color:#2dd4bf;color:#2dd4bf}
+.ex{grid-column:1/5}
+.gh .gg{display:flex;align-items:center;gap:2px}
+.card.sl{border-color:rgba(45,212,191,.45)}
+.eql{cursor:pointer}.eql:hover{background:#181c20}
+.eqh .mini{margin-left:auto}
+.li{grid-template-columns:44px minmax(0,1fr) auto}
+.li.sel{border-color:#2dd4bf}
+.pill{display:inline-block;background:#2dd4bf;color:#0b0d10;font-weight:700;font-size:11px;border-radius:6px;padding:1px 7px;margin-bottom:2px}
+.pill.off{background:#22262b;color:#8a939d;font-weight:500}
+.cb.part svg{display:none}.cb.part::after{content:"";width:8px;height:2px;background:#0b0d10;border-radius:1px}
+.eqrow{grid-template-columns:22px 30px 30px minmax(0,1fr) auto;cursor:pointer}
+.eqrow.sl{border-color:#2dd4bf;background:rgba(45,212,191,.1)}
+.eqrow.best{border-color:#7b8190}
+.eqrow.best.sl{border-color:#2dd4bf}
+.dh .mini{margin-left:auto}
+.sw{grid-template-columns:minmax(0,.75fr) 14px minmax(0,1.5fr) 38px}
+.sw .chip{flex-wrap:nowrap}.chip>b{min-width:0}
+</style></head><body>
+<div class="win"><div class="side"><i></i><i></i><i></i><i class="on"></i><i></i><i></i></div><div class="main" id="app"></div><div class="rail"><b>Hope</b><i></i><i style="background:#1a1d21;opacity:1"></i><i></i></div></div>
+<script>const DATA={"vocal":{"label":"Vocal","owned":[{"name":"H-Delay (s)","publisher":"Waves","videos":17,"match":"exact"},{"name":"RVox (s)","publisher":"Waves","videos":12,"match":"exact"},{"name":"RCompressor (s)","publisher":"Waves","videos":9,"match":"exact"},{"name":"Waves Tune Real-Time (s)","publisher":"Waves","videos":5,"match":"exact"},{"name":"Decapitator","publisher":"Soundtoys","videos":4,"match":"exact"},{"name":"DeEsser (s)","publisher":"Waves","videos":4,"match":"exact"},{"name":"MV2 (s)","publisher":"Waves","videos":4,"match":"exact"},{"name":"Pro-MB","publisher":"FabFilter","videos":3,"match":"exact"},{"name":"S1 Imager (s)","publisher":"Waves","videos":3,"match":"exact"},{"name":"Vitamin (s)","publisher":"Waves","videos":3,"match":"exact"},{"name":"Vocal Rider (s)","publisher":"Waves","videos":3,"match":"exact"},{"name":"Melodyne","publisher":"Celemony","videos":2,"match":"exact"},{"name":"Fresh Air","publisher":"Slate Digital","videos":2,"match":"exact"},{"name":"Virtual Tape Machines","publisher":"Slate Digital","videos":2,"match":"exact"},{"name":"Oxford Inflator","publisher":"Sonnox","videos":2,"match":"exact"},{"name":"C4 (s)","publisher":"Waves","videos":2,"match":"exact"},{"name":"soothe2","publisher":"oeksound","videos":2,"match":"exact"},{"name":"Pro-Q 4","publisher":"FabFilter","videos":11,"match":"close"},{"name":"ValhallaVintageVerb","publisher":"Valhalla DSP, LLC","videos":1,"match":"exact"},{"name":"Scheps 73 (s)","publisher":"Waves","videos":1,"match":"exact"},{"name":"UADx 1176 FET Compressor","publisher":"Universal Audio (UADx)","videos":8,"match":"close"},{"name":"Ozone 12","publisher":"iZotope","videos":4,"match":"close"},{"name":"Doubler2 (s)","publisher":"Waves","videos":3,"match":"close"},{"name":"UAD UA 1176LN Rev E","publisher":"Universal Audio","videos":8,"match":"close"},{"name":"Ozone 12 Equalizer","publisher":"iZotope","videos":4,"match":"close"},{"name":"Ozone 12 Dynamic EQ","publisher":"iZotope","videos":4,"match":"close"},{"name":"Doubler4 (s)","publisher":"Waves","videos":3,"match":"close"},{"name":"UAD UA 1176 Rev A","publisher":"Universal Audio","videos":3,"match":"close"},{"name":"UAD UA 1176AE","publisher":"Universal Audio","videos":3,"match":"close"},{"name":"UAD UA 1176LN Legacy","publisher":"Universal Audio","videos":3,"match":"close"},{"name":"UAD UA 1176SE Legacy","publisher":"Universal Audio","videos":3,"match":"close"},{"name":"UADx 1176 Rev A Compressor","publisher":"Universal Audio (UADx)","videos":3,"match":"close"},{"name":"UADx 1176AE Compressor","publisher":"Universal Audio (UADx)","videos":3,"match":"close"},{"name":"UADx 1176LN Rev E Compressor","publisher":"Universal Audio (UADx)","videos":3,"match":"close"},{"name":"UAD Teletronix LA-2A Gray","publisher":"Universal Audio","videos":2,"match":"close"},{"name":"UAD Teletronix LA-2A Legacy","publisher":"Universal Audio","videos":2,"match":"close"},{"name":"UAD Teletronix LA-2A Silver","publisher":"Universal Audio","videos":2,"match":"close"},{"name":"UADx LA-2A Gray Compressor","publisher":"Universal Audio (UADx)","videos":2,"match":"close"},{"name":"UADx LA-2A Silver Compressor","publisher":"Universal Audio (UADx)","videos":2,"match":"close"},{"name":"UADx LA-2A Tube Compressor","publisher":"Universal Audio (UADx)","videos":2,"match":"close"},{"name":"White 2A","publisher":"IK Multimedia","videos":2,"match":"close"},{"name":"UAD Tube-Tech CL 1B","publisher":"Universal Audio","videos":1,"match":"close"},{"name":"UAD Tube-Tech CL 1B mk II","publisher":"Universal Audio","videos":1,"match":"close"},{"name":"One","publisher":"IK Multimedia","videos":1,"match":"close"},{"name":"ValhallaSupermassive","publisher":"Valhalla DSP, LLC","videos":1,"match":"exact"}],"stock":[{"name":"Adaptive Limiter","videos":0},{"name":"AutoFilter","videos":0},{"name":"Bitcrusher","videos":0},{"name":"Channel EQ","videos":0},{"name":"Chorus","videos":0},{"name":"ChromaGlow","videos":0},{"name":"ChromaVerb","videos":0},{"name":"Clip Distortion","videos":0},{"name":"Compressor","videos":1},{"name":"DeEsser 2","videos":1},{"name":"Delay Designer","videos":0},{"name":"Direction Mixer","videos":0},{"name":"Distortion","videos":0},{"name":"Distortion II","videos":0},{"name":"Echo","videos":0},{"name":"EnVerb","videos":0},{"name":"Ensemble","videos":0},{"name":"Enveloper","videos":0},{"name":"Exciter","videos":0},{"name":"Expander","videos":0},{"name":"Flanger","videos":0},{"name":"Gain","videos":0},{"name":"Graphic EQ","videos":0},{"name":"Limiter","videos":0},{"name":"Linear Phase EQ","videos":0},{"name":"Match EQ","videos":0},{"name":"Microphaser","videos":0},{"name":"Modulation Delay","videos":0},{"name":"MultiMeter","videos":0},{"name":"Multipressor","videos":1},{"name":"Noise Gate","videos":0},{"name":"Overdrive","videos":0},{"name":"Pedalboard","videos":0},{"name":"Phase Distortion","videos":0},{"name":"Phaser","videos":0},{"name":"Phat FX","videos":0},{"name":"Pitch Correction","videos":0},{"name":"Pitch Shifter","videos":0},{"name":"PlatinumVerb","videos":0},{"name":"Ringshifter","videos":0},{"name":"Rotor Cabinet","videos":0},{"name":"Sample Delay","videos":0},{"name":"SilverVerb","videos":0},{"name":"Single Band EQ","videos":0},{"name":"Space Designer","videos":3},{"name":"Spectral Gate","videos":0},{"name":"Spreader","videos":0},{"name":"Stereo Delay","videos":8},{"name":"Stereo Spread","videos":0},{"name":"SubBass","videos":0},{"name":"Tape Delay","videos":2},{"name":"Tremolo","videos":0},{"name":"Tru-Tape Delay","videos":0},{"name":"Vintage Console EQ","videos":1},{"name":"Vintage Graphic EQ","videos":0},{"name":"Vintage Tube EQ","videos":0},{"name":"Vocal Transformer","videos":0}],"missing":[{"name":"Slate Virtual Mix Rack","videos":8,"job":"Channel strip","eq":[{"name":"Console 1","publisher":"Softube"},{"name":"SSL Native Channel Strip 2","publisher":"SSL"},{"name":"UAD API Vision Channel Strip","publisher":"Universal Audio"}]},{"name":"Waves H-Verb","videos":2,"job":"Reverb","eq":[{"name":"RVerb (s)","publisher":"Waves"},{"name":"TrueVerb (s)","publisher":"Waves"},{"name":"UAD Lexicon 224","publisher":"Universal Audio"}]},{"name":"Valhalla Room","videos":1,"job":"Reverb","eq":[{"name":"ValhallaVintageVerb","publisher":"Valhalla DSP, LLC"},{"name":"CSR Room","publisher":"IK Multimedia"},{"name":"UAD Hitsville Reverb Chambers","publisher":"Universal Audio"}]},{"name":"Valhalla Delay","videos":1,"job":"Delay","eq":[{"name":"ValhallaSupermassive","publisher":"Valhalla DSP, LLC"},{"name":"H-Delay (s)","publisher":"Waves"},{"name":"EchoBoy Jr","publisher":"Soundtoys"}]},{"name":"Waves C6","videos":5,"job":"Multiband compressor","eq":[{"name":"C4 (s)","publisher":"Waves"},{"name":"LinMB (s)","publisher":"Waves"},{"name":"Pro-MB","publisher":"FabFilter"}]},{"name":"Waves F6","videos":3,"job":"EQ","eq":[{"name":"Ozone 12 Dynamic EQ","publisher":"iZotope"},{"name":"Neutron 5 Equalizer","publisher":"iZotope"},{"name":"Pro-Q 4","publisher":"FabFilter"}]},{"name":"FabFilter Pro-DS","videos":3,"job":"De-esser","eq":[{"name":"DeEsser (s)","publisher":"Waves"},{"name":"RDeEsser (s)","publisher":"Waves"},{"name":"Weiss Deess","publisher":"Softube"}]},{"name":"Baby Audio Smooth Operator","videos":1,"job":"Resonance control","eq":[{"name":"soothe2","publisher":"oeksound"},{"name":"Ozone 12 Spectral Shaper","publisher":"iZotope"},{"name":"Neutron 5 Sculptor","publisher":"iZotope"}]},{"name":"oeksound spiff","videos":1,"job":"Transient shaper","eq":[{"name":"Neutron 5 Transient Shaper","publisher":"iZotope"},{"name":"Smack Attack (s)","publisher":"Waves"}]},{"name":"Crane Song Phoenix II","videos":3,"job":"Saturation","eq":[{"name":"UAD Raw","publisher":"Universal Audio"},{"name":"UAD Studer A800","publisher":"Universal Audio"},{"name":"Virtual Tape Machines","publisher":"Slate Digital"}]},{"name":"Slate Infinity EQ","videos":2,"job":"EQ","eq":[{"name":"Pro-Q 4","publisher":"FabFilter"},{"name":"Ozone 12 Equalizer","publisher":"iZotope"},{"name":"Neutron 5 Equalizer","publisher":"iZotope"}]},{"name":"Waves Manny Marroquin EQ","videos":1,"job":"EQ","eq":[{"name":"SSLEQ (s)","publisher":"Waves"},{"name":"REQ 6 (s)","publisher":"Waves"},{"name":"Pro-Q 4","publisher":"FabFilter"}]},{"name":"Waves Tune","videos":3,"job":"Pitch correction","eq":[{"name":"Waves Tune LT (s)","publisher":"Waves"},{"name":"Waves Tune Real-Time (s)","publisher":"Waves"}]},{"name":"Antares AVOX","videos":1,"job":"Pitch correction","eq":[{"name":"Waves Tune Real-Time (s)","publisher":"Waves"},{"name":"VocalSynth 2","publisher":"iZotope"}]},{"name":"FabFilter Pro-C 2","videos":1,"job":"Compressor","eq":[{"name":"RCompressor (s)","publisher":"Waves"},{"name":"UADx 1176 FET Compressor","publisher":"Universal Audio (UADx)"},{"name":"Neutron 5 Compressor","publisher":"iZotope"}]},{"name":"Eventide H3000","videos":1,"job":"Pitch and echo","eq":[{"name":"UAD Galaxy Tape Echo","publisher":"Universal Audio"},{"name":"EchoBoy Jr","publisher":"Soundtoys"}]},{"name":"UAD Antares Auto-Tune Realtime","videos":19,"job":"Pitch correction","eq":[{"name":"Waves Tune Real-Time (s)","publisher":"Waves"},{"name":"Waves Tune LT (s)","publisher":"Waves"},{"name":"UAD Topline Vocal Tune","publisher":"Universal Audio"}]},{"name":"UAD Auto-Tune Realtime Advanced","videos":19,"job":"Pitch correction","eq":[{"name":"Waves Tune Real-Time (s)","publisher":"Waves"},{"name":"Waves Tune LT (s)","publisher":"Waves"},{"name":"UAD Topline Vocal Tune","publisher":"Universal Audio"}]},{"name":"Eventide H910","videos":1,"job":"Pitch and echo","eq":[{"name":"SoundShifter Pitch (s)","publisher":"Waves"},{"name":"Little AlterBoy","publisher":"Soundtoys"},{"name":"EchoBoy Jr","publisher":"Soundtoys"}]}]},"drums":{"label":"Drums","owned":[{"name":"UAD Pultec EQP-1A","publisher":"Universal Audio","videos":4,"match":"close"},{"name":"SPL Transient Designer Plus","publisher":"Plugin Alliance","videos":6,"match":"close"},{"name":"RCompressor (m)","publisher":"Waves","videos":3,"match":"exact"},{"name":"Decapitator","publisher":"Soundtoys","videos":6,"match":"exact"},{"name":"Neutron 5","publisher":"iZotope","videos":4,"match":"close"},{"name":"Fresh Air","publisher":"Slate Digital","videos":2,"match":"exact"},{"name":"FabFilter: Pro-Q 4","publisher":"FabFilter","videos":2,"match":"close"},{"name":"C4 (m)","publisher":"Waves","videos":1,"match":"exact"},{"name":"L2 (m)","publisher":"Waves","videos":1,"match":"exact"},{"name":"Vitamin (m)","publisher":"Waves","videos":1,"match":"exact"},{"name":"MV2 (m)","publisher":"Waves","videos":2,"match":"exact"},{"name":"Ozone 12","publisher":"iZotope","videos":2,"match":"close"},{"name":"FabFilter: Pro-MB","publisher":"FabFilter","videos":1,"match":"exact"},{"name":"Oxford Inflator","publisher":"Sonnox","videos":1,"match":"exact"},{"name":"StandardCLIP","publisher":"SIR Audio Tools","videos":1,"match":"exact"},{"name":"SSL 4K E","publisher":"SSL","videos":1,"match":"close"},{"name":"SSL 4K B","publisher":"SSL","videos":1,"match":"close"},{"name":"SSL 4K G","publisher":"SSL","videos":1,"match":"close"},{"name":"SSLGChannel (m)","publisher":"Waves","videos":1,"match":"close"},{"name":"SSLGChannel (s)","publisher":"Waves","videos":1,"match":"close"},{"name":"SSL Native Channel Strip 2","publisher":"SSL","videos":1,"match":"close"},{"name":"bx_console SSL 9000 J","publisher":"Plugin Alliance","videos":1,"match":"close"},{"name":"UAD API 2500","publisher":"Universal Audio","videos":1,"match":"close"},{"name":"UADx API 2500 Bus Compressor","publisher":"Universal Audio (UADx)","videos":1,"match":"close"},{"name":"NLS Buss (m)","publisher":"Waves","videos":1,"match":"close"},{"name":"NLS Buss (s)","publisher":"Waves","videos":1,"match":"close"},{"name":"NLS Channel (m)","publisher":"Waves","videos":1,"match":"close"},{"name":"NLS Channel (s)","publisher":"Waves","videos":1,"match":"close"}],"stock":[{"name":"Adaptive Limiter","videos":0},{"name":"AutoFilter","videos":0},{"name":"Bitcrusher","videos":0},{"name":"Channel EQ","videos":0},{"name":"Chorus","videos":0},{"name":"ChromaGlow","videos":0},{"name":"ChromaVerb","videos":0},{"name":"Clip Distortion","videos":0},{"name":"Compressor","videos":2},{"name":"DeEsser 2","videos":0},{"name":"Delay Designer","videos":0},{"name":"Direction Mixer","videos":0},{"name":"Distortion","videos":0},{"name":"Distortion II","videos":0},{"name":"Echo","videos":0},{"name":"EnVerb","videos":0},{"name":"Ensemble","videos":0},{"name":"Enveloper","videos":1},{"name":"Exciter","videos":0},{"name":"Expander","videos":0},{"name":"Flanger","videos":0},{"name":"Gain","videos":0},{"name":"Graphic EQ","videos":0},{"name":"Limiter","videos":0},{"name":"Linear Phase EQ","videos":0},{"name":"Match EQ","videos":0},{"name":"Microphaser","videos":0},{"name":"Modulation Delay","videos":0},{"name":"MultiMeter","videos":0},{"name":"Multipressor","videos":0},{"name":"Noise Gate","videos":0},{"name":"Overdrive","videos":0},{"name":"Pedalboard","videos":0},{"name":"Phase Distortion","videos":0},{"name":"Phaser","videos":0},{"name":"Phat FX","videos":0},{"name":"Pitch Correction","videos":0},{"name":"Pitch Shifter","videos":0},{"name":"PlatinumVerb","videos":0},{"name":"Ringshifter","videos":0},{"name":"Rotor Cabinet","videos":0},{"name":"Sample Delay","videos":0},{"name":"SilverVerb","videos":0},{"name":"Single Band EQ","videos":0},{"name":"Space Designer","videos":0},{"name":"Spectral Gate","videos":0},{"name":"Spreader","videos":0},{"name":"Stereo Delay","videos":0},{"name":"Stereo Spread","videos":0},{"name":"SubBass","videos":1},{"name":"Tape Delay","videos":0},{"name":"Tremolo","videos":0},{"name":"Tru-Tape Delay","videos":0},{"name":"Vintage Console EQ","videos":0},{"name":"Vintage Graphic EQ","videos":0},{"name":"Vintage Tube EQ","videos":0},{"name":"Vocal Transformer","videos":0}],"missing":[{"name":"Waves C6","videos":2,"job":"Multiband compressor","eq":[{"name":"C4 (s)","publisher":"Waves"},{"name":"LinMB (s)","publisher":"Waves"},{"name":"Pro-MB","publisher":"FabFilter"}]},{"name":"Waves F6","videos":2,"job":"EQ","eq":[{"name":"Ozone 12 Dynamic EQ","publisher":"iZotope"},{"name":"Neutron 5 Equalizer","publisher":"iZotope"},{"name":"Pro-Q 4","publisher":"FabFilter"}]},{"name":"Ableton Drum Buss","videos":1,"job":"Bus and glue","eq":[{"name":"SSL Native Bus Compressor 2","publisher":"SSL"},{"name":"UAD Studer A800","publisher":"Universal Audio"},{"name":"Neutron 5 Transient Shaper","publisher":"iZotope"}]},{"name":"Avid Lo-Fi","videos":1,"job":"Saturation","eq":[{"name":"Lofi Space (s)","publisher":"Waves"},{"name":"Retro Fi (s)","publisher":"Waves"},{"name":"Vinyl","publisher":"iZotope"}]},{"name":"Ableton Drum Rack","videos":2,"job":"Sampler","eq":[{"name":"MODO DRUM","publisher":"IK Multimedia"},{"name":"Prism Drums","publisher":"Aurally Sound"}]},{"name":"Ableton EQ Eight","videos":1,"job":"EQ","eq":[{"name":"Pro-Q 4","publisher":"FabFilter"},{"name":"Ozone 12 Equalizer","publisher":"iZotope"},{"name":"Neutron 5 Equalizer","publisher":"iZotope"}]},{"name":"Ableton Glue Compressor","videos":1,"job":"Compressor","eq":[{"name":"SSL Native Bus Compressor 2","publisher":"SSL"},{"name":"UAD API 2500","publisher":"Universal Audio"}]},{"name":"Cableguys Kickstart","videos":1,"job":"Sidechain pump","eq":[{"name":"OneKnob Pumper (s)","publisher":"Waves"},{"name":"Trackspacer","publisher":"Wavesfactory"},{"name":"Neutron 5 Compressor","publisher":"iZotope"}]},{"name":"FabFilter Pro-C 2","videos":1,"job":"Compressor","eq":[{"name":"RCompressor (s)","publisher":"Waves"},{"name":"Neutron 5 Compressor","publisher":"iZotope"},{"name":"UADx 1176 FET Compressor","publisher":"Universal Audio (UADx)"}]},{"name":"FabFilter Saturn 2","videos":1,"job":"Saturation","eq":[{"name":"Trash","publisher":"iZotope"},{"name":"UAD Raw","publisher":"Universal Audio"},{"name":"Decapitator","publisher":"Soundtoys"}]},{"name":"KNOCK","videos":1,"job":"Transient shaper","eq":[{"name":"Neutron 5 Transient Shaper","publisher":"iZotope"},{"name":"Smack Attack (s)","publisher":"Waves"}]},{"name":"Waves StudioRack","videos":1,"job":"Plug-in rack","eq":[{"name":"StudioVerse Audio Effects (s)","publisher":"Waves"},{"name":"Console 1","publisher":"Softube"}]},{"name":"oeksound spiff","videos":1,"job":"Transient shaper","eq":[{"name":"Neutron 5 Transient Shaper","publisher":"iZotope"},{"name":"Smack Attack (s)","publisher":"Waves"}]},{"name":"Little Labs Voice Of God","videos":2,"job":"Sub bass","eq":[{"name":"RBass (s)","publisher":"Waves"},{"name":"UAD Precision Enhancer Hz","publisher":"Universal Audio"},{"name":"SSL SubGen","publisher":"SSL"}]},{"name":"Waves API 550","videos":1,"job":"EQ","eq":[{"name":"UAD Pultec EQP-1A","publisher":"Universal Audio"},{"name":"Pro-Q 4","publisher":"FabFilter"}]}]},"808":{"label":"808 / Bass","owned":[{"name":"RCompressor (m)","publisher":"Waves","videos":4,"match":"exact"},{"name":"Trackspacer","publisher":"Wavesfactory","videos":5,"match":"exact"},{"name":"UAD Pultec EQP-1A","publisher":"Universal Audio","videos":5,"match":"close"},{"name":"Pro-Q 4","publisher":"FabFilter","videos":5,"match":"close"},{"name":"Ozone 12 Low End Focus","publisher":"iZotope","videos":3,"match":"close"},{"name":"UAD Fairchild 670","publisher":"Universal Audio","videos":2,"match":"close"},{"name":"Vitamin (m)","publisher":"Waves","videos":2,"match":"exact"},{"name":"RBass (m)","publisher":"Waves","videos":3,"match":"exact"},{"name":"Pro-MB","publisher":"FabFilter","videos":3,"match":"exact"},{"name":"Neutron 5 Compressor","publisher":"iZotope","videos":3,"match":"close"},{"name":"UAD Fairchild 670 Legacy","publisher":"Universal Audio","videos":1,"match":"exact"},{"name":"Decapitator","publisher":"Soundtoys","videos":2,"match":"exact"},{"name":"SPL Transient Designer Plus","publisher":"Plugin Alliance","videos":1,"match":"close"},{"name":"Oxford Inflator","publisher":"Sonnox","videos":1,"match":"exact"},{"name":"Smack Attack (m)","publisher":"Waves","videos":1,"match":"exact"},{"name":"Tonal Balance Control 2","publisher":"iZotope","videos":2,"match":"close"},{"name":"UAD API 2500","publisher":"Universal Audio","videos":1,"match":"close"},{"name":"UADx API 2500 Bus Compressor","publisher":"Universal Audio (UADx)","videos":1,"match":"close"}],"stock":[{"name":"Adaptive Limiter","videos":0},{"name":"AutoFilter","videos":0},{"name":"Bitcrusher","videos":0},{"name":"Channel EQ","videos":1},{"name":"Chorus","videos":0},{"name":"ChromaGlow","videos":0},{"name":"ChromaVerb","videos":0},{"name":"Clip Distortion","videos":0},{"name":"Compressor","videos":1},{"name":"DeEsser 2","videos":0},{"name":"Delay Designer","videos":0},{"name":"Direction Mixer","videos":0},{"name":"Distortion","videos":0},{"name":"Distortion II","videos":0},{"name":"Echo","videos":0},{"name":"EnVerb","videos":0},{"name":"Ensemble","videos":0},{"name":"Enveloper","videos":0},{"name":"Exciter","videos":0},{"name":"Expander","videos":0},{"name":"Flanger","videos":0},{"name":"Gain","videos":0},{"name":"Graphic EQ","videos":0},{"name":"Limiter","videos":0},{"name":"Linear Phase EQ","videos":0},{"name":"Match EQ","videos":0},{"name":"Microphaser","videos":0},{"name":"Modulation Delay","videos":0},{"name":"MultiMeter","videos":0},{"name":"Multipressor","videos":0},{"name":"Noise Gate","videos":0},{"name":"Overdrive","videos":0},{"name":"Pedalboard","videos":0},{"name":"Phase Distortion","videos":0},{"name":"Phaser","videos":0},{"name":"Phat FX","videos":0},{"name":"Pitch Correction","videos":0},{"name":"Pitch Shifter","videos":0},{"name":"PlatinumVerb","videos":0},{"name":"Ringshifter","videos":0},{"name":"Rotor Cabinet","videos":0},{"name":"Sample Delay","videos":0},{"name":"SilverVerb","videos":0},{"name":"Single Band EQ","videos":0},{"name":"Space Designer","videos":0},{"name":"Spectral Gate","videos":0},{"name":"Spreader","videos":0},{"name":"Stereo Delay","videos":0},{"name":"Stereo Spread","videos":0},{"name":"SubBass","videos":0},{"name":"Tape Delay","videos":0},{"name":"Tremolo","videos":0},{"name":"Tru-Tape Delay","videos":0},{"name":"Vintage Console EQ","videos":0},{"name":"Vintage Graphic EQ","videos":0},{"name":"Vintage Tube EQ","videos":0},{"name":"Vocal Transformer","videos":0}],"missing":[{"name":"Waves F6","videos":4,"job":"EQ","eq":[{"name":"Ozone 12 Dynamic EQ","publisher":"iZotope"},{"name":"Neutron 5 Equalizer","publisher":"iZotope"},{"name":"Pro-Q 4","publisher":"FabFilter"}]},{"name":"FabFilter Saturn","videos":5,"job":"Saturation","eq":[{"name":"Trash","publisher":"iZotope"},{"name":"UAD Raw","publisher":"Universal Audio"},{"name":"Decapitator","publisher":"Soundtoys"}]},{"name":"Waves C6","videos":2,"job":"Multiband compressor","eq":[{"name":"C4 (s)","publisher":"Waves"},{"name":"LinMB (s)","publisher":"Waves"},{"name":"Pro-MB","publisher":"FabFilter"}]},{"name":"FabFilter Pro-C 2","videos":3,"job":"Compressor","eq":[{"name":"RCompressor (m)","publisher":"Waves"},{"name":"Neutron 5 Compressor","publisher":"iZotope"},{"name":"UADx 1176 FET Compressor","publisher":"Universal Audio (UADx)"}]},{"name":"Nicky Romero Kickstart","videos":3,"job":"Sidechain pump","eq":[{"name":"OneKnob Pumper (s)","publisher":"Waves"},{"name":"Trackspacer","publisher":"Wavesfactory"},{"name":"Neutron 5 Compressor","publisher":"iZotope"}]},{"name":"Slate Digital Virtual Mix Rack","videos":1,"job":"Channel strip","eq":[{"name":"Console 1","publisher":"Softube"},{"name":"SSL Native Channel Strip 2","publisher":"SSL"},{"name":"UAD API Vision Channel Strip","publisher":"Universal Audio"}]},{"name":"Cableguys ShaperBox","videos":2,"job":"Sidechain pump","eq":[{"name":"OneKnob Pumper (s)","publisher":"Waves"},{"name":"Trackspacer","publisher":"Wavesfactory"},{"name":"Neutron 5 Compressor","publisher":"iZotope"}]},{"name":"Ableton Glue Compressor","videos":1,"job":"Compressor","eq":[{"name":"SSL Native Bus Compressor 2","publisher":"SSL"},{"name":"UAD API 2500","publisher":"Universal Audio"}]},{"name":"Cableguys VolumeShaper","videos":1,"job":"Sidechain pump","eq":[{"name":"OneKnob Pumper (s)","publisher":"Waves"},{"name":"Trackspacer","publisher":"Wavesfactory"},{"name":"Neutron 5 Compressor","publisher":"iZotope"}]},{"name":"Soundtoys Radiator","videos":1,"job":"Saturation","eq":[{"name":"UAD Raw","publisher":"Universal Audio"},{"name":"Decapitator","publisher":"Soundtoys"},{"name":"Saturation Knob","publisher":"Softube"}]},{"name":"Universal Audio Little Labs VOG","videos":5,"job":"Sub bass","eq":[{"name":"RBass (s)","publisher":"Waves"},{"name":"UAD Precision Enhancer Hz","publisher":"Universal Audio"},{"name":"SSL SubGen","publisher":"SSL"}]}]},"master":{"label":"Master bus","owned":[{"name":"Ozone 12","publisher":"iZotope","videos":10,"match":"close_version"},{"name":"WLM Meter (s)","publisher":"Waves","videos":5,"match":"exact"},{"name":"Fresh Air","publisher":"Slate Digital","videos":4,"match":"exact"},{"name":"Oxford Inflator","publisher":"Sonnox","videos":8,"match":"exact"},{"name":"Pro-Q 4","publisher":"FabFilter","videos":6,"match":"close_version"},{"name":"Ozone 12 Maximizer","publisher":"iZotope","videos":4,"match":"close_version"},{"name":"Vitamin (s)","publisher":"Waves","videos":2,"match":"exact"},{"name":"StandardCLIP","publisher":"SIR Audio Tools","videos":3,"match":"exact"},{"name":"One","publisher":"IK Multimedia","videos":1,"match":"exact"},{"name":"Ozone 12 Exciter","publisher":"iZotope","videos":1,"match":"close_version"},{"name":"Ozone 12 Master Rebalance","publisher":"iZotope","videos":1,"match":"close_version"},{"name":"Oxford Limiter","publisher":"Sonnox","videos":2,"match":"exact"},{"name":"bx_clipper","publisher":"Plugin Alliance","videos":1,"match":"exact"},{"name":"MV2 (s)","publisher":"Waves","videos":1,"match":"exact"},{"name":"RCompressor (s)","publisher":"Waves","videos":1,"match":"exact"},{"name":"Neutron 5","publisher":"iZotope","videos":1,"match":"close_version"},{"name":"Tonal Balance Control 2","publisher":"iZotope","videos":1,"match":"close_version"}],"stock":[{"name":"Adaptive Limiter","videos":1},{"name":"AutoFilter","videos":0},{"name":"Bitcrusher","videos":0},{"name":"Channel EQ","videos":0},{"name":"Chorus","videos":0},{"name":"ChromaGlow","videos":0},{"name":"ChromaVerb","videos":0},{"name":"Clip Distortion","videos":0},{"name":"Compressor","videos":0},{"name":"DeEsser 2","videos":0},{"name":"Delay Designer","videos":0},{"name":"Direction Mixer","videos":0},{"name":"Distortion","videos":0},{"name":"Distortion II","videos":0},{"name":"Echo","videos":0},{"name":"EnVerb","videos":0},{"name":"Ensemble","videos":0},{"name":"Enveloper","videos":0},{"name":"Exciter","videos":0},{"name":"Expander","videos":0},{"name":"Flanger","videos":0},{"name":"Gain","videos":0},{"name":"Graphic EQ","videos":0},{"name":"Limiter","videos":0},{"name":"Linear Phase EQ","videos":1},{"name":"Match EQ","videos":0},{"name":"Microphaser","videos":0},{"name":"Modulation Delay","videos":0},{"name":"MultiMeter","videos":2},{"name":"Multipressor","videos":1},{"name":"Noise Gate","videos":0},{"name":"Overdrive","videos":0},{"name":"Pedalboard","videos":0},{"name":"Phase Distortion","videos":0},{"name":"Phaser","videos":0},{"name":"Phat FX","videos":0},{"name":"Pitch Correction","videos":0},{"name":"Pitch Shifter","videos":0},{"name":"PlatinumVerb","videos":0},{"name":"Ringshifter","videos":0},{"name":"Rotor Cabinet","videos":0},{"name":"Sample Delay","videos":0},{"name":"SilverVerb","videos":0},{"name":"Single Band EQ","videos":0},{"name":"Space Designer","videos":0},{"name":"Spectral Gate","videos":0},{"name":"Spreader","videos":0},{"name":"Stereo Delay","videos":0},{"name":"Stereo Spread","videos":0},{"name":"SubBass","videos":0},{"name":"Tape Delay","videos":0},{"name":"Tremolo","videos":0},{"name":"Tru-Tape Delay","videos":0},{"name":"Vintage Console EQ","videos":1},{"name":"Vintage Graphic EQ","videos":0},{"name":"Vintage Tube EQ","videos":1},{"name":"Vocal Transformer","videos":0}],"missing":[{"name":"DMG Audio Limitless","videos":8,"job":"Limiter","eq":[{"name":"Ozone 12 Maximizer","publisher":"iZotope"},{"name":"Weiss MM-1 Mastering Maximizer","publisher":"Softube"},{"name":"Oxford Limiter","publisher":"Sonnox"}]},{"name":"FabFilter Pro-L 2","videos":6,"job":"Limiter","eq":[{"name":"Ozone 12 Maximizer","publisher":"iZotope"},{"name":"Oxford Limiter","publisher":"Sonnox"},{"name":"SSL X-Limit","publisher":"SSL"}]},{"name":"FabFilter Pro-L","videos":4,"job":"Limiter","eq":[{"name":"Ozone 12 Maximizer","publisher":"iZotope"},{"name":"Oxford Limiter","publisher":"Sonnox"},{"name":"SSL X-Limit","publisher":"SSL"}]},{"name":"Music Hack Master Plan","videos":2,"job":"Mastering suite","eq":[{"name":"Ozone 12","publisher":"iZotope"},{"name":"T-RackS 6","publisher":"IK Multimedia"}]},{"name":"Newfangled Audio Elevate","videos":2,"job":"Limiter","eq":[{"name":"Ozone 12 Maximizer","publisher":"iZotope"},{"name":"Ozone 12 Dynamics","publisher":"iZotope"},{"name":"Weiss MM-1 Mastering Maximizer","publisher":"Softube"}]},{"name":"Newfangled Audio Saturate","videos":1,"job":"Saturation","eq":[{"name":"Clipper","publisher":"Softube"},{"name":"Classic Clipper","publisher":"IK Multimedia"},{"name":"Neutron 5 Clipper","publisher":"iZotope"}]},{"name":"iZotope Audiolens","videos":1,"job":"Metering","eq":[{"name":"Ozone 12 Match EQ","publisher":"iZotope"},{"name":"Master Match X","publisher":"IK Multimedia"},{"name":"Tonal Balance Control 2","publisher":"iZotope"}]},{"name":"Brainworx bx_digital V3","videos":2,"job":"Mid/side EQ","eq":[{"name":"Ozone 12 Equalizer","publisher":"iZotope"},{"name":"Pro-Q 4","publisher":"FabFilter"}]},{"name":"Brainworx bx_digital V2","videos":1,"job":"Mid/side EQ","eq":[{"name":"Ozone 12 Equalizer","publisher":"iZotope"},{"name":"Pro-Q 4","publisher":"FabFilter"}]}]}};window.OPT="C";</script><script>const OPT=window.OPT, MK={waves:'waves',valhalla:'valhalla',fabfilter:'fabfilter',slate:'slate',uad:'universal audio',eventide:'eventide',oeksound:'oeksound',antares:'antares',ableton:'ableton',soundtoys:'soundtoys',cableguys:'cableguys',nicky:'nicky romero',avid:'avid',little:'universal audio',universal:'universal audio',dmg:'dmg',newfangled:'newfangled',brainworx:'brainworx',izotope:'izotope',baby:'baby audio',crane:'crane song',music:'music hack'};
+const qs=new URLSearchParams(location.search), hash=location.hash.slice(1);
+const S={chain:qs.get('chain')||'vocal',view:['owned','stock','missing'].includes(hash)?hash:'missing',q:'',sort:'videos',stars:new Set(),pick:new Set(),sel:null,job:'All',open:new Set(),status:''};
+let REG={};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const C=()=>DATA[S.chain];
+const norm=s=>s.toLowerCase().replace(/[^a-z0-9]/g,'');
+const ownedNames=()=>new Set(C().owned.map(o=>norm(o.name)));
+const sameMaker=(m,pub)=>{const k=MK[m.name.split(' ')[0].toLowerCase()];return !!k&&pub.toLowerCase().includes(k)};
+function eqs(m){const own=ownedNames();return m.eq.map(e=>({...e,own:own.has(norm(e.name)),mk:sameMaker(m,e.publisher),k:'e:'+m.name+'>'+e.name}))}
+function bestOf(list){return list.find(e=>e.mk)||list.find(e=>e.own)||list[0]}
+const starSvg='<svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>';
+const tick='<svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+const star=k=>`<button class="star ${S.stars.has(k)?'on':''}" data-act="star" data-k="${esc(k)}" aria-label="Star now" title="Star this one now">${starSvg}</button>`;
+const cbx=k=>`<button class="cb ${S.pick.has(k)?'on':''}" data-act="pick" data-k="${esc(k)}" role="checkbox" aria-checked="${S.pick.has(k)}" aria-label="Select">${tick}</button>`;
+const cbSpan=k=>`<span class="cb ${S.pick.has(k)?'on':''}">${tick}</span>`;
+function grp(keys){const id='g'+Object.keys(REG).length;REG[id]=keys;return id}
+function cbGroup(keys){const n=keys.filter(k=>S.pick.has(k)).length,st=n===0?'':n===keys.length?'on':'part';return `<button class="cb ${st}" data-act="item" data-k="${grp(keys)}" role="checkbox" aria-checked="${st==='on'?'true':st==='part'?'mixed':'false'}" aria-label="Select all equivalents">${tick}</button>`}
+function allNone(keys){const g=grp(keys);return `<button class="mini" data-act="all" data-k="${g}">All</button><button class="mini" data-act="none" data-k="${g}">None</button>`}
+const tags=e=>(e.mk?'<i class="tag mk">same maker</i>':'')+(e.own?'<i class="tag own">Owned</i>':'');
+const chip=(e,best)=>`<span class="chip ${best?'best':''} ${S.pick.has(e.k)?'sel':''}" data-act="pick" data-k="${esc(e.k)}" title="${esc(e.publisher)}">${cbSpan(e.k)}<b>${esc(e.name)}</b>${tags(e)}${star(e.k)}</span>`;
+function items(){
+  const c=C(),q=S.q.trim().toLowerCase();let a=c[S.view].slice();
+  if(q)a=a.filter(x=>(x.name+' '+(x.publisher||'')+' '+(x.eq?x.eq.map(e=>e.name+' '+e.publisher).join(' '):'')+' '+(x.job||'')).toLowerCase().includes(q));
+  a.sort((x,y)=>S.sort==='az'?x.name.localeCompare(y.name):((y.videos-x.videos)||x.name.localeCompare(y.name)));
+  return a;
+}
+const ekeys=m=>eqs(m).map(e=>e.k);
+const key=x=>S.view[0]+':'+x.name;
+const keysOf=x=>S.view==='missing'?ekeys(x):[key(x)];
+const viewKeys=()=>C()[S.view].flatMap(keysOf);
+const selCount=()=>{const v=new Set(viewKeys());return [...S.pick].filter(k=>v.has(k)).length};
+function standsFor(name){return C().missing.filter(m=>m.eq.some(e=>norm(e.name)===norm(name)))}
+const maxV=()=>Math.max(1,...C()[S.view].map(x=>x.videos));
+const vb=v=>`<span class="vbar"><b style="width:${Math.max(4,v/maxV()*100)}%"></b></span>`;
+const vtxt=v=>'in '+v+' video'+(v===1?'':'s');
+function badge(x){return S.view==='missing'?'<i class="tag miss">Not installed</i>':S.view==='stock'?'<i class="tag">Logic stock</i>':(x.match==='close'?'<i class="tag close">Close version</i>':'<i class="tag own">Owned</i>')}
+function head(){
+  const c=C(),n=v=>c[v].length,cnt=selCount();
+  const desc={missing:'Plug-ins the chain videos use that you do not have, with the closest alternatives. Tick the ones you want.',owned:'Chain plug-ins you own. Close version means a sibling of the one named in the videos.',stock:'Logic Pro 13 stock plug-ins that fit this chain.'}[S.view];
+  const chains=['vocal','drums','808','master'].map(k=>`<button class="${k===S.chain?'on':''}" data-act="chain" data-k="${k}">${DATA[k].label}</button>`).join('');
+  const views=[['owned','Owned'],['stock','Stock Plugins'],['missing','Not installed']].map(([k,l])=>`<button class="${k===S.view?'on':''}" data-act="view" data-k="${k}">${l}<em>${n(k)}</em></button>`).join('');
+  const vg=grp(items().flatMap(keysOf));
+  return `<div class="top"><div><h2>${c.label} chain favourites</h2><div class="sub">${desc}</div></div><button class="btn primary" data-act="apply" ${cnt?'':'disabled'}>${cnt?'Apply '+cnt+' selected to Favorites':'Apply to Favorites'}</button></div>
+  <div class="bar"><div class="seg chain">${chains}</div></div>
+  <div class="bar"><div class="seg">${views}</div><label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" placeholder="Search plug-ins or equivalents" value="${esc(S.q)}"></label>
+  <select id="sort"><option value="videos" ${S.sort==='videos'?'selected':''}>Most used in videos first</option><option value="az" ${S.sort==='az'?'selected':''}>A to Z</option></select></div>
+  <div class="selbar"><button class="btn sm" data-act="all" data-k="${vg}">Select all</button><button class="btn sm" data-act="none" data-k="${vg}">Clear</button><span class="cnt2 ${cnt?'':'zero'}" role="status">${cnt} selected</span><span class="muted">${esc(S.status)}</span><span class="spacer"></span>
+  <span class="legend"><i class="tag own">Owned</i><i class="tag close">Close version</i><i class="tag">Logic stock</i><i class="tag">Equivalent</i><i class="tag mk">same maker</i></span></div>`;
+}
+/* ---------- A: dense table ---------- */
+function bodyA(){
+  const a=items();if(!a.length)return '<div class="empty">No matches.</div>';
+  const M=S.view==='missing';
+  let h=`<div class="tbl"><div class="tr th ${M?'m':'o'}">${M?'':'<span>Pick</span>'}<span>Plug-in</span><span>Videos</span><span>${M?'Equivalents, best first (tick to select)':S.view==='owned'?'Stands in for (not installed)':''}</span><span>${M?'Select all':'Status'}</span></div>`;
+  for(const x of a){
+    if(M){
+      const l=eqs(x),b=bestOf(l),ks=l.map(e=>e.k),any=ks.some(k=>S.pick.has(k));
+      h+=`<div class="tr m ${any?'sl':''}"><span class="n">${esc(x.name)}<small>${esc(x.job)} &middot; Not installed</small></span><span class="v">${vb(x.videos)}${vtxt(x.videos)}</span><span>${l.map(e=>chip(e,e===b)).join('')}</span><span>${allNone(ks)}</span></div>`;
+    }else{
+      const sub=S.view==='owned'?x.publisher:'Logic Pro 13',mid=S.view==='owned'?standsFor(x.name).map(m=>`<span class="chip" style="cursor:default">${esc(m.name)}<i class="tag">Equivalent</i></span>`).join(''):'';
+      h+=`<div class="tr o ${S.pick.has(key(x))?'sl':''}"><span style="display:flex;gap:4px;align-items:center">${cbx(key(x))}${star(key(x))}</span><span class="n">${esc(x.name)}<small>${esc(sub)}</small></span><span class="v">${vb(x.videos)}${vtxt(x.videos)}</span><span>${mid}</span><span>${badge(x)}</span></div>`;
+    }
+  }
+  return h+'</div>';
+}
+/* ---------- B: grouped swap rows ---------- */
+function bodyB(){
+  const a=items();if(!a.length)return '<div class="empty">No matches.</div>';
+  const M=S.view==='missing';
+  const groupKey=x=>M?x.job:(x.publisher||'Logic Pro 13 stock');
+  const counts={};a.forEach(x=>counts[groupKey(x)]=(counts[groupKey(x)]||0)+1);
+  const names=Object.keys(counts).sort((p,q)=>counts[q]-counts[p]||p.localeCompare(q));
+  const jobsRow=M?`<div class="jobs"><button class="${S.job==='All'?'on':''}" data-act="job" data-k="All">All jobs<em>${a.length}</em></button>${names.map(j=>`<button class="${S.job===j?'on':''}" data-act="job" data-k="${esc(j)}">${esc(j)}<em>${counts[j]}</em></button>`).join('')}</div>`:'';
+  let h=jobsRow+'<div class="groups">';
+  for(const g of names){
+    if(M&&S.job!=='All'&&S.job!==g)continue;
+    const gi=a.filter(x=>groupKey(x)===g),gk=gi.flatMap(keysOf),gn=gk.filter(k=>S.pick.has(k)).length;
+    h+=`<div class="grp"><div class="gh"><div>${esc(g)} <span>${counts[g]} ${M?'not installed':'plug-ins'}${gn?' &middot; '+gn+' selected':''}</span></div><div class="gg">${allNone(gk).replace(/>All</g,'>Select all<').replace(/>None</g,'>Clear<')}</div></div>`;
+    for(const x of gi){
+      if(M){
+        const l=eqs(x),b=bestOf(l),rest=l.filter(e=>e!==b),open=S.open.has(x.name),hid=rest.filter(e=>S.pick.has(e.k)).length;
+        h+=`<div class="sw"><span class="n">${esc(x.name)}<small>${vtxt(x.videos)}</small></span><span class="ar">&rarr;</span><span>${chip(b,true)}</span><button class="more ${open?'on':hid?'has':''}" data-act="more" data-k="${esc(x.name)}" title="${rest.length} more equivalents">+${rest.length}</button>${open?`<div class="ex">${rest.map(e=>chip(e)).join('')}<span style="margin-left:auto">${allNone(l.map(e=>e.k))}</span></div>`:''}</div>`;
+      }else h+=`<div class="sw o"><span style="display:flex;gap:4px;align-items:center">${cbx(key(x))}${star(key(x))}</span><span class="n">${esc(x.name)}</span><span class="muted" style="font-size:11px">${vtxt(x.videos)}</span><span>${badge(x)}</span></div>`;
+    }
+    h+='</div>';
+  }
+  return h+'</div>';
+}
+/* ---------- C: card grid ---------- */
+function bodyC(){
+  const a=items();if(!a.length)return '<div class="empty">No matches.</div>';
+  let h='<div class="grid">';
+  for(const x of a){
+    if(S.view==='missing'){
+      const l=eqs(x),any=l.some(e=>S.pick.has(e.k));
+      h+=`<div class="card ${any?'sl':''}"><div class="ch"><h3>${esc(x.name)}</h3><span class="muted" style="font-size:11px">${l.filter(e=>S.pick.has(e.k)).length} of ${l.length}</span></div><div class="cm"><i class="tag miss">Not installed</i><span>${esc(x.job)}</span><span>&middot;</span>${vb(x.videos)}<span>${vtxt(x.videos)}</span></div><div class="eqh">Equivalents <i class="tag">Equivalent</i>${allNone(l.map(e=>e.k))}</div>${l.map(e=>`<div class="eql" data-act="pick" data-k="${esc(e.k)}">${cbSpan(e.k)}<b title="${esc(e.name)}">${esc(e.name)}</b><span class="mkr">${esc(e.publisher.replace(', LLC',''))}</span>${tags(e)}${star(e.k)}</div>`).join('')}</div>`;
+    }else{
+      h+=`<div class="card ${S.pick.has(key(x))?'sl':''}"><div class="ch"><div style="display:flex;gap:9px;align-items:center">${cbx(key(x))}<h3>${esc(x.name)}</h3></div>${star(key(x))}</div><div class="cm"><span>${esc(x.publisher||'Logic Pro 13')}</span><span>&middot;</span>${vb(x.videos)}<span>${vtxt(x.videos)}</span></div><div>${badge(x)} ${S.view==='owned'?standsFor(x.name).map(m=>`<i class="tag" title="Equivalent for ${esc(m.name)}">Equivalent for ${esc(m.name)}</i>`).join(' '):''}</div></div>`;
+    }
+  }
+  return h+'</div>';
+}
+/* ---------- D: master-detail ---------- */
+function bodyD(){
+  const a=items();
+  if(!a.length)return '<div class="empty">No matches.</div>';
+  if(!S.sel||!a.find(x=>x.name===S.sel))S.sel=a[0].name;
+  const M=S.view==='missing',cur=a.find(x=>x.name===S.sel);
+  const list=a.map(x=>{
+    const ks=keysOf(x),n=ks.filter(k=>S.pick.has(k)).length;
+    const lead=M?cbGroup(ks):`<span style="display:flex;gap:4px">${cbx(key(x))}</span>`;
+    const right=M?(n?`<span class="pill">${n} of ${ks.length}</span>`:`<span class="pill off">0 of ${ks.length}</span>`)+`<small>${x.videos} video${x.videos===1?'':'s'}</small>`:`${x.videos}<small>videos</small>`;
+    return `<div class="li ${x.name===S.sel?'sel':''}" data-act="sel" data-k="${esc(x.name)}"><span>${lead}</span><span class="n">${esc(x.name)}<small>${esc(M?x.job:(x.publisher||'Logic Pro 13'))}</small></span><span class="cnt">${right}</span></div>`}).join('');
+  let d='';
+  if(M){
+    const l=eqs(cur),b=bestOf(l),own=l.filter(e=>e.own).length;
+    d=`<h3>${esc(cur.name)}</h3><div class="dm"><i class="tag miss">Not installed</i><span>${esc(cur.job)}</span><span>&middot;</span>${vb(cur.videos)}<span>${vtxt(cur.videos)}</span></div>
+    <div class="dh">Equivalents, best first <i class="tag">Equivalent</i>${allNone(l.map(e=>e.k))}</div>`+l.map((e,i)=>`<div class="eqrow ${e===b?'best':''} ${S.pick.has(e.k)?'sl':''}" data-act="pick" data-k="${esc(e.k)}">${cbSpan(e.k)}<span class="rk">${i+1}</span>${star(e.k)}<span class="nm">${esc(e.name)}<small>${esc(e.publisher)}</small></span><span class="tg">${tags(e)}<i class="tag">Equivalent</i></span></div>`).join('')+
+    `<div class="dh">At a glance</div><div class="muted" style="font-size:13px;line-height:1.6">You already own ${own} of these ${l.length}. ${l.some(e=>e.mk)?'One is made by the same company.':'None is made by the same company.'} Tick the ones you want, or use the star to add one straight away.</div>`;
+  }else{
+    const st=S.view==='owned'?standsFor(cur.name):[];
+    d=`<h3>${esc(cur.name)}</h3><div class="dm">${badge(cur)}<span>${esc(cur.publisher||'Logic Pro 13')}</span><span>&middot;</span>${vb(cur.videos)}<span>${vtxt(cur.videos)}</span><span class="spacer"></span>${star(key(cur))}</div>
+    ${S.view==='owned'?`<div class="dh">Stands in for these missing plug-ins <i class="tag">Equivalent</i></div>${st.length?st.map(m=>`<div class="eqrow" style="cursor:default;grid-template-columns:30px minmax(0,1fr) auto"><span class="rk">${m.eq.findIndex(e=>norm(e.name)===norm(cur.name))+1}</span><span class="nm">${esc(m.name)}<small>${esc(m.job)} &middot; ${vtxt(m.videos)}</small></span><span class="tg"><i class="tag miss">Not installed</i></span></div>`).join(''):'<div class="muted" style="font-size:13px">Not named as an equivalent for anything missing.</div>'}`:'<div class="muted" style="font-size:13px;line-height:1.6">Built into Logic Pro 13. No video in this chain uses it by name.</div>'}`;
+  }
+  return `<div class="md"><div class="lst">${list}</div><div class="panel det">${d}</div></div>`;
+}
+const BODY={A:bodyA,B:bodyB,C:bodyC,D:bodyD}[OPT];
+function render(){
+  REG={};
+  const f=document.activeElement,keep=f&&f.id==='q'?f.selectionStart:null;
+  const bs=document.getElementById('bd'),bt=bs?bs.scrollTop:0,ls=document.querySelector('.lst'),lt=ls?ls.scrollTop:0;
+  const hd=head(),bd=BODY();
+  document.getElementById('app').innerHTML=hd+'<div class="body" id="bd">'+bd+'</div>';
+  document.getElementById('bd').scrollTop=bt;const nl=document.querySelector('.lst');if(nl)nl.scrollTop=lt;
+  if(keep!==null){const q=document.getElementById('q');q.focus();q.setSelectionRange(keep,keep)}
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-act]');if(!t)return;const a=t.dataset.act,k=t.dataset.k;
+  if(a==='star'){e.stopPropagation();S.stars.has(k)?S.stars.delete(k):S.stars.add(k)}
+  else if(a==='pick'){S.pick.has(k)?S.pick.delete(k):S.pick.add(k)}
+  else if(a==='all'){REG[k].forEach(x=>S.pick.add(x))}
+  else if(a==='none'){REG[k].forEach(x=>S.pick.delete(x))}
+  else if(a==='item'){const ks=REG[k];ks.every(x=>S.pick.has(x))?ks.forEach(x=>S.pick.delete(x)):ks.forEach(x=>S.pick.add(x));e.stopPropagation()}
+  else if(a==='chain'){S.chain=k;S.sel=null;S.job='All';S.open.clear();S.pick.clear();S.status=''}
+  else if(a==='view'){S.view=k;S.sel=null;S.job='All';S.status=''}
+  else if(a==='job')S.job=k;
+  else if(a==='more'){S.open.has(k)?S.open.delete(k):S.open.add(k)}
+  else if(a==='sel')S.sel=k;
+  else if(a==='apply'&&!t.disabled)S.status='Preview only. This would add '+selCount()+' to your favourites.';
+  render();
+});
+document.addEventListener('input',e=>{if(e.target.id==='q'){S.q=e.target.value;render()}});
+document.addEventListener('change',e=>{if(e.target.id==='sort'){S.sort=e.target.value;render()}});
+['Waves C6','Waves H-Verb','FabFilter Pro-DS'].forEach(n=>S.stars.add('e:'+n+'>'+({'Waves C6':'C4 (s)','Waves H-Verb':'RVerb (s)','FabFilter Pro-DS':'DeEsser (s)'}[n])));
+['H-Delay (s)','RVox (s)','Pro-Q 4','soothe2'].forEach(n=>S.stars.add('o:'+n));
+['Waves H-Verb>RVerb (s)','Waves H-Verb>ValhallaVintageVerb','Waves C6>C4 (s)','Waves C6>Pro-MB','Valhalla Room>ValhallaVintageVerb','FabFilter Pro-DS>DeEsser (s)','Valhalla Delay>ValhallaSupermassive','Waves F6>Pro-Q 4'].forEach(n=>S.pick.add('e:'+n));
+['H-Delay (s)','RVox (s)','Pro-Q 4','soothe2','Decapitator'].forEach(n=>S.pick.add('o:'+n));
+['Channel EQ','Compressor','Space Designer'].forEach(n=>S.pick.add('s:'+n));
+['Waves H-Verb','Waves C6'].forEach(n=>S.open.add(n));
+if(qs.get('sel'))S.sel=qs.get('sel');
+render();
+</script></body></html>

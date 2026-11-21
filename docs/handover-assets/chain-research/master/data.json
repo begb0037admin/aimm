@@ -1,0 +1,682 @@
+{
+  "version": 1,
+  "chain": "master",
+  "source": "738 docs/knowledge transcripts; /Users/admin/aimm-previews/inventory-scan.json for ownership; Logic Pro 13 stock names from standalone/assets/vocal-favs.json stock.logic",
+  "genres": {
+    "trap": {
+      "videos": 6,
+      "weight": 3,
+      "weighted_videos": 18
+    },
+    "drill": {
+      "videos": 2,
+      "weight": 3,
+      "weighted_videos": 6
+    },
+    "hip-hop/boom bap": {
+      "videos": 22,
+      "weight": 3,
+      "weighted_videos": 66
+    },
+    "R&B": {
+      "videos": 6,
+      "weight": 2,
+      "weighted_videos": 12
+    },
+    "pop": {
+      "videos": 7,
+      "weight": 1,
+      "weighted_videos": 7
+    },
+    "rock": {
+      "videos": 3,
+      "weight": 1,
+      "weighted_videos": 3
+    },
+    "EDM": {
+      "videos": 2,
+      "weight": 1,
+      "weighted_videos": 2
+    },
+    "other": {
+      "videos": 39,
+      "weight": 1,
+      "weighted_videos": 39
+    }
+  },
+  "owned": [
+    {
+      "name": "Ozone 12",
+      "publisher": "iZotope",
+      "videos": 10,
+      "match": "close_version",
+      "weightedVideos": 16,
+      "mentioned_as": "iZotope Ozone"
+    },
+    {
+      "name": "WLM Meter (s)",
+      "publisher": "Waves",
+      "videos": 5,
+      "match": "exact",
+      "weightedVideos": 12,
+      "mentioned_as": "Waves WLM Meter"
+    },
+    {
+      "name": "Fresh Air",
+      "publisher": "Slate Digital",
+      "videos": 4,
+      "match": "exact",
+      "weightedVideos": 11,
+      "mentioned_as": "Slate Digital Fresh Air"
+    },
+    {
+      "name": "Ozone 12",
+      "publisher": "iZotope",
+      "videos": 4,
+      "match": "close_version",
+      "weightedVideos": 10,
+      "mentioned_as": "iZotope Ozone 9"
+    },
+    {
+      "name": "Oxford Inflator",
+      "publisher": "Sonnox",
+      "videos": 8,
+      "match": "exact",
+      "weightedVideos": 8,
+      "mentioned_as": "Sonnox Oxford Inflator"
+    },
+    {
+      "name": "Pro-Q 4",
+      "publisher": "FabFilter",
+      "videos": 6,
+      "match": "close_version",
+      "weightedVideos": 6,
+      "mentioned_as": "FabFilter Pro-Q 3"
+    },
+    {
+      "name": "Ozone 12 Maximizer",
+      "publisher": "iZotope",
+      "videos": 4,
+      "match": "close_version",
+      "weightedVideos": 6,
+      "mentioned_as": "iZotope Ozone Maximizer"
+    },
+    {
+      "name": "Vitamin (s)",
+      "publisher": "Waves",
+      "videos": 2,
+      "match": "exact",
+      "weightedVideos": 6,
+      "mentioned_as": "Waves Vitamin"
+    },
+    {
+      "name": "Ozone 12",
+      "publisher": "iZotope",
+      "videos": 3,
+      "match": "exact",
+      "weightedVideos": 5,
+      "mentioned_as": "iZotope Ozone 12"
+    },
+    {
+      "name": "StandardCLIP",
+      "publisher": "SIR Audio Tools",
+      "videos": 3,
+      "match": "exact",
+      "weightedVideos": 3,
+      "mentioned_as": "SIR Audio Tools StandardCLIP"
+    },
+    {
+      "name": "Ozone 12",
+      "publisher": "iZotope",
+      "videos": 3,
+      "match": "close_version",
+      "weightedVideos": 3,
+      "mentioned_as": "iZotope Ozone 11"
+    },
+    {
+      "name": "One",
+      "publisher": "IK Multimedia",
+      "videos": 1,
+      "match": "exact",
+      "weightedVideos": 3,
+      "mentioned_as": "IK Multimedia T-RackS One"
+    },
+    {
+      "name": "Ozone 12 Exciter",
+      "publisher": "iZotope",
+      "videos": 1,
+      "match": "close_version",
+      "weightedVideos": 3,
+      "mentioned_as": "iZotope Ozone Exciter"
+    },
+    {
+      "name": "Ozone 12 Master Rebalance",
+      "publisher": "iZotope",
+      "videos": 1,
+      "match": "close_version",
+      "weightedVideos": 3,
+      "mentioned_as": "iZotope Ozone Master Rebalance"
+    },
+    {
+      "name": "Oxford Limiter",
+      "publisher": "Sonnox",
+      "videos": 2,
+      "match": "exact",
+      "weightedVideos": 2,
+      "mentioned_as": "Sonnox Oxford Limiter"
+    },
+    {
+      "name": "bx_clipper",
+      "publisher": "Plugin Alliance",
+      "videos": 1,
+      "match": "exact",
+      "weightedVideos": 1,
+      "mentioned_as": "Brainworx bx_clipper"
+    },
+    {
+      "name": "MV2 (s)",
+      "publisher": "Waves",
+      "videos": 1,
+      "match": "exact",
+      "weightedVideos": 1,
+      "mentioned_as": "Waves MV2"
+    },
+    {
+      "name": "RCompressor (s)",
+      "publisher": "Waves",
+      "videos": 1,
+      "match": "exact",
+      "weightedVideos": 1,
+      "mentioned_as": "Waves RCompressor"
+    },
+    {
+      "name": "Neutron 5",
+      "publisher": "iZotope",
+      "videos": 1,
+      "match": "close_version",
+      "weightedVideos": 1,
+      "mentioned_as": "iZotope Neutron"
+    },
+    {
+      "name": "Ozone 12",
+      "publisher": "iZotope",
+      "videos": 1,
+      "match": "close_version",
+      "weightedVideos": 1,
+      "mentioned_as": "iZotope Ozone 10"
+    },
+    {
+      "name": "Tonal Balance Control 2",
+      "publisher": "iZotope",
+      "videos": 1,
+      "match": "close_version",
+      "weightedVideos": 1,
+      "mentioned_as": "iZotope Tonal Balance Control"
+    }
+  ],
+  "stock": {
+    "logic": [
+      {
+        "name": "Adaptive Limiter",
+        "videos": 1,
+        "weightedVideos": 1
+      },
+      {
+        "name": "AutoFilter",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Bitcrusher",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Channel EQ",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Chorus",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "ChromaGlow",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "ChromaVerb",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Clip Distortion",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Compressor",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "DeEsser 2",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Delay Designer",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Direction Mixer",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Distortion",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Distortion II",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Echo",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "EnVerb",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Ensemble",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Enveloper",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Exciter",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Expander",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Flanger",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Gain",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Graphic EQ",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Limiter",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Linear Phase EQ",
+        "videos": 1,
+        "weightedVideos": 1
+      },
+      {
+        "name": "Match EQ",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Microphaser",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Modulation Delay",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "MultiMeter",
+        "videos": 2,
+        "weightedVideos": 3
+      },
+      {
+        "name": "Multipressor",
+        "videos": 1,
+        "weightedVideos": 1
+      },
+      {
+        "name": "Noise Gate",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Overdrive",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Pedalboard",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Phase Distortion",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Phaser",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Phat FX",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Pitch Correction",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Pitch Shifter",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "PlatinumVerb",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Ringshifter",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Rotor Cabinet",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Sample Delay",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "SilverVerb",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Single Band EQ",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Space Designer",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Spectral Gate",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Spreader",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Stereo Delay",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Stereo Spread",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "SubBass",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Tape Delay",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Tremolo",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Tru-Tape Delay",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Vintage Console EQ",
+        "videos": 1,
+        "weightedVideos": 1
+      },
+      {
+        "name": "Vintage Graphic EQ",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Vintage Tube EQ",
+        "videos": 1,
+        "weightedVideos": 1
+      },
+      {
+        "name": "Vocal Transformer",
+        "videos": 0,
+        "weightedVideos": 0
+      }
+    ],
+    "other_daw": [
+      {
+        "name": "EQ Eight",
+        "videos": 1,
+        "weightedVideos": 1
+      }
+    ]
+  },
+  "missing": [
+    {
+      "name": "DMG Audio Limitless",
+      "videos": 8,
+      "equivalents": [
+        {
+          "name": "Ozone 12 Maximizer",
+          "publisher": "iZotope"
+        },
+        {
+          "name": "Weiss MM-1 Mastering Maximizer",
+          "publisher": "Softube"
+        },
+        {
+          "name": "Oxford Limiter",
+          "publisher": "Sonnox"
+        }
+      ],
+      "weightedVideos": 19
+    },
+    {
+      "name": "FabFilter Pro-L 2",
+      "videos": 6,
+      "equivalents": [
+        {
+          "name": "Ozone 12 Maximizer",
+          "publisher": "iZotope"
+        },
+        {
+          "name": "Oxford Limiter",
+          "publisher": "Sonnox"
+        },
+        {
+          "name": "SSL X-Limit",
+          "publisher": "SSL"
+        }
+      ],
+      "weightedVideos": 7
+    },
+    {
+      "name": "FabFilter Pro-L",
+      "videos": 4,
+      "equivalents": [
+        {
+          "name": "Ozone 12 Maximizer",
+          "publisher": "iZotope"
+        },
+        {
+          "name": "Oxford Limiter",
+          "publisher": "Sonnox"
+        },
+        {
+          "name": "SSL X-Limit",
+          "publisher": "SSL"
+        }
+      ],
+      "weightedVideos": 6
+    },
+    {
+      "name": "Music Hack Master Plan",
+      "videos": 2,
+      "equivalents": [
+        {
+          "name": "Ozone 12",
+          "publisher": "iZotope"
+        },
+        {
+          "name": "T-RackS 6",
+          "publisher": "IK Multimedia"
+        }
+      ],
+      "weightedVideos": 4
+    },
+    {
+      "name": "Newfangled Audio Elevate",
+      "videos": 2,
+      "equivalents": [
+        {
+          "name": "Ozone 12 Maximizer",
+          "publisher": "iZotope"
+        },
+        {
+          "name": "Ozone 12 Dynamics",
+          "publisher": "iZotope"
+        },
+        {
+          "name": "Weiss MM-1 Mastering Maximizer",
+          "publisher": "Softube"
+        }
+      ],
+      "weightedVideos": 2
+    },
+    {
+      "name": "Newfangled Audio Saturate",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "Clipper",
+          "publisher": "Softube"
+        },
+        {
+          "name": "Classic Clipper",
+          "publisher": "IK Multimedia"
+        },
+        {
+          "name": "Neutron 5 Clipper",
+          "publisher": "iZotope"
+        }
+      ],
+      "weightedVideos": 1
+    },
+    {
+      "name": "iZotope Audiolens",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "Ozone 12 Match EQ",
+          "publisher": "iZotope"
+        },
+        {
+          "name": "Master Match X",
+          "publisher": "IK Multimedia"
+        },
+        {
+          "name": "Tonal Balance Control 2",
+          "publisher": "iZotope"
+        }
+      ],
+      "weightedVideos": 1
+    },
+    {
+      "name": "Brainworx bx_digital V3",
+      "videos": 2,
+      "equivalents": [
+        {
+          "name": "SPL PQ",
+          "publisher": "Plugin Alliance"
+        },
+        {
+          "name": "TBTECH Kirchhoff-EQ",
+          "publisher": "Plugin Alliance"
+        },
+        {
+          "name": "Maag EQ4",
+          "publisher": "Plugin Alliance"
+        }
+      ],
+      "weightedVideos": 5
+    },
+    {
+      "name": "Brainworx bx_digital V2",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "SPL PQ",
+          "publisher": "Plugin Alliance"
+        },
+        {
+          "name": "TBTECH Kirchhoff-EQ",
+          "publisher": "Plugin Alliance"
+        },
+        {
+          "name": "Maag EQ4",
+          "publisher": "Plugin Alliance"
+        }
+      ],
+      "weightedVideos": 1
+    }
+  ]
+}

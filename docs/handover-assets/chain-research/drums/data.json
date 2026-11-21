@@ -1,0 +1,837 @@
+{
+  "version": 1,
+  "source": "738 Markdown transcripts in docs/knowledge; ownership only from inventory-scan.json; Logic stock from vocal-favs.json",
+  "chain": "drums",
+  "genres": {
+    "trap": {
+      "videos": 11,
+      "weight": 3,
+      "weighted_videos": 33
+    },
+    "drill": {
+      "videos": 1,
+      "weight": 3,
+      "weighted_videos": 3
+    },
+    "hip-hop/boom bap": {
+      "videos": 20,
+      "weight": 3,
+      "weighted_videos": 60
+    },
+    "R&B": {
+      "videos": 3,
+      "weight": 2,
+      "weighted_videos": 6
+    },
+    "pop": {
+      "videos": 9,
+      "weight": 1,
+      "weighted_videos": 9
+    },
+    "rock": {
+      "videos": 9,
+      "weight": 1,
+      "weighted_videos": 9
+    },
+    "EDM": {
+      "videos": 4,
+      "weight": 1,
+      "weighted_videos": 4
+    },
+    "lo-fi": {
+      "videos": 0,
+      "weight": 2,
+      "weighted_videos": 0
+    },
+    "other": {
+      "videos": 39,
+      "weight": 1,
+      "weighted_videos": 39
+    }
+  },
+  "owned": [
+    {
+      "name": "UAD Pultec EQP-1A",
+      "publisher": "Universal Audio",
+      "videos": 4,
+      "match": "close",
+      "weightedVideos": 11,
+      "mentioned_as": "Pultec EQ",
+      "licence": "licensed"
+    },
+    {
+      "name": "SPL Transient Designer Plus",
+      "publisher": "Plugin Alliance",
+      "videos": 6,
+      "match": "close",
+      "weightedVideos": 10,
+      "mentioned_as": "SPL Transient Designer"
+    },
+    {
+      "name": "RCompressor (m)",
+      "publisher": "Waves",
+      "videos": 3,
+      "match": "exact",
+      "weightedVideos": 7,
+      "mentioned_as": "Waves RCompressor"
+    },
+    {
+      "name": "Decapitator",
+      "publisher": "Soundtoys",
+      "videos": 6,
+      "match": "exact",
+      "weightedVideos": 6,
+      "mentioned_as": "Soundtoys Decapitator"
+    },
+    {
+      "name": "Neutron 5",
+      "publisher": "iZotope",
+      "videos": 4,
+      "match": "close",
+      "weightedVideos": 6,
+      "mentioned_as": "iZotope Neutron"
+    },
+    {
+      "name": "Fresh Air",
+      "publisher": "Slate Digital",
+      "videos": 2,
+      "match": "exact",
+      "weightedVideos": 6,
+      "mentioned_as": "Slate Digital Fresh Air"
+    },
+    {
+      "name": "FabFilter: Pro-Q 4",
+      "publisher": "FabFilter",
+      "videos": 2,
+      "match": "close",
+      "weightedVideos": 4,
+      "mentioned_as": "FabFilter Pro-Q 3"
+    },
+    {
+      "name": "C4 (m)",
+      "publisher": "Waves",
+      "videos": 1,
+      "match": "exact",
+      "weightedVideos": 3,
+      "mentioned_as": "Waves C4"
+    },
+    {
+      "name": "L2 (m)",
+      "publisher": "Waves",
+      "videos": 1,
+      "match": "exact",
+      "weightedVideos": 3,
+      "mentioned_as": "Waves L2"
+    },
+    {
+      "name": "Vitamin (m)",
+      "publisher": "Waves",
+      "videos": 1,
+      "match": "exact",
+      "weightedVideos": 3,
+      "mentioned_as": "Waves Vitamin"
+    },
+    {
+      "name": "MV2 (m)",
+      "publisher": "Waves",
+      "videos": 2,
+      "match": "exact",
+      "weightedVideos": 2,
+      "mentioned_as": "Waves MV2"
+    },
+    {
+      "name": "Ozone 12",
+      "publisher": "iZotope",
+      "videos": 2,
+      "match": "close",
+      "weightedVideos": 2,
+      "mentioned_as": "iZotope Ozone"
+    },
+    {
+      "name": "FabFilter: Pro-MB",
+      "publisher": "FabFilter",
+      "videos": 1,
+      "match": "exact",
+      "weightedVideos": 1,
+      "mentioned_as": "FabFilter Pro-MB"
+    },
+    {
+      "name": "Oxford Inflator",
+      "publisher": "Sonnox",
+      "videos": 1,
+      "match": "exact",
+      "weightedVideos": 1,
+      "mentioned_as": "Sonnox Oxford Inflator"
+    },
+    {
+      "name": "StandardCLIP",
+      "publisher": "SIR Audio Tools",
+      "videos": 1,
+      "match": "exact",
+      "weightedVideos": 1,
+      "mentioned_as": "StandardCLIP"
+    },
+    {
+      "name": "SSL 4K E",
+      "publisher": "SSL",
+      "videos": 1,
+      "match": "close",
+      "mentioned_as": "Waves SSL E-Channel",
+      "weightedVideos": 3
+    },
+    {
+      "name": "SSL 4K B",
+      "publisher": "SSL",
+      "videos": 1,
+      "match": "close",
+      "mentioned_as": "Waves SSL E-Channel",
+      "weightedVideos": 3
+    },
+    {
+      "name": "SSL 4K G",
+      "publisher": "SSL",
+      "videos": 1,
+      "match": "close",
+      "mentioned_as": "Waves SSL E-Channel",
+      "weightedVideos": 3
+    },
+    {
+      "name": "SSLGChannel (m)",
+      "publisher": "Waves",
+      "videos": 1,
+      "match": "close",
+      "mentioned_as": "Waves SSL E-Channel",
+      "weightedVideos": 3
+    },
+    {
+      "name": "SSLGChannel (s)",
+      "publisher": "Waves",
+      "videos": 1,
+      "match": "close",
+      "mentioned_as": "Waves SSL E-Channel",
+      "weightedVideos": 3
+    },
+    {
+      "name": "SSL Native Channel Strip 2",
+      "publisher": "SSL",
+      "videos": 1,
+      "match": "close",
+      "mentioned_as": "Waves SSL E-Channel",
+      "weightedVideos": 3
+    },
+    {
+      "name": "bx_console SSL 9000 J",
+      "publisher": "Plugin Alliance",
+      "videos": 1,
+      "match": "close",
+      "mentioned_as": "Waves SSL E-Channel",
+      "weightedVideos": 3
+    },
+    {
+      "name": "UAD API 2500",
+      "publisher": "Universal Audio",
+      "videos": 1,
+      "match": "close",
+      "mentioned_as": "Waves API 2500",
+      "weightedVideos": 1,
+      "licence": "licensed"
+    },
+    {
+      "name": "UADx API 2500 Bus Compressor",
+      "publisher": "Universal Audio (UADx)",
+      "videos": 1,
+      "match": "close",
+      "mentioned_as": "Waves API 2500",
+      "weightedVideos": 1,
+      "licence": "licensed"
+    },
+    {
+      "name": "NLS Buss (m)",
+      "publisher": "Waves",
+      "videos": 1,
+      "match": "close",
+      "mentioned_as": "Waves NLS",
+      "weightedVideos": 1
+    },
+    {
+      "name": "NLS Buss (s)",
+      "publisher": "Waves",
+      "videos": 1,
+      "match": "close",
+      "mentioned_as": "Waves NLS",
+      "weightedVideos": 1
+    },
+    {
+      "name": "NLS Channel (m)",
+      "publisher": "Waves",
+      "videos": 1,
+      "match": "close",
+      "mentioned_as": "Waves NLS",
+      "weightedVideos": 1
+    },
+    {
+      "name": "NLS Channel (s)",
+      "publisher": "Waves",
+      "videos": 1,
+      "match": "close",
+      "mentioned_as": "Waves NLS",
+      "weightedVideos": 1
+    }
+  ],
+  "stock": {
+    "logic": [
+      {
+        "name": "Adaptive Limiter",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "AutoFilter",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Bitcrusher",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Channel EQ",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Chorus",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "ChromaGlow",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "ChromaVerb",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Clip Distortion",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Compressor",
+        "videos": 2,
+        "weightedVideos": 2
+      },
+      {
+        "name": "DeEsser 2",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Delay Designer",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Direction Mixer",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Distortion",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Distortion II",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Echo",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "EnVerb",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Ensemble",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Enveloper",
+        "videos": 1,
+        "weightedVideos": 1
+      },
+      {
+        "name": "Exciter",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Expander",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Flanger",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Gain",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Graphic EQ",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Limiter",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Linear Phase EQ",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Match EQ",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Microphaser",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Modulation Delay",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "MultiMeter",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Multipressor",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Noise Gate",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Overdrive",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Pedalboard",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Phase Distortion",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Phaser",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Phat FX",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Pitch Correction",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Pitch Shifter",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "PlatinumVerb",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Ringshifter",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Rotor Cabinet",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Sample Delay",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "SilverVerb",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Single Band EQ",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Space Designer",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Spectral Gate",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Spreader",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Stereo Delay",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Stereo Spread",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "SubBass",
+        "videos": 1,
+        "weightedVideos": 1
+      },
+      {
+        "name": "Tape Delay",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Tremolo",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Tru-Tape Delay",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Vintage Console EQ",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Vintage Graphic EQ",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Vintage Tube EQ",
+        "videos": 0,
+        "weightedVideos": 0
+      },
+      {
+        "name": "Vocal Transformer",
+        "videos": 0,
+        "weightedVideos": 0
+      }
+    ]
+  },
+  "missing": [
+    {
+      "name": "Waves C6",
+      "videos": 2,
+      "equivalents": [
+        {
+          "name": "C4 (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "LinMB (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "Pro-MB",
+          "publisher": "FabFilter"
+        }
+      ],
+      "weightedVideos": 6
+    },
+    {
+      "name": "Waves F6",
+      "videos": 2,
+      "equivalents": [
+        {
+          "name": "Curves Resolve (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "REQ 6 (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "Q10 (s)",
+          "publisher": "Waves"
+        }
+      ],
+      "weightedVideos": 6
+    },
+    {
+      "name": "Ableton Drum Buss",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "SSL Native Bus Compressor 2",
+          "publisher": "SSL"
+        },
+        {
+          "name": "UAD Studer A800",
+          "publisher": "Universal Audio"
+        },
+        {
+          "name": "Neutron 5 Transient Shaper",
+          "publisher": "iZotope"
+        }
+      ],
+      "weightedVideos": 3
+    },
+    {
+      "name": "Avid Lo-Fi",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "Lofi Space (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "Retro Fi (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "Vinyl",
+          "publisher": "iZotope"
+        }
+      ],
+      "weightedVideos": 3
+    },
+    {
+      "name": "Ableton Drum Rack",
+      "videos": 2,
+      "equivalents": [
+        {
+          "name": "MODO DRUM",
+          "publisher": "IK Multimedia"
+        },
+        {
+          "name": "Prism Drums",
+          "publisher": "Aurally Sound"
+        }
+      ],
+      "weightedVideos": 2
+    },
+    {
+      "name": "Ableton EQ Eight",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "Pro-Q 4",
+          "publisher": "FabFilter"
+        },
+        {
+          "name": "Ozone 12 Equalizer",
+          "publisher": "iZotope"
+        },
+        {
+          "name": "Neutron 5 Equalizer",
+          "publisher": "iZotope"
+        }
+      ],
+      "weightedVideos": 1
+    },
+    {
+      "name": "Ableton Glue Compressor",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "SSL Native Bus Compressor 2",
+          "publisher": "SSL"
+        },
+        {
+          "name": "UAD API 2500",
+          "publisher": "Universal Audio"
+        }
+      ],
+      "weightedVideos": 1
+    },
+    {
+      "name": "Cableguys Kickstart",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "OneKnob Pumper (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "Trackspacer",
+          "publisher": "Wavesfactory"
+        },
+        {
+          "name": "Neutron 5 Compressor",
+          "publisher": "iZotope"
+        }
+      ],
+      "weightedVideos": 1
+    },
+    {
+      "name": "FabFilter Pro-C 2",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "Pro-MB",
+          "publisher": "FabFilter"
+        },
+        {
+          "name": "RCompressor (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "Neutron 5 Compressor",
+          "publisher": "iZotope"
+        }
+      ],
+      "weightedVideos": 1
+    },
+    {
+      "name": "FabFilter Saturn 2",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "Trash",
+          "publisher": "iZotope"
+        },
+        {
+          "name": "UAD Raw",
+          "publisher": "Universal Audio"
+        },
+        {
+          "name": "Decapitator",
+          "publisher": "Soundtoys"
+        }
+      ],
+      "weightedVideos": 1
+    },
+    {
+      "name": "KNOCK",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "Neutron 5 Transient Shaper",
+          "publisher": "iZotope"
+        },
+        {
+          "name": "Smack Attack (s)",
+          "publisher": "Waves"
+        }
+      ],
+      "weightedVideos": 1
+    },
+    {
+      "name": "Waves StudioRack",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "StudioVerse Audio Effects (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "Console 1",
+          "publisher": "Softube"
+        }
+      ],
+      "weightedVideos": 1
+    },
+    {
+      "name": "oeksound spiff",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "Neutron 5 Transient Shaper",
+          "publisher": "iZotope"
+        },
+        {
+          "name": "Smack Attack (s)",
+          "publisher": "Waves"
+        }
+      ],
+      "weightedVideos": 1
+    },
+    {
+      "name": "Little Labs Voice Of God",
+      "videos": 2,
+      "equivalents": [
+        {
+          "name": "RBass (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "UAD Precision Enhancer Hz",
+          "publisher": "Universal Audio"
+        },
+        {
+          "name": "SSL SubGen",
+          "publisher": "SSL"
+        }
+      ],
+      "weightedVideos": 6
+    },
+    {
+      "name": "Waves API 550",
+      "videos": 1,
+      "equivalents": [
+        {
+          "name": "SSLEQ (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "REQ 6 (s)",
+          "publisher": "Waves"
+        },
+        {
+          "name": "Pro-Q 4",
+          "publisher": "FabFilter"
+        }
+      ],
+      "weightedVideos": 1
+    }
+  ]
+}

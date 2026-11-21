@@ -1,0 +1,12 @@
+# BRIEF — Plugin Companion window redesign (repo worktree /Users/admin/aimm-wt-window, branch companion-window; plugin-companion/ only)
+
+Approved preview: /Users/admin/aimm-previews/companion-window.png (and companion-window.html for exact spacing). Match it. Model it on audio-reference-companion's window (see its Swift source for the layout, fonts, colours, status box, green dot, Open AIMM button).
+
+Do exactly this:
+1. Replace the window content in plugin-companion/Sources/AIMMPluginCompanion/App.swift (move to a new WindowView.swift if cleaner): header with the app icon (plugin-companion/assets/AppIcon-1024.png as a bundled resource or NSApp.applicationIconImage), title "AIMM Plugin Companion", subtitle "Plug-in inventory and housekeeping for AIMM"; grey rounded status box with one sentence: "<total> plug-ins found · last scan <local time HH:mm> · <last action or 'no actions yet'>"; four count chips AU/VST2/VST3/CLAP; status dot line: green "Connected to AIMM" if /status was requested by an allowed origin in the last 60 s, else amber "Waiting for AIMM"; small grey line "Local AIMM connection ready · 127.0.0.1:41736"; the two explainer paragraphs exactly as in the preview; buttons "Scan now" (calls the same scan as POST /scan) and "Show Unused folder" (reveals the Unused folder of the user plug-in folder if it exists, else the user Plug-Ins folder); footer left "Listening service: 127.0.0.1:41736 · v<version>", right blue "Open AIMM" button (opens https://aimixmasters.com in default browser). Window ~ 640x500, not resizable below that.
+2. Last action: record a short text ("Moved 1 plug-in to Unused, 08:02") when /action/unuse, restore or trash succeeds; keep in memory only.
+3. Show an amber warning line if the scan reports unreadable folders, and "Needs administrator approval" note when an admin-prompt move is attempted. Keep to what the code already knows; do not invent data.
+4. Connection tracking: record the time of the last allowed-origin request in LocalBridge, expose to the model.
+5. No emoji. Use system fonts and the same colours as the audio companion. No new network calls, no new endpoints, no behaviour change to existing endpoints.
+6. Run `swift build` and `swift run AIMMPluginCompanion --self-test` (all PASS, report the count) and `sh build-app.sh` only to compile (it installs to ~/Applications — that is fine; it replaces the running app, do not launch it). Do not push; commit on branch companion-window.
+Report files changed and results.

@@ -1,0 +1,13 @@
+# BRIEF - Plugins sidebar redesign, Jules Option C (repo /Users/admin/github/aimm, branch sidebar-redesign, already created from main)
+
+Kevin chose Option C ("accordion cards with a chunky chevron tile and a sliding teal pill"). Read first: /Users/admin/aimm-previews/sidebar-headings/notes.md and options.html (use ?only=c) and opt-c.png. Implement Option C on the REAL Plugins sidebar (#invSidebar in standalone/assets/index.html). Follow docs/UI_CHANGE_PROCESS.md. Existing palette/tokens only, no emoji, no new colours.
+
+Requirements:
+1. Three clear levels: section headings (big, bold, in the section colour, chunky chevron tile, clearly a dropdown), sub-group labels, items. Headings are collapsible with a smooth slide; collapsed/expanded state persists as today.
+2. The heading of the section the user is working in is highlighted (fill + soft glow in its colour) and the selected item underneath uses a different colour (teal pill that slides between items). Exactly one item lit at a time (this was fixed in commit 7225524d, keep it). A collapsed heading that contains the selected item shows a teal dot.
+3. Section colours: use the existing palette but NOT the red or green status colours (they read as error/success). Use blue, amber, purple, pink and one more existing non-status colour for Categories. Heading colour must differ from the teal selected-item colour.
+4. Motion: chevron rotate, list height slide, glow ease-in, active marker gentle breathing; all disabled under prefers-reduced-motion. Keyboard focus visible (2px outline).
+5. Rename heading CHAIN FAVOURITES to VIDEO CHAIN PICKS and make it its own section holding Owned / Stock Plugins (Logic Pro 13) / Not installed (it already sits between Favorites and My tags; keep those three items inside this one section, Favorites stays under Library). Rename the window title "Chain favourites" to "Video chain picks" (keep the "N starred on <chain>" note). Hope tool names/behaviour do not change.
+6. Keep all existing counts, data-inv-scope / data-vocal-view hooks and behaviour (clicking, scopes, search, shift-click categories). Do not break the card grid, selection or purple star styling.
+7. Bump AIMM_BUILD to 2026-11-20.23 (and the three places that assert/mention the build: tests/hope-installed-rule.test.mjs, tests/vocal-favs.test.mjs, docs/STATUS.md, DASHBOARD.html). Add/adjust tests; run ALL tests/*.test.mjs, all must pass. Update docs/STATUS.md and DASHBOARD.html.
+8. Do NOT start servers, take screenshots, commit, push or deploy (sandbox: no escalation). Report files changed, test results, and anything not done.

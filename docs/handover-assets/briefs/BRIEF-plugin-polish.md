@@ -1,0 +1,5 @@
+# BRIEF — Plugin companion polish (repo /Users/admin/github/aimm, branch main)
+Do exactly these two things, nothing else.
+1. standalone/assets/index.html line ~5087: the initial text of #invScanStatus says "Connect the Audio/Plug-Ins folder and, if needed, Avid/Audio/Plug-Ins. You can add more folders later." Change it to "Connect plugins in Settings." (keep the id/class). Do not touch other copy that the Chrome folder-scan fallback needs when the companion is not connected: if some code sets that old text when the companion is NOT connected, keep it there; only the initial/static text and the companion-connected state must not mention folders.
+2. plugin-companion/Sources/AIMMPluginCompanion/Scanner.swift (~line 88): skip any bundle whose name starts with "AIMMFoundationSyntheticTest" (a leftover test item). Add a fixture assertion in the existing scanner tests for it.
+3. Bump AIMM_BUILD to 2026-11-19.9, add a short STATUS.md entry (undeployed), run all tests (`for f in tests/*.test.mjs; do node $f | grep "^ℹ fail"; done`), commit on main with trailer "Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>". Do not push or deploy.

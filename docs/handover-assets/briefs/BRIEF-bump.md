@@ -1,0 +1,1 @@
+In /Users/admin/github/aimm on branch luna-everything: bump AIMM_BUILD in standalone/assets/index.html from 2026-11-18.3 to 2026-11-18.4, add one line to the STATUS entry for commit 50b0a93c noting the Costs Primary/Backup switch is build .4, run all tests in tests/, commit. No push, no deploy. Change nothing else.
