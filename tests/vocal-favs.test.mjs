@@ -4,11 +4,26 @@ import {readFileSync,existsSync} from 'node:fs';
 import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);
 const favs=require('../standalone/assets/vocal-favs.js');
+const uad=require('../standalone/assets/uad-licence.js');
 const data=JSON.parse(readFileSync(new URL('../standalone/assets/vocal-favs.json',import.meta.url)));
+const licence=JSON.parse(readFileSync(new URL('../standalone/assets/uad-licence.json',import.meta.url)));
 const html=readFileSync(new URL('../standalone/assets/index.html',import.meta.url),'utf8');
 const inventory=JSON.parse(readFileSync('/Users/admin/aimm-previews/inventory-scan.json','utf8'));
 const stockCount=data.stock.logic.length;
 const item=(name,publisher)=>({name,publisher});
+test('missing favourites prefer same-maker effects and only scanned licensed equivalents',()=>{
+  const missing=name=>data.missing.find(row=>row.name===name);
+  assert.equal(missing('Valhalla Room').equivalents[0].name,'ValhallaVintageVerb');
+  assert.equal(missing('Valhalla Delay').equivalents[0].name,'ValhallaSupermassive');
+  const scanned=new Set(inventory.rows.map(row=>favs.norm(row.vendor)+'|'+favs.norm(row.name)));
+  for(const row of data.missing){
+    assert.ok(row.equivalents.length<=3,row.name);
+    for(const equivalent of row.equivalents){
+      assert.ok(scanned.has(favs.norm(equivalent.publisher)+'|'+favs.norm(equivalent.name)),`${row.name}: ${equivalent.name} is not scanned`);
+      assert.ok(uad.licensed(equivalent.name,equivalent.publisher,licence),`${row.name}: ${equivalent.name} is unlicensed`);
+    }
+  }
+});
 test('Logic stock is DAW keyed and scanned targets resolve by exact normalised name and publisher',()=>{
   assert.deepEqual(Object.keys(data.stock),['logic']);
   assert.equal(data.owned.length,53);
@@ -57,5 +72,5 @@ test('Hope exposes both tool schemas and routes through shared handler',()=>{
   assert.match(html,/const AICHAT_TOOL_DEFS = TOOL_DEFS\.map/);
   assert.match(html,/section:\{type:'string',enum:\['owned','stock','missing','all'\]/);
   assert.match(html,/confirmed:\{type:'boolean'/);
-  assert.match(html,/const AIMM_BUILD = '2026-11-20\.17'/);
+  assert.match(html,/const AIMM_BUILD = '2026-11-20\.18'/);
 });

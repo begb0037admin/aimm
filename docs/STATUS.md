@@ -1,3 +1,7 @@
+## 2026-11-20 build 2026-11-20.18 — Maker-first plug-in equivalents (BUILT, NOT DEPLOYED)
+
+Reordered vocal-chain Not installed equivalents to prefer a scanned, licensed product from the same maker and effect type. Valhalla Room now starts with ValhallaVintageVerb; Valhalla Delay starts with ValhallaSupermassive; Waves H-Verb also lists ValhallaVintageVerb. Applied the same rule to corrected drums, 808 and master chain data under `/tmp/chain-research-maker/`. Every vocal equivalent is checked against the inventory scan and UAD licence map in `tests/vocal-favs.test.mjs`; all 151 `tests/*.test.mjs` tests passed. No push or deploy.
+
 ## 2026-11-20 build 2026-11-20.17 — UAD account licence filter (BUILT, NOT DEPLOYED)
 
 The Plugins library uses the 62-product UA account map to keep certain, probable and unsure matches visible. The latest scan groups 169 other UAD products in the read-only Not licensed (UAD) view, separate from the 1,145 owned or non-UAD products. Its sidebar count and view now use the same full product grouping as All plugins; Treat as licensed is saved per product in browser state. Hope's standing Plugins context, search and summary exclude these products, and inventory_summary reports `uad_installed_not_licensed`. Vocal favourites follow the final ownership data. The uninstall review list is at `/Users/admin/aimm-previews/uad-uninstall-list.md`; no files were removed. All `tests/*.test.mjs` passed. Not pushed or deployed. Screenshot is assigned to Claude under the follow-up brief.

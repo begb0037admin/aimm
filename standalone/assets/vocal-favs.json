@@ -636,8 +636,8 @@
           "publisher": "Waves"
         },
         {
-          "name": "UAD Lexicon 224",
-          "publisher": "Universal Audio"
+          "name": "ValhallaVintageVerb",
+          "publisher": "Valhalla DSP, LLC"
         }
       ]
     },
@@ -646,16 +646,16 @@
       "videos": 1,
       "equivalents": [
         {
+          "name": "ValhallaVintageVerb",
+          "publisher": "Valhalla DSP, LLC"
+        },
+        {
+          "name": "ValhallaSupermassive",
+          "publisher": "Valhalla DSP, LLC"
+        },
+        {
           "name": "CSR Room",
           "publisher": "IK Multimedia"
-        },
-        {
-          "name": "UAD Hitsville Reverb Chambers",
-          "publisher": "Universal Audio"
-        },
-        {
-          "name": "TrueVerb (s)",
-          "publisher": "Waves"
         }
       ]
     },
@@ -664,16 +664,16 @@
       "videos": 1,
       "equivalents": [
         {
+          "name": "ValhallaSupermassive",
+          "publisher": "Valhalla DSP, LLC"
+        },
+        {
           "name": "H-Delay (s)",
           "publisher": "Waves"
         },
         {
           "name": "EchoBoy Jr",
           "publisher": "Soundtoys"
-        },
-        {
-          "name": "Space Delay",
-          "publisher": "IK Multimedia"
         }
       ]
     },
@@ -700,16 +700,16 @@
       "videos": 3,
       "equivalents": [
         {
-          "name": "Ozone 12 Dynamic EQ",
-          "publisher": "iZotope"
+          "name": "Curves Resolve (s)",
+          "publisher": "Waves"
         },
         {
-          "name": "Neutron 5 Equalizer",
-          "publisher": "iZotope"
+          "name": "REQ 6 (s)",
+          "publisher": "Waves"
         },
         {
-          "name": "Pro-Q 4",
-          "publisher": "FabFilter"
+          "name": "Q10 (s)",
+          "publisher": "Waves"
         }
       ]
     },
@@ -850,16 +850,16 @@
       "videos": 1,
       "equivalents": [
         {
+          "name": "Pro-MB",
+          "publisher": "FabFilter"
+        },
+        {
           "name": "RCompressor (s)",
           "publisher": "Waves"
         },
         {
           "name": "UADx 1176 FET Compressor",
           "publisher": "Universal Audio (UADx)"
-        },
-        {
-          "name": "Neutron 5 Compressor",
-          "publisher": "iZotope"
         }
       ]
     },
@@ -882,16 +882,16 @@
       "videos": 19,
       "equivalents": [
         {
+          "name": "UAD Topline Vocal Tune",
+          "publisher": "Universal Audio"
+        },
+        {
           "name": "Waves Tune Real-Time (s)",
           "publisher": "Waves"
         },
         {
           "name": "Waves Tune LT (s)",
           "publisher": "Waves"
-        },
-        {
-          "name": "UAD Topline Vocal Tune",
-          "publisher": "Universal Audio"
         }
       ]
     },
@@ -900,16 +900,16 @@
       "videos": 19,
       "equivalents": [
         {
+          "name": "UAD Topline Vocal Tune",
+          "publisher": "Universal Audio"
+        },
+        {
           "name": "Waves Tune Real-Time (s)",
           "publisher": "Waves"
         },
         {
           "name": "Waves Tune LT (s)",
           "publisher": "Waves"
-        },
-        {
-          "name": "UAD Topline Vocal Tune",
-          "publisher": "Universal Audio"
         }
       ]
     },
