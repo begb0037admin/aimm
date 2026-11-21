@@ -9,7 +9,7 @@ const uad=require('../standalone/assets/uad-licence.js');
 const data=JSON.parse(readFileSync(new URL('../standalone/assets/vocal-favs.json',import.meta.url)));
 const licence=JSON.parse(readFileSync(new URL('../standalone/assets/uad-licence.json',import.meta.url)));
 const html=readFileSync(new URL('../standalone/assets/index.html',import.meta.url),'utf8');
-const inventory=JSON.parse(readFileSync('/Users/admin/aimm-previews/inventory-scan.json','utf8'));
+const inventory=JSON.parse(readFileSync(new URL('../docs/handover-assets/inventory-scan.json',import.meta.url),'utf8'));
 const chains=['vocal','drums','808','master'];
 test('v2 chain data has the required shape, counts and no genre weights',()=>{
   assert.equal(data.version,2);assert.deepEqual(new Set(Object.keys(data.chains)),new Set(chains));
@@ -55,5 +55,5 @@ test('Hope schemas match page tools and both routes use shared handler',()=>{
     assert.match(html,new RegExp("AIMM_NEW_AGENT_TOOLS = \\[([^\\]]*)'"+name+"'"));assert.match(html,new RegExp("case '"+name+"':"));
   }
   assert.deepEqual(pageTools.find(t=>t.name==='vocal_favorites_apply').parameters.properties.names,{type:'array',items:{type:'string'},description:'Exact item names to apply; omit for the whole chain view.'});
-  assert.match(html,/const AICHAT_TOOL_DEFS = TOOL_DEFS\.map/);assert.match(html,/const AIMM_BUILD = '2026-11-20\.27'/);
+  assert.match(html,/const AICHAT_TOOL_DEFS = TOOL_DEFS\.map/);assert.match(html,/const AIMM_BUILD = '2026-11-21\.4'/);
 });

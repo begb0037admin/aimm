@@ -6,7 +6,7 @@ const require=createRequire(import.meta.url);
 const licence=require('../standalone/assets/uad-licence.js');
 const data=JSON.parse(readFileSync(new URL('../standalone/assets/uad-licence.json',import.meta.url),'utf8'));
 const html=readFileSync(new URL('../standalone/assets/index.html',import.meta.url),'utf8');
-const scan=JSON.parse(readFileSync('/Users/admin/aimm-previews/inventory-scan.json','utf8'));
+const scan=JSON.parse(readFileSync(new URL('../docs/handover-assets/inventory-scan.json',import.meta.url),'utf8'));
 
 test('account map contains only public product fields and keeps all 62 accounts',()=>{
   assert.equal(data.version,1);

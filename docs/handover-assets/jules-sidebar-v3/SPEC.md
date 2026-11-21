@@ -127,3 +127,31 @@ Three rows (`data-vocal-view` ~5197-5199) get an icon like every other row. Same
 - Not installed: dashed circle (`<circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/>`), "empty slot".
 Codex: add `<span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24">...</svg></span>` before the `.inv-side-label` span in each button, exactly like the Status rows, and add `aria-label`/`title` like the others. Then delete the preview `::before` block. CSS needed for the rail: none. The existing rail rules (label hidden, button centred, gap 0) already show `.inv-side-icon`. Selected state needs none either: the teal rule forces icon black.
 Checked live at 700px (rail): all three icons show and align with the icons above and below; "Logic Pro stock" selected = teal square with black icon. At 1440 the labels now line up with the other sections.
+
+## SIZES: one coherent set for rail and expanded (Kevin, 21 Nov: all too small, column too narrow)
+Every number below is at 100% text and is written in CSS as `calc(Npx * var(--inv-text-scale,1))`. Replaces earlier sizes in this spec (clamp 236px, 20px icons, 38px rows, 14px headings).
+
+| Thing | Was | Now (expanded) | Now (rail) |
+|---|---|---|---|
+| Column width | 236px (clamp 236 to 34vw), rail 64px | `clamp(280px, 280px x scale, 32vw)` | `clamp(72px, 80px x scale, 104px)` |
+| Sidebar side padding | 12px / 8px | 12px | 12px |
+| Icon slot / glyph | 20 / 18 (rail 24 / 19) | 28 / 24 | 32 / 28 |
+| Row height | 38 min | 46 min (grows when text wraps), padding 8 12, gap 12 | 56 fixed, square selected tile 56 high, full inner width |
+| Row text | 13.5px | 15px | none |
+| Count | 14px | 15px | hidden (forced) |
+| Gap between rows | 2px | 3px | 6px |
+| Section heading | 14px in 42px bar | 16px bold in 48px bar | none (sections hidden) |
+| Fold plus/minus | 18px | 22px | none |
+| Header collapse icon / target | 20 / 36x28 | 24 / 40x36 | 28 / 48x44, centred |
+| Row radius | 9px | 10px | 12px |
+At 120% text: expanded = 336px wide (cap 32vw), rail = 96px. At 80%: expanded 280px floor, rail 72px floor.
+Why 280: the longest labels ("Batch Plugin Management", "Compare Plugin Profiles") still wrap to two balanced lines at 100%, and fit on one line at 120%. Cap lowered to 32vw so the main panel keeps its space at 1280 (sidebar 280, 22%).
+Selected row = teal tile that is the full row (expanded: full width, 46px+; rail: full inner width, 56px).
+
+Codex changes (all in standalone/assets/index.html, one block, replacing the old values):
+- Widths: 4055/4056 `236px`, `64px`; 4424 media `64px`; the clamp line in override.css.
+- Rail rules 4412-4421 (padding 8px to 12px; icon 24/19 to 32/28; button height); the media rule 4424 (same numbers).
+- Row/icon rules 4080-4089 and 4086-4088 (20/18 to 28/24); 4894-4896; count size lines 4090 / 4882 / 4885 (14px to 15px).
+- Heading 4854 (min-height 48px, font 16px); fold icon (new SVG, 22px); header button 4252 (30px box to 40x36, glyph 24).
+- Rail counts: add `display:none!important` on `.inv-side-count` in the rail. Bug found: the active-row rules at 4096-4097 re-show the count in the rail and push the icon off centre.
+Preview: all of the above in override.css. Checked live: expanded at 100% and 120% (bold worst case), rail at 700px at 100% and 120%; selected tile reads and stays centred. Not re-run: the full wrap audit at the new 280px width (wraps only reduce).

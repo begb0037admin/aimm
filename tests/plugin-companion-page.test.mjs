@@ -21,7 +21,7 @@ const ok = body => ({ok:true,json:async()=>body});
 
 function harness(reply = async path => path === '/status' ? ok({lastScanAt:inventory.scannedAt}) : ok(inventory), permission='granted') {
   const elements = new Map();
-  for (const id of ['pcCompanionConnectionStatus','pcCompanionSettingsStatus','pcCompanionConnect','invScanBtn'])
+  for (const id of ['pcCompanionConnectionStatus','pcCompanionSettingsStatus','pcCompanionConnect','invScanBtn','invSidebarFolderMeta'])
     elements.set(id,{textContent:'',disabled:false,hidden:false,listeners:{},addEventListener(type,fn){this.listeners[type]=fn;}});
   const calls=[]; const settingsTab={listeners:{},addEventListener(type,fn){this.listeners[type]=fn;}}; let chromeScans=0, renders=0, saves=0;
   const context={
@@ -33,6 +33,7 @@ function harness(reply = async path => path === '/status' ? ok({lastScanAt:inven
     invBuildGroups:rows=>[...new Set(rows.map(r=>r.vendor+'|'+r.name))].map(name=>({name})),
     invSaveScan:()=>{saves++;return true;},invRenderInventory:()=>{renders++;},
     invStatus:()=>{},invScanNow:async()=>{chromeScans++;},
+    invUpdateSettingsFolderMeta:()=>{elements.get('invSidebarFolderMeta').textContent='No folders connected';},
     pcCompanionReadUnused:async()=>[],hopePushPluginSummary:()=>{},
   };
   vm.runInNewContext(code,context);
@@ -102,4 +103,5 @@ test('page load and Settings open each check quietly', async()=>{
   await new Promise(resolve=>setTimeout(resolve,0));
   assert.deepEqual(h.calls.map(c=>new URL(c.url).pathname),['/status','/inventory','/status','/inventory']);
   assert.equal(h.pc.connected(),true);
+  assert.equal(h.elements.get('invSidebarFolderMeta').textContent,'No folders connected');
 });

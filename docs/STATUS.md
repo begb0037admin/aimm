@@ -1,3 +1,7 @@
+## 2026-11-21 build 2026-11-21.1 — Plugins sidebar v3 (BUILT, NOT DEPLOYED)
+
+The approved sidebar v3 replaces heading counts, subheadings, notes and the sliding selection pill with plain fold icons and rows that paint their own teal selection. Labels wrap; Video chain picks has icons and “Logic Pro stock”. Scan folder status is in Settings under Plugin companion, while scan controls remain on Plugins. Removed the disabled Compatibility row and the Not licensed (UAD) navigation row; UAD licence filtering remains. No server, commit, push or deploy.
+
 ## 2026-11-20 build 2026-11-20.27 — Plugins sidebar Option C (BUILT, NOT DEPLOYED)
 
 The Plugins Browse sidebar now has five accordion cards with coloured section headings, subgroup labels and a sliding teal selection pill. Video chain picks is its own section, with Owned, Stock Plugins (Logic Pro 13) and Not installed; the card grid window title matches. Existing filter hooks, counts, saved section state, Hope tool names and purple stars remain. All `tests/*.test.mjs` passed. No server, screenshot, commit, push or deploy.

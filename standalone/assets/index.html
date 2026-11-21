@@ -4052,51 +4052,15 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-shell{max-width:none;margin:0 auto;color:#f2f4f5}
     /* The frame fits the viewport or the Browse list, whichever is taller.
        Inventory records scroll inside the frame. */
-    #library .inv-layout{display:grid;grid-template-columns:236px minmax(0,1fr);grid-template-rows:minmax(0,1fr);height:var(--inv-layout-height,auto);min-height:0;max-height:none;border:1px solid #2c3034;border-radius:12px;overflow:hidden;background:#101214}
-    #library .inv-layout.is-collapsed{grid-template-columns:64px minmax(0,1fr)}
-    #library .inv-sidebar{position:relative;min-height:0;background:#17191c;border-right:1px solid #30343a;border-radius:11px 0 0 11px;padding:16px 11px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;transition:width .2s ease}
+    #library .inv-layout{display:grid;grid-template-columns:clamp(280px,calc(280px * var(--inv-text-scale,1)),32vw) minmax(0,1fr);grid-template-rows:minmax(0,1fr);height:var(--inv-layout-height,auto);min-height:0;max-height:none;border:1px solid #2c3034;border-radius:12px;overflow:hidden;background:#101214}
+    #library .inv-layout.is-collapsed{grid-template-columns:clamp(72px,calc(80px * var(--inv-text-scale,1)),104px) minmax(0,1fr)}
     /* Keep the native scroll affordance functional, but blend its track and thumb
        into the dark panes so it does not read as a bright divider. */
     #library .inv-sidebar,#library #invInventory{scrollbar-width:thin;scrollbar-color:#000 #000}
     #library .inv-sidebar::-webkit-scrollbar,#library #invInventory::-webkit-scrollbar{width:8px;height:8px}
     #library .inv-sidebar::-webkit-scrollbar-track,#library #invInventory::-webkit-scrollbar-track{background:#000}
     #library .inv-sidebar::-webkit-scrollbar-thumb,#library #invInventory::-webkit-scrollbar-thumb{background:#000;border:0}
-    #library .inv-sidebar-head{display:flex;align-items:center;justify-content:space-between;padding:2px 10px 16px;margin-bottom:15px;border-bottom:1px solid #30343a;color:#7f8993;font: 700 calc(var(--inv-text-scale, 1) * 10px) ui-monospace,Menlo,monospace;letter-spacing:.18em}
-    #library .inv-sidebar-head button{border:0;background:transparent;color:#aab2bd;cursor:pointer;padding:3px;font-size:calc(var(--inv-text-scale, 1) * 14px)}
-    #library .inv-sidebar-head button:hover{color:#36a8ed}
-    #library .inv-sidebar-section{margin:17px 0 8px;padding:0 10px;color:#7f8993;font: 700 calc(var(--inv-text-scale, 1) * 10px) ui-monospace,Menlo,monospace;letter-spacing:.18em}
-    #library .inv-sidebar-section-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;border:0;background:transparent;text-align:left;cursor:pointer}
-    #library .inv-sidebar-section-toggle:hover,#library .inv-sidebar-section-toggle[aria-expanded="true"]{color:#c4cad3}
-    #library .inv-sidebar-section-toggle::after{content:"";width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin:0 3px 3px 8px;opacity:.72}
-    #library .inv-sidebar-section-toggle[aria-expanded="false"]::after{transform:rotate(-45deg);margin-bottom:0}
-    #library .inv-sidebar-section-content{min-width:0}
-    #library .inv-status-note{margin:-4px 10px 8px;color:#79838e;font-size:calc(var(--inv-text-scale, 1) * 9px);line-height:1.3}
-    #library .inv-sidebar.is-collapsed .inv-status-note{display:none}
-    #library .inv-sidebar-nav{display:grid;gap:4px}
-    #library .inv-sidebar-nav[aria-label="Plug-in categories"]{grid-template-columns:minmax(0,1fr);min-width:0}
-    #library .inv-sidebar-nav[aria-label="Plug-in categories"] .inv-side-button{min-width:0}
-    #library .inv-tools-note{margin:9px 8px 0;color:#8993a2;font-size:calc(var(--inv-text-scale, 1) * 10px);line-height:1.45}
-    #library .inv-sidebar.is-collapsed .inv-tools-note{display:none}
-    #library .inv-side-button{width:100%;min-height:40px;display:flex;align-items:center;gap:11px;border:0;border-radius:9px;background:transparent;color:#c4cad3;padding:0 10px;text-align:left;font: 600 calc(var(--inv-text-scale, 1) * 13px) -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer;white-space:nowrap}
-    #library .inv-side-button:hover{background:#24272c;color:#eef2f6}
-    #library .inv-side-button.active{background:var(--mixing-state-fill);border:1px solid var(--mixing-state-outline);box-shadow:inset 0 0 0 1px rgba(237,246,248,.06);color:var(--mixing-state-ink)}
-    #library .inv-side-button:disabled{opacity:.48;cursor:default}
-    #library .inv-side-button:disabled:hover{background:transparent;color:#c4cad3}
-#library .inv-sidebar a[data-inv-duplicate-review][aria-disabled="true"]{opacity:.48;color:#77808c;background:transparent;cursor:not-allowed;pointer-events:none}
-    #library .inv-side-icon{width:20px;height:20px;flex:none;display:flex;align-items:center;justify-content:center;color:#aab2bd}
-    #library .inv-side-button.active .inv-side-icon{color:#c5eaf2}
-    #library .inv-side-icon svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-    #library .inv-side-label{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    #library .inv-side-count{flex:0 0 auto;min-width:28px;min-height:22px;margin-left:0;padding:1px 5px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;background:rgba(9,11,15,.72);box-shadow:0 0 0 1px rgba(255,255,255,.08);text-align:center;color:#8993a2;font:700 calc(var(--inv-text-scale, 1) * 11px)/1 ui-monospace,Menlo,monospace}
-    #library .inv-side-button[data-inv-scope="updates"] .inv-side-count{color:#ee7777;font-weight:700}
-    #library .inv-side-button[data-inv-scope="up-to-date"] .inv-side-count{color:#42c995;font-weight:700}
-    #library .inv-side-button[data-inv-scope="manual-check"] .inv-side-count{color:#e8b45a;font-weight:700}
-    #library .inv-side-button[data-inv-scope="vendor-app"] .inv-side-count,#library .inv-side-button[data-inv-scope="unchecked"] .inv-side-count{color:#a0a8b1;font-weight:700}
-    #library .inv-sidebar.is-collapsed .inv-side-count{display:none!important}
-    #library .inv-side-button.active[data-inv-scope="updates"] .inv-side-count,#library .inv-side-button.active[data-inv-scope="up-to-date"] .inv-side-count,#library .inv-side-button.active[data-inv-scope="manual-check"] .inv-side-count,#library .inv-side-button.active[data-inv-scope="vendor-app"] .inv-side-count,#library .inv-side-button.active[data-inv-scope="unchecked"] .inv-side-count{display:inline-flex;align-items:center;justify-content:center;min-width:28px;min-height:22px;padding:1px 5px;border-radius:6px;background:rgba(9,11,15,.72);box-shadow:0 0 0 1px rgba(255,255,255,.08)}
-    #library .inv-side-button.active[data-inv-open-all-plugins] .inv-side-count{display:inline-flex;align-items:center;justify-content:center;min-width:28px;min-height:22px;padding:1px 5px;border-radius:6px;background:rgba(9,11,15,.72);color:#eef4fb;font-weight:700;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
-    #library .inv-folder-summary{margin:18px 5px 0;padding:12px;border:1px solid #30353a;border-radius:9px;color:#9aa3ad;font-size:calc(var(--inv-text-scale, 1) * 11px);line-height:1.5}
-    #library .inv-folder-summary strong{display:block;color:#dce2e8;font-size:calc(var(--inv-text-scale, 1) * 11px);letter-spacing:.06em;margin-bottom:4px}
+    /* Sidebar v3 is defined in one block below. */
     #library .inv-content{display:flex;flex-direction:column;min-width:0;min-height:0;padding:22px 24px 32px;overflow:hidden;container-type:inline-size}
     #library .inv-content>*{min-width:0}
     #library #invInventory{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain}
@@ -4249,9 +4213,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-vendor-toggle{border:0;background:transparent;color:#87919b;font-size:calc(var(--inv-text-scale, 1) * 15px);cursor:pointer;padding:3px 2px}
     /* Shared inventory chevrons: one visible 11px mark with a 2px stroke. */
     #library .inv-shell{--inv-chevron-size:11px;--inv-chevron-stroke:2px}
-    #library .inv-sidebar-head button{display:inline-flex;align-items:center;justify-content:center;flex:none;width:30px;height:30px;box-sizing:border-box;border:0;border-radius:6px;background:transparent;color:#aab2bd;cursor:pointer;padding:0;font-size:0;line-height:0}
-    #library .inv-sidebar-head button::before{content:"";width:var(--inv-chevron-size);height:var(--inv-chevron-size);box-sizing:border-box;border-right:var(--inv-chevron-stroke) solid currentColor;border-bottom:var(--inv-chevron-stroke) solid currentColor;transform:rotate(-45deg);margin-left:-3px}
-    #library .inv-sidebar-head button[aria-expanded="true"]::before{transform:rotate(135deg);margin-left:0}
     #library .inv-vst-filter>summary::after,#library .inv-tag-filter>summary::after{width:var(--inv-chevron-size);height:var(--inv-chevron-size);border-right:var(--inv-chevron-stroke) solid currentColor;border-bottom:var(--inv-chevron-stroke) solid currentColor;box-sizing:border-box}
     #library .inv-view-menu>summary{gap:10px}
     #library .inv-view-menu>summary>span[aria-hidden="true"]{display:inline-flex;align-items:center;justify-content:center;flex:none;width:18px;height:18px;box-sizing:border-box;font-size:0;line-height:0}
@@ -4409,19 +4370,10 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     #library .inv-scope-banner{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:8px 14px;margin:12px 0;padding:12px 15px;border:1px solid #45515d;border-left:4px solid #77818b;border-radius:8px;background:#171b20;color:#d5dbe1;font-size:calc(var(--inv-text-scale, 1) * 12px);line-height:1.5}#library .inv-scope-banner[hidden]{display:none}#library .inv-scope-banner strong{font-size:calc(var(--inv-text-scale, 1) * 15px);letter-spacing:.02em}#library .inv-scope-count{font-weight:650;color:#a9b2bc}#library .inv-scope-banner.updates{border-color:#754347;border-left-color:#ef7478;background:#211719}#library .inv-scope-banner.updates strong{color:#ff888c}#library .inv-scope-banner.up-to-date{border-color:#315e4d;border-left-color:#42c995;background:#142019}#library .inv-scope-banner.up-to-date strong{color:#58d7a1}#library .inv-scope-banner.manual-check{border-color:#745b34;border-left-color:#e8b45a;background:#211d16}#library .inv-scope-banner.manual-check strong{color:#f0c16c}#library .inv-scope-banner.unchecked{border-color:#46505a;border-left-color:#929ca8;background:#181c20}#library .inv-scope-banner.unchecked strong{color:#b2bbc5}#library .inv-status-detail{display:grid;gap:3px;margin-top:5px;font-size:calc(var(--inv-text-scale, 1) * 10px);line-height:1.45;color:#929ca6}#library .inv-status-detail-row{display:block}#library .inv-status-detail-row b{color:#b3bdc7;font-weight:650}#library .inv-status-detail-row strong{color:#ff888c;font-weight:700}#library .inv-status-detail-row.up-to-date{color:#58c995}#library .inv-status-detail-row.manual-check{color:#e8b45a}#library .inv-status-detail-row.unchecked{color:#a1aab4}#library .inv-status-detail a{color:#aeb7c1;text-decoration:underline;text-decoration-color:#68727d;text-underline-offset:2px}#library .inv-status-detail a:hover,#library .inv-status-detail a:focus-visible{color:#e1e6eb;text-decoration-color:#c2cbd4}#library .inv-status-detail a:focus-visible{outline:2px solid #aeb7c1;outline-offset:2px;border-radius:2px}#library .inv-synthetic-preview{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:12px 0;padding:11px 14px;border:1px solid #5c4b80;border-radius:8px;background:#211a2b;color:#d8c8f5;font-size:calc(var(--inv-text-scale, 1) * 12px)}#library .inv-synthetic-preview[hidden]{display:none}#library .inv-synthetic-preview span{color:#b4a8c9}
     #library .inv-empty{border:1px dashed #394149;border-radius:9px;padding:28px;text-align:center;color:#87919b;font-size:calc(var(--inv-text-scale, 1) * 12px);margin-top:12px}
     #library .inv-small{color:#75808a;font-size:calc(var(--inv-text-scale, 1) * 10px)}
-    #library .inv-sidebar.is-collapsed{padding-left:8px;padding-right:8px}
-    #library .inv-sidebar.is-collapsed .inv-sidebar-head{justify-content:center;padding:3px 0 13px}
-    #library .inv-sidebar.is-collapsed .inv-sidebar-head>span,#library .inv-sidebar.is-collapsed .inv-sidebar-section,#library .inv-sidebar.is-collapsed .inv-side-label,#library .inv-sidebar.is-collapsed .inv-side-count,#library .inv-sidebar.is-collapsed .inv-folder-summary{display:none}
-    #library .inv-sidebar.is-collapsed .inv-side-button{justify-content:center;gap:0;padding:0}
-    #library .inv-sidebar.is-collapsed .inv-side-icon{width:24px;height:24px}
-    #library .inv-sidebar.is-collapsed .inv-side-icon svg{width:19px;height:19px}
     #library .inv-layout.is-collapsed .inv-sidebar{min-width:0;width:100%;max-width:100%;box-sizing:border-box;overflow-x:hidden}
-    #library .inv-sidebar.is-collapsed .inv-sidebar-nav{min-width:0;width:100%;overflow:visible}
-    #library .inv-sidebar.is-collapsed .inv-side-button{width:100%;min-width:0;max-width:100%;box-sizing:border-box;border-radius:9px}
-    #library .inv-sidebar.is-collapsed .inv-side-button:focus-visible{outline:2px solid #36a8ed;outline-offset:-2px}
     @media(max-height:850px){#library .inv-content{padding-top:14px;padding-bottom:18px}#library .inv-note{display:none}#library .inv-stats{gap:6px;margin:8px 0}#library .inv-stat{padding:8px 10px}#library .inv-synthetic-preview{gap:4px 8px;margin:6px 0;padding:7px 10px;font-size:calc(var(--inv-text-scale, 1) * 10px)}}
     @media(max-width:1100px){#library .inv-content{padding:18px 16px 26px}#library .inv-stats{grid-template-columns:repeat(2,minmax(120px,1fr))}#library .inv-row{grid-template-columns:minmax(140px,1.3fr) minmax(90px,.8fr) 28px}#library .inv-row>.inv-meta:last-of-type{display:none}}
-    @media(max-width:760px){#library .inv-layout{grid-template-columns:64px minmax(0,1fr)}#library .inv-sidebar{padding-left:8px;padding-right:8px}#library .inv-sidebar .inv-sidebar-head{justify-content:center}#library .inv-sidebar .inv-sidebar-head>span,#library .inv-sidebar .inv-sidebar-section,#library .inv-sidebar .inv-side-label,#library .inv-sidebar .inv-side-count,#library .inv-sidebar .inv-folder-summary{display:none}#library .inv-sidebar .inv-side-button{justify-content:center;gap:0;padding:0}#library .inv-top{flex-direction:column}#library .inv-search{margin-left:0;max-width:none}}
+    @media(max-width:760px){#library .inv-layout{grid-template-columns:clamp(72px,calc(80px * var(--inv-text-scale,1)),104px) minmax(0,1fr)}#library .inv-top{flex-direction:column}#library .inv-search{margin-left:0;max-width:none}}
     @media(max-width:680px){#library .inv-scope-banner{grid-template-columns:minmax(0,1fr);align-items:start;gap:4px 0;padding:11px 12px}#library .inv-scope-banner>*{min-width:0}}
       #library .inv-scope-banner,#library .inv-synthetic-preview,#library .inv-status,#library .inv-roots,#library .inv-table,#library .inv-empty{margin-inline:14px}
 
@@ -4696,7 +4648,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library,#invPopoverLayer,#invProductMenu,#invNoteOverlay,#invProductMetaOverlay,#invTagManagerOverlay,#aimmLocalToolOverlay,.aimm-local-tool{--pm-grad:linear-gradient(135deg,#9442dc,#b970ff);--pm-off:#7b8190;--pm-dim:#9ca3af}
 
 /* A. Strokes removed: border colour goes transparent (fill shows through), width untouched */
-#library :is(.inv-btn,.inv-format,.inv-action,.inv-action.hub,.inv-search,.inv-stat,.inv-note,.inv-folder-summary,.inv-root,.inv-vendor,.inv-table,.inv-layout,.inv-scope-banner,.inv-status-pill,.inv-hidden-badge,.inv-tag-filter-chip,.inv-chip,.inv-vst-filter-menu,.inv-tag-filter-menu,.inv-view-panel,.inv-view-menu>summary,.inv-synthetic-preview,.inv-empty),
+#library :is(.inv-btn,.inv-format,.inv-action,.inv-action.hub,.inv-search,.inv-stat,.inv-note,.inv-root,.inv-vendor,.inv-table,.inv-layout,.inv-scope-banner,.inv-status-pill,.inv-hidden-badge,.inv-tag-filter-chip,.inv-chip,.inv-vst-filter-menu,.inv-tag-filter-menu,.inv-view-panel,.inv-view-menu>summary,.inv-synthetic-preview,.inv-empty),
 #invPopoverLayer :is(.inv-vst-filter-menu,.inv-tag-filter-menu,.inv-view-panel,.inv-vst-option,.inv-tag-filter-option),
 #library :is(.inv-vst-option,.inv-tag-filter-option,.inv-tag-row),
 #invProductMenu,#invProductMetaOverlay :is(.inv-product-meta-dialog,.inv-product-meta-option,.inv-product-tag-choice,.inv-kept-version,textarea,select,input:not([type=checkbox])),
@@ -4724,18 +4676,16 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #invTagManagerOverlay .inv-tag-row.selected :is(.inv-tag-select,.inv-tag-name,.inv-tag-count){color:var(--pv-black)!important}
 
 /* D. Hover and keyboard focus: purple gradient (#chain #presetsBtn, .chain-add:hover) */
-#library :is(.inv-btn,.inv-format,.inv-action,.inv-more,.inv-side-button,.inv-vst-option,.inv-tag-filter-option,.inv-fav,.inv-product-actions,.inv-vendor-toggle,.inv-sidebar-head button,.inv-view-menu>summary):hover:not(:disabled):not(.active):not(.on):not([aria-disabled="true"]),
+#library :is(.inv-btn,.inv-format,.inv-action,.inv-more,.inv-side-button,.inv-vst-option,.inv-tag-filter-option,.inv-fav,.inv-product-actions,.inv-vendor-toggle,.inv-view-menu>summary):hover:not(:disabled):not(.active):not(.on):not([aria-disabled="true"]),
 #invPopoverLayer :is(.inv-vst-option,.inv-tag-filter-option):hover:not(.on),
 #invProductMenu .inv-menu-row:hover:not(.disabled),
 #invNoteOverlay button:hover:not(.primary),
 #invTagManagerOverlay :is(.inv-tag-done,.inv-tag-action,.inv-tag-icon,.inv-tag-order button):hover:not(:disabled),
 #invProductMetaOverlay .inv-product-meta-option:hover:not(.selected),
 .aimm-local-tool :is(button,a):hover:not(:disabled){background:var(--pm-grad)!important;color:#fff!important;border-color:transparent!important;outline-color:transparent!important}
-#library .inv-sidebar.is-collapsed .inv-side-button:focus-visible{outline-color:transparent!important}
 
 /* E. Greyed out: Mix Check disabled modes (opacity .76) + palette-v2 disabled ink #7b8190 */
 #library :is(.inv-btn,.inv-side-button):is(:disabled,[aria-disabled="true"]),.aimm-local-tool button:disabled,#invProductMenu .inv-menu-row.disabled{color:var(--pm-off)!important;opacity:.76!important}
-#library .inv-sidebar-section,#library .inv-sidebar-head,#library .inv-status-note,#library .inv-tools-note{color:var(--pm-dim)!important}
 
 /* F. Status colours: the page's existing capture-state tokens replace red/green/amber */
 #library .inv-format-status.updates,#library .inv-version-row .inv-version-latest,#library .inv-version-row .inv-version-warning{background-color:#f472b6!important}
@@ -4745,11 +4695,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library .inv-format-status.unchecked{background:#7b8190!important}
 #library .inv-version-row.up-to-date .inv-version-current{color:#7ee2a8!important}
 #library .inv-version-row.manual-check .inv-version-current{color:#facc15!important}
-#library .inv-side-button[data-inv-scope="updates"] .inv-side-count{color:#f472b6!important}
-#library .inv-side-button[data-inv-scope="up-to-date"] .inv-side-count{color:#7ee2a8!important}
-#library .inv-side-button[data-inv-scope="manual-check"] .inv-side-count{color:#facc15!important}
-#library .inv-side-button[data-inv-scope="unchecked"] .inv-side-count{color:#7b8190!important}
-#library .inv-side-count{box-shadow:none!important}
 #library .inv-status.error{color:#f472b6!important}#library .inv-status.good{color:#7ee2a8!important}
 
 /* G. Star and icon buttons */
@@ -4797,10 +4742,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library .inv-format-status.up-to-date{background:var(--st-green)!important}
 #library .inv-format-status.manual-check{background:var(--st-amber)!important}
 #library .inv-format-status.unchecked{background:var(--st-grey)!important}
-#library .inv-side-button[data-inv-scope="updates"] .inv-side-count{color:var(--st-red)!important}
-#library .inv-side-button[data-inv-scope="up-to-date"] .inv-side-count{color:var(--st-green)!important}
-#library .inv-side-button[data-inv-scope="manual-check"] .inv-side-count{color:var(--st-amber)!important}
-#library .inv-side-button[data-inv-scope="unchecked"] .inv-side-count{color:var(--st-grey)!important}
 #library .inv-scope-banner.updates strong,#library .inv-status-detail-row strong{color:var(--st-red)!important}
 #library .inv-scope-banner.up-to-date strong,#library .inv-status-detail-row.up-to-date{color:var(--st-green)!important}
 #library .inv-scope-banner.manual-check strong,#library .inv-status-detail-row.manual-check{color:var(--st-amber)!important}
@@ -4817,7 +4758,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library .inv-status-pill[aria-label^="Manual"]{color:var(--st-amber)!important}
 #library .inv-status-pill[aria-label^="Unchecked"]{color:var(--st-grey)!important}
 #library .inv-format-status.vendor-app{background:var(--st-grey)!important}
-#library .inv-side-button[data-inv-scope="vendor-app"] .inv-side-count{color:var(--st-grey)!important}
 #library .inv-scope-banner.vendor-app{background:var(--pv-neutral-bg)!important;border-color:transparent!important}
 #library .inv-scope-banner.vendor-app strong,#library .inv-status-detail-row.vendor-app,#library .inv-version-row.vendor-app .inv-version-current,#library .inv-status-pill[aria-label^="Vendor app"]{color:var(--st-grey)!important}
 #library .inv-status-pill[aria-label*=" · "]{color:#f3f4f6!important}
@@ -4836,75 +4776,63 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library .inv-chip.vst2{background:#1e3a6b!important;color:#f3f4f6!important}
 #library .inv-chip.vst3,#library .inv-chip.vst:not(.vst2):not(.vst3){background:#b970ff!important;color:#0b0d10!important}
 #library .inv-chip.clap{background:#68d3e6!important;color:#0b0d10!important}
-#library .inv-side-button.active .inv-side-count,
-#library .inv-side-button.active[data-inv-scope] .inv-side-count,
-#library .inv-side-button.active[data-inv-open-all-plugins] .inv-side-count{background:transparent!important;box-shadow:none!important;border-color:transparent!important;color:#0b0d10!important}
-#library .inv-side-button:hover:not(.active):not(:disabled) .inv-side-count{color:#fff!important;background:transparent!important;box-shadow:none!important;border-color:transparent!important}
-#library .inv-sidebar-section-toggle[data-inv-section-toggle="status"],#library .inv-sidebar-section-toggle[data-inv-section-toggle="tools"],#library .inv-sidebar-section-toggle[data-inv-section-toggle="library"],#library .inv-sidebar-section-toggle[data-inv-section-toggle="categories"]{min-height:40px;margin:8px 0 4px;padding:0 10px;font-size:11px;border-radius:9px}
-#library .inv-sidebar .inv-sidebar-section-toggle:hover:not(:disabled){background:rgba(255,255,255,.07);color:#fff!important}
-
-/* Option C: Plugins Browse accordion cards. Existing palette only. */
-#library #invSidebar .inv-sidebar-card{--section-colour:#36a8ed;position:relative;margin:0 0 12px;background:var(--pv-neutral-bg);border:1px solid var(--pv-neutral-bd)!important;border-radius:12px;overflow:hidden;transition:border-color .25s ease,box-shadow .35s ease}
+/* Library sidebar v3: one source of truth for the card, heading and row. */
+#library #invSidebar{position:relative;min-height:0;min-width:0;padding:calc(14px * var(--inv-text-scale,1)) calc(12px * var(--inv-text-scale,1)) calc(16px * var(--inv-text-scale,1));background:#17191c;border-right:1px solid #30343a;border-radius:11px 0 0 11px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain}
+#library #invSidebar .inv-sidebar-head{position:sticky;top:0;z-index:1;display:flex;justify-content:flex-end;align-items:center;min-height:calc(36px * var(--inv-text-scale,1));margin:0 0 calc(8px * var(--inv-text-scale,1));padding:0;border:0;background:#17191c;box-shadow:0 8px 0 #17191c}
+#library #invSidebar .inv-sidebar-head button{display:inline-flex;justify-content:center;align-items:center;flex:none;min-width:calc(40px * var(--inv-text-scale,1));min-height:calc(36px * var(--inv-text-scale,1));margin-right:calc(-4px * var(--inv-text-scale,1));padding:0;border:0!important;border-radius:6px;background:transparent!important;box-shadow:none!important;color:#aab2bd;font-size:0;cursor:pointer}
+#library #invSidebar .inv-sidebar-head button:hover,#library #invSidebar .inv-sidebar-head button:focus-visible{background:transparent!important;color:#eef2f6!important}
+#library #invSidebar .inv-sidebar-head button:focus-visible{outline:2px solid #36a8ed!important;outline-offset:1px!important}
+#library #invSidebar .inv-sidebar-head svg{width:calc(24px * var(--inv-text-scale,1));height:calc(24px * var(--inv-text-scale,1));fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#library #invSidebar .inv-sidebar-head [aria-expanded="false"] .inv-panel-tint{display:none}
+#library #invSidebar .inv-sidebar-card{--section-colour:#36a8ed;position:relative;margin:0 0 12px;background:var(--pv-neutral-bg);border:1px solid var(--section-colour)!important;border-radius:12px;overflow:hidden}
 #library #invSidebar .inv-sidebar-card[data-inv-section="tools"]{--section-colour:#e8b45a}
 #library #invSidebar .inv-sidebar-card[data-inv-section="library"]{--section-colour:#b970ff}
 #library #invSidebar .inv-sidebar-card[data-inv-section="video-chain-picks"]{--section-colour:#f472b6}
 #library #invSidebar .inv-sidebar-card[data-inv-section="categories"]{--section-colour:#68d3e6}
-#library #invSidebar .inv-sidebar-card:has(.inv-sidebar-section-toggle[aria-expanded="true"]){border-color:var(--section-colour)!important}
 #library #invSidebar .inv-sidebar-card.is-current{box-shadow:0 0 18px -4px var(--section-colour)!important}
-#library #invSidebar .inv-sidebar-section-toggle{min-height:48px;margin:0;padding:0 10px 0 14px;display:flex;gap:7px;width:100%;border:0!important;border-radius:0;background:#0b0d10;color:var(--section-colour)!important;font:800 calc(var(--inv-text-scale,1) * 13px)/1.15 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.01em;word-break:keep-all;overflow-wrap:normal;text-align:left;transition:background .25s ease,color .25s ease,box-shadow .35s ease}
-#library #invSidebar .inv-sidebar-section-toggle:hover:not(:disabled){background:#24272c!important;color:var(--section-colour)!important}
-#library #invSidebar .inv-sidebar-section-toggle::after{display:none!important}
-#library #invSidebar .inv-sidebar-section-toggle{gap:5px;padding-right:8px}
-#library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-section-toggle,#library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-section-toggle:hover{background:var(--section-colour)!important;color:var(--pv-black)!important}
-#library #invSidebar .inv-sidebar-heading-label{flex:1;min-width:0;overflow-wrap:anywhere}
-#library #invSidebar .inv-sidebar-heading-count{min-width:24px;padding:4px 5px;border-radius:6px;background:rgba(9,11,15,.72);font:700 11px/1 ui-monospace,Menlo,monospace;text-align:center;color:var(--pm-dim)}
-#library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-heading-count{color:var(--pv-black);background:rgba(11,13,16,.16)}
-#library #invSidebar .inv-sidebar-selected-dot{width:7px;height:7px;flex:none;border-radius:50%;background:var(--pv-teal);opacity:0;transform:scale(.4);transition:opacity .2s,transform .2s}
-#library #invSidebar .inv-sidebar-card.is-current:has(.inv-sidebar-section-toggle[aria-expanded="false"]) .inv-sidebar-selected-dot{opacity:1;transform:scale(1)}
-#library #invSidebar .inv-sidebar-chevron{position:relative;flex:none;width:26px;height:26px;border-radius:7px;background:var(--section-colour)}
-#library #invSidebar .inv-sidebar-chevron::after{content:"";position:absolute;left:8px;top:6px;width:8px;height:8px;border-right:2.5px solid var(--pv-black)!important;border-bottom:2.5px solid var(--pv-black)!important;transform:rotate(-45deg);transition:transform .28s cubic-bezier(.4,0,.2,1)}
-#library #invSidebar [aria-expanded="true"] .inv-sidebar-chevron::after{transform:translate(1px,2px) rotate(45deg) translate(-1px,-1px)}
-#library #invSidebar [aria-expanded="false"] .inv-sidebar-chevron{background:transparent;box-shadow:inset 0 0 0 2px var(--pv-neutral-bd)!important}
-#library #invSidebar [aria-expanded="false"] .inv-sidebar-chevron::after{border-color:var(--pm-dim)!important}
-#library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-chevron{background:var(--pv-black)}
-#library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-chevron::after{border-color:var(--section-colour)!important}
-/* All section headings lit in their colour (Kevin, 21 Nov 2026); the section in use keeps its glow */
-#library #invSidebar .inv-sidebar-section-toggle,#library #invSidebar .inv-sidebar-section-toggle:hover:not(:disabled){background:var(--section-colour)!important;color:var(--pv-black)!important}
-#library #invSidebar .inv-sidebar-heading-count{color:var(--pv-black);background:rgba(11,13,16,.16)}
-#library #invSidebar .inv-sidebar-chevron{background:var(--pv-black)}
-#library #invSidebar .inv-sidebar-chevron::after{border-color:var(--section-colour)!important}
-#library #invSidebar .inv-sidebar-card{border-color:var(--section-colour)!important}
-/* No boxes anywhere in the sidebar: arrows are plain glyphs (Kevin, 21 Nov 2026) */
-#library #invSidebar .inv-sidebar-chevron,#library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-chevron{background:none!important;border:0!important;box-shadow:none!important;width:18px;height:18px}
-#library #invSidebar .inv-sidebar-chevron::after,#library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-chevron::after{border-color:var(--pv-black)!important;left:4px;top:3px}
-#library #invSidebar [aria-expanded="false"] .inv-sidebar-chevron,#library #invSidebar .inv-sidebar-card.is-current [aria-expanded="false"] .inv-sidebar-chevron{box-shadow:none!important;background:none!important}
-#library #invSidebar [aria-expanded="false"] .inv-sidebar-chevron::after,#library #invSidebar .inv-sidebar-card.is-current [aria-expanded="false"] .inv-sidebar-chevron::after{border-color:var(--pv-black)!important}
-#library #invSidebar .inv-side-count{font-size:calc(var(--inv-text-scale,1) * 15px)!important;font-weight:700!important;line-height:1!important}
-#library #invSidebar .inv-sidebar-heading-count{font-size:calc(var(--inv-text-scale,1) * 16px)!important;font-weight:800!important;line-height:1!important}
-/* Counts: numbers only, no box (Kevin, 21 Nov 2026) */
-#library #invSidebar .inv-side-count,#library #invSidebar .inv-sidebar-heading-count,#library .inv-side-count,#library .inv-sidebar-card.is-current .inv-sidebar-heading-count{background:none!important;border:0!important;box-shadow:none!important;padding:0 2px!important;border-radius:0!important;min-width:0!important}
+#library #invSidebar .inv-sidebar-section-toggle,#library #invSidebar .inv-sidebar-section-toggle:hover:not(:disabled){display:flex;align-items:center;gap:calc(8px * var(--inv-text-scale,1));width:100%;min-height:calc(48px * var(--inv-text-scale,1));margin:0;padding:calc(8px * var(--inv-text-scale,1)) calc(12px * var(--inv-text-scale,1)) calc(8px * var(--inv-text-scale,1)) calc(14px * var(--inv-text-scale,1));border:0!important;border-radius:0;background:var(--section-colour)!important;color:var(--pv-black)!important;font:700 calc(16px * var(--inv-text-scale,1))/1.25 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:0;text-align:left;cursor:pointer}
+#library #invSidebar .inv-sidebar-section-toggle:focus-visible,#library #invSidebar .inv-side-button:focus-visible{outline:2px solid #36a8ed!important;outline-offset:-2px!important}
+#library #invSidebar .inv-sidebar-heading-label{flex:1;min-width:0;overflow-wrap:break-word;text-wrap:balance}
+#library #invSidebar .inv-sidebar-chevron{width:calc(22px * var(--inv-text-scale,1));height:calc(22px * var(--inv-text-scale,1));flex:none;background:none!important;border:0!important;box-shadow:none!important}
+#library #invSidebar .inv-sidebar-chevron svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+#library #invSidebar [aria-expanded="true"] .inv-fold-plus{display:none}
 #library #invSidebar .inv-sidebar-section-content{display:grid;grid-template-rows:1fr;min-width:0;transition:grid-template-rows .28s cubic-bezier(.4,0,.2,1),visibility 0s}
 #library #invSidebar .inv-sidebar-section-content.is-closed{grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .28s cubic-bezier(.4,0,.2,1),visibility 0s .28s}
-#library #invSidebar .inv-sidebar-section-inner{min-height:0;overflow:hidden;padding:6px}
+#library #invSidebar .inv-sidebar-section-inner{min-height:0;overflow:hidden;padding:calc(8px * var(--inv-text-scale,1)) calc(6px * var(--inv-text-scale,1))}
 #library #invSidebar .inv-sidebar-section-content.is-closed .inv-sidebar-section-inner{padding-top:0;padding-bottom:0}
-#library #invSidebar .inv-sidebar-subgroup{display:flex;align-items:center;gap:7px;padding:7px 5px;color:var(--section-colour);font:700 calc(var(--inv-text-scale,1) * 12.5px) -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.04em}
-#library #invSidebar .inv-sidebar-subgroup::before{content:"";width:8px;height:8px;flex:none;border-radius:2px;background:var(--section-colour)}
-#library #invSidebar .inv-sidebar-subgroup::after{content:"";height:1px;flex:1;background:var(--section-colour);opacity:.45}
-#library #invSidebar .inv-sidebar-section-inner .inv-sidebar-nav{gap:2px}
-#library #invSidebar .inv-sidebar-section-inner .inv-side-button{position:relative;z-index:1;min-height:38px;font-weight:500}
-#library #invSidebar .inv-sidebar-section-inner .inv-side-button.active{background:transparent!important;border:0!important;box-shadow:none!important;color:var(--pv-black)!important;font-weight:700}
-#library #invSidebar .inv-sidebar-section-inner .inv-side-button.active .inv-side-count{color:var(--pv-black)!important}
-#library #invSidebar .inv-sidebar-pill{position:absolute;top:0;left:0;z-index:0;border-radius:9px;background:var(--pv-teal);opacity:0;pointer-events:none;transition:transform .28s cubic-bezier(.4,0,.2,1),width .28s,height .28s,opacity .15s}
-#library #invSidebar .inv-sidebar-pill.is-visible{opacity:1;animation:invPillBreathe 2.6s ease-in-out infinite}
-@keyframes invPillBreathe{0%,100%{filter:brightness(1)}50%{filter:brightness(1.18)}}
-#library #invSidebar .inv-sidebar-section-toggle:focus-visible,#library #invSidebar .inv-side-button:focus-visible{outline:2px solid #36a8ed!important;outline-offset:-2px!important}
+#library #invSidebar .inv-sidebar-nav{display:grid;gap:calc(3px * var(--inv-text-scale,1));min-width:0}
+#library #invSidebar .inv-side-button{display:flex;align-items:center;gap:calc(12px * var(--inv-text-scale,1));width:100%;min-height:calc(46px * var(--inv-text-scale,1));height:auto;padding:calc(8px * var(--inv-text-scale,1)) calc(12px * var(--inv-text-scale,1));border:0!important;border-radius:calc(10px * var(--inv-text-scale,1));background:transparent;color:#c4cad3;font:500 calc(15px * var(--inv-text-scale,1))/1.25 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:left;white-space:normal;cursor:pointer}
+#library #invSidebar .inv-side-button:hover:not(.active):not(:disabled){background:var(--pm-grad)!important;color:#fff!important}
+#library #invSidebar .inv-side-button:disabled{opacity:.76;cursor:default}
+#library #invSidebar .inv-side-button.active,#library #invSidebar .inv-side-button.active:hover{background:var(--pv-teal)!important;border:0!important;box-shadow:none!important;color:var(--pv-black)!important;font-weight:700}
+#library #invSidebar .inv-side-button.active :is(.inv-side-icon,.inv-side-label,.inv-side-count){color:var(--pv-black)!important}
+#library #invSidebar .inv-side-icon{display:flex;align-items:center;justify-content:center;flex:none;width:calc(28px * var(--inv-text-scale,1));height:calc(28px * var(--inv-text-scale,1));color:#aab2bd}
+#library #invSidebar .inv-side-icon svg{display:block;width:calc(24px * var(--inv-text-scale,1));height:calc(24px * var(--inv-text-scale,1));fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#library #invSidebar .inv-side-label{flex:1 1 0;min-width:0;overflow:visible;text-overflow:clip;white-space:normal;overflow-wrap:break-word;text-wrap:balance;hyphens:manual}
+#library #invSidebar .inv-side-count{display:inline-flex;align-items:center;justify-content:center;flex:none;min-width:0;min-height:0;margin-left:auto;padding:0 calc(2px * var(--inv-text-scale,1));border:0;border-radius:0;background:none;box-shadow:none;text-align:center;color:#8993a2;font:700 calc(15px * var(--inv-text-scale,1))/1 Inter,-apple-system,sans-serif;font-variant-numeric:tabular-nums}
+#library #invSidebar [data-inv-scope="updates"] .inv-side-count{color:var(--st-red)!important}
+#library #invSidebar [data-inv-scope="up-to-date"] .inv-side-count{color:var(--st-green)!important}
+#library #invSidebar [data-inv-scope="manual-check"] .inv-side-count{color:var(--st-amber)!important}
+#library #invSidebar [data-inv-scope="vendor-app"] .inv-side-count,#library #invSidebar [data-inv-scope="unchecked"] .inv-side-count{color:var(--st-grey)!important}
+#library #invSidebar .inv-side-button:hover:not(.active) .inv-side-count{color:#fff!important}
+#library #invSidebar.is-collapsed{padding-left:calc(12px * var(--inv-text-scale,1));padding-right:calc(12px * var(--inv-text-scale,1))}
+#library #invSidebar.is-collapsed .inv-sidebar-head{justify-content:center;min-height:calc(44px * var(--inv-text-scale,1))}
+#library #invSidebar.is-collapsed .inv-sidebar-head button{min-width:calc(48px * var(--inv-text-scale,1));min-height:calc(44px * var(--inv-text-scale,1));margin-right:0}
+#library #invSidebar.is-collapsed .inv-sidebar-head svg{width:calc(28px * var(--inv-text-scale,1));height:calc(28px * var(--inv-text-scale,1))}
 #library #invSidebar.is-collapsed .inv-sidebar-card{display:contents}
 #library #invSidebar.is-collapsed .inv-sidebar-section-toggle{display:none}
 #library #invSidebar.is-collapsed .inv-sidebar-section-content{display:block}
 #library #invSidebar.is-collapsed .inv-sidebar-section-inner{overflow:visible;padding:0}
-#library #invSidebar.is-collapsed .inv-sidebar-subgroup,#library #invSidebar.is-collapsed .inv-sidebar-pill{display:none}
-@media(max-width:760px){#library #invSidebar .inv-sidebar-card{display:contents}#library #invSidebar .inv-sidebar-section-toggle{display:none}#library #invSidebar .inv-sidebar-section-content{display:block}#library #invSidebar .inv-sidebar-section-inner{overflow:visible;padding:0}#library #invSidebar .inv-sidebar-subgroup,#library #invSidebar .inv-sidebar-pill,#library #invSidebar .inv-status-note,#library #invSidebar .inv-tools-note{display:none}}
-@media(prefers-reduced-motion:reduce){#library #invSidebar .inv-sidebar-card,#library #invSidebar .inv-sidebar-section-toggle,#library #invSidebar .inv-sidebar-selected-dot,#library #invSidebar .inv-sidebar-chevron::after,#library #invSidebar .inv-sidebar-section-content,#library #invSidebar .inv-sidebar-pill{transition:none!important;animation:none!important}}
+#library #invSidebar.is-collapsed .inv-sidebar-nav{gap:calc(6px * var(--inv-text-scale,1))}
+#library #invSidebar.is-collapsed .inv-side-button{justify-content:center;gap:0;min-height:calc(56px * var(--inv-text-scale,1));height:calc(56px * var(--inv-text-scale,1));padding:0;border-radius:calc(12px * var(--inv-text-scale,1))}
+#library #invSidebar.is-collapsed .inv-side-label,#library #invSidebar.is-collapsed .inv-side-count{display:none!important}
+#library #invSidebar.is-collapsed .inv-side-icon{width:calc(32px * var(--inv-text-scale,1));height:calc(32px * var(--inv-text-scale,1))}
+#library #invSidebar.is-collapsed .inv-side-icon svg{width:calc(28px * var(--inv-text-scale,1));height:calc(28px * var(--inv-text-scale,1))}
+@media(max-width:760px){#library #invSidebar{padding-left:calc(12px * var(--inv-text-scale,1));padding-right:calc(12px * var(--inv-text-scale,1))}#library #invSidebar .inv-sidebar-head{justify-content:center;min-height:calc(44px * var(--inv-text-scale,1))}#library #invSidebar .inv-sidebar-head button{min-width:calc(48px * var(--inv-text-scale,1));min-height:calc(44px * var(--inv-text-scale,1));margin-right:0}#library #invSidebar .inv-sidebar-head svg{width:calc(28px * var(--inv-text-scale,1));height:calc(28px * var(--inv-text-scale,1))}#library #invSidebar .inv-sidebar-card{display:contents}#library #invSidebar .inv-sidebar-section-toggle{display:none}#library #invSidebar .inv-sidebar-section-content{display:block}#library #invSidebar .inv-sidebar-section-inner{overflow:visible;padding:0}#library #invSidebar .inv-sidebar-nav{gap:calc(6px * var(--inv-text-scale,1))}#library #invSidebar .inv-side-button{justify-content:center;gap:0;min-height:calc(56px * var(--inv-text-scale,1));height:calc(56px * var(--inv-text-scale,1));padding:0;border-radius:calc(12px * var(--inv-text-scale,1))}#library #invSidebar .inv-side-label,#library #invSidebar .inv-side-count{display:none!important}#library #invSidebar .inv-side-icon{width:calc(32px * var(--inv-text-scale,1));height:calc(32px * var(--inv-text-scale,1))}#library #invSidebar .inv-side-icon svg{width:calc(28px * var(--inv-text-scale,1));height:calc(28px * var(--inv-text-scale,1))}}
+@media(prefers-reduced-motion:reduce){#library #invSidebar .inv-sidebar-section-content{transition:none!important;animation:none!important}}
+#settings #settingsPluginCompanion .settings-scan-folders{margin-top:16px}
+#settings #settingsPluginCompanion .settings-scan-folders strong{display:block;color:#e8ebed;font:700 calc(var(--inv-text-scale,1) * 15px)/1.3 Inter,-apple-system,sans-serif}
+#settings #settingsPluginCompanion .settings-scan-folders span{display:block;margin-top:6px;color:#9aa0a6;font-size:calc(var(--inv-text-scale,1) * 13px);line-height:1.55}
 
 /* Insight tab colours 2026-11-18 */
 /* PREVIEW ONLY. Insight tab (#knowledge) and its note dialog (#kbModal), COLOURS ONLY.
@@ -5158,8 +5086,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   <div id="pluginInventoryUI" class="inv-shell">
     <div id="invLayout" class="inv-layout">
       <aside id="invSidebar" class="inv-sidebar" aria-label="Plug-in filters">
-        <div class="inv-sidebar-head"><span>BROWSE</span><button id="invSidebarToggle" type="button" aria-label="Collapse filters" aria-expanded="true" title="Collapse filters">‹</button></div>
-        <button class="inv-sidebar-section inv-sidebar-section-toggle" type="button" data-inv-section-toggle="status" aria-expanded="true" aria-controls="invBrowseSectionStatus">STATUS</button><div class="inv-status-note">Counts are products</div>
+        <div class="inv-sidebar-head"><button id="invSidebarToggle" type="button" aria-label="Collapse filters" aria-expanded="true" title="Collapse filters"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="inv-panel-tint" d="M6 5h3v14H6a2.5 2.5 0 0 1-2.5-2.5v-9A2.5 2.5 0 0 1 6 5Z" fill="currentColor" fill-opacity=".45" stroke="none"/><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M9 5v14"/></svg></button></div>
+        <button class="inv-sidebar-section inv-sidebar-section-toggle" type="button" data-inv-section-toggle="status" aria-expanded="true" aria-controls="invBrowseSectionStatus">Status</button>
         <nav class="inv-sidebar-nav" aria-label="Inventory status">
           <button class="inv-side-button active" type="button" data-inv-scope="all" aria-label="All plugins" title="All plugins"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></span><span class="inv-side-label">All plugins</span><span class="inv-side-count" id="invSidebarAllCount">—</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="updates" aria-label="Updates available" title="No vendor update observations are connected to this inventory yet"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 7v5h-5"/><path d="M20 12a8 8 0 1 1-2.3-5.7L20 9"/></svg></span><span class="inv-side-label">Updates available</span><span class="inv-side-count" id="invSidebarUpdatesCount">0</span></button>
@@ -5168,7 +5096,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <button class="inv-side-button" type="button" data-inv-scope="vendor-app" aria-label="Vendor app" title="Check updates in the publisher's own app"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 10h8M8 14h5"/></svg></span><span class="inv-side-label">Vendor app</span><span class="inv-side-count" id="invSidebarVendorAppCount">0</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="unchecked" aria-label="Unchecked — no vendor status result is connected" title="Items without a current vendor observation remain unchecked"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></span><span class="inv-side-label">Unchecked</span><span class="inv-side-count" id="invSidebarUncheckedCount">—</span></button>
         </nav>
-        <button class="inv-sidebar-section inv-sidebar-section-toggle" type="button" data-inv-section-toggle="tools" aria-expanded="true" aria-controls="invBrowseSectionTools">TOOLS</button>
+        <button class="inv-sidebar-section inv-sidebar-section-toggle" type="button" data-inv-section-toggle="tools" aria-expanded="true" aria-controls="invBrowseSectionTools">Tools</button>
         <nav class="inv-sidebar-nav" aria-label="Plug-in tools">
           <button class="inv-side-button" type="button" data-inv-install-manager data-inv-local-tool="install-manager" aria-label="Install Manager" title="Review AIMM’s vendor-verified updates and open the publisher’s download page."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v11"/><path d="m8 10 4 4 4-4"/><path d="M5 16v4h14v-4"/></svg></span><span class="inv-side-label">Install Manager</span></button>
           <button class="inv-side-button" type="button" data-inv-local-tool="batch-management" aria-label="Batch Plug-in Management" title="Apply reversible hide and favourite changes to selected plug-ins in this browser."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg></span><span class="inv-side-label">Batch Plugin Management</span></button>
@@ -5181,38 +5109,34 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <button class="inv-side-button" type="button" data-inv-local-tool="compare-profiles" aria-label="Compare Plug-in Profiles" title="Save and compare local folder-scan snapshots in this browser."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="16" rx="1"/><rect x="14" y="4" width="7" height="16" rx="1"/><path d="M11 8h2M11 16h2M12 8l1.5-1.5M12 8l1.5 1.5M12 16l1.5-1.5M12 16l1.5 1.5"/></svg></span><span class="inv-side-label">Compare Plugin Profiles</span></button>
           <button class="inv-side-button" type="button" data-inv-local-tool="license" aria-label="AIMM License" title="View AIMM build and local data details."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3h14v18l-7-4-7 4V3Z"/><path d="m9 10 2 2 4-4"/></svg></span><span class="inv-side-label">AIMM License</span></button>
         </nav>
-        <p class="inv-tools-note" data-inv-tools-note>AIMM tools run from this browser and the folders you choose.</p>
-        <button class="inv-sidebar-section inv-sidebar-section-toggle" type="button" data-inv-section-toggle="library" aria-expanded="true" aria-controls="invBrowseSectionLibrary">LIBRARY</button>
+        <button class="inv-sidebar-section inv-sidebar-section-toggle" type="button" data-inv-section-toggle="library" aria-expanded="true" aria-controls="invBrowseSectionLibrary">Library</button>
         <nav class="inv-sidebar-nav" aria-label="Saved plug-ins">
           <button class="inv-side-button" type="button" data-inv-open-all-plugins aria-label="All Plugins" title="Show every installed plug-in in a flat list" aria-pressed="false"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></span><span class="inv-side-label">All Plugins</span><span class="inv-side-count" id="invLibraryAllCount">—</span></button>
-          <button class="inv-side-button" type="button" disabled aria-label="Plugin Compatibility — unavailable until plug-in architecture metadata and current vendor evidence are connected" title="Compatibility is unavailable until this Library has source-backed architecture metadata and current vendor evidence."><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/><path d="m8 11 2.5 2.5L16 8"/></svg></span><span class="inv-side-label">Plugin Compatibility</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="favorites" aria-label="Favorites" title="Favorites"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg></span><span class="inv-side-label">Favorites</span><span class="inv-side-count" id="invSidebarFavCount">0</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="tags" aria-label="My tags" title="Show plug-ins with saved tags"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m20 13-7 7-9-9V4h7l9 9Z"/><circle cx="8.5" cy="8.5" r=".8"/></svg></span><span class="inv-side-label">My tags</span></button>
           <button class="inv-side-button" type="button" data-inv-tag-manager aria-label="Plugin Tag Manager" title="Manage tags on this browser"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 13 11 22l-9-9V3h10l8 10Z"/><circle cx="7" cy="7" r="1"/></svg></span><span class="inv-side-label">Tag Manager</span></button>
-          <button class="inv-side-button" type="button" data-inv-scope="not-licensed-uad" aria-label="Not licensed UAD" title="UAD products outside the account ownership map"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 8l8 8M16 8l-8 8"/></svg></span><span class="inv-side-label">Not licensed (UAD)</span><span class="inv-side-count" id="invSidebarNotLicensedCount">0</span></button>
           <button class="inv-side-button" type="button" data-inv-scope="hidden" aria-label="Hidden plug-ins" title="Show plug-ins hidden from the main library"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c5.5 0 9 7 9 7a16 16 0 0 1-3.1 3.8M6.2 6.2C4.1 7.6 3 12 3 12s3.5 7 9 7a10 10 0 0 0 3-.5"/></svg></span><span class="inv-side-label">Hidden</span><span class="inv-side-count" id="invSidebarHiddenCount">0</span></button>
         </nav>
-        <button class="inv-sidebar-section inv-sidebar-section-toggle" type="button" data-inv-section-toggle="video-chain-picks" aria-expanded="true" aria-controls="invBrowseSectionVideoChainPicks">VIDEO CHAIN PICKS</button>
+        <button class="inv-sidebar-section inv-sidebar-section-toggle" type="button" data-inv-section-toggle="video-chain-picks" aria-expanded="true" aria-controls="invBrowseSectionVideoChainPicks">Video chain picks</button>
         <nav class="inv-sidebar-nav" aria-label="Video chain picks">
-          <button class="inv-side-button" type="button" data-vocal-view="owned"><span class="inv-side-label">Owned</span></button>
-          <button class="inv-side-button" type="button" data-vocal-view="stock"><span class="inv-side-label">Stock Plugins (Logic Pro 13)</span></button>
-          <button class="inv-side-button" type="button" data-vocal-view="missing"><span class="inv-side-label">Not installed</span></button>
+          <button class="inv-side-button" type="button" data-vocal-view="owned" aria-label="Owned" title="Owned"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8.5 12.3 2.4 2.4 4.6-5"/></svg></span><span class="inv-side-label">Owned</span></button>
+          <button class="inv-side-button" type="button" data-vocal-view="stock" aria-label="Logic Pro stock" title="Logic Pro stock"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.5 19.5 7.5v9L12 20.5l-7.5-4v-9Z"/><path d="M4.8 7.7 12 11.8l7.2-4.1M12 11.8v8.4"/></svg></span><span class="inv-side-label">Logic Pro stock</span></button>
+          <button class="inv-side-button" type="button" data-vocal-view="missing" aria-label="Not installed" title="Not installed"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/></svg></span><span class="inv-side-label">Not installed</span></button>
         </nav>
-        <button class="inv-sidebar-section inv-sidebar-section-toggle" type="button" data-inv-section-toggle="categories" aria-expanded="true" aria-controls="invBrowseSectionCategories">CATEGORIES</button>
+        <button class="inv-sidebar-section inv-sidebar-section-toggle" type="button" data-inv-section-toggle="categories" aria-expanded="true" aria-controls="invBrowseSectionCategories">Categories</button>
         <nav class="inv-sidebar-nav" aria-label="Plug-in categories">
           <button class="inv-side-button" type="button" data-inv-category="EQ &amp; Filter" aria-label="EQ and Filter" title="EQ &amp; Filter"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="7" cy="18" r="2"/></svg></span><span class="inv-side-label">EQ &amp; Filter</span></button>
           <button class="inv-side-button" type="button" data-inv-category="Dynamics" aria-label="Dynamics" title="Dynamics"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h3l3-7 4 14 3-7h5"/></svg></span><span class="inv-side-label">Dynamics</span></button>
-          <button class="inv-side-button" type="button" data-inv-category="Pitch &amp; Modulation" aria-label="Pitch and Modulation" title="Pitch &amp; Modulation"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12c3-8 6-8 9 0s6 8 9 0"/></svg></span><span class="inv-side-label">Pitch &amp; Modulation</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Pitch &amp; Modulation" aria-label="Pitch and Modulation" title="Pitch &amp; Modulation"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12c3-8 6-8 9 0s6 8 9 0"/></svg></span><span class="inv-side-label">Pitch &amp;&nbsp;Modulation</span></button>
           <button class="inv-side-button" type="button" data-inv-category="Reverb" aria-label="Reverb" title="Reverb"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19a8 8 0 1 1 16 0"/><path d="M8 19a4 4 0 1 1 8 0"/></svg></span><span class="inv-side-label">Reverb</span></button>
           <button class="inv-side-button" type="button" data-inv-category="Delay" aria-label="Delay" title="Delay"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="2"/><circle cx="17" cy="12" r="2"/><path d="M9 12h6M12 8v8"/></svg></span><span class="inv-side-label">Delay</span></button>
-          <button class="inv-side-button" type="button" data-inv-category="Distortion &amp; Amps" aria-label="Distortion and Amps" title="Distortion &amp; Amps"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 18V6l4 6 4-6 4 12 4-12 2 6"/></svg></span><span class="inv-side-label">Distortion &amp; Amps</span></button>
-          <button class="inv-side-button" type="button" data-inv-category="Utility &amp; Metering" aria-label="Utility and Metering" title="Utility &amp; Metering"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18a8 8 0 1 1 16 0"/><path d="m12 14 4-4M7 18h10"/></svg></span><span class="inv-side-label">Utility &amp; Metering</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Distortion &amp; Amps" aria-label="Distortion and Amps" title="Distortion &amp; Amps"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 18V6l4 6 4-6 4 12 4-12 2 6"/></svg></span><span class="inv-side-label">Distortion &amp;&nbsp;Amps</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Utility &amp; Metering" aria-label="Utility and Metering" title="Utility &amp; Metering"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18a8 8 0 1 1 16 0"/><path d="m12 14 4-4M7 18h10"/></svg></span><span class="inv-side-label">Utility &amp;&nbsp;Metering</span></button>
           <button class="inv-side-button" type="button" data-inv-category="Imaging" aria-label="Imaging" title="Imaging"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="6" height="14" rx="2"/><rect x="14" y="5" width="6" height="14" rx="2"/><path d="M7 9v6M17 9v6"/></svg></span><span class="inv-side-label">Imaging</span></button>
-          <button class="inv-side-button" type="button" data-inv-category="Instruments &amp; MIDI" aria-label="Instruments and MIDI" title="Instruments &amp; MIDI"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><span class="inv-side-label">Instruments &amp; MIDI</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Instruments &amp; MIDI" aria-label="Instruments and MIDI" title="Instruments &amp; MIDI"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><span class="inv-side-label">Instruments &amp;&nbsp;MIDI</span></button>
           <button class="inv-side-button" type="button" data-inv-category="Restoration" aria-label="Restoration" title="Restoration"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 14a8 8 0 1 1 2.3 5.7"/><path d="M4 20v-6h6"/></svg></span><span class="inv-side-label">Restoration</span></button>
-          <button class="inv-side-button" type="button" data-inv-category="Channel Strips &amp; Multi-FX" aria-label="Channel Strips and Multi-FX" title="Channel Strips &amp; Multi-FX"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8v8M12 7v10M16 9v6"/></svg></span><span class="inv-side-label">Channel Strips &amp; Multi-FX</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Channel Strips &amp; Multi-FX" aria-label="Channel Strips and Multi-FX" title="Channel Strips &amp; Multi-FX"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8v8M12 7v10M16 9v6"/></svg></span><span class="inv-side-label">Channel Strips &amp;&nbsp;Multi‑FX</span></button>
         </nav>
-        <div class="inv-folder-summary"><strong>SCAN FOLDERS</strong><span id="invSidebarFolderMeta">No folders connected</span></div>
       </aside>
       <main class="inv-content">
         <div class="inv-top"><div><h2 class="inv-title">Plugin inventory</h2><div class="inv-subtitle">Find, group and compare the plug-ins installed on this Mac.</div></div></div>
@@ -5476,6 +5400,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
       <div class="settings-companion-connect-row"><button type="button" id="pcCompanionConnect" aria-label="Connect plugins">Connect</button></div>
       <span id="pcCompanionConnectionStatus" role="status" aria-live="polite">Disconnected</span>
     </div>
+    <div class="settings-scan-folders"><strong>Scan folders</strong><span id="invSidebarFolderMeta">No folders connected</span></div>
     <div id="pcCompanionSettingsStatus" role="status" aria-live="polite"></div>
   </div>
   <div class="settings-section" id="settingsReset">
@@ -5731,7 +5656,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-20.27';
+const AIMM_BUILD = '2026-11-21.4';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7407,7 +7332,6 @@ function invVendorReasonForDisplay(reason){
 const INV_LOCAL_TOOL_LABELS={"install-manager":"Install Manager","batch-management":"Batch Plug-in Management","remove-old-installers":"Remove Old Installers","license-vault":"License Key Vault","share-plugin-list":"Share Plug-in List","compare-profiles":"Compare Plug-in Profiles","duplicates":"Check for Duplicates","unused":"Unused plug-ins","license":"AIMM License"};
 function invInitStandaloneToolButtons(){
   if(INV_SYNTHETIC_PREVIEW)return;
-  const note=document.querySelector("[data-inv-tools-note]");if(note)note.textContent="AIMM scans the folders you choose and stores your inventory and settings in this browser.";
 }
 const INV_VENDOR_STATUS_ALIASES={
   "acestudio":"ace studio","accidental":"ace studio","acondigital":"acon digital","altitude":"altitude audio","altitudeaudio":"altitude audio",
@@ -7624,7 +7548,7 @@ function pcCompanionInit(){
     pcCompanionBusy=true;pcCompanionRender('Disconnected','');
     try{await pcCompanionCheck(true);}finally{pcCompanionBusy=false;pcCompanionRender(document.getElementById('pcCompanionConnectionStatus')?.textContent||'Disconnected',document.getElementById('pcCompanionSettingsStatus')?.textContent||'');}
   });
-  document.querySelector('.tab[data-tab="settings"]')?.addEventListener('click',()=>pcCompanionCheck(false));
+  document.querySelector('.tab[data-tab="settings"]')?.addEventListener('click',()=>{invUpdateSettingsFolderMeta();pcCompanionCheck(false);});
   pcCompanionCheck(false);
 }
 function invSaveScan(){
@@ -8255,21 +8179,6 @@ function invRenderTagFilter(groups){
   });
   chips.hidden=INV_TAG_FILTERS.size===0;
 }
-function invSidebarPlacePill(){
-  const sidebar=document.getElementById("invSidebar"),pill=sidebar?.querySelector(".inv-sidebar-pill"),active=sidebar?.querySelector(".inv-sidebar-card .inv-side-button.active");
-  if(!pill)return;
-  const content=active?.closest(".inv-sidebar-section-content");
-  if(!active||sidebar.classList.contains("is-collapsed")||content?.classList.contains("is-closed")){pill.classList.remove("is-visible");return;}
-  const row=active.getBoundingClientRect(),host=sidebar.getBoundingClientRect();
-  pill.style.width=row.width+"px";pill.style.height=row.height+"px";
-  pill.style.transform="translate("+(row.left-host.left+sidebar.scrollLeft)+"px,"+(row.top-host.top+sidebar.scrollTop)+"px)";
-  pill.classList.add("is-visible");
-}
-function invSidebarTrackPill(){
-  const start=performance.now();
-  const frame=()=>{invSidebarPlacePill();if(performance.now()-start<320)requestAnimationFrame(frame);};
-  requestAnimationFrame(frame);
-}
 function invSidebarSyncSelection(){
   const sidebar=document.getElementById("invSidebar");if(!sidebar)return;
   const selected=Array.from(sidebar.querySelectorAll(".inv-sidebar-card .inv-side-button.active"));
@@ -8277,7 +8186,10 @@ function invSidebarSyncSelection(){
   selected.forEach(button=>{if(button!==preferred)button.classList.remove("active");});
   if(preferred)preferred.classList.add("active");
   sidebar.querySelectorAll(".inv-sidebar-card").forEach(card=>card.classList.toggle("is-current",Boolean(preferred&&card.contains(preferred))));
-  invSidebarPlacePill();
+}
+function invUpdateSettingsFolderMeta(){
+  const folder=document.getElementById("invSidebarFolderMeta");
+  if(folder)folder.textContent=INV_ROOTS.length?INV_ROOTS.length+" connected · "+(INV_SCAN_INFO.bundles||0).toLocaleString()+" bundles inspected":"No folders connected";
 }
 function invRenderSidebar(groups,stageMap){
   const sidebar=document.getElementById("invSidebar");
@@ -8300,7 +8212,6 @@ function invRenderSidebar(groups,stageMap){
   setStatusCount("invSidebarUpToDateCount",statusCounts["up-to-date"]);
   setStatusCount("invSidebarManualCount",statusCounts["manual-check"]);
   setStatusCount("invSidebarVendorAppCount",statusCounts["vendor-app"]);
-  const statusNote=sidebar.querySelector(".inv-status-note");if(statusNote)statusNote.textContent=INV_SYNTHETIC_PREVIEW?"Sample product counts":"Counts are products";
   const statusNotice=INV_SYNTHETIC_PREVIEW?" — synthetic sample only; not live vendor status":" — AIMM folder scan and AIMM vendor records";
   [["updates","Updates available"],["up-to-date","Up to date"],["manual-check","Manual check"],["vendor-app","Vendor app"],["unchecked","Unchecked"]].forEach(([scope,label])=>{
     const button=sidebar.querySelector('[data-inv-scope="'+scope+'"]');
@@ -8320,13 +8231,11 @@ function invRenderSidebar(groups,stageMap){
   if(libraryAllLabel)libraryAllLabel.textContent=allCount.toLocaleString();
   if(favLabel)favLabel.textContent=favCount.toLocaleString();
   setStatusCount("invSidebarNotLicensedCount",notLicensedCount);
-  const folder=document.getElementById("invSidebarFolderMeta");
-  if(folder)folder.textContent=INV_ROOTS.length+" connected · "+(INV_SCAN_INFO.bundles||0).toLocaleString()+" bundles inspected";
+  invUpdateSettingsFolderMeta();
   layout.classList.toggle("is-collapsed",INV_SIDEBAR_COLLAPSED);
   sidebar.classList.toggle("is-collapsed",INV_SIDEBAR_COLLAPSED);
   const toggle=document.getElementById("invSidebarToggle");
   if(toggle){
-    toggle.textContent=INV_SIDEBAR_COLLAPSED?"›":"‹";
     toggle.setAttribute("aria-label",INV_SIDEBAR_COLLAPSED?"Expand filters":"Collapse filters");
     toggle.setAttribute("aria-expanded",String(!INV_SIDEBAR_COLLAPSED));
     toggle.title=INV_SIDEBAR_COLLAPSED?"Expand filters":"Collapse filters";
@@ -8977,7 +8886,7 @@ function invOpenProductNote(vendor,name){
 function invFitFrame(){
   const layout=document.querySelector("#library .inv-layout"),sidebar=document.querySelector("#library .inv-sidebar"),inventory=document.getElementById("invInventory");
   if(!layout||!sidebar||!inventory||!layout.getClientRects().length)return;
-  const children=Array.from(sidebar.children).filter(child=>!child.classList.contains("inv-sidebar-pill")&&getComputedStyle(child).display!=="none");
+  const children=Array.from(sidebar.children).filter(child=>getComputedStyle(child).display!=="none");
   if(!children.length)return;
   const last=children[children.length-1],style=getComputedStyle(sidebar),lastStyle=getComputedStyle(last);
   const browseEnd=last.getBoundingClientRect().bottom- sidebar.getBoundingClientRect().top +(Number.parseFloat(lastStyle.marginBottom)||0)+(Number.parseFloat(style.paddingBottom)||0)+(Number.parseFloat(style.borderBottomWidth)||0);
@@ -9436,7 +9345,6 @@ function invSidebarSetSection(name,open){
   toggle.setAttribute("aria-expanded",String(expanded));content.classList.toggle("is-closed",!expanded);content.inert=!expanded;
   if(INV_SYNTHETIC_PREVIEW)INV_BROWSE_SECTIONS_MEMORY[name]=!expanded;else try{const state=JSON.parse(localStorage.getItem(INV_BROWSE_SECTIONS_KEY)||"{}");state[name]=!expanded;localStorage.setItem(INV_BROWSE_SECTIONS_KEY,JSON.stringify(state));}catch(_){}
   if(typeof invScheduleFrameFit==="function")invScheduleFrameFit();
-  invSidebarTrackPill();
   return true;
 }
 function invApplySidebarSectionState(sidebar){
@@ -9463,20 +9371,12 @@ function invInitSidebarSections(sidebar){
     const inner=document.createElement("div");inner.className="inv-sidebar-section-inner";
     while(content.firstChild)inner.appendChild(content.firstChild);
     content.appendChild(inner);
-    const labels={status:"Update status",tools:"Actions",library:"Saved views","video-chain-picks":"Video picks",categories:"Effects"};
-    const subgroup=document.createElement("div");subgroup.className="inv-sidebar-subgroup";subgroup.textContent=labels[name];
-    const nav=inner.querySelector(".inv-sidebar-nav");if(nav)nav.prepend(subgroup);
-    const count=document.createElement("span");count.className="inv-sidebar-heading-count";count.textContent=String(inner.querySelectorAll(".inv-side-button").length);
-    toggle.innerHTML='<span class="inv-sidebar-heading-label">'+toggle.textContent+'</span><span class="inv-sidebar-selected-dot" aria-hidden="true"></span>';
-    toggle.append(count);
-    const chevron=document.createElement("span");chevron.className="inv-sidebar-chevron";chevron.setAttribute("aria-hidden","true");toggle.append(chevron);
+    toggle.innerHTML='<span class="inv-sidebar-heading-label">'+toggle.textContent+'</span>';
+    const chevron=document.createElement("span");chevron.className="inv-sidebar-chevron";chevron.setAttribute("aria-hidden","true");chevron.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 12h14"/><path class="inv-fold-plus" d="M12 5v14"/></svg>';toggle.append(chevron);
     toggle.addEventListener("click",()=>invSidebarSetSection(name));
-    content.addEventListener("transitionend",invSidebarPlacePill);
   });
-  const pill=document.createElement("span");pill.className="inv-sidebar-pill";pill.setAttribute("aria-hidden","true");sidebar.appendChild(pill);
   invApplySidebarSectionState(sidebar);
-  window.addEventListener("resize",()=>{invApplySidebarSectionState(sidebar);invSidebarPlacePill();},{passive:true});
-  sidebar.addEventListener("scroll",invSidebarPlacePill,{passive:true});
+  window.addEventListener("resize",()=>invApplySidebarSectionState(sidebar),{passive:true});
 }
 function invScanButtonAction(){return pcCompanionConnected?pcCompanionScan():invScanNow({allowPrompt:true});}
 function invInit(){
@@ -12866,7 +12766,7 @@ Tabs:
 - community (Community) — social presence
 
 Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull up the Plugin Library" — keep it natural, ONE short phrase. Do NOT say "I\'m calling switch_tab" or any other meta narration. Don\'t switch tabs gratuitously — only when it\'s genuinely the right surface for what he asked.`,parameters:{type:'object',properties:{tab:{type:'string',enum:['chain','knowledge','eq','library','marketing','community','snapshots'],description:'The tab id to switch to.'}},required:['tab']}},
-  {type:'function',name:'inventory_navigate',description:'Navigate the live AIMM inventory sidebar. This opens the Plugins tab if needed, then selects the requested status, Library filter, category, or tool. Returns a snapshot of the whole sidebar plus the selected live view. This changes only the visible view; it does not scan, download, share, or add anything. Use it whenever Kev asks to open or inspect one of the AIMM inventory menu items. Disabled items return their current unavailable reason; connected items can open their existing screen.',parameters:{type:'object',properties:{item:{type:'string',enum:['all_plugins','updates_available','up_to_date','manual_check','vendor_app','unchecked','stale_results','check_errors','install_manager','batch_management','remove_old_installers','duplicates','unused','license_vault','share_plugin_list','compare_profiles','aimm_license','ilok_license_manager','library_all_plugins','plugin_compatibility','favorites','my_tags','tag_manager','hidden','eq_filter','dynamics','pitch_modulation','reverb','delay','distortion_amps','utility_metering','imaging','instruments_midi','restoration','channel_strips_multi_fx','status_section','tools_section','library_section'],description:'The exact AIMM inventory sidebar item to open.'}},required:['item']}},
+  {type:'function',name:'inventory_navigate',description:'Navigate the live AIMM inventory sidebar. This opens the Plugins tab if needed, then selects the requested status, Library filter, category, or tool. Returns a snapshot of the whole sidebar plus the selected live view. This changes only the visible view; it does not scan, download, share, or add anything. Use it whenever Kev asks to open or inspect one of the AIMM inventory menu items. Disabled items return their current unavailable reason; connected items can open their existing screen.',parameters:{type:'object',properties:{item:{type:'string',enum:['all_plugins','updates_available','up_to_date','manual_check','vendor_app','unchecked','stale_results','check_errors','install_manager','batch_management','remove_old_installers','duplicates','unused','license_vault','share_plugin_list','compare_profiles','aimm_license','ilok_license_manager','library_all_plugins','favorites','my_tags','tag_manager','hidden','eq_filter','dynamics','pitch_modulation','reverb','delay','distortion_amps','utility_metering','imaging','instruments_midi','restoration','channel_strips_multi_fx','status_section','tools_section','library_section'],description:'The exact AIMM inventory sidebar item to open.'}},required:['item']}},
   {type:'function',name:'inventory_search',description:'Read the current local AIMM scan without changing the visible Plugins view. Returns product status and known latest versions; synthetic preview rows are not proof of installed plug-ins. Use scan results to verify an installed plug-in before discussing it or adding it to a MixBus.',parameters:{type:'object',properties:{query:{type:'string',description:'Words from the plug-in or publisher name; an empty query lists the current scanned inventory.'},format:{type:'string',enum:['AU','VST2','VST3','CLAP'],description:'Optional exact plug-in format filter.'},status:{type:'string',enum:['updates_available','up_to_date','manual_check','vendor_app','unchecked'],description:'Optional product update status filter.'},offset:{type:'integer',minimum:0,description:'Zero-based result offset for paging.'},limit:{type:'integer',minimum:1,maximum:50,description:'Number of product results to return, maximum 50.'}},required:[]}},
   {type:'function',name:'inventory_summary',description:'Read the current local AIMM scan totals, formats, update statuses and leading vendors without changing the visible Plugins view. Does not scan folders.',parameters:{type:'object',properties:{},required:[]}},
   {type:'function',name:'inventory_set_favorite',description:'Star or unstar an exact scanned plug-in in the Plugins tab Favorites. If a name matches several publishers, supply the publisher from inventory_search. Report the returned result accurately; no confirmation is needed.',parameters:{type:'object',properties:{plugin:{type:'string',description:'Exact scanned plug-in name returned by inventory_search.'},publisher:{type:'string',description:'Exact publisher returned by inventory_search; required when the plug-in name is ambiguous.'},favorite:{type:'boolean',description:'True to star, false to unstar.'}},required:['plugin','favorite']}},
@@ -17306,7 +17206,7 @@ function invRenderVocalFavorites(){
   const star=(item,stock=false)=>{const on=stock?vocalReadStock().includes(item.name):invIsFavorite(item.name,item.publisher);return '<button type="button" class="inv-fav fav-card-star'+(on?' on':'')+'" data-fav-star="'+esc(stock?stockKey(item):key(item))+'" aria-pressed="'+on+'" aria-label="'+(on?'Remove':'Add')+' '+esc(item.name)+' '+(on?'from':'to')+' Favorites">'+(on?'★':'☆')+'</button>'};
   const tick=itemKey=>'<input type="checkbox" data-fav-pick="'+esc(itemKey)+'" aria-label="Select '+esc(itemKey.split('|').slice(1).join('|'))+'"'+(INV_FAV_SELECTED.has(itemKey)?' checked':'')+'>';
   const tag=(label,kind='')=>'<span class="fav-tag '+kind+'">'+esc(label)+'</span>';
-  let html='<div class="vocal-fav-head"><div><h2>Video chain picks</h2><small>Video picks and installed alternatives <span id="vocalFavCount" class="fav-starred-note">&middot; '+starredHere+' starred on '+({vocal:'Vocal',drums:'Drums','808':'808',master:'Master bus'}[INV_FAV_CHAIN]||'this chain')+'</span></small></div></div><div class="fav-switch" aria-label="Chain">'+[['vocal','Vocal'],['drums','Drums'],['808','808'],['master','Master bus']].map(([k,label])=>'<button type="button" data-fav-chain="'+k+'" class="'+(k===INV_FAV_CHAIN?'on':'')+'">'+label+'</button>').join('')+'</div><div class="fav-toolbar"><div class="fav-switch" aria-label="View">'+[['owned','Owned'],['stock','Stock Plugins (Logic Pro 13)'],['missing','Not installed']].map(([k,label])=>'<button type="button" data-fav-view="'+k+'" class="'+(k===view?'on':'')+'">'+label+'</button>').join('')+'</div><input id="favSearch" type="search" placeholder="Search plug-ins" aria-label="Search chain favourites" value="'+esc(INV_FAV_QUERY)+'"><select id="favSort" aria-label="Sort chain favourites"><option value="videos"'+(INV_FAV_SORT==='videos'?' selected':'')+'>Most-used videos first</option><option value="name"'+(INV_FAV_SORT==='name'?' selected':'')+'>Name A–Z</option></select></div>';
+  let html='<div class="vocal-fav-head"><div><h2>Video chain picks</h2><small>Video picks and installed alternatives <span id="vocalFavCount" class="fav-starred-note">&middot; '+starredHere+' starred on '+({vocal:'Vocal',drums:'Drums','808':'808',master:'Master bus'}[INV_FAV_CHAIN]||'this chain')+'</span></small></div></div><div class="fav-switch" aria-label="Chain">'+[['vocal','Vocal'],['drums','Drums'],['808','808'],['master','Master bus']].map(([k,label])=>'<button type="button" data-fav-chain="'+k+'" class="'+(k===INV_FAV_CHAIN?'on':'')+'">'+label+'</button>').join('')+'</div><div class="fav-toolbar"><div class="fav-switch" aria-label="View">'+[['owned','Owned'],['stock','Logic Pro stock'],['missing','Not installed']].map(([k,label])=>'<button type="button" data-fav-view="'+k+'" class="'+(k===view?'on':'')+'">'+label+'</button>').join('')+'</div><input id="favSearch" type="search" placeholder="Search plug-ins" aria-label="Search chain favourites" value="'+esc(INV_FAV_QUERY)+'"><select id="favSort" aria-label="Sort chain favourites"><option value="videos"'+(INV_FAV_SORT==='videos'?' selected':'')+'>Most-used videos first</option><option value="name"'+(INV_FAV_SORT==='name'?' selected':'')+'>Name A–Z</option></select></div>';
   html+='<div class="fav-selection"><button type="button" data-fav-group="select">Select all</button><button type="button" data-fav-group="clear">Clear</button><span id="favSelectedCount">'+selected.length+' selected</span><button type="button" class="inv-btn primary" id="vocalFavApply"'+(selected.length?'':' disabled')+'>Apply '+selected.length+' selected to Favorites</button></div><div id="vocalFavStatus" role="status"></div>';
   html+='<div class="fav-grid">';
   for(const item of rows){
@@ -17507,7 +17407,7 @@ async function handleToolCall(name,args){
           status_section:{section:'status',label:'Status'},tools_section:{section:'tools',label:'Tools'},library_section:{section:'library',label:'Library'},
           all_plugins:{selector:'[data-inv-scope="all"]',label:'All plugins'},updates_available:{selector:'[data-inv-scope="updates"]',label:'Updates available'},up_to_date:{selector:'[data-inv-scope="up-to-date"]',label:'Up to date'},manual_check:{selector:'[data-inv-scope="manual-check"]',label:'Manual check'},vendor_app:{selector:'[data-inv-scope="vendor-app"]',label:'Vendor app'},unchecked:{selector:'[data-inv-scope="unchecked"]',label:'Unchecked'},stale_results:{selector:'[data-inv-scope="stale"]',label:'Stale results'},check_errors:{selector:'[data-inv-scope="error"]',label:'Check errors'},
           install_manager:{selector:'[data-inv-local-tool="install-manager"]',label:'Install Manager'},batch_management:{selector:'[data-inv-local-tool="batch-management"]',label:'Batch Plug-in Management'},remove_old_installers:{selector:'[data-inv-local-tool="remove-old-installers"]',label:'Remove Old Installers'},duplicates:{selector:'[data-inv-local-tool="duplicates"]',label:'Check for Duplicates'},unused:{selector:'[data-inv-local-tool="unused"]',label:'Unused plug-ins'},license_vault:{selector:'[data-inv-local-tool="license-vault"]',label:'License Key Vault'},share_plugin_list:{selector:'[data-inv-local-tool="share-plugin-list"]',label:'Share Plugin List'},compare_profiles:{selector:'[data-inv-local-tool="compare-profiles"]',label:'Compare Plugin Profiles'},aimm_license:{selector:'[data-inv-local-tool="license"]',label:'AIMM License'},ilok_license_manager:{selector:'[data-inv-local-tool="ilok-license-manager"]',label:'iLok License Manager'},
-          library_all_plugins:{selector:'[data-inv-open-all-plugins]',label:'All Plugins'},plugin_compatibility:{label:'Plugin Compatibility'},favorites:{selector:'[data-inv-scope="favorites"]',label:'Favorites'},my_tags:{selector:'[data-inv-scope="tags"]',label:'My tags'},tag_manager:{selector:'[data-inv-tag-manager]',label:'Tag Manager'},hidden:{selector:'[data-inv-scope="hidden"]',label:'Hidden'},
+          library_all_plugins:{selector:'[data-inv-open-all-plugins]',label:'All Plugins'},favorites:{selector:'[data-inv-scope="favorites"]',label:'Favorites'},my_tags:{selector:'[data-inv-scope="tags"]',label:'My tags'},tag_manager:{selector:'[data-inv-tag-manager]',label:'Tag Manager'},hidden:{selector:'[data-inv-scope="hidden"]',label:'Hidden'},
           eq_filter:{category:'EQ & Filter',label:'EQ & Filter'},dynamics:{category:'Dynamics',label:'Dynamics'},pitch_modulation:{category:'Pitch & Modulation',label:'Pitch & Modulation'},reverb:{category:'Reverb',label:'Reverb'},delay:{category:'Delay',label:'Delay'},distortion_amps:{category:'Distortion & Amps',label:'Distortion & Amps'},utility_metering:{category:'Utility & Metering',label:'Utility & Metering'},imaging:{category:'Imaging',label:'Imaging'},instruments_midi:{category:'Instruments & MIDI',label:'Instruments & MIDI'},restoration:{category:'Restoration',label:'Restoration'},channel_strips_multi_fx:{category:'Channel Strips & Multi-FX',label:'Channel Strips & Multi-FX'}
         };
         const target=targets[item];if(!target)throw new Error('Unknown AIMM inventory menu item: '+item);

@@ -2,7 +2,7 @@
 /* Jules sidebar v3 preview - CSS only, nothing committed */
 /* 1. Fluid width: grows with text size, never below 236px, never over a third of the screen */
 @media(min-width:761px){
-#library .inv-layout:not(.is-collapsed){grid-template-columns:clamp(236px,calc(236px * var(--inv-text-scale,1)),34vw) minmax(0,1fr)}
+#library .inv-layout:not(.is-collapsed){grid-template-columns:clamp(280px,calc(280px * var(--inv-text-scale,1)),32vw) minmax(0,1fr)}
 }
 #library #invSidebar{padding:14px 12px 16px;min-width:0}
 /* 2. Header: collapse arrow alone, right-aligned, slim row; no title (Kevin 21 Nov) */
@@ -75,4 +75,47 @@
 #library #invSidebar [data-vocal-view="owned"]{--vp-icon:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.6%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%228%22/%3E%3Cpath d=%22m8.5 12.3 2.4 2.4 4.6-5%22/%3E%3C/svg%3E")}
 #library #invSidebar [data-vocal-view="stock"]{--vp-icon:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.6%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M12 3.5 19.5 7.5v9L12 20.5l-7.5-4v-9Z%22/%3E%3Cpath d=%22M4.8 7.7 12 11.8l7.2-4.1M12 11.8v8.4%22/%3E%3C/svg%3E")}
 #library #invSidebar [data-vocal-view="missing"]{--vp-icon:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.6%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%228%22 stroke-dasharray=%223 3%22/%3E%3C/svg%3E")}
+/* RAIL SIZE (Kevin 21 Nov: icons too small, column too narrow). Rail 80px at 100% text (72-104px), padding 12px, icon slot 32px, glyph 26px, row/selected square 56px high, gap 6px, header icon 28px in a 48x44 target. All scale with --inv-text-scale. */
+@media(min-width:761px){#library .inv-layout.is-collapsed{grid-template-columns:clamp(72px,calc(80px * var(--inv-text-scale,1)),104px) minmax(0,1fr)}}
+@media(max-width:760px){#library .inv-layout{grid-template-columns:clamp(72px,calc(80px * var(--inv-text-scale,1)),104px) minmax(0,1fr)}}
+#library #invSidebar.is-collapsed{padding-left:12px;padding-right:12px}
+#library #invSidebar.is-collapsed .inv-sidebar-head{justify-content:center;padding:4px 0 14px;margin:0}
+#library #invSidebar.is-collapsed .inv-sidebar-head button{min-width:calc(48px * var(--inv-text-scale,1));min-height:calc(44px * var(--inv-text-scale,1))}
+#library #invSidebar.is-collapsed .inv-sidebar-head button::before{width:calc(28px * var(--inv-text-scale,1));height:calc(28px * var(--inv-text-scale,1));-webkit-mask-size:calc(28px * var(--inv-text-scale,1)) calc(28px * var(--inv-text-scale,1));mask-size:calc(28px * var(--inv-text-scale,1)) calc(28px * var(--inv-text-scale,1))}
+#library #invSidebar.is-collapsed .inv-side-count{display:none!important}
+#library #invSidebar.is-collapsed .inv-sidebar-nav{gap:6px}
+#library #invSidebar.is-collapsed .inv-sidebar-section-inner .inv-sidebar-nav{gap:6px}
+#library #invSidebar.is-collapsed .inv-side-button{min-height:calc(56px * var(--inv-text-scale,1));height:calc(56px * var(--inv-text-scale,1));padding:0;border-radius:12px}
+#library #invSidebar.is-collapsed .inv-side-icon{width:calc(32px * var(--inv-text-scale,1));height:calc(32px * var(--inv-text-scale,1))}
+#library #invSidebar.is-collapsed .inv-side-icon svg{width:calc(28px * var(--inv-text-scale,1));height:calc(28px * var(--inv-text-scale,1))}
+#library #invSidebar.is-collapsed [data-vocal-view]::before{width:calc(32px * var(--inv-text-scale,1));height:calc(32px * var(--inv-text-scale,1));-webkit-mask-size:calc(28px * var(--inv-text-scale,1)) calc(28px * var(--inv-text-scale,1));mask-size:calc(28px * var(--inv-text-scale,1)) calc(28px * var(--inv-text-scale,1))}
+@media(max-width:760px){
+#library #invSidebar{padding-left:12px;padding-right:12px}
+#library #invSidebar .inv-sidebar-head{justify-content:center;padding:4px 0 14px;margin:0}
+#library #invSidebar .inv-sidebar-head button{min-width:calc(48px * var(--inv-text-scale,1));min-height:calc(44px * var(--inv-text-scale,1))}
+#library #invSidebar .inv-sidebar-head button::before{width:calc(28px * var(--inv-text-scale,1));height:calc(28px * var(--inv-text-scale,1));-webkit-mask-size:calc(28px * var(--inv-text-scale,1)) calc(28px * var(--inv-text-scale,1));mask-size:calc(28px * var(--inv-text-scale,1)) calc(28px * var(--inv-text-scale,1))}
+#library #invSidebar .inv-side-count{display:none!important}
+#library #invSidebar .inv-sidebar-nav{gap:6px}
+#library #invSidebar .inv-sidebar-section-inner .inv-sidebar-nav{gap:6px}
+#library #invSidebar .inv-side-button{min-height:calc(56px * var(--inv-text-scale,1));height:calc(56px * var(--inv-text-scale,1));padding:0;border-radius:12px}
+#library #invSidebar .inv-side-icon{width:calc(32px * var(--inv-text-scale,1));height:calc(32px * var(--inv-text-scale,1))}
+#library #invSidebar .inv-side-icon svg{width:calc(28px * var(--inv-text-scale,1));height:calc(28px * var(--inv-text-scale,1))}
+#library #invSidebar [data-vocal-view]::before{width:calc(32px * var(--inv-text-scale,1));height:calc(32px * var(--inv-text-scale,1));-webkit-mask-size:calc(28px * var(--inv-text-scale,1)) calc(28px * var(--inv-text-scale,1));mask-size:calc(28px * var(--inv-text-scale,1)) calc(28px * var(--inv-text-scale,1))}
+}
+@media(min-width:761px){
+/* EXPANDED SIDEBAR sizes (Kevin 21 Nov: everything too small). Width 280px base (was 236), icon slot 28px / glyph 24px, row min-height 46px, row text 15px, count 15px, heading 16px bold in a 48px bar, fold icon 22px, header icon 24px in a 40x36 target. */
+#library #invSidebar:not(.is-collapsed) .inv-side-icon{width:calc(28px * var(--inv-text-scale,1));height:calc(28px * var(--inv-text-scale,1))}
+#library #invSidebar:not(.is-collapsed) .inv-side-icon svg{width:calc(24px * var(--inv-text-scale,1));height:calc(24px * var(--inv-text-scale,1))}
+#library #invSidebar:not(.is-collapsed) .inv-side-button{min-height:calc(46px * var(--inv-text-scale,1));padding:8px 12px;gap:12px;font-size:calc(15px * var(--inv-text-scale,1));border-radius:10px}
+#library #invSidebar:not(.is-collapsed) .inv-side-count{font-size:calc(15px * var(--inv-text-scale,1))!important}
+#library #invSidebar:not(.is-collapsed) [data-vocal-view]::before{width:calc(28px * var(--inv-text-scale,1));height:calc(28px * var(--inv-text-scale,1));-webkit-mask-size:calc(24px * var(--inv-text-scale,1)) calc(24px * var(--inv-text-scale,1));mask-size:calc(24px * var(--inv-text-scale,1)) calc(24px * var(--inv-text-scale,1))}
+#library #invSidebar:not(.is-collapsed) .inv-sidebar-section-toggle{min-height:calc(48px * var(--inv-text-scale,1));font-size:calc(16px * var(--inv-text-scale,1))}
+#library #invSidebar:not(.is-collapsed) .inv-sidebar-heading-label{font-size:calc(16px * var(--inv-text-scale,1))}
+#library #invSidebar:not(.is-collapsed) .inv-sidebar-section-inner .inv-sidebar-nav{gap:3px}
+#library #invSidebar:not(.is-collapsed) .inv-sidebar-head{min-height:calc(36px * var(--inv-text-scale,1))}
+#library #invSidebar:not(.is-collapsed) .inv-sidebar-head button{min-width:calc(40px * var(--inv-text-scale,1));min-height:calc(36px * var(--inv-text-scale,1))}
+#library #invSidebar:not(.is-collapsed) .inv-sidebar-head button::before{width:calc(24px * var(--inv-text-scale,1));height:calc(24px * var(--inv-text-scale,1));-webkit-mask-size:calc(24px * var(--inv-text-scale,1)) calc(24px * var(--inv-text-scale,1));mask-size:calc(24px * var(--inv-text-scale,1)) calc(24px * var(--inv-text-scale,1))}
+#library #invSidebar:not(.is-collapsed) .inv-sidebar-chevron,#library #invSidebar:not(.is-collapsed) .inv-sidebar-chevron::after{width:calc(22px * var(--inv-text-scale,1))!important;height:calc(22px * var(--inv-text-scale,1))!important;-webkit-mask-size:calc(22px * var(--inv-text-scale,1)) calc(22px * var(--inv-text-scale,1))!important;mask-size:calc(22px * var(--inv-text-scale,1)) calc(22px * var(--inv-text-scale,1))!important}
+}
+}
 </style>

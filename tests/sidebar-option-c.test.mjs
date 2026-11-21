@@ -13,7 +13,11 @@ test('Browse has five sections and keeps existing item hooks in their intended s
   assert.match(library,/data-inv-scope="favorites"/);
   assert.doesNotMatch(library,/data-vocal-view=/);
   assert.deepEqual([...picks.matchAll(/data-vocal-view="([^"]+)"/g)].map(match=>match[1]),['owned','stock','missing']);
-  assert.match(picks,/VIDEO CHAIN PICKS/);
+  assert.match(picks,/>Video chain picks<\/button>/);
+  assert.match(picks,/data-vocal-view="stock" aria-label="Logic Pro stock" title="Logic Pro stock"><span class="inv-side-icon"/);
+  assert.equal([...picks.matchAll(/data-vocal-view="[^"]+"[^>]*><span class="inv-side-icon"/g)].length,3);
+  assert.doesNotMatch(sidebar,/Plugin Compatibility|Not licensed \(UAD\)|Counts are products|inv-tools-note|inv-folder-summary|BROWSE/);
+  assert.match(html,/<div class="settings-scan-folders"><strong>Scan folders<\/strong><span id="invSidebarFolderMeta">No folders connected<\/span><\/div>/);
   assert.match(html,/<h2>Video chain picks<\/h2>.*?starred on /);
 });
 
@@ -22,9 +26,21 @@ test('accordion preserves state and has one visual selection with accessible foc
   assert.match(html,/content\.classList\.toggle\("is-closed",!expanded\);content\.inert=!expanded/);
   assert.match(html,/selected\.forEach\(button=>\{if\(button!==preferred\)button\.classList\.remove\("active"\)/);
   assert.match(html,/const preferred=INV_SIDEBAR_TOOL_ACTIVE\?.*?:INV_VOCAL_VIEW\?/);
-  assert.match(html,/\.inv-sidebar-card\.is-current:has\(\.inv-sidebar-section-toggle\[aria-expanded="false"\]\) \.inv-sidebar-selected-dot/);
-  assert.match(html,/\.inv-sidebar-pill\.is-visible\{opacity:1;animation:invPillBreathe/);
+  assert.doesNotMatch(html,/inv-sidebar-selected-dot/);
+  assert.doesNotMatch(html,/inv-sidebar-pill|invSidebarPlacePill|invSidebarTrackPill|inv-sidebar-heading-count|inv-sidebar-subgroup/);
+  assert.match(html,/#library #invSidebar \.inv-side-button\.active,#library #invSidebar \.inv-side-button\.active:hover\{background:var\(--pv-teal\)!important/);
+  assert.match(html,/chevron\.innerHTML=.*inv-fold-plus/);
+  assert.match(html,/#library #invSidebar \[aria-expanded="true"\] \.inv-fold-plus\{display:none\}/);
+  assert.match(html,/grid-template-columns:clamp\(280px,calc\(280px \* var\(--inv-text-scale,1\)\),32vw\)/);
+  assert.match(html,/grid-template-columns:clamp\(72px,calc\(80px \* var\(--inv-text-scale,1\)\),104px\)/);
+  assert.match(html,/#library #invSidebar \.inv-side-icon\{[^}]*width:calc\(28px \* var\(--inv-text-scale,1\)\)/);
+  assert.match(html,/#library #invSidebar\.is-collapsed \.inv-side-count\{display:none!important\}/);
   assert.match(html,/\.inv-sidebar-section-toggle:focus-visible,#library #invSidebar \.inv-side-button:focus-visible\{outline:2px solid #36a8ed!important/);
   assert.match(html,/@media\(prefers-reduced-motion:reduce\).*animation:none!important/);
-  assert.match(html,/const AIMM_BUILD = '2026-11-20\.27'/);
+  assert.match(html,/const AIMM_BUILD = '2026-11-21\.4'/);
+});
+
+test('sidebar header stays above scrolling rows in every sidebar mode',()=>{
+  assert.match(html,/#library #invSidebar\{[^}]*overflow-y:auto/);
+  assert.match(html,/#library #invSidebar \.inv-sidebar-head\{[^}]*position:sticky;top:0;z-index:1;[^}]*background:#17191c;box-shadow:0 8px 0 #17191c/);
 });
