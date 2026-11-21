@@ -4868,6 +4868,12 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library #invSidebar [aria-expanded="false"] .inv-sidebar-chevron::after{border-color:var(--pm-dim)!important}
 #library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-chevron{background:var(--pv-black)}
 #library #invSidebar .inv-sidebar-card.is-current .inv-sidebar-chevron::after{border-color:var(--section-colour)!important}
+/* All section headings lit in their colour (Kevin, 21 Nov 2026); the section in use keeps its glow */
+#library #invSidebar .inv-sidebar-section-toggle,#library #invSidebar .inv-sidebar-section-toggle:hover:not(:disabled){background:var(--section-colour)!important;color:var(--pv-black)!important}
+#library #invSidebar .inv-sidebar-heading-count{color:var(--pv-black);background:rgba(11,13,16,.16)}
+#library #invSidebar .inv-sidebar-chevron{background:var(--pv-black)}
+#library #invSidebar .inv-sidebar-chevron::after{border-color:var(--section-colour)!important}
+#library #invSidebar .inv-sidebar-card{border-color:var(--section-colour)!important}
 #library #invSidebar .inv-sidebar-section-content{display:grid;grid-template-rows:1fr;min-width:0;transition:grid-template-rows .28s cubic-bezier(.4,0,.2,1),visibility 0s}
 #library #invSidebar .inv-sidebar-section-content.is-closed{grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .28s cubic-bezier(.4,0,.2,1),visibility 0s .28s}
 #library #invSidebar .inv-sidebar-section-inner{min-height:0;overflow:hidden;padding:6px}
@@ -5716,7 +5722,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-20.23';
+const AIMM_BUILD = '2026-11-20.24';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);

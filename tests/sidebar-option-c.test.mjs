@@ -26,5 +26,5 @@ test('accordion preserves state and has one visual selection with accessible foc
   assert.match(html,/\.inv-sidebar-pill\.is-visible\{opacity:1;animation:invPillBreathe/);
   assert.match(html,/\.inv-sidebar-section-toggle:focus-visible,#library #invSidebar \.inv-side-button:focus-visible\{outline:2px solid #36a8ed!important/);
   assert.match(html,/@media\(prefers-reduced-motion:reduce\).*animation:none!important/);
-  assert.match(html,/const AIMM_BUILD = '2026-11-20\.23'/);
+  assert.match(html,/const AIMM_BUILD = '2026-11-20\.24'/);
 });
