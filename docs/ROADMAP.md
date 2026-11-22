@@ -1,4 +1,4 @@
-## 2026-11-22 build 2026-11-22.5 — Library tab (BUILT, NOT DEPLOYED)
+## 2026-11-22 build 2026-11-22.8 — Library tab (LIVE)
 
 The approved Library design replaces the visible Insight and Snapshots tabs in `standalone/assets/index.html`. It keeps note and snapshot storage and recall, adds a to-review queue for Hope tips, six-category migration, video discovery with an approval list, and a Worker search route that excludes repo and dashboard videos by ID. The Worker was not deployed and the ElevenLabs agent was not registered with the new tool. All 171 Node tests pass; empty and populated layouts were rendered at 1900, 1300 and 560 pixels. Live Apify search/ingestion and ElevenLabs voice use remain unverified. No commit, push or deploy, per the build brief.
 
