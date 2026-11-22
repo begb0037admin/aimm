@@ -1,0 +1,27 @@
+<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>YouTube link preview</title>
+<style>
+:root{--s:1}body{margin:0;padding:16px;background:#0b0d10;color:#c4cad3;font:15px Inter,system-ui,sans-serif}
+.card{max-width:900px;border:1px solid #b970ff;border-radius:12px;background:#1a1d21;overflow:hidden;margin-bottom:16px}
+.bar{background:#b970ff;color:#0b0d10;font:700 calc(16px*var(--s))/1.25 Inter,sans-serif;padding:calc(12px*var(--s)) 14px}
+.tb{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:12px}
+.btn{min-height:calc(44px*var(--s));padding:0 calc(16px*var(--s));font:700 calc(15px*var(--s))/1.2 Inter,sans-serif;border:0;border-radius:10px;background:#2a2e35;color:#d5d8dc;cursor:pointer}
+.btn.amber{background:#2dd4bf;color:#0b0d10}.btn:hover,.btn:focus-visible{background:#fff;color:#0b0d10;outline:0}.btn:disabled{background:#2a2e35;color:#9aa0a6}
+.txt{background:transparent;color:#9aa0a6;padding:8px 6px;min-height:0;font-size:calc(14px*var(--s))}
+.kb-yt{display:flex;flex-wrap:wrap;gap:8px;padding:0 12px 12px}
+.kb-yt-in{flex:1 1 220px;min-height:calc(44px*var(--s));padding:0 calc(14px*var(--s));background:#2a2e35;border:0;border-radius:10px;color:#e5e7ea;font:calc(15px*var(--s)) Inter,sans-serif}
+.kb-yt-in::placeholder{color:#9aa0a6}.kb-yt-in:focus{outline:2px solid #b970ff;outline-offset:0}
+@media(max-width:480px){.kb-yt .btn{flex:1 1 100%}}
+.kb-yt-msg{flex:1 1 100%;font:calc(14px*var(--s))/1.45 Inter,sans-serif;color:#c4cad3;margin:0}.kb-yt-msg b{color:#e5e7ea;font-weight:600}
+.is-warn{color:#e8b45a}.is-stop{color:#f97316}.dim{color:#9aa0a6}
+.meter{height:2px;background:#2a2e35;margin:0 12px 10px}.meter i{display:block;width:50%;height:100%;background:#b970ff}
+.lbl{font-size:12px;color:#9aa0a6;padding:0 12px 4px}
+</style>
+<script>var q=new URLSearchParams(location.search).get('scale');if(q)document.documentElement.style.setProperty('--s',q)</script>
+<div class=card><div class=bar>Knowledge base</div>
+<div class=tb><button class="btn amber">Add note</button><button class=btn>Import</button><button class=btn>Add YouTube link</button><button class=btn>Export</button><button class="btn txt">Expand all</button><button class="btn txt">Collapse all</button></div>
+<div class=lbl>Open, empty (focused)</div><div class=kb-yt><input class=kb-yt-in placeholder="Paste a YouTube link" autofocus><button class="btn amber" disabled>Add</button></div>
+<div class=lbl>Working</div><div class=kb-yt><input class=kb-yt-in value="https://youtu.be/dQw4w9WgXcQ" readonly style="opacity:.7"><button class="btn amber" disabled>Adding...</button></div><div class=meter><i></i></div><p class="kb-yt-msg dim" style="padding:0 12px 12px">Filing it in Hope's library...</p>
+<div class=lbl>Success</div><div class=kb-yt><input class=kb-yt-in placeholder="Paste a YouTube link"><button class="btn amber" disabled>Add</button><p class=kb-yt-msg>Added: <b>How to mix 808s in a dense trap beat</b>, 42 chunks. Summary note added.</p></div>
+<div class=lbl>Already there</div><div class=kb-yt><p class=kb-yt-msg style="padding-left:0">Already in the library: <b>How to mix 808s in a dense trap beat</b>. No new note added.</p></div>
+<div class=lbl>Errors</div><div class=kb-yt><p class="kb-yt-msg is-warn">This video has no captions, so there is no transcript to add.</p><p class="kb-yt-msg is-warn">The transcript service is not available right now. Try again in a minute.</p><p class="kb-yt-msg is-warn">That is not a YouTube link. Paste a link from the Share button.</p><p class="kb-yt-msg is-stop">The monthly limit for adding videos has been reached. It resets next month.</p></div>
+</div>
