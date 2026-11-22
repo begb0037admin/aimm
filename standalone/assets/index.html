@@ -421,6 +421,67 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #chain>.tip-box.alt strong{color:#c8d1d2}
 @media(max-width:900px){#chain .chain-toolbar{margin:14px 0 20px;justify-content:flex-start;flex-wrap:wrap}}
 @media(max-width:560px){#chain .chain-toolbar{display:grid;grid-template-columns:1fr;gap:8px}#chain .chain-toolbar button{width:100%}#chain .bus-col{padding:14px 12px}#chain .bus-col h4{font-size:20px}#chain .bus-content{padding:14px}#chain .chain-item{flex-basis:170px;min-width:150px;padding:14px 18px}#chain .chain-panel{--mb-panel-side:14px;padding:16px var(--mb-panel-side)}#chain .chain-settings{gap:12px 18px}}
+/* MixBus uses the Library sidebar's card, row, and colour language. */
+#chain .bus-grid{gap:12px}
+#chain .bus-col[data-bus="master"]{--bus:#f97316}
+#chain .bus-col[data-bus="vocal"]{--bus:#e8b45a}
+#chain .bus-col[data-bus="808"]{--bus:#36a8ed}
+#chain .bus-col[data-bus="drums"]{--bus:#f472b6}
+#chain .bus-col[data-bus="fx"]{--bus:#b970ff}
+#chain .bus-col,#chain .bus-col.is-empty{padding:0;overflow:hidden;background:#1a1d21;border:1px solid var(--bus);border-radius:12px;box-shadow:none}
+#chain .bus-col h4,#chain .bus-col.is-empty h4{display:flex;align-items:center;gap:12px;height:auto;min-height:calc(48px * var(--inv-text-scale,1));margin:0;padding:8px 12px 8px 14px;background:var(--bus);color:#000;font:700 calc(16px * var(--inv-text-scale,1))/1.25 Inter,-apple-system,sans-serif;letter-spacing:0;cursor:pointer}
+#chain .bus-col h4:focus-visible{outline:2px solid #fff;outline-offset:-3px}
+#chain .bus-title{min-width:0}
+#chain .bus-fold{order:2;flex:none;width:calc(22px * var(--inv-text-scale,1));color:#000;font:500 calc(22px * var(--inv-text-scale,1))/1 Inter,sans-serif;text-align:center}
+#chain .bus-col h4 .clear-bus-btn{order:1;margin-left:auto;min-height:0;padding:4px 2px;border:0;border-radius:0;background:none;color:#000;font:600 calc(14px * var(--inv-text-scale,1)) Inter,-apple-system,sans-serif;opacity:.75}
+#chain .bus-col h4 .clear-bus-btn:hover,#chain .bus-col h4 .clear-bus-btn:focus-visible{background:none;color:#000;opacity:1;text-decoration:underline;outline:0}
+#chain .bus-col h4:not(:has(.clear-bus-btn)) .bus-fold{margin-left:auto}
+#chain .bus-content{min-height:0;padding:8px 6px;background:none;border-radius:0}
+#chain .bus-col.is-empty .bus-content{display:block}
+#chain .bus-col .bus-content[hidden]{display:none}
+#chain .chain-list{flex-direction:column;flex-wrap:nowrap;align-items:stretch;row-gap:3px}
+#chain .chain-item{flex:none;display:flex;flex-direction:row;align-items:center;gap:12px;min-width:0;min-height:calc(46px * var(--inv-text-scale,1));margin:0;padding:8px 12px;background:transparent;box-shadow:none;border-radius:10px;cursor:grab}
+#chain .chain-item::after{display:none}
+#chain .chain-item .row-icon{flex:none;display:inline-flex;width:calc(28px * var(--inv-text-scale,1));height:calc(28px * var(--inv-text-scale,1));align-items:center;justify-content:center;color:#aab2bd}
+#chain .chain-item .row-icon svg{width:calc(24px * var(--inv-text-scale,1));height:calc(24px * var(--inv-text-scale,1));stroke:currentColor}
+#chain .chain-head{flex:1 1 0;min-width:0;display:flex;align-items:baseline;flex-wrap:wrap;column-gap:12px}
+#chain .chain-head .name{flex:1 1 auto;min-width:0;display:block;padding:0;color:#c4cad3;font:500 calc(15px * var(--inv-text-scale,1))/1.3 Inter,-apple-system,sans-serif;text-wrap:balance;overflow-wrap:break-word}
+#chain .chain-meta{display:block;flex:0 1 auto;max-width:100%;margin-left:auto;color:#9aa0a6;font:500 calc(13px * var(--inv-text-scale,1))/1.3 Inter,-apple-system,sans-serif;text-align:right;text-wrap:balance;overflow-wrap:break-word}
+#chain .chain-actions{position:static;flex:none;display:flex}
+#chain .chain-actions button{width:calc(28px * var(--inv-text-scale,1));height:calc(28px * var(--inv-text-scale,1));padding:0;border:0;border-radius:0;background:none;color:#9aa0a6;font-size:calc(20px * var(--inv-text-scale,1));outline:0}
+#chain .chain-actions button:hover,#chain .chain-actions button:focus-visible{outline:0;background:none}
+#chain .chain-item:hover:not(.selected),#chain .chain-item:focus-visible:not(.selected){background:var(--bus);outline:0}
+#chain .chain-item:hover:not(.selected) :is(.row-icon,.name,.chain-meta,.chain-actions button),#chain .chain-item:focus-visible:not(.selected) :is(.row-icon,.name,.chain-meta,.chain-actions button){color:#000}
+#chain .chain-item.selected,#chain .chain-item.selected:hover,#chain .chain-item.selected:focus-visible{background:#2dd4bf;box-shadow:none;outline:0}
+#chain .chain-item.selected :is(.row-icon,.name,.chain-meta,.chain-actions button){color:#000}
+#chain .chain-item.selected .name{font-weight:700}
+#chain .chain-list .sortable-ghost{opacity:.4;background:var(--bus)}
+#chain .chain-list .sortable-drag{opacity:.95;background:var(--bus);box-shadow:0 8px 24px rgba(0,0,0,.55)}
+#chain .chain-list .sortable-drag :is(.row-icon,.name,.chain-meta,.chain-actions button){color:#000}
+#chain .chain-list>.chain-add{flex:none;display:flex;align-self:stretch;align-items:center;justify-content:flex-start;gap:12px;width:auto;height:auto;min-width:0;min-height:calc(46px * var(--inv-text-scale,1));padding:8px 12px;border:0;border-radius:10px;background:transparent;color:#c4cad3;font:500 calc(15px * var(--inv-text-scale,1))/1.3 Inter,-apple-system,sans-serif;text-align:left}
+#chain .chain-list>.chain-add .add-icon{display:inline-flex;flex:none;align-items:center;justify-content:center;width:calc(28px * var(--inv-text-scale,1));height:calc(28px * var(--inv-text-scale,1));color:#aab2bd;font:400 calc(24px * var(--inv-text-scale,1))/1 Inter,sans-serif}
+#chain .chain-list>.chain-add:hover,#chain .chain-list>.chain-add:focus-visible{background:var(--bus);color:#000;outline:0}
+#chain .chain-list>.chain-add:hover .add-icon,#chain .chain-list>.chain-add:focus-visible .add-icon{color:#000}
+#chain .bus-col .chain-panel{margin:0 6px 8px;padding:14px 14px 16px;background:transparent;border-top:1px solid #2a2e35;border-radius:0}
+#chain .chain-panel-title{font-weight:700;font-size:calc(16px * var(--inv-text-scale,1))}
+#chain .chain-panel-sub,#chain .chain-setting-label,#chain .chain-settings-empty{font-size:calc(13px * var(--inv-text-scale,1))}
+#chain .chain-setting-value{font-size:calc(20px * var(--inv-text-scale,1))}
+#chain .chain-setting-plain{font-size:calc(15px * var(--inv-text-scale,1))}
+#chain .chain-panel-edit{margin-right:0;min-height:0;padding:4px 2px;border:0;border-radius:0;background:none;color:var(--bus);font:700 calc(14px * var(--inv-text-scale,1)) Inter,-apple-system,sans-serif}
+#chain .chain-panel-edit:hover,#chain .chain-panel-edit:focus-visible{background:none;color:var(--bus);text-decoration:underline;outline:0}
+#chain .chain-edit-actions button{min-height:calc(40px * var(--inv-text-scale,1));padding:8px 14px;border:0;border-radius:10px;font:700 calc(14px * var(--inv-text-scale,1)) Inter,-apple-system,sans-serif}
+#chain .chain-edit-actions .save{background:#2dd4bf;color:#000}
+#chain .chain-edit-actions .cancel,#chain .chain-edit-actions .restore{background:#252a30;color:#d5d8dc}
+#chain .chain-edit-actions button:hover,#chain .chain-edit-actions button:focus-visible{background:#fff;color:#000;outline:0}
+#chain .chain-toolbar button{height:calc(44px * var(--inv-text-scale,1));padding:0 22px;border-radius:10px;color:#000;font:700 calc(15px * var(--inv-text-scale,1)) Inter,-apple-system,sans-serif}
+#chain #presetsBtn{background:#b970ff;color:#000}
+#chain #autoFillBtn{background:#2dd4bf;color:#000}
+#chain #revertFillBtn{background:#1a1d21;color:#d5d8dc;box-shadow:none}
+#chain .chain-toolbar button:hover,#chain .chain-toolbar button:focus-visible{filter:none;background:#fff;color:#000}
+#chain #presetsBtn:hover,#chain #presetsBtn:focus-visible,#chain #autoFillBtn:hover,#chain #autoFillBtn:focus-visible,#chain #revertFillBtn:hover,#chain #revertFillBtn:focus-visible{background:#fff;color:#000}
+#chain .chain-toolbar-hint{width:auto;height:auto;padding:0 4px;border:0;color:#9aa0a6;font:700 calc(18px * var(--inv-text-scale,1)) Inter,sans-serif;cursor:help}
+#chain .chain-toolbar-hint::after{content:none}
+@media(max-width:560px){#chain .bus-col,#chain .bus-col.is-empty{padding:0}#chain .bus-col h4,#chain .bus-col.is-empty h4{font-size:calc(16px * var(--inv-text-scale,1))}#chain .bus-content{padding:8px 6px}#chain .chain-item{min-width:0;padding:8px 12px}#chain .bus-col .chain-panel{padding:14px 14px 16px}}
 .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center;padding:20px}
 .modal-backdrop.open{display:flex}
 .modal{background:#1f2937;border:1px solid #374151;border-radius:12px;width:100%;max-width:720px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
@@ -3409,10 +3470,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     <button class="btn ghost sm" id="presetsBtn">Load preset</button>
     <button class="btn ghost sm" id="autoFillBtn" title="Luna fills missing settings, revises ones that need updating, and keeps the rest.">Auto-fill settings</button>
     <button class="btn ghost sm" id="revertFillBtn" title="Restore the chain to the state before the last auto-fill" style="display:none">↺ Revert last fill</button>
-    <span class="chain-toolbar-hint" title="Drag plugins to reorder within a bus. Hope can read and edit the chain during a live call.">Drag plugins to reorder within a bus. Hope can read and edit the chain during a live call.</span>
+    <span class="chain-toolbar-hint" title="Drag plugins to reorder within a bus. Hope can read and edit the chain during a live call. x removes.">?</span>
   </div>
   <div class="bus-grid" id="busGrid"></div>
-  <div class="tip-box alt"><strong>How to use:</strong> click "+ Add plugin" on any bus, search, click to add. Drag to reorder, × to remove. Bring the chain into a chat with Luna in Hope's chat, then hit <strong>Snapshot → Luna chat</strong> to save the discussion as a Session Snapshot pill next to START CALL.</div>
 </div>
 
 <!-- Repair tab (#meter) retired — Troubleshooter moved to Mix Check (#eq), P-C 2026-06-04 -->
@@ -5662,7 +5722,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-21.8';
+const AIMM_BUILD = '2026-11-21.9';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -6851,6 +6911,15 @@ document.getElementById('copyModalSelect').onclick=()=>{const ta=document.getEle
 const chainSelected = Object.create(null);
 const chainEditing = Object.create(null);
 const chainReplacement = Object.create(null);
+const CHAIN_FOLD_KEY = 'aimmMixBusFold_v1';
+const chainFold = (()=>{try{return JSON.parse(localStorage.getItem(CHAIN_FOLD_KEY))||{}}catch(_){return {}}})();
+function toggleChainBus(busId){
+  chainFold[busId]=chainFold[busId]!==false?false:true;
+  try{localStorage.setItem(CHAIN_FOLD_KEY,JSON.stringify(chainFold))}catch(_){}
+  const keepFocus=document.activeElement?.matches('#busGrid .bus-col h4');
+  renderChain();
+  if(keepFocus)document.querySelector(`#busGrid .bus-col[data-bus="${busId}"] h4`)?.focus();
+}
 function pluginStageLabel(p){return STAGES.find(stage=>stage.id===p.s)?.label||p.s||'Other';}
 function chainParts(notes){
   return String(notes||'').split(/\r?\n/).filter(line=>line.trim()).map(line=>{
@@ -6868,21 +6937,13 @@ function renderChain(){
     if(items.length&&!items.includes(chainSelected[b.id]))chainSelected[b.id]=items[0];
     if(!items.length){delete chainSelected[b.id];delete chainEditing[b.id];delete chainReplacement[b.id];}
     const rows=items.map((p,i)=>renderChainItem(b.id,p,i)).join('');
-    const clearBtn=items.length?`<button class="clear-bus-btn" type="button" title="Clear all plugins from this bus" onclick="clearBusFromUI('${escapeJs(b.id)}')">Clear</button>`:'';
-    const emptyAdd=items.length?'':`<button class="empty-add" type="button" title="Add plugin to ${escapeHtml(b.label)}" aria-label="Add plugin to ${escapeHtml(b.label)}" onclick="openPicker('${escapeJs(b.id)}')">+</button>`;
-    return `<div class="bus-col${items.length?'':' is-empty'}"><h4>${escapeHtml(b.label)} ${emptyAdd}${clearBtn}</h4><div class="bus-content"><div class="chain-list" data-bus="${escapeHtml(b.id)}">${rows}<button class="chain-add" type="button" title="Add plugin to ${escapeHtml(b.label)}" aria-label="Add plugin to ${escapeHtml(b.label)}" onclick="openPicker('${escapeJs(b.id)}')">+</button></div></div>${items.length?renderChainPanel(b.id):''}</div>`;
+    const clearBtn=items.length?`<button class="clear-bus-btn" type="button" title="Clear all plugins from this bus" onclick="event.stopPropagation();clearBusFromUI('${escapeJs(b.id)}')">Clear</button>`:'';
+    const open=chainFold[b.id]!==false;
+    return `<div class="bus-col${items.length?'':' is-empty'}${open?'':' is-closed'}" data-bus="${escapeHtml(b.id)}"><h4 role="button" tabindex="0" aria-expanded="${open}" aria-label="${escapeHtml(b.label)}" onclick="toggleChainBus('${escapeJs(b.id)}')" onkeydown="if(event.target===this&&(event.key==='Enter'||event.key===' ')){event.preventDefault();toggleChainBus('${escapeJs(b.id)}')}"><span class="bus-title">${escapeHtml(b.label)}</span>${clearBtn}<span class="bus-fold" aria-hidden="true">${open?'−':'+'}</span></h4><div class="bus-content"${open?'':' hidden'}><div class="chain-list" data-bus="${escapeHtml(b.id)}">${rows}<button class="chain-add" type="button" title="Add plugin to ${escapeHtml(b.label)}" aria-label="Add plugin to ${escapeHtml(b.label)}" onclick="openPicker('${escapeJs(b.id)}')"><span class="add-icon" aria-hidden="true">+</span><span>Add plugin</span></button></div></div>${open&&items.length?renderChainPanel(b.id):''}</div>`;
   }).join('');
   initChainDragDrop();
   BUSES.forEach(b=>{if(chainEditing[b.id])renderReplacementList(b.id)});
-  requestAnimationFrame(updateChainConnectors);
 }
-function updateChainConnectors(){
-  document.querySelectorAll('#busGrid .chain-list').forEach(list=>{
-    const nodes=[...list.children];
-    nodes.forEach((node,i)=>{if(!node.classList.contains('chain-item'))return;node.classList.toggle('no-connector',!nodes[i+1]||Math.abs(node.getBoundingClientRect().top-nodes[i+1].getBoundingClientRect().top)>5)});
-  });
-}
-window.addEventListener('resize',updateChainConnectors);
 function initChainDragDrop(){
   if(typeof Sortable==='undefined')return;
   document.querySelectorAll('#busGrid .chain-list').forEach(host=>{
@@ -6908,7 +6969,8 @@ function clearBusFromUI(busId){
 function renderChainItem(busId,p,idx){
   const pub=PUBS[p.p]||PUBS.other;
   const pubName=p.p==='other'&&p.pLabel?p.pLabel:pub[0];
-  return `<div class="chain-item${chainSelected[busId]===p?' selected':''}" data-bus="${escapeHtml(busId)}" data-idx="${idx}" role="button" tabindex="0" aria-selected="${chainSelected[busId]===p}" aria-label="${escapeHtml(p.n)} settings" onclick="selectChainTile('${escapeJs(busId)}',${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectChainTile('${escapeJs(busId)}',${idx})}"><div class="chain-head"><span class="name">${escapeHtml(p.n)}</span><span class="stage">${escapeHtml(pluginStageLabel(p))}</span><span class="maker">${escapeHtml(pubName)}</span></div><div class="chain-actions"><button type="button" class="del" title="Remove plugin" aria-label="Remove ${escapeHtml(p.n)}" onclick="event.stopPropagation();removeChain('${escapeJs(busId)}',${idx})">×</button></div></div>`;
+  const icon=(STAGES.find(stage=>stage.id===p.s)?.icon||'').replace(/stroke="#fff"/g,'stroke="currentColor"').replace(/fill="#fff"/g,'fill="currentColor"');
+  return `<div class="chain-item${chainSelected[busId]===p?' selected':''}" data-bus="${escapeHtml(busId)}" data-idx="${idx}" role="button" tabindex="0" aria-selected="${chainSelected[busId]===p}" aria-label="${escapeHtml(p.n)} settings" onclick="selectChainTile('${escapeJs(busId)}',${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectChainTile('${escapeJs(busId)}',${idx})}"><span class="row-icon" aria-hidden="true">${icon}</span><div class="chain-head"><span class="name">${escapeHtml(p.n)}</span><span class="chain-meta">${escapeHtml(pluginStageLabel(p))} · ${escapeHtml(pubName)}</span></div><div class="chain-actions"><button type="button" class="del" title="Remove plugin" aria-label="Remove ${escapeHtml(p.n)}" onclick="event.stopPropagation();removeChain('${escapeJs(busId)}',${idx})">×</button></div></div>`;
 }
 function renderChainPanel(busId){
   const arr=STATE.chain[busId],p=chainSelected[busId],idx=arr.indexOf(p);
