@@ -3659,23 +3659,23 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
      etc.) keep finding their targets unchanged. -->
 
 <!-- KNOWLEDGE BASE -->
-<div class="panel" id="knowledge">
-  <div class="section-head">
-    <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4a2 2 0 0 1 2-2h12v18H6a2 2 0 0 0-2 2z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H18"/><path d="M14 2v8l-2.5-1.6L9 10V2"/></svg></span>Knowledge Base</h2>
-    <span class="blurb">Paste research from NotebookLM, YouTube transcripts, articles, or interview notes. Active notes are injected into Luna's prompt every chat & voice session.</span>
-  </div>
+<div class="panel" id="knowledge" ondragover="insightOpenDropCategory(event)">
+  <section class="insight-sec" data-sec="kb" id="insightKbSection">
+  <button class="sec-bar" type="button" onclick="insightToggleSection('kb')" aria-expanded="true"><span>Knowledge base</span><span class="sec-read" id="kbStats">0 of 0 active · 0 / 8000 bytes</span><span class="sec-fold" aria-hidden="true">−</span></button>
+  <div class="meter" id="kbMeter"><i></i></div>
+  <div class="sec-body">
   <div class="kb-toolbar">
-    <button class="btn amber sm" id="kbAdd">⊕ Add note</button>
-    <button class="btn ghost sm" id="kbExport" title="Download all notes as JSON">⬇ Export</button>
-    <button class="btn ghost sm" id="kbImport" title="Import a research note — drop PDF / DOCX / TXT / MD anywhere on this tab, or paste long text. Luna auto-extracts the title, tags + summary; the note saves Active with an undo toast. JSON exports also still merge here.">⬆ Import</button>
+    <button class="btn amber sm" id="kbAdd">＋ Add note</button>
+    <button class="btn ghost sm" id="kbImport" title="Import a research note — drop PDF / DOCX / TXT / MD anywhere on this tab, or paste long text. Hope auto-extracts the title, tags + summary; the note saves Active with an undo toast. JSON exports also still merge here.">↓ Import</button>
+    <button class="btn ghost sm" id="kbExport" title="Download all notes as JSON">↑ Export</button>
     <input type="file" id="kbImportFile" accept=".txt,.md,.markdown,.pdf,.docx,.json,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/markdown,application/json" multiple style="display:none">
     <button class="btn ghost sm" type="button" onclick="expandAllIn('#kbList'); knowledgeRender();" title="Expand every category card">Expand all</button>
     <button class="btn ghost sm" type="button" onclick="collapseAllIn('#kbList'); knowledgeRender();" title="Collapse every category card">Collapse all</button>
     <div style="flex:1"></div>
-    <span class="kb-bytes-meter" id="kbBytes" title="Total bytes injected into Hope's research digest (summary or raw per note). Amber ≥ 6000, red ≥ 8000.">0 / 8000 bytes</span>
-    <span class="kb-stats" id="kbStats">No notes yet.</span>
+    <span class="kb-bytes-meter" id="kbBytes" hidden title="Total bytes injected into Hope's research digest (summary or raw per note). Amber ≥ 6000, red ≥ 8000.">0 / 8000 bytes</span>
   </div>
   <div class="kb-list" id="kbList"></div>
+  </div></section>
 
   <!-- HOPE'S MEMORY — Profile editor relocated from the Hope tab in this
        batch. Same DOM IDs (profileText / profileSave / profileClear /
@@ -3684,10 +3684,10 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
        blob is auto-extracted by Luna at end-of-call from the voice transcript;
        feel free to hand-edit any time. Persisted in STATE.profile under
        trapMasterState_v1. -->
-  <div class="section-head" style="margin-top:28px;">
-    <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6z"/><path d="M19 3l.7 2.1L22 6l-2.3.9L19 9l-.7-2.1L16 6l2.3-.9z"/><path d="M5 16l.5 1.5L7 18l-1.5.5L5 20l-.5-1.5L3 18l1.5-.5z"/></svg></span>Hope's memory</h2>
-    <span class="blurb">Cross-conversation profile of you. Auto-extracted at end-of-call via Luna, hand-editable. Injected into every Hope conversation so she remembers across sessions.</span>
-  </div>
+  <section class="insight-sec" data-sec="memory" id="insightMemorySection">
+  <button class="sec-bar" type="button" onclick="insightToggleSection('memory')" aria-expanded="true"><span>Hope's memory</span><span class="sec-read" id="hopeMemStats">0 of 0 active · 0 / 2000 bytes</span><span class="sec-fold" aria-hidden="true">−</span></button>
+  <div class="meter" id="hopeMemMeter"><i></i></div>
+  <div class="sec-body">
   <div class="hope-memory-wrap" id="hopeMemoryContainer">
     <!-- HOPE'S MEMORY — fact-chip system (2026-05-12). Replaces the legacy
          2KB textarea blob with categorised, draggable, individually-deletable
@@ -3699,7 +3699,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
          to Misc with fuzzy dedup so manual edits survive. -->
     <div class="hope-memory-meta">
       <button class="btn purple sm" id="hopeMemAdd" type="button" onclick="promptAddFact('misc')" title="Add a fact manually — lands in Misc, drag it where you want">＋ Add fact</button>
-      <span class="hope-bytes-meter" id="hopeMemBytes">0 / 2000 bytes</span>
+      <span class="hope-bytes-meter" id="hopeMemBytes" hidden>0 / 2000 bytes</span>
       <span class="hope-status" id="profileStatus"></span>
       <div style="flex:1"></div>
       <button class="btn ghost sm" type="button" onclick="expandAllIn('#hopeMemoryContainer'); renderHopeMemory();" title="Expand every category">Expand all</button>
@@ -3708,6 +3708,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     </div>
     <div id="hopeMemoryCategories"></div>
   </div>
+  </div></section>
 </div>
 
 <div class="panel oz-mixcheck active" id="eq">
@@ -4900,89 +4901,98 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #settings #settingsPluginCompanion .settings-scan-folders strong{display:block;color:#e8ebed;font:700 calc(var(--inv-text-scale,1) * 15px)/1.3 Inter,-apple-system,sans-serif}
 #settings #settingsPluginCompanion .settings-scan-folders span{display:block;margin-top:6px;color:#9aa0a6;font-size:calc(var(--inv-text-scale,1) * 13px);line-height:1.55}
 
-/* Insight tab colours 2026-11-18 */
-/* PREVIEW ONLY. Insight tab (#knowledge) and its note dialog (#kbModal), COLOURS ONLY.
-   Same rules as the approved Plugins tab: solid fills, no coloured strokes/rings/dashes/side bars/lines,
-   rest = grey, selected/primary = teal with black text, hover = purple gradient, greyed-out = dim text.
-   Palette v2 only: teal #2dd4bf, black #0b0d10, greys #1a1d21 #2a2e35 #9ca3af #7b8190, white #f3f4f6,
-   gradient #9442dc to #b970ff, status green #42c995 / yellow #facc15 / red #f87171, blue #60a5fa.
-   Grey steps: a control is the opposite step of what it sits on. On the black page = #1a1d21; on a #1a1d21 card = #2a2e35; on a #2a2e35 card = #1a1d21.
-   Every selector starts with #knowledge or #kbModal. No other tab, no Hope rail. */
-#knowledge,#kbModal{--k1:#1a1d21;--k2:#2a2e35;--kink:#f3f4f6;--kdim:#9ca3af;--koff:#7b8190;--kblk:#0b0d10;--kteal:#2dd4bf;--kgrad:linear-gradient(135deg,#9442dc,#b970ff)}
-
-/* A. No strokes, rings, dashes, side bars, drop shadows or focus rings anywhere (width untouched, colour goes transparent) */
-#knowledge,#knowledge *,#kbModal,#kbModal *{border-color:transparent!important;outline:none!important;box-shadow:none!important;text-decoration-color:transparent!important;-webkit-tap-highlight-color:transparent;scrollbar-color:#2a2e35 transparent}
-#knowledge :is(.kb-empty,.kb-cat-list-empty,.fact-chip.sortable-ghost,.kb-card.sortable-ghost){border-style:solid!important}
-#knowledge.kb-drag-over{outline:none!important}
-#knowledge.kb-drag-over::before{background:var(--k1)!important;border-color:transparent!important;box-shadow:none!important;color:var(--kink)!important}
-
-/* B. Headings, text */
-#knowledge .section-head h2,#knowledge .fact-cat-label,#knowledge .kb-title,#knowledge .fact-text{color:var(--kink)!important}
-#knowledge .section-head .blurb,#knowledge .kb-meta,#knowledge .fact-cat-count,#knowledge .collapse-chev,#knowledge .hope-status{color:var(--kdim)!important}
-#knowledge .kb-counts,#knowledge .kb-grip,#knowledge .kb-cat-list-empty,#knowledge .facts-list-empty,#knowledge .kb-empty,#knowledge .kb-meta span{color:var(--koff)!important}
-#knowledge .kb-empty strong{color:var(--kink)!important}
-#knowledge .kb-card .kb-meta a{color:#60a5fa!important}
-#knowledge .hope-status.ok{color:#42c995!important}
-#knowledge .hope-status.busy,#knowledge .kb-card .kb-summary-status.busy{color:#facc15!important}
-#knowledge .hope-status.err,#knowledge .kb-card .kb-summary-status.err{color:#f87171!important}
-#knowledge .section-head .sec-ico{color:var(--kink)!important}
-
-/* C. Surfaces. Directly on the black page: #1a1d21 */
-#knowledge :is(.kb-empty,.fact-cat-card,.hope-memory-meta,.kb-toolbar .btn,.kb-bytes-meter,.kb-stats){background:var(--k1)!important}
-#knowledge :is(.kb-toolbar .btn.ghost,.kb-bytes-meter,.kb-stats){color:var(--kdim)!important}
-#knowledge .kb-toolbar .btn.ghost{color:var(--kink)!important}
-/* On a #1a1d21 card: #2a2e35 */
-#knowledge :is(.kb-card,.fact-chip,.kb-cat-list-empty,.fact-add-mini,.hope-memory-meta .btn.ghost,.hope-bytes-meter){background:var(--k2)!important}
-#knowledge .hope-memory-meta .btn.ghost,#knowledge .hope-bytes-meter{color:var(--kdim)!important}
-#knowledge .hope-memory-meta .btn.ghost{color:var(--kink)!important}
-#knowledge .fact-add-mini{color:var(--kink)!important}
-/* On a #2a2e35 card: #1a1d21 */
-#knowledge :is(.kb-body,.kb-tag,.kb-mode-pill,.kb-active-toggle,.kb-card .btn.ghost,.fact-action-btn,.fact-edit-form textarea,.fact-edit-actions .btn.ghost){background:var(--k1)!important}
-#knowledge .kb-body{color:var(--kdim)!important}
-#knowledge .kb-tag{color:var(--kdim)!important}
-#knowledge .kb-mode-pill,#knowledge .kb-active-toggle{color:var(--kdim)!important}
-#knowledge .kb-card .btn.ghost,#knowledge .fact-edit-actions .btn.ghost{color:var(--kink)!important}
-#knowledge .fact-action-btn{color:var(--kdim)!important}
-#knowledge .fact-edit-form textarea{color:var(--kink)!important}
-#knowledge .fact-cat-head{background:transparent!important}
-
-/* D. Bytes meters: status colour on the text only (yellow at the amber threshold, red at the red one) */
-#knowledge :is(.kb-bytes-meter,.hope-bytes-meter).amber{color:#facc15!important}
-#knowledge :is(.kb-bytes-meter,.hope-bytes-meter).red{color:#f87171!important}
-
-/* E. Selected / primary: solid teal, black text */
-#knowledge :is(.kb-toolbar .btn.amber,.hope-memory-meta .btn.purple,.fact-edit-actions .btn.purple,.kb-active-toggle.on,.kb-mode-pill.on,.fact-action-btn.pin.on),
-#kbModal .btn.green{background:var(--kteal)!important;color:var(--kblk)!important}
-#knowledge :is(.kb-toolbar .btn.amber,.hope-memory-meta .btn.purple,.fact-edit-actions .btn.purple,.kb-active-toggle.on,.kb-mode-pill.on,.fact-action-btn.pin.on) *{color:var(--kblk)!important}
-
-/* F. Hover and keyboard focus: purple gradient, white text (selected toggles stay teal) */
-#knowledge :is(.btn,.kb-active-toggle,.kb-mode-pill,.fact-add-mini,.fact-action-btn,.fact-cat-head):is(:hover,:focus-visible):not(:disabled):not(.on),
-#kbModal :is(.btn,.close-btn):is(:hover,:focus-visible):not(:disabled){background:var(--kgrad)!important;color:#fff!important}
-#knowledge :is(.btn,.kb-active-toggle,.kb-mode-pill,.fact-add-mini,.fact-action-btn,.fact-cat-head):is(:hover,:focus-visible):not(:disabled):not(.on) *{color:#fff!important}
-#knowledge .fact-cat-head:hover{border-radius:9px}
-#knowledge .kb-grip:hover{color:var(--kink)!important}
-
-/* G. Greyed out: dim text, same grey */
-#knowledge :is(.btn,.kb-mode-pill):disabled{color:var(--koff)!important;opacity:.76!important}
-#knowledge .fact-chip.inactive{opacity:.76!important}
-#knowledge .fact-chip.inactive .fact-text,#knowledge .fact-action-btn.active-toggle.off{color:var(--koff)!important}
-#knowledge .fact-chip.inactive .fact-text{text-decoration-color:var(--koff)!important}
-
-/* H. Destructive actions: red text on the grey (Delete note, Delete fact, Clear all) */
-#knowledge .kb-card .btn.ghost[onclick^="kbDelete"],#knowledge .fact-action-btn.danger,#knowledge .hope-memory-meta .btn.ghost[onclick^="clearAllFacts"]{color:#f87171!important}
-#knowledge .fact-action-btn.danger:hover,#knowledge .hope-memory-meta .btn.ghost[onclick^="clearAllFacts"]:hover,#knowledge .kb-card .btn.ghost[onclick^="kbDelete"]:hover{background:var(--kgrad)!important;color:#fff!important}
-
-/* I. Inputs and the note dialog */
-#kbModal .modal{background:var(--k1)!important}
-#kbModal .modal-header h3{color:var(--kink)!important}
-#kbModal .modal-header .close-btn{color:var(--kdim)!important;background:transparent!important}
-#kbModal .modal-form label{color:var(--kdim)!important}
-#kbModal :is(input[type=text],textarea){background:var(--k2)!important;color:var(--kink)!important}
-#kbModal :is(input,textarea)::placeholder{color:var(--koff)!important}
-#kbModal .btn.ghost,#kbModal .btn.secondary{background:var(--k2)!important;color:var(--kink)!important}
-#kbModal :is(input[type=checkbox]){accent-color:var(--kteal)!important}
-#knowledge input[type=checkbox]{accent-color:var(--kteal)!important}
-#kbModal .btn.ghost:hover,#kbModal .btn.secondary:hover{background:var(--kgrad)!important;color:#fff!important}
+/* Insight: section cards, fold rows and plain action controls */
+#knowledge{--insight-ink:#c4cad3;--insight-dim:#9aa0a6;--insight-track:#2a2e35;--insight-teal:#2dd4bf}
+#knowledge .section-head{margin-bottom:18px}
+#knowledge .section-head h2{font:500 calc(30px*var(--inv-text-scale,1))/1.2 Inter,sans-serif;letter-spacing:-.035em;text-transform:none}
+#knowledge .section-head .blurb{font-size:calc(14px*var(--inv-text-scale,1));color:var(--insight-dim)}
+#knowledge .insight-sec{--c:#b970ff;margin:0 0 16px;background:#1a1d21;border:1px solid var(--c);border-radius:12px;overflow:hidden}
+#knowledge .insight-sec[data-sec="memory"]{--c:#36a8ed}
+#knowledge .sec-bar{display:flex;align-items:center;gap:calc(14px*var(--inv-text-scale,1));width:100%;min-height:calc(48px*var(--inv-text-scale,1));padding:calc(8px*var(--inv-text-scale,1)) calc(14px*var(--inv-text-scale,1));background:var(--c);color:#0b0d10;border:0;cursor:pointer;text-align:left;font:700 calc(16px*var(--inv-text-scale,1))/1.25 Inter,sans-serif}
+#knowledge .sec-bar>span:first-child{flex:1}
+#knowledge .sec-read{font-size:calc(14px*var(--inv-text-scale,1));font-weight:600;white-space:normal;text-align:right}
+#knowledge .sec-fold{font-size:calc(22px*var(--inv-text-scale,1));font-weight:400;width:calc(22px*var(--inv-text-scale,1));text-align:center}
+#knowledge .meter{height:4px;background:var(--insight-track)}
+#knowledge .meter i{display:block;width:var(--p,0%);height:100%;background:var(--c)}
+#knowledge .meter.warn i{background:#e8b45a}#knowledge .meter.full i{background:#f97316}
+#knowledge .insight-sec.is-closed>.meter,#knowledge .insight-sec.is-closed>.sec-body{display:none}
+#knowledge .kb-toolbar,#knowledge .hope-memory-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0;padding:12px;background:transparent;border:0}
+#knowledge .kb-toolbar .btn,#knowledge .hope-memory-meta .btn{min-height:calc(44px*var(--inv-text-scale,1));padding:0 calc(16px*var(--inv-text-scale,1));font:700 calc(15px*var(--inv-text-scale,1))/1.2 Inter,sans-serif;border:0;border-radius:10px;background:#2a2e35;color:#d5d8dc}
+#knowledge .kb-toolbar .btn.amber,#knowledge .hope-memory-meta .btn.purple{background:var(--insight-teal);color:#0b0d10}
+#knowledge .kb-toolbar .btn:hover,#knowledge .hope-memory-meta .btn:hover{background:#fff;color:#0b0d10}
+#knowledge .kb-toolbar .btn[onclick],#knowledge .hope-memory-meta .btn[onclick^="expandAll"],#knowledge .hope-memory-meta .btn[onclick^="collapseAll"],#knowledge .hope-memory-meta .btn[onclick^="clearAll"]{min-height:0;padding:8px 6px;background:transparent;color:var(--insight-dim);font-size:calc(14px*var(--inv-text-scale,1))}
+#knowledge .kb-toolbar .btn[onclick]:hover,#knowledge .hope-memory-meta .btn[onclick^="expandAll"]:hover,#knowledge .hope-memory-meta .btn[onclick^="collapseAll"]:hover,#knowledge .hope-memory-meta .btn[onclick^="clearAll"]:hover{background:var(--c);color:#0b0d10}
+#knowledge .kb-bytes-meter,#knowledge .hope-bytes-meter{display:none}
+#knowledge .kb-list,#knowledge #hopeMemoryCategories{padding:0 8px 8px}
+#knowledge .hope-memory-wrap{margin:0}
+#knowledge .hope-status{color:var(--insight-dim);font-size:calc(13px*var(--inv-text-scale,1))}
+#knowledge .fact-cat-card{margin:0;background:transparent;border:0;border-radius:0;overflow:visible}
+#knowledge .fact-cat-head{display:flex;align-items:center;gap:calc(10px*var(--inv-text-scale,1));min-height:calc(46px*var(--inv-text-scale,1));margin-top:3px;padding:calc(8px*var(--inv-text-scale,1)) calc(12px*var(--inv-text-scale,1));border:0;border-radius:10px;color:#e5e7ea}
+#knowledge .fact-cat-head:hover,#knowledge .fact-cat-head:focus-visible{background:var(--c);color:#0b0d10}
+#knowledge .fact-cat-label{font:700 calc(15px*var(--inv-text-scale,1))/1.3 Inter,sans-serif;letter-spacing:0;text-transform:none;color:inherit}
+#knowledge .fact-cat-count{order:3;margin-left:auto;color:var(--insight-dim);font:600 calc(15px*var(--inv-text-scale,1))/1.3 Inter,sans-serif}
+#knowledge .fact-cat-head>div{display:none}
+#knowledge .fact-cat-card.is-empty .fact-cat-label{color:var(--insight-dim)}
+#knowledge .fact-cat-head:hover :is(.fact-cat-label,.fact-cat-count,.collapse-chev){color:#0b0d10}
+#knowledge .collapse-chev{order:-1;display:inline-block;width:calc(18px*var(--inv-text-scale,1));height:auto;margin:0;color:var(--c);font:600 calc(20px*var(--inv-text-scale,1))/1 Inter,sans-serif;transform:none!important}
+#knowledge .kb-cat-list,#knowledge .facts-list{min-height:0;padding:0 0 4px calc(18px*var(--inv-text-scale,1));gap:0}
+#knowledge .fact-cat-card.collapsed>.insight-add,#knowledge .fact-cat-card.collapsed>.fact-add-row{display:none}
+#knowledge .insight-add,#knowledge .fact-add-mini{display:flex;align-items:center;width:calc(100% - 18px);min-height:calc(44px*var(--inv-text-scale,1));margin:3px 0 6px calc(18px*var(--inv-text-scale,1));padding:8px 12px;border:0;border-radius:10px;background:transparent;color:var(--insight-dim);font:700 calc(14px*var(--inv-text-scale,1))/1.3 Inter,sans-serif;cursor:pointer}
+#knowledge .insight-add:hover,#knowledge .fact-add-mini:hover{background:var(--c);color:#0b0d10}
+#knowledge .fact-add-row{padding:0;display:block}
+#knowledge .fact-add-mini{margin-left:calc(18px*var(--inv-text-scale,1))}
+#knowledge .kb-card,#knowledge .fact-chip{margin-top:3px;padding:calc(10px*var(--inv-text-scale,1)) calc(12px*var(--inv-text-scale,1));background:transparent;border:0;border-radius:10px;color:var(--insight-ink)}
+#knowledge .kb-card.active{border:0}
+#knowledge .kb-card:hover:not(.expanded),#knowledge .kb-card:focus-within:not(.expanded),#knowledge .fact-chip:hover,#knowledge .fact-chip:focus-within{background:var(--c);color:#0b0d10}
+#knowledge .kb-card.expanded{background:var(--insight-teal);color:#0b0d10}
+#knowledge .kb-card .kb-row1{display:grid;grid-template-columns:calc(20px*var(--inv-text-scale,1)) minmax(0,1fr) auto;gap:calc(10px*var(--inv-text-scale,1));margin:0}
+#knowledge .kb-card .kb-main{min-width:0}
+#knowledge .kb-grip{color:var(--insight-dim);font-size:calc(19px*var(--inv-text-scale,1));letter-spacing:0}
+#knowledge .kb-grip svg{display:block;width:calc(16px*var(--inv-text-scale,1));height:calc(24px*var(--inv-text-scale,1));fill:currentColor;stroke:none}
+#knowledge .kb-title{font:600 calc(15px*var(--inv-text-scale,1))/1.35 Inter,sans-serif;color:#e5e7ea;white-space:normal;overflow:visible}
+#knowledge .kb-meta,#knowledge .kb-tags{margin:2px 0 0;color:var(--insight-dim);font-size:calc(13px*var(--inv-text-scale,1));line-height:1.45;overflow-wrap:anywhere}
+#knowledge .kb-meta a{color:inherit;text-decoration:none}
+#knowledge .kb-meta a:hover{text-decoration:underline}
+#knowledge .kb-card .kb-actions{gap:2px calc(14px*var(--inv-text-scale,1));margin-top:6px}
+#knowledge .kb-card .kb-actions button{min-height:0;margin:0;padding:3px 0;background:transparent;border:0;border-radius:0;color:var(--insight-ink);font:700 calc(14px*var(--inv-text-scale,1))/1.3 Inter,sans-serif}
+#knowledge .kb-card .kb-actions button:hover{text-decoration:underline}
+#knowledge .kb-card .kb-actions button:disabled{opacity:.55;cursor:default}
+#knowledge .kb-card .kb-actions button:last-of-type{color:var(--insight-dim)}
+#knowledge .kb-state{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+#knowledge .kb-active-toggle{display:block;min-width:24px;height:24px;padding:0;background:transparent;border:0;border-radius:0;color:#e5e7ea;font-size:calc(20px*var(--inv-text-scale,1));line-height:1;text-align:center}
+#knowledge .kb-active-toggle.on{background:transparent;border:0;color:#e5e7ea}
+#knowledge .kb-counts{margin:0;color:var(--insight-dim);font:400 calc(13px*var(--inv-text-scale,1))/1.4 Inter,sans-serif;white-space:nowrap}
+#knowledge .kb-card.off .kb-title{color:var(--insight-dim);text-decoration:line-through}
+#knowledge .kb-card.off :is(.kb-grip,.kb-meta){opacity:.7}
+#knowledge .kb-card .kb-body{display:none;margin:8px 0 0;padding:10px 12px 10px calc(42px*var(--inv-text-scale,1));background:transparent;border:0;border-top:1px solid #2a2e35;border-radius:0;color:var(--insight-ink);font-size:calc(13px*var(--inv-text-scale,1));max-height:280px}
+#knowledge .kb-card.expanded .kb-body{display:block}
+#knowledge .kb-card :is(.kb-title,.kb-meta,.kb-meta a,.kb-grip,.kb-active-toggle,.kb-counts,.kb-actions button),#knowledge .fact-chip :is(.fact-text,.fact-action-btn,.fact-star){transition:color .12s}
+#knowledge .kb-card:hover :is(.kb-title,.kb-meta,.kb-meta a,.kb-grip,.kb-active-toggle,.kb-counts,.kb-actions button),#knowledge .kb-card.expanded :is(.kb-title,.kb-meta,.kb-meta a,.kb-grip,.kb-active-toggle,.kb-counts,.kb-actions button),#knowledge .fact-chip:hover :is(.fact-text,.fact-action-btn,.fact-star){color:#0b0d10}
+#knowledge .fact-chip{display:grid;grid-template-columns:calc(22px*var(--inv-text-scale,1)) minmax(0,1fr) auto;align-items:center;min-height:calc(46px*var(--inv-text-scale,1));font-size:calc(15px*var(--inv-text-scale,1))}
+#knowledge .fact-chip.pinned,#knowledge .fact-chip.inactive{padding-left:calc(12px*var(--inv-text-scale,1));background:transparent;border:0}
+#knowledge .fact-chip.inactive{opacity:1}
+#knowledge .fact-chip.inactive .fact-text{color:var(--insight-dim);text-decoration:line-through}
+#knowledge .fact-chip.inactive:hover{background:var(--c)}
+#knowledge .fact-star{color:#b970ff;font-size:calc(20px*var(--inv-text-scale,1));text-shadow:0 0 6px #b970ff}
+#knowledge .fact-actions{display:flex;gap:calc(4px*var(--inv-text-scale,1));opacity:1}
+#knowledge .fact-action-btn{width:calc(28px*var(--inv-text-scale,1));height:calc(28px*var(--inv-text-scale,1));background:transparent;border:0;color:var(--insight-dim)}
+#knowledge .fact-action-btn svg{width:calc(18px*var(--inv-text-scale,1));height:calc(18px*var(--inv-text-scale,1))}
+#knowledge .fact-action-btn.pin.on{background:transparent;color:var(--insight-dim)}
+#knowledge .fact-action-btn:hover,#knowledge .fact-action-btn.danger:hover{background:transparent;color:inherit}
+#knowledge .fact-chip.sortable-ghost,#knowledge .kb-card.sortable-ghost{opacity:.4;background:var(--c);border:0}
+#knowledge .fact-chip.sortable-drag,#knowledge .kb-card.sortable-drag{background:var(--c);color:#0b0d10;border:0;box-shadow:none}
+#knowledge.kb-drag-over{outline:0}
+#knowledge.kb-drag-over::before{content:'Drop files to import. PDF, DOCX, TXT, MD or JSON';background:#2dd4bf;color:#0b0d10;border:0;box-shadow:none;font-size:calc(16px*var(--inv-text-scale,1))}
+#knowledge :focus-visible,#kbModal :focus-visible{outline:2px solid #36a8ed;outline-offset:2px}
+#kbModal .modal{background:#1a1d21;border:1px solid #b970ff}
+#kbModal .modal-header{background:#b970ff;color:#0b0d10}
+#kbModal .modal-header h3{color:#0b0d10;text-transform:none}
+#kbModal .modal-header .close-btn{background:transparent;border:0;color:#0b0d10}
+#kbModal :is(input[type=text],textarea){background:#2a2e35;color:#e5e7ea}
+#kbModal .btn.green{background:#2dd4bf;color:#0b0d10}
+#kbModal .btn.ghost{background:transparent;color:#9aa0a6;border:0}
+#kbModal .btn.secondary{background:#2a2e35;color:#d5d8dc;border:0}
+#kbModal .btn:hover{background:#fff;color:#0b0d10}
 
 /* Snapshots tab colours 2026-11-18 */
 /* PREVIEW ONLY. Snapshots tab (#snapshots) and its two dialogs (#editPillModal, #applyPillModal), COLOURS ONLY.
@@ -5688,13 +5698,13 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 <!-- KNOWLEDGE NOTE MODAL -->
 <div class="modal-backdrop" id="kbModal">
   <div class="modal" style="max-width:780px;">
-    <div class="modal-header"><h3 id="kbModalTitle">Add research note</h3><button class="close-btn" id="kbModalClose">×</button></div>
+    <div class="modal-header"><h3 id="kbModalTitle">Add note</h3><button class="close-btn" id="kbModalClose">×</button></div>
     <div class="modal-form">
       <div><label>Title</label><input type="text" id="kbTitle" placeholder="e.g. MWTM — Manny Marroquin on vocal compression"></div>
       <div><label>Source (URL or citation)</label><input type="text" id="kbSource" placeholder="https://… or 'YouTube — channel — date'"></div>
       <div><label>Tags (comma-separated)</label><input type="text" id="kbTags" placeholder="vocals, compression, mastering, trap"></div>
-      <div><label>Content (paste from NotebookLM, transcript, article)</label><textarea id="kbContent" rows="14" placeholder="Paste the research content here…" style="width:100%;background:#111827;color:#e5e7eb;border:1px solid #374151;border-radius:6px;padding:10px 12px;font-size:13px;line-height:1.55;resize:vertical;font-family:inherit;"></textarea></div>
-      <label style="display:flex;align-items:center;gap:8px;color:#9ca3af;font-size:12px;cursor:pointer;"><input type="checkbox" id="kbAutoSummarise" checked> Auto-summarise with Luna — raw text is kept too.</label>
+      <div><label>Content (paste from NotebookLM, transcript, article)</label><textarea id="kbContent" rows="14" placeholder="Paste the research content here…" style="width:100%;background:#2a2e35;color:#e5e7ea;border:0;border-radius:6px;padding:10px 12px;font-size:13px;line-height:1.55;resize:vertical;font-family:inherit;"></textarea></div>
+      <label style="display:flex;align-items:center;gap:8px;color:#9ca3af;font-size:12px;cursor:pointer;"><input type="checkbox" id="kbAutoSummarise" checked> Auto-summarise with Hope — raw text is kept too.</label>
       <div class="actions">
         <button class="btn ghost sm" id="kbCancel">Cancel</button>
         <button class="btn secondary" id="kbSave">Save inactive</button>
@@ -5722,7 +5732,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-21.9';
+const AIMM_BUILD = '2026-11-22.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -6614,7 +6624,10 @@ function wireFactsDragdrop(){
       dragClass: 'sortable-drag',
       filter: '.fact-action-btn, .fact-edit-form, button, textarea',
       preventOnFilter: false,
+      onStart: () => { insightDraggingRow = true; },
+      onUnchoose: () => { insightDraggingRow = false; },
       onEnd: () => {
+        insightDraggingRow = false;
         const newOrder = [];
         const facts = STATE.profileFacts || [];
         for (const cat of PROFILE_CATEGORIES){
@@ -6653,11 +6666,12 @@ function renderHopeMemory(){
   const out = PROFILE_CATEGORIES.map(cat => {
     const arr = byCat[cat.id] || [];
     const collapseId = 'pfc-' + cat.id;
-    const collapsedCls = collapsedSet.has(collapseId) ? ' collapsed' : '';
+    const collapsedCls = (collapsedSet.has(collapseId) || (!arr.length && !insightOpenedEmptyCats.has(collapseId))) ? ' collapsed' : '';
     const chips = arr.map(f => {
       const cls = 'fact-chip' + (f.pinned ? ' pinned' : '') + (f.active === false ? ' inactive' : '');
       return ''
         + '<div class="' + cls + '" data-fact-id="' + escapeHtml(f.id) + '">'
+        +   '<span class="fact-star" aria-hidden="true">' + (f.pinned ? '★' : '') + '</span>'
         +   '<span class="fact-text">' + escapeHtml(f.text || '') + '</span>'
         +   '<span class="fact-actions">'
         +     '<button class="fact-action-btn pin' + (f.pinned ? ' on' : '') + '" type="button" title="' + (f.pinned ? 'Unpin' : 'Pin to top — Hope sees this first') + '" onclick="toggleFactPin(\'' + escapeJs(f.id) + '\')">'
@@ -6668,7 +6682,7 @@ function renderHopeMemory(){
         +     '</button>'
         +     '<button class="fact-action-btn active-toggle' + (f.active === false ? ' off' : '') + '" type="button" title="' + (f.active === false ? 'Re-enable — include in Hope\'s context' : 'Disable — keep but exclude from Hope\'s context') + '" onclick="toggleFactActive(\'' + escapeJs(f.id) + '\')">'
         +       (f.active === false
-            ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>'
+            ? '<svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>'
             : '<svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>')
         +     '</button>'
         +     '<button class="fact-action-btn danger" type="button" title="Delete" onclick="deleteFact(\'' + escapeJs(f.id) + '\')">'
@@ -6677,17 +6691,17 @@ function renderHopeMemory(){
         +   '</span>'
         + '</div>';
     }).join('');
-    const body = arr.length ? chips : '<div class="facts-list-empty">No facts here yet — drag a chip in or use + to add.</div>';
+    const body = chips;
     return ''
-      + '<div class="fact-cat-card collapsible' + collapsedCls + '" data-collapse-id="' + collapseId + '">'
-      +   '<div class="fact-cat-head" onclick="toggleCollapse(\'' + collapseId + '\', event)">'
+      + '<div class="fact-cat-card collapsible' + collapsedCls + (!arr.length ? ' is-empty' : '') + '" data-collapse-id="' + collapseId + '">'
+      +   '<div class="fact-cat-head" role="button" tabindex="0" onclick="toggleCollapse(\'' + collapseId + '\', event)" onkeydown="insightCategoryKey(event, \'' + collapseId + '\')">'
+      +     '<span class="collapse-chev" aria-hidden="true">' + (collapsedCls ? '+' : '−') + '</span>'
       +     '<span class="fact-cat-label">' + escapeHtml(cat.label) + '</span>'
-      +     '<span class="fact-cat-count">(' + arr.length + ')</span>'
+      +     '<span class="fact-cat-count">' + arr.length + '</span>'
       +     '<div style="flex:1"></div>'
-      +     '<span class="collapse-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg></span>'
       +   '</div>'
       +   '<div class="facts-list" data-cat="' + cat.id + '">' + body + '</div>'
-      +   '<div class="fact-add-row"><button class="fact-add-mini" type="button" onclick="promptAddFact(\'' + cat.id + '\')">+ Add to ' + escapeHtml(cat.label) + '</button></div>'
+      +   '<div class="fact-add-row"><button class="fact-add-mini" type="button" onclick="promptAddFact(\'' + cat.id + '\')">＋ Add to ' + escapeHtml(cat.label) + '</button></div>'
       + '</div>';
   }).join('');
   container.innerHTML = out;
@@ -6700,6 +6714,7 @@ function renderHopeMemory(){
     meter.classList.toggle('amber', used >= 1500 && used < 1800);
     meter.classList.toggle('red', used >= 1800);
   }
+  insightUpdateBudget('memory', facts.filter(f => f.active !== false).length, facts.length, used, PROFILE_MAX_LEN, 1800, 2000);
   // Re-wire Sortable on the freshly rendered lists.
   try { wireFactsDragdrop(); } catch(e){ console.warn('[hope-memory] sortable wire failed', e); }
 }
@@ -7243,13 +7258,52 @@ function loadCollapsedSet(){
 function saveCollapsedSet(set){
   try { localStorage.setItem(COLLAPSE_STATE_KEY, JSON.stringify(Array.from(set))); } catch(_){}
 }
+const insightOpenedEmptyCats = new Set();
+let insightDraggingRow = false;
+function insightOpenDropCategory(ev){
+  if (!insightDraggingRow) return;
+  const card = ev.target.closest('.fact-cat-card.collapsed');
+  if (!card) return;
+  const id = card.dataset.collapseId;
+  insightOpenedEmptyCats.add(id);
+  const set = loadCollapsedSet();
+  set.delete(id);
+  saveCollapsedSet(set);
+  card.classList.remove('collapsed');
+  card.querySelector('.collapse-chev').textContent = '−';
+}
+function insightCategoryKey(ev, id){
+  if (ev.key !== 'Enter' && ev.key !== ' ') return;
+  ev.preventDefault();
+  toggleCollapse(id, ev);
+}
+function insightToggleSection(name){
+  const section = document.getElementById(name === 'kb' ? 'insightKbSection' : 'insightMemorySection');
+  if (!section) return;
+  const closed = section.classList.toggle('is-closed');
+  section.querySelector('.sec-bar').setAttribute('aria-expanded', String(!closed));
+  section.querySelector('.sec-fold').textContent = closed ? '+' : '−';
+}
+function insightUpdateBudget(name, active, total, used, cap, warn, full){
+  const section = document.getElementById(name === 'kb' ? 'insightKbSection' : 'insightMemorySection');
+  if (!section) return;
+  section.querySelector('.sec-read').textContent = active + ' of ' + total + ' active · ' + used + ' / ' + cap + ' bytes';
+  const meter = section.querySelector('.meter');
+  meter.style.setProperty('--p', Math.min(100, used / cap * 100) + '%');
+  meter.classList.toggle('warn', used >= warn && used < full);
+  meter.classList.toggle('full', used >= full);
+}
 function toggleCollapse(id, ev){
   if (ev && ev.target && ev.target.closest('a, button, input')) return; // don't toggle when clicking a nested control
   const set = loadCollapsedSet();
-  if (set.has(id)) set.delete(id); else set.add(id);
+  const insightCat = id.startsWith('kbc-') || id.startsWith('pfc-');
+  const shownClosed = insightCat && document.querySelector('[data-collapse-id="'+id+'"]')?.classList.contains('collapsed');
+  if (set.has(id) || shownClosed) set.delete(id); else set.add(id);
+  if (id.startsWith('kbc-') || id.startsWith('pfc-')) insightOpenedEmptyCats.add(id);
   saveCollapsedSet(set);
   document.querySelectorAll('[data-collapse-id="'+id.replace(/"/g,'\\"')+'"]').forEach(el => {
     el.classList.toggle('collapsed', set.has(id));
+    if (id.startsWith('kbc-') || id.startsWith('pfc-')) el.querySelector('.collapse-chev').textContent = set.has(id) ? '+' : '−';
   });
 }
 function expandAllIn(scopeSel){
@@ -7259,6 +7313,7 @@ function expandAllIn(scopeSel){
   root.querySelectorAll('[data-collapse-id]').forEach(el => {
     el.classList.remove('collapsed');
     set.delete(el.dataset.collapseId);
+    if (el.dataset.collapseId.startsWith('kbc-') || el.dataset.collapseId.startsWith('pfc-')) { insightOpenedEmptyCats.add(el.dataset.collapseId); el.querySelector('.collapse-chev').textContent = '−'; }
   });
   saveCollapsedSet(set);
 }
@@ -7269,6 +7324,7 @@ function collapseAllIn(scopeSel){
   root.querySelectorAll('[data-collapse-id]').forEach(el => {
     el.classList.add('collapsed');
     set.add(el.dataset.collapseId);
+    if (el.dataset.collapseId.startsWith('kbc-') || el.dataset.collapseId.startsWith('pfc-')) el.querySelector('.collapse-chev').textContent = '+';
   });
   saveCollapsedSet(set);
 }
@@ -13649,6 +13705,7 @@ OPEN FOLLOW-UPS. F0 (Hope sounds different in app vs dashboard preview — likel
 // so Luna has Kev's curated reference material in context every session.
 const KB_MAX_NOTES = 200;
 let kbEditingId = null;
+let kbAddingCategory = null;
 
 function kbEstimateTokens(s){ return Math.ceil(String(s||'').length / 4); }
 function kbActiveText(n){ return (n && n.useSummary && n.summary) ? n.summary : (n?n.raw||'':''); }
@@ -14115,7 +14172,10 @@ function wireKbCardsDragdrop(){
       animation: 180,
       ghostClass: 'sortable-ghost',
       dragClass: 'sortable-drag',
+      onStart: () => { insightDraggingRow = true; },
+      onUnchoose: () => { insightDraggingRow = false; },
       onEnd: () => {
+        insightDraggingRow = false;
         const notes = STATE.knowledge || [];
         const seen = new Set();
         const newOrder = [];
@@ -14147,11 +14207,10 @@ function knowledgeRender(){
   if (!host || !stats) return;
   const notes = STATE.knowledge || [];
   const meter = document.getElementById('kbBytes');
-  // Empty state — keep the original onboarding panel rather than emit eight
-  // empty category cards. Categorised view kicks in as soon as there's data.
+  // A new library starts with one direct action.
   if (!notes.length){
-    host.innerHTML = `<div class="kb-empty">No notes yet — click <strong>⊕ Add note</strong> above to paste your first piece of research.<br><br>Workflow: in NotebookLM, ask it to summarise a YouTube video / article / interview about mastering trap → copy the answer → paste it here → tag it with the topic. From then on, Luna has it on every chat & voice session.<br><br>Tip: keep notes <strong>active</strong> only when relevant — inactive notes don't burn tokens.</div>`;
-    stats.textContent = 'No notes yet.';
+    host.innerHTML = `<button class="insight-add" type="button" onclick="kbOpenAdd()">＋ Add note</button>`;
+    insightUpdateBudget('kb', 0, 0, 0, KB_BYTES_BUDGET, KB_BYTES_AMBER, KB_BYTES_RED);
     if (meter){ meter.textContent = '0 / ' + KB_BYTES_BUDGET + ' bytes'; meter.classList.remove('amber','red'); }
     return;
   }
@@ -14167,19 +14226,20 @@ function knowledgeRender(){
   const html = KB_CATEGORIES.map(cat => {
     const arr = byCat[cat.id] || [];
     const collapseId = 'kbc-' + cat.id;
-    const collapsedCls = collapsedSet.has(collapseId) ? ' collapsed' : '';
+    const collapsedCls = (collapsedSet.has(collapseId) || (!arr.length && !insightOpenedEmptyCats.has(collapseId))) ? ' collapsed' : '';
     const cards = arr.length
       ? arr.map(n => kbRenderCard(n)).join('')
-      : '<div class="kb-cat-list-empty">No notes here yet — drag one in.</div>';
+      : '';
     return ''
-      + '<div class="fact-cat-card collapsible' + collapsedCls + '" data-collapse-id="' + collapseId + '">'
-      +   '<div class="fact-cat-head" onclick="toggleCollapse(\'' + collapseId + '\', event)">'
+      + '<div class="fact-cat-card collapsible' + collapsedCls + (!arr.length ? ' is-empty' : '') + '" data-collapse-id="' + collapseId + '">'
+      +   '<div class="fact-cat-head" role="button" tabindex="0" onclick="toggleCollapse(\'' + collapseId + '\', event)" onkeydown="insightCategoryKey(event, \'' + collapseId + '\')">'
+      +     '<span class="collapse-chev" aria-hidden="true">' + (collapsedCls ? '+' : '−') + '</span>'
       +     '<span class="fact-cat-label">' + escapeHtml(cat.label) + '</span>'
-      +     '<span class="fact-cat-count">(' + arr.length + ')</span>'
+      +     '<span class="fact-cat-count">' + arr.length + '</span>'
       +     '<div style="flex:1"></div>'
-      +     '<span class="collapse-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg></span>'
       +   '</div>'
       +   '<div class="kb-cat-list" data-cat="' + cat.id + '">' + cards + '</div>'
+      +   '<button class="insight-add" type="button" onclick="kbOpenAdd(\'' + cat.id + '\')">＋ Add note</button>'
       + '</div>';
   }).join('');
   host.innerHTML = html;
@@ -14195,6 +14255,7 @@ function knowledgeRender(){
   // Bytes meter — colour thresholds mirror Hope's-Memory style. Soft signal
   // only; buildResearchDigest doesn't truncate.
   const used = kbActiveBytes();
+  insightUpdateBudget('kb', active.length, notes.length, used, KB_BYTES_BUDGET, KB_BYTES_AMBER, KB_BYTES_RED);
   if (meter){
     meter.textContent = used + ' / ' + KB_BYTES_BUDGET + ' bytes';
     meter.classList.toggle('amber', used >= KB_BYTES_AMBER && used < KB_BYTES_RED);
@@ -14205,41 +14266,38 @@ function knowledgeRender(){
 }
 
 function kbRenderCard(n){
-  const cls = 'kb-card' + (n.active?' active':'') + (n.expanded?' expanded':'');
-  const tagHtml = (n.tags||[]).map(t=>`<span class="kb-tag">${escapeHtml(t)}</span>`).join('');
+  const cls = 'kb-card' + (n.active?' active':'') + (n.expanded?' expanded':'') + (!n.active?' off':'');
+  const tagHtml = (n.tags||[]).map(t=>escapeHtml(t)).join(', ');
   const sourceHtml = n.source
     ? (/^https?:\/\//.test(n.source)
-        ? `<a href="${escapeHtml(n.source)}" target="_blank" rel="noopener">${escapeHtml(n.source)}</a>`
+        ? `<a href="${escapeHtml(n.source)}" target="_blank" rel="noopener" title="${escapeHtml(n.source)}">${escapeHtml(n.source.replace(/^https?:\/\//,'').split('/')[0])}</a>`
         : escapeHtml(n.source))
-    : '<span style="color:#6b7280;">no source</span>';
+    : '<span>no source</span>';
   const dt = new Date(n.ts||Date.now()).toLocaleDateString();
-  const rawChars = (n.raw||'').length;
-  const sumChars = (n.summary||'').length;
   const activeChars = kbActiveText(n).length;
   const activeTok = Math.ceil(activeChars/4);
   const useSumOn = !!n.useSummary && !!n.summary;
   const sumPillCls = 'kb-mode-pill' + (useSumOn?' on':'');
-  const sumPillTxt = n.summary ? (useSumOn?'Inject summary':'Inject raw') : 'Raw only (no summary yet)';
+  const sumPillTxt = n.summary ? (useSumOn?'Summary':'Raw') : 'Raw only';
   const sumDisabled = !n.summary;
-  const summStat = n.summarising ? '<div class="kb-summary-status busy">Summarising with Luna…</div>'
+  const summStat = n.summarising ? '<div class="kb-summary-status busy">Summarising with Hope…</div>'
                   : (n.summaryError ? `<div class="kb-summary-status err">Summary error: ${escapeHtml(n.summaryError)}</div>` : '');
   const idJs = escapeJs(n.id);
   return `<div class="${cls}" data-id="${escapeHtml(n.id)}">
     <div class="kb-row1">
-      <span class="kb-grip" title="Drag to reorder or move to another category">⋮⋮</span>
-      <div class="kb-title">${escapeHtml(n.title||'(untitled)')}</div>
-      <button class="kb-active-toggle ${n.active?'on':''}" onclick="kbToggleActive('${idJs}')" title="Toggle whether this note is injected into Luna's prompt">${n.active?'⚡ Active':'○ Inactive'}</button>
-    </div>
-    <div class="kb-meta">${dt} · ${sourceHtml}</div>
-    ${tagHtml?`<div class="kb-tags">${tagHtml}</div>`:''}
-    ${summStat}
-    <div class="kb-actions">
-      <button class="${sumPillCls}" onclick="kbToggleSummary('${idJs}')"${sumDisabled?' disabled':''} title="Switch between injecting the summary vs. the raw paste">${sumPillTxt}</button>
-      <button class="btn ghost sm" onclick="kbToggleExpand('${idJs}')">${n.expanded?'⌃ Hide':'⌄ View'}</button>
-      <button class="btn ghost sm" onclick="kbEdit('${idJs}')">✎ Edit</button>
-      <button class="btn ghost sm" onclick="kbResummarise('${idJs}')" title="Re-run Luna summary on the raw text">↻ Re-summarise</button>
-      <button class="btn ghost sm" onclick="kbDelete('${idJs}')" style="color:#fca5a5;"></button>
-      <span class="kb-counts">~${activeTok} tok · raw ${rawChars}/sum ${sumChars}</span>
+      <span class="kb-grip" title="Drag to reorder or move to another category"><svg viewBox="0 0 16 24" aria-hidden="true"><circle cx="5" cy="6" r="1.5"/><circle cx="11" cy="6" r="1.5"/><circle cx="5" cy="12" r="1.5"/><circle cx="11" cy="12" r="1.5"/><circle cx="5" cy="18" r="1.5"/><circle cx="11" cy="18" r="1.5"/></svg></span>
+      <div class="kb-main"><div class="kb-title">${escapeHtml(n.title||'(untitled)')}</div>
+        <div class="kb-meta">${dt} · ${sourceHtml}</div>
+        ${tagHtml?`<div class="kb-tags">${tagHtml}</div>`:''}
+        ${summStat}
+        <div class="kb-actions">
+          <button class="${sumPillCls}" onclick="kbToggleSummary('${idJs}')"${sumDisabled?' disabled':''} title="Switch between injecting the summary vs. the raw paste">${sumPillTxt}</button>
+          <button class="btn ghost sm" onclick="kbToggleExpand('${idJs}')">${n.expanded?'Hide':'View'}</button>
+          <button class="btn ghost sm" onclick="kbEdit('${idJs}')">Edit</button>
+          <button class="btn ghost sm" onclick="kbResummarise('${idJs}')" title="Re-run Hope summary on the raw text">Re-summarise</button>
+          <button class="btn ghost sm" onclick="kbDelete('${idJs}')">Delete</button>
+        </div></div>
+      <div class="kb-state"><button class="kb-active-toggle ${n.active?'on':''}" aria-pressed="${!!n.active}" onclick="kbToggleActive('${idJs}')" title="${n.active?'Active, click to turn off':'Inactive, click to turn on'}">${n.active?'✓':'−'}</button><span class="kb-counts">${activeTok} tok</span></div>
     </div>
     <div class="kb-body">${escapeHtml(kbActiveText(n))}</div>
   </div>`;
@@ -14257,7 +14315,9 @@ function kbToggleSummary(id){
 }
 function kbToggleExpand(id){
   const n = (STATE.knowledge||[]).find(x=>x.id===id); if(!n) return;
-  n.expanded = !n.expanded;
+  const opening = !n.expanded;
+  (STATE.knowledge||[]).forEach(note => { note.expanded = false; });
+  n.expanded = opening;
   knowledgeRender();
 }
 function kbDelete(id){
@@ -14268,9 +14328,10 @@ function kbDelete(id){
 }
 
 // Modal open/close
-function kbOpenAdd(){
+function kbOpenAdd(category){
   kbEditingId = null;
-  document.getElementById('kbModalTitle').textContent = 'Add research note';
+  kbAddingCategory = typeof category === 'string' ? category : null;
+  document.getElementById('kbModalTitle').textContent = 'Add note';
   document.getElementById('kbTitle').value = '';
   document.getElementById('kbSource').value = '';
   document.getElementById('kbTags').value = '';
@@ -14282,6 +14343,7 @@ function kbOpenAdd(){
 function kbEdit(id){
   const n = (STATE.knowledge||[]).find(x=>x.id===id); if(!n) return;
   kbEditingId = id;
+  kbAddingCategory = null;
   document.getElementById('kbModalTitle').textContent = 'Edit research note';
   document.getElementById('kbTitle').value = n.title||'';
   document.getElementById('kbSource').value = n.source||'';
@@ -14310,6 +14372,7 @@ async function kbSaveFromModal(makeActive){
   }
   if (!note){
     note = { id:'kb_'+Date.now()+'_'+Math.random().toString(36).slice(2,7), ts:Date.now(), active:false, useSummary:false };
+    if (kbAddingCategory) note.category = kbAddingCategory;
     STATE.knowledge = STATE.knowledge || [];
     STATE.knowledge.unshift(note);
     if (STATE.knowledge.length > KB_MAX_NOTES) STATE.knowledge = STATE.knowledge.slice(0, KB_MAX_NOTES);
@@ -14597,7 +14660,7 @@ async function kbImportFile(file){
     toast(`${file.name}: not enough text to import (${text.length} chars)`, true);
     return;
   }
-  toast('Extracting metadata via Luna…');
+  toast('Extracting metadata via Hope…');
   const meta = await kbExtractMetadata(text, file.name);
   // Build + save the note straight to Active.
   const note = {
@@ -14619,7 +14682,7 @@ async function kbImportFile(file){
   // Surface the undo toast — Edit re-opens the modal pre-filled, Undo
   // removes the just-imported note. If the AIMM token was missing, mention
   // it so Kev knows to add one for proper auto-extract next time.
-  const noKeyHint = meta._noKey ? ' · (add the Hope usage test access token in Settings → API Keys for Luna auto-extract)' : '';
+  const noKeyHint = meta._noKey ? ' · (add the Hope usage test access token in Settings → API Keys for Hope auto-extract)' : '';
   kbShowImportToast(note.id, note.title, noKeyHint);
 }
 

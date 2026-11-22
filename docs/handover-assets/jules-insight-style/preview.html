@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Insight tab - proposed design (preview only)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+/* PREVIEW ONLY. Insight tab in the Plugins sidebar v3 / MixBus language. Palette: only the five section colours + teal + neutrals.
+   Open with ?scale=1.5 to test the text-size setting. */
+:root{--inv-text-scale:1;--ink:#c4cad3;--dim:#9aa0a6;--neutral:#1a1d21;--track:#2a2e35;--black:#0b0d10;--teal:#2dd4bf;--status:#36a8ed;--tools:#e8b45a;--library:#b970ff;--video:#f472b6;--cats:#f97316}
+*{box-sizing:border-box}
+body{margin:0;background:#000;color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:24px}
+.page{max-width:880px;margin:0 auto}
+.page-head h1{margin:0 0 6px;font:500 calc(30px*var(--inv-text-scale))/1.2 Inter,sans-serif;letter-spacing:-.035em;color:#f3f4f6}
+.page-head p{margin:0 0 20px;font-size:calc(14px*var(--inv-text-scale));color:var(--dim)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+svg{display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+:focus-visible{outline:2px solid var(--status);outline-offset:2px}
+
+/* Section card = one job. Same construction as a sidebar section / MixBus bus */
+.sec{--c:var(--library);margin:0 0 16px;background:var(--neutral);border:1px solid var(--c);border-radius:12px;overflow:hidden}
+.sec.memory{--c:var(--status)}
+.sec-bar{display:flex;align-items:center;gap:calc(14px*var(--inv-text-scale));width:100%;min-height:calc(48px*var(--inv-text-scale));padding:calc(8px*var(--inv-text-scale)) calc(12px*var(--inv-text-scale)) calc(8px*var(--inv-text-scale)) calc(14px*var(--inv-text-scale));background:var(--c);color:var(--black);font:700 calc(16px*var(--inv-text-scale))/1.25 Inter,sans-serif}
+.sec-bar .t{flex:1}
+.sec-bar .read{font-weight:600;font-size:calc(14px*var(--inv-text-scale));opacity:.85;white-space:nowrap}
+.fold{width:calc(22px*var(--inv-text-scale));height:calc(22px*var(--inv-text-scale));flex:none}
+.fold .v{display:none}.sec-bar.is-closed .fold .v,.row-fold.is-closed .fold .v{display:block}
+/* Budget line: what Hope receives vs its cap. Plain meter, not a box behind a number */
+.meter{height:4px;background:var(--track)}
+.meter i{display:block;height:100%;width:var(--p);background:var(--c)}
+.meter.warn i{background:var(--tools)}.meter.full i{background:var(--cats)}
+.sec.is-closed>.sec-body,.sec.is-closed>.meter{display:none}
+
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px}
+.tb{display:inline-flex;align-items:center;gap:8px;min-height:calc(44px*var(--inv-text-scale));padding:0 calc(16px*var(--inv-text-scale));border-radius:10px;font-weight:700;font-size:calc(15px*var(--inv-text-scale));background:var(--track);color:#d5d8dc}
+.tb svg{width:calc(18px*var(--inv-text-scale));height:calc(18px*var(--inv-text-scale))}
+.tb.primary{background:var(--teal);color:var(--black)}
+.tb:hover,.tb:focus-visible{background:#fff;color:var(--black)}
+.tx{font-weight:700;font-size:calc(14px*var(--inv-text-scale));color:var(--dim);padding:calc(8px*var(--inv-text-scale)) calc(6px*var(--inv-text-scale));border-radius:8px}
+.tx:hover,.tx:focus-visible{background:var(--c);color:var(--black)}
+.grow{flex:1}
+
+/* Category fold row */
+.cat{padding:0 8px}
+.row-fold{display:flex;align-items:center;gap:calc(10px*var(--inv-text-scale));width:100%;min-height:calc(46px*var(--inv-text-scale));padding:calc(8px*var(--inv-text-scale)) calc(12px*var(--inv-text-scale));border-radius:10px;margin-top:3px;font-weight:700;font-size:calc(15px*var(--inv-text-scale));color:#e5e7ea}
+.row-fold .n{margin-left:auto;font-weight:600;color:var(--dim);font-variant-numeric:tabular-nums}
+.row-fold .fold{width:calc(18px*var(--inv-text-scale));height:calc(18px*var(--inv-text-scale));color:var(--c)}
+.row-fold:hover,.row-fold:focus-visible{background:var(--c);color:var(--black)}
+.row-fold:hover .n,.row-fold:hover .fold{color:var(--black)}
+.cat.is-closed .items{display:none}
+.cat.is-empty .row-fold{color:var(--dim)}
+.items{padding:0 0 6px 18px}
+
+/* Note / fact rows */
+.row{display:grid;grid-template-columns:calc(20px*var(--inv-text-scale)) 1fr auto;gap:calc(10px*var(--inv-text-scale));align-items:start;padding:calc(10px*var(--inv-text-scale)) calc(12px*var(--inv-text-scale));margin-top:3px;border-radius:10px;color:var(--ink)}
+.row .grip{width:calc(16px*var(--inv-text-scale));height:calc(22px*var(--inv-text-scale));color:var(--dim);cursor:grab;margin-top:1px}
+.row .title{font-size:calc(15px*var(--inv-text-scale));line-height:1.35;color:#e5e7ea;font-weight:600}
+.row .meta{margin-top:2px;font-size:calc(13px*var(--inv-text-scale));line-height:1.45;color:var(--dim)}
+.row .meta b{font-weight:600;color:var(--ink)}
+.row .acts{display:flex;flex-wrap:wrap;gap:calc(2px*var(--inv-text-scale)) calc(14px*var(--inv-text-scale));margin-top:calc(6px*var(--inv-text-scale));font-size:calc(14px*var(--inv-text-scale));font-weight:700}
+.row .acts button{padding:calc(3px*var(--inv-text-scale)) 0;color:var(--ink)}
+.row .acts button:hover{text-decoration:underline}
+.row .acts .del{color:var(--dim)}
+/* Active = Hope has it now. Check glyph, no box. Inactive = dimmed + struck */
+.state{width:calc(24px*var(--inv-text-scale));height:calc(24px*var(--inv-text-scale));color:#e5e7ea;margin-top:calc(-1px*var(--inv-text-scale))}
+.row.off .title{color:var(--dim);text-decoration:line-through;text-decoration-thickness:1px}
+.row.off .state{color:var(--dim)}.row.off .state .tick{display:none}.row:not(.off) .state .dash{display:none}
+.row.off .meta,.row.off .grip{opacity:.7}
+.row:hover,.row:focus-within{background:var(--c);color:var(--black)}
+.row:hover .title,.row:hover .meta,.row:hover .meta b,.row:hover .grip,.row:hover .state,.row:hover .acts button,.row:hover .star{color:var(--black)}
+/* Selected = the note that is open (teal, black ink), as the selected plugin in MixBus */
+.row.open{background:var(--teal);color:var(--black)}
+.row.open .title,.row.open .meta,.row.open .meta b,.row.open .grip,.row.open .state,.row.open .acts button{color:var(--black)}
+.body{margin:0 0 6px;padding:calc(10px*var(--inv-text-scale)) calc(12px*var(--inv-text-scale)) calc(10px*var(--inv-text-scale)) calc(42px*var(--inv-text-scale));border-top:1px solid var(--track);font:calc(13px*var(--inv-text-scale))/1.6 "SF Mono",ui-monospace,monospace;color:var(--ink)}
+.add{display:flex;align-items:center;gap:calc(10px*var(--inv-text-scale));width:100%;min-height:calc(44px*var(--inv-text-scale));padding:calc(8px*var(--inv-text-scale)) calc(12px*var(--inv-text-scale));border-radius:10px;margin-top:3px;font-weight:700;font-size:calc(14px*var(--inv-text-scale));color:var(--dim)}
+.add svg{width:calc(20px*var(--inv-text-scale));height:calc(20px*var(--inv-text-scale))}
+.add:hover,.add:focus-visible{background:var(--c);color:var(--black)}
+
+/* Memory facts */
+.fact{display:grid;grid-template-columns:calc(22px*var(--inv-text-scale)) 1fr auto;gap:calc(10px*var(--inv-text-scale));align-items:center;padding:calc(8px*var(--inv-text-scale)) calc(12px*var(--inv-text-scale));margin-top:3px;border-radius:10px;min-height:calc(46px*var(--inv-text-scale))}
+.fact .txt{font-size:calc(15px*var(--inv-text-scale));line-height:1.4;color:#e5e7ea}
+.fact.off .txt{color:var(--dim);text-decoration:line-through;text-decoration-thickness:1px}
+.star{width:calc(20px*var(--inv-text-scale));height:calc(20px*var(--inv-text-scale));color:var(--library);filter:drop-shadow(0 0 5px rgba(185,112,255,.7));fill:currentColor}
+.star.none{visibility:hidden}
+.fact .tools{display:flex;gap:calc(4px*var(--inv-text-scale))}
+.fact .tools button{width:calc(28px*var(--inv-text-scale));height:calc(28px*var(--inv-text-scale));display:grid;place-items:center;color:var(--dim)}
+.fact .tools svg{width:calc(18px*var(--inv-text-scale));height:calc(18px*var(--inv-text-scale))}
+.fact:hover,.fact:focus-within{background:var(--c)}
+.fact:hover .txt,.fact:hover .tools button{color:var(--black)}
+.fact:hover .star{color:var(--black);filter:none}
+.fact .tools .dash{display:none}.fact.off .tools .tick{display:none}.fact.off .tools .dash{display:block}
+.dragzone{display:none;margin:12px;padding:18px;border-radius:12px;background:var(--teal);color:var(--black);font-weight:700;font-size:calc(16px*var(--inv-text-scale));text-align:center}
+.foot-note{color:var(--dim);font-size:calc(13px*var(--inv-text-scale));margin:20px 0 0}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="grip" viewBox="0 0 16 24"><g fill="currentColor" stroke="none"><circle cx="5" cy="6" r="1.5"/><circle cx="11" cy="6" r="1.5"/><circle cx="5" cy="12" r="1.5"/><circle cx="11" cy="12" r="1.5"/><circle cx="5" cy="18" r="1.5"/><circle cx="11" cy="18" r="1.5"/></g></symbol>
+<symbol id="import" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+<symbol id="export" viewBox="0 0 24 24"><path d="M12 16V5M7 10l5-5 5 5M5 20h14"/></symbol>
+<symbol id="tick" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+<symbol id="dash" viewBox="0 0 24 24"><path d="M6 12h12"/></symbol>
+<symbol id="star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol>
+<symbol id="pin" viewBox="0 0 24 24"><path d="M12 17v5M9 10.8V6l3-3 3 3v4.8l3 3.2v3H6v-3z"/></symbol>
+<symbol id="edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></symbol>
+<symbol id="trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+</defs></svg>
+
+<div class="page">
+<div class="page-head"><h1>Build a library of useful mix knowledge</h1><p>Save research, notes, and references Hope can use in future sessions.</p></div>
+
+<!-- JOB 1: KNOWLEDGE BASE -->
+<section class="sec" id="kb">
+ <button class="sec-bar" data-fold="sec" aria-expanded="true"><span class="t">Knowledge base</span><span class="read">2 of 3 active · 873 / 8000 bytes</span>
+  <svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg></button>
+ <div class="meter" style="--p:10.9%"></div>
+ <div class="sec-body">
+  <div class="toolbar">
+   <button class="tb primary"><svg><use href="#plus"/></svg>Add note</button>
+   <button class="tb"><svg><use href="#import"/></svg>Import</button>
+   <button class="tb"><svg><use href="#export"/></svg>Export</button>
+   <span class="grow"></span>
+   <button class="tx" data-all="open">Expand all</button><button class="tx" data-all="close">Collapse all</button>
+  </div>
+  <div class="dragzone" id="dz">Drop files to import. PDF, DOCX, TXT, MD or JSON</div>
+
+  <div class="cat is-empty is-closed"><button class="row-fold is-closed" data-fold="cat"><svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg>Mixing techniques<span class="n">0</span></button><div class="items"><button class="add"><svg><use href="#plus"/></svg>Add note</button></div></div>
+
+  <div class="cat"><button class="row-fold" data-fold="cat"><svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg>Producer interviews / chains<span class="n">2</span></button>
+   <div class="items">
+    <div class="row open"><svg class="grip"><use href="#grip"/></svg>
+     <div><div class="title">Metro Boomin 808 and sub chain breakdown</div>
+      <div class="meta">22 Nov 2026 · youtube.com/watch?v=abc123</div>
+      <div class="meta">808, sub, sidechain</div>
+      <div class="acts"><button>Summary</button><button>Hide</button><button>Edit</button><button>Re-summarise</button><button class="del">Delete</button></div></div>
+     <div><svg class="state" aria-label="Active"><use class="tick" href="#tick"/></svg><div class="meta" style="text-align:right">19 tok</div></div></div>
+    <div class="body">Sub tamed with a high-pass at 28 Hz, soft clip, then sidechain from kick. Layer a short click above 2 kHz so the 808 translates on phones. Keep the sub mono below 120 Hz.</div>
+    <div class="row"><svg class="grip"><use href="#grip"/></svg>
+     <div><div class="title">Wheezy on vocal stacking and ad-lib widths</div>
+      <div class="meta">20 Nov 2026 · NotebookLM</div><div class="meta">vocals, stereo width</div>
+      <div class="acts"><button>Raw</button><button>View</button><button>Edit</button><button>Re-summarise</button><button class="del">Delete</button></div></div>
+     <div><svg class="state" aria-label="Active"><use class="tick" href="#tick"/></svg><div class="meta" style="text-align:right">142 tok</div></div></div>
+    <button class="add"><svg><use href="#plus"/></svg>Add note</button>
+   </div></div>
+
+  <div class="cat is-empty is-closed"><button class="row-fold is-closed" data-fold="cat"><svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg>Plugin recipes / settings<span class="n">0</span></button><div class="items"><button class="add"><svg><use href="#plus"/></svg>Add note</button></div></div>
+  <div class="cat is-empty is-closed"><button class="row-fold is-closed" data-fold="cat"><svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg>Reference tracks<span class="n">0</span></button><div class="items"><button class="add"><svg><use href="#plus"/></svg>Add note</button></div></div>
+
+  <div class="cat"><button class="row-fold" data-fold="cat"><svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg>Mastering<span class="n">1</span></button>
+   <div class="items"><div class="row"><svg class="grip"><use href="#grip"/></svg>
+     <div><div class="title">Streaming loudness targets 2026</div>
+      <div class="meta">22 Nov 2026 · spotify.com/loudness</div><div class="meta">lufs</div>
+      <div class="acts"><button disabled style="opacity:.55;cursor:default">Raw only</button><button>View</button><button>Edit</button><button>Re-summarise</button><button class="del">Delete</button></div></div>
+     <div><svg class="state" aria-label="Active"><use class="tick" href="#tick"/></svg><div class="meta" style="text-align:right">200 tok</div></div></div>
+    <button class="add"><svg><use href="#plus"/></svg>Add note</button></div></div>
+
+  <div class="cat"><button class="row-fold" data-fold="cat"><svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg>Vocal techniques<span class="n">1</span></button>
+   <div class="items"><div class="row off"><svg class="grip"><use href="#grip"/></svg>
+     <div><div class="title">Vocal chain for melodic trap leads</div>
+      <div class="meta">22 Nov 2026 · NotebookLM</div><div class="meta">vocals, de-esser</div>
+      <div class="acts"><button disabled style="opacity:.55;cursor:default">Raw only</button><button>View</button><button>Edit</button><button>Re-summarise</button><button class="del">Delete</button></div></div>
+     <div><svg class="state" aria-label="Inactive"><use class="dash" href="#dash"/></svg><div class="meta" style="text-align:right">100 tok</div></div></div>
+    <button class="add"><svg><use href="#plus"/></svg>Add note</button></div></div>
+
+  <div class="cat is-empty is-closed"><button class="row-fold is-closed" data-fold="cat"><svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg>Workflow<span class="n">0</span></button><div class="items"><button class="add"><svg><use href="#plus"/></svg>Add note</button></div></div>
+  <div class="cat is-empty is-closed" style="padding-bottom:8px"><button class="row-fold is-closed" data-fold="cat"><svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg>Misc<span class="n">0</span></button><div class="items"><button class="add"><svg><use href="#plus"/></svg>Add note</button></div></div>
+ </div>
+</section>
+
+<!-- JOB 2: HOPE'S MEMORY -->
+<section class="sec memory" id="mem">
+ <button class="sec-bar" data-fold="sec" aria-expanded="true"><span class="t">Hope's memory</span><span class="read">5 of 6 active · 214 / 2000 bytes</span>
+  <svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg></button>
+ <div class="meter" style="--p:10.7%"></div>
+ <div class="sec-body">
+  <div class="toolbar"><button class="tb primary"><svg><use href="#plus"/></svg>Add fact</button><span class="grow"></span>
+   <button class="tx" data-all="open">Expand all</button><button class="tx" data-all="close">Collapse all</button><button class="tx">Clear all</button></div>
+
+  <div class="cat"><button class="row-fold" data-fold="cat"><svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg>Mixing targets<span class="n">2</span></button><div class="items">
+   <div class="fact"><svg class="star"><use href="#star"/></svg><span class="txt">Targets -9 LUFS integrated for Spotify trap masters.</span><span class="tools"><button title="Unpin"><svg><use href="#pin"/></svg></button><button title="Edit"><svg><use href="#edit"/></svg></button><button title="Active, click to disable"><svg><use class="tick" href="#tick"/><use class="dash" href="#dash"/></svg></button><button title="Delete"><svg><use href="#trash"/></svg></button></span></div>
+   <div class="fact"><svg class="star none"><use href="#star"/></svg><span class="txt">Wants true peak no higher than -1 dBTP.</span><span class="tools"><button title="Pin"><svg><use href="#pin"/></svg></button><button title="Edit"><svg><use href="#edit"/></svg></button><button title="Active, click to disable"><svg><use class="tick" href="#tick"/><use class="dash" href="#dash"/></svg></button><button title="Delete"><svg><use href="#trash"/></svg></button></span></div>
+   <button class="add"><svg><use href="#plus"/></svg>Add to Mixing targets</button></div></div>
+  <div class="cat"><button class="row-fold" data-fold="cat"><svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg>Vocals<span class="n">2</span></button><div class="items">
+   <div class="fact"><svg class="star none"><use href="#star"/></svg><span class="txt">Prefers a CLA-2A before the de-esser.</span><span class="tools"><button title="Pin"><svg><use href="#pin"/></svg></button><button title="Edit"><svg><use href="#edit"/></svg></button><button title="Active, click to disable"><svg><use class="tick" href="#tick"/><use class="dash" href="#dash"/></svg></button><button title="Delete"><svg><use href="#trash"/></svg></button></span></div>
+   <div class="fact"><svg class="star none"><use href="#star"/></svg><span class="txt">Likes ad-libs panned wide with a short slap delay.</span><span class="tools"><button title="Pin"><svg><use href="#pin"/></svg></button><button title="Edit"><svg><use href="#edit"/></svg></button><button title="Active, click to disable"><svg><use class="tick" href="#tick"/><use class="dash" href="#dash"/></svg></button><button title="Delete"><svg><use href="#trash"/></svg></button></span></div>
+   <button class="add"><svg><use href="#plus"/></svg>Add to Vocals</button></div></div>
+  <div class="cat"><button class="row-fold" data-fold="cat"><svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg>808 / Bass<span class="n">2</span></button><div class="items">
+   <div class="fact off"><svg class="star none"><use href="#star"/></svg><span class="txt">Keeps 808 sub mono below 120 Hz.</span><span class="tools"><button title="Pin"><svg><use href="#pin"/></svg></button><button title="Edit"><svg><use href="#edit"/></svg></button><button title="Disabled, click to enable"><svg><use class="tick" href="#tick"/><use class="dash" href="#dash"/></svg></button><button title="Delete"><svg><use href="#trash"/></svg></button></span></div>
+   <div class="fact"><svg class="star none"><use href="#star"/></svg><span class="txt">Sidechains the 808 from the kick, fast release.</span><span class="tools"><button title="Pin"><svg><use href="#pin"/></svg></button><button title="Edit"><svg><use href="#edit"/></svg></button><button title="Active, click to disable"><svg><use class="tick" href="#tick"/><use class="dash" href="#dash"/></svg></button><button title="Delete"><svg><use href="#trash"/></svg></button></span></div>
+   <button class="add"><svg><use href="#plus"/></svg>Add to 808 / Bass</button></div></div>
+  <div class="cat is-empty is-closed"><button class="row-fold is-closed" data-fold="cat"><svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg>Drums<span class="n">0</span></button><div class="items"><button class="add"><svg><use href="#plus"/></svg>Add to Drums</button></div></div>
+  <div class="cat is-empty is-closed"><button class="row-fold is-closed" data-fold="cat"><svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg>Master<span class="n">0</span></button><div class="items"><button class="add"><svg><use href="#plus"/></svg>Add to Master</button></div></div>
+  <div class="cat is-empty is-closed"><button class="row-fold is-closed" data-fold="cat"><svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg>Workflow<span class="n">0</span></button><div class="items"><button class="add"><svg><use href="#plus"/></svg>Add to Workflow</button></div></div>
+  <div class="cat is-empty is-closed" style="padding-bottom:8px"><button class="row-fold is-closed" data-fold="cat"><svg class="fold" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg>Misc<span class="n">0</span></button><div class="items"><button class="add"><svg><use href="#plus"/></svg>Add to Misc</button></div></div>
+ </div>
+</section>
+<p class="foot-note">Preview only. Not shown: Add/Edit note dialog, drag-and-drop in motion, over-budget meter colours, mobile width.</p>
+</div>
+<script>
+const q=new URLSearchParams(location.search);if(q.get('scale'))document.documentElement.style.setProperty('--inv-text-scale',q.get('scale'));
+document.addEventListener('click',e=>{
+ const f=e.target.closest('[data-fold]');
+ if(f){const t=f.dataset.fold==='sec'?f.parentElement:f.closest('.cat');t.classList.toggle('is-closed');f.classList.toggle('is-closed');if(f.dataset.fold==='sec')f.setAttribute('aria-expanded',!t.classList.contains('is-closed'))}
+ const a=e.target.closest('[data-all]');
+ if(a){a.closest('.sec').querySelectorAll('.cat').forEach(c=>{c.classList.toggle('is-closed',a.dataset.all==='close');c.querySelector('.row-fold').classList.toggle('is-closed',a.dataset.all==='close')})}
+});
+/* the fold glyph: row-fold uses .is-closed on the button itself */
+</script></body></html>
