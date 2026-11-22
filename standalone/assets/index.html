@@ -3241,6 +3241,169 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #genreSelect + .cs,#platformSelect + .cs{display:none !important}
 #hopeRail .aichat-compose .send-col{background:transparent !important}
 #hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):not(:hover):not(:disabled){background:transparent !important}
+
+body:has(#library.active) #tabIntro{display:none}
+/* LIBRARY TAB (Jules, 22 Nov 2026). One tab replacing Insight + Snapshots. Scoped to #library.
+   Unit --u = 1px x text-size setting. Palette only. No glows, tints, rings under text or boxes behind markers.
+   Each section is ONE outlined card, built exactly like a MixBus bus / Plugins sidebar card:
+   1px section colour border, radius 12, #1a1d21, solid section-colour bar (48px, black 16px/700), plus/minus fold at the right. */
+#library{--u:calc(1px*var(--inv-text-scale,1));--ink:#c4cad3;--hi:#e5e7ea;--dim:#9aa0a6;--track:#2a2e35;--black:#000;
+  --yellow:#e8b45a;--blue:#36a8ed;--pink:#f472b6;--orange:#f97316;--purple:#b970ff;
+  --rowx-l:calc(14*var(--u));--rowx-r:calc(12*var(--u));--rowy:calc(22*var(--u));--zgap:calc(40*var(--u))}
+#library :is(button,input,select,textarea,a){font-family:inherit}
+#library :focus{outline:0}
+
+/* page head: title left, one budget readout right, nothing else */
+#library .lib-head{display:flex;align-items:baseline;gap:calc(24*var(--u));margin:0 0 calc(28*var(--u))}
+#library .lib-head h2{margin:0;font:500 calc(30*var(--u))/1.2 Inter,sans-serif;letter-spacing:-.035em;color:#fff}
+#library .lib-read{margin-left:auto;font:600 calc(14*var(--u))/1.4 Inter,sans-serif;color:var(--dim)}
+#library .lib-read.over{color:var(--orange)}
+#library .lib-group{display:flex;flex-direction:column;gap:calc(12*var(--u));margin:0 0 calc(40*var(--u))}
+
+/* 1. CARD + BAR (identical to MixBus .bus-col / Plugins card) */
+#library .card{--c:var(--dim);container:card/inline-size;background:#1a1d21;border:1px solid var(--c);border-radius:12px;overflow:hidden}
+#library .card[data-sec=add]{--c:var(--yellow)}
+#library .card[data-sec=review]{--c:var(--blue)}
+#library .card[data-sec=videos]{--c:var(--pink)}
+#library .card[data-sec=notes]{--c:var(--orange)}
+#library .card[data-sec=chats]{--c:var(--purple)}
+#library .bar{display:flex;align-items:center;gap:calc(12*var(--u));width:100%;min-height:calc(48*var(--u));margin:0;padding:calc(8*var(--u)) var(--rowx-r) calc(8*var(--u)) calc(14*var(--u));background:var(--c);border:0;color:#000;font:700 calc(16*var(--u))/1.25 Inter,sans-serif;text-align:left;cursor:pointer}
+#library .bar .n{font:600 calc(15*var(--u))/1.3 Inter,sans-serif;font-variant-numeric:tabular-nums;opacity:.8}
+#library .bar:focus-visible{outline:2px solid #fff;outline-offset:calc(-3*var(--u))}
+#library .fold{margin-left:auto;flex:none;width:calc(22*var(--u));color:#000;font:500 calc(22*var(--u))/1 Inter,sans-serif;text-align:center}
+#library [aria-expanded=true]>.fold::before{content:"\2212"}
+#library [aria-expanded=false]>.fold::before{content:"+"}
+#library .card[data-open=false]>.cbody{display:none}
+
+/* 2. BUTTONS AND TEXT ACTIONS (Plugins/MixBus: solid hover fill white, black ink) */
+#library .btn{display:inline-flex;align-items:center;justify-content:center;min-height:calc(44*var(--u));min-width:calc(112*var(--u));padding:0 calc(20*var(--u));border:0;border-radius:10px;background:var(--track);color:#d5d8dc;font:700 calc(15*var(--u))/1.2 Inter,sans-serif;white-space:nowrap;cursor:pointer;text-decoration:none}
+#library .btn.pri{background:var(--c);color:#000}
+#library .btn:hover:not(:disabled){background:#fff;color:#000}
+#library .btn:focus-visible{background:#fff;color:#000;box-shadow:inset 0 0 0 2px #000}
+#library .btn:disabled{background:var(--track);color:var(--dim);cursor:default}
+#library .tx{display:inline-flex;align-items:center;min-height:calc(36*var(--u));padding:0 calc(6*var(--u));margin:0 calc(-6*var(--u));background:none;border:0;border-radius:6px;color:var(--ink);font:600 calc(15*var(--u))/1.2 Inter,sans-serif;white-space:nowrap;cursor:pointer;text-decoration:none}
+#library .tx.hi{color:var(--hi);font-weight:700}
+#library .tx.dim{color:var(--dim)}
+#library .tx:hover{color:#fff}                /* text brightens, nothing else: no fill, underline or ring */
+#library .tx:focus-visible{color:#fff;box-shadow:inset 0 0 0 2px #fff}
+#library .field{display:block;width:100%;min-width:0;min-height:calc(44*var(--u));padding:0 calc(16*var(--u));background:var(--track);border:0;border-radius:10px;color:var(--hi);font:calc(15*var(--u))/1.2 Inter,sans-serif}
+#library textarea.field{padding:calc(12*var(--u)) calc(16*var(--u));line-height:1.6;resize:vertical;min-height:calc(112*var(--u))}
+#library .field::placeholder{color:var(--dim)}
+#library .field:focus{box-shadow:inset 0 0 0 2px #fff}
+#library select.field{appearance:none;-webkit-appearance:none;cursor:pointer}
+
+/* 3. ADD CARD: label | field | button on one grid, rows separated by the hairline */
+#library .frow{display:grid;grid-template-columns:calc(200*var(--u)) minmax(0,1fr) auto;grid-template-areas:"l f b" ". m .";column-gap:calc(24*var(--u));align-items:center;padding:var(--rowy) var(--rowx-r) var(--rowy) var(--rowx-l);border-top:1px solid var(--track)}
+#library .frow:first-child{border-top:0}
+#library .frow .lbl{grid-area:l;font:600 calc(16*var(--u))/1.3 Inter,sans-serif;color:var(--hi)}
+#library .frow .field{grid-area:f}
+#library .frow .btns{grid-area:b;display:flex;gap:calc(12*var(--u))}
+#library .frow .fmsg{grid-area:m;margin:calc(12*var(--u)) 0 0;font:calc(14*var(--u))/1.5 Inter,sans-serif;color:var(--ink)}
+#library .frow .fmsg.bad{color:var(--orange)}
+#library .frow .fmsg:empty{display:none}
+#library .frow.notes .btns{grid-column:2/4}
+#library .prog{grid-column:1/-1;height:2px;margin:calc(12*var(--u)) 0 0;background:var(--track);overflow:hidden}
+#library .prog i{display:block;width:40%;height:100%;background:var(--hi);animation:libsweep 1.4s ease-in-out infinite}
+@keyframes libsweep{0%{margin-left:-40%}100%{margin-left:100%}}
+@media (prefers-reduced-motion:reduce){#library .prog i{animation:none;width:100%}}
+
+/* 4. APPROVAL LIST (inside the Add card) */
+#library .res{border-top:1px solid var(--track)}
+#library .rhead{display:flex;align-items:center;gap:calc(24*var(--u));padding:calc(18*var(--u)) var(--rowx-r) calc(6*var(--u)) var(--rowx-l)}
+#library .rhead h3{margin:0;font:700 calc(16*var(--u))/1.3 Inter,sans-serif;color:#fff}
+#library .rhead .by{font:600 calc(14*var(--u))/1.3 Inter,sans-serif;color:var(--dim);margin-left:calc(12*var(--u))}
+#library .rhead .rhead-end{margin-left:auto;display:flex;align-items:center;gap:calc(24*var(--u))}
+#library .rleft{margin:0;padding:0 var(--rowx-r) calc(4*var(--u)) var(--rowx-l);font:calc(14*var(--u))/1.5 Inter,sans-serif;color:var(--dim)}
+#library .rmeter{height:2px;margin:calc(12*var(--u)) var(--rowx-r) 0 var(--rowx-l);background:var(--track)}
+#library .rmeter i{display:block;height:100%;width:var(--p,0%);background:var(--hi)}
+
+/* 5. ENTRY = one table row. Every row in a card uses the same fixed column template (--grid), so each column lines up vertically.
+   Title takes the remaining width; Channel/source, date and every action get their own fixed-width column; a quiet header row names the columns.
+   No boxes, no fills. Hairline between rows, 22px above and below it. The summary opens under its own title and runs the full row width. */
+#library .card[data-sec=add]{--grid:minmax(0,1fr) calc(190*var(--u)) calc(170*var(--u)) calc(100*var(--u)) calc(80*var(--u)) calc(112*var(--u))}            /* Title | Channel | Length, views | Open video | Dismiss | Add */
+#library .card[data-sec=review]{--grid:minmax(0,1fr) calc(190*var(--u)) calc(150*var(--u)) calc(56*var(--u)) calc(72*var(--u)) calc(112*var(--u))}          /* Title | Files under | Received | Edit | Delete | Keep */
+#library .card[data-sec=videos]{--grid:minmax(0,1fr) calc(180*var(--u)) calc(110*var(--u)) calc(56*var(--u)) calc(64*var(--u)) calc(100*var(--u)) calc(120*var(--u)) calc(72*var(--u)) calc(72*var(--u))}   /* Title | Channel | Added | Edit | Hide | Open video | Re-summarise | Delete | Hope reads */
+#library .card[data-sec=notes]{--grid:minmax(0,1fr) calc(180*var(--u)) calc(110*var(--u)) calc(56*var(--u)) calc(64*var(--u)) calc(100*var(--u)) calc(120*var(--u)) calc(72*var(--u)) calc(72*var(--u))}    /* Title | Source | Added | Edit | Hide | Summary/Raw | Re-summarise | Delete | Hope reads */
+#library .card[data-sec=chats]{--grid:minmax(0,1fr) calc(170*var(--u)) calc(120*var(--u)) calc(56*var(--u)) calc(64*var(--u)) calc(130*var(--u)) calc(110*var(--u)) calc(56*var(--u)) calc(72*var(--u))}   /* Title | Contents | Saved | Edit | Hide | Apply to MixBus | Favourite | Copy | Delete */
+#library .thead,#library .ent{display:grid;grid-template-columns:var(--grid);column-gap:calc(24*var(--u));align-items:center;padding-left:var(--rowx-l);padding-right:var(--rowx-r)}
+#library .thead{padding-top:calc(16*var(--u));padding-bottom:calc(6*var(--u));font:600 calc(13*var(--u))/1.3 Inter,sans-serif;color:var(--dim)}   /* plain text names, no fill, no rule */
+#library .thead span{min-width:0}
+#library .ent{padding-top:var(--rowy);padding-bottom:var(--rowy);border-top:1px solid var(--track)}
+#library .rhead+.thead+.ent,#library .rleft+.thead+.ent,#library .gbody>.thead+.ent,#library .gbody>.ent:first-child,#library .cbody>.ent:first-child,#library .cbody>.thead+.ent{border-top:0}
+#library .ent .t{min-width:0}
+#library .ent h4{margin:0;font:600 calc(16*var(--u))/1.4 Inter,sans-serif;color:var(--hi);overflow-wrap:anywhere}   /* wraps cleanly, never cut off */
+#library .ent .sub{margin:calc(4*var(--u)) 0 0;font:calc(14*var(--u))/1.5 Inter,sans-serif;color:var(--dim)}
+#library .ent .meta,#library .ent .acts{display:contents}
+#library .ent .c{min-width:0;font:calc(14*var(--u))/1.5 Inter,sans-serif;color:var(--ink);overflow-wrap:anywhere}
+#library .ent .c.d{color:var(--dim)}
+#library .ent .k{justify-self:center}
+#library .ent .body{grid-column:1/-1;margin-top:calc(10*var(--u))}
+#library .ent .body:empty{display:none}
+#library .ent .sum{margin:0;font:calc(15*var(--u))/1.65 Inter,sans-serif;color:var(--ink)}   /* no width cap: the summary runs the full row */
+#library .ent[data-open=false] .body .sum.fold-sum{display:none}
+#library .ent[data-open=false] .body:not(:has(>:not(.fold-sum))){display:none}
+#library .ent .stat{margin:calc(12*var(--u)) 0 0;font:calc(14*var(--u))/1.5 Inter,sans-serif;color:var(--ink)}
+#library .ent .stat.bad{color:var(--orange)}
+#library .ent .stat b{color:#fff;font-weight:600}
+#library .ent .turn{margin:calc(12*var(--u)) 0 0;font:calc(15*var(--u))/1.65 Inter,sans-serif;color:var(--ink)}
+#library .ent .turn b{color:var(--hi);font-weight:700;margin-right:calc(8*var(--u))}
+#library .ent .edit{display:grid;gap:calc(12*var(--u))}
+#library .tick{display:inline-flex;align-items:center;justify-content:center;width:calc(24*var(--u));min-height:calc(28*var(--u));padding:0;background:none;border:0;border-radius:6px;color:var(--hi);font:700 calc(18*var(--u))/1 Inter,sans-serif;cursor:pointer}
+#library .tick[aria-pressed=true]::before{content:"\2713"}
+#library .tick[aria-pressed=false]::before{content:"\2013";color:var(--dim)}
+#library .tick:hover{color:#fff}
+#library .tick:focus-visible{box-shadow:inset 0 0 0 2px #fff}
+
+/* below 1300px (card width) rows stack: title (tick at the right), then channel and date on one line, the summary, then the actions in their own row under the title */
+@container card (max-width:1299px){
+  #library .thead{display:none}
+  #library .ent{grid-template-columns:minmax(0,1fr) calc(24*var(--u));column-gap:calc(16*var(--u));align-items:start}
+  #library .ent.nk{grid-template-columns:minmax(0,1fr)}
+  #library .ent .t{order:1}#library .ent .k{order:2}
+  #library .ent .meta{order:3;grid-column:1/-1;display:flex;flex-wrap:wrap;gap:0 calc(16*var(--u));margin-top:calc(4*var(--u))}
+  #library .ent .body{order:4}
+  #library .ent .acts{order:5;grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:0 calc(24*var(--u));margin-top:calc(16*var(--u))}
+  #library .ent .acts .c{display:flex;align-items:center}
+  #library .ent .c:empty,#library .ent .acts .c:empty{display:none}
+  #library .frow{grid-template-columns:calc(150*var(--u)) minmax(0,1fr) auto}
+}
+@container card (max-width:639px){
+  #library .frow{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"l l" "f b" "m m";row-gap:calc(10*var(--u));column-gap:calc(12*var(--u))}
+  #library .frow.notes .btns{grid-column:1/-1}
+  #library .rhead{flex-wrap:wrap;gap:calc(8*var(--u)) calc(16*var(--u))}
+  #library .rhead .rhead-end{margin-left:0;width:100%;justify-content:space-between}
+  #library .btn{min-width:calc(88*var(--u))}
+}
+
+/* 6. GROUPS inside Videos and Notes (the six categories) and Saved chats (Favourites, Sessions): a hairline row, count beside the name, fold at the right */
+#library .grp{display:flex;align-items:center;gap:calc(12*var(--u));width:100%;min-height:calc(56*var(--u));padding:0 var(--rowx-r) 0 var(--rowx-l);background:none;border:0;border-top:1px solid var(--track);color:#fff;font:700 calc(16*var(--u))/1.3 Inter,sans-serif;text-align:left;cursor:pointer}
+#library .cbody>.g:first-child>.grp{border-top:0}
+#library .grp .n{font:600 calc(15*var(--u))/1.3 Inter,sans-serif;color:var(--dim);font-variant-numeric:tabular-nums}
+#library .grp .fold{color:var(--c)}
+#library .grp:focus-visible{box-shadow:inset 0 0 0 2px #fff}
+#library .g[data-open=false]>.gbody{display:none}
+#library .more{display:block;width:100%;min-height:calc(52*var(--u));padding:0 var(--rowx-r) 0 var(--rowx-l);background:none;border:0;border-top:1px solid var(--track);color:var(--ink);font:600 calc(15*var(--u))/1.2 Inter,sans-serif;text-align:left;cursor:pointer}
+#library .more:hover{color:#fff}
+#library .more:focus-visible{box-shadow:inset 0 0 0 2px #fff;color:#fff}
+#library .none{margin:0;padding:var(--rowy) var(--rowx-r) var(--rowy) var(--rowx-l);font:calc(15*var(--u))/1.5 Inter,sans-serif;color:var(--dim)}
+#library .foot{display:flex;justify-content:flex-end;gap:calc(28*var(--u));padding:calc(10*var(--u)) var(--rowx-r) calc(10*var(--u)) var(--rowx-l);border-top:1px solid var(--track)}
+
+/* 7. SNAPSHOT PILLS (filled ones only; empty slots are gone). Click recalls: mid-call to Hope as context, idle into the compose box. */
+#library .pills{display:grid;grid-template-columns:repeat(auto-fill,minmax(calc(260*var(--u)),1fr));gap:calc(12*var(--u));padding:calc(8*var(--u)) var(--rowx-r) calc(24*var(--u)) var(--rowx-l)}
+#library .pill{display:flex;align-items:stretch;min-height:calc(48*var(--u));background:var(--track);border-radius:10px;overflow:hidden}
+#library .pill .main{flex:1;min-width:0;padding:calc(10*var(--u)) calc(8*var(--u)) calc(10*var(--u)) calc(16*var(--u));background:none;border:0;color:var(--hi);font:600 calc(15*var(--u))/1.35 Inter,sans-serif;text-align:left;cursor:pointer;text-wrap:balance}
+#library .pill .star{flex:none;width:calc(44*var(--u));background:none;border:0;color:var(--purple);font:calc(18*var(--u))/1 Inter,sans-serif;cursor:pointer}
+#library .pill:hover,#library .pill:has(:focus-visible){background:#fff}
+#library .pill:hover :is(.main,.star),#library .pill:has(:focus-visible) :is(.main,.star){color:#000}
+#library .pill:has(:focus-visible){box-shadow:inset 0 0 0 2px #000}
+#library .pill :focus-visible{outline:0}
+
+/* 8. BROWSE: plain heading, one search field that filters Videos, Notes and Saved chats together */
+#library .browse-head{display:flex;align-items:center;flex-wrap:wrap;gap:calc(16*var(--u)) calc(24*var(--u));margin:0 0 calc(16*var(--u))}
+#library .browse-head h3{margin:0;font:700 calc(22*var(--u))/1.25 Inter,sans-serif;color:#f3f4f6}
+#library .browse-head .field{flex:1 1 calc(320*var(--u));width:auto}
+#library .browse-head .ends{display:flex;gap:calc(20*var(--u))}
+
 </style>
 </head>
 <body>
@@ -3374,13 +3537,12 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   <button class="tab oz-tab active" data-tab="mixcheck" data-label="Mix Check" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.5 4.2c1.2 6.2 2.1 7.1 8.3 8.3-6.2 1.2-7.1 2.1-8.3 8.3-1.2-6.2-2.1-7.1-8.3-8.3 6.2-1.2 7.1-2.1 8.3-8.3Z"/><path d="M18 1.2c.7 3.3 1.2 3.8 4.5 4.5-3.3.7-3.8 1.2-4.5 4.5-.7-3.3-1.2-3.8-4.5-4.5 3.3-.7 3.8-1.2 4.5-4.5Z"/></svg></span><span class="tab-label">Mix Check</span></button>
   <button class="tab oz-tab" data-tab="mixbus" data-label="MixBus" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 3v18M9.3 3v18M14.7 3v18M20 3v18"/><path d="M2.5 7h3M7.8 14h3M13.2 5.5h3M18.5 16.5h3" stroke-width="2.8"/></svg></span><span class="tab-label">MixBus</span></button>
   <button class="tab oz-tab" data-tab="plugins" data-label="Plugins" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M18.3,17.3L15,20.6L11.4,17l3.3-3.3c0.4-0.4,0.4-1,0-1.4s-1-0.4-1.4,0L10,15.6l-1.3-1.3c-0.4-0.4-1-0.4-1.4,0s-0.4,1,0,1.4L7.6,16l-2.8,2.8C3.6,19.9,3,21.4,3,23c0,1.3,0.4,2.4,1.1,3.5l-2.8,2.8c-0.4,0.4-0.4,1,0,1.4C1.5,30.9,1.7,31,2,31s0.5-0.1,0.7-0.3l2.8-2.8C6.5,28.6,7.7,29,9,29c1.6,0,3.1-0.6,4.2-1.7l2.8-2.8l0.3,0.3c0.2,0.2,0.5,0.3,0.7,0.3s0.5-0.1,0.7-0.3c0.4-0.4,0.4-1,0-1.4L16.4,22l3.3-3.3c0.4-0.4,0.4-1,0-1.4S18.7,16.9,18.3,17.3z"/><path d="M30.7,1.3c-0.4-0.4-1-0.4-1.4,0l-2.8,2.8C25.5,3.4,24.3,3,23,3c-1.6,0-3.1,0.6-4.2,1.7l-3.5,3.5c-0.4,0.4-0.4,1,0,1.4l7,7c0.2,0.2,0.5,0.3,0.7,0.3s0.5-0.1,0.7-0.3l3.5-3.5C28.4,12.1,29,10.6,29,9c0-1.3-0.4-2.4-1.1-3.5l2.8-2.8C31.1,2.3,31.1,1.7,30.7,1.3z"/></svg></span><span class="tab-label">Plugins</span></button>
-  <button class="tab oz-tab" data-tab="knowledge" data-label="Insight" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10.5c-.8.7-1 1.5-1 2.5H9c0-1-.2-1.8-1-2.5A6 6 0 0 1 12 3z"/></svg></span><span class="tab-label">Insight</span></button>
+  <button class="tab oz-tab" data-tab="library" data-label="Library" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10.5c-.8.7-1 1.5-1 2.5H9c0-1-.2-1.8-1-2.5A6 6 0 0 1 12 3z"/></svg></span><span class="tab-label">Library</span></button>
   <!-- Snapshots tab — relocated home for the favourited pill grid + Session
        Snapshots list. Creation (Snapshot → Luna chat) stays in Hope's
        chat (the persistent rail, docked on every tab) so save-from-chat is
        in-context; viewing / managing lives here. Bookmark glyph echoes the
        section-head icons in-panel. -->
-  <button class="tab oz-tab" data-tab="snapshots" data-label="Snapshots" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span><span class="tab-label">Snapshots</span></button>
   <!-- Settings is the single navigation entry for settings; all settings
        sections live in this panel. -->
   <button class="tab oz-tab" data-tab="settings" data-label="Settings" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.5-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.5 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.5 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.5-2-1.5c.1-.4.1-.8.1-1.2z"/></svg></span><span class="tab-label">Settings</span></button>
@@ -3622,6 +3784,24 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
      editPill modal) keeps working without code touches beyond panel
      wrapping. The Snapshot → Luna chat creator stays on Conversation
      so saving is in-context with the chat. -->
+<div class="panel" id="library">
+  <div class="lib-head"><h2>Library</h2><span class="lib-read" id="libRead">Hope reads 0 of 0 notes</span></div>
+  <div class="lib-group">
+    <section class="card" data-sec="add" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Add to Hope's library<span class="fold" aria-hidden="true"></span></button><div class="cbody">
+      <div class="frow"><label class="lbl" for="libLink">Paste a link</label><input class="field" id="libLink" type="url" placeholder="YouTube link" onkeydown="if(event.key==='Enter'){event.preventDefault();libAddLink()}"><div class="btns"><button class="btn pri" type="button" id="libLinkGo" onclick="libAddLink()">Add</button></div><p class="fmsg" id="libLinkMsg"></p><div class="prog" id="libLinkProgress" hidden><i></i></div></div>
+      <div class="frow"><label class="lbl" for="libFind">Find videos</label><input class="field" id="libFind" type="search" placeholder="e.g. 808s in hip hop" onkeydown="if(event.key==='Enter'){event.preventDefault();libFindVideos()}"><div class="btns"><button class="btn pri" type="button" id="libFindGo" onclick="libFindVideos()">Find</button></div><p class="fmsg" id="libFindMsg"></p><div class="prog" id="libFindProgress" hidden><i></i></div></div>
+      <div class="frow notes"><span class="lbl">Add a note</span><div class="btns"><button class="btn" type="button" onclick="kbOpenAdd()">Write a note</button><button class="btn" type="button" onclick="document.getElementById('kbImportFile').click()">Import a file</button></div></div>
+      <div class="res" id="libResults" hidden></div>
+    </div></section>
+    <section class="card" data-sec="review" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">To review <span class="n" id="libReviewCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libReviewRows"></div></section>
+  </div>
+  <div class="browse-head"><h3>Browse</h3><input class="field" type="search" id="libSearch" aria-label="Search library" placeholder="Search videos, notes and saved chats" oninput="libraryRender()"><div class="ends"><button class="tx" type="button" onclick="libFoldAll(true)">Expand all</button><button class="tx" type="button" onclick="libFoldAll(false)">Collapse all</button></div></div>
+  <div class="lib-group" id="libBrowse">
+    <section class="card" data-sec="videos" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Videos <span class="n" id="libVideoCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libVideoRows"></div></section>
+    <section class="card" data-sec="notes" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Notes <span class="n" id="libNoteCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libNoteRows"></div></section>
+    <section class="card" data-sec="chats" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Saved chats <span class="n" id="libChatCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libChatRows"></div></section>
+  </div>
+</div>
 <div class="panel" id="snapshots">
   <div class="section-head">
     <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span>Snapshot pills</h2>
@@ -5733,7 +5913,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 
 <!-- Sortable.js — bundled drag-and-drop with no deps. Loads before the main
      script so the Sortable global is ready when EQGRID.init() fires. -->
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1/Sortable.min.js">
+</script>
 
 <script src="./vocal-favs.js"></script>
 <script src="./uad-licence.js"></script>
@@ -5747,7 +5928,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-22.4';
+const AIMM_BUILD = '2026-11-22.5';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -10787,6 +10968,7 @@ function renderJournal(){
   list.querySelectorAll('.journal-entry-head').forEach(h=>{
     h.addEventListener('click',()=>h.closest('.journal-entry').classList.toggle('open'));
   });
+  libraryRender();
 }
 function restoreFromJournal(id){
   const e=STATE.journal.find(x=>x.id===id); if(!e) return;
@@ -10857,14 +11039,8 @@ function renderFavouritePills(){
       + `</span>`;
     return `<button class="rt-pill populated" data-id="${escapeHtml(e.id)}" title="${escapeHtml(tooltip)}" onclick="recallFavourite('${id}')"><span class="rt-pill-label">${escapeHtml(labelTrunc)}</span>${actions}</button>`;
   }
-  function emptyHtml(){
-    return `<button class="rt-pill empty" disabled title="Click the Snapshot → Luna chat button in your chat toolbar to populate this pill"><span class="rt-pill-label">+ snapshot a chat</span></button>`;
-  }
-  const slots = [];
-  for (let i = 0; i < FAV_PILLS_MAX; i++){
-    slots.push(favs[i] ? pillHtml(favs[i]) : emptyHtml());
-  }
-  grid.innerHTML = slots.join('');
+  grid.innerHTML = favs.map(pillHtml).join('');
+  libraryRender();
 }
 
 function recallFavourite(id){
@@ -10921,12 +11097,9 @@ function toggleFavourite(id){
     // Unfavourite — easy.
     e.favourite = false;
   } else {
-    // Favourite — enforce the FAV_PILLS_MAX cap by FIFO-dropping the oldest.
+    // Favourite — never silently evict an older favourite.
     const currentFavs = STATE.journal.filter(x => x.favourite === true);
-    if (currentFavs.length >= FAV_PILLS_MAX){
-      const oldest = currentFavs.sort((a,b) => (a.ts||0) - (b.ts||0))[0];
-      if (oldest) oldest.favourite = false;
-    }
+    if (currentFavs.length >= FAV_PILLS_MAX){ toast('Favourites are full',true); return; }
     e.favourite = true;
   }
   saveState();
@@ -11344,6 +11517,7 @@ const AIMM_TAB_INTROS={
   plugins:{title:'Find the right tools for your sound',description:'Browse, compare, and organise the plug-ins in your collection.'},
   knowledge:{title:'Build a library of useful mix knowledge',description:'Save research, notes, and references Hope can use in future sessions.'},
   snapshots:{title:'Return to your saved sessions',description:'Revisit past conversations and keep useful mix decisions close.'},
+  library:{title:'Library',description:''},
   settings:{title:'Set up AIMM to fit your workflow',description:'Manage provider access, voice routes, audio reference, and session safeguards.'},
   marketing:{title:'Shape your release and how people find you',description:'Plan your artist story, web presence, release strategy, and next steps.'},
   community:{title:'Connect with artists and collaborators',description:'Community tools are in development; this is where shared work, ideas, and feedback will come together.'}
@@ -11384,10 +11558,13 @@ function updateTabLabels(activeTab){
 document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));t.classList.add('active');document.getElementById(t.dataset.tab).classList.add('active');updateTabLabels(t);if(t.dataset.tab==='plugins')invScheduleFrameFit();if(typeof applyFloatMicVisibility==='function')applyFloatMicVisibility();if(typeof notifyTabChangeIfActive==='function')notifyTabChangeIfActive(t.dataset.tab);});});
 // Upgrade persisted tab ids once, preserving their exact order and unknown future ids.
 function aimmMapLegacyTabId(id){
-  return ({chain:'mixbus',eq:'mixcheck',library:'plugins'})[id] || id;
+  return ({chain:'mixbus',eq:'mixcheck',knowledge:'library',snapshots:'library'})[id] || id;
 }
 function aimmMigrateTabOrderIds(order){
-  return order.map(id => typeof id==='string' ? aimmMapLegacyTabId(id) : id);
+  // A pre-.4 order used "library" for Plugins. Its chain/eq ids identify
+  // that format; in the current order "library" means this page.
+  const oldPluginOrder=order.includes('library') && !order.includes('plugins') && (order.includes('chain') || order.includes('eq'));
+  return [...new Set(order.map(id => typeof id==='string' ? aimmMapLegacyTabId(oldPluginOrder && id==='library' ? 'plugins' : id) : id))];
 }
 (function aimmMigrateStoredTabOrder(){
   try{
@@ -11396,7 +11573,7 @@ function aimmMigrateTabOrderIds(order){
     const order=JSON.parse(raw);
     if(!Array.isArray(order))return;
     const migrated=aimmMigrateTabOrderIds(order);
-    if(migrated.some((id,i)=>id!==order[i]))localStorage.setItem(key,JSON.stringify(migrated));
+    if(migrated.length!==order.length || migrated.some((id,i)=>id!==order[i]))localStorage.setItem(key,JSON.stringify(migrated));
   }catch(e){console.warn('[tab-order] migration failed',e);}
 })();
 // Tab order persistence — replay Kev's saved order BEFORE the active-tab
@@ -12937,18 +13114,17 @@ function rtLogTool(fn,args,result,isErr){
 const TOOL_DEFS=[
   {type:'function',name:'get_context',description:'Get the current MixBus state and complete Mix Check session. Includes full-mix spectrum and corridor, all imported Logic stem names/status, every decoded stem\'s measurements/full-record spectrum/leave-one-out comparison/Fix Queue, current selected-group PCM sum and remainder, plus chart legend colours and line styles. Use this evidence without treating the full-mix corridor as a validated solo-stem or group target.',parameters:{type:'object',properties:{},required:[]}},
   {type:'function',name:'set_genre',description:'Switch the active genre (changes which plugins are starred as top picks).',parameters:{type:'object',properties:{genre:{type:'string',enum:['hiphop','rnb','pop','afrobeats','trap','lofi']}},required:['genre']}},
-  {type:'function',name:'switch_tab',description:`Navigate the app to a different tab so Kev physically sees what you\'re working on with him. Call this when he asks to "look at", "open", "go to", "check", or "switch to" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to Plugins; he wants to review his mix so you go to Mix Check; he wants to dig through saved research so you go to Insight). The visual switch is the point — it confirms to Kev that you\'re collaborating with him on the same screen.
+  {type:'function',name:'switch_tab',description:`Navigate the app to a different tab so Kev physically sees what you\'re working on with him. Call this when he asks to "look at", "open", "go to", "check", or "switch to" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to Plugins; he wants to review his mix so you go to Mix Check; he wants to dig through saved research so you go to Library). The visual switch is the point — it confirms to Kev that you\'re collaborating with him on the same screen.
 
 Tabs:
 - plugins (Plugins) — installed Plugin Companion scan plus separate MixBus recommendation catalogue
 - mixbus (MixBus) — bus chains, plugin slots, settings notes
-- knowledge (Insight) — research notes, producer techniques, plugin habits
-- snapshots (Snapshots) — favourited pill grid + full Session Snapshots list (chronological saved chats)
+- library (Library) — videos, notes, tips and saved chats; knowledge and snapshots are aliases
 - mixcheck (Mix Check) — mix analysis, reference comparison, transport and Fix Queue
 - marketing (Marketing) — release strategy + Pop A&R thinking
 - community (Community) — social presence
 
-Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull up the Plugin Library" — keep it natural, ONE short phrase. Do NOT say "I\'m calling switch_tab" or any other meta narration. Don\'t switch tabs gratuitously — only when it\'s genuinely the right surface for what he asked.`,parameters:{type:'object',properties:{tab:{type:'string',enum:['mixbus','knowledge','mixcheck','plugins','marketing','community','snapshots'],description:'Tab id matching the visible label; legacy chain, eq and library are accepted as aliases.'}},required:['tab']}},
+Brief Kev verbally as you do it: "ok, hopping over to Library" or "let me pull up the Plugin Library" — keep it natural, ONE short phrase. Do NOT say "I\'m calling switch_tab" or any other meta narration. Don\'t switch tabs gratuitously — only when it\'s genuinely the right surface for what he asked.`,parameters:{type:'object',properties:{tab:{type:'string',enum:['mixbus','library','knowledge','snapshots','mixcheck','plugins','marketing','community'],description:'Tab id matching the visible label; knowledge and snapshots open Library; chain and eq are legacy aliases.'}},required:['tab']}},
   {type:'function',name:'inventory_navigate',description:'Navigate the live AIMM inventory sidebar. This opens the Plugins tab if needed, then selects the requested status, Library filter, category, or tool. Returns a snapshot of the whole sidebar plus the selected live view. This changes only the visible view; it does not scan, download, share, or add anything. Use it whenever Kev asks to open or inspect one of the AIMM inventory menu items. Disabled items return their current unavailable reason; connected items can open their existing screen.',parameters:{type:'object',properties:{item:{type:'string',enum:['all_plugins','updates_available','up_to_date','manual_check','vendor_app','unchecked','stale_results','check_errors','install_manager','batch_management','remove_old_installers','duplicates','unused','license_vault','share_plugin_list','compare_profiles','aimm_license','ilok_license_manager','library_all_plugins','favorites','my_tags','tag_manager','hidden','eq_filter','dynamics','pitch_modulation','reverb','delay','distortion_amps','utility_metering','imaging','instruments_midi','restoration','channel_strips_multi_fx','status_section','tools_section','library_section'],description:'The exact AIMM inventory sidebar item to open.'}},required:['item']}},
   {type:'function',name:'inventory_search',description:'Read the current local AIMM scan without changing the visible Plugins view. Returns product status and known latest versions; synthetic preview rows are not proof of installed plug-ins. Use scan results to verify an installed plug-in before discussing it or adding it to a MixBus.',parameters:{type:'object',properties:{query:{type:'string',description:'Words from the plug-in or publisher name; an empty query lists the current scanned inventory.'},format:{type:'string',enum:['AU','VST2','VST3','CLAP'],description:'Optional exact plug-in format filter.'},status:{type:'string',enum:['updates_available','up_to_date','manual_check','vendor_app','unchecked'],description:'Optional product update status filter.'},offset:{type:'integer',minimum:0,description:'Zero-based result offset for paging.'},limit:{type:'integer',minimum:1,maximum:50,description:'Number of product results to return, maximum 50.'}},required:[]}},
   {type:'function',name:'inventory_summary',description:'Read the current local AIMM scan totals, formats, update statuses and leading vendors without changing the visible Plugins view. Does not scan folders.',parameters:{type:'object',properties:{},required:[]}},
@@ -13032,9 +13208,10 @@ body: short and scannable. One key fact per line; up to 6 lines. Plain text — 
   {type:'function',name:'remove_eq_tile',description:'Remove a custom Reference tile by title or id (fuzzy match on title supported). Built-in tiles cannot be deleted via this tool.',parameters:{type:'object',properties:{section:{type:'string',enum:['freqMap','loudness','truePeak','stereoWidth'],description:'Optional — narrows the search.'},title:{type:'string',description:'Tile title to remove (fuzzy match). Either title or id required.'},id:{type:'string',description:'Tile id (e.g. custom-l3a1bc). Either title or id required.'}},required:[]}},
   // -- Knowledge Base --
   {type:'function',name:'list_knowledge_notes',description:'List Knowledge Base notes — id, title, source, tags, ts, active flag. Use to find an existing note before adding/exporting.',parameters:{type:'object',properties:{active_only:{type:'boolean',description:'If true, only notes currently injected into session context are returned.'}},required:[]}},
-  {type:'function',name:'add_knowledge_note',description:`Add a research/technique note to Kev's Knowledge Base. Use when Kev dictates a takeaway from a producer interview, a plugin technique, a meter reading habit, or anything mix-related he wants to keep.
+  {type:'function',name:'add_knowledge_note',description:`Add a research/technique note to Kev's Library. Set to_review when Hope offers to record a tip for Kev to review later; it stays out of Hope's reading context until kept. Use when Kev dictates a takeaway from a producer interview, a plugin technique, a meter reading habit, or anything mix-related he wants to keep.
 
-Keep titles concise (under 80 chars) and content focused — Kev reviews these later, not real-time. If Kev rambles, condense his words into a clean note rather than transcribing verbatim.`,parameters:{type:'object',properties:{title:{type:'string'},content:{type:'string',description:'The note body — what he wants to remember. Plain text, can be multi-line.'},source:{type:'string',description:'Optional citation — producer name, interview URL, video timestamp, etc.'},tags:{type:'array',items:{type:'string'},description:'Optional tags like ["vocals","jaycen joshua","saturation"].'},activate:{type:'boolean',description:'If true, the note becomes part of the voice session context immediately. Default false — Kev usually activates manually.'}},required:['title','content']}},
+Keep titles concise (under 80 chars) and content focused — Kev reviews these later, not real-time. If Kev rambles, condense his words into a clean note rather than transcribing verbatim.`,parameters:{type:'object',properties:{title:{type:'string'},content:{type:'string',description:'The note body — what he wants to remember. Plain text, can be multi-line.'},source:{type:'string',description:'Optional citation — producer name, interview URL, video timestamp, etc.'},tags:{type:'array',items:{type:'string'},description:'Optional tags like ["vocals","jaycen joshua","saturation"].'},activate:{type:'boolean',description:'If true, the note becomes part of the voice session context immediately.'},to_review:{type:'boolean',description:'Queue a Hope tip in To review rather than filing it immediately.'},category:{type:'string',enum:['mixing','producers','refs','mastering','vocals','workflow'],description:'Suggested Library category.'}},required:['title','content']}},
+  {type:'function',name:'find_youtube_videos',description:'Search YouTube for videos to propose in Library. This fills the approval list; it does not ingest anything. Kev chooses Add or Add all.',parameters:{type:'object',properties:{query:{type:'string',description:'The topic to search for.'}},required:['query']}},
   {type:'function',name:'export_knowledge_note',description:'Export a Knowledge Base note to disk (file download) or to the system clipboard. Use after Kev says "download that note" / "copy that one to clipboard". Identify the target by id or by fuzzy title match.',parameters:{type:'object',properties:{title:{type:'string',description:'Note title — fuzzy match. Either title or id required.'},id:{type:'string',description:'Note id. Either title or id required.'},target:{type:'string',enum:['download','clipboard'],description:'download = save a .md file. clipboard = copy text to system clipboard.'}},required:['target']}},
   {type:'function',name:'save_preset',description:`Save the current chain as a named user preset that Kev can reload later from the Load Preset modal. Use this whenever Kev says "save this", "save this as a preset", "save this chain", "save this as my master chain", etc. If he doesn't specify which bus, default to "all" (saves every non-empty bus as a single multi-bus preset — best for when you've been collaborating on a full session).
 
@@ -13772,7 +13949,7 @@ function kbActiveText(n){ return (n && n.useSummary && n.summary) ? n.summary : 
 // Build the research digest that gets appended to system prompts.
 // Returns '' when no active notes exist so callers can skip cleanly.
 function buildResearchDigest(){
-  const active = (STATE.knowledge||[]).filter(n => n && n.active && (n.raw||n.summary));
+  const active = (STATE.knowledge||[]).filter(n => n && n.active && !n.toReview && (n.raw||n.summary));
   const lines = [];
   if (active.length) {
     lines.push(`=== KEV'S RESEARCH NOTES (${active.length} active) ===`);
@@ -13814,6 +13991,7 @@ async function loadYtKb() {
     YT_KB.videos = [...repoVideos, ...userVideos.filter(v => !repoVideos.some(r => r.video_id === v.video_id))];
     YT_KB.loaded = true;
     console.log('[YT_KB] loaded', YT_KB.videos.length, 'video(s)');
+    libraryRender();
   } catch (e) {
     YT_KB.error = e.message;
     console.warn('[YT_KB] failed to load index:', e.message);
@@ -13863,8 +14041,9 @@ function ensureYtKbLoaded() {
 // attempting (and failing) to be the discovery mechanism itself.
 function buildYtKbDigest() {
   if (!YT_KB.loaded || !YT_KB.videos.length) return '';
-  const total = YT_KB.videos.length;
-  const totalChunks = YT_KB.videos.reduce((a, v) => a + (v.chunks || 0), 0);
+  const readable = YT_KB.videos.filter(v => typeof libVideoReads !== 'function' || libVideoReads(v.video_id));
+  const total = readable.length;
+  const totalChunks = readable.reduce((a, v) => a + (v.chunks || 0), 0);
   return `=== YOUTUBE KNOWLEDGE BASE ===\nSearchable YouTube KB: ${total} video${total === 1 ? '' : 's'} / ${totalChunks} chunks. Use search_yt_knowledge(query) to find relevant content on ANY mixing/production/plugin question — it searches the full corpus, not just a static list. Once you've found a promising video, call read_yt_knowledge(video_id, query) for more of that specific transcript BEFORE concluding you lack a specific detail — this is mandatory for a video_id starting with "mwtm-" (a full Mix With The Masters lesson transcript, not a trailer). Cite the video title and channel when you draw from either tool's result.`;
 }
 
@@ -14154,12 +14333,10 @@ function rrfFuse(listA, listB, k = 60){
 const KB_CATEGORIES = [
   {id:'mixing',    label:'Mixing techniques'},
   {id:'producers', label:'Producer interviews / chains'},
-  {id:'plugins',   label:'Plugin recipes / settings'},
   {id:'refs',      label:'Reference tracks'},
   {id:'mastering', label:'Mastering'},
   {id:'vocals',    label:'Vocal techniques'},
-  {id:'workflow',  label:'Workflow'},
-  {id:'misc',      label:'Misc'}
+  {id:'workflow',  label:'Workflow'}
 ];
 // Heuristic regex map for auto-categorising notes that don't carry a
 // .category yet. ORDER MATTERS: producer names first (most specific
@@ -14170,7 +14347,7 @@ const KB_CAT_PATTERNS = [
   {id:'producers', rx:/\b(wheezy|metro boomin?|murda beatz|southside|tay keith|tm88|cubeatz|cardo|pi[' ]erre|sonny digital|zaytoven|lex luger|jaycen joshua|mixedbyali|mike will|atl jacob|nard ?& ?b|earl on the beat|young chop|drumma boy|honorable c\.?n\.?o\.?t\.?e|producer interview|engineer interview|signal flow|chain breakdown|producer chain)\b/i},
   {id:'mastering', rx:/\b(master(ing)?\b|limit(er|ing)\b|lufs|lkfs|dbtp|true[- ]?peak|brick[- ]?wall|ozone|pro-?l\b|gullfoss|loudness ceiling|streaming master|integrated loudness)\b/i},
   {id:'vocals',    rx:/\b(vocal(s)?\b|vox\b|ad-?lib|lead vox|background vox|harmon(y|ies)\b|melodyne|antares|auto-?tune|cla-?2a|cla-?3a|nectar|de-?ess|sibilan|pitch correction)\b/i},
-  {id:'plugins',   rx:/\b(preset|recipe|fabfilter|waves\b|izotope|kilohearts|soundtoys|valhalla|softube|plugin alliance|native instruments|nls\b|h-?(eq|comp|delay|reverb)|serum|massive|kontakt|saturator chain|distortion chain)\b/i},
+  {id:'mixing',   rx:/\b(preset|recipe|fabfilter|waves\b|izotope|kilohearts|soundtoys|valhalla|softube|plugin alliance|native instruments|nls\b|h-?(eq|comp|delay|reverb)|serum|massive|kontakt|saturator chain|distortion chain)\b/i},
   {id:'refs',      rx:/\b(reference (track|song|mix)|ref(erence)? track|sound-?alike|spectrogram of|target reference|like the (song|track)\b|a-?b(ing)? against)\b/i},
   {id:'workflow',  rx:/\b(workflow|template|session organisation|routing|gain stag|low[- ]?fader|low[- ]?volume|listen at|monitoring level|reference (mix|level)|file naming|backup|version control|bus structure|aux send|return bus)\b/i},
   {id:'mixing',    rx:/\b(mix(ing)?\b|eq\b|equalis(er|ation)|compress(ion|or)\b|saturat(ion|or)|sidechain|stereo (image|width)|panning|space design|verb\b|reverb\b|delay\b|mid[- ]?side\b|m\/s\b|transient designer|attack|release\b|ratio\b|threshold)\b/i}
@@ -14179,7 +14356,7 @@ const KB_CAT_PATTERNS = [
 // the regex pass without paying for long source dumps. Returns 'misc' on no
 // match.
 function kbCategorize(note){
-  if (!note) return 'misc';
+  if (!note) return 'mixing';
   const blob = [
     note.title || '',
     Array.isArray(note.tags) ? note.tags.join(' ') : '',
@@ -14187,7 +14364,7 @@ function kbCategorize(note){
     String(note.raw || '').slice(0, 800)
   ].join('\n');
   for (const pat of KB_CAT_PATTERNS){ if (pat.rx.test(blob)) return pat.id; }
-  return 'misc';
+  return 'mixing';
 }
 // Idempotent — runs at the top of every knowledgeRender(). Notes that
 // already have a valid .category are skipped; legacy notes (no category /
@@ -14200,7 +14377,7 @@ function knowledgeMigrateCategories(){
     if (!n) continue;
     const cur = n.category;
     if (!cur || !KB_CATEGORIES.find(c => c.id === cur)){
-      n.category = kbCategorize(n);
+      n.category = cur ? 'mixing' : kbCategorize(n);
       migrated++;
     }
   }
@@ -14270,13 +14447,14 @@ function knowledgeRender(){
   const host = document.getElementById('kbList');
   const stats = document.getElementById('kbStats');
   if (!host || !stats) return;
-  const notes = STATE.knowledge || [];
+  const notes = (STATE.knowledge || []).filter(n=>!n.toReview);
   const meter = document.getElementById('kbBytes');
   // A new library starts with one direct action.
   if (!notes.length){
     host.innerHTML = `<button class="insight-add" type="button" onclick="kbOpenAdd()">＋ Add note</button>`;
     insightUpdateBudget('kb', 0, 0, 0, KB_BYTES_BUDGET, KB_BYTES_AMBER, KB_BYTES_RED);
     if (meter){ meter.textContent = '0 / ' + KB_BYTES_BUDGET + ' bytes'; meter.classList.remove('amber','red'); }
+    libraryRender();
     return;
   }
   // Run the heuristic migration before grouping — idempotent, so the first
@@ -14285,7 +14463,7 @@ function knowledgeRender(){
   const collapsedSet = (typeof loadCollapsedSet === 'function') ? loadCollapsedSet() : new Set();
   const byCat = {};
   for (const n of notes){
-    const cat = KB_CATEGORIES.find(c => c.id === n.category) ? n.category : 'misc';
+    const cat = KB_CATEGORIES.find(c => c.id === n.category) ? n.category : 'mixing';
     (byCat[cat] = byCat[cat] || []).push(n);
   }
   const html = KB_CATEGORIES.map(cat => {
@@ -14328,6 +14506,7 @@ function knowledgeRender(){
   }
   // Re-wire Sortable on the freshly rendered lists.
   try { wireKbCardsDragdrop(); } catch(e){ console.warn('[kb] sortable wire failed', e); }
+  libraryRender();
 }
 
 function kbRenderCard(n){
@@ -14339,8 +14518,6 @@ function kbRenderCard(n){
         : escapeHtml(n.source))
     : '<span>no source</span>';
   const dt = new Date(n.ts||Date.now()).toLocaleDateString();
-  const activeChars = kbActiveText(n).length;
-  const activeTok = Math.ceil(activeChars/4);
   const useSumOn = !!n.useSummary && !!n.summary;
   const sumPillCls = 'kb-mode-pill' + (useSumOn?' on':'');
   const sumPillTxt = n.summary ? (useSumOn?'Summary':'Raw') : 'Raw only';
@@ -14362,7 +14539,7 @@ function kbRenderCard(n){
           <button class="btn ghost sm" onclick="kbResummarise('${idJs}')" title="Re-run Hope summary on the raw text">Re-summarise</button>
           <button class="btn ghost sm" onclick="kbDelete('${idJs}')">Delete</button>
         </div></div>
-      <div class="kb-state"><button class="kb-active-toggle ${n.active?'on':''}" aria-pressed="${!!n.active}" onclick="kbToggleActive('${idJs}')" title="${n.active?'Active, click to turn off':'Inactive, click to turn on'}">${n.active?'✓':'−'}</button><span class="kb-counts">${activeTok} tok</span></div>
+      <div class="kb-state"><button class="kb-active-toggle ${n.active?'on':''}" aria-pressed="${!!n.active}" onclick="kbToggleActive('${idJs}')" title="${n.active?'Active, click to turn off':'Inactive, click to turn on'}">${n.active?'✓':'−'}</button></div>
     </div>
     <div class="kb-body">${escapeHtml(kbActiveText(n))}</div>
   </div>`;
@@ -14792,7 +14969,7 @@ function kbShowImportToast(noteId, title, suffix){
 
 // ----- Drag-and-drop on the Knowledge panel -----
 function kbDragInit(){
-  const panel = document.getElementById('knowledge');
+  const panel = document.getElementById('library');
   if (!panel) return;
   // Track the count of dragenter/leave events so child elements don't
   // flicker the overlay off when the cursor crosses an internal element.
@@ -14834,10 +15011,10 @@ function kbDragInit(){
 // extract-metadata + auto-save pipeline. Avoids accidental imports on
 // short pastes (URLs, single words).
 function kbPasteInit(){
-  const panel = document.getElementById('knowledge');
+  const panel = document.getElementById('library');
   if (!panel) return;
   document.addEventListener('paste', async e => {
-    if (typeof activeTabId === 'function' && activeTabId() !== 'knowledge') return;
+    if (typeof activeTabId === 'function' && activeTabId() !== 'library') return;
     // Don't hijack pastes into form inputs (the kbAdd modal, Hope's memory,
     // a future search box, etc.).
     const ae = document.activeElement;
@@ -17349,7 +17526,7 @@ async function buildDashboardDigest(){
 // Tools added after the original bulk registration. This retained helper
 // registers any that are missing — idempotent (reuses same-name workspace
 // tools, append-only PATCH of the agent's tool_ids).
-const AIMM_NEW_AGENT_TOOLS = ['manage_roadmap_inbox', 'propose_mix_move', 'set_stem_selection', 'list_symptom_tiles', 'add_symptom_tile', 'delete_symptom_tile', 'inventory_navigate', 'inventory_search', 'inventory_summary', 'inventory_set_favorite', 'vocal_favorites_read', 'vocal_favorites_apply', 'inventory_add_to_bus', 'inventory_status', 'inventory_duplicates', 'inventory_unused', 'inventory_reveal', 'inventory_move_to_unused', 'inventory_restore', 'inventory_move_to_trash', 'inventory_rescan', 'inventory_mark_vendor_app_checked', 'inventory_unmark_vendor_check', 'inventory_keep_newest_duplicates', 'snapshots_list', 'snapshots_read', 'snapshots_apply', 'snapshots_add_note', 'plugin_tags_read', 'plugin_tag_set', 'hidden_list', 'plugin_hide', 'reference_status', 'saved_targets_list', 'saved_target_apply', 'mixbus_load_preset', 'mixbus_auto_fill', 'settings_status'];
+const AIMM_NEW_AGENT_TOOLS = ['manage_roadmap_inbox', 'propose_mix_move', 'set_stem_selection', 'list_symptom_tiles', 'add_symptom_tile', 'delete_symptom_tile', 'inventory_navigate', 'inventory_search', 'inventory_summary', 'inventory_set_favorite', 'vocal_favorites_read', 'vocal_favorites_apply', 'inventory_add_to_bus', 'inventory_status', 'inventory_duplicates', 'inventory_unused', 'inventory_reveal', 'inventory_move_to_unused', 'inventory_restore', 'inventory_move_to_trash', 'inventory_rescan', 'inventory_mark_vendor_app_checked', 'inventory_unmark_vendor_check', 'inventory_keep_newest_duplicates', 'snapshots_list', 'snapshots_read', 'snapshots_apply', 'snapshots_add_note', 'plugin_tags_read', 'plugin_tag_set', 'hidden_list', 'plugin_hide', 'reference_status', 'saved_targets_list', 'saved_target_apply', 'mixbus_load_preset', 'mixbus_auto_fill', 'settings_status', 'find_youtube_videos'];
 async function registerInboxTool(){
   const sts=document.getElementById('regInboxToolStatus');
   const set=(m,ok)=>{if(sts){sts.textContent=m;sts.className='rt-key-status'+(ok===true?' ok':ok===false?' err':'');}};
@@ -17634,7 +17811,7 @@ async function handleToolCall(name,args){
         // mid-call notify so we don\'t echo the change back at Hope.
         const requestedTab = String(args.tab || '').toLowerCase().trim();
         const tab = aimmMapLegacyTabId(requestedTab);
-        const VALID = ['mixbus','knowledge','mixcheck','plugins','marketing','community','snapshots'];
+        const VALID = ['mixbus','library','mixcheck','plugins','marketing','community'];
         if (!VALID.includes(tab)) throw new Error('Unknown tab: '+requestedTab+'. Valid: '+VALID.join(', '));
         const btn = document.querySelector('.tab[data-tab="'+tab+'"]');
         if (!btn) throw new Error('Tab button not present in the DOM: '+tab);
@@ -18064,7 +18241,7 @@ async function handleToolCall(name,args){
       }
       // -- Knowledge Base --
       case 'list_knowledge_notes':{
-        const all = STATE.knowledge || [];
+        const all = (STATE.knowledge || []).filter(n=>!n.toReview);
         const filtered = args.active_only ? all.filter(n => n && n.active) : all;
         return {
           count: filtered.length,
@@ -18089,7 +18266,10 @@ async function handleToolCall(name,args){
           raw: content,
           summary: '',
           useSummary: false,
-          active: !!args.activate,
+          active: !!args.activate && !args.to_review,
+          toReview: !!args.to_review,
+          category: KB_CATEGORIES.some(c=>c.id===args.category) ? args.category : 'mixing',
+          origin: args.to_review ? 'hope' : 'user',
           expanded: false
         };
         STATE.knowledge = STATE.knowledge || [];
@@ -18097,7 +18277,15 @@ async function handleToolCall(name,args){
         if (STATE.knowledge.length > KB_MAX_NOTES) STATE.knowledge = STATE.knowledge.slice(0, KB_MAX_NOTES);
         saveState();
         if (typeof knowledgeRender === 'function') knowledgeRender();
-        return {ok:true, id: note.id, title: note.title, active: note.active};
+        libraryRender();
+        return {ok:true, id: note.id, title: note.title, active: note.active, to_review:note.toReview};
+      }
+      case 'find_youtube_videos':{
+        const query=String(args.query||'').trim();if(!query)throw new Error('query required');
+        const tab=document.querySelector('.tab[data-tab="library"]');
+        if(tab&&!tab.classList.contains('active')){if(typeof EL!=='undefined')EL.suppressNextTabChange=true;tab.click();}
+        await libFindVideos(query,true);
+        return {ok:true,query,results:(LIB_UI.results||[]).map(v=>({id:v.id,title:v.title,channel:v.channel,url:v.url})),excluded:LIB_UI.excluded,ingested:false};
       }
       case 'export_knowledge_note':{
         const notes = STATE.knowledge || [];
@@ -18309,6 +18497,7 @@ async function handleToolCall(name,args){
           fused = rerankedIds.map(id => byId.get(id)).filter(Boolean);
         }
         fused = kbPromoteNamedVideo(HOPE_KB_DECISION.question, query, fused, n);
+        if (typeof libVideoReads === 'function') fused = fused.filter(c => libVideoReads(c.video_id));
         const hits = fused.slice(0, n);
 
         // Existing behaviour: BM25 excerpts centre on a literal query term;
@@ -18398,7 +18587,7 @@ async function handleToolCall(name,args){
         // search_yt_knowledge -> read_yt_knowledge routing can chain these
         // two calls in quick succession right after page load.
         await ensureYtKbLoaded();
-        const knownVideo = YT_KB.videos.find(v => v.video_id === reqId);
+        const knownVideo = YT_KB.videos.find(v => v.video_id === reqId && (typeof libVideoReads !== 'function' || libVideoReads(reqId)));
         if (!knownVideo) throw new Error(`read_yt_knowledge: video_id "${reqId}" not found in knowledge base. Available: ${YT_KB.videos.map(v=>v.video_id).join(', ') || 'none loaded'}`);
         let src = '';
         try {
@@ -18879,13 +19068,13 @@ The tabs (use these exact names when you reference them out loud):
 There is no "Conversation" tab any more (retired 2026-09-05) — your chat is a persistent rail docked on every one of the tabs above, not a destination of its own. Never offer to switch there or tell Kev to "go to Conversation."
 
 When to switch:
-- Kev says "let's go to Insight" / "open Mix Check" / "pull up the Library" / "the Plugin tab" / "marketing for a sec" → switch_tab. Map "the Plugin tab" / "Plugin Library" / "Library" → 'plugins'; "Mix Check" / "the meters" / "the analysis" / "check my mix" → 'mixcheck'.
+- Kev says "let's go to Insight" / "open Mix Check" / "pull up the Library" / "the Plugin tab" / "marketing for a sec" → switch_tab. Map "the Plugin tab" / "Plugin Library" → 'plugins'; "Library" / "Insight" / "Snapshots" → 'library'; "Mix Check" / "the meters" / "the analysis" / "check my mix" → 'mixcheck'.
 - He asks about a plugin choice → switch_tab to plugins so he sees what you're picking from.
 - He's diagnosing a mix problem, or asks about a fix / the analysis / the loudness / the spectrum → switch_tab to mixcheck (Mix Check).
 - He asks about a saved technique or producer note → switch_tab to knowledge (Insight).
 - After you've moved, the workbench context follows you — your next reply can engage with what's now visible.
 
-Brief him verbally as you switch — ONE short natural phrase like "ok, hopping over to Insight" or "let me pull up the Plugin Library." Do NOT narrate the tool name. Don't switch gratuitously — only when the destination tab is genuinely the right surface for what he just said. If you're on the right tab already, stay put.
+Brief him verbally as you switch — ONE short natural phrase like "ok, hopping over to Library" or "let me pull up the Plugin Library." Do NOT narrate the tool name. Don't switch gratuitously — only when the destination tab is genuinely the right surface for what he just said. If you're on the right tab already, stay put.
 
 AIMM PLUG-IN INVENTORY: Two separate plug-in lists exist. The MixBus library/catalogue in context is what AIMM recommends from; it is not an installed inventory or installed count. Kev's INSTALLED plug-ins are the Plugin Companion scan shown in the Plugins tab. For questions about what he has installed, how many plug-ins he has, updates, duplicates, Unused, vendor apps, a vendor's plug-ins or the companion, use inventory_summary, inventory_search, inventory_status, inventory_duplicates or inventory_unused as appropriate. Never answer these questions from MixBus catalogue numbers and never guess a number. If no scan is available, say the Plugins tab has no scan loaded and the companion may not be connected. Synthetic preview rows are not installed plug-ins. Use inventory_navigate to open requested sidebar items and report disabled items' unavailable reason. inventory_search and inventory_summary leave the visible view unchanged; use inventory_set_favorite for scanned or installed plug-ins and toggle_favorite only for the MixBus catalogue, reporting failed, ambiguous and already-set results accurately. Starring needs no confirmation. vocal_favorites_read reads the video favourites; for vocal_favorites_apply, read the proposed counts aloud with confirmed false, wait for Kev’s clear yes, then call confirmed true and report verified starred, already and unresolved counts. When building a chain from a video read the matching bus chain favourites first (vocal, drums, 808 or master) and prefer in order: owned, close version, equivalent, Logic stock; say which video plug-in was swapped for which favourite. inventory_reveal and inventory_rescan use existing controls. For every inventory change tool — inventory_move_to_unused, inventory_restore, inventory_move_to_trash, inventory_mark_vendor_app_checked, inventory_unmark_vendor_check, inventory_keep_newest_duplicates and inventory_add_to_bus — call with confirmed false first, read the returned summary aloud briefly, wait for Kev's clear yes, then call with confirmed true. Trash needs a separate yes before setting confirmed_trash true. For inventory_add_to_bus, first verify exact installed name and publisher in the scan and choose a valid bus and stage; only use it when Kev explicitly asks. Menu navigation alone does not authorize scanning folders, downloading installers, sharing the inventory or changing MixBus.
 
@@ -22103,6 +22292,152 @@ ensureYtKbLoaded();
 // tool handler still awaits loadKbSearchIndex() itself, so this is purely a
 // head start, not a correctness requirement.
 loadKbSearchIndex();
+
+// Library: one surface for additions, review and browsing. Existing note and
+// snapshot storage and handlers remain the source of truth.
+const LIB_UI={results:null,query:'',excluded:0,hopeSearch:false,groups:{},more:{},open:{},editTip:null,kept:null,videoText:{},busy:false,addingAll:false};
+function libVideoSkipped(){
+  try{return new Set(JSON.parse(localStorage.getItem('aimmLibrarySkippedVideos_v1')||'[]'));}catch(_){return new Set();}
+}
+function libVideoReads(id){return !libVideoSkipped().has(id);}
+function libToggleVideoRead(id){
+  const skipped=libVideoSkipped();
+  if(skipped.has(id))skipped.delete(id);else skipped.add(id);
+  try{localStorage.setItem('aimmLibrarySkippedVideos_v1',JSON.stringify([...skipped]));}catch(_){toast('Could not save this setting',true);return;}
+  libraryRender();
+}
+function libFold(button){
+  const card=button.closest('.card');card.dataset.open=card.dataset.open==='false'?'true':'false';
+  button.setAttribute('aria-expanded',card.dataset.open);
+}
+function libFoldAll(open){
+  document.querySelectorAll('#libBrowse .card').forEach(card=>{card.dataset.open=String(open);card.querySelector('.bar').setAttribute('aria-expanded',String(open));});
+  document.querySelectorAll('#libBrowse .g').forEach(group=>{group.dataset.open=String(open);group.querySelector('.grp').setAttribute('aria-expanded',String(open));LIB_UI.groups[group.dataset.key]=open;});
+}
+function libGroupToggle(button){
+  const group=button.closest('.g'),open=group.dataset.open==='false';
+  group.dataset.open=String(open);button.setAttribute('aria-expanded',String(open));LIB_UI.groups[group.dataset.key]=open;
+}
+function libDate(value){return value?new Date(value).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'Library';}
+function libChatTurns(text){
+  return String(text||'').split(/\n+/).map(line=>{
+    const turn=/^(You|Hope):\s*(.*)$/.exec(line.trim());
+    return turn?`<p class="turn"><b>${turn[1]}</b>${escapeHtml(turn[2])}</p>`:`<p class="turn">${escapeHtml(line)}</p>`;
+  }).join('');
+}
+function libAction(label,code,extra=''){return `<button type="button" class="tx ${extra}" onclick="${code}">${label}</button>`;}
+function libHead(names){return `<div class="thead">${names.map(n=>`<span>${n}</span>`).join('')}</div>`;}
+function libGroup(key,label,items,render,heads){
+  const open=LIB_UI.groups[key]!==false,limit=LIB_UI.more[key]||12;
+  return `<div class="g" data-key="${escapeHtml(key)}" data-open="${open}"><button class="grp" type="button" aria-expanded="${open}" onclick="libGroupToggle(this)">${escapeHtml(label)} <span class="n">${items.length}</span><span class="fold" aria-hidden="true"></span></button><div class="gbody">${items.length?libHead(heads)+items.slice(0,limit).map(render).join(''):'<p class="none">Nothing here yet.</p>'}${items.length>limit?`<button class="more" type="button" onclick="LIB_UI.more['${key}']=${limit+12};libraryRender()">Show ${Math.min(12,items.length-limit)} more</button>`:''}</div></div>`;
+}
+function libCategory(id){return KB_CATEGORIES.find(c=>c.id===id)?.label||KB_CATEGORIES[0].label;}
+function libTextButton(id,type,open){LIB_UI.open[type+id]=!open;libraryRender();}
+function libraryRender(){
+  if(!document.getElementById('library') || typeof STATE==='undefined')return;
+  const all=STATE.knowledge||[];knowledgeMigrateCategories();
+  const notes=all.filter(n=>!n.toReview),tips=all.filter(n=>n.toReview);
+  const chats=STATE.journal||[],videos=YT_KB.videos||[];
+  const set=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text;};
+  set('libReviewCount',tips.length);set('libVideoCount',videos.length);set('libNoteCount',notes.length);set('libChatCount',chats.length);
+  const active=notes.filter(n=>n.active),read=document.getElementById('libRead');
+  if(read){read.textContent=`Hope reads ${active.length} of ${notes.length} notes${kbActiveBytes()>KB_BYTES_BUDGET?', budget full':''}`;read.classList.toggle('over',kbActiveBytes()>KB_BYTES_BUDGET);}
+  const q=(document.getElementById('libSearch')?.value||'').trim().toLowerCase();
+  const matches=(...parts)=>!q||parts.some(v=>String(v||'').toLowerCase().includes(q));
+  const tipHost=document.getElementById('libReviewRows');
+  tipHost.innerHTML=tips.length?libHead(['Title','Files under','Received','Edit','Delete','Keep'])+tips.map(n=>{
+    const id=escapeJs(n.id),editing=LIB_UI.editTip===n.id;
+    if(editing)return `<div class="ent nk"><div class="t"><input class="field" id="libTipTitle" value="${escapeHtml(n.title)}" aria-label="Tip title"></div><div class="meta"><select class="field" id="libTipCategory" aria-label="Category">${KB_CATEGORIES.map(c=>`<option value="${c.id}" ${n.category===c.id?'selected':''}>${escapeHtml(c.label)}</option>`).join('')}</select></div><div class="body"><textarea class="field" id="libTipBody" aria-label="Tip text">${escapeHtml(n.raw)}</textarea></div><div class="acts">${libAction('Cancel','LIB_UI.editTip=null;libraryRender()')}<button class="btn pri" type="button" onclick="libSaveTip('${id}')">Save</button></div></div>`;
+    return `<div class="ent nk"><div class="t"><h4>${escapeHtml(n.title)}</h4><p class="sub">${escapeHtml(n.raw)}</p></div><div class="meta"><span class="c">${escapeHtml(libCategory(n.category))}</span><span class="c d">${libDate(n.ts)}</span></div><div class="acts"><span class="c">${libAction('Edit',`LIB_UI.editTip='${id}';libraryRender()`)}</span><span class="c">${libAction('Delete',`libDeleteTip('${id}')`,'dim')}</span><span class="c"><button class="btn pri" type="button" onclick="libKeepTip('${id}')">Keep</button></span></div></div>`;
+  }).join(''):(LIB_UI.kept?`<p class="none">Kept. Filed in Notes under ${escapeHtml(libCategory(LIB_UI.kept.category))}. ${libAction('Undo','libUndoTip()')}</p>`:'<p class="none">Nothing to review.</p>');
+  const vh=document.getElementById('libVideoRows'),nh=document.getElementById('libNoteRows'),ch=document.getElementById('libChatRows');
+  const filteredVideos=videos.filter(v=>matches(v.title,v.channel));
+  vh.innerHTML=filteredVideos.length?KB_CATEGORIES.map(c=>{
+    const arr=filteredVideos.filter(v=>kbCategorize({title:v.title})===c.id);
+    return arr.length?libGroup('v'+c.id,c.label,arr,v=>{
+      const id=escapeJs(v.video_id),own=!!v.added,open=!!LIB_UI.open['video'+id],note=notes.find(n=>n.source===v.url);
+      const url=escapeHtml(v.url||`https://www.youtube.com/watch?v=${v.video_id}`);
+      return `<div class="ent"><div class="t"><h4>${escapeHtml(v.title)}</h4></div><div class="meta"><span class="c">${escapeHtml(v.channel||'YouTube')}</span><span class="c d">${libDate(v.added)}</span></div><div class="acts"><span class="c">${libAction('Edit',`libVideoNote('${id}',true)`)}</span><span class="c">${libAction(open?'Hide':'View',`libViewVideo('${id}')`,'hi')}</span><span class="c"><a class="tx hi" href="${url}" target="_blank" rel="noopener">Open video</a></span><span class="c">${libAction('Re-summarise',`libVideoNote('${id}',false)`)}</span><span class="c">${own?libAction('Delete',`libDeleteVideo('${id}')`,'dim'):''}</span><span class="c k"><button type="button" class="tick" aria-pressed="${libVideoReads(v.video_id)}" aria-label="${libVideoReads(v.video_id)?'Hope reads this':'Hope skips this'}" onclick="libToggleVideoRead('${id}')"></button></span></div>${open?`<div class="body"><p class="sum">${escapeHtml(note?.summary||LIB_UI.videoText[id]||'Loading…')}</p></div>`:''}</div>`;
+    },['Title','Channel','Added','Edit','Show','Link','Summary','Remove','Hope reads']):'';
+  }).join(''):'<p class="none">'+(q?'No matches.':'No videos yet.')+'</p>';
+  const filteredNotes=notes.filter(n=>matches(n.title,n.tags?.join(' '),n.raw,n.summary));
+  nh.innerHTML=(filteredNotes.length?KB_CATEGORIES.map(c=>{
+    const arr=filteredNotes.filter(n=>n.category===c.id);
+    return arr.length?libGroup('n'+c.id,c.label,arr,n=>{
+      const id=escapeJs(n.id),open=!!LIB_UI.open['note'+id];
+      return `<div class="ent"><div class="t"><h4>${escapeHtml(n.title)}</h4><p class="sub">${escapeHtml((n.tags||[]).join(', '))}</p></div><div class="meta"><span class="c">${n.origin==='hope'?'Tip from Hope':n.source?'Imported file':'Written by you'}</span><span class="c d">${libDate(n.ts)}</span></div><div class="acts"><span class="c">${libAction('Edit',`kbEdit('${id}')`)}</span><span class="c">${libAction(open?'Hide':'View',`libTextButton('${id}','note',${open})`,'hi')}</span><span class="c">${n.summary?libAction(n.useSummary?'Summary':'Raw',`kbToggleSummary('${id}')`,'hi'):''}</span><span class="c">${libAction('Re-summarise',`kbResummarise('${id}')`)}</span><span class="c">${libAction('Delete',`kbDelete('${id}')`,'dim')}</span><span class="c k"><button type="button" class="tick" aria-pressed="${!!n.active}" aria-label="${n.active?'Hope reads this':'Hope skips this'}" onclick="kbToggleActive('${id}')"></button></span></div>${open?`<div class="body"><p class="sum">${escapeHtml(kbActiveText(n))}</p></div>`:''}</div>`;
+    },['Title','Source','Added','Edit','Show','Mode','Summary','Remove','Hope reads']):'';
+  }).join(''):'<p class="none">'+(q?'No matches.':'No notes yet.')+'</p>')+'<div class="foot">'+libAction('Export notes','kbExport()')+'</div>';
+  const filteredChats=chats.filter(e=>matches(e.subject,e.text,e.tldr));
+  // Favourites use the existing recallFavourite path; only filled pills render.
+  const favs=filteredChats.filter(e=>e.favourite).slice(0,FAV_PILLS_MAX);
+  ch.innerHTML=`<div class="g" data-key="favourites" data-open="${LIB_UI.groups.favourites!==false}"><button class="grp" type="button" aria-expanded="${LIB_UI.groups.favourites!==false}" onclick="libGroupToggle(this)">Favourites <span class="n">${favs.length}</span><span class="fold"></span></button><div class="gbody">${favs.length?`<div class="pills">${favs.map(e=>`<div class="pill"><button class="main" type="button" onclick="recallFavourite('${escapeJs(e.id)}')">${escapeHtml(e.subject||'Untitled chat')}</button><button class="star" type="button" aria-label="Unfavourite" onclick="toggleFavourite('${escapeJs(e.id)}')">★</button></div>`).join('')}</div>`:'<p class="none">No favourites yet.</p>'}</div></div>`;
+  ch.innerHTML+=filteredChats.length?libGroup('sessions','Sessions',filteredChats,e=>{
+    const id=escapeJs(e.id),open=!!LIB_UI.open['chat'+id],hasChain=!!e.workbenchSnapshot?.chain||Object.values(e.chain||{}).some(a=>Array.isArray(a)&&a.length);
+    return `<div class="ent"><div class="t"><h4>${escapeHtml(e.subject||'Session snapshot')}</h4></div><div class="meta"><span class="c">${hasChain?'Chat and MixBus chain':'Chat only'}</span><span class="c d">${libDate(e.ts)}</span></div><div class="acts"><span class="c">${libAction('Edit',`editJournalEntry('${id}')`)}</span><span class="c">${libAction(open?'Hide':'View',`libTextButton('${id}','chat',${open})`,'hi')}</span><span class="c">${hasChain?libAction('Apply to MixBus',e.workbenchSnapshot?.chain?`openApplyPillModal('${id}')`:`restoreFromJournal('${id}')`,'hi'):''}</span><span class="c">${!e.favourite&&getFavouriteEntries().length>=FAV_PILLS_MAX?'<button class="tx" type="button" disabled title="Favourites are full">Favourite</button>':libAction(e.favourite?'Unfavourite':'Favourite',`toggleFavourite('${id}')`)}</span><span class="c">${libAction('Copy',`copyJournal('${id}')`)}</span><span class="c">${libAction('Delete',`deleteJournal('${id}')`,'dim')}</span></div>${open?`<div class="body"><p class="sum">${escapeHtml(e.tldr||'')}</p>${libChatTurns(e.text)}</div>`:''}</div>`;
+  },['Title','Contents','Saved','Edit','Show','MixBus chain','Favourite','Copy','Remove']):'<p class="none">'+(q?'No matches.':'No saved chats yet.')+'</p>';
+  ch.innerHTML+='<div class="foot">'+libAction('Export all',"document.getElementById('journalExport').click()")+libAction('Clear all',"document.getElementById('journalClear').click()")+'</div>';
+}
+async function libAddLink(){
+  if(LIB_UI.busy)return;const field=document.getElementById('libLink'),legacy=document.getElementById('kbYtInput'),msg=document.getElementById('libLinkMsg');
+  if(!field.value.trim())return;LIB_UI.busy=true;legacy.value=field.value.trim();document.getElementById('kbYtGo').disabled=false;msg.textContent='Reading the transcript and writing the summary.';
+  document.getElementById('libLinkProgress').hidden=false;const button=document.getElementById('libLinkGo');button.disabled=true;button.textContent='Adding';
+  await kbAddYoutube();const oldMsg=document.getElementById('kbYtMsg');const failed=oldMsg.classList.contains('is-warn')||oldMsg.classList.contains('is-stop');
+  msg.textContent=failed?'Could not add. '+oldMsg.textContent:oldMsg.textContent;msg.classList.toggle('bad',failed);
+  if(!failed)field.value='';LIB_UI.busy=false;document.getElementById('libLinkProgress').hidden=true;button.disabled=false;button.textContent='Add';libraryRender();
+}
+async function libFindVideos(query,fromHope=false){
+  const field=document.getElementById('libFind'),msg=document.getElementById('libFindMsg');query=typeof query==='string'?query:field.value.trim();if(!query)return;
+  field.value=query;msg.textContent='Searching YouTube.';msg.classList.remove('bad');LIB_UI.query=query;LIB_UI.hopeSearch=fromHope;
+  const button=document.getElementById('libFindGo');button.disabled=true;document.getElementById('libFindProgress').hidden=false;
+  try{const r=await fetch(AIMM_PROXY_URL.replace(/\/+$/,'')+'/kb/search-youtube',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query})});const data=await r.json();if(!r.ok)throw Error(data.error||'Search failed. Try again.');LIB_UI.results=data.videos||[];LIB_UI.excluded=data.excluded||0;msg.textContent='';libRenderResults();}
+  catch(e){msg.textContent=e.message||'Search failed. Try again.';msg.classList.add('bad');if(fromHope)throw e;}
+  finally{button.disabled=false;document.getElementById('libFindProgress').hidden=true;}
+}
+function libRenderResults(){
+  const host=document.getElementById('libResults');if(!host)return;
+  const list=LIB_UI.results;host.hidden=!list;if(!list)return;
+  host.innerHTML=`<div class="rhead"><h3>Results for “${escapeHtml(LIB_UI.query)}”</h3>${LIB_UI.hopeSearch?'<span class="by">Started by Hope</span>':''}<div class="rhead-end"><button class="btn pri" type="button" ${LIB_UI.addingAll?'disabled':''} onclick="libAddAll()">${LIB_UI.addingAll?'Adding all':'Add all'}</button>${libAction('Clear','LIB_UI.results=null;libRenderResults()')}</div></div>${LIB_UI.excluded?`<p class="rleft">${LIB_UI.excluded} already in the library were left out.</p>`:''}${LIB_UI.addingAll?`<div class="rmeter" role="progressbar" aria-valuenow="${list.filter(v=>v.status==='added'||v.status==='failed').length}" aria-valuemax="${list.length}"><i style="--p:${list.length?100*list.filter(v=>v.status==='added'||v.status==='failed').length/list.length:100}%"></i></div>`:''}${list.length?libHead(['Title','Channel','Length and views','Link','Dismiss','Add'])+list.map((v,i)=>`<div class="ent nk"><div class="t"><h4>${escapeHtml(v.title)}</h4><p class="sub">${escapeHtml(v.reason)}</p></div><div class="meta"><span class="c">${escapeHtml(v.channel)}</span><span class="c d">${escapeHtml(String(v.duration||'—'))} · ${Number(v.views||0).toLocaleString()} views</span></div><div class="acts"><span class="c"><a class="tx hi" href="${escapeHtml(v.url)}" target="_blank" rel="noopener">Open video</a></span><span class="c">${libAction('Dismiss',`LIB_UI.results.splice(${i},1);libRenderResults()`,'dim')}</span><span class="c"><button class="btn ${v.status==='added'?'':'pri'}" type="button" ${v.status==='adding'||v.status==='added'?'disabled':''} onclick="libAddResult(${i})">${v.status==='adding'?'Adding':v.status==='added'?'Added':v.status==='failed'?'Try again':'Add'}</button></span></div>${v.message?`<div class="body"><p class="stat ${v.status==='failed'?'bad':''}">${escapeHtml(v.message)}</p></div>`:''}</div>`).join(''):`<p class="none">${LIB_UI.excluded?'Everything found is already in the library.':`Nothing new found for “${escapeHtml(LIB_UI.query)}”.`}</p>`}`;
+}
+async function libAddResult(i){
+  const item=LIB_UI.results?.[i];if(!item||item.status==='adding'||item.status==='added')return;
+  item.status='adding';item.message='Reading the transcript and writing the summary.';libRenderResults();
+  const legacy=document.getElementById('kbYtInput');legacy.value=item.url;document.getElementById('kbYtGo').disabled=false;
+  await kbAddYoutube();const succeeded=YT_KB.videos.some(v=>v.video_id===item.video_id);
+  item.status=succeeded?'added':'failed';item.message=succeeded?`Added. Summary saved under ${libCategory(kbCategorize({title:item.title}))}.`:document.getElementById('kbYtMsg').textContent;libRenderResults();libraryRender();
+}
+async function libAddAll(){if(LIB_UI.addingAll)return;LIB_UI.addingAll=true;libRenderResults();try{for(let i=0;i<(LIB_UI.results||[]).length;i++)if(!LIB_UI.results[i].status)await libAddResult(i);}finally{LIB_UI.addingAll=false;libRenderResults();}}
+function libKeepTip(id){const n=STATE.knowledge.find(x=>x.id===id);if(!n)return;n.toReview=false;n.origin='hope';LIB_UI.kept={id,category:n.category};saveState();knowledgeRender();}
+function libUndoTip(){const n=STATE.knowledge.find(x=>x.id===LIB_UI.kept?.id);if(n){n.toReview=true;n.active=false;saveState();knowledgeRender();}LIB_UI.kept=null;libraryRender();}
+function libDeleteTip(id){if(!confirm('Delete this tip?'))return;STATE.knowledge=STATE.knowledge.filter(n=>n.id!==id);saveState();knowledgeRender();}
+function libSaveTip(id){const n=STATE.knowledge.find(x=>x.id===id);if(!n)return;n.title=document.getElementById('libTipTitle').value.trim()||n.title;n.raw=document.getElementById('libTipBody').value.trim()||n.raw;n.category=document.getElementById('libTipCategory').value;LIB_UI.editTip=null;saveState();libraryRender();}
+async function libViewVideo(id){const open=!!LIB_UI.open['video'+id];LIB_UI.open['video'+id]=!open;if(!open&&!LIB_UI.videoText[id]){try{const v=YT_KB.videos.find(x=>x.video_id===id),r=await fetch(v?.added?AIMM_PROXY_URL.replace(/\/+$/,'')+'/kb/transcript?id='+encodeURIComponent(id):'./docs/knowledge/'+encodeURIComponent(id)+'.md');if(r.ok){const data=v?.added?await r.json():await r.text();LIB_UI.videoText[id]=typeof data==='string'?data.slice(0,1500):String(data.transcript||'').slice(0,1500);}else LIB_UI.videoText[id]='Summary unavailable.';}catch(_){LIB_UI.videoText[id]='Summary unavailable.';}}libraryRender();}
+async function libVideoNote(id,edit){
+  const v=YT_KB.videos.find(item=>item.video_id===id);if(!v)return;
+  let note=(STATE.knowledge||[]).find(n=>n.source===v.url);
+  if(note){if(edit)kbEdit(note.id);else await kbResummarise(note.id);return;}
+  try{
+    const url=v.added?AIMM_PROXY_URL.replace(/\/+$/,'')+'/kb/transcript?id='+encodeURIComponent(id):'./docs/knowledge/'+encodeURIComponent(id)+'.md';
+    const r=await fetch(url);if(!r.ok)throw Error('Transcript unavailable');
+    const data=v.added?await r.json():await r.text();
+    const raw=String(typeof data==='string'?data:data.transcript||'').slice(0,12000);
+    if(!raw)throw Error('Transcript unavailable');
+    if(edit){kbOpenAdd();document.getElementById('kbTitle').value=v.title;document.getElementById('kbSource').value=v.url;document.getElementById('kbContent').value=raw;return;}
+    if((STATE.knowledge||[]).length>=KB_MAX_NOTES)throw Error('Notes are full. Export or remove a note before summarising.');
+    note={id:'kb_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),ts:Date.now(),title:v.title,source:v.url,tags:[],raw,summary:'',useSummary:false,active:false,category:kbCategorize({title:v.title})};
+    STATE.knowledge.unshift(note);saveState();knowledgeRender();await kbResummarise(note.id);
+  }catch(e){toast(e.message||'Could not open this video.',true);}
+}
+async function libDeleteVideo(id){
+  if(!confirm('Delete this dashboard video from Hope’s library?'))return;
+  try{
+    const r=await fetch(AIMM_PROXY_URL.replace(/\/+$/,'')+'/kb/user-videos/'+encodeURIComponent(id),{method:'DELETE'});
+    if(!r.ok)throw Error('Could not delete the video.');
+    await loadYtKb();
+    toast('Video deleted');
+  }catch(e){toast(e.message||'Could not delete the video.',true);}
+}
+
 renderJournal();
 // Render the favourite snapshot pills flanking START CALL. Reads from
 // STATE.journal (already loaded above by loadState). Safe to call before
@@ -22110,6 +22445,7 @@ renderJournal();
 try { renderFavouritePills(); } catch(e){ console.warn('[fav-pill] init render failed', e); }
 aichatInit();
 knowledgeInit();
+libraryRender();
 importInit();
 // Hope's memory — fact-chip system. Initial render populates the
 // categorised, draggable chip UI from STATE.profileFacts (which loadState
@@ -27258,6 +27594,7 @@ csInit('csPlatform');
     window.__ozSpecCancel=()=>cancelAnimationFrame(raf);
   })();
 })();
+
 </script>
 <script>
 /* R3 round 17 (2026-08-31): relocate the transport engine into the in-flow

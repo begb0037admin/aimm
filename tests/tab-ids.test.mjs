@@ -16,16 +16,19 @@ test('localStorage tab order migrates in place, preserves order and unknown ids,
   ctx.localStorage=storage;ctx.console=console;
   vm.runInContext(code,ctx);
   const migrated=JSON.parse(saved.get('aimmTabOrder_v2'));
-  assert.deepEqual(migrated,['snapshots','mixcheck','future','plugins','mixbus','knowledge']);
+  assert.deepEqual(migrated,['library','mixcheck','future','plugins','mixbus']);
   assert.equal(writes,1);
   vm.runInContext(code,ctx);
   assert.equal(writes,1);
   assert.deepEqual(order(migrated),migrated);
 });
 test('switch_tab maps old ids to their new ids and accepts new ids',()=>{
-  for(const [oldId,newId] of Object.entries({chain:'mixbus',eq:'mixcheck',library:'plugins'})){
+  for(const [oldId,newId] of Object.entries({chain:'mixbus',eq:'mixcheck',knowledge:'library',snapshots:'library'})){
     assert.equal(ctx.aimmMapLegacyTabId(oldId),newId);
     assert.equal(ctx.aimmMapLegacyTabId(newId),newId);
   }
   assert.match(html,/case 'switch_tab':\{[\s\S]*?const tab = aimmMapLegacyTabId\(requestedTab\)/);
+});
+test('a pre-rename Plugins library id is preserved as Plugins in old tab orders',()=>{
+  assert.deepEqual(order(['chain','library','knowledge','snapshots','eq']),['mixbus','plugins','library','mixcheck']);
 });

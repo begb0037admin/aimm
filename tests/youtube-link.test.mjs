@@ -9,7 +9,7 @@ function setup(){
   const vectors = [];
   const env = {
     APIFY_TOKEN:'mock-only', VOYAGE_API_KEY:'mock-voyage',
-    AIMM_KV:{get:async (key, mode)=>{ const raw=data.get(key); return mode==='json' && raw ? JSON.parse(raw) : raw || null; },put:async (key,value)=>data.set(key,value)},
+    AIMM_KV:{get:async (key, mode)=>{ const raw=data.get(key); return mode==='json' && raw ? JSON.parse(raw) : raw || null; },put:async (key,value)=>data.set(key,value),delete:async key=>data.delete(key)},
     VEC_YT_KB:{upsert:async values=>vectors.push(...values),deleteByIds:async()=>{}},
     HOPE_STT_LIMIT:{limit:async()=>({success:true})},
   };
@@ -68,4 +68,42 @@ test('no captions and service errors have plain messages without upstream body o
       const body=await r.text();assert.equal(r.status,mock.status===500?502:422);assert.doesNotMatch(body,/mock-only/);
     }
   }finally{globalThis.fetch=original;}
+});
+test('search returns approval candidates and excludes repo and dashboard video ids',async()=>{
+  const original=globalThis.fetch;
+  const {request,data}=setup();
+  data.set('yt-user:index',JSON.stringify([{video_id:sampleId,title:'Already added'}]));
+  const fresh='QWERTY12345';
+  globalThis.fetch=async (url,options)=>{
+    assert.match(String(url),/streamers~youtube-scraper/);
+    assert.deepEqual(JSON.parse(options.body).searchQueries,['808 drums']);
+    return Response.json([
+      {url:'https://www.youtube.com/watch?v=6WPtHxWkY2k',title:'Repo'},
+      {url:'https://youtu.be/'+sampleId,title:'User'},
+      {url:'https://youtu.be/'+fresh,title:'Fresh',channelName:'Studio',duration:'11:42',viewCount:312000},
+      {url:'https://youtu.be/'+fresh,title:'Duplicate'}
+    ]);
+  };
+  try{
+    const response=await request('/kb/search-youtube','POST',{query:'808 drums'});
+    assert.equal(response.status,200);
+    const body=await response.json();
+    assert.equal(body.excluded,2);
+    assert.equal(body.videos.length,1);
+    assert.deepEqual(body.videos[0],{id:fresh,video_id:fresh,title:'Fresh',channel:'Studio',duration:'11:42',views:312000,url:'https://www.youtube.com/watch?v='+fresh,reason:'Matches your search for 808 drums.'});
+    assert.equal(data.has('yt-user:'+fresh),false);
+  }finally{globalThis.fetch=original;}
+});
+test('deleting a dashboard video removes its vector chunks and index entry',async()=>{
+  const {request,data,vectors,env}=setup();
+  data.set('yt-user:index',JSON.stringify([{video_id:sampleId,title:'Saved'}]));
+  data.set('yt-user:'+sampleId,JSON.stringify({video_id:sampleId,transcript:'Words'}));
+  data.set('kb-vec-manifest:'+sampleId,JSON.stringify([1,2]));
+  let deleted=[];env.VEC_YT_KB.deleteByIds=async ids=>{deleted=ids;};
+  const response=await request('/kb/user-videos/'+sampleId,'DELETE');
+  assert.equal(response.status,200);
+  assert.equal(deleted.length,2);
+  assert.equal(data.has('yt-user:'+sampleId),false);
+  assert.equal(data.has('kb-vec-manifest:'+sampleId),false);
+  assert.deepEqual(JSON.parse(data.get('yt-user:index')),[]);
 });

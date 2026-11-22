@@ -731,6 +731,52 @@ export default {
       const videos = await env.AIMM_KV.get('yt-user:index', 'json') || [];
       return corsJsonResponse({ videos },200,origin,request);
     }
+    if (url.pathname.startsWith('/kb/user-videos/')){
+      if (request.method !== 'DELETE') return corsJsonResponse({ error:'Method not allowed' },405,origin,request);
+      const id = url.pathname.slice('/kb/user-videos/'.length);
+      if (!/^[A-Za-z0-9_-]{11}$/.test(id) || !env.AIMM_KV || !env.VEC_YT_KB) return corsJsonResponse({ error:'Video is unavailable' },400,origin,request);
+      const index = await env.AIMM_KV.get('yt-user:index','json') || [];
+      if (!index.some(v=>v.video_id===id)) return corsJsonResponse({ error:'Video is not in the dashboard library' },404,origin,request);
+      const chunks = await env.AIMM_KV.get(`kb-vec-manifest:${id}`,'json') || [];
+      if (chunks.length) await env.VEC_YT_KB.deleteByIds(chunks.map(n=>vectorIdFor(id,n)));
+      await env.AIMM_KV.put('yt-user:index',JSON.stringify(index.filter(v=>v.video_id!==id)));
+      await env.AIMM_KV.delete(`yt-user:${id}`);
+      await env.AIMM_KV.delete(`kb-vec-manifest:${id}`);
+      return corsJsonResponse({ ok:true,video_id:id },200,origin,request);
+    }
+    if (url.pathname === '/kb/search-youtube'){
+      if (request.method !== 'POST') return corsJsonResponse({ error:'Method not allowed' },405,origin,request);
+      if (!env.APIFY_TOKEN || !env.AIMM_KV) return corsJsonResponse({ error:'Video search is unavailable right now.' },503,origin,request);
+      if (Number(request.headers.get('content-length') || 0) > 2048) return corsJsonResponse({ error:'Request is too long' },413,origin,request);
+      let body;
+      try { body = await request.text(); if (body.length > 2048) throw new Error(); body = JSON.parse(body); }
+      catch (_) { return corsJsonResponse({ error:'Invalid request' },400,origin,request); }
+      const query = typeof body?.query === 'string' ? body.query.trim().slice(0,200) : '';
+      if (!query) return corsJsonResponse({ error:'Enter a video topic.' },400,origin,request);
+      let upstream;
+      try {
+        upstream = await fetch(`https://api.apify.com/v2/acts/streamers~youtube-scraper/run-sync-get-dataset-items?token=${encodeURIComponent(env.APIFY_TOKEN)}`,{
+          method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({searchQueries:[query],maxResults:20,maxResultsShorts:0,maxResultStreams:0})
+        });
+      } catch (_) { return corsJsonResponse({ error:'Search failed. Try again.' },502,origin,request); }
+      if (!upstream.ok) return corsJsonResponse({ error:'Search failed. Try again.' },502,origin,request);
+      let items;
+      try { items = await upstream.json(); } catch (_) { items = []; }
+      const userVideos = await env.AIMM_KV.get('yt-user:index','json') || [];
+      const known = new Set([...REPO_YT_VIDEOS.keys(),...userVideos.map(v=>v.video_id)]);
+      const seen = new Set();
+      let excluded = 0;
+      const videos = [];
+      for (const item of Array.isArray(items) ? items : []){
+        const id = youtubeVideoId(item.url || item.videoUrl || '') || (typeof item.id === 'string' && /^[A-Za-z0-9_-]{11}$/.test(item.id) ? item.id : '');
+        if (!id || seen.has(id)) continue;
+        seen.add(id);
+        if (known.has(id)){ excluded++; continue; }
+        const description = String(item.description || '').replace(/\s+/g,' ').trim();
+        videos.push({id,video_id:id,title:String(item.title || item.videoTitle || id).slice(0,300),channel:String(item.channelName || item.channel || 'YouTube').slice(0,200),duration:item.duration || null,views:item.viewCount || item.views || 0,url:`https://www.youtube.com/watch?v=${id}`,reason:description ? description.slice(0,180) : `Matches your search for ${query}.`});
+      }
+      return corsJsonResponse({query,videos,excluded},200,origin,request);
+    }
     if (url.pathname === '/kb/transcript'){
       if (request.method !== 'GET') return corsJsonResponse({ error:'Method not allowed' },405,origin,request);
       const id = url.searchParams.get('id') || '';

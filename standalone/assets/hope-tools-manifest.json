@@ -33,7 +33,7 @@
   },
   {
     "name": "switch_tab",
-    "description": "Navigate the app to a different tab so Kev physically sees what you're working on with him. Call this when he asks to \"look at\", \"open\", \"go to\", \"check\", or \"switch to\" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to Plugins; he wants to review his mix so you go to Mix Check; he wants to dig through saved research so you go to Insight). The visual switch is the point — it confirms to Kev that you're collaborating with him on the same screen.\n\nTabs:\n- plugins (Plugins) — installed Plugin Companion scan plus separate MixBus recommendation catalogue\n- mixbus (MixBus) — bus chains, plugin slots, settings notes\n- knowledge (Insight) — research notes, producer techniques, plugin habits\n- snapshots (Snapshots) — favourited pill grid + full Session Snapshots list (chronological saved chats)\n- mixcheck (Mix Check) — mix analysis, reference comparison, transport and Fix Queue\n- marketing (Marketing) — release strategy + Pop A&R thinking\n- community (Community) — social presence\n\nBrief Kev verbally as you do it: \"ok, hopping over to Insight\" or \"let me pull up the Plugin Library\" — keep it natural, ONE short phrase. Do NOT say \"I'm calling switch_tab\" or any other meta narration. Don't switch tabs gratuitously — only when it's genuinely the right surface for what he asked.",
+    "description": "Navigate the app to a different tab so Kev physically sees what you're working on with him. Call this when he asks to \"look at\", \"open\", \"go to\", \"check\", or \"switch to\" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to Plugins; he wants to review his mix so you go to Mix Check; he wants to dig through saved research so you go to Library). The visual switch is the point — it confirms to Kev that you're collaborating with him on the same screen.\n\nTabs:\n- plugins (Plugins) — installed Plugin Companion scan plus separate MixBus recommendation catalogue\n- mixbus (MixBus) — bus chains, plugin slots, settings notes\n- library (Library) — videos, notes, tips and saved chats; knowledge and snapshots are aliases\n- mixcheck (Mix Check) — mix analysis, reference comparison, transport and Fix Queue\n- marketing (Marketing) — release strategy + Pop A&R thinking\n- community (Community) — social presence\n\nBrief Kev verbally as you do it: \"ok, hopping over to Library\" or \"let me pull up the Plugin Library\" — keep it natural, ONE short phrase. Do NOT say \"I'm calling switch_tab\" or any other meta narration. Don't switch tabs gratuitously — only when it's genuinely the right surface for what he asked.",
     "parameters": {
       "type": "object",
       "properties": {
@@ -41,14 +41,15 @@
           "type": "string",
           "enum": [
             "mixbus",
+            "library",
             "knowledge",
+            "snapshots",
             "mixcheck",
             "plugins",
             "marketing",
-            "community",
-            "snapshots"
+            "community"
           ],
-          "description": "Tab id matching the visible label; legacy chain, eq and library are accepted as aliases."
+          "description": "Tab id matching the visible label; knowledge and snapshots open Library; chain and eq are legacy aliases."
         }
       },
       "required": [
@@ -1482,7 +1483,7 @@
   },
   {
     "name": "add_knowledge_note",
-    "description": "Add a research/technique note to Kev's Knowledge Base. Use when Kev dictates a takeaway from a producer interview, a plugin technique, a meter reading habit, or anything mix-related he wants to keep.\n\nKeep titles concise (under 80 chars) and content focused — Kev reviews these later, not real-time. If Kev rambles, condense his words into a clean note rather than transcribing verbatim.",
+    "description": "Add a research/technique note to Kev's Library. Set to_review when Hope offers to record a tip for Kev to review later; it stays out of Hope's reading context until kept. Use when Kev dictates a takeaway from a producer interview, a plugin technique, a meter reading habit, or anything mix-related he wants to keep.\n\nKeep titles concise (under 80 chars) and content focused — Kev reviews these later, not real-time. If Kev rambles, condense his words into a clean note rather than transcribing verbatim.",
     "parameters": {
       "type": "object",
       "properties": {
@@ -1506,12 +1507,44 @@
         },
         "activate": {
           "type": "boolean",
-          "description": "If true, the note becomes part of the voice session context immediately. Default false — Kev usually activates manually."
+          "description": "If true, the note becomes part of the voice session context immediately."
+        },
+        "to_review": {
+          "type": "boolean",
+          "description": "Queue a Hope tip in To review rather than filing it immediately."
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "mixing",
+            "producers",
+            "refs",
+            "mastering",
+            "vocals",
+            "workflow"
+          ],
+          "description": "Suggested Library category."
         }
       },
       "required": [
         "title",
         "content"
+      ]
+    }
+  },
+  {
+    "name": "find_youtube_videos",
+    "description": "Search YouTube for videos to propose in Library. This fills the approval list; it does not ingest anything. Kev chooses Add or Add all.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The topic to search for."
+        }
+      },
+      "required": [
+        "query"
       ]
     }
   },

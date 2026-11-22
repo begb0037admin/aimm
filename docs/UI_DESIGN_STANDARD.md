@@ -10,7 +10,7 @@ Mix Check is the visual template for the other tabs. Keep its established page s
 
 ## No boxes around small elements (Kevin, 21 November 2026)
 
-Boxed chips and tiles are no longer part of the AIMM design. Do not draw a box, filled tile, border or pill behind: count numbers, dropdown/expand arrows, section-heading icons, or similar small markers. Show the number or the plain glyph directly on the background. Colour (palette colours, the heading fill, the teal selected row) carries the meaning, not an enclosing box. Full-size controls (buttons, cards, selected rows, headings) keep their shapes. Starred items use a plain purple star with a soft glow, never a box. Applies to every tab; check new UI against it before it ships.
+Boxed chips and tiles are no longer part of the AIMM design. Do not draw a box, filled tile, border or pill behind: count numbers, dropdown/expand arrows, section-heading icons, or similar small markers. Show the number or the plain glyph directly on the background. Colour (palette colours, the heading fill, the teal selected row) carries the meaning, not an enclosing box. Full-size controls (buttons, cards, selected rows, headings) keep their shapes. Starred items use a plain purple star without a glow or box. Applies to every tab; check new UI against it before it ships.
 
 ## Typography
 

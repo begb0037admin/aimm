@@ -1,3 +1,7 @@
+## 2026-11-22 build 2026-11-22.5 — Library tab (BUILT, NOT DEPLOYED)
+
+The approved Library design replaces the visible Insight and Snapshots tabs in `standalone/assets/index.html`. It keeps note and snapshot storage and recall, adds a to-review queue for Hope tips, six-category migration, video discovery with an approval list, and a Worker search route that excludes repo and dashboard videos by ID. The Worker was not deployed and the ElevenLabs agent was not registered with the new tool. All 171 Node tests pass; empty and populated layouts were rendered at 1900, 1300 and 560 pixels. Live Apify search/ingestion and ElevenLabs voice use remain unverified. No commit, push or deploy, per the build brief.
+
 ## Spotify saved target: glow band, white live line — builds 2026-11-13.01 to .05
 
 Spotify saved target (purple) arc, all live at aimixmasters.com. Builds .01-.05: (1) selecting a Spotify song keeps its saved target selected and saving a capture selects the new target; (2) the target is drawn through the live-line pipeline, smoothed about a third of an octave (SAVED_TARGET_SMOOTH_OCT) and centred, so it is visible and smooth; (3) it is a thick glow band with a 1px purple outline on both edges and no centre line, cached offscreen; (4) the live Spotify line is white with the same glow. Step 3 (capture-in-progress curves through the purple renderer) was closed as not needed: the live line already draws during capture and purple appears on save.

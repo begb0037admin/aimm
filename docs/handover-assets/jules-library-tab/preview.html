@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIMM Library tab - design preview (Jules, 22 Nov 2026)</title>
+<style>
+:root{--inv-text-scale:1;--gutter:16px;--page-gutter:16px;--hope-w:380px}
+@media (min-width:1600px){:root{--page-gutter:32px}}
+*{box-sizing:border-box}
+body{margin:0;background:#000;color:#c4cad3;font:15px/1.5 Inter,-apple-system,"Segoe UI",sans-serif}
+/* ---- app shell stand-in (real shell: .container 2000 max, 1fr + Hope rail) ---- */
+.shell{max-width:2000px;margin:0 auto;padding:var(--gutter) var(--page-gutter);display:grid;grid-template-columns:minmax(0,1fr) var(--hope-w);gap:var(--gutter);align-items:start}
+.rail{background:#1a1d21;border:1px solid #2a2e35;border-radius:16px;height:260px;color:#9aa0a6;font-size:13px;padding:18px}
+.rail.ghost{visibility:hidden}
+@media (max-width:1000px){.shell{grid-template-columns:minmax(0,1fr)}.rail{display:none}}
+.tabs{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 28px}
+.tabs span{display:inline-flex;align-items:center;min-height:54px;padding:0 28px;border-radius:27px;background:#1a1d21;border:1px solid #2a2e35;color:#c4cad3;font-weight:600;font-size:15px}
+.tabs span.on{background:#2dd4bf;border-color:#2dd4bf;color:#000}
+.cap{max-width:2000px;margin:56px auto 0;padding:0 var(--page-gutter);font:600 13px/1.4 Inter,sans-serif;color:#6b7280;letter-spacing:.02em}
+.nav{max-width:2000px;margin:0 auto;padding:12px var(--page-gutter);display:flex;gap:20px;flex-wrap:wrap;font:600 13px Inter,sans-serif}
+.nav a{color:#9aa0a6;text-decoration:none}.nav a:hover{color:#fff}
+.scene[hidden]{display:none}
+/* LIBRARY TAB (Jules, 22 Nov 2026). One tab replacing Insight + Snapshots. Scoped to #library.
+   Unit --u = 1px x text-size setting. Palette only. No glows, tints, rings under text or boxes behind markers.
+   Each section is ONE outlined card, built exactly like a MixBus bus / Plugins sidebar card:
+   1px section colour border, radius 12, #1a1d21, solid section-colour bar (48px, black 16px/700), plus/minus fold at the right. */
+#library{--u:calc(1px*var(--inv-text-scale,1));--ink:#c4cad3;--hi:#e5e7ea;--dim:#9aa0a6;--track:#2a2e35;--black:#000;
+  --yellow:#e8b45a;--blue:#36a8ed;--pink:#f472b6;--orange:#f97316;--purple:#b970ff;
+  --rowx-l:calc(14*var(--u));--rowx-r:calc(12*var(--u));--rowy:calc(22*var(--u));--zgap:calc(40*var(--u))}
+#library :is(button,input,select,textarea,a){font-family:inherit}
+#library :focus{outline:0}
+
+/* page head: title left, one budget readout right, nothing else */
+#library .lib-head{display:flex;align-items:baseline;gap:calc(24*var(--u));margin:0 0 calc(28*var(--u))}
+#library .lib-head h2{margin:0;font:500 calc(30*var(--u))/1.2 Inter,sans-serif;letter-spacing:-.035em;color:#fff}
+#library .lib-read{margin-left:auto;font:600 calc(14*var(--u))/1.4 Inter,sans-serif;color:var(--dim)}
+#library .lib-read.over{color:var(--orange)}
+#library .lib-group{display:flex;flex-direction:column;gap:calc(12*var(--u));margin:0 0 calc(40*var(--u))}
+
+/* 1. CARD + BAR (identical to MixBus .bus-col / Plugins card) */
+#library .card{--c:var(--dim);container:card/inline-size;background:#1a1d21;border:1px solid var(--c);border-radius:12px;overflow:hidden}
+#library .card[data-sec=add]{--c:var(--yellow)}
+#library .card[data-sec=review]{--c:var(--blue)}
+#library .card[data-sec=videos]{--c:var(--pink)}
+#library .card[data-sec=notes]{--c:var(--orange)}
+#library .card[data-sec=chats]{--c:var(--purple)}
+#library .bar{display:flex;align-items:center;gap:calc(12*var(--u));width:100%;min-height:calc(48*var(--u));margin:0;padding:calc(8*var(--u)) var(--rowx-r) calc(8*var(--u)) calc(14*var(--u));background:var(--c);border:0;color:#000;font:700 calc(16*var(--u))/1.25 Inter,sans-serif;text-align:left;cursor:pointer}
+#library .bar .n{font:600 calc(15*var(--u))/1.3 Inter,sans-serif;font-variant-numeric:tabular-nums;opacity:.8}
+#library .bar:focus-visible{outline:2px solid #fff;outline-offset:calc(-3*var(--u))}
+#library .fold{margin-left:auto;flex:none;width:calc(22*var(--u));color:#000;font:500 calc(22*var(--u))/1 Inter,sans-serif;text-align:center}
+#library [aria-expanded=true]>.fold::before{content:"\2212"}
+#library [aria-expanded=false]>.fold::before{content:"+"}
+#library .card[data-open=false]>.cbody{display:none}
+
+/* 2. BUTTONS AND TEXT ACTIONS (Plugins/MixBus: solid hover fill white, black ink) */
+#library .btn{display:inline-flex;align-items:center;justify-content:center;min-height:calc(44*var(--u));min-width:calc(112*var(--u));padding:0 calc(20*var(--u));border:0;border-radius:10px;background:var(--track);color:#d5d8dc;font:700 calc(15*var(--u))/1.2 Inter,sans-serif;white-space:nowrap;cursor:pointer;text-decoration:none}
+#library .btn.pri{background:var(--c);color:#000}
+#library .btn:hover:not(:disabled){background:#fff;color:#000}
+#library .btn:focus-visible{background:#fff;color:#000;box-shadow:inset 0 0 0 2px #000}
+#library .btn:disabled{background:var(--track);color:var(--dim);cursor:default}
+#library .tx{display:inline-flex;align-items:center;min-height:calc(36*var(--u));padding:0 calc(6*var(--u));margin:0 calc(-6*var(--u));background:none;border:0;border-radius:6px;color:var(--ink);font:600 calc(15*var(--u))/1.2 Inter,sans-serif;white-space:nowrap;cursor:pointer;text-decoration:none}
+#library .tx.hi{color:var(--hi);font-weight:700}
+#library .tx.dim{color:var(--dim)}
+#library .tx:hover{color:#fff}                /* text brightens, nothing else: no fill, underline or ring */
+#library .tx:focus-visible{color:#fff;box-shadow:inset 0 0 0 2px #fff}
+#library .field{display:block;width:100%;min-width:0;min-height:calc(44*var(--u));padding:0 calc(16*var(--u));background:var(--track);border:0;border-radius:10px;color:var(--hi);font:calc(15*var(--u))/1.2 Inter,sans-serif}
+#library textarea.field{padding:calc(12*var(--u)) calc(16*var(--u));line-height:1.6;resize:vertical;min-height:calc(112*var(--u))}
+#library .field::placeholder{color:var(--dim)}
+#library .field:focus{box-shadow:inset 0 0 0 2px #fff}
+#library select.field{appearance:none;-webkit-appearance:none;cursor:pointer}
+
+/* 3. ADD CARD: label | field | button on one grid, rows separated by the hairline */
+#library .frow{display:grid;grid-template-columns:calc(200*var(--u)) minmax(0,1fr) auto;grid-template-areas:"l f b" ". m .";column-gap:calc(24*var(--u));align-items:center;padding:var(--rowy) var(--rowx-r) var(--rowy) var(--rowx-l);border-top:1px solid var(--track)}
+#library .frow:first-child{border-top:0}
+#library .frow .lbl{grid-area:l;font:600 calc(16*var(--u))/1.3 Inter,sans-serif;color:var(--hi)}
+#library .frow .field{grid-area:f}
+#library .frow .btns{grid-area:b;display:flex;gap:calc(12*var(--u))}
+#library .frow .fmsg{grid-area:m;margin:calc(12*var(--u)) 0 0;font:calc(14*var(--u))/1.5 Inter,sans-serif;color:var(--ink)}
+#library .frow .fmsg.bad{color:var(--orange)}
+#library .frow .fmsg:empty{display:none}
+#library .frow.notes .btns{grid-column:2/4}
+#library .prog{grid-column:1/-1;height:2px;margin:calc(12*var(--u)) 0 0;background:var(--track);overflow:hidden}
+#library .prog i{display:block;width:40%;height:100%;background:var(--hi);animation:libsweep 1.4s ease-in-out infinite}
+@keyframes libsweep{0%{margin-left:-40%}100%{margin-left:100%}}
+@media (prefers-reduced-motion:reduce){#library .prog i{animation:none;width:100%}}
+
+/* 4. APPROVAL LIST (inside the Add card) */
+#library .res{border-top:1px solid var(--track)}
+#library .rhead{display:flex;align-items:center;gap:calc(24*var(--u));padding:calc(18*var(--u)) var(--rowx-r) calc(6*var(--u)) var(--rowx-l)}
+#library .rhead h3{margin:0;font:700 calc(16*var(--u))/1.3 Inter,sans-serif;color:#fff}
+#library .rhead .by{font:600 calc(14*var(--u))/1.3 Inter,sans-serif;color:var(--dim);margin-left:calc(12*var(--u))}
+#library .rhead .rhead-end{margin-left:auto;display:flex;align-items:center;gap:calc(24*var(--u))}
+#library .rleft{margin:0;padding:0 var(--rowx-r) calc(4*var(--u)) var(--rowx-l);font:calc(14*var(--u))/1.5 Inter,sans-serif;color:var(--dim)}
+#library .rmeter{height:2px;margin:calc(12*var(--u)) var(--rowx-r) 0 var(--rowx-l);background:var(--track)}
+#library .rmeter i{display:block;height:100%;width:var(--p,0%);background:var(--hi)}
+
+/* 5. ENTRY = one table row. Every row in a card uses the same fixed column template (--grid), so each column lines up vertically.
+   Title takes the remaining width; Channel/source, date and every action get their own fixed-width column; a quiet header row names the columns.
+   No boxes, no fills. Hairline between rows, 22px above and below it. The summary opens under its own title and runs the full row width. */
+#library .card[data-sec=add]{--grid:minmax(0,1fr) calc(190*var(--u)) calc(170*var(--u)) calc(100*var(--u)) calc(80*var(--u)) calc(112*var(--u))}            /* Title | Channel | Length, views | Open video | Dismiss | Add */
+#library .card[data-sec=review]{--grid:minmax(0,1fr) calc(190*var(--u)) calc(150*var(--u)) calc(56*var(--u)) calc(72*var(--u)) calc(112*var(--u))}          /* Title | Files under | Received | Edit | Delete | Keep */
+#library .card[data-sec=videos]{--grid:minmax(0,1fr) calc(180*var(--u)) calc(110*var(--u)) calc(56*var(--u)) calc(64*var(--u)) calc(100*var(--u)) calc(120*var(--u)) calc(72*var(--u)) calc(72*var(--u))}   /* Title | Channel | Added | Edit | Hide | Open video | Re-summarise | Delete | Hope reads */
+#library .card[data-sec=notes]{--grid:minmax(0,1fr) calc(180*var(--u)) calc(110*var(--u)) calc(56*var(--u)) calc(64*var(--u)) calc(100*var(--u)) calc(120*var(--u)) calc(72*var(--u)) calc(72*var(--u))}    /* Title | Source | Added | Edit | Hide | Summary/Raw | Re-summarise | Delete | Hope reads */
+#library .card[data-sec=chats]{--grid:minmax(0,1fr) calc(170*var(--u)) calc(120*var(--u)) calc(56*var(--u)) calc(64*var(--u)) calc(130*var(--u)) calc(110*var(--u)) calc(56*var(--u)) calc(72*var(--u))}   /* Title | Contents | Saved | Edit | Hide | Apply to MixBus | Favourite | Copy | Delete */
+#library .thead,#library .ent{display:grid;grid-template-columns:var(--grid);column-gap:calc(24*var(--u));align-items:center;padding-left:var(--rowx-l);padding-right:var(--rowx-r)}
+#library .thead{padding-top:calc(16*var(--u));padding-bottom:calc(6*var(--u));font:600 calc(13*var(--u))/1.3 Inter,sans-serif;color:var(--dim)}   /* plain text names, no fill, no rule */
+#library .thead span{min-width:0}
+#library .ent{padding-top:var(--rowy);padding-bottom:var(--rowy);border-top:1px solid var(--track)}
+#library .rhead+.thead+.ent,#library .rleft+.thead+.ent,#library .gbody>.thead+.ent,#library .gbody>.ent:first-child,#library .cbody>.ent:first-child,#library .cbody>.thead+.ent{border-top:0}
+#library .ent .t{min-width:0}
+#library .ent h4{margin:0;font:600 calc(16*var(--u))/1.4 Inter,sans-serif;color:var(--hi);overflow-wrap:anywhere}   /* wraps cleanly, never cut off */
+#library .ent .sub{margin:calc(4*var(--u)) 0 0;font:calc(14*var(--u))/1.5 Inter,sans-serif;color:var(--dim)}
+#library .ent .meta,#library .ent .acts{display:contents}
+#library .ent .c{min-width:0;font:calc(14*var(--u))/1.5 Inter,sans-serif;color:var(--ink);overflow-wrap:anywhere}
+#library .ent .c.d{color:var(--dim)}
+#library .ent .k{justify-self:center}
+#library .ent .body{grid-column:1/-1;margin-top:calc(10*var(--u))}
+#library .ent .body:empty{display:none}
+#library .ent .sum{margin:0;font:calc(15*var(--u))/1.65 Inter,sans-serif;color:var(--ink)}   /* no width cap: the summary runs the full row */
+#library .ent[data-open=false] .body .sum.fold-sum{display:none}
+#library .ent[data-open=false] .body:not(:has(>:not(.fold-sum))){display:none}
+#library .ent .stat{margin:calc(12*var(--u)) 0 0;font:calc(14*var(--u))/1.5 Inter,sans-serif;color:var(--ink)}
+#library .ent .stat.bad{color:var(--orange)}
+#library .ent .stat b{color:#fff;font-weight:600}
+#library .ent .turn{margin:calc(12*var(--u)) 0 0;font:calc(15*var(--u))/1.65 Inter,sans-serif;color:var(--ink)}
+#library .ent .turn b{color:var(--hi);font-weight:700;margin-right:calc(8*var(--u))}
+#library .ent .edit{display:grid;gap:calc(12*var(--u))}
+#library .tick{display:inline-flex;align-items:center;justify-content:center;width:calc(24*var(--u));min-height:calc(28*var(--u));padding:0;background:none;border:0;border-radius:6px;color:var(--hi);font:700 calc(18*var(--u))/1 Inter,sans-serif;cursor:pointer}
+#library .tick[aria-pressed=true]::before{content:"\2713"}
+#library .tick[aria-pressed=false]::before{content:"\2013";color:var(--dim)}
+#library .tick:hover{color:#fff}
+#library .tick:focus-visible{box-shadow:inset 0 0 0 2px #fff}
+
+/* below 1300px (card width) rows stack: title (tick at the right), then channel and date on one line, the summary, then the actions in their own row under the title */
+@container card (max-width:1299px){
+  #library .thead{display:none}
+  #library .ent{grid-template-columns:minmax(0,1fr) calc(24*var(--u));column-gap:calc(16*var(--u));align-items:start}
+  #library .ent.nk{grid-template-columns:minmax(0,1fr)}
+  #library .ent .t{order:1}#library .ent .k{order:2}
+  #library .ent .meta{order:3;grid-column:1/-1;display:flex;flex-wrap:wrap;gap:0 calc(16*var(--u));margin-top:calc(4*var(--u))}
+  #library .ent .body{order:4}
+  #library .ent .acts{order:5;grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:0 calc(24*var(--u));margin-top:calc(16*var(--u))}
+  #library .ent .acts .c{display:flex;align-items:center}
+  #library .ent .c:empty,#library .ent .acts .c:empty{display:none}
+  #library .frow{grid-template-columns:calc(150*var(--u)) minmax(0,1fr) auto}
+}
+@container card (max-width:639px){
+  #library .frow{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"l l" "f b" "m m";row-gap:calc(10*var(--u));column-gap:calc(12*var(--u))}
+  #library .frow.notes .btns{grid-column:1/-1}
+  #library .rhead{flex-wrap:wrap;gap:calc(8*var(--u)) calc(16*var(--u))}
+  #library .rhead .rhead-end{margin-left:0;width:100%;justify-content:space-between}
+  #library .btn{min-width:calc(88*var(--u))}
+}
+
+/* 6. GROUPS inside Videos and Notes (the six categories) and Saved chats (Favourites, Sessions): a hairline row, count beside the name, fold at the right */
+#library .grp{display:flex;align-items:center;gap:calc(12*var(--u));width:100%;min-height:calc(56*var(--u));padding:0 var(--rowx-r) 0 var(--rowx-l);background:none;border:0;border-top:1px solid var(--track);color:#fff;font:700 calc(16*var(--u))/1.3 Inter,sans-serif;text-align:left;cursor:pointer}
+#library .cbody>.g:first-child>.grp{border-top:0}
+#library .grp .n{font:600 calc(15*var(--u))/1.3 Inter,sans-serif;color:var(--dim);font-variant-numeric:tabular-nums}
+#library .grp .fold{color:var(--c)}
+#library .grp:focus-visible{box-shadow:inset 0 0 0 2px #fff}
+#library .g[data-open=false]>.gbody{display:none}
+#library .more{display:block;width:100%;min-height:calc(52*var(--u));padding:0 var(--rowx-r) 0 var(--rowx-l);background:none;border:0;border-top:1px solid var(--track);color:var(--ink);font:600 calc(15*var(--u))/1.2 Inter,sans-serif;text-align:left;cursor:pointer}
+#library .more:hover{color:#fff}
+#library .more:focus-visible{box-shadow:inset 0 0 0 2px #fff;color:#fff}
+#library .none{margin:0;padding:var(--rowy) var(--rowx-r) var(--rowy) var(--rowx-l);font:calc(15*var(--u))/1.5 Inter,sans-serif;color:var(--dim)}
+#library .foot{display:flex;justify-content:flex-end;gap:calc(28*var(--u));padding:calc(10*var(--u)) var(--rowx-r) calc(10*var(--u)) var(--rowx-l);border-top:1px solid var(--track)}
+
+/* 7. SNAPSHOT PILLS (filled ones only; empty slots are gone). Click recalls: mid-call to Hope as context, idle into the compose box. */
+#library .pills{display:grid;grid-template-columns:repeat(auto-fill,minmax(calc(260*var(--u)),1fr));gap:calc(12*var(--u));padding:calc(8*var(--u)) var(--rowx-r) calc(24*var(--u)) var(--rowx-l)}
+#library .pill{display:flex;align-items:stretch;min-height:calc(48*var(--u));background:var(--track);border-radius:10px;overflow:hidden}
+#library .pill .main{flex:1;min-width:0;padding:calc(10*var(--u)) calc(8*var(--u)) calc(10*var(--u)) calc(16*var(--u));background:none;border:0;color:var(--hi);font:600 calc(15*var(--u))/1.35 Inter,sans-serif;text-align:left;cursor:pointer;text-wrap:balance}
+#library .pill .star{flex:none;width:calc(44*var(--u));background:none;border:0;color:var(--purple);font:calc(18*var(--u))/1 Inter,sans-serif;cursor:pointer}
+#library .pill:hover,#library .pill:has(:focus-visible){background:#fff}
+#library .pill:hover :is(.main,.star),#library .pill:has(:focus-visible) :is(.main,.star){color:#000}
+#library .pill:has(:focus-visible){box-shadow:inset 0 0 0 2px #000}
+#library .pill :focus-visible{outline:0}
+
+/* 8. BROWSE: plain heading, one search field that filters Videos, Notes and Saved chats together */
+#library .browse-head{display:flex;align-items:center;flex-wrap:wrap;gap:calc(16*var(--u)) calc(24*var(--u));margin:0 0 calc(16*var(--u))}
+#library .browse-head h3{margin:0;font:700 calc(22*var(--u))/1.25 Inter,sans-serif;color:#f3f4f6}
+#library .browse-head .field{flex:1 1 calc(320*var(--u));width:auto}
+#library .browse-head .ends{display:flex;gap:calc(20*var(--u))}
+
+/* preview-only: forced states for the States scene */
+#library .force-hover.btn{background:#fff;color:#000}#library .force-hover.tx{color:#fff}
+#library .force-focus.btn{background:#fff;color:#000;box-shadow:inset 0 0 0 2px #000}#library .force-focus.tx{color:#fff;box-shadow:inset 0 0 0 2px #fff}
+#library .pill.force-hover{background:#fff}#library .pill.force-hover :is(.main,.star){color:#000}
+#library .pill.force-focus{background:#fff;box-shadow:inset 0 0 0 2px #000}#library .pill.force-focus :is(.main,.star){color:#000}
+#library .field.force-focus{box-shadow:inset 0 0 0 2px #fff}
+#library .st-grid{display:grid;grid-template-columns:200px repeat(3,minmax(0,1fr));gap:20px 24px;align-items:center;padding:22px 14px}
+#library .st-grid .h{font:600 13px Inter,-apple-system,sans-serif;color:var(--dim)}
+</style></head>
+<body>
+<nav class="nav" id="nav"></nav>
+<div id="root"></div>
+<script>
+const P=new URLSearchParams(location.search);const sc=parseFloat(P.get('scale'));if(sc)document.documentElement.style.setProperty('--inv-text-scale',sc);
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const CATS=['Mixing techniques','Producer interviews / chains','Reference tracks','Mastering','Vocal techniques','Workflow'];
+
+/* ---------- builders (these mirror the markup Codex should build) ---------- */
+const card=(sec,title,n,body,open=true,id='')=>`<section class="card" data-sec="${sec}" data-open="${open}" ${id?`id="${id}"`:''}><button class="bar" type="button" aria-expanded="${open}"><span>${title}</span>${n!=null?`<span class="n">${n}</span>`:''}<span class="fold" aria-hidden="true"></span></button><div class="cbody">${body}</div></section>`;
+const grp=(name,n,inner,open=false)=>`<div class="g" data-open="${open}"><button class="grp" type="button" aria-expanded="${open}"><span>${name}</span><span class="n">${n}</span><span class="fold" aria-hidden="true"></span></button><div class="gbody">${inner}</div></div>`;
+const tx=(t,cls='')=>`<button class="tx ${cls}" type="button">${t}</button>`;
+const cell=(x,cls='')=>`<span class="c ${cls}">${x||''}</span>`;
+const thead=cols=>`<div class="thead">${cols.map(c=>`<span>${c}</span>`).join('')}</div>`;
+/* one table row: title | meta cells | action cells | tick. meta/acts are arrays; '' keeps an empty column so the grid never shifts */
+const ent=({title,sub='',meta=[],acts=[],sum='',body='',tick=null,open=true,nk=false})=>`<article class="ent${nk?' nk':''}" data-open="${open}"><div class="t"><h4>${title}</h4>${sub?`<p class="sub">${sub}</p>`:''}</div><div class="meta">${meta.map((m,i)=>cell(m,i?'d':'')).join('')}</div><div class="acts">${acts.map(a=>cell(a)).join('')}</div>${tick===null?'':`<button class="tick k" type="button" aria-pressed="${tick}" aria-label="${tick?'Hope reads this':'Hope skips this'}"></button>`}<div class="body">${sum?`<p class="sum fold-sum">${sum}</p>`:''}${body}</div></article>`;
+const link=`<a class="tx hi" href="#" target="_blank" rel="noopener">Open video</a>`;
+
+/* ---------- sample data ---------- */
+const videos=[
+ {t:'808 Tuning and Sustain in Hip Hop in 10 Minutes',ch:'Low End Lab',len:'11:42',v:'312K views',why:'Shows how to tune an 808 to the key and shape its sustain, which answers your 808 request directly.'},
+ {t:'Hip Hop 808 Mixing: Sidechain, Saturation and EQ',ch:'Studio Notes',len:'18:05',v:'96K views',why:'Walks through a full 808 chain in Logic with settings for each plugin.'},
+ {t:'How Producers Layer 808s With Sub Bass',ch:'Beat Anatomy',len:'9:20',v:'1.2M views',why:'Covers layering and phase so the 808 and sub do not cancel.'},
+ {t:'Why Your 808 Disappears on Phone Speakers',ch:'Mix Clinic',len:'7:31',v:'58K views',why:'Explains harmonic saturation so the 808 stays audible on small speakers.'},
+ {t:'808s in Logic Pro: Sampler or Alchemy',ch:'Logic Daily',len:'14:12',v:'41K views',why:'Compares the two Logic instruments for building and pitching an 808.'},
+ {t:'Trap Low End Masterclass',ch:'Beat Anatomy',len:'32:48',v:'205K views',why:'Long session on kick and 808 balance with before and after mixes.'}
+];
+const resEnt=(v,state)=>{
+ let acts=[link,tx('Dismiss','dim'),'<button class="btn" type="button" data-add>Add</button>'];let body=`<p class="sum">${esc(v.why)}</p>`;
+ if(state==='adding'){acts=[link,'','<button class="btn" type="button" disabled>Adding</button>'];body+=`<p class="stat">Reading the transcript and writing the summary.</p><div class="prog"><i></i></div>`}
+ if(state==='done'){acts=[link,'',tx('View in Videos','hi')];body+=`<p class="stat"><b>Added.</b> Summary saved under Mixing techniques.</p>`}
+ if(state==='bad'){acts=[link,tx('Dismiss','dim'),'<button class="btn" type="button" data-add>Try again</button>'];body+=`<p class="stat bad">Could not add. This video has no transcript.</p>`}
+ return ent({title:esc(v.t),meta:[esc(v.ch),`${v.len} · ${v.v}`],acts,body,nk:true});
+};
+const results=({q='808s in hip hop',hope=false,state=['idle','adding','done','bad','idle','idle'],head='all',left=5}={})=>`<div class="res"><div class="rhead"><h3>Results for &ldquo;${esc(q)}&rdquo;${hope?'<span class="by">Started by Hope</span>':''}</h3><div class="rhead-end">${head==='adding'?'<button class="btn" disabled>Adding all</button>':'<button class="btn pri" type="button" data-addall>Add all</button>'}${tx('Clear','dim')}</div></div><p class="rleft">${left} already in the library were left out.</p>${head==='adding'?'<div class="rmeter" style="--p:50%"></div>':''}${thead(['Title','Channel','Length and views','Link','Dismiss','Add'])}${videos.map((v,i)=>resEnt(v,state[i])).join('')}</div>`;
+
+const addCard=({linkMsg='',linkBad=false,linkProg=false,findProg=false,findVal='',res='',open=true,id='addCard'}={})=>card('add','Add to Hope&rsquo;s library',null,
+`<div class="frow"><label class="lbl" for="${id}-l">Paste a link</label><input class="field" id="${id}-l" type="url" placeholder="YouTube link"><div class="btns"><button class="btn pri" type="button" ${linkProg?'disabled':''}>Add</button></div>${linkMsg?`<p class="fmsg${linkBad?' bad':''}">${linkMsg}</p>`:''}${linkProg?'<div class="prog"><i></i></div>':''}</div>
+ <div class="frow"><label class="lbl" for="${id}-f">Find videos</label><input class="field" id="${id}-f" type="text" placeholder="e.g. 808s in hip hop" value="${findVal}"><div class="btns"><button class="btn pri" type="button" data-find ${findProg?'disabled':''}>${findProg?'Searching':'Find'}</button></div>${findProg?'<p class="fmsg">Searching YouTube.</p><div class="prog"><i></i></div>':''}</div>
+ <div class="res-slot">${res}</div>
+ <div class="frow notes"><span class="lbl">Add a note</span><div class="btns"><button class="btn" type="button">Write a note</button><button class="btn" type="button">Import a file</button></div></div>`,open,id);
+
+const tips=[
+ {t:'Cut 250 Hz on the 808 before it hits the compressor',d:'22 Nov, 14:05',cat:'Vocal techniques',sum:'Hope: cutting a narrow band near 250 Hz before compression keeps the sustain clean and stops the compressor pumping on mud.'},
+ {t:'Check the vocal in mono before printing the chain',d:'22 Nov, 13:48',cat:'Workflow',sum:'Hope: if the lead vocal loses body in mono, the stereo widener on the chain is too strong.'},
+ {t:'Match the reference at the same loudness before you compare',d:'21 Nov, 19:20',cat:'Reference tracks',sum:'Hope: turn the reference down to the mix level first. A louder track always sounds better.'}
+];
+const tipEnt=(t,mode)=>{
+ if(mode==='edit')return ent({title:`<input class="field" value="${esc(t.t)}" aria-label="Title">`,meta:['',''],acts:['',tx('Cancel','dim'),'<button class="btn pri" type="button">Save</button>'],body:`<div class="edit"><textarea class="field" aria-label="Tip">${esc(t.sum)}</textarea><select class="field" aria-label="Category">${CATS.map(c=>`<option ${c===t.cat?'selected':''}>${c}</option>`).join('')}</select></div>`,nk:true});
+ return ent({title:esc(t.t),meta:[t.cat,t.d],acts:[tx('Edit'),tx('Delete','dim'),'<button class="btn pri" type="button" data-keep>Keep</button>'],sum:esc(t.sum),nk:true});
+};
+const reviewCard=(items,{edit=-1,open=true}={})=>card('review','To review',items.length,items.length?thead(['Title','Files under','Received','Edit','Delete','Keep'])+items.map((t,i)=>tipEnt(t,i===edit?'edit':'')).join(''):'<p class="none">Nothing to review.</p>',open,'reviewCard');
+
+const vEnt=(t,ch,d,sum,open,user)=>ent({title:t,meta:[ch,d],acts:[tx('Edit'),tx(open?'Hide':'View','hi'),link,tx('Re-summarise'),user?tx('Delete','dim'):''],sum,open,tick:true});
+const VH=['Title','Channel','Added','Edit','Show','Link','Summary','Remove','Hope reads'];
+const videosCard=(empty=false)=>card('videos','Videos',empty?0:128,empty?'<p class="none">No videos yet.</p>':thead(VH)+
+ grp('Mixing techniques',42,vEnt('Sidechain compression on 808s, explained','Low End Lab','21 Nov','The video sets the compressor to a fast attack and a medium release and keys it from the kick. The 808 ducks by about three decibels so both hit cleanly. Tune the release to the tempo so the bass swells back in time with the groove.',true,true)+vEnt('Gain staging in Logic Pro from the first plugin','Studio Notes','18 Nov','Set every channel to peak near minus eighteen before any processing, then leave the faders alone.',false,true)+vEnt('Parallel compression on the drum bus','Mix With The Masters','Library','A walkthrough of blending a heavily compressed copy of the drum bus under the dry signal.',false,false)+'<button class="more" type="button">Show 39 more</button>',true)
+ +grp(CATS[1],31,'')+grp(CATS[2],9,'')+grp(CATS[3],18,'')+grp(CATS[4],21,'')+grp(CATS[5],7,''));
+const nEnt=(t,tags,d,src,sum,raw,open,mode)=>ent({title:t,sub:tags,meta:[src,d],acts:[tx('Edit'),tx(open?'Hide':'View','hi'),tx(mode==='raw'?'Raw':'Summary','hi'),tx('Re-summarise'),tx('Delete','dim')],sum:mode==='raw'?raw:sum,open,tick:true});
+const NH=['Title','Source','Added','Edit','Show','Mode','Summary','Remove','Hope reads'];
+const notesCard=(empty=false)=>card('notes','Notes',empty?0:14,empty?'<p class="none">No notes yet.</p>':thead(NH)+
+ grp('Mixing techniques',5,nEnt('Low cut the reverb returns','reverb, eq','20 Nov','Written by you','Put a high pass near 200 Hz on every reverb return so the low end stays tight and the vocal sits forward.','High pass the returns at 200 Hz. Check with and without.',true,'summary')+nEnt('Cut 250 Hz on the 808 before it hits the compressor','808, eq','22 Nov','Tip from Hope','Cutting a narrow band near 250 Hz before compression keeps the sustain clean.','',false,'summary')+nEnt('Bus compressor settings for a loud rap master','compression, master','12 Nov','Imported file','Two to three decibels of gain reduction, slow attack, auto release.','',false,'summary'),true)
+ +grp(CATS[1],3,'')+grp(CATS[2],2,'')+grp(CATS[3],1,'')+grp(CATS[4],2,'')+grp(CATS[5],1,'')
+ +'<div class="foot">'+tx('Export notes','dim')+'</div>');
+const favs=['Vocal chain for the hook','808 sidechain settings','Master bus loudness plan','Reference mix notes','Drum bus parallel setup','Mono check on the vocal'];
+const pill=l=>`<div class="pill"><button class="main" type="button">${l}</button><button class="star" type="button" aria-label="Unfavourite ${l}">&#9733;</button></div>`;
+const SH=['Title','Contents','Saved','Edit','Show','MixBus chain','Favourite','Copy','Remove'];
+const sEnt=(t,d,sum,open,chain,fav,turns)=>ent({title:t,meta:[chain?'Chat and MixBus chain':'Chat only',d],acts:[tx('Edit'),tx(open?'Hide':'View','hi'),chain?tx('Apply to MixBus','hi'):'',tx(fav?'Unfavourite':'Favourite'),tx('Copy'),tx('Delete','dim')],sum,open,nk:true,body:turns||''});
+const chatsCard=(empty=false)=>card('chats','Saved chats',empty?0:9,empty?'<p class="none">No saved chats yet.</p>':
+ grp('Favourites',6,`<div class="pills">${favs.map(pill).join('')}</div>`,true)
+ +grp('Sessions',9,thead(SH)+sEnt('Getting the 808 to sit under the vocal','22 Nov, 15:10','Hope suggested a high pass on the 808 at 30 Hz, a cut at 250 Hz and sidechain from the kick. You tried the first two and kept the sidechain for later.',true,true,true,`<p class="turn"><b>You</b>Why does my 808 disappear when the vocal comes in?</p><p class="turn"><b>Hope</b>Most of the weight sits between 60 and 120 Hz, so the vocal is not the cause. Check for phase against the kick first.</p>`)+sEnt('Reference mix notes for the new single','21 Nov, 18:02','Compared the master with two references, mostly on low end and brightness.',false,false,true)+sEnt('Vocal chain for the hook','20 Nov, 11:44','Compressor, de-esser, then a plate reverb on a send.',false,true,true)+'<button class="more" type="button">Show 6 more</button>',true)
+ +'<div class="foot">'+tx('Export all','dim')+tx('Clear all','dim')+'</div>');
+
+const head=(read='Hope reads 4 of 14 notes',over=false)=>`<div class="lib-head"><h2>Library</h2><span class="lib-read${over?' over':''}">${read}</span></div>`;
+const browse=(empty=false)=>`<div class="browse-head"><h3>Browse</h3><input class="field" type="search" placeholder="Search videos, notes and chats">${empty?'':'<div class="ends">'+tx('Expand all','dim')+tx('Collapse all','dim')+'</div>'}</div><div class="lib-group" style="margin:0">${videosCard(empty)}${notesCard(empty)}${chatsCard(empty)}</div>`;
+const tabs=on=>`<div class="tabs">${['Mix Check','MixBus','Plugins','Library','Settings','Marketing','Community'].map(t=>`<span class="${t===on?'on':''}">${t}</span>`).join('')}</div>`;
+const page=(inner,{rail=true,tabsOn=false}={})=>`<div class="shell"><main id="library">${tabsOn?tabs('Library'):''}${inner}</main>${rail?'<aside class="rail">Hope rail (380px, unchanged)</aside>':'<aside class="rail ghost"></aside>'}</div>`;
+
+/* ---------- scenes ---------- */
+const scenes={
+ overview:['1. Overview, populated',page(head()+`<div class="lib-group">${addCard()}${reviewCard(tips)}</div>`+browse(),{tabsOn:true})],
+ empty:['2. Overview, empty library',page(head('Hope reads no notes')+`<div class="lib-group">${addCard({id:'e'})}${reviewCard([])}</div>`+browse(true),{tabsOn:true})],
+ add:['3. Add card: link adding, link failed, link added, Find searching',page(head()+`<div class="lib-group">${addCard({linkProg:true,linkMsg:'Reading the transcript and writing the summary.',id:'a1'})}${addCard({linkMsg:'Could not add. This video has no transcript.',linkBad:true,id:'a2'})}${addCard({linkMsg:'<b style="color:#fff;font-weight:600">Added.</b> Summary saved under Mixing techniques.',id:'a3'})}${addCard({findProg:true,findVal:'808s in hip hop',id:'a4'})}</div>`,{rail:false})],
+ approve:['4. Approval list: idle, adding, added, failed (and Add all in progress, started by Hope)',page(head()+`<div class="lib-group">${addCard({findVal:'808s in hip hop',res:results(),id:'p1'})}${addCard({findVal:'plugin for tape saturation',res:results({q:'plugin for tape saturation',hope:true,head:'adding',state:['done','done','adding','idle','idle','idle'],left:2}),id:'p2'})}</div>`,{rail:false})],
+ review:['5. To review: tips from Hope (second tip in edit)',page(head()+`<div class="lib-group">${reviewCard(tips,{edit:1})}</div>`,{rail:false})],
+ browse:['6. Browse: videos, notes, saved chats',page(head()+browse(),{rail:false})],
+ states:['7. Rest, hover, keyboard focus',page(`<div class="lib-group"><section class="card" data-sec="add"><button class="bar" aria-expanded="true"><span>States</span><span class="fold"></span></button><div class="cbody"><div class="st-grid">
+  <span class="h"></span><span class="h">Rest</span><span class="h">Hover</span><span class="h">Keyboard focus</span>
+  <span class="h">Primary button</span><button class="btn pri">Add</button><button class="btn pri force-hover">Add</button><button class="btn pri force-focus">Add</button>
+  <span class="h">Neutral button</span><button class="btn">Write a note</button><button class="btn force-hover">Write a note</button><button class="btn force-focus">Write a note</button>
+  <span class="h">Text action</span><button class="tx hi">View</button><button class="tx hi force-hover">View</button><button class="tx hi force-focus">View</button>
+  <span class="h">Field</span><input class="field" placeholder="YouTube link"><input class="field" placeholder="YouTube link"><input class="field force-focus" placeholder="YouTube link">
+  <span class="h">Snapshot pill</span><div class="pill"><button class="main">Vocal chain for the hook</button><button class="star">&#9733;</button></div><div class="pill force-hover"><button class="main">Vocal chain for the hook</button><button class="star">&#9733;</button></div><div class="pill force-focus"><button class="main">Vocal chain for the hook</button><button class="star">&#9733;</button></div>
+  <span class="h">Content row</span><div style="grid-column:2/-1" class="sub">No hover fill, no underline, no marker. Rows never react to the pointer; only their own actions do.</div>
+ </div></div></section></div>`,{rail:false})]
+};
+const only=P.get('only');const root=document.getElementById('root');
+root.innerHTML=Object.entries(scenes).map(([k,[cap,html]])=>`<div class="scene" id="sc-${k}" ${only&&only!==k?'hidden':''}><div class="cap">${cap}</div>${html}</div>`).join('');
+document.getElementById('nav').innerHTML=Object.entries(scenes).map(([k,[c]])=>`<a href="?only=${k}">${c.split(':')[0]}</a>`).join('')+'<a href="?">All</a>'+'<a href="?scale=1.4">Text 140%</a>';
+
+/* ---------- behaviour: folds, view/hide, keep, add, find, add all ---------- */
+document.addEventListener('click',e=>{
+ const bar=e.target.closest('.bar');if(bar){const c=bar.closest('.card');const o=c.dataset.open!=='true';c.dataset.open=o;bar.setAttribute('aria-expanded',o);return}
+ const g=e.target.closest('.grp');if(g){const x=g.closest('.g');const o=x.dataset.open!=='true';x.dataset.open=o;g.setAttribute('aria-expanded',o);return}
+ const tk=e.target.closest('.tick');if(tk){const v=tk.getAttribute('aria-pressed')!=='true';tk.setAttribute('aria-pressed',v);return}
+ const vh=e.target.closest('.tx');if(vh&&/^(View|Hide)$/.test(vh.textContent)){const a=vh.closest('.ent');const o=a.dataset.open!=='true';a.dataset.open=o;vh.textContent=o?'Hide':'View';return}
+ const sr=e.target.closest('.tx');if(sr&&/^(Summary|Raw)$/.test(sr.textContent)){sr.textContent=sr.textContent==='Summary'?'Raw':'Summary';return}
+ const kp=e.target.closest('[data-keep]');if(kp){const a=kp.closest('.ent');a.outerHTML=`<article class="ent nk"><div class="t"><p class="stat" style="margin:0"><b>Kept.</b> Filed in Notes under Mixing techniques.</p></div><div class="meta">${cell('')+cell('')}</div><div class="acts">${cell('')+cell('')+cell(tx('Undo','hi'))}</div></article>`;return}
+ const ad=e.target.closest('[data-add]');if(ad){const a=ad.closest('.ent');ad.disabled=true;ad.textContent='Adding';a.querySelector('.body').insertAdjacentHTML('beforeend','<p class="stat">Reading the transcript and writing the summary.</p><div class="prog"><i></i></div>');setTimeout(()=>{a.querySelector('.acts').innerHTML=cell(link)+cell('')+cell(tx('View in Videos','hi'));a.querySelector('.stat').innerHTML='<b>Added.</b> Summary saved under Mixing techniques.';a.querySelector('.prog')?.remove()},1400);return}
+ const aa=e.target.closest('[data-addall]');if(aa){aa.closest('.res').querySelectorAll('[data-add]').forEach((b,i)=>setTimeout(()=>b.click(),i*500));return}
+ const fd=e.target.closest('[data-find]');if(fd){const r=fd.closest('.card').querySelector('.res-slot');fd.textContent='Searching';fd.disabled=true;setTimeout(()=>{r.innerHTML=results({state:['idle','idle','idle','idle','idle','idle']});fd.textContent='Find';fd.disabled=false},1200)}
+});
+</script></body></html>
