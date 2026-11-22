@@ -3286,6 +3286,10 @@ body:has(#library.active) #tabIntro{display:none}
 #library .field::placeholder{color:var(--dim)}
 #library .field:focus{box-shadow:inset 0 0 0 2px #fff}
 #library select.field{appearance:none;-webkit-appearance:none;cursor:pointer}
+#library input[type=search]::-webkit-search-decoration,#library input[type=search]::-webkit-search-cancel-button,#library input[type=search]::-webkit-search-results-button,#library input[type=search]::-webkit-search-results-decoration{display:none}
+#library input[type=number]{appearance:textfield;-moz-appearance:textfield}
+#library input[type=number]::-webkit-inner-spin-button,#library input[type=number]::-webkit-outer-spin-button{appearance:none;-webkit-appearance:none;margin:0}
+#library input[type=date]::-webkit-calendar-picker-indicator,#library input[type=time]::-webkit-calendar-picker-indicator{display:none}
 
 /* 3. ADD CARD: label | field | button on one grid, rows separated by the hairline */
 #library .frow{display:grid;grid-template-columns:calc(200*var(--u)) minmax(0,1fr) auto;grid-template-areas:"l f b" ". m .";column-gap:calc(24*var(--u));align-items:center;padding:var(--rowy) var(--rowx-r) var(--rowy) var(--rowx-l);border-top:1px solid var(--track)}
@@ -3392,7 +3396,9 @@ body:has(#library.active) #tabIntro{display:none}
 #library .browse-head{display:flex;align-items:center;flex-wrap:wrap;gap:calc(16*var(--u)) calc(24*var(--u));margin:0 0 calc(16*var(--u))}
 #library .browse-head h3{margin:0;font:700 calc(22*var(--u))/1.25 Inter,sans-serif;color:#f3f4f6}
 #library .browse-head input.field{flex:1 1 calc(320*var(--u));width:auto}
-#library .browse-head select.field{flex:0 1 calc(280*var(--u));width:calc(280*var(--u));appearance:auto;-webkit-appearance:menulist}
+#library .browse-head .channel-select{position:relative;flex:0 1 calc(280*var(--u));width:calc(280*var(--u));min-width:0}
+#library .browse-head .channel-select select.field{width:100%;padding-right:calc(46*var(--u));appearance:none;-webkit-appearance:none}
+#library .browse-head .channel-select::after{content:"+";position:absolute;right:calc(16*var(--u));top:50%;transform:translateY(-50%);pointer-events:none;color:var(--hi);font:500 calc(22*var(--u))/1 Inter,sans-serif;text-align:center;width:calc(22*var(--u))}
 #library .browse-head .ends{display:flex;gap:calc(20*var(--u))}
 #kbModal [hidden]{display:none!important}
 
@@ -3787,7 +3793,7 @@ body:has(#library.active) #tabIntro{display:none}
     </div></section>
     <section class="card" data-sec="review" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Hope's review <span class="n" id="libReviewCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libReviewRows"></div></section>
   </div>
-  <div class="browse-head"><h3>Browse</h3><input class="field" type="search" id="libSearch" aria-label="Search library" placeholder="Search videos, notes and saved chats" oninput="libSearchChanged()"><select class="field" id="libChannel" aria-label="Filter videos by channel" onchange="libChannelChanged()"><option value="">All channels</option></select><div class="ends"><button class="tx" type="button" onclick="libFoldAll(true)">Expand all</button><button class="tx" type="button" onclick="libFoldAll(false)">Collapse all</button></div></div>
+  <div class="browse-head"><h3>Browse</h3><input class="field" type="search" id="libSearch" aria-label="Search library" placeholder="Search videos, notes and saved chats" oninput="libSearchChanged()"><span class="channel-select"><select class="field" id="libChannel" aria-label="Filter videos by channel" onchange="libChannelChanged()"><option value="">All channels</option></select></span><div class="ends"><button class="tx" type="button" onclick="libFoldAll(true)">Expand all</button><button class="tx" type="button" onclick="libFoldAll(false)">Collapse all</button></div></div>
   <div class="lib-group" id="libBrowse">
     <section class="card" data-sec="videos" data-open="false"><button class="bar" type="button" aria-expanded="false" onclick="libFold(this)">Videos <span class="n" id="libVideoCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libVideoRows"></div></section>
     <section class="card" data-sec="notes" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Notes <span class="n" id="libNoteCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libNoteRows"></div></section>
@@ -5915,7 +5921,7 @@ body:has(#library.active) #tabIntro{display:none}
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-22.7';
+const AIMM_BUILD = '2026-11-22.8';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);

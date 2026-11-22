@@ -41,7 +41,7 @@ test('accordion preserves state and has one visual selection with accessible foc
   assert.match(html,/#plugins #invSidebar \.inv-side-button:hover:not\(\.active\):not\(:disabled\),\s*#plugins #invSidebar \.inv-side-button:focus-visible:not\(\.active\):not\(:disabled\)\{\s*background:var\(--section-colour,#36a8ed\)!important;\s*color:var\(--pv-black\)!important\}/);
   assert.match(html,/#plugins #invSidebar \.inv-side-button:focus-visible:not\(\.active\):not\(:disabled\) :is\(\.inv-side-icon,\.inv-side-label,\.inv-side-count\)\{\s*color:var\(--pv-black\)!important/);
   assert.doesNotMatch(html,/color-mix\(in srgb,var\(--section-colour,#36a8ed\) 18%,transparent\)/);
-  assert.match(html,/const AIMM_BUILD = '2026-11-22\.7'/);
+  assert.match(html,/const AIMM_BUILD = '2026-11-22\.8'/);
 });
 
 test('sidebar header stays above scrolling rows in every sidebar mode',()=>{
