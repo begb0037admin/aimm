@@ -5732,7 +5732,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-22.1';
+const AIMM_BUILD = '2026-11-22.2';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -6402,6 +6402,17 @@ function loadState(){
       console.log('[hope-memory] migrated ' + STATE.profileFacts.length + ' facts from legacy profile blob');
     }
   } catch(e){ console.warn('[hope-memory] legacy migration failed', e); }
+  // Remove only unedited, unpinned junk left by older extraction runs.
+  try {
+    const before = STATE.profileFacts.length;
+    STATE.profileFacts = STATE.profileFacts.filter(f => f.pinned || f.edited || isMeaningfulFactText(f.text));
+    const removed = before - STATE.profileFacts.length;
+    if (removed){
+      syncLegacyProfileFromFacts();
+      saveState();
+      setProfileStatus('Removed ' + removed + ' blank facts', 'ok');
+    }
+  } catch(e){ console.warn('[hope-memory] blank fact cleanup failed', e); }
   // One-time migration: any custom plugin saved with p:'other' + a pLabel that
   // matches a known publisher alias (Plugin Alliance, NI, UA, etc.) gets
   // promoted to the canonical PUBS key so it shows up under the right pill
@@ -6438,6 +6449,13 @@ function loadState(){
 // the profile hasn't been written yet. Caller appends to whatever instructions
 // it's already building.
 // ----- Fact helpers -----
+function isMeaningfulFactText(text){
+  if (typeof text !== 'string') return false;
+  const characters = text.toLowerCase().match(/[\p{L}\p{N}]/gu) || [];
+  if (characters.length < 3) return false;
+  const compact = characters.join('');
+  return !['none', 'na', 'nothingnew', 'nonewfacts'].includes(compact);
+}
 function categorizeFactText(text){
   const s = String(text || '');
   for (const pat of PROFILE_CAT_PATTERNS){ if (pat.rx.test(s)) return pat.id; }
@@ -6463,7 +6481,7 @@ function parseLegacyProfileToFacts(blob){
   const out = [];
   for (const raw of chunks){
     const text = raw.replace(/^[-*•]\s*/, '').trim();
-    if (!text) continue;
+    if (!isMeaningfulFactText(text)) continue;
     out.push({
       id: newFactId(),
       text: text.slice(0, 400),
@@ -6536,7 +6554,10 @@ function setProfileStatus(msg, cls){
 // ----- Fact CRUD -----
 function addFact(text, category){
   const t = String(text || '').trim();
-  if (!t) return null;
+  if (!isMeaningfulFactText(t)){
+    setProfileStatus('Please enter a meaningful fact', 'err');
+    return null;
+  }
   const cat = (PROFILE_CATEGORIES.find(c => c.id === category) ? category : 'misc');
   const f = { id: newFactId(), text: t.slice(0, 400), category: cat, active: true, pinned: false, ts: Date.now() };
   STATE.profileFacts = STATE.profileFacts || [];
@@ -6587,7 +6608,12 @@ function saveFactEdit(id){
   if (!f) return;
   const v = ta.value.trim();
   if (!v){ deleteFact(id); return; }
+  if (!isMeaningfulFactText(v)){
+    setProfileStatus('Please enter a meaningful fact', 'err');
+    return;
+  }
   f.text = v.slice(0, 400);
+  f.edited = true;
   syncLegacyProfileFromFacts();
   saveState();
   renderHopeMemory();
@@ -6605,7 +6631,7 @@ function clearAllFacts(){
 function promptAddFact(category){
   const cat = category || 'misc';
   const txt = window.prompt("New fact for Hope to remember (will go in '" + (PROFILE_CATEGORIES.find(c => c.id === cat)?.label || cat) + "'):");
-  if (txt) addFact(txt, cat);
+  if (txt !== null) addFact(txt, cat);
 }
 // ----- Drag wiring -----
 // Sortable across all 7 category facts-lists with group:'profileFacts' so a
@@ -6816,20 +6842,21 @@ ${transcript}`;
   const text = await aimmAiText(sysPrompt,userMsg,1500);
   // Parse Luna's JSON array of new facts. Try strict JSON first; fall back
   // to bullet-line plaintext if Luna slipped into prose.
-  let parsed = [];
+  let parsed;
   try {
     const m = text.match(/\[[\s\S]*\]/);
-    if (m) parsed = JSON.parse(m[0]);
-  } catch(_) {
-    parsed = [];
-  }
-  if (!Array.isArray(parsed) || !parsed.length){
+    if (m){
+      const candidate = JSON.parse(m[0]);
+      if (Array.isArray(candidate)) parsed = candidate;
+    }
+  } catch(_) {}
+  if (!parsed){
     // Plaintext fallback — split on lines, strip bullets, categorise via heuristic.
     const lines = text.split(/\n+/).map(l => l.trim().replace(/^[-*•]\s*/, '')).filter(Boolean);
     parsed = lines.map(l => ({ category: categorizeFactText(l), text: l }));
   }
   return parsed
-    .filter(f => f && typeof f.text === 'string' && f.text.trim())
+    .filter(f => f && isMeaningfulFactText(f.text))
     .map(f => ({
       category: PROFILE_CATEGORIES.find(c => c.id === f.category) ? f.category : 'misc',
       text: String(f.text).trim().slice(0, 280)
@@ -6858,6 +6885,7 @@ async function maybeExtractProfile(){
     STATE.profileFacts = STATE.profileFacts || [];
     let added = 0;
     for (const nf of newFacts){
+      if (!nf || !isMeaningfulFactText(nf.text)) continue;
       // Fuzzy dedup against existing facts — skip if anything clears 0.6.
       const dup = STATE.profileFacts.find(ex => factSimilarity(ex.text, nf.text) >= 0.6);
       if (dup) continue;

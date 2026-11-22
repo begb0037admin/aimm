@@ -54,6 +54,7 @@ test('Worker web search uses Luna web_search and preserves the caller response s
 
 function slice(start,end){const a=html.indexOf(start),b=html.indexOf(end,a+start.length);assert.ok(a>=0&&b>a,`${start} found`);return html.slice(a,b);}
 const helper = slice('async function aimmAiText(', 'const RT_PREFS_STORAGE=');
+const factGuard = slice('function isMeaningfulFactText(', 'function categorizeFactText(');
 const featureSources = {
   extractProfile:slice('async function extractProfile(', '// Orchestrator: at end'),
   autoFillChainSettings:slice('async function autoFillChainSettings()', 'function showFillSummary'),
@@ -81,7 +82,7 @@ function featureContext(source, reply, overrides={}){
     toast(){},confirm:()=>true,console,
     ...overrides
   });
-  vm.runInContext(helper+'\n'+source,context);
+  vm.runInContext(helper+'\n'+factGuard+'\n'+source,context);
   return {context,calls};
 }
 for(const [name, source] of Object.entries(featureSources)){
