@@ -33,22 +33,22 @@
   },
   {
     "name": "switch_tab",
-    "description": "Navigate the app to a different tab so Kev physically sees what you're working on with him. Call this when he asks to \"look at\", \"open\", \"go to\", \"check\", or \"switch to\" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to Plugins; he wants to capture a frequency note so you go to Reference; he wants to dig through saved research so you go to Insight). The visual switch is the point — it confirms to Kev that you're collaborating with him on the same screen.\n\nTabs:\n- library (Plugins tab) — installed Plugin Companion scan plus separate MixBus recommendation catalogue\n- chain (MixBus) — bus chains, plugin slots, settings notes\n- meter (Repair) — meter readings + troubleshooter symptom pills\n- knowledge (Insight) — research notes, producer techniques, plugin habits\n- snapshots (Snapshots) — favourited pill grid + full Session Snapshots list (chronological saved chats)\n- eq (Reference) — frequency map, loudness targets, true peak, stereo width\n- marketing (Marketing) — release strategy + Pop A&R thinking\n- community (Community) — social presence\n\nBrief Kev verbally as you do it: \"ok, hopping over to Insight\" or \"let me pull up the Plugin Library\" — keep it natural, ONE short phrase. Do NOT say \"I'm calling switch_tab\" or any other meta narration. Don't switch tabs gratuitously — only when it's genuinely the right surface for what he asked.",
+    "description": "Navigate the app to a different tab so Kev physically sees what you're working on with him. Call this when he asks to \"look at\", \"open\", \"go to\", \"check\", or \"switch to\" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to Plugins; he wants to review his mix so you go to Mix Check; he wants to dig through saved research so you go to Insight). The visual switch is the point — it confirms to Kev that you're collaborating with him on the same screen.\n\nTabs:\n- plugins (Plugins) — installed Plugin Companion scan plus separate MixBus recommendation catalogue\n- mixbus (MixBus) — bus chains, plugin slots, settings notes\n- knowledge (Insight) — research notes, producer techniques, plugin habits\n- snapshots (Snapshots) — favourited pill grid + full Session Snapshots list (chronological saved chats)\n- mixcheck (Mix Check) — mix analysis, reference comparison, transport and Fix Queue\n- marketing (Marketing) — release strategy + Pop A&R thinking\n- community (Community) — social presence\n\nBrief Kev verbally as you do it: \"ok, hopping over to Insight\" or \"let me pull up the Plugin Library\" — keep it natural, ONE short phrase. Do NOT say \"I'm calling switch_tab\" or any other meta narration. Don't switch tabs gratuitously — only when it's genuinely the right surface for what he asked.",
     "parameters": {
       "type": "object",
       "properties": {
         "tab": {
           "type": "string",
           "enum": [
-            "chain",
+            "mixbus",
             "knowledge",
-            "eq",
-            "library",
+            "mixcheck",
+            "plugins",
             "marketing",
             "community",
             "snapshots"
           ],
-          "description": "The tab id to switch to."
+          "description": "Tab id matching the visible label; legacy chain, eq and library are accepted as aliases."
         }
       },
       "required": [

@@ -242,7 +242,7 @@ triggered this whole reconciliation pass (Kevin caught it live, 2026-10-08).
 
 ### 13. Mix Check — Default tab on load should be Mix Check, not Conversation · owner: Cat · ✅ **SHIPPED & MERGED, confirmed 2026-10-08**
 
-The app should open on Mix Check (`data-tab="eq"`). Shipped on branch `mixcheck-audiospecs-label-align`
+The app should open on Mix Check (`data-tab="mixcheck"`). Shipped on branch `mixcheck-audiospecs-label-align`
 (build `2026-09-05.1`), merged to `main` 2026-09-05. Markup hardcodes `active` on the Mix Check
 tab/panel; the three tab-click-gated lazy-inits this card originally flagged now also fire on cold
 load. **Re-verified 2026-10-08:** still true on current `main` — Conversation tab has since been

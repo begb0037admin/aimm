@@ -28,23 +28,23 @@ test('accordion preserves state and has one visual selection with accessible foc
   assert.match(html,/const preferred=INV_SIDEBAR_TOOL_ACTIVE\?.*?:INV_VOCAL_VIEW\?/);
   assert.doesNotMatch(html,/inv-sidebar-selected-dot/);
   assert.doesNotMatch(html,/inv-sidebar-pill|invSidebarPlacePill|invSidebarTrackPill|inv-sidebar-heading-count|inv-sidebar-subgroup/);
-  assert.match(html,/#library #invSidebar \.inv-side-button\.active,#library #invSidebar \.inv-side-button\.active:hover\{background:var\(--pv-teal\)!important/);
-  assert.match(html,/#library #invSidebar \.inv-sidebar-card\[data-inv-section="categories"\]\{--section-colour:#f97316\}/);
+  assert.match(html,/#plugins #invSidebar \.inv-side-button\.active,#plugins #invSidebar \.inv-side-button\.active:hover\{background:var\(--pv-teal\)!important/);
+  assert.match(html,/#plugins #invSidebar \.inv-sidebar-card\[data-inv-section="categories"\]\{--section-colour:#f97316\}/);
   assert.match(html,/chevron\.innerHTML=.*inv-fold-plus/);
-  assert.match(html,/#library #invSidebar \[aria-expanded="true"\] \.inv-fold-plus\{display:none\}/);
+  assert.match(html,/#plugins #invSidebar \[aria-expanded="true"\] \.inv-fold-plus\{display:none\}/);
   assert.match(html,/grid-template-columns:clamp\(280px,calc\(280px \* var\(--inv-text-scale,1\)\),32vw\)/);
   assert.match(html,/grid-template-columns:clamp\(72px,calc\(80px \* var\(--inv-text-scale,1\)\),104px\)/);
-  assert.match(html,/#library #invSidebar \.inv-side-icon\{[^}]*width:calc\(28px \* var\(--inv-text-scale,1\)\)/);
-  assert.match(html,/#library #invSidebar\.is-collapsed \.inv-side-count\{display:none!important\}/);
-  assert.match(html,/\.inv-sidebar-section-toggle:focus-visible,#library #invSidebar \.inv-side-button:focus-visible\{outline:2px solid #36a8ed!important/);
+  assert.match(html,/#plugins #invSidebar \.inv-side-icon\{[^}]*width:calc\(28px \* var\(--inv-text-scale,1\)\)/);
+  assert.match(html,/#plugins #invSidebar\.is-collapsed \.inv-side-count\{display:none!important\}/);
+  assert.match(html,/\.inv-sidebar-section-toggle:focus-visible,#plugins #invSidebar \.inv-side-button:focus-visible\{outline:2px solid #36a8ed!important/);
   assert.match(html,/@media\(prefers-reduced-motion:reduce\).*animation:none!important/);
-  assert.match(html,/#library #invSidebar \.inv-side-button:hover:not\(\.active\):not\(:disabled\),\s*#library #invSidebar \.inv-side-button:focus-visible:not\(\.active\):not\(:disabled\)\{\s*background:var\(--section-colour,#36a8ed\)!important;\s*color:var\(--pv-black\)!important\}/);
-  assert.match(html,/#library #invSidebar \.inv-side-button:focus-visible:not\(\.active\):not\(:disabled\) :is\(\.inv-side-icon,\.inv-side-label,\.inv-side-count\)\{\s*color:var\(--pv-black\)!important/);
+  assert.match(html,/#plugins #invSidebar \.inv-side-button:hover:not\(\.active\):not\(:disabled\),\s*#plugins #invSidebar \.inv-side-button:focus-visible:not\(\.active\):not\(:disabled\)\{\s*background:var\(--section-colour,#36a8ed\)!important;\s*color:var\(--pv-black\)!important\}/);
+  assert.match(html,/#plugins #invSidebar \.inv-side-button:focus-visible:not\(\.active\):not\(:disabled\) :is\(\.inv-side-icon,\.inv-side-label,\.inv-side-count\)\{\s*color:var\(--pv-black\)!important/);
   assert.doesNotMatch(html,/color-mix\(in srgb,var\(--section-colour,#36a8ed\) 18%,transparent\)/);
-  assert.match(html,/const AIMM_BUILD = '2026-11-22\.3'/);
+  assert.match(html,/const AIMM_BUILD = '2026-11-22\.4'/);
 });
 
 test('sidebar header stays above scrolling rows in every sidebar mode',()=>{
-  assert.match(html,/#library #invSidebar\{[^}]*overflow-y:auto/);
-  assert.match(html,/#library #invSidebar \.inv-sidebar-head\{[^}]*position:sticky;top:0;z-index:1;[^}]*background:#17191c;box-shadow:0 8px 0 #17191c/);
+  assert.match(html,/#plugins #invSidebar\{[^}]*overflow-y:auto/);
+  assert.match(html,/#plugins #invSidebar \.inv-sidebar-head\{[^}]*position:sticky;top:0;z-index:1;[^}]*background:#17191c;box-shadow:0 8px 0 #17191c/);
 });

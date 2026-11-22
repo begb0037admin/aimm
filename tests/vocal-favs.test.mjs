@@ -45,9 +45,9 @@ test('selection apply uses only exact names, is idempotent, and verifies failure
   const target=chain.owned[1];const rejected=await favs.apply(chain,inventory.rows,{...hooks,setFavorite:async()=>({ok:false})},[target.name]);assert.equal(rejected.ok,false);assert.equal(rejected.not_saved.length,1);
 });
 test('Plugins starred stars have purple glow and no background or ring',()=>{
-  assert.match(html,/#library \.inv-fav\.on\{color:#b970ff!important;background:none!important;border:0!important;box-shadow:none!important;text-shadow:/);
-  assert.match(html,/#library \.inv-fav\.on:is\(:hover,:focus-visible\)\{color:#b970ff!important;background:none!important;border:0!important;outline:none!important;box-shadow:none!important;text-shadow:/);
-  assert.match(html,/#library \.inv-fav:not\(\.on\)\{color:var\(--pm-dim\)!important\}/);
+  assert.match(html,/#plugins \.inv-fav\.on\{color:#b970ff!important;background:none!important;border:0!important;box-shadow:none!important;text-shadow:/);
+  assert.match(html,/#plugins \.inv-fav\.on:is\(:hover,:focus-visible\)\{color:#b970ff!important;background:none!important;border:0!important;outline:none!important;box-shadow:none!important;text-shadow:/);
+  assert.match(html,/#plugins \.inv-fav:not\(\.on\)\{color:var\(--pm-dim\)!important\}/);
 });
 test('Hope schemas match page tools and both routes use shared handler',()=>{
   for(const name of ['vocal_favorites_read','vocal_favorites_apply']){
@@ -55,5 +55,5 @@ test('Hope schemas match page tools and both routes use shared handler',()=>{
     assert.match(html,new RegExp("AIMM_NEW_AGENT_TOOLS = \\[([^\\]]*)'"+name+"'"));assert.match(html,new RegExp("case '"+name+"':"));
   }
   assert.deepEqual(pageTools.find(t=>t.name==='vocal_favorites_apply').parameters.properties.names,{type:'array',items:{type:'string'},description:'Exact item names to apply; omit for the whole chain view.'});
-  assert.match(html,/const AICHAT_TOOL_DEFS = TOOL_DEFS\.map/);assert.match(html,/const AIMM_BUILD = '2026-11-22\.3'/);
+  assert.match(html,/const AICHAT_TOOL_DEFS = TOOL_DEFS\.map/);assert.match(html,/const AIMM_BUILD = '2026-11-22\.4'/);
 });
