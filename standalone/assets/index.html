@@ -3262,11 +3262,11 @@ body:has(#library.active) #tabIntro{display:none}
 
 /* 1. CARD + BAR (identical to MixBus .bus-col / Plugins card) */
 #library .card{--c:var(--dim);container:card/inline-size;background:#1a1d21;border:1px solid var(--c);border-radius:12px;overflow:hidden}
-#library .card[data-sec=add]{--c:var(--yellow)}
-#library .card[data-sec=review]{--c:var(--blue)}
+#library .card[data-sec=add]{--c:var(--blue)}
+#library .card[data-sec=review]{--c:var(--purple)}
 #library .card[data-sec=videos]{--c:var(--pink)}
 #library .card[data-sec=notes]{--c:var(--orange)}
-#library .card[data-sec=chats]{--c:var(--purple)}
+#library .card[data-sec=chats]{--c:var(--yellow)}
 #library .bar{display:flex;align-items:center;gap:calc(12*var(--u));width:100%;min-height:calc(48*var(--u));margin:0;padding:calc(8*var(--u)) var(--rowx-r) calc(8*var(--u)) calc(14*var(--u));background:var(--c);border:0;color:#000;font:700 calc(16*var(--u))/1.25 Inter,sans-serif;text-align:left;cursor:pointer}
 #library .bar .n{font:600 calc(15*var(--u))/1.3 Inter,sans-serif;font-variant-numeric:tabular-nums;opacity:.8}
 #library .bar:focus-visible{outline:2px solid #fff;outline-offset:calc(-3*var(--u))}
@@ -3793,11 +3793,11 @@ body:has(#library.active) #tabIntro{display:none}
       <div class="frow notes"><span class="lbl">Add a note</span><div class="btns"><button class="btn" type="button" onclick="kbOpenAdd()">Write a note</button><button class="btn" type="button" onclick="document.getElementById('kbImportFile').click()">Import a file</button></div></div>
       <div class="res" id="libResults" hidden></div>
     </div></section>
-    <section class="card" data-sec="review" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">To review <span class="n" id="libReviewCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libReviewRows"></div></section>
+    <section class="card" data-sec="review" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Hope's review <span class="n" id="libReviewCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libReviewRows"></div></section>
   </div>
-  <div class="browse-head"><h3>Browse</h3><input class="field" type="search" id="libSearch" aria-label="Search library" placeholder="Search videos, notes and saved chats" oninput="libraryRender()"><div class="ends"><button class="tx" type="button" onclick="libFoldAll(true)">Expand all</button><button class="tx" type="button" onclick="libFoldAll(false)">Collapse all</button></div></div>
+  <div class="browse-head"><h3>Browse</h3><input class="field" type="search" id="libSearch" aria-label="Search library" placeholder="Search videos, notes and saved chats" oninput="libSearchChanged()"><div class="ends"><button class="tx" type="button" onclick="libFoldAll(true)">Expand all</button><button class="tx" type="button" onclick="libFoldAll(false)">Collapse all</button></div></div>
   <div class="lib-group" id="libBrowse">
-    <section class="card" data-sec="videos" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Videos <span class="n" id="libVideoCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libVideoRows"></div></section>
+    <section class="card" data-sec="videos" data-open="false"><button class="bar" type="button" aria-expanded="false" onclick="libFold(this)">Videos <span class="n" id="libVideoCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libVideoRows"></div></section>
     <section class="card" data-sec="notes" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Notes <span class="n" id="libNoteCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libNoteRows"></div></section>
     <section class="card" data-sec="chats" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Saved chats <span class="n" id="libChatCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libChatRows"></div></section>
   </div>
@@ -5928,7 +5928,7 @@ body:has(#library.active) #tabIntro{display:none}
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-22.5';
+const AIMM_BUILD = '2026-11-22.6';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -13210,7 +13210,7 @@ body: short and scannable. One key fact per line; up to 6 lines. Plain text — 
   {type:'function',name:'list_knowledge_notes',description:'List Knowledge Base notes — id, title, source, tags, ts, active flag. Use to find an existing note before adding/exporting.',parameters:{type:'object',properties:{active_only:{type:'boolean',description:'If true, only notes currently injected into session context are returned.'}},required:[]}},
   {type:'function',name:'add_knowledge_note',description:`Add a research/technique note to Kev's Library. Set to_review when Hope offers to record a tip for Kev to review later; it stays out of Hope's reading context until kept. Use when Kev dictates a takeaway from a producer interview, a plugin technique, a meter reading habit, or anything mix-related he wants to keep.
 
-Keep titles concise (under 80 chars) and content focused — Kev reviews these later, not real-time. If Kev rambles, condense his words into a clean note rather than transcribing verbatim.`,parameters:{type:'object',properties:{title:{type:'string'},content:{type:'string',description:'The note body — what he wants to remember. Plain text, can be multi-line.'},source:{type:'string',description:'Optional citation — producer name, interview URL, video timestamp, etc.'},tags:{type:'array',items:{type:'string'},description:'Optional tags like ["vocals","jaycen joshua","saturation"].'},activate:{type:'boolean',description:'If true, the note becomes part of the voice session context immediately.'},to_review:{type:'boolean',description:'Queue a Hope tip in To review rather than filing it immediately.'},category:{type:'string',enum:['mixing','producers','refs','mastering','vocals','workflow'],description:'Suggested Library category.'}},required:['title','content']}},
+Keep titles concise (under 80 chars) and content focused — Kev reviews these later, not real-time. If Kev rambles, condense his words into a clean note rather than transcribing verbatim.`,parameters:{type:'object',properties:{title:{type:'string'},content:{type:'string',description:'The note body — what he wants to remember. Plain text, can be multi-line.'},source:{type:'string',description:'Optional citation — producer name, interview URL, video timestamp, etc.'},tags:{type:'array',items:{type:'string'},description:'Optional tags like ["vocals","jaycen joshua","saturation"].'},activate:{type:'boolean',description:'If true, the note becomes part of the voice session context immediately.'},to_review:{type:'boolean',description:'Queue a Hope tip in Hope\'s review rather than filing it immediately.'},category:{type:'string',enum:['mixing','producers','refs','mastering','vocals','workflow'],description:'Suggested Library category.'}},required:['title','content']}},
   {type:'function',name:'find_youtube_videos',description:'Search YouTube for videos to propose in Library. This fills the approval list; it does not ingest anything. Kev chooses Add or Add all.',parameters:{type:'object',properties:{query:{type:'string',description:'The topic to search for.'}},required:['query']}},
   {type:'function',name:'export_knowledge_note',description:'Export a Knowledge Base note to disk (file download) or to the system clipboard. Use after Kev says "download that note" / "copy that one to clipboard". Identify the target by id or by fuzzy title match.',parameters:{type:'object',properties:{title:{type:'string',description:'Note title — fuzzy match. Either title or id required.'},id:{type:'string',description:'Note id. Either title or id required.'},target:{type:'string',enum:['download','clipboard'],description:'download = save a .md file. clipboard = copy text to system clipboard.'}},required:['target']}},
   {type:'function',name:'save_preset',description:`Save the current chain as a named user preset that Kev can reload later from the Load Preset modal. Use this whenever Kev says "save this", "save this as a preset", "save this chain", "save this as my master chain", etc. If he doesn't specify which bus, default to "all" (saves every non-empty bus as a single multi-bus preset — best for when you've been collaborating on a full session).
@@ -22310,6 +22310,16 @@ function libFold(button){
   const card=button.closest('.card');card.dataset.open=card.dataset.open==='false'?'true':'false';
   button.setAttribute('aria-expanded',card.dataset.open);
 }
+function libSearchChanged(){
+  const card=document.querySelector('#libBrowse .card[data-sec=videos]');
+  if(card){
+    const open=!!document.getElementById('libSearch').value.trim();
+    card.dataset.open=String(open);
+    card.querySelector('.bar').setAttribute('aria-expanded',String(open));
+    if(open)for(const key of Object.keys(LIB_UI.groups))if(key.startsWith('v'))LIB_UI.groups[key]=true;
+  }
+  libraryRender();
+}
 function libFoldAll(open){
   document.querySelectorAll('#libBrowse .card').forEach(card=>{card.dataset.open=String(open);card.querySelector('.bar').setAttribute('aria-expanded',String(open));});
   document.querySelectorAll('#libBrowse .g').forEach(group=>{group.dataset.open=String(open);group.querySelector('.grp').setAttribute('aria-expanded',String(open));LIB_UI.groups[group.dataset.key]=open;});
@@ -22318,7 +22328,7 @@ function libGroupToggle(button){
   const group=button.closest('.g'),open=group.dataset.open==='false';
   group.dataset.open=String(open);button.setAttribute('aria-expanded',String(open));LIB_UI.groups[group.dataset.key]=open;
 }
-function libDate(value){return value?new Date(value).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'Library';}
+function libDate(value,fallback='Library'){return value?new Date(value).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):fallback;}
 function libChatTurns(text){
   return String(text||'').split(/\n+/).map(line=>{
     const turn=/^(You|Hope):\s*(.*)$/.exec(line.trim());
@@ -22357,7 +22367,7 @@ function libraryRender(){
     return arr.length?libGroup('v'+c.id,c.label,arr,v=>{
       const id=escapeJs(v.video_id),own=!!v.added,open=!!LIB_UI.open['video'+id],note=notes.find(n=>n.source===v.url);
       const url=escapeHtml(v.url||`https://www.youtube.com/watch?v=${v.video_id}`);
-      return `<div class="ent"><div class="t"><h4>${escapeHtml(v.title)}</h4></div><div class="meta"><span class="c">${escapeHtml(v.channel||'YouTube')}</span><span class="c d">${libDate(v.added)}</span></div><div class="acts"><span class="c">${libAction('Edit',`libVideoNote('${id}',true)`)}</span><span class="c">${libAction(open?'Hide':'View',`libViewVideo('${id}')`,'hi')}</span><span class="c"><a class="tx hi" href="${url}" target="_blank" rel="noopener">Open video</a></span><span class="c">${libAction('Re-summarise',`libVideoNote('${id}',false)`)}</span><span class="c">${own?libAction('Delete',`libDeleteVideo('${id}')`,'dim'):''}</span><span class="c k"><button type="button" class="tick" aria-pressed="${libVideoReads(v.video_id)}" aria-label="${libVideoReads(v.video_id)?'Hope reads this':'Hope skips this'}" onclick="libToggleVideoRead('${id}')"></button></span></div>${open?`<div class="body"><p class="sum">${escapeHtml(note?.summary||LIB_UI.videoText[id]||'Loading…')}</p></div>`:''}</div>`;
+      return `<div class="ent"><div class="t"><h4>${escapeHtml(v.title)}</h4></div><div class="meta"><span class="c">${escapeHtml(v.channel||'YouTube')}</span><span class="c d">${libDate(v.added,'–')}</span></div><div class="acts"><span class="c">${libAction('Edit',`libVideoNote('${id}',true)`)}</span><span class="c">${libAction(open?'Hide':'View',`libViewVideo('${id}')`,'hi')}</span><span class="c"><a class="tx hi" href="${url}" target="_blank" rel="noopener">Open video</a></span><span class="c">${libAction('Re-summarise',`libVideoNote('${id}',false)`)}</span><span class="c">${own?libAction('Delete',`libDeleteVideo('${id}')`,'dim'):''}</span><span class="c k"><button type="button" class="tick" aria-pressed="${libVideoReads(v.video_id)}" aria-label="${libVideoReads(v.video_id)?'Hope reads this':'Hope skips this'}" onclick="libToggleVideoRead('${id}')"></button></span></div>${open?`<div class="body"><p class="sum">${escapeHtml(note?.summary||LIB_UI.videoText[id]||'Loading…')}</p></div>`:''}</div>`;
     },['Title','Channel','Added','Edit','Show','Link','Summary','Remove','Hope reads']):'';
   }).join(''):'<p class="none">'+(q?'No matches.':'No videos yet.')+'</p>';
   const filteredNotes=notes.filter(n=>matches(n.title,n.tags?.join(' '),n.raw,n.summary));

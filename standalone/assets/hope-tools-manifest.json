@@ -1511,7 +1511,7 @@
         },
         "to_review": {
           "type": "boolean",
-          "description": "Queue a Hope tip in To review rather than filing it immediately."
+          "description": "Queue a Hope tip in Hope's review rather than filing it immediately."
         },
         "category": {
           "type": "string",
