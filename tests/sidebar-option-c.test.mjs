@@ -29,6 +29,7 @@ test('accordion preserves state and has one visual selection with accessible foc
   assert.doesNotMatch(html,/inv-sidebar-selected-dot/);
   assert.doesNotMatch(html,/inv-sidebar-pill|invSidebarPlacePill|invSidebarTrackPill|inv-sidebar-heading-count|inv-sidebar-subgroup/);
   assert.match(html,/#library #invSidebar \.inv-side-button\.active,#library #invSidebar \.inv-side-button\.active:hover\{background:var\(--pv-teal\)!important/);
+  assert.match(html,/#library #invSidebar \.inv-sidebar-card\[data-inv-section="categories"\]\{--section-colour:#f97316\}/);
   assert.match(html,/chevron\.innerHTML=.*inv-fold-plus/);
   assert.match(html,/#library #invSidebar \[aria-expanded="true"\] \.inv-fold-plus\{display:none\}/);
   assert.match(html,/grid-template-columns:clamp\(280px,calc\(280px \* var\(--inv-text-scale,1\)\),32vw\)/);
@@ -40,7 +41,7 @@ test('accordion preserves state and has one visual selection with accessible foc
   assert.match(html,/#library #invSidebar \.inv-side-button:hover:not\(\.active\):not\(:disabled\),\s*#library #invSidebar \.inv-side-button:focus-visible:not\(\.active\):not\(:disabled\)\{\s*background:var\(--section-colour,#36a8ed\)!important;\s*color:var\(--pv-black\)!important\}/);
   assert.match(html,/#library #invSidebar \.inv-side-button:focus-visible:not\(\.active\):not\(:disabled\) :is\(\.inv-side-icon,\.inv-side-label,\.inv-side-count\)\{\s*color:var\(--pv-black\)!important/);
   assert.doesNotMatch(html,/color-mix\(in srgb,var\(--section-colour,#36a8ed\) 18%,transparent\)/);
-  assert.match(html,/const AIMM_BUILD = '2026-11-21\.7'/);
+  assert.match(html,/const AIMM_BUILD = '2026-11-21\.8'/);
 });
 
 test('sidebar header stays above scrolling rows in every sidebar mode',()=>{
