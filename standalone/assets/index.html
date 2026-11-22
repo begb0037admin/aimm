@@ -768,9 +768,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .kb-card .kb-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
 .kb-tag{background:#111827;color:#d1d5db;border:1px solid #374151;border-radius:10px;padding:2px 8px;font-size:calc(var(--inv-text-scale, 1) * 10px);font-weight:500}
 .kb-card .kb-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center}
-.kb-active-toggle{display:inline-flex;align-items:center;gap:5px;color:#9ca3af;font-size:calc(var(--inv-text-scale, 1) * 11px);font-weight:600;cursor:pointer;background:#111827;border:1px solid #374151;border-radius:14px;padding:5px 12px;font-family:inherit;transition:all .12s}
-.kb-active-toggle:hover{color:#e5e7eb;border-color:#6b7280}
-.kb-active-toggle.on{color:#fde68a;border-color:#fbbf24;background:#3b1f01}
 .kb-mode-pill{display:inline-flex;align-items:center;gap:4px;background:#111827;border:1px solid #374151;border-radius:14px;padding:4px 10px;color:#9ca3af;font-size:calc(var(--inv-text-scale, 1) * 11px);cursor:pointer;font-family:inherit}
 .kb-mode-pill:hover{color:#e5e7eb}
 .kb-mode-pill.on{color:#a5b4fc;border-color:#6366f1}
@@ -3253,11 +3250,9 @@ body:has(#library.active) #tabIntro{display:none}
 #library :is(button,input,select,textarea,a){font-family:inherit}
 #library :focus{outline:0}
 
-/* page head: title left, one budget readout right, nothing else */
+/* page head */
 #library .lib-head{display:flex;align-items:baseline;gap:calc(24*var(--u));margin:0 0 calc(28*var(--u))}
 #library .lib-head h2{margin:0;font:500 calc(30*var(--u))/1.2 Inter,sans-serif;letter-spacing:-.035em;color:#fff}
-#library .lib-read{margin-left:auto;font:600 calc(14*var(--u))/1.4 Inter,sans-serif;color:var(--dim)}
-#library .lib-read.over{color:var(--orange)}
 #library .lib-group{display:flex;flex-direction:column;gap:calc(12*var(--u));margin:0 0 calc(40*var(--u))}
 
 /* 1. CARD + BAR (identical to MixBus .bus-col / Plugins card) */
@@ -3322,8 +3317,8 @@ body:has(#library.active) #tabIntro{display:none}
    No boxes, no fills. Hairline between rows, 22px above and below it. The summary opens under its own title and runs the full row width. */
 #library .card[data-sec=add]{--grid:minmax(0,1fr) calc(190*var(--u)) calc(170*var(--u)) calc(100*var(--u)) calc(80*var(--u)) calc(112*var(--u))}            /* Title | Channel | Length, views | Open video | Dismiss | Add */
 #library .card[data-sec=review]{--grid:minmax(0,1fr) calc(190*var(--u)) calc(150*var(--u)) calc(56*var(--u)) calc(72*var(--u)) calc(112*var(--u))}          /* Title | Files under | Received | Edit | Delete | Keep */
-#library .card[data-sec=videos]{--grid:minmax(0,1fr) calc(180*var(--u)) calc(110*var(--u)) calc(56*var(--u)) calc(64*var(--u)) calc(100*var(--u)) calc(120*var(--u)) calc(72*var(--u)) calc(72*var(--u))}   /* Title | Channel | Added | Edit | Hide | Open video | Re-summarise | Delete | Hope reads */
-#library .card[data-sec=notes]{--grid:minmax(0,1fr) calc(180*var(--u)) calc(110*var(--u)) calc(56*var(--u)) calc(64*var(--u)) calc(100*var(--u)) calc(120*var(--u)) calc(72*var(--u)) calc(72*var(--u))}    /* Title | Source | Added | Edit | Hide | Summary/Raw | Re-summarise | Delete | Hope reads */
+#library .card[data-sec=videos]{--grid:minmax(0,1fr) calc(180*var(--u)) calc(110*var(--u)) calc(56*var(--u)) calc(64*var(--u)) calc(100*var(--u))}   /* Title | Channel | Added | Edit | Show | Link */
+#library .card[data-sec=notes]{--grid:minmax(0,1fr) calc(180*var(--u)) calc(110*var(--u)) calc(56*var(--u)) calc(64*var(--u)) calc(100*var(--u)) calc(72*var(--u))}    /* Title | Source | Added | Edit | Show | Mode | Remove */
 #library .card[data-sec=chats]{--grid:minmax(0,1fr) calc(170*var(--u)) calc(120*var(--u)) calc(56*var(--u)) calc(64*var(--u)) calc(130*var(--u)) calc(110*var(--u)) calc(56*var(--u)) calc(72*var(--u))}   /* Title | Contents | Saved | Edit | Hide | Apply to MixBus | Favourite | Copy | Delete */
 #library .thead,#library .ent{display:grid;grid-template-columns:var(--grid);column-gap:calc(24*var(--u));align-items:center;padding-left:var(--rowx-l);padding-right:var(--rowx-r)}
 #library .thead{padding-top:calc(16*var(--u));padding-bottom:calc(6*var(--u));font:600 calc(13*var(--u))/1.3 Inter,sans-serif;color:var(--dim)}   /* plain text names, no fill, no rule */
@@ -3348,18 +3343,13 @@ body:has(#library.active) #tabIntro{display:none}
 #library .ent .turn{margin:calc(12*var(--u)) 0 0;font:calc(15*var(--u))/1.65 Inter,sans-serif;color:var(--ink)}
 #library .ent .turn b{color:var(--hi);font-weight:700;margin-right:calc(8*var(--u))}
 #library .ent .edit{display:grid;gap:calc(12*var(--u))}
-#library .tick{display:inline-flex;align-items:center;justify-content:center;width:calc(24*var(--u));min-height:calc(28*var(--u));padding:0;background:none;border:0;border-radius:6px;color:var(--hi);font:700 calc(18*var(--u))/1 Inter,sans-serif;cursor:pointer}
-#library .tick[aria-pressed=true]::before{content:"\2713"}
-#library .tick[aria-pressed=false]::before{content:"\2013";color:var(--dim)}
-#library .tick:hover{color:#fff}
-#library .tick:focus-visible{box-shadow:inset 0 0 0 2px #fff}
 
-/* below 1300px (card width) rows stack: title (tick at the right), then channel and date on one line, the summary, then the actions in their own row under the title */
+/* below 1300px (card width) rows stack title, metadata, summary and actions */
 @container card (max-width:1299px){
   #library .thead{display:none}
-  #library .ent{grid-template-columns:minmax(0,1fr) calc(24*var(--u));column-gap:calc(16*var(--u));align-items:start}
+  #library .ent{grid-template-columns:minmax(0,1fr);column-gap:calc(16*var(--u));align-items:start}
   #library .ent.nk{grid-template-columns:minmax(0,1fr)}
-  #library .ent .t{order:1}#library .ent .k{order:2}
+  #library .ent .t{order:1}
   #library .ent .meta{order:3;grid-column:1/-1;display:flex;flex-wrap:wrap;gap:0 calc(16*var(--u));margin-top:calc(4*var(--u))}
   #library .ent .body{order:4}
   #library .ent .acts{order:5;grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:0 calc(24*var(--u));margin-top:calc(16*var(--u))}
@@ -3401,9 +3391,10 @@ body:has(#library.active) #tabIntro{display:none}
 /* 8. BROWSE: search across the library and filter videos by channel */
 #library .browse-head{display:flex;align-items:center;flex-wrap:wrap;gap:calc(16*var(--u)) calc(24*var(--u));margin:0 0 calc(16*var(--u))}
 #library .browse-head h3{margin:0;font:700 calc(22*var(--u))/1.25 Inter,sans-serif;color:#f3f4f6}
-#library .browse-head .field{flex:1 1 calc(320*var(--u));width:auto}
-#library .browse-head select.field{appearance:auto;-webkit-appearance:menulist}
+#library .browse-head input.field{flex:1 1 calc(320*var(--u));width:auto}
+#library .browse-head select.field{flex:0 1 calc(280*var(--u));width:calc(280*var(--u));appearance:auto;-webkit-appearance:menulist}
 #library .browse-head .ends{display:flex;gap:calc(20*var(--u))}
+#kbModal [hidden]{display:none!important}
 
 </style>
 </head>
@@ -3786,7 +3777,7 @@ body:has(#library.active) #tabIntro{display:none}
      wrapping. The Snapshot → Luna chat creator stays on Conversation
      so saving is in-context with the chat. -->
 <div class="panel" id="library">
-  <div class="lib-head"><h2>Library</h2><span class="lib-read" id="libRead">Hope reads 0 of 0 notes</span></div>
+  <div class="lib-head"><h2>Library</h2></div>
   <div class="lib-group">
     <section class="card" data-sec="add" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Add to Hope's library<span class="fold" aria-hidden="true"></span></button><div class="cbody">
       <div class="frow"><label class="lbl" for="libLink">Paste a link</label><input class="field" id="libLink" type="url" placeholder="YouTube link" onkeydown="if(event.key==='Enter'){event.preventDefault();libAddLink()}"><div class="btns"><button class="btn pri" type="button" id="libLinkGo" onclick="libAddLink()">Add</button></div><p class="fmsg" id="libLinkMsg"></p><div class="prog" id="libLinkProgress" hidden><i></i></div></div>
@@ -5154,16 +5145,11 @@ body:has(#library.active) #tabIntro{display:none}
 #knowledge .kb-card .kb-actions button:hover{text-decoration:underline}
 #knowledge .kb-card .kb-actions button:disabled{opacity:.55;cursor:default}
 #knowledge .kb-card .kb-actions button:last-of-type{color:var(--insight-dim)}
-#knowledge .kb-state{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
-#knowledge .kb-active-toggle{display:block;min-width:24px;height:24px;padding:0;background:transparent;border:0;border-radius:0;color:#e5e7ea;font-size:calc(20px*var(--inv-text-scale,1));line-height:1;text-align:center}
-#knowledge .kb-active-toggle.on{background:transparent;border:0;color:#e5e7ea}
 #knowledge .kb-counts{margin:0;color:var(--insight-dim);font:400 calc(13px*var(--inv-text-scale,1))/1.4 Inter,sans-serif;white-space:nowrap}
-#knowledge .kb-card.off .kb-title{color:var(--insight-dim);text-decoration:line-through}
-#knowledge .kb-card.off :is(.kb-grip,.kb-meta){opacity:.7}
 #knowledge .kb-card .kb-body{display:none;margin:8px 0 0;padding:10px 12px 10px calc(42px*var(--inv-text-scale,1));background:transparent;border:0;border-top:1px solid #2a2e35;border-radius:0;color:var(--insight-ink);font-size:calc(13px*var(--inv-text-scale,1));max-height:280px}
 #knowledge .kb-card.expanded .kb-body{display:block}
-#knowledge .kb-card :is(.kb-title,.kb-meta,.kb-meta a,.kb-grip,.kb-active-toggle,.kb-counts,.kb-actions button),#knowledge .fact-chip :is(.fact-text,.fact-action-btn,.fact-star){transition:color .12s}
-#knowledge .kb-card:hover :is(.kb-title,.kb-meta,.kb-meta a,.kb-grip,.kb-active-toggle,.kb-counts,.kb-actions button),#knowledge .kb-card.expanded :is(.kb-title,.kb-meta,.kb-meta a,.kb-grip,.kb-active-toggle,.kb-counts,.kb-actions button),#knowledge .fact-chip:hover :is(.fact-text,.fact-action-btn,.fact-star){color:#0b0d10}
+#knowledge .kb-card :is(.kb-title,.kb-meta,.kb-meta a,.kb-grip,.kb-counts,.kb-actions button),#knowledge .fact-chip :is(.fact-text,.fact-action-btn,.fact-star){transition:color .12s}
+#knowledge .kb-card:hover :is(.kb-title,.kb-meta,.kb-meta a,.kb-grip,.kb-counts,.kb-actions button),#knowledge .kb-card.expanded :is(.kb-title,.kb-meta,.kb-meta a,.kb-grip,.kb-counts,.kb-actions button),#knowledge .fact-chip:hover :is(.fact-text,.fact-action-btn,.fact-star){color:#0b0d10}
 #knowledge .fact-chip{display:grid;grid-template-columns:calc(22px*var(--inv-text-scale,1)) minmax(0,1fr) auto;align-items:center;min-height:calc(46px*var(--inv-text-scale,1));font-size:calc(15px*var(--inv-text-scale,1))}
 #knowledge .fact-chip.pinned,#knowledge .fact-chip.inactive{padding-left:calc(12px*var(--inv-text-scale,1));background:transparent;border:0}
 #knowledge .fact-chip.inactive{opacity:1}
@@ -5903,8 +5889,8 @@ body:has(#library.active) #tabIntro{display:none}
       <label style="display:flex;align-items:center;gap:8px;color:#9ca3af;font-size:12px;cursor:pointer;"><input type="checkbox" id="kbAutoSummarise" checked> Auto-summarise with Hope — raw text is kept too.</label>
       <div class="actions">
         <button class="btn ghost sm" id="kbCancel">Cancel</button>
-        <button class="btn secondary" id="kbSave">Save inactive</button>
-        <button class="btn green" id="kbSaveActivate">Save & activate</button>
+        <button class="btn secondary" id="kbVideoDelete" type="button" hidden>Delete video</button>
+        <button class="btn green" id="kbSave">Save</button>
       </div>
     </div>
   </div>
@@ -6565,6 +6551,7 @@ function saveState(){
 }
 function loadState(){
   try{
+    localStorage.removeItem?.('aimmLibrarySkippedVideos_v1');
     const raw=localStorage.getItem(STORAGE_KEY);
     if(!raw)return;
     const d=JSON.parse(raw);
@@ -6583,6 +6570,9 @@ function loadState(){
     if(ps&&d.platform)ps.value=d.platform;
     if(Array.isArray(d.journal))STATE.journal=d.journal.slice(0,50);
     if(Array.isArray(d.knowledge))STATE.knowledge=d.knowledge.slice(0,200);
+    let readFlagsCleared=false;
+    for(const note of STATE.knowledge||[])if(note && !note.toReview && !note.active){note.active=true;readFlagsCleared=true;}
+    if(readFlagsCleared)saveState();
     if(Array.isArray(d.userPresets))STATE.userPresets=d.userPresets.slice(0,100);
     if(d.pluginStageOverrides && typeof d.pluginStageOverrides==='object') STATE.pluginStageOverrides=d.pluginStageOverrides;
     if(d.topPicksOverride && typeof d.topPicksOverride==='object') STATE.topPicksOverride=d.topPicksOverride;
@@ -14511,7 +14501,7 @@ function knowledgeRender(){
 }
 
 function kbRenderCard(n){
-  const cls = 'kb-card' + (n.active?' active':'') + (n.expanded?' expanded':'') + (!n.active?' off':'');
+  const cls = 'kb-card' + (n.expanded?' expanded':'');
   const tagHtml = (n.tags||[]).map(t=>escapeHtml(t)).join(', ');
   const sourceHtml = n.source
     ? (/^https?:\/\//.test(n.source)
@@ -14537,20 +14527,13 @@ function kbRenderCard(n){
           <button class="${sumPillCls}" onclick="kbToggleSummary('${idJs}')"${sumDisabled?' disabled':''} title="Switch between injecting the summary vs. the raw paste">${sumPillTxt}</button>
           <button class="btn ghost sm" onclick="kbToggleExpand('${idJs}')">${n.expanded?'Hide':'View'}</button>
           <button class="btn ghost sm" onclick="kbEdit('${idJs}')">Edit</button>
-          <button class="btn ghost sm" onclick="kbResummarise('${idJs}')" title="Re-run Hope summary on the raw text">Re-summarise</button>
           <button class="btn ghost sm" onclick="kbDelete('${idJs}')">Delete</button>
         </div></div>
-      <div class="kb-state"><button class="kb-active-toggle ${n.active?'on':''}" aria-pressed="${!!n.active}" onclick="kbToggleActive('${idJs}')" title="${n.active?'Active, click to turn off':'Inactive, click to turn on'}">${n.active?'✓':'−'}</button></div>
     </div>
     <div class="kb-body">${escapeHtml(kbActiveText(n))}</div>
   </div>`;
 }
 
-function kbToggleActive(id){
-  const n = (STATE.knowledge||[]).find(x=>x.id===id); if(!n) return;
-  n.active = !n.active;
-  knowledgeRender(); saveState();
-}
 function kbToggleSummary(id){
   const n = (STATE.knowledge||[]).find(x=>x.id===id); if(!n||!n.summary) return;
   n.useSummary = !n.useSummary;
@@ -14580,6 +14563,8 @@ function kbOpenAdd(category){
   document.getElementById('kbTags').value = '';
   document.getElementById('kbContent').value = '';
   document.getElementById('kbAutoSummarise').checked = true;
+  document.getElementById('kbAutoSummarise').closest('label').hidden = false;
+  document.getElementById('kbVideoDelete').hidden = true;
   document.getElementById('kbModal').classList.add('open');
   setTimeout(()=>document.getElementById('kbTitle').focus(), 30);
 }
@@ -14592,14 +14577,16 @@ function kbEdit(id){
   document.getElementById('kbSource').value = n.source||'';
   document.getElementById('kbTags').value = (n.tags||[]).join(', ');
   document.getElementById('kbContent').value = n.raw||'';
-  document.getElementById('kbAutoSummarise').checked = false; // user explicitly opts in to re-summarise on edit
+  document.getElementById('kbAutoSummarise').checked = false;
+  document.getElementById('kbAutoSummarise').closest('label').hidden = true;
+  document.getElementById('kbVideoDelete').hidden = true;
   document.getElementById('kbModal').classList.add('open');
 }
 function kbCloseModal(){
   document.getElementById('kbModal').classList.remove('open');
 }
 
-async function kbSaveFromModal(makeActive){
+async function kbSaveFromModal(){
   const title = document.getElementById('kbTitle').value.trim();
   const source = document.getElementById('kbSource').value.trim();
   const tagsRaw = document.getElementById('kbTags').value.trim();
@@ -14614,7 +14601,7 @@ async function kbSaveFromModal(makeActive){
     note = (STATE.knowledge||[]).find(x=>x.id===kbEditingId);
   }
   if (!note){
-    note = { id:'kb_'+Date.now()+'_'+Math.random().toString(36).slice(2,7), ts:Date.now(), active:false, useSummary:false };
+    note = { id:'kb_'+Date.now()+'_'+Math.random().toString(36).slice(2,7), ts:Date.now(), active:true, useSummary:false };
     if (kbAddingCategory) note.category = kbAddingCategory;
     STATE.knowledge = STATE.knowledge || [];
     STATE.knowledge.unshift(note);
@@ -14625,10 +14612,10 @@ async function kbSaveFromModal(makeActive){
   note.source = source;
   note.tags = tags;
   note.raw = content;
-  if (makeActive) note.active = true;
+  note.active = true;
   delete note.summaryError;
 
-  // Re-summarise asynchronously if requested. We persist the note immediately
+  // Summarise asynchronously if requested. We persist the note immediately
   // so Kev's content is safe even if the summary call fails.
   if (autoSum){
     note.summarising = true;
@@ -14657,7 +14644,7 @@ async function kbSaveFromModal(makeActive){
   }
 
   // Manual save: if it's a brand-new note with no summary requested, leave summary empty.
-  // If editing, keep any existing summary as-is (Kev can re-summarise from the card).
+  // If editing, keep any existing summary as-is.
   if (wasNew){
     note.summary = note.summary || '';
     note.useSummary = false;
@@ -14666,28 +14653,7 @@ async function kbSaveFromModal(makeActive){
   kbCloseModal();
   knowledgeRender();
   saveState();
-  toast('Note saved'+(makeActive?' & activated':''));
-}
-
-async function kbResummarise(id){
-  const n = (STATE.knowledge||[]).find(x=>x.id===id); if(!n) return;
-  if (!n.raw){ toast('No raw content to summarise', true); return; }
-  n.summarising = true;
-  delete n.summaryError;
-  knowledgeRender();
-  try{
-    n.summary = await kbCallHaikuSummary(n.raw);
-    n.useSummary = true;
-    delete n.summarising;
-    saveState();
-    knowledgeRender();
-    toast('Re-summarised');
-  }catch(e){
-    n.summaryError = e.message||String(e);
-    delete n.summarising;
-    knowledgeRender();
-    toast('Summary failed: '+(e.message||e), true);
-  }
+  toast('Note saved');
 }
 
 // One-shot Luna summary for each paste.
@@ -14722,7 +14688,7 @@ function kbImportFromFile(file){
       arr.forEach(n => {
         if (!n || !n.id || !n.raw || !n.title) return;
         if (STATE.knowledge.find(x=>x.id===n.id)) return;
-        STATE.knowledge.push(n);
+        STATE.knowledge.push({...n,active:!n.toReview});
         merged++;
       });
       if (STATE.knowledge.length > KB_MAX_NOTES) STATE.knowledge = STATE.knowledge.slice(0, KB_MAX_NOTES);
@@ -15085,8 +15051,7 @@ function knowledgeInit(){
   wire('kbAdd','click', kbOpenAdd);
   wire('kbModalClose','click', kbCloseModal);
   wire('kbCancel','click', kbCloseModal);
-  wire('kbSave','click', ()=>kbSaveFromModal(false));
-  wire('kbSaveActivate','click', ()=>kbSaveFromModal(true));
+  wire('kbSave','click', kbSaveFromModal);
   wire('kbExport','click', kbExport);
   wire('kbImport','click', ()=>document.getElementById('kbImportFile').click());
   wire('kbYt','click', ()=>{ if (kbYtWorking) return; const row=document.getElementById('kbYtRow'); row.hidden=!row.hidden; if (!row.hidden) document.getElementById('kbYtInput').focus(); });
@@ -18267,7 +18232,7 @@ async function handleToolCall(name,args){
           raw: content,
           summary: '',
           useSummary: false,
-          active: !!args.activate && !args.to_review,
+          active: !args.to_review,
           toReview: !!args.to_review,
           category: KB_CATEGORIES.some(c=>c.id===args.category) ? args.category : 'mixing',
           origin: args.to_review ? 'hope' : 'user',
@@ -22297,16 +22262,7 @@ loadKbSearchIndex();
 // Library: one surface for additions, review and browsing. Existing note and
 // snapshot storage and handlers remain the source of truth.
 const LIB_UI={results:null,query:'',excluded:0,hopeSearch:false,groups:{},more:{},open:{},editTip:null,kept:null,videoText:{},busy:false,addingAll:false};
-function libVideoSkipped(){
-  try{return new Set(JSON.parse(localStorage.getItem('aimmLibrarySkippedVideos_v1')||'[]'));}catch(_){return new Set();}
-}
-function libVideoReads(id){return !libVideoSkipped().has(id);}
-function libToggleVideoRead(id){
-  const skipped=libVideoSkipped();
-  if(skipped.has(id))skipped.delete(id);else skipped.add(id);
-  try{localStorage.setItem('aimmLibrarySkippedVideos_v1',JSON.stringify([...skipped]));}catch(_){toast('Could not save this setting',true);return;}
-  libraryRender();
-}
+function libVideoReads(){return true;}
 function libFold(button){
   const card=button.closest('.card');card.dataset.open=card.dataset.open==='false'?'true':'false';
   button.setAttribute('aria-expanded',card.dataset.open);
@@ -22368,8 +22324,6 @@ function libraryRender(){
     channelSelect.innerHTML='<option value="">All channels</option>'+channels.map(([name,count])=>`<option value="${escapeHtml(name)}">${escapeHtml(name)} ${count}</option>`).join('');
     channelSelect.value=channels.some(([name])=>name===selectedChannel)?selectedChannel:'';
   }
-  const active=notes.filter(n=>n.active),read=document.getElementById('libRead');
-  if(read){read.textContent=`Hope reads ${active.length} of ${notes.length} notes${kbActiveBytes()>KB_BYTES_BUDGET?', budget full':''}`;read.classList.toggle('over',kbActiveBytes()>KB_BYTES_BUDGET);}
   const q=(document.getElementById('libSearch')?.value||'').trim().toLowerCase();
   const matches=(...parts)=>!q||parts.some(v=>String(v||'').toLowerCase().includes(q));
   const tipHost=document.getElementById('libReviewRows');
@@ -22385,18 +22339,18 @@ function libraryRender(){
   vh.innerHTML=filteredVideos.length?KB_CATEGORIES.map(c=>{
     const arr=filteredVideos.filter(v=>kbCategorize({title:v.title})===c.id);
     return arr.length?libGroup('v'+c.id,c.label,arr,v=>{
-      const id=escapeJs(v.video_id),own=!!v.added,open=!!LIB_UI.open['video'+id],note=notes.find(n=>n.source===v.url);
+      const id=escapeJs(v.video_id),open=!!LIB_UI.open['video'+id],note=notes.find(n=>n.source===v.url);
       const url=escapeHtml(v.url||`https://www.youtube.com/watch?v=${v.video_id}`);
-      return `<div class="ent"><div class="t"><h4>${escapeHtml(v.title)}</h4></div><div class="meta"><span class="c">${escapeHtml(v.channel||'YouTube')}</span><span class="c d">${libDate(v.added,'–')}</span></div><div class="acts"><span class="c">${libAction('Edit',`libVideoNote('${id}',true)`)}</span><span class="c">${libAction(open?'Hide':'View',`libViewVideo('${id}')`,'hi')}</span><span class="c"><a class="tx hi" href="${url}" target="_blank" rel="noopener">Open video</a></span><span class="c">${libAction('Re-summarise',`libVideoNote('${id}',false)`)}</span><span class="c">${own?libAction('Delete',`libDeleteVideo('${id}')`,'dim'):''}</span><span class="c k"><button type="button" class="tick" aria-pressed="${libVideoReads(v.video_id)}" aria-label="${libVideoReads(v.video_id)?'Hope reads this':'Hope skips this'}" onclick="libToggleVideoRead('${id}')"></button></span></div>${open?`<div class="body"><p class="sum">${escapeHtml(note?.summary||LIB_UI.videoText[id]||'Loading…')}</p></div>`:''}</div>`;
-    },['Title','Channel','Added','Edit','Show','Link','Summary','Remove','Hope reads']):'';
+      return `<div class="ent"><div class="t"><h4>${escapeHtml(v.title)}</h4></div><div class="meta"><span class="c">${escapeHtml(v.channel||'YouTube')}</span><span class="c d">${libDate(v.added,'–')}</span></div><div class="acts"><span class="c">${libAction('Edit',`libVideoNote('${id}')`)}</span><span class="c">${libAction(open?'Hide':'View',`libViewVideo('${id}')`,'hi')}</span><span class="c"><a class="tx hi" href="${url}" target="_blank" rel="noopener">Open video</a></span></div>${open?`<div class="body"><p class="sum">${escapeHtml(note?.summary||LIB_UI.videoText[id]||'Loading…')}</p></div>`:''}</div>`;
+    },['Title','Channel','Added','Edit','Show','Link']):'';
   }).join(''):'<p class="none">'+(q?'No matches.':'No videos yet.')+'</p>';
   const filteredNotes=notes.filter(n=>matches(n.title,n.tags?.join(' '),n.raw,n.summary));
   nh.innerHTML=(filteredNotes.length?KB_CATEGORIES.map(c=>{
     const arr=filteredNotes.filter(n=>n.category===c.id);
     return arr.length?libGroup('n'+c.id,c.label,arr,n=>{
       const id=escapeJs(n.id),open=!!LIB_UI.open['note'+id];
-      return `<div class="ent"><div class="t"><h4>${escapeHtml(n.title)}</h4><p class="sub">${escapeHtml((n.tags||[]).join(', '))}</p></div><div class="meta"><span class="c">${n.origin==='hope'?'Tip from Hope':n.source?'Imported file':'Written by you'}</span><span class="c d">${libDate(n.ts)}</span></div><div class="acts"><span class="c">${libAction('Edit',`kbEdit('${id}')`)}</span><span class="c">${libAction(open?'Hide':'View',`libTextButton('${id}','note',${open})`,'hi')}</span><span class="c">${n.summary?libAction(n.useSummary?'Summary':'Raw',`kbToggleSummary('${id}')`,'hi'):''}</span><span class="c">${libAction('Re-summarise',`kbResummarise('${id}')`)}</span><span class="c">${libAction('Delete',`kbDelete('${id}')`,'dim')}</span><span class="c k"><button type="button" class="tick" aria-pressed="${!!n.active}" aria-label="${n.active?'Hope reads this':'Hope skips this'}" onclick="kbToggleActive('${id}')"></button></span></div>${open?`<div class="body"><p class="sum">${escapeHtml(kbActiveText(n))}</p></div>`:''}</div>`;
-    },['Title','Source','Added','Edit','Show','Mode','Summary','Remove','Hope reads']):'';
+      return `<div class="ent"><div class="t"><h4>${escapeHtml(n.title)}</h4><p class="sub">${escapeHtml((n.tags||[]).join(', '))}</p></div><div class="meta"><span class="c">${n.origin==='hope'?'Tip from Hope':n.source?'Imported file':'Written by you'}</span><span class="c d">${libDate(n.ts)}</span></div><div class="acts"><span class="c">${libAction('Edit',`kbEdit('${id}')`)}</span><span class="c">${libAction(open?'Hide':'View',`libTextButton('${id}','note',${open})`,'hi')}</span><span class="c">${n.summary?libAction(n.useSummary?'Summary':'Raw',`kbToggleSummary('${id}')`,'hi'):''}</span><span class="c">${libAction('Delete',`kbDelete('${id}')`,'dim')}</span></div>${open?`<div class="body"><p class="sum">${escapeHtml(kbActiveText(n))}</p></div>`:''}</div>`;
+    },['Title','Source','Added','Edit','Show','Mode','Remove']):'';
   }).join(''):'<p class="none">'+(q?'No matches.':'No notes yet.')+'</p>')+'<div class="foot">'+libAction('Export notes','kbExport()')+'</div>';
   const filteredChats=chats.filter(e=>matches(e.subject,e.text,e.tldr));
   // Favourites use the existing recallFavourite path; only filled pills render.
@@ -22437,26 +22391,32 @@ async function libAddResult(i){
   item.status=succeeded?'added':'failed';item.message=succeeded?`Added. Summary saved under ${libCategory(kbCategorize({title:item.title}))}.`:document.getElementById('kbYtMsg').textContent;libRenderResults();libraryRender();
 }
 async function libAddAll(){if(LIB_UI.addingAll)return;LIB_UI.addingAll=true;libRenderResults();try{for(let i=0;i<(LIB_UI.results||[]).length;i++)if(!LIB_UI.results[i].status)await libAddResult(i);}finally{LIB_UI.addingAll=false;libRenderResults();}}
-function libKeepTip(id){const n=STATE.knowledge.find(x=>x.id===id);if(!n)return;n.toReview=false;n.origin='hope';LIB_UI.kept={id,category:n.category};saveState();knowledgeRender();}
+function libKeepTip(id){const n=STATE.knowledge.find(x=>x.id===id);if(!n)return;n.toReview=false;n.active=true;n.origin='hope';LIB_UI.kept={id,category:n.category};saveState();knowledgeRender();}
 function libUndoTip(){const n=STATE.knowledge.find(x=>x.id===LIB_UI.kept?.id);if(n){n.toReview=true;n.active=false;saveState();knowledgeRender();}LIB_UI.kept=null;libraryRender();}
 function libDeleteTip(id){if(!confirm('Delete this tip?'))return;STATE.knowledge=STATE.knowledge.filter(n=>n.id!==id);saveState();knowledgeRender();}
 function libSaveTip(id){const n=STATE.knowledge.find(x=>x.id===id);if(!n)return;n.title=document.getElementById('libTipTitle').value.trim()||n.title;n.raw=document.getElementById('libTipBody').value.trim()||n.raw;n.category=document.getElementById('libTipCategory').value;LIB_UI.editTip=null;saveState();libraryRender();}
 async function libViewVideo(id){const open=!!LIB_UI.open['video'+id];LIB_UI.open['video'+id]=!open;if(!open&&!LIB_UI.videoText[id]){try{const v=YT_KB.videos.find(x=>x.video_id===id),r=await fetch(v?.added?AIMM_PROXY_URL.replace(/\/+$/,'')+'/kb/transcript?id='+encodeURIComponent(id):'./docs/knowledge/'+encodeURIComponent(id)+'.md');if(r.ok){const data=v?.added?await r.json():await r.text();LIB_UI.videoText[id]=typeof data==='string'?data.slice(0,1500):String(data.transcript||'').slice(0,1500);}else LIB_UI.videoText[id]='Summary unavailable.';}catch(_){LIB_UI.videoText[id]='Summary unavailable.';}}libraryRender();}
-async function libVideoNote(id,edit){
+async function libVideoNote(id){
   const v=YT_KB.videos.find(item=>item.video_id===id);if(!v)return;
   let note=(STATE.knowledge||[]).find(n=>n.source===v.url);
-  if(note){if(edit)kbEdit(note.id);else await kbResummarise(note.id);return;}
-  try{
-    const url=v.added?AIMM_PROXY_URL.replace(/\/+$/,'')+'/kb/transcript?id='+encodeURIComponent(id):'./docs/knowledge/'+encodeURIComponent(id)+'.md';
-    const r=await fetch(url);if(!r.ok)throw Error('Transcript unavailable');
-    const data=v.added?await r.json():await r.text();
-    const raw=String(typeof data==='string'?data:data.transcript||'').slice(0,12000);
-    if(!raw)throw Error('Transcript unavailable');
-    if(edit){kbOpenAdd();document.getElementById('kbTitle').value=v.title;document.getElementById('kbSource').value=v.url;document.getElementById('kbContent').value=raw;return;}
-    if((STATE.knowledge||[]).length>=KB_MAX_NOTES)throw Error('Notes are full. Export or remove a note before summarising.');
-    note={id:'kb_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),ts:Date.now(),title:v.title,source:v.url,tags:[],raw,summary:'',useSummary:false,active:false,category:kbCategorize({title:v.title})};
-    STATE.knowledge.unshift(note);saveState();knowledgeRender();await kbResummarise(note.id);
-  }catch(e){toast(e.message||'Could not open this video.',true);}
+  if(note){kbEdit(note.id);}
+  else{
+    let raw='';
+    try{
+      const url=v.added?AIMM_PROXY_URL.replace(/\/+$/,'')+'/kb/transcript?id='+encodeURIComponent(id):'./docs/knowledge/'+encodeURIComponent(id)+'.md';
+      const r=await fetch(url);if(!r.ok)throw Error('Transcript unavailable');
+      const data=v.added?await r.json():await r.text();
+      raw=String(typeof data==='string'?data:data.transcript||'').slice(0,12000);
+      if(!raw)throw Error('Transcript unavailable');
+    }catch(e){
+      if(!v.added){toast(e.message||'Could not open this video.',true);return;}
+      toast('Transcript unavailable. You can still delete this video.',true);
+    }
+    kbOpenAdd();document.getElementById('kbTitle').value=v.title;document.getElementById('kbSource').value=v.url;document.getElementById('kbContent').value=raw;
+  }
+  const remove=document.getElementById('kbVideoDelete');
+  remove.hidden=!v.added;
+  if(v.added)remove.onclick=()=>libDeleteVideo(id);
 }
 async function libDeleteVideo(id){
   if(!confirm('Delete this dashboard video from Hope’s library?'))return;
@@ -22464,6 +22424,7 @@ async function libDeleteVideo(id){
     const r=await fetch(AIMM_PROXY_URL.replace(/\/+$/,'')+'/kb/user-videos/'+encodeURIComponent(id),{method:'DELETE'});
     if(!r.ok)throw Error('Could not delete the video.');
     await loadYtKb();
+    kbCloseModal();
     toast('Video deleted');
   }catch(e){toast(e.message||'Could not delete the video.',true);}
 }

@@ -3,6 +3,7 @@ import {readFileSync} from 'node:fs';
 import {test} from 'node:test';
 import vm from 'node:vm';
 const html=readFileSync(new URL('../standalone/assets/index.html',import.meta.url),'utf8');
+const manifest=JSON.parse(readFileSync(new URL('../docs/knowledge/index.json',import.meta.url),'utf8'));
 function code(start,end){return html.slice(html.indexOf(start),html.indexOf(end,html.indexOf(start)));}
 test('removed note categories migrate to Mixing techniques without dropping notes',()=>{
   const ctx={STATE:{knowledge:[{id:'one',category:'plugins'},{id:'two',category:'misc'},{id:'three',category:'vocals'}]},saveState:()=>{},console};
@@ -20,16 +21,14 @@ test("Hope tip stays in Hope's review until Keep, and Undo restores it",()=>{
   ctx.libUndoTip();
   assert.equal(note.toReview,true);assert.equal(note.active,false);
 });
-test('Hope reads control persists video exclusions',()=>{
-  const values=new Map();
-  const ctx={localStorage:{getItem:key=>values.get(key)||null,setItem:(key,value)=>values.set(key,value)},libraryRender:()=>{},toast:()=>{}};
-  vm.runInNewContext(code('function libVideoSkipped','function libFold('),ctx);
+test('all videos read and Library has no per-item read or re-summary controls',()=>{
+  const ctx={};vm.runInNewContext(code('function libVideoReads','function libFold('),ctx);
   assert.equal(ctx.libVideoReads('QWERTY12345'),true);
-  ctx.libToggleVideoRead('QWERTY12345');
-  assert.equal(ctx.libVideoReads('QWERTY12345'),false);
-  assert.deepEqual(JSON.parse(values.get('aimmLibrarySkippedVideos_v1')),['QWERTY12345']);
-  ctx.libToggleVideoRead('QWERTY12345');
-  assert.equal(ctx.libVideoReads('QWERTY12345'),true);
+  const library=code('function libraryRender','async function libAddLink');
+  assert.doesNotMatch(library,/Hope reads|Re-summarise|libToggleVideoRead|libToggleVideoRead|libRead|kbResummarise/);
+  assert.doesNotMatch(html,/id="libRead"|id="kbSaveActivate"|onclick="kbToggleActive/);
+  assert.match(html,/localStorage\.removeItem\?\.\('aimmLibrarySkippedVideos_v1'\)/);
+  assert.match(html,/for\(const note of STATE\.knowledge\|\|\[\]\)if\(note && !note\.toReview && !note\.active\)/);
 });
 test('video browse starts closed, search opens matching groups, clearing closes it',()=>{
   assert.match(html, /data-sec="videos" data-open="false"><button class="bar" type="button" aria-expanded="false"/);
@@ -37,7 +36,7 @@ test('video browse starts closed, search opens matching groups, clearing closes 
   const card={dataset:{open:'false'},querySelector:()=>bar};
   const search={value:'compression'};
   let renders=0;
-  const ctx={document:{querySelector:()=>card,getElementById:()=>search},LIB_UI:{groups:{vmixing:false,nmixing:false}},libraryRender:()=>renders++};
+  const ctx={document:{querySelector:()=>card,getElementById:id=>id==='libSearch'?search:{value:''}},LIB_UI:{groups:{vmixing:false,nmixing:false}},libraryRender:()=>renders++};
   vm.runInNewContext(code('function libSearchChanged','function libFoldAll'),ctx);
   ctx.libSearchChanged();
   assert.equal(card.dataset.open,'true');assert.equal(bar.expanded,'true');
@@ -61,6 +60,10 @@ test('channel options count videos and channel filter combines with search',()=>
   assert.deepEqual(Array.from(ctx.libFilterVideos(videos,'Mix With The Masters','BASS')), [videos[0]]);
   assert.equal(ctx.libFilterVideos(videos,'','bass').length,3);
   assert.equal(ctx.libFilterVideos(videos,'Mix With The Masters','').length,2);
+  const actual=ctx.libChannels(manifest.videos);
+  assert.equal(actual.reduce((sum,[,count])=>sum+count,0),manifest.videos.length);
+  assert.deepEqual(new Set(actual.map(([channel])=>channel)),new Set(manifest.videos.map(v=>v.channel||'YouTube')));
+  assert.ok(actual.every(([,count],i)=>i===0||actual[i-1][1]>=count));
 
   const bar={setAttribute(_key,value){this.expanded=value}};
   const card={dataset:{open:'false'},querySelector:()=>bar};
@@ -79,4 +82,19 @@ test('undated videos display an en dash',()=>{
   assert.equal(ctx.libDate(null,'–'),'–');
   assert.equal(ctx.libDate(null),'Library');
   assert.match(html,/libDate\(v\.added,'–'\)/);
+});
+test('dashboard video Delete remains available in Edit when its transcript fails',async()=>{
+  const fields=Object.fromEntries(['kbTitle','kbSource','kbContent','kbVideoDelete'].map(id=>[id,{value:'',hidden:true}]));
+  let opened=false;
+  const ctx={
+    YT_KB:{videos:[{video_id:'dashboard-1',title:'Dashboard video',url:'https://youtu.be/dashboard-1',added:true}]},
+    STATE:{knowledge:[]},AIMM_PROXY_URL:'https://example.test',
+    document:{getElementById:id=>fields[id]},
+    fetch:async()=>({ok:false}),kbOpenAdd:()=>{opened=true},toast:()=>{}
+  };
+  vm.runInNewContext(code('async function libVideoNote','renderJournal();'),ctx);
+  await ctx.libVideoNote('dashboard-1');
+  assert.equal(opened,true);
+  assert.equal(fields.kbVideoDelete.hidden,false);
+  assert.equal(typeof fields.kbVideoDelete.onclick,'function');
 });
