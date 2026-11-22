@@ -3398,10 +3398,11 @@ body:has(#library.active) #tabIntro{display:none}
 #library .pill:has(:focus-visible){box-shadow:inset 0 0 0 2px #000}
 #library .pill :focus-visible{outline:0}
 
-/* 8. BROWSE: plain heading, one search field that filters Videos, Notes and Saved chats together */
+/* 8. BROWSE: search across the library and filter videos by channel */
 #library .browse-head{display:flex;align-items:center;flex-wrap:wrap;gap:calc(16*var(--u)) calc(24*var(--u));margin:0 0 calc(16*var(--u))}
 #library .browse-head h3{margin:0;font:700 calc(22*var(--u))/1.25 Inter,sans-serif;color:#f3f4f6}
 #library .browse-head .field{flex:1 1 calc(320*var(--u));width:auto}
+#library .browse-head select.field{appearance:auto;-webkit-appearance:menulist}
 #library .browse-head .ends{display:flex;gap:calc(20*var(--u))}
 
 </style>
@@ -3795,7 +3796,7 @@ body:has(#library.active) #tabIntro{display:none}
     </div></section>
     <section class="card" data-sec="review" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Hope's review <span class="n" id="libReviewCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libReviewRows"></div></section>
   </div>
-  <div class="browse-head"><h3>Browse</h3><input class="field" type="search" id="libSearch" aria-label="Search library" placeholder="Search videos, notes and saved chats" oninput="libSearchChanged()"><div class="ends"><button class="tx" type="button" onclick="libFoldAll(true)">Expand all</button><button class="tx" type="button" onclick="libFoldAll(false)">Collapse all</button></div></div>
+  <div class="browse-head"><h3>Browse</h3><input class="field" type="search" id="libSearch" aria-label="Search library" placeholder="Search videos, notes and saved chats" oninput="libSearchChanged()"><select class="field" id="libChannel" aria-label="Filter videos by channel" onchange="libChannelChanged()"><option value="">All channels</option></select><div class="ends"><button class="tx" type="button" onclick="libFoldAll(true)">Expand all</button><button class="tx" type="button" onclick="libFoldAll(false)">Collapse all</button></div></div>
   <div class="lib-group" id="libBrowse">
     <section class="card" data-sec="videos" data-open="false"><button class="bar" type="button" aria-expanded="false" onclick="libFold(this)">Videos <span class="n" id="libVideoCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libVideoRows"></div></section>
     <section class="card" data-sec="notes" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Notes <span class="n" id="libNoteCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libNoteRows"></div></section>
@@ -5928,7 +5929,7 @@ body:has(#library.active) #tabIntro{display:none}
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-22.6';
+const AIMM_BUILD = '2026-11-22.7';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -22313,12 +22314,22 @@ function libFold(button){
 function libSearchChanged(){
   const card=document.querySelector('#libBrowse .card[data-sec=videos]');
   if(card){
-    const open=!!document.getElementById('libSearch').value.trim();
+    const open=!!(document.getElementById('libSearch')?.value.trim()||document.getElementById('libChannel')?.value);
     card.dataset.open=String(open);
     card.querySelector('.bar').setAttribute('aria-expanded',String(open));
     if(open)for(const key of Object.keys(LIB_UI.groups))if(key.startsWith('v'))LIB_UI.groups[key]=true;
   }
   libraryRender();
+}
+function libChannelChanged(){libSearchChanged();}
+function libChannels(videos){
+  const counts=new Map();
+  for(const video of videos){const channel=video.channel||'YouTube';counts.set(channel,(counts.get(channel)||0)+1);}
+  return [...counts].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+}
+function libFilterVideos(videos,channel,query){
+  const q=query.trim().toLowerCase();
+  return videos.filter(v=>(!channel||(v.channel||'YouTube')===channel)&&(!q||[v.title,v.channel].some(text=>String(text||'').toLowerCase().includes(q))));
 }
 function libFoldAll(open){
   document.querySelectorAll('#libBrowse .card').forEach(card=>{card.dataset.open=String(open);card.querySelector('.bar').setAttribute('aria-expanded',String(open));});
@@ -22349,7 +22360,14 @@ function libraryRender(){
   const notes=all.filter(n=>!n.toReview),tips=all.filter(n=>n.toReview);
   const chats=STATE.journal||[],videos=YT_KB.videos||[];
   const set=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text;};
-  set('libReviewCount',tips.length);set('libVideoCount',videos.length);set('libNoteCount',notes.length);set('libChatCount',chats.length);
+  set('libReviewCount',tips.length);set('libNoteCount',notes.length);set('libChatCount',chats.length);
+  const channelSelect=document.getElementById('libChannel');
+  const channels=libChannels(videos);
+  const selectedChannel=channelSelect?.value||'';
+  if(channelSelect){
+    channelSelect.innerHTML='<option value="">All channels</option>'+channels.map(([name,count])=>`<option value="${escapeHtml(name)}">${escapeHtml(name)} ${count}</option>`).join('');
+    channelSelect.value=channels.some(([name])=>name===selectedChannel)?selectedChannel:'';
+  }
   const active=notes.filter(n=>n.active),read=document.getElementById('libRead');
   if(read){read.textContent=`Hope reads ${active.length} of ${notes.length} notes${kbActiveBytes()>KB_BYTES_BUDGET?', budget full':''}`;read.classList.toggle('over',kbActiveBytes()>KB_BYTES_BUDGET);}
   const q=(document.getElementById('libSearch')?.value||'').trim().toLowerCase();
@@ -22361,7 +22379,9 @@ function libraryRender(){
     return `<div class="ent nk"><div class="t"><h4>${escapeHtml(n.title)}</h4><p class="sub">${escapeHtml(n.raw)}</p></div><div class="meta"><span class="c">${escapeHtml(libCategory(n.category))}</span><span class="c d">${libDate(n.ts)}</span></div><div class="acts"><span class="c">${libAction('Edit',`LIB_UI.editTip='${id}';libraryRender()`)}</span><span class="c">${libAction('Delete',`libDeleteTip('${id}')`,'dim')}</span><span class="c"><button class="btn pri" type="button" onclick="libKeepTip('${id}')">Keep</button></span></div></div>`;
   }).join(''):(LIB_UI.kept?`<p class="none">Kept. Filed in Notes under ${escapeHtml(libCategory(LIB_UI.kept.category))}. ${libAction('Undo','libUndoTip()')}</p>`:'<p class="none">Nothing to review.</p>');
   const vh=document.getElementById('libVideoRows'),nh=document.getElementById('libNoteRows'),ch=document.getElementById('libChatRows');
-  const filteredVideos=videos.filter(v=>matches(v.title,v.channel));
+  const channel=channelSelect?.value||'';
+  const filteredVideos=libFilterVideos(videos,channel,q);
+  set('libVideoCount',channel||q?`${filteredVideos.length} of ${videos.length}`:videos.length);
   vh.innerHTML=filteredVideos.length?KB_CATEGORIES.map(c=>{
     const arr=filteredVideos.filter(v=>kbCategorize({title:v.title})===c.id);
     return arr.length?libGroup('v'+c.id,c.label,arr,v=>{

@@ -45,6 +45,35 @@ test('video browse starts closed, search opens matching groups, clearing closes 
   search.value='  ';ctx.libSearchChanged();
   assert.equal(card.dataset.open,'false');assert.equal(bar.expanded,'false');assert.equal(renders,2);
 });
+test('channel options count videos and channel filter combines with search',()=>{
+  assert.match(html,/id="libChannel"[^>]+onchange="libChannelChanged\(\)"/);
+  const videos=[
+    {title:'Bass compression',channel:'Mix With The Masters'},
+    {title:'Vocal compression',channel:'Mix With The Masters'},
+    {title:'Bass EQ',channel:'Other'},
+    {title:'Bass tips'}
+  ];
+  const ctx={};
+  vm.runInNewContext(code('function libChannels','function libFoldAll'),ctx);
+  assert.deepEqual(Array.from(ctx.libChannels(videos),entry=>Array.from(entry)),[
+    ['Mix With The Masters',2],['Other',1],['YouTube',1]
+  ]);
+  assert.deepEqual(Array.from(ctx.libFilterVideos(videos,'Mix With The Masters','BASS')), [videos[0]]);
+  assert.equal(ctx.libFilterVideos(videos,'','bass').length,3);
+  assert.equal(ctx.libFilterVideos(videos,'Mix With The Masters','').length,2);
+
+  const bar={setAttribute(_key,value){this.expanded=value}};
+  const card={dataset:{open:'false'},querySelector:()=>bar};
+  const search={value:''},channel={value:'Mix With The Masters'};
+  let renders=0;
+  const ui={document:{querySelector:()=>card,getElementById:id=>id==='libSearch'?search:channel},LIB_UI:{groups:{vmixing:false}},libraryRender:()=>renders++};
+  vm.runInNewContext(code('function libSearchChanged','function libChannels'),ui);
+  ui.libChannelChanged();
+  assert.equal(card.dataset.open,'true');assert.equal(bar.expanded,'true');
+  assert.equal(ui.LIB_UI.groups.vmixing,true);
+  channel.value='';ui.libChannelChanged();
+  assert.equal(card.dataset.open,'false');assert.equal(renders,2);
+});
 test('undated videos display an en dash',()=>{
   const ctx={};vm.runInNewContext(code('function libDate','function libChatTurns'),ctx);
   assert.equal(ctx.libDate(null,'–'),'–');
