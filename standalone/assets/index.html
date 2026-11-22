@@ -3667,12 +3667,19 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   <div class="kb-toolbar">
     <button class="btn amber sm" id="kbAdd">＋ Add note</button>
     <button class="btn ghost sm" id="kbImport" title="Import a research note — drop PDF / DOCX / TXT / MD anywhere on this tab, or paste long text. Hope auto-extracts the title, tags + summary; the note saves Active with an undo toast. JSON exports also still merge here.">↓ Import</button>
+    <button class="btn ghost sm" id="kbYt" type="button">Add YouTube link</button>
     <button class="btn ghost sm" id="kbExport" title="Download all notes as JSON">↑ Export</button>
     <input type="file" id="kbImportFile" accept=".txt,.md,.markdown,.pdf,.docx,.json,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/markdown,application/json" multiple style="display:none">
     <button class="btn ghost sm" type="button" onclick="expandAllIn('#kbList'); knowledgeRender();" title="Expand every category card">Expand all</button>
     <button class="btn ghost sm" type="button" onclick="collapseAllIn('#kbList'); knowledgeRender();" title="Collapse every category card">Collapse all</button>
     <div style="flex:1"></div>
     <span class="kb-bytes-meter" id="kbBytes" hidden title="Total bytes injected into Hope's research digest (summary or raw per note). Amber ≥ 6000, red ≥ 8000.">0 / 8000 bytes</span>
+  </div>
+  <div class="kb-yt" id="kbYtRow" hidden>
+    <input class="kb-yt-in" id="kbYtInput" type="url" inputmode="url" autocomplete="off" aria-label="YouTube link" placeholder="Paste a YouTube link">
+    <button class="btn amber sm" id="kbYtGo" type="button" disabled>Add</button>
+    <p class="kb-yt-msg hope-status" id="kbYtMsg" role="status" aria-live="polite" hidden></p>
+    <div class="meter kb-yt-progress" id="kbYtProgress" hidden><i></i></div>
   </div>
   <div class="kb-list" id="kbList"></div>
   </div></section>
@@ -4922,6 +4929,14 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #knowledge .kb-toolbar .btn:hover,#knowledge .hope-memory-meta .btn:hover{background:#fff;color:#0b0d10}
 #knowledge .kb-toolbar .btn[onclick],#knowledge .hope-memory-meta .btn[onclick^="expandAll"],#knowledge .hope-memory-meta .btn[onclick^="collapseAll"],#knowledge .hope-memory-meta .btn[onclick^="clearAll"]{min-height:0;padding:8px 6px;background:transparent;color:var(--insight-dim);font-size:calc(14px*var(--inv-text-scale,1))}
 #knowledge .kb-toolbar .btn[onclick]:hover,#knowledge .hope-memory-meta .btn[onclick^="expandAll"]:hover,#knowledge .hope-memory-meta .btn[onclick^="collapseAll"]:hover,#knowledge .hope-memory-meta .btn[onclick^="clearAll"]:hover{background:var(--c);color:#0b0d10}
+#knowledge .kb-yt{display:flex;flex-wrap:wrap;gap:8px;padding:0 12px 12px}
+#knowledge .kb-yt[hidden]{display:none}
+#knowledge .kb-yt-in{flex:1 1 220px;min-width:220px;min-height:calc(44px*var(--inv-text-scale,1));padding:0 calc(14px*var(--inv-text-scale,1));background:#2a2e35;border:0;border-radius:10px;color:#e5e7ea;font:calc(15px*var(--inv-text-scale,1)) Inter,sans-serif}
+#knowledge .kb-yt-in::placeholder{color:#9aa0a6}#knowledge .kb-yt-in:focus{outline:2px solid #b970ff;outline-offset:0}#knowledge .kb-yt-in[readonly]{opacity:.7}
+#knowledge .kb-yt .btn{min-height:calc(44px*var(--inv-text-scale,1));padding:0 calc(16px*var(--inv-text-scale,1));font:700 calc(15px*var(--inv-text-scale,1))/1.2 Inter,sans-serif;border:0;border-radius:10px;background:var(--insight-teal);color:#0b0d10}
+#knowledge .kb-yt .btn:hover,#knowledge .kb-yt .btn:focus-visible{background:#fff;color:#0b0d10}#knowledge .kb-yt .btn:disabled{background:#2a2e35;color:#9aa0a6}
+#knowledge .kb-yt-msg{flex:1 1 100%;font:calc(14px*var(--inv-text-scale,1))/1.45 Inter,sans-serif;color:#c4cad3;margin:0}#knowledge .kb-yt-msg[hidden]{display:none}#knowledge .kb-yt-msg b{color:#e5e7ea;font-weight:600}#knowledge .kb-yt-msg.is-warn{color:#e8b45a}#knowledge .kb-yt-msg.is-stop{color:#f97316}#knowledge .kb-yt-msg.is-progress{color:#9aa0a6}
+#knowledge .kb-yt-progress{flex:1 1 100%;height:2px;background:#2a2e35}#knowledge .kb-yt-progress[hidden]{display:none}#knowledge .kb-yt-progress i{width:50%;background:#b970ff;animation:kbYtSweep 1.4s ease-in-out infinite alternate}@keyframes kbYtSweep{from{margin-left:0}to{margin-left:50%}}@media(prefers-reduced-motion:reduce){#knowledge .kb-yt-progress i{animation:none}}@media(max-width:480px){#knowledge .kb-yt .btn{flex:1 1 100%}}
 #knowledge .kb-bytes-meter,#knowledge .hope-bytes-meter{display:none}
 #knowledge .kb-list,#knowledge #hopeMemoryCategories{padding:0 8px 8px}
 #knowledge .hope-memory-wrap{margin:0}
@@ -5732,7 +5747,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-22.2';
+const AIMM_BUILD = '2026-11-22.3';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -13774,7 +13789,13 @@ async function loadYtKb() {
     const r = await fetch('./docs/knowledge/index.json', { cache: 'no-store' });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const data = await r.json();
-    YT_KB.videos = Array.isArray(data.videos) ? data.videos : [];
+    const repoVideos = Array.isArray(data.videos) ? data.videos : [];
+    let userVideos = [];
+    try {
+      const user = await fetch(AIMM_PROXY_URL.replace(/\/+$/, '') + '/kb/user-videos');
+      if (user.ok) userVideos = (await user.json()).videos || [];
+    } catch (_) {}
+    YT_KB.videos = [...repoVideos, ...userVideos.filter(v => !repoVideos.some(r => r.video_id === v.video_id))];
     YT_KB.loaded = true;
     console.log('[YT_KB] loaded', YT_KB.videos.length, 'video(s)');
   } catch (e) {
@@ -14818,6 +14839,53 @@ function kbPasteInit(){
   });
 }
 
+let kbYtWorking = false;
+function kbYtStatus(message, kind='', title=''){
+  const el = document.getElementById('kbYtMsg');
+  el.className = 'kb-yt-msg hope-status' + (kind ? ' is-'+kind : '');
+  if (title) el.innerHTML = message.replace('{title}', '<b>' + escapeHtml(title) + '</b>');
+  else el.textContent = message;
+  el.hidden = !message;
+  document.getElementById('kbYtProgress').hidden = kind !== 'progress';
+}
+async function kbAddYoutube(){
+  if (kbYtWorking) return;
+  const input = document.getElementById('kbYtInput'), button = document.getElementById('kbYtGo');
+  const url = input.value.trim();
+  if (!url) return;
+  kbYtWorking = true; input.readOnly = true; button.disabled = true; button.textContent = 'Adding...';
+  kbYtStatus('Getting the transcript...', 'progress');
+  try {
+    const response = await fetch(AIMM_PROXY_URL.replace(/\/+$/, '') + '/kb/add-youtube',{
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      const code = result.code;
+      kbYtStatus(code === 'no_captions' ? 'This video has no captions, so there is no transcript to add.' :
+        code === 'invalid_url' ? 'That is not a YouTube link. Paste a link from the Share button.' :
+        code === 'quota' ? 'The monthly limit for adding videos has been reached. It resets next month.' :
+        'The transcript service is not available right now. Try again in a minute.',code === 'quota' ? 'stop' : 'warn');
+      return;
+    }
+    if (result.already) { kbYtStatus('Already in the library: {title}. No new note added.','',result.title); return; }
+    kbYtStatus("Filing it in Hope's library...", 'progress');
+    await loadYtKb();
+    kbYtStatus('Writing the summary note...', 'progress');
+    try {
+      const meta = await kbExtractMetadata(result.transcript_for_summary, result.title + '.txt');
+      const note = {id:'kb_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),ts:Date.now(),active:true,
+        useSummary:!!meta.summary,title:meta.title || result.title,source:url,tags:meta.tags || [],raw:result.transcript_for_summary,summary:meta.summary || ''};
+      STATE.knowledge = STATE.knowledge || [];
+      STATE.knowledge.unshift(note);
+      if (STATE.knowledge.length > KB_MAX_NOTES) STATE.knowledge = STATE.knowledge.slice(0,KB_MAX_NOTES);
+      saveState(); knowledgeRender(); kbShowImportToast(note.id,note.title,meta._noKey ? ' · (add the Hope usage test access token in Settings → API Keys for Hope auto-extract)' : '');
+      input.value = ''; kbYtStatus(`Added: {title}, ${result.chunks} chunks. Summary note added.`,'',result.title);
+    } catch (_) { kbYtStatus(`Added: {title}, ${result.chunks} chunks. The summary note could not be written.`, 'warn',result.title); }
+  } catch (_) { kbYtStatus('The transcript service is not available right now. Try again in a minute.', 'warn'); }
+  finally { kbYtWorking = false; input.readOnly = false; button.textContent = 'Add'; button.disabled = !input.value.trim(); }
+}
+
 function knowledgeInit(){
   const wire = (id, ev, fn) => { const el = document.getElementById(id); if (el) el.addEventListener(ev, fn); };
   wire('kbAdd','click', kbOpenAdd);
@@ -14827,6 +14895,10 @@ function knowledgeInit(){
   wire('kbSaveActivate','click', ()=>kbSaveFromModal(true));
   wire('kbExport','click', kbExport);
   wire('kbImport','click', ()=>document.getElementById('kbImportFile').click());
+  wire('kbYt','click', ()=>{ if (kbYtWorking) return; const row=document.getElementById('kbYtRow'); row.hidden=!row.hidden; if (!row.hidden) document.getElementById('kbYtInput').focus(); });
+  wire('kbYtInput','input', e=>{ document.getElementById('kbYtGo').disabled=kbYtWorking || !e.target.value.trim(); });
+  wire('kbYtInput','keydown', e=>{ if(e.key==='Enter'){e.preventDefault();kbAddYoutube();} if(e.key==='Escape' && !kbYtWorking) document.getElementById('kbYtRow').hidden=true; });
+  wire('kbYtGo','click', kbAddYoutube);
   wire('kbImportFile','change', async e => {
     const files = Array.from(e.target.files || []);
     e.target.value = ''; // reset so re-picking the same file fires `change` again
@@ -18317,7 +18389,13 @@ async function handleToolCall(name,args){
           if (!r.ok) throw new Error('HTTP ' + r.status);
           src = await r.text();
         } catch(e) {
-          return { error: `Could not load transcript for ${reqId}: ${e.message}` };
+          if (knownVideo.added) {
+            try {
+              const r = await fetch(AIMM_PROXY_URL.replace(/\/+$/, '') + '/kb/transcript?id=' + encodeURIComponent(reqId));
+              if (!r.ok) throw new Error('HTTP ' + r.status);
+              src = (await r.json()).transcript || '';
+            } catch (remoteError) { return { error: `Could not load transcript for ${reqId}: ${remoteError.message}` }; }
+          } else return { error: `Could not load transcript for ${reqId}: ${e.message}` };
         }
         const MAX_BYTES = 4000;
         const q = (args.query || '').toString().trim().toLowerCase();

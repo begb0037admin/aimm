@@ -156,6 +156,10 @@ the local backfill script described in the repository's ingest documentation.
 It sends complete per-video chunk sets to `/kb/upsert`, so refreshed videos
 also remove stale vectors — provided `AIMM_KV` is bound as above.
 
+## Insight YouTube link import
+
+Set `APIFY_TOKEN` as a Worker secret before deploying this route. The browser sends only a YouTube URL; the Worker keeps the token server-side, files the transcript in `AIMM_KV`, and embeds its chunks in `VEC_YT_KB`. The existing `AIMM_KV`, `VEC_YT_KB`, and `VOYAGE_API_KEY` bindings are required.
+
 ## Updating
 
 - Code change in `worker/src/index.js` → `npx wrangler deploy` again.
