@@ -1,0 +1,15 @@
+# BRIEF: Hope's memory = small core + searchable archive, Hope decides alone
+
+Kevin (22 Nov 2026): Hope's memory must not fill up with every fact; he does not want to see every entry in Library; Hope decides alone what matters. Live today: every extracted fact is kept, newest first, and only the first 2000 bytes reach Hope (24 facts = 2294 bytes, so the oldest are silently cut).
+
+## Behaviour
+1. Two tiers on each fact (STATE.profileFacts): tier 'core' or 'archive'. Only ACTIVE CORE facts are sent to Hope (existing injection path), capped at 15 facts and 1500 bytes. Pinned facts are always core and count toward the cap.
+2. End-of-call extraction (extractProfile / maybeExtractProfile) saves only durable, important facts: the prompt asks for an importance score 1-5 per fact and drops anything below 4; one-offs and session details are never saved. New facts go to core; keep the empty-array and placeholder guards already live (build 2026-11-22.2).
+3. Consolidation after every extraction run: if core is over cap, make one model call that (a) merges near-duplicate or overlapping facts into one clearer fact, and (b) chooses the least useful facts to demote to archive. Hope decides alone: no user prompt, no confirmation. Nothing is ever deleted by consolidation; merged originals are kept in archive with merged_into set. Never demote pinned facts.
+4. Archive search: new page tool memory_search {query, n} that does keyword/BM25-style retrieval over archive facts (and returns text, category, date). Hope calls it when something may have been remembered earlier. Add it to the tool catalogue/manifest and the voice tool list; scripts/hope-tool-sync.mjs and tests/tool-sync.test.mjs must stay green; Jacob will register it on the live ElevenLabs agent via the connector afterwards. Add one line to Hope's coverage rules explaining core vs archive. Reading an archive fact via the tool bumps lastUsed; a recently used archive fact is a candidate for promotion to core at the next consolidation.
+5. One-time migration on load (idempotent, versioned flag): first save a full backup of the current facts (localStorage key plus a note in status), then run the consolidation so the existing 24 facts become at most 15 core, the rest archive. Skip silently if no model token is available and retry next load. Never lose a fact.
+6. UI: the Library tab (live, build 2026-11-22.8) deliberately has NO Hope-memory section, so build NO new UI. Keep the existing (hidden) memory render working with core only and expose small helper functions (archive count, archive search) so a future screen can use them. Core bytes still budgeted at 1500.
+7. Sync legacy STATE.profile string from core only.
+
+## Rules
+Codex only; no emoji; no boxes; keep existing ids/classes/handlers; ROOM TO BREATHE; bump AIMM_BUILD to 2026-11-22.9; update the 3 build-stamp tests; tests with no network for tier logic, caps, consolidation parsing (mock the model), migration idempotence and backup, memory_search ranking, pinned protection. Run all tests. Do NOT commit, push or deploy; report diff summary and results.
