@@ -3488,33 +3488,14 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 </div>
 
 <div class="tabs oz-tabstrip">
-  <!-- TAB ORDER — R5 Ozone-12 redesign (2026-08-17): the reference's 6-tab
-       rack (MixCheck, Workbench, Library, Insight, Snapshots, Settings) in
-       ITS exact order, THEN the real tabs that have no reference counterpart
-       appended after (Conversation, Marketing, Community) — per the round-5
-       brief's "don't delete real navigation" rule. Settings is unhidden here
-       as the single Settings entry point (it was a toolbar-only shortcut
-       pre-R5). data-tab/data-label/
-       data-persona-label are unchanged so updateTabLabels() / persona colour
-       rules / drag-reorder (aimmTabOrder_v2) keep working untouched.
-       Icon markup follows the shared Lucide sprite. -->
+  <!-- Fixed tab order: Mix Check, Library, MixBus, Plugins, Community,
+       Marketing, Settings. Icon markup follows the shared Lucide sprite. -->
   <!-- Default-active tab (2026-09-05): Mix Check opens first. -->
   <button class="tab oz-tab active" data-tab="mixcheck" data-label="Mix Check" title="Mix Check" data-persona-label=""><span class="tab-ico"><svg class="ic ic-24" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-tab-mixcheck"/></svg></span><span class="tab-label">Mix Check</span></button>
   <button class="tab oz-tab" data-tab="library" data-label="Library" title="Library" data-persona-label=""><span class="tab-ico"><svg class="ic ic-24" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-tab-library"/></svg></span><span class="tab-label">Library</span></button>
   <button class="tab oz-tab" data-tab="mixbus" data-label="MixBus" title="MixBus" data-persona-label=""><span class="tab-ico"><svg class="ic ic-24" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-tab-mixbus"/></svg></span><span class="tab-label">MixBus</span></button>
   <button class="tab oz-tab" data-tab="plugins" data-label="Plugins" title="Plugins" data-persona-label=""><span class="tab-ico"><svg class="ic ic-24" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-tab-plugins"/></svg></span><span class="tab-label">Plugins</span></button>
-  <!-- Snapshots tab — relocated home for the favourited pill grid + Session
-       Snapshots list. Creation (Snapshot → Luna chat) stays in Hope's
-       chat (the persistent rail, docked on every tab) so save-from-chat is
-       in-context; viewing / managing lives here. Bookmark glyph echoes the
-       section-head icons in-panel. -->
-  <!-- Settings is the single navigation entry for settings; all settings
-       sections live in this panel. -->
-  <button class="tab oz-tab" data-tab="settings" data-label="Settings" title="Settings" data-persona-label=""><span class="tab-ico"><svg class="ic ic-24" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-tab-settings"/></svg></span><span class="tab-label">Settings</span></button>
-  <!-- Real tabs with no reference counterpart — appended after the
-       reference's 6, per round-5 brief item 6 ("don't delete real
-       navigation"). Icons/labels unchanged from pre-R5.
-       2026-09-05 (board item 12 correction, Kevin's ask): the Conversation
+  <!-- 2026-09-05 (board item 12 correction, Kevin's ask): the Conversation
        nav button (data-tab="voice") REMOVED here — Hope's chat is now a
        permanent rail on every tab, so a standalone Conversation tab is
        redundant. The underlying `#voice` panel + `#aichatHome` DOM node are
@@ -3527,12 +3508,11 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
        either way: `#railReopen` is a global position:fixed button, not
        scoped to any tab, so chat is reachable from any tab on mobile
        regardless of where `.aichat-layout` is physically parked at rest.
-       Tab-strip width: no CSS change needed — `.tabs.oz-tabstrip .tab.oz-tab`
-       already uses `flex:1 1 0` (R3 round 15, "the 9 tabs flex to share the
-       strip width"), so the remaining tabs auto-grow to fill the freed
-       space and the strip's start/end position is unchanged. -->
-  <button class="tab oz-tab" data-tab="marketing" data-label="Marketing" title="Marketing" data-persona-label=""><span class="tab-ico"><svg class="ic ic-24" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-tab-marketing"/></svg></span><span class="tab-label">Marketing</span></button>
+       The seven-tab grid shares the strip width in DOM order. -->
   <button class="tab oz-tab" data-tab="community" data-label="Community" title="Community" data-persona-label="Hope"><span class="tab-ico"><svg class="ic ic-24" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-tab-community"/></svg></span><span class="tab-label">Community</span></button>
+  <button class="tab oz-tab" data-tab="marketing" data-label="Marketing" title="Marketing" data-persona-label=""><span class="tab-ico"><svg class="ic ic-24" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-tab-marketing"/></svg></span><span class="tab-label">Marketing</span></button>
+  <!-- Settings is the single navigation entry for settings; all settings sections live in this panel. -->
+  <button class="tab oz-tab" data-tab="settings" data-label="Settings" title="Settings" data-persona-label=""><span class="tab-ico"><svg class="ic ic-24" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-tab-settings"/></svg></span><span class="tab-label">Settings</span></button>
 </div>
 <section class="tab-intro" id="tabIntro" aria-live="polite" aria-atomic="true" aria-labelledby="tabIntroTitle">
   <h2 id="tabIntroTitle">Compare your mix with a reference</h2>
@@ -5823,7 +5803,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.23';
+const AIMM_BUILD = '2026-11-23.25';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11540,43 +11520,15 @@ function updateTabLabels(activeTab){
   }
 }
 document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));t.classList.add('active');document.getElementById(t.dataset.tab).classList.add('active');updateTabLabels(t);if(t.dataset.tab==='plugins')invScheduleFrameFit();if(typeof applyFloatMicVisibility==='function')applyFloatMicVisibility();if(typeof notifyTabChangeIfActive==='function')notifyTabChangeIfActive(t.dataset.tab);});});
-// Upgrade persisted tab ids once, preserving their exact order and unknown future ids.
 function aimmMapLegacyTabId(id){
   return ({chain:'mixbus',eq:'mixcheck',knowledge:'library',snapshots:'library'})[id] || id;
 }
-function aimmMigrateTabOrderIds(order){
-  // A pre-.4 order used "library" for Plugins. Its chain/eq ids identify
-  // that format; in the current order "library" means this page.
-  const oldPluginOrder=order.includes('library') && !order.includes('plugins') && (order.includes('chain') || order.includes('eq'));
-  return [...new Set(order.map(id => typeof id==='string' ? aimmMapLegacyTabId(oldPluginOrder && id==='library' ? 'plugins' : id) : id))];
-}
-(function aimmMigrateStoredTabOrder(){
+// The markup defines the fixed tab order; discard orders saved by older builds.
+(function aimmClearStoredTabOrder(){
   try{
-    const key='aimmTabOrder_v2', raw=localStorage.getItem(key);
-    if(!raw)return;
-    const order=JSON.parse(raw);
-    if(!Array.isArray(order))return;
-    const migrated=aimmMigrateTabOrderIds(order);
-    if(migrated.length!==order.length || migrated.some((id,i)=>id!==order[i]))localStorage.setItem(key,JSON.stringify(migrated));
-  }catch(e){console.warn('[tab-order] migration failed',e);}
-})();
-// Tab order persistence — replay Kev's custom order when one exists; otherwise keep the markup order.
-// v2 is current, while v1 supports orders saved by older builds.
-(function aimmReplayTabOrder(){
-  try{
-    const raw = localStorage.getItem('aimmTabOrder_v2') || localStorage.getItem('aimmTabOrder_v1');
-    if(!raw) return;
-    const savedOrder = JSON.parse(raw);
-    if(!Array.isArray(savedOrder) || !savedOrder.length) return;
-    const order = aimmMigrateTabOrderIds(savedOrder);
-    const tabsContainer = document.querySelector('.tabs');
-    if(!tabsContainer) return;
-    const tabsById = new Map();
-    tabsContainer.querySelectorAll('.tab').forEach(t => { if(t.dataset.tab) tabsById.set(t.dataset.tab, t); });
-    order.forEach(id => { const t = tabsById.get(id); if(t){ tabsContainer.appendChild(t); tabsById.delete(id); }});
-    // Tabs absent from the saved order retain their relative markup order.
-    tabsById.forEach(t => tabsContainer.appendChild(t));
-  }catch(e){ console.warn('[tab-order] replay failed', e); }
+    localStorage.removeItem('aimmTabOrder_v1');
+    localStorage.removeItem('aimmTabOrder_v2');
+  }catch(e){ console.warn('[tab-order] cleanup failed', e); }
 })();
 // Drag-to-reorder the tab nav via Sortable.js (already loaded globally for
 // the Reference + Workbench drag layers). delay:150 ms press-and-hold so a
@@ -13111,14 +13063,15 @@ const TOOL_DEFS=[
   {type:'function',name:'switch_tab',description:`Navigate the app to a different tab so Kev physically sees what you\'re working on with him. Call this when he asks to "look at", "open", "go to", "check", or "switch to" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to Plugins; he wants to review his mix so you go to Mix Check; he wants to dig through saved research so you go to Library). The visual switch is the point — it confirms to Kev that you\'re collaborating with him on the same screen.
 
 Tabs:
-- plugins (Plugins) — installed Plugin Companion scan plus separate MixBus recommendation catalogue
-- mixbus (MixBus) — bus chains, plugin slots, settings notes
-- library (Library) — videos, notes, tips and saved chats; knowledge and snapshots are aliases
 - mixcheck (Mix Check) — mix analysis, reference comparison, transport and Fix Queue
-- marketing (Marketing) — release strategy + Pop A&R thinking
+- library (Library) — videos, notes, tips and saved chats; knowledge and snapshots are aliases
+- mixbus (MixBus) — bus chains, plugin slots, settings notes
+- plugins (Plugins) — installed Plugin Companion scan plus separate MixBus recommendation catalogue
 - community (Community) — social presence
+- marketing (Marketing) — release strategy + Pop A&R thinking
+- settings (Settings) — provider access and app preferences
 
-Brief Kev verbally as you do it: "ok, hopping over to Library" or "let me pull up the Plugin Library" — keep it natural, ONE short phrase. Do NOT say "I\'m calling switch_tab" or any other meta narration. Don\'t switch tabs gratuitously — only when it\'s genuinely the right surface for what he asked.`,parameters:{type:'object',properties:{tab:{type:'string',enum:['mixbus','library','knowledge','snapshots','mixcheck','plugins','marketing','community'],description:'Tab id matching the visible label; knowledge and snapshots open Library; chain and eq are legacy aliases.'}},required:['tab']}},
+Brief Kev verbally as you do it: "ok, hopping over to Library" or "let me pull up the Plugin Library" — keep it natural, ONE short phrase. Do NOT say "I\'m calling switch_tab" or any other meta narration. Don\'t switch tabs gratuitously — only when it\'s genuinely the right surface for what he asked.`,parameters:{type:'object',properties:{tab:{type:'string',enum:['mixcheck','library','mixbus','plugins','community','marketing','settings','knowledge','snapshots'],description:'Tab id matching the visible label; knowledge and snapshots open Library; chain and eq are legacy aliases.'}},required:['tab']}},
   {type:'function',name:'inventory_navigate',description:'Navigate the live AIMM inventory sidebar. This opens the Plugins tab if needed, then selects the requested status, Library filter, category, or tool. Returns a snapshot of the whole sidebar plus the selected live view. This changes only the visible view; it does not scan, download, share, or add anything. Use it whenever Kev asks to open or inspect one of the AIMM inventory menu items. Disabled items return their current unavailable reason; connected items can open their existing screen.',parameters:{type:'object',properties:{item:{type:'string',enum:['all_plugins','updates_available','up_to_date','manual_check','vendor_app','unchecked','stale_results','check_errors','install_manager','batch_management','remove_old_installers','duplicates','unused','license_vault','share_plugin_list','compare_profiles','aimm_license','ilok_license_manager','library_all_plugins','favorites','my_tags','tag_manager','hidden','eq_filter','dynamics','pitch_modulation','reverb','delay','distortion_amps','utility_metering','imaging','instruments_midi','restoration','channel_strips_multi_fx','status_section','tools_section','library_section'],description:'The exact AIMM inventory sidebar item to open.'}},required:['item']}},
   {type:'function',name:'inventory_search',description:'Read the current local AIMM scan without changing the visible Plugins view. Returns product status and known latest versions; synthetic preview rows are not proof of installed plug-ins. Use scan results to verify an installed plug-in before discussing it or adding it to a MixBus.',parameters:{type:'object',properties:{query:{type:'string',description:'Words from the plug-in or publisher name; an empty query lists the current scanned inventory.'},format:{type:'string',enum:['AU','VST2','VST3','CLAP'],description:'Optional exact plug-in format filter.'},status:{type:'string',enum:['updates_available','up_to_date','manual_check','vendor_app','unchecked'],description:'Optional product update status filter.'},offset:{type:'integer',minimum:0,description:'Zero-based result offset for paging.'},limit:{type:'integer',minimum:1,maximum:50,description:'Number of product results to return, maximum 50.'}},required:[]}},
   {type:'function',name:'inventory_summary',description:'Read the current local AIMM scan totals, formats, update statuses and leading vendors without changing the visible Plugins view. Does not scan folders.',parameters:{type:'object',properties:{},required:[]}},
@@ -17780,7 +17733,7 @@ async function handleToolCall(name,args){
         // mid-call notify so we don\'t echo the change back at Hope.
         const requestedTab = String(args.tab || '').toLowerCase().trim();
         const tab = aimmMapLegacyTabId(requestedTab);
-        const VALID = ['mixbus','library','mixcheck','plugins','marketing','community'];
+        const VALID = ['mixcheck','library','mixbus','plugins','community','marketing','settings'];
         if (!VALID.includes(tab)) throw new Error('Unknown tab: '+requestedTab+'. Valid: '+VALID.join(', '));
         const btn = document.querySelector('.tab[data-tab="'+tab+'"]');
         if (!btn) throw new Error('Tab button not present in the DOM: '+tab);
@@ -19603,12 +19556,14 @@ function getRecentCallContext(){
 // when Kev has moved between tabs ("ok, looking for a plugin to fix that?"
 // reads way more naturally than "ok, picking up.").
 const TAB_DISPLAY_NAMES = {
-  mixbus:     'MixBus',
-  knowledge:  'Insight',
   mixcheck:   'Mix Check',
+  library:    'Library',
+  mixbus:     'MixBus',
   plugins:    'Plugins',
-  marketing:  'Marketing',
   community:  'Community',
+  marketing:  'Marketing',
+  settings:   'Settings',
+  knowledge:  'Insight',
   snapshots:  'Snapshots'
 };
 
