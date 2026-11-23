@@ -1,3 +1,12 @@
+## 2026-11-23 build 2026-11-23.23 — Library redesign, MixBus restyle, new tab strip, Inter bundled, icons and motion (LIVE)
+Deployed 23 Nov 2026 after Kevin's "approve - deploy" (main 8b001396, Worker aimm version d841e73b). Verified live: AIMM_BUILD 2026-11-23.23, /fonts/inter-latin-wght.woff2 served (immutable cache), real-browser check of tabs and titles, no page errors.
+- Library: embedded YouTube player + 494-video playlist, Browse card, neutral cards, tab intro. MixBus restyled neutral. Tab order: Mix Check, Library, MixBus, Plugins, Settings, Marketing, Community.
+- Default title style on every tab: Inter 20px/500 (token --aimm-section-title-size); no coloured titles (docs/UI_DESIGN_STANDARD.md, docs/CLAUDE.md).
+- Tab strip rebuilt from scratch (Jules docs/handover-assets/jules-tabbar): teal hover/selected, 24px outline icons, no scale/lift/glow.
+- Inter packaged in the app, one default font; new stroke icon set (Lucide ISC sprite) and motion tokens.
+- Regression fixes after the highlight cleanup (Jules docs/handover-assets/jules-regression-fix): solid teal selected rows with black ink, Plugins sidebar neutral (no colour), MixBus Add plugin hover, Settings/Library hover contrast.
+- Open: six Settings helper labels low contrast at rest; coloured elements left on Mix Check (navy strip, Spotify glow), Marketing/Community .tip-box.alt, Settings Backup button (Kevin to decide); 560-wide label truncation outside the tab strip; Hope-rail icons are Markey's. Annotate tool for Kevin's feedback lives outside the repo (~/aimm-review).
+
 ## 2026-11-23 Library follow-ups and player redesign (NOT DEPLOYED; hope-memory build .9 is LIVE)
 - Hope memory core/archive deployed as build 2026-11-22.9 (main 142e049a); memory_search registered on Hope's live agent (74 tools).
 - Library visual fixes (flush bars, hover pills, rest ink, Jules review fixes, video summary view, 6-column Videos) are built on branch library-bars, uncommitted, preview only, awaiting Jules re-review and Kevin's yes.
