@@ -25,9 +25,8 @@ test('extraction treats parsed empty arrays as no facts and accepts valid JSON',
     assert.deepEqual(Array.from(await context.extractProfile('transcript', [])), [], answer);
   }
   reply = '- Prefers dry vocals\n- Mixes at low volume';
-  assert.deepEqual(Array.from(await context.extractProfile('transcript', []), f => f.text),
-    ['Prefers dry vocals', 'Mixes at low volume']);
-  reply = '[{"category":"vocals","text":"Prefers dry vocals"},{"category":"misc","text":"[]"}]';
+  assert.deepEqual(Array.from(await context.extractProfile('transcript', [])), []);
+  reply = '[{"category":"vocals","text":"Prefers dry vocals","importance":4},{"category":"misc","text":"[]","importance":5},{"category":"misc","text":"Temporary preference","importance":3}]';
   assert.deepEqual(Array.from(await context.extractProfile('transcript', []), f => f.text), ['Prefers dry vocals']);
 });
 
@@ -42,35 +41,19 @@ test('fact guard rejects short and placeholder answers', () => {
   }
 });
 
-test('load cleanup removes blank facts once and keeps real, pinned and edited facts', () => {
-  const saved = [
-    {id:'bad', text:'[]'},
-    {id:'bad2', text:'n/a'},
-    {id:'real', text:'Prefers dry vocals'},
-    {id:'pinned', text:'[]', pinned:true},
-    {id:'edited', text:'none', edited:true}
-  ];
-  const statuses = [];
-  let saves = 0;
-  let storage = JSON.stringify({profile:'[]', profileFacts:saved});
-  const context = vm.createContext({
-    localStorage: {getItem: () => storage},
-    STORAGE_KEY: 'trapMasterState_v1',
-    STATE: {profile:'', profileFacts:[], chain:{}, favorites:new Set(), symptoms:new Set(), customPlugins:[]},
-    BUSES: [], TOP_PICKS:{}, PROFILE_MAX_LEN:2048,
-    document: {getElementById: () => null},
-    parseLegacyProfileToFacts: () => { throw Error('unexpected migration'); },
-    syncLegacyProfileFromFacts(){ context.STATE.profile = context.STATE.profileFacts.map(f => f.text).join('\n\n'); },
-    saveState(){ saves++; storage = JSON.stringify({profile:context.STATE.profile, profileFacts:context.STATE.profileFacts}); },
-    setProfileStatus(message){ statuses.push(message); },
-    console
+test('load preserves all historical facts for backed-up migration', async () => {
+  const saved = [{id:'bad',text:'[]'},{id:'real',text:'Prefers dry vocals'},{id:'pinned',text:'[]',pinned:true}];
+  const storage=JSON.stringify({profileFacts:saved});
+  let migrationCalls=0;
+  const context=vm.createContext({
+    localStorage:{getItem:k=>k==='trapMasterState_v1'?storage:null,removeItem(){}}, STORAGE_KEY:'trapMasterState_v1',PROFILE_MIGRATION_KEY:'migration',
+    STATE:{profile:'',profileFacts:[],chain:{},favorites:new Set(),symptoms:new Set(),customPlugins:[]},
+    BUSES:[],TOP_PICKS:{},PROFILE_MAX_LEN:1500,document:{getElementById:()=>null},
+    migrateProfileFacts(){migrationCalls++;},console
   });
-  vm.runInContext(guard + source('function loadState()', '// ========== PROFILE — cross-conversation memory'), context);
+  vm.runInContext(source('function loadState()', '// ========== PROFILE — cross-conversation memory'),context);
   context.loadState();
-  assert.deepEqual(Array.from(context.STATE.profileFacts, f => f.id), ['real', 'pinned', 'edited']);
-  assert.equal(saves, 1);
-  assert.deepEqual(statuses, ['Removed 2 blank facts']);
-  context.loadState();
-  assert.equal(saves, 1);
-  assert.deepEqual(statuses, ['Removed 2 blank facts']);
+  await new Promise(setImmediate);
+  assert.deepEqual(Array.from(context.STATE.profileFacts,f=>f.id),['bad','real','pinned']);
+  assert.equal(migrationCalls,1);
 });

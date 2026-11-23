@@ -1,5 +1,25 @@
 [
   {
+    "name": "memory_search",
+    "description": "Search Hope's archived cross-call memory when Kev mentions something remembered earlier. Returns fact text, category and date; results may return to core memory.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Keywords or a short question."
+        },
+        "n": {
+          "type": "integer",
+          "description": "Maximum results, 1 to 10; default 5."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
     "name": "get_context",
     "description": "Get the current MixBus state and complete Mix Check session. Includes full-mix spectrum and corridor, all imported Logic stem names/status, every decoded stem's measurements/full-record spectrum/leave-one-out comparison/Fix Queue, current selected-group PCM sum and remainder, plus chart legend colours and line styles. Use this evidence without treating the full-mix corridor as a validated solo-stem or group target.",
     "parameters": {

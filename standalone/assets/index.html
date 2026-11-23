@@ -5921,7 +5921,7 @@ body:has(#library.active) #tabIntro{display:none}
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
-const AIMM_BUILD = '2026-11-22.8';
+const AIMM_BUILD = '2026-11-22.9';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -6467,7 +6467,11 @@ const STATE = {
   profile: '',  // Legacy plain-text dossier. Kept as fallback / back-compat seed for the migration. New fact-chip system uses STATE.profileFacts below; profile string is regenerated from facts on each save so any code path still reading STATE.profile keeps working.
   profileFacts: []  // Cross-conversation memory as individual draggable, categorised facts. Shape: {id, text, category, active, pinned, ts}. Injected into every Hope call via buildProfileDigest. Auto-extracted at end-of-call (Luna appends new facts; manual edits survive).
 };
-const PROFILE_MAX_LEN = 2000;
+const PROFILE_MAX_LEN = 1500;
+const PROFILE_LEGACY_STORAGE_LEN = 2000;
+const PROFILE_CORE_MAX_FACTS = 15;
+const PROFILE_MIGRATION_KEY = 'hopeMemoryTierMigration_v1';
+const PROFILE_BACKUP_KEY = 'hopeMemoryFactsBackup_v1';
 // HOPE'S MEMORY — fact-chip system (2026-05-12). Categories are hardcoded;
 // each fact lands in one of them. Misc is the catch-all + default landing
 // spot for Luna-auto-extracted facts that arrive uncategorised.
@@ -6544,7 +6548,7 @@ function saveState(){
         pluginStageOverrides:STATE.pluginStageOverrides||{},
         topPicksOverride:STATE.topPicksOverride||null,
         profile:(STATE.profile||'').slice(0, PROFILE_MAX_LEN),
-        profileFacts:(STATE.profileFacts||[]).slice(0, 200)
+        profileFacts:STATE.profileFacts||[]
       };
       localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
       saved=true;
@@ -6582,8 +6586,8 @@ function loadState(){
     if(Array.isArray(d.userPresets))STATE.userPresets=d.userPresets.slice(0,100);
     if(d.pluginStageOverrides && typeof d.pluginStageOverrides==='object') STATE.pluginStageOverrides=d.pluginStageOverrides;
     if(d.topPicksOverride && typeof d.topPicksOverride==='object') STATE.topPicksOverride=d.topPicksOverride;
-    if(typeof d.profile === 'string') STATE.profile = d.profile.slice(0, PROFILE_MAX_LEN);
-    if(Array.isArray(d.profileFacts)) STATE.profileFacts = d.profileFacts.slice(0, 200).filter(f => f && typeof f.text === 'string');
+    if(typeof d.profile === 'string') STATE.profile = d.profile.slice(0, PROFILE_LEGACY_STORAGE_LEN);
+    if(Array.isArray(d.profileFacts)) STATE.profileFacts = d.profileFacts.filter(f => f && typeof f.text === 'string');
   }catch(e){console.warn('loadState failed',e);}
   // Migration: if there's a legacy profile string but no facts array yet,
   // split the string into facts and categorise heuristically. The legacy
@@ -6595,17 +6599,11 @@ function loadState(){
       console.log('[hope-memory] migrated ' + STATE.profileFacts.length + ' facts from legacy profile blob');
     }
   } catch(e){ console.warn('[hope-memory] legacy migration failed', e); }
-  // Remove only unedited, unpinned junk left by older extraction runs.
-  try {
-    const before = STATE.profileFacts.length;
-    STATE.profileFacts = STATE.profileFacts.filter(f => f.pinned || f.edited || isMeaningfulFactText(f.text));
-    const removed = before - STATE.profileFacts.length;
-    if (removed){
-      syncLegacyProfileFromFacts();
-      saveState();
-      setProfileStatus('Removed ' + removed + ' blank facts', 'ok');
-    }
-  } catch(e){ console.warn('[hope-memory] blank fact cleanup failed', e); }
+  // Do not remove historical facts on load. The versioned migration backs up
+  // the complete collection before assigning tiers.
+  if(STATE.profileFacts.length) Promise.resolve().then(()=>
+    localStorage.getItem(PROFILE_MIGRATION_KEY) ? consolidateProfileFacts() : migrateProfileFacts()
+  ).catch(e=>console.warn('[hope-memory] migration failed',e));
   // One-time migration: any custom plugin saved with p:'other' + a pLabel that
   // matches a known publisher alias (Plugin Alliance, NI, UA, etc.) gets
   // promoted to the canonical PUBS key so it shows up under the right pill
@@ -6688,15 +6686,21 @@ function parseLegacyProfileToFacts(blob){
 }
 // Sum of active fact texts' lengths — what actually goes into Hope's context.
 // Inactive + pinned-text-only metadata doesn't count.
+function profileCoreFacts(){
+  return (STATE.profileFacts || []).filter(f => f && (f.pinned || f.tier !== 'archive') && f.active !== false && !f.merged_into && isMeaningfulFactText(f.text));
+}
+function profileArchiveCount(){
+  return (STATE.profileFacts || []).filter(f => f && f.tier === 'archive').length;
+}
+function profileFactBytes(f){ return new TextEncoder().encode(String(f.text||'')).length; }
 function factsActiveBytes(){
-  return (STATE.profileFacts || []).filter(f => f.active !== false).reduce((sum, f) => sum + (f.text || '').length, 0);
+  return profileCoreFacts().reduce((sum, f) => sum + profileFactBytes(f), 0);
 }
 // Regenerate the legacy STATE.profile plain-text mirror from facts. Keeps
 // any code path still reading STATE.profile (back-compat) working.
 function syncLegacyProfileFromFacts(){
   try {
-    const out = (STATE.profileFacts || [])
-      .filter(f => f.active !== false)
+    const out = profileCoreFacts()
       .map(f => (f.pinned ? '★ ' : '') + (f.text || '').trim())
       .filter(Boolean)
       .join('\n\n');
@@ -6708,28 +6712,117 @@ function syncLegacyProfileFromFacts(){
 // each. Emits a markdown-ish block injected via sendContextualUpdate and
 // the OpenAI-direct chat system prompt.
 function buildProfileDigest(){
-  const facts = (STATE.profileFacts || []).filter(f => f && f.active !== false && (f.text || '').trim());
+  const facts = profileCoreFacts().sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
   if (!facts.length) return '';
-  const byCat = {};
-  for (const f of facts){
-    const cat = PROFILE_CATEGORIES.find(c => c.id === f.category) ? f.category : 'misc';
-    (byCat[cat] = byCat[cat] || []).push(f);
-  }
-  Object.keys(byCat).forEach(k => byCat[k].sort((a,b) => (a.pinned?0:1) - (b.pinned?0:1)));
   let out = "KEV'S PROFILE — what you know about him from previous calls. " +
             "Use this to skip ground he's already covered and tailor suggestions " +
             "to his taste. If something here is wrong, he'll tell you; don't " +
             "second-guess every line. Don't recite this back at him verbatim.\n\n";
-  for (const cat of PROFILE_CATEGORIES){
-    const arr = byCat[cat.id];
-    if (!arr || !arr.length) continue;
-    out += '## ' + cat.label + '\n';
-    for (const f of arr){
-      out += '- ' + (f.pinned ? '★ ' : '') + String(f.text || '').trim() + '\n';
-    }
-    out += '\n';
+  let count=0, bytes=new TextEncoder().encode(out).length;
+  let lastCat='';
+  for (const f of facts){
+    if(count>=PROFILE_CORE_MAX_FACTS)break;
+    const cat=PROFILE_CATEGORIES.find(c=>c.id===f.category)||PROFILE_CATEGORIES[PROFILE_CATEGORIES.length-1];
+    const header=cat.id===lastCat?'':'## '+cat.label+'\n';
+    const line='- '+(f.pinned?'★ ':'')+String(f.text||'').trim()+'\n';
+    const nextBytes=new TextEncoder().encode(header+line).length;
+    if(bytes+nextBytes>PROFILE_MAX_LEN)continue;
+    out+=header+line;bytes+=nextBytes;count++;lastCat=cat.id;
   }
   return out.trim();
+}
+// Archive facts stay local and searchable; reading one makes it eligible for
+// promotion when the next consolidation chooses a core set.
+function memorySearch(query, n=5){
+  const terms=String(query||'').toLowerCase().match(/[\p{L}\p{N}]{2,}/gu)||[];
+  if(!terms.length)return [];
+  const unique=[...new Set(terms)];
+  const docs=(STATE.profileFacts||[]).filter(f=>f && f.tier==='archive' && isMeaningfulFactText(f.text));
+  const tokenise=s=>String(s||'').toLowerCase().match(/[\p{L}\p{N}]{2,}/gu)||[];
+  const lengths=docs.map(f=>tokenise(f.text).length);
+  const avg=lengths.reduce((a,b)=>a+b,0)/(lengths.length||1);
+  const ranked=docs.map((f,i)=>{
+    const words=tokenise(f.text), score=unique.reduce((sum,t)=>{
+      const tf=words.filter(w=>w===t).length;
+      if(!tf)return sum;
+      const df=docs.filter(d=>tokenise(d.text).includes(t)).length;
+      const idf=Math.log(1+(docs.length-df+0.5)/(df+0.5));
+      return sum+idf*tf*2.2/(tf+1.2*(0.25+0.75*words.length/(avg||1)));
+    },0);
+    return {fact:f,score};
+  }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score || (b.fact.ts||0)-(a.fact.ts||0));
+  const hits=ranked.slice(0,Math.max(1,Math.min(10,Number(n)||5)));
+  if(hits.length){
+    const now=Date.now();
+    for(const hit of hits)hit.fact.lastUsed=now;
+    saveState();
+  }
+  return hits.map(({fact,score})=>({text:fact.text,category:fact.category||'misc',date:new Date(fact.ts||Date.now()).toISOString().slice(0,10),score:Number(score.toFixed(3))}));
+}
+function parseMemoryConsolidation(raw, facts){
+  let plan;
+  try{plan=JSON.parse(String(raw||'').replace(/^\x60\x60\x60(?:json)?\s*|\s*\x60\x60\x60$/g,''));}catch(_){throw new Error('Invalid consolidation JSON');}
+  if(!plan || !Array.isArray(plan.core_ids) || !Array.isArray(plan.merges))throw new Error('Invalid consolidation plan');
+  const ids=new Set(facts.map(f=>f.id));
+  const used=new Set();
+  const merges=[];
+  for(const m of plan.merges){
+    if(!m || !Array.isArray(m.ids) || m.ids.length<2 || typeof m.text!=='string' || !isMeaningfulFactText(m.text))continue;
+    const source=[...new Set(m.ids)].filter(id=>ids.has(id) && !used.has(id) && !facts.find(f=>f.id===id).pinned);
+    if(source.length<2)continue;
+    source.forEach(id=>used.add(id));
+    merges.push({ids:source,text:m.text.trim().slice(0,280),category:PROFILE_CATEGORIES.some(c=>c.id===m.category)?m.category:'misc'});
+  }
+  return {coreIds:plan.core_ids.filter(id=>ids.has(id)),merges};
+}
+async function consolidateProfileFacts(){
+  const facts=STATE.profileFacts||[];
+  for(const f of facts)if(f && !f.tier)f.tier='core';
+  for(const f of facts)if(f && f.pinned && !f.merged_into)f.tier='core';
+  const candidates=facts.filter(f=>f && f.active!==false && !f.merged_into && isMeaningfulFactText(f.text));
+  const over=candidates.filter(f=>f.tier==='core').length>PROFILE_CORE_MAX_FACTS || factsActiveBytes()>PROFILE_MAX_LEN;
+  const recent=candidates.some(f=>f.tier==='archive' && f.lastUsed && f.lastUsed>(f.lastConsolidated||0));
+  if(!over && !recent){syncLegacyProfileFromFacts();return true;}
+  if(!localStorage.getItem(HOPE_STT_TOKEN_STORAGE))return false;
+  const payload=candidates.map(f=>({id:f.id,text:f.text,category:f.category,pinned:!!f.pinned,tier:f.tier,lastUsed:f.lastUsed||0}));
+  const prompt='Choose a compact durable memory for Hope. Return strict JSON only: {"merges":[{"ids":["source-id-1","source-id-2"],"text":"clear combined fact","category":"misc"}],"core_ids":["existing-id"]}. Merge only genuinely overlapping facts. Never merge or demote pinned facts. Prefer durable preferences and recently used archive facts. Keep at most 15 core facts and about 1500 UTF-8 bytes. Every omitted fact will be archived, never deleted.';
+  const raw=await aimmAiText(prompt,JSON.stringify(payload),1800);
+  const plan=parseMemoryConsolidation(raw,candidates);
+  const mergedIds=new Set();
+  const additions=[];
+  for(const m of plan.merges){
+    const merged={id:newFactId(),text:m.text,category:m.category,tier:'core',active:true,pinned:false,ts:Date.now()};
+    additions.push(merged);
+    for(const id of m.ids)mergedIds.add(id);
+    for(const f of facts)if(m.ids.includes(f.id)){f.tier='archive';f.merged_into=merged.id;}
+  }
+  facts.unshift(...additions);
+  const wanted=new Set(plan.coreIds);
+  for(const f of additions)wanted.add(f.id);
+  const eligible=facts.filter(f=>f && f.active!==false && !f.merged_into && isMeaningfulFactText(f.text));
+  const order=eligible.sort((a,b)=>Number(!!b.pinned)-Number(!!a.pinned) || Number(wanted.has(b.id))-Number(wanted.has(a.id)) || (b.lastUsed||0)-(a.lastUsed||0) || (b.ts||0)-(a.ts||0));
+  let count=0,bytes=0;
+  for(const f of order){
+    const size=profileFactBytes(f);
+    const keep=f.pinned || (wanted.has(f.id) && count<PROFILE_CORE_MAX_FACTS && bytes+size<=PROFILE_MAX_LEN && !mergedIds.has(f.id));
+    f.tier=keep?'core':'archive';
+    f.lastConsolidated=Date.now();
+    if(keep){count++;bytes+=size;}
+  }
+  syncLegacyProfileFromFacts();
+  await saveState();
+  renderHopeMemory();
+  return true;
+}
+async function migrateProfileFacts(){
+  if(localStorage.getItem(PROFILE_MIGRATION_KEY))return;
+  if(!localStorage.getItem(HOPE_STT_TOKEN_STORAGE))return;
+  if(!localStorage.getItem(PROFILE_BACKUP_KEY)){
+    localStorage.setItem(PROFILE_BACKUP_KEY,JSON.stringify({version:1,ts:Date.now(),facts:STATE.profileFacts,profile:STATE.profile}));
+    setProfileStatus('Memory backup saved before archive migration', 'ok');
+  }
+  const ok=await consolidateProfileFacts();
+  if(ok && await saveState())localStorage.setItem(PROFILE_MIGRATION_KEY,'1');
 }
 // ----- Status pill -----
 function setProfileStatus(msg, cls){
@@ -6874,7 +6967,7 @@ function wireFactsDragdrop(){
 function renderHopeMemory(){
   const container = document.getElementById('hopeMemoryCategories');
   if (!container) return;
-  const facts = STATE.profileFacts || [];
+  const facts = profileCoreFacts();
   const collapsedSet = (typeof loadCollapsedSet === 'function') ? loadCollapsedSet() : new Set();
   const byCat = {};
   for (const f of facts){
@@ -6930,10 +7023,10 @@ function renderHopeMemory(){
   const meter = document.getElementById('hopeMemBytes');
   if (meter){
     meter.textContent = used + ' / ' + PROFILE_MAX_LEN + ' bytes';
-    meter.classList.toggle('amber', used >= 1500 && used < 1800);
-    meter.classList.toggle('red', used >= 1800);
+    meter.classList.toggle('amber', used >= 1200 && used < 1500);
+    meter.classList.toggle('red', used >= 1500);
   }
-  insightUpdateBudget('memory', facts.filter(f => f.active !== false).length, facts.length, used, PROFILE_MAX_LEN, 1800, 2000);
+  insightUpdateBudget('memory', facts.length, facts.length, used, PROFILE_MAX_LEN, 1200, 1500);
   // Re-wire Sortable on the freshly rendered lists.
   try { wireFactsDragdrop(); } catch(e){ console.warn('[hope-memory] sortable wire failed', e); }
 }
@@ -7015,11 +7108,11 @@ CATEGORIES — each fact tagged with ONE of:
 - workflow — project setup, routing, monitoring, habits
 - misc — anything else
 
-OUTPUT: a STRICT JSON array of new facts. No preamble. No markdown. Each item: {"category":"<id>","text":"<terse present-tense fact, max 180 chars>"}. Empty array if nothing new.
+OUTPUT: a STRICT JSON array of new facts. No preamble. No markdown. Each item: {"category":"<id>","text":"<terse present-tense fact, max 180 chars>","importance":<integer 1-5>}. Only score 4 or 5 for facts useful across many calls. Empty array if nothing new.
 
 Example:
-[{"category":"vocals","text":"prefers Soothe2 over de-essers for hat clash"},
- {"category":"workflow","text":"mixes at -16 LUFS reference level"}]`;
+[{"category":"vocals","text":"prefers Soothe2 over de-essers for hat clash","importance":4},
+ {"category":"workflow","text":"mixes at -16 LUFS reference level","importance":5}]`;
 
   const userMsg =
 `Existing dossier (do NOT re-output these):
@@ -7043,13 +7136,9 @@ ${transcript}`;
       if (Array.isArray(candidate)) parsed = candidate;
     }
   } catch(_) {}
-  if (!parsed){
-    // Plaintext fallback — split on lines, strip bullets, categorise via heuristic.
-    const lines = text.split(/\n+/).map(l => l.trim().replace(/^[-*•]\s*/, '')).filter(Boolean);
-    parsed = lines.map(l => ({ category: categorizeFactText(l), text: l }));
-  }
+  if (!parsed) parsed=[];
   return parsed
-    .filter(f => f && isMeaningfulFactText(f.text))
+    .filter(f => f && isMeaningfulFactText(f.text) && Number.isInteger(f.importance) && f.importance>=4 && f.importance<=5)
     .map(f => ({
       category: PROFILE_CATEGORIES.find(c => c.id === f.category) ? f.category : 'misc',
       text: String(f.text).trim().slice(0, 280)
@@ -7071,10 +7160,7 @@ async function maybeExtractProfile(){
   setProfileStatus('Extracting facts from call…', 'busy');
   try {
     const newFacts = await extractProfile(transcript, STATE.profileFacts);
-    if (!Array.isArray(newFacts) || !newFacts.length){
-      setProfileStatus('No new learnings from this call', '');
-      return;
-    }
+    if (!Array.isArray(newFacts))throw new Error('Invalid extraction result');
     STATE.profileFacts = STATE.profileFacts || [];
     let added = 0;
     for (const nf of newFacts){
@@ -7088,18 +7174,18 @@ async function maybeExtractProfile(){
         category: nf.category || 'misc',
         active: true,
         pinned: false,
+        tier: 'core',
         ts: Date.now()
       });
       added++;
     }
+    if (added > 0)await saveState();
+    await consolidateProfileFacts();
     if (added > 0){
-      syncLegacyProfileFromFacts();
-      saveState();
-      renderHopeMemory();
       setProfileStatus('Added ' + added + ' new fact' + (added === 1 ? '' : 's') + ' from call', 'ok');
       console.log('[profile] appended ' + added + ' new fact(s) from end-of-call extraction (' + (newFacts.length - added) + ' duped)');
     } else {
-      setProfileStatus('Nothing new — all extracted facts already on file', '');
+      setProfileStatus('No new learnings from this call', '');
     }
   } catch (e){
     console.warn('[profile] extraction failed:', e);
@@ -13109,6 +13195,7 @@ function rtLogTool(fn,args,result,isErr){
 // ========== TOOLS exposed to the model ==========
 // These mutate STATE and re-render. The model uses them to read + modify the workbench.
 const TOOL_DEFS=[
+  {type:'function',name:'memory_search',description:"Search Hope's archived cross-call memory when Kev mentions something remembered earlier. Returns fact text, category and date; results may return to core memory.",parameters:{type:'object',properties:{query:{type:'string',description:'Keywords or a short question.'},n:{type:'integer',description:'Maximum results, 1 to 10; default 5.'}},required:['query']}},
   {type:'function',name:'get_context',description:'Get the current MixBus state and complete Mix Check session. Includes full-mix spectrum and corridor, all imported Logic stem names/status, every decoded stem\'s measurements/full-record spectrum/leave-one-out comparison/Fix Queue, current selected-group PCM sum and remainder, plus chart legend colours and line styles. Use this evidence without treating the full-mix corridor as a validated solo-stem or group target.',parameters:{type:'object',properties:{},required:[]}},
   {type:'function',name:'set_genre',description:'Switch the active genre (changes which plugins are starred as top picks).',parameters:{type:'object',properties:{genre:{type:'string',enum:['hiphop','rnb','pop','afrobeats','trap','lofi']}},required:['genre']}},
   {type:'function',name:'switch_tab',description:`Navigate the app to a different tab so Kev physically sees what you\'re working on with him. Call this when he asks to "look at", "open", "go to", "check", or "switch to" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to Plugins; he wants to review his mix so you go to Mix Check; he wants to dig through saved research so you go to Library). The visual switch is the point — it confirms to Kev that you\'re collaborating with him on the same screen.
@@ -16701,7 +16788,7 @@ const HOPE_USAGE_VOICE = {
 };
 const HOPE_CHAIN_BUILD_RULES = `Building a chain from a video: 1) Search the videos. Name the video and its creator, and read out the plugin list exactly as the video shows it. Never call something "from the video" if it is not. 2) For each plugin, read vocal_favorites_read for the matching bus chain (vocal, drums, 808 or master) and prefer owned, then close version, then owned equivalent, then Logic Pro 13 stock. Verify scanned ownership. If a video plug-in is swapped, say plainly which favourite replaces it and why. 3) Clear the bus, then add the plugins in the video's order. 4) Go through the chain one plugin at a time. Pin that plugin's settings first, then say them out loud. The highlight moves to that plugin, so Kev can see its settings as you talk. 5) Tell Kev which plugins are swaps and which are exact matches.`;
 const HOPE_INVENTORY_RULES = `Two separate plug-in lists exist. The MixBus library/catalogue in context is what AIMM recommends from; it is not an installed inventory or installed count. Kev's INSTALLED plug-ins are the Plugin Companion scan shown in the Plugins tab. For any question about what he has installed, how many plug-ins he has, updates, duplicates, Unused, vendor apps, a vendor's plug-ins, or the companion, use inventory_summary, inventory_search, inventory_status, inventory_duplicates or inventory_unused as appropriate. Never answer these questions from MixBus catalogue numbers and never guess a number. If no scan is available, say the Plugins tab has no scan loaded and the companion may not be connected. Synthetic preview rows are not installed plug-ins. Use inventory_navigate to open a requested inventory sidebar item and report disabled items' unavailable reason. inventory_search and inventory_summary leave the visible view unchanged. Use inventory_set_favorite for scanned or installed plug-ins, and toggle_favorite only for the MixBus catalogue; say whether the saved change succeeded, was already set, was ambiguous, was not found, or was not saved. Starring needs no confirmation. vocal_favorites_read reads the video favourites; for vocal_favorites_apply, read the proposed counts aloud with confirmed false, wait for Kev’s clear yes, then call confirmed true and report verified starred, already and unresolved counts. When building a chain from a video read the matching bus chain favourites first (vocal, drums, 808 or master) and prefer in order: owned, close version, equivalent, Logic stock; say which video plug-in was swapped for which favourite. inventory_reveal and inventory_rescan use the existing controls. For every inventory change tool — inventory_move_to_unused, inventory_restore, inventory_move_to_trash, inventory_mark_vendor_app_checked, inventory_unmark_vendor_check, inventory_keep_newest_duplicates and inventory_add_to_bus — call with confirmed false first, read the returned summary aloud briefly, wait for Kev's clear yes, then call with confirmed true. Trash needs a separate yes before setting confirmed_trash true. For inventory_add_to_bus, first verify the exact installed name and publisher in the scan and choose a valid bus and stage; only use it when Kev explicitly asks. Menu navigation alone does not authorize scanning folders, downloading installers, sharing the inventory, or changing MixBus.`;
-const HOPE_COVERAGE_RULES = `Unlicensed UAD products are excluded from the installed library and inventory counts because UA installs products the account may not own. The Plugins summary in your live context is the installed scan, not the MixBus catalogue. After inventory_rescan, use its completed before_total, after_total and lastScanAt; if timed_out, say the scan was not verified. For snapshots_apply, snapshots_add_note, plugin_tag_set, plugin_hide, saved_target_apply, mixbus_load_preset, mixbus_auto_fill and clear_bus, call with confirmed false, read the summary aloud, wait for Kev's clear yes, then repeat with confirmed true. Report a write as successful only when its result says ok true. Mix Check audio-file loading stays manual through the browser file picker. settings_status is read-only; never open Settings or reveal any key, token or secret value. Report only the credits returned by settings_status, never state a dollar spent figure, and say you can't see anything the tool does not return.`;
+const HOPE_COVERAGE_RULES = `Hope's active core memory is brief; use memory_search when older preferences or details may be in the archive. Unlicensed UAD products are excluded from the installed library and inventory counts because UA installs products the account may not own. The Plugins summary in your live context is the installed scan, not the MixBus catalogue. After inventory_rescan, use its completed before_total, after_total and lastScanAt; if timed_out, say the scan was not verified. For snapshots_apply, snapshots_add_note, plugin_tag_set, plugin_hide, saved_target_apply, mixbus_load_preset, mixbus_auto_fill and clear_bus, call with confirmed false, read the summary aloud, wait for Kev's clear yes, then repeat with confirmed true. Report a write as successful only when its result says ok true. Mix Check audio-file loading stays manual through the browser file picker. settings_status is read-only; never open Settings or reveal any key, token or secret value. Report only the credits returned by settings_status, never state a dollar spent figure, and say you can't see anything the tool does not return.`;
 const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural and complete: lead with the answer, stay under about 120 words, and finish the sentence before stopping; never end mid-sentence. Usually use one or two sentences and 20–35 words. Answer directly; use contractions and producer language. For how-to questions, give the usable steps from the knowledge base directly and in order, using numbered steps (at most five); ask a clarifying question only when the knowledge base has nothing usable. For recommendations, use only plug-ins confirmed in the MixBus library/catalogue. For installed-plug-in questions, use the inventory tools and their live scan. Use available AIMM tools for live measurements and MixBus actions; never guess when live state is available. Voice and typed chat are the same Hope and have the same full AIMM tool set. For mixing, production, plugin or factual questions, search the knowledge base first. If Kev names a video title, read that video; for an unnamed video reference, use the shared vague-video candidate list, choose one candidate based on its title, channel, and transcript content, and explain in one sentence in your own words what that video covers; never quote or copy the transcript, and follow the page's closest-match fallback if no candidate title is named. Otherwise read the top-ranked search result. Only if search_yt_knowledge and read_yt_knowledge, where relevant, return nothing that answers the question, call web_search_fallback once, then answer from its result and say it came from the web. Never use web_search_fallback first. When Kev asks for a MixBus action, call the matching tool and report its actual result; do not tell him to do it manually if a tool exists. Use write tools only for what he actually asked you to change; if he says explain only, make no changes. Use set_stem_selection for loaded stem selection and playback control. If a requested action has no matching tool, say so plainly. Do not narrate internal work.`;
 function hopeUsageSelectTools(utterance){
   // Keep every AIMM capability available on every Hope route. Tool selection
@@ -17498,7 +17585,7 @@ async function buildDashboardDigest(){
 // Tools added after the original bulk registration. This retained helper
 // registers any that are missing — idempotent (reuses same-name workspace
 // tools, append-only PATCH of the agent's tool_ids).
-const AIMM_NEW_AGENT_TOOLS = ['manage_roadmap_inbox', 'propose_mix_move', 'set_stem_selection', 'list_symptom_tiles', 'add_symptom_tile', 'delete_symptom_tile', 'inventory_navigate', 'inventory_search', 'inventory_summary', 'inventory_set_favorite', 'vocal_favorites_read', 'vocal_favorites_apply', 'inventory_add_to_bus', 'inventory_status', 'inventory_duplicates', 'inventory_unused', 'inventory_reveal', 'inventory_move_to_unused', 'inventory_restore', 'inventory_move_to_trash', 'inventory_rescan', 'inventory_mark_vendor_app_checked', 'inventory_unmark_vendor_check', 'inventory_keep_newest_duplicates', 'snapshots_list', 'snapshots_read', 'snapshots_apply', 'snapshots_add_note', 'plugin_tags_read', 'plugin_tag_set', 'hidden_list', 'plugin_hide', 'reference_status', 'saved_targets_list', 'saved_target_apply', 'mixbus_load_preset', 'mixbus_auto_fill', 'settings_status', 'find_youtube_videos'];
+const AIMM_NEW_AGENT_TOOLS = ['memory_search', 'manage_roadmap_inbox', 'propose_mix_move', 'set_stem_selection', 'list_symptom_tiles', 'add_symptom_tile', 'delete_symptom_tile', 'inventory_navigate', 'inventory_search', 'inventory_summary', 'inventory_set_favorite', 'vocal_favorites_read', 'vocal_favorites_apply', 'inventory_add_to_bus', 'inventory_status', 'inventory_duplicates', 'inventory_unused', 'inventory_reveal', 'inventory_move_to_unused', 'inventory_restore', 'inventory_move_to_trash', 'inventory_rescan', 'inventory_mark_vendor_app_checked', 'inventory_unmark_vendor_check', 'inventory_keep_newest_duplicates', 'snapshots_list', 'snapshots_read', 'snapshots_apply', 'snapshots_add_note', 'plugin_tags_read', 'plugin_tag_set', 'hidden_list', 'plugin_hide', 'reference_status', 'saved_targets_list', 'saved_target_apply', 'mixbus_load_preset', 'mixbus_auto_fill', 'settings_status', 'find_youtube_videos'];
 async function registerInboxTool(){
   const sts=document.getElementById('regInboxToolStatus');
   const set=(m,ok)=>{if(sts){sts.textContent=m;sts.className='rt-key-status'+(ok===true?' ok':ok===false?' err':'');}};
@@ -18319,6 +18406,7 @@ async function handleToolCall(name,args){
         if(RT.active)rtSetStatus('live','Listening…');
         return r;
       }
+        case 'memory_search':return memorySearch(args.query,args.n);
         case 'read_doc':{
         // Whitelisted doc reader. Hope uses this to answer "what's on the
         // roadmap?", "what did we ship?", "what does the handover say?"
