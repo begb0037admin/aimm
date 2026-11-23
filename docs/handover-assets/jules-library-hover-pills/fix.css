@@ -1,0 +1,53 @@
+/* ===== Library text-button hover pills: DRAFT for Codex (Jules, 23 Nov 2026) =====
+   Append after the existing Library block; the rules named in SPEC section 9 are REPLACED, not layered.
+   --u is the existing 1px x text-size unit. Nothing here changes markup except the two optional lines in SPEC section 9. */
+
+/* 0. tokens */
+#library{--hov:#2dd4bf;--pill-h:calc(32*var(--u));--pill-x:calc(12*var(--u));--pill-gap:calc(12*var(--u));--ctl-y:calc(14*var(--u));--ctl-r:calc(16*var(--u))}
+#library .card{--hov:var(--c)}                          /* inside a section = that section's colour; outside any card = teal */
+
+/* 1. THE PILL. The button box IS the pill at rest (transparent), so hover only paints it: nothing moves, nothing resizes. */
+#library :is(.tx,.more){display:inline-flex;align-items:center;justify-content:center;min-height:var(--pill-h);padding:0 var(--pill-x);margin:0;background:transparent;border:0;border-radius:999px;color:var(--ink);font:600 calc(15*var(--u))/1.2 Inter,sans-serif;white-space:nowrap;cursor:pointer;text-decoration:none;transition:background 160ms ease,color 160ms ease}
+#library :is(.tx,.more):is(:hover,:focus-visible):not(:disabled){background:var(--hov);color:#000}
+#library :is(.tx,.more):focus-visible{box-shadow:inset 0 0 0 2px #000}
+#library .tx:disabled{color:var(--dim);cursor:default}
+@media (prefers-reduced-motion:reduce){#library :is(.tx,.more){transition:none}}
+
+/* 2. TABLE MODE (card 1300+): row actions keep their column text start, so the text lines up under its header.
+      The pill bleeds 12 into empty column space; every column gap is 24+, so neighbours never touch. */
+#library .ent .acts .c{display:flex;align-items:center}
+#library .ent .acts .tx{margin:0 calc(-1*var(--pill-x))}
+
+/* 3. FOOTERS (Export notes, Export all, Clear all): boxes 12 apart, 16 from the right card edge, 14 above and below */
+#library .foot{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:calc(8*var(--u)) var(--pill-gap);padding:var(--ctl-y) var(--ctl-r);border-top:1px solid var(--track)}
+
+/* 4. SHOW MORE: centred in its own 60px row so the pill has room on both sides */
+#library .more-row{display:flex;justify-content:center;align-items:center;padding:var(--ctl-y) var(--ctl-r);min-height:0;border-top:1px solid var(--track)}
+
+/* 5. RESULTS HEAD (Add all, Clear) */
+#library .rhead{padding-right:var(--ctl-r)}
+#library .rhead .rhead-end{gap:var(--pill-gap)}
+
+/* 6. INLINE ACTION IN A SENTENCE (Kept. Filed in Notes under X. Undo): pill starts 4 after the full stop, never over it */
+#library .none .tx{margin:calc(-5*var(--u)) 0 calc(-5*var(--u)) calc(4*var(--u));vertical-align:middle}
+
+/* 7. BROWSE ROW. Expand all / Collapse all are outside any section, so they hover teal. Box right edge = card right edge. */
+#library .browse-head .ends{display:flex;gap:var(--pill-gap)}
+@media (max-width:1400px){
+  #library .browse-head{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"t e" "s c";gap:calc(16*var(--u)) calc(24*var(--u));align-items:center}
+  #library .browse-head h3{grid-area:t}
+  #library .browse-head input.field{grid-area:s;width:100%}
+  #library .browse-head .channel-select{grid-area:c;width:calc(260*var(--u))}
+  #library .browse-head .ends{grid-area:e;justify-self:end}
+}
+@media (max-width:700px){
+  #library .browse-head{grid-template-areas:"t e" "s s" "c c";gap:calc(12*var(--u)) calc(24*var(--u))}
+  #library .browse-head .channel-select{width:100%}
+}
+
+/* 8. STACKED MODE (card under 1300, includes 1300 and 560 windows): the action row is box-aligned (pill box edge on the title edge),
+      boxes 8 apart, so text is 32 apart and no pill can touch. */
+@container card (max-width:1299px){
+  #library .ent .acts{gap:calc(4*var(--u)) calc(8*var(--u));margin-top:calc(12*var(--u))}
+  #library .ent .acts .tx{margin:0}
+}

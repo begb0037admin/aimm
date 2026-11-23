@@ -1,0 +1,174 @@
+/* LIBRARY PLAYER, revision 4 (Jules, 23 Nov 2026). Design draft; nothing built. Scoped to #library.
+   Layout = Kevin's reference (dark Elfsight-style YouTube playlist widget): real YouTube iframe left (about 2/3), title, channel row, description box;
+   playlist panel right (about 1/3) whose height equals the whole left column. AIMM dark palette: black page, #1a1d21 surfaces, #2a2e35 pills, white text.
+   Current row = solid teal #2dd4bf with black ink (not blue, no tint). No outer card. NOTHING here draws, replaces or imitates a transport.
+   Search field, teal pill and compact-row values are copied from the live Mix Check Spotify Reference block (.mc-spotify-ref-controls input, #mcSpotifyCapture, .mc-spotify-result--compact).
+   Extends jules-library-tab/library.css (cards, bars, tables) and jules-library-hover-pills/fix.css. */
+#library{--teal:#2dd4bf;--surface:#1a1d21;--line:#2a2e35;--field:#12161c;--field-bd:#2a3340;--rowhover:#22262b;--rowhover-bd:#4f7f8c}
+#library .card[data-sec=add]{--c:var(--blue)}
+#library .card[data-sec=review]{--c:var(--purple)}
+#library .card[data-sec=chats]{--c:var(--yellow)}
+
+/* 1. WIDGET GRID. Container = #library column. Two columns from 820 wide: 2fr | 1fr (min 320). Panel spans all left rows, so its height = player + title + channel row + description. */
+#library .yt{container:yt/inline-size;margin:0 0 calc(40*var(--u))}
+#library .yt-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(calc(320*var(--u)),1fr);grid-template-areas:"player list" "meta list" "desc list";column-gap:calc(24*var(--u));align-items:start}
+#library .yt-player{grid-area:player;min-width:0}
+#library .yt-meta{grid-area:meta;min-width:0}
+#library .yt-desc{grid-area:desc;min-width:0}
+#library .yt-list{grid-area:list;position:relative;min-width:0;align-self:stretch}
+
+/* 2. PLAYER FRAME: the real iframe, 16:9, radius 14, nothing drawn over it */
+#library .yt-frame{position:relative;aspect-ratio:16/9;width:100%;background:#000;border-radius:14px;overflow:hidden}
+#library .yt-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+#library .yt-frame .msg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(10*var(--u));padding:calc(24*var(--u));text-align:center;background:#000}
+#library .yt-frame .msg h4{margin:0;font:600 calc(20*var(--u))/1.3 Inter,sans-serif;color:var(--hi)}
+#library .yt-frame .msg p{margin:0;max-width:calc(480*var(--u));font:calc(15*var(--u))/1.6 Inter,sans-serif;color:var(--dim)}
+
+/* 3. TITLE + CHANNEL ROW. Avatar, subscriber count and Subscribe are dropped (need the Data API / a channel id). */
+#library .yt-title{margin:calc(20*var(--u)) 0 0;font:700 calc(22*var(--u))/1.3 Inter,sans-serif;color:#fff;letter-spacing:-.01em;overflow-wrap:anywhere}
+#library .yt-title.none{color:var(--dim);font-weight:600}
+#library .yt-chan{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:calc(14*var(--u)) calc(20*var(--u));margin:calc(14*var(--u)) 0 0}
+#library .yt-chan .who{min-width:0}
+#library .yt-chan .who b{display:block;font:700 calc(16*var(--u))/1.35 Inter,sans-serif;color:#fff}
+#library .yt-chan .who span{display:block;margin-top:calc(2*var(--u));font:calc(14*var(--u))/1.5 Inter,sans-serif;color:var(--dim)}
+#library .yt-chan .btns{display:flex;flex-wrap:wrap;align-items:center;gap:calc(10*var(--u))}
+#library .pillb{display:inline-flex;align-items:center;justify-content:center;min-height:calc(44*var(--u));padding:0 calc(20*var(--u));border:1.5px solid transparent;border-radius:999px;background:var(--line);color:#fff;font:600 calc(15*var(--u))/1 Inter,sans-serif;white-space:nowrap;cursor:pointer;text-decoration:none}
+#library .pillb:hover:not(:disabled){background:#fff;color:#000}
+#library .pillb:focus-visible{background:#fff;color:#000;box-shadow:inset 0 0 0 2px #000}
+#library .pillb.teal{background:var(--teal);color:#0b0d10;font-weight:750}            /* Mix Check "Capture" pill: teal, #0b0d10 ink */
+#library .pillb.teal:hover:not(:disabled){background:#fff}
+#library .pillb:disabled{background:var(--surface);border:1px solid var(--line);color:#9ca3af;cursor:default}   /* Mix Check disabled pill */
+#library .pillb.dim{background:none;color:var(--dim)}
+#library .yt-status{margin:calc(12*var(--u)) 0 0;font:calc(14*var(--u))/1.5 Inter,sans-serif;color:var(--hi)}
+
+/* 4. DESCRIPTION BOX (dark grey, radius 14). Tier 0 content = what AIMM holds: category, date added, Hope's summary. */
+#library .descbox{margin:calc(18*var(--u)) 0 0;padding:calc(18*var(--u)) calc(20*var(--u)) calc(16*var(--u));background:var(--surface);border-radius:14px}
+#library .descbox .l1{font:600 calc(14*var(--u))/1.5 Inter,sans-serif;color:#fff}
+#library .descbox p{margin:calc(8*var(--u)) 0 0;font:calc(15*var(--u))/1.65 Inter,sans-serif;color:var(--ink)}
+#library .descbox .more{margin:calc(8*var(--u)) 0 0;padding:0;min-height:0;width:auto;display:inline-flex;border:0;background:none;color:#fff;font:700 calc(15*var(--u))/1.5 Inter,sans-serif;cursor:pointer}
+#library .descbox .more:hover{color:var(--teal)}
+#library .descbox textarea{display:block;width:100%;min-height:calc(88*var(--u));margin:calc(12*var(--u)) 0 0;padding:calc(12*var(--u)) calc(16*var(--u));border:1px solid var(--field-bd);border-radius:11px;background:var(--field);color:#f0f7f2;font:calc(15*var(--u))/1.6 Inter,sans-serif;resize:vertical}
+#library .descbox .row{display:flex;flex-wrap:wrap;gap:calc(10*var(--u));margin:calc(12*var(--u)) 0 0}
+
+/* 5. PLAYLIST PANEL: absolute inside .yt-list so it can never stretch the grid; header fixed, rows scroll. */
+#library .yt-panel{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--surface);border-radius:14px;overflow:hidden}
+#library .yt-ph{flex:none;padding:calc(18*var(--u)) calc(16*var(--u)) calc(12*var(--u))}
+#library .yt-ph .h{display:flex;align-items:baseline;justify-content:space-between;gap:calc(12*var(--u));margin:0 0 calc(14*var(--u))}
+#library .yt-ph h3{margin:0;font:700 calc(18*var(--u))/1.3 Inter,sans-serif;color:#fff}
+#library .yt-ph .pos{font:600 calc(14*var(--u))/1.3 Inter,sans-serif;color:var(--dim);font-variant-numeric:tabular-nums}
+/* search + channel filter: values copied from .mc-spotify-ref-controls input */
+#library .yt-input{display:block;width:100%;min-width:0;height:calc(52*var(--u));padding:0 calc(16*var(--u));border:1px solid var(--field-bd);border-radius:11px;background:var(--field);color:#f0f7f2;font:calc(15*var(--u))/1.2 Inter,sans-serif}
+#library .yt-input::placeholder{color:#90a097;opacity:1}
+#library .yt-input:focus,#library .yt-input.is-focus{outline:2px solid rgba(79,195,232,.6);outline-offset:2px}
+#library select.yt-input{appearance:none;-webkit-appearance:none;margin-top:calc(10*var(--u));cursor:pointer}
+#library .yt-filter{display:flex;flex-wrap:wrap;align-items:center;gap:calc(4*var(--u)) calc(24*var(--u));margin:calc(12*var(--u)) 0 0}
+#library .yt-filter .tx{min-height:calc(32*var(--u))}
+#library .yt-filter .tx[aria-pressed=true]{color:#fff;font-weight:700}
+#library .yt-filter .tx[aria-pressed=false]{color:var(--dim)}
+#library .yt-rows{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;padding:0 calc(10*var(--u)) calc(12*var(--u));display:flex;flex-direction:column;gap:calc(4*var(--u))}
+/* row = .mc-spotify-result--compact geometry (radius 12, padding 10 14, gap 14, title 14/650 #eaf0f6, sub 12 #a4b1c1), thumbnail 128 x 72 */
+#library .yt-row{display:grid;grid-template-columns:calc(24*var(--u)) calc(128*var(--u)) minmax(0,1fr);column-gap:calc(14*var(--u));align-items:center;padding:calc(10*var(--u)) calc(12*var(--u));border:1px solid transparent;border-radius:12px;background:none;text-align:left;color:inherit;cursor:pointer;width:100%}
+#library .yt-row:hover:not(.sel){background:var(--rowhover);border-color:var(--rowhover-bd)}
+#library .yt-row:focus-visible{outline:0;box-shadow:inset 0 0 0 2px #fff}
+#library .yt-row .no{font:600 calc(14*var(--u))/1 Inter,sans-serif;color:var(--dim);text-align:center;font-variant-numeric:tabular-nums}
+#library .yt-row .th{position:relative;width:100%;aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:var(--field)}
+#library .yt-row .th img{display:block;width:100%;height:100%;object-fit:cover}
+#library .yt-row .th .tr{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:600 calc(12*var(--u))/1.2 Inter,sans-serif;color:var(--dim)}
+#library .yt-row .th .dur{position:absolute;right:calc(6*var(--u));bottom:calc(4*var(--u));font:700 calc(12*var(--u))/1 Inter,sans-serif;color:#fff;text-shadow:0 0 3px #000,0 0 3px #000}   /* tier 1 only: plain text, no chip */
+#library .yt-row .tx1{min-width:0}
+#library .yt-row b{display:block;font:650 calc(14*var(--u))/1.4 Inter,sans-serif;color:#eaf0f6;overflow-wrap:anywhere}
+#library .yt-row span{display:block;margin-top:calc(3*var(--u));font:calc(12*var(--u))/1.4 Inter,sans-serif;color:#a4b1c1}
+/* current row: solid teal, black ink, plain play marker in the number column (no box, no glow) */
+#library .yt-row.sel{background:var(--teal);border-color:transparent}
+#library .yt-row.sel b,#library .yt-row.sel span{color:#000}
+#library .yt-row.sel .no{color:#000;font-size:0;position:relative;height:calc(14*var(--u))}
+#library .yt-row.sel .no::before{content:"";position:absolute;left:50%;top:50%;margin:calc(-7*var(--u)) 0 0 calc(-5*var(--u));border-style:solid;border-width:calc(7*var(--u)) 0 calc(7*var(--u)) calc(12*var(--u));border-color:transparent transparent transparent #000}
+
+/* 6. HOPE ON THIS VIDEO (full width under the widget): sections table + tips */
+#library .hope{container:yt/inline-size;margin:0 0 calc(40*var(--u))}
+#library .hope-h{display:flex;align-items:baseline;flex-wrap:wrap;gap:calc(8*var(--u)) calc(16*var(--u));margin:0 0 calc(16*var(--u))}
+#library .hope-h h3{margin:0;font:700 calc(22*var(--u))/1.25 Inter,sans-serif;color:#f3f4f6}
+#library .hope-h .ap{font:calc(14*var(--u))/1.4 Inter,sans-serif;color:var(--dim)}
+#library .hope-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(calc(320*var(--u)),1fr);column-gap:calc(24*var(--u));align-items:start}
+#library .hope-box{background:var(--surface);border-radius:14px;padding:calc(6*var(--u)) calc(20*var(--u)) calc(10*var(--u))}
+#library .hope-box h4{margin:0;padding:calc(16*var(--u)) 0 calc(6*var(--u));font:700 calc(16*var(--u))/1.3 Inter,sans-serif;color:#fff}
+#library .hope-box h4 .n{margin-left:calc(10*var(--u));color:var(--dim);font-weight:600}
+#library .srow{display:grid;grid-template-columns:calc(72*var(--u)) minmax(0,1fr) auto;column-gap:calc(20*var(--u));align-items:start;padding:calc(16*var(--u)) 0;border-top:1px solid var(--line)}
+#library .hope-box h4+.srow{border-top:0}
+#library .srow .tm{font:600 calc(14*var(--u))/1.6 ui-monospace,Menlo,monospace;color:var(--dim);font-variant-numeric:tabular-nums}
+#library .srow h5{margin:0;font:600 calc(16*var(--u))/1.4 Inter,sans-serif;color:var(--hi)}
+#library .srow p{margin:calc(4*var(--u)) 0 0;font:calc(14*var(--u))/1.5 Inter,sans-serif;color:var(--dim)}
+#library .srow.now .tm,#library .srow.now h5{color:var(--teal)}    /* current section: teal text only */
+#library .srow-more{display:flex;justify-content:center;padding:calc(12*var(--u)) 0;border-top:1px solid var(--line)}
+#library .tipr{display:grid;grid-template-columns:calc(56*var(--u)) minmax(0,1fr) auto;column-gap:calc(14*var(--u));align-items:start;padding:calc(16*var(--u)) 0;border-top:1px solid var(--line)}
+#library .hope-box h4+.tipr{border-top:0}
+#library .tipr .tm{font:600 calc(14*var(--u))/1.6 ui-monospace,Menlo,monospace;color:var(--orange);font-variant-numeric:tabular-nums}
+#library .tipr.hp .tm{color:var(--purple)}
+#library .tipr p{margin:0;font:calc(15*var(--u))/1.6 Inter,sans-serif;color:var(--ink)}
+#library .tipr p small{display:block;margin-top:calc(2*var(--u));color:var(--dim);font-size:calc(13*var(--u))}
+
+/* 7. DOCK: the same iframe, 384 x 216 (above YouTube's 320 x 180 floor), bottom left of the main column, with app navigation only under it */
+#libdock{--u:calc(1px*var(--inv-text-scale,1));position:fixed;z-index:60;left:var(--dock-left,var(--page-gutter));bottom:calc(16*var(--u));width:calc(384*var(--u));background:#0b0d10;border:1px solid #2a2e35;border-radius:14px;overflow:hidden}
+#libdock .dv{position:relative;aspect-ratio:16/9;background:#000}
+#libdock .dv iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+#libdock .db{display:flex;flex-wrap:wrap;align-items:center;gap:calc(8*var(--u)) calc(12*var(--u));padding:calc(12*var(--u)) calc(14*var(--u))}
+#libdock .dt{flex:1 1 100%;font:600 calc(14*var(--u))/1.35 Inter,sans-serif;color:#e5e7ea;overflow-wrap:anywhere}
+#libdock .pillb{display:inline-flex;align-items:center;min-height:calc(36*var(--u));padding:0 calc(16*var(--u));border:0;border-radius:999px;background:#2dd4bf;color:#0b0d10;font:750 calc(14*var(--u))/1 Inter,sans-serif;cursor:pointer}
+#libdock .pillb:hover{background:#fff}
+#libdock .pillb.dim{background:none;color:#9aa0a6;font-weight:600}
+@media (prefers-reduced-motion:no-preference){#libdock{animation:libdockin .18s ease-out}}
+@keyframes libdockin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* 8. VIDEOS CARD ADDITIONS (browse table): last column becomes Watch */
+#library .vfilter{display:flex;flex-wrap:wrap;align-items:center;gap:calc(8*var(--u)) calc(32*var(--u));padding:calc(14*var(--u)) var(--rowx-r) calc(14*var(--u)) var(--rowx-l);border-bottom:1px solid var(--track)}
+#library .vfilter .l{font:600 calc(13*var(--u))/1.3 Inter,sans-serif;color:var(--dim)}
+#library .vfilter .tx[aria-pressed=true]{color:#fff;font-weight:700}
+#library .vfilter .tx[aria-pressed=false]{color:var(--dim)}
+#library .card[data-sec=videos]{--grid:minmax(0,1fr) calc(180*var(--u)) calc(110*var(--u)) calc(56*var(--u)) calc(64*var(--u)) calc(130*var(--u))}
+#library .ent.playing h4{color:var(--teal)}
+#library .tx.watch{color:#fff;font-weight:700}
+
+/* 9. RESPONSIVE (container = #library column, so it follows the app column, not the window) */
+@container yt (max-width:819px){
+  #library .yt-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"player" "meta" "list" "desc";row-gap:calc(24*var(--u))}
+  #library .yt-list{height:calc(560*var(--u));align-self:auto}
+  #library .hope-grid{grid-template-columns:minmax(0,1fr);row-gap:calc(16*var(--u))}
+  #library .descbox{margin-top:0}
+}
+@container yt (max-width:639px){
+  #library .yt-title{font-size:calc(20*var(--u))}
+  #library .yt-chan .btns{width:100%}
+  #library .yt-row{grid-template-columns:calc(20*var(--u)) calc(104*var(--u)) minmax(0,1fr);column-gap:calc(10*var(--u))}
+  #library .srow{grid-template-columns:calc(56*var(--u)) minmax(0,1fr);}
+  #library .srow .act{grid-column:2}
+}
+@media (prefers-reduced-motion:reduce){#library *{transition:none!important}}
+
+/* 10. CHANNEL VIEW (idle surface): toolbar, channel cards, channel header, 4-column video grid. Same dark palette; selected = teal. */
+#library .yt-crumb{display:flex;flex-wrap:wrap;align-items:center;gap:calc(6*var(--u)) calc(12*var(--u));margin:0 0 calc(16*var(--u));font:600 calc(15*var(--u))/1.4 Inter,sans-serif;color:var(--dim)}
+#library .yt-crumb .tx{min-height:calc(32*var(--u));color:#fff;font-weight:700}
+#library .yt-crumb i{font-style:normal;color:var(--dim)}
+#library .yt-bar{display:grid;grid-template-columns:minmax(0,1fr) calc(300*var(--u));column-gap:calc(16*var(--u));margin:0 0 calc(24*var(--u))}
+#library .yt-bar select.yt-input{margin-top:0}
+#library .chead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:calc(14*var(--u)) calc(24*var(--u));margin:0 0 calc(24*var(--u))}
+#library .chead h3{margin:0;font:500 calc(30*var(--u))/1.2 Inter,sans-serif;letter-spacing:-.035em;color:#fff}   /* "Drop your mix here" display style */
+#library .chead p{margin:calc(6*var(--u)) 0 0;font:calc(14*var(--u))/1.5 Inter,sans-serif;color:var(--dim)}
+#library .cgrid,#library .vgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:calc(20*var(--u)) calc(20*var(--u))}
+/* channel card: thumbnail of the channel's first playable video, name, count. Hover = Mix Check result hover (#22262b, #4f7f8c). */
+#library .ccard,#library .vcard{display:block;padding:calc(10*var(--u));border:1px solid transparent;border-radius:14px;background:none;text-align:left;color:inherit;cursor:pointer;width:100%;min-width:0}
+#library .ccard{background:var(--surface)}
+#library .ccard:hover,#library .vcard:hover{background:var(--rowhover);border-color:var(--rowhover-bd)}
+#library .ccard:focus-visible,#library .vcard:focus-visible{outline:0;box-shadow:inset 0 0 0 2px #fff}
+#library .ccard .th,#library .vcard .th{position:relative;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:var(--field)}
+#library .ccard .th img,#library .vcard .th img{display:block;width:100%;height:100%;object-fit:cover}
+#library .th .tr{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:600 calc(13*var(--u))/1.2 Inter,sans-serif;color:var(--dim)}
+#library .th .dur{position:absolute;right:calc(8*var(--u));bottom:calc(6*var(--u));font:700 calc(13*var(--u))/1 Inter,sans-serif;color:#fff;text-shadow:0 0 3px #000,0 0 3px #000}
+#library .ccard b{display:block;margin:calc(12*var(--u)) 0 0;font:700 calc(16*var(--u))/1.35 Inter,sans-serif;color:#fff}
+#library .ccard span,#library .vcard span{display:block;margin-top:calc(3*var(--u));font:calc(14*var(--u))/1.45 Inter,sans-serif;color:var(--dim)}
+#library .vcard b{display:block;margin:calc(12*var(--u)) 0 0;font:650 calc(15*var(--u))/1.4 Inter,sans-serif;color:#eaf0f6;overflow-wrap:anywhere}
+#library .vcard.sel{background:var(--teal)}
+#library .vcard.sel b,#library .vcard.sel span{color:#000}
+#library .more-videos{display:flex;justify-content:center;margin:calc(28*var(--u)) 0 0}
+@container yt (max-width:1099px){#library .cgrid,#library .vgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@container yt (max-width:819px){#library .cgrid,#library .vgrid{grid-template-columns:repeat(2,minmax(0,1fr))}#library .yt-bar{grid-template-columns:minmax(0,1fr)}#library .yt-bar select.yt-input{margin-top:calc(10*var(--u))}}
+@container yt (max-width:479px){#library .cgrid,#library .vgrid{grid-template-columns:minmax(0,1fr)}}

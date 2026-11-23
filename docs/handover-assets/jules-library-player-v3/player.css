@@ -1,0 +1,91 @@
+/* AIMM Library YouTube player, v3 (Jules, 23 Nov 2026). Design only, nothing built into index.html.
+   Replicates Kevin's Elfsight playlist screenshot: black page, ~2/3 player column, ~1/3 playlist panel.
+   Everything is scoped to .lp and sized by CONTAINER width (.lp is the Library column), so it behaves the same inside the app shell with the Hope rail open.
+   Palette = AIMM: surfaces #1a1d21, lines #2a2e35, fields #12161c/#2a3340 (Mix Check Spotify Reference input), selected teal #2dd4bf with black ink. No arrows, no emoji, no boxes behind small markers. */
+.lp{--teal:#2dd4bf;--ink:#0b0d10;--hi:#fff;--mid:#c9ced6;--dim:#9aa3af;--surf:#1a1d21;--line:#2a2e35;--field:#12161c;--field-bd:#2a3340;--hover:#1e2328;
+  container:lp/inline-size;display:block;margin:0 0 56px;font-family:Inter,-apple-system,"Segoe UI",sans-serif;color:var(--mid)}
+.lp *{box-sizing:border-box}
+.lp button,.lp input,.lp select{font:inherit;color:inherit}
+
+/* ---- TOKENS: the three size tiers. Large = container 1200+, Mid = 820-1199, Narrow = under 820 ---- */
+.lp{--gap:32px;--cols:minmax(0,2fr) minmax(0,1fr);--t-title:28px;--t-chan:18px;--t-btn:16px;--btn-h:48px;--t-desc:17px;--desc-pad:22px;
+  --t-head:22px;--t-count:18px;--t-row:18px;--t-sub:16px;--t-meta:15px;--thumb-w:144px;--rank-w:34px;--row-gap:16px;--row-pad:10px;--fld-h:52px;--t-fld:16px;--panel-pad:14px}
+@container lp (max-width:1199px){.lp .grid{--gap:24px;--cols:minmax(0,1.3fr) minmax(0,1fr);--t-title:24px;--t-chan:17px;--t-btn:15px;--btn-h:44px;--t-desc:16px;--desc-pad:18px;
+  --t-head:20px;--t-count:16px;--t-row:16px;--t-sub:15px;--t-meta:14px;--thumb-w:112px;--rank-w:24px;--row-gap:12px;--row-pad:9px;--fld-h:48px;--t-fld:15px;--panel-pad:12px}
+  .lp .fields{flex-direction:column;gap:8px}.lp .fld.chsel{flex:none}.lp .fld.search{flex:none}}
+@container lp (max-width:819px){.lp .fields{flex-direction:row;gap:10px}.lp .fld.chsel{flex:0 0 40%}.lp .fld.search{flex:1 1 0}.lp .grid{--gap:20px;--thumb-w:120px;--t-title:22px;--t-chan:17px;--t-desc:16px;--desc-pad:16px;--t-head:20px;--t-row:16px;--t-sub:15px;--t-meta:14px;--thumb-w:120px;--rank-w:26px;--row-gap:12px}}
+
+/* ---- GRID. Wide: player / meta / description stack in column 1, the playlist panel spans every row of column 2 so it is exactly as tall as the left column. ---- */
+.lp .grid{display:grid;grid-template-columns:var(--cols);grid-template-areas:"player list" "meta list" "desc list";column-gap:var(--gap);align-items:start}
+.lp .player{grid-area:player;min-width:0}
+.lp .meta{grid-area:meta;min-width:0}
+.lp .desc{grid-area:desc;min-width:0}
+.lp .list{grid-area:list;position:relative;align-self:stretch;min-width:0}
+@container lp (max-width:819px){.lp .grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"player" "meta" "desc" "list"}
+  .lp .list{height:min(78vh,760px);align-self:auto;margin-top:8px}}
+
+/* ---- PLAYER: the real YouTube iframe only, 16:9, radius 18. Nothing drawn over it except the cannot-embed message. ---- */
+.lp .frame{position:relative;aspect-ratio:16/9;width:100%;background:#000;border-radius:18px;overflow:hidden}
+.lp .frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.lp .frame .fail{position:absolute;inset:0;z-index:2;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:28px;text-align:center;background:#0b0d10}
+.lp .frame.is-fail .fail{display:flex}
+.lp .fail h3{margin:0;font:600 clamp(20px,2.2cqw,26px)/1.3 Inter,sans-serif;color:var(--hi)}
+.lp .fail p{margin:0;max-width:30em;font-size:var(--t-desc);line-height:1.55;color:var(--dim)}
+
+/* ---- TITLE AND CHANNEL ROW ---- */
+.lp .title{margin:22px 0 0;font-size:var(--t-title);line-height:1.3;font-weight:600;letter-spacing:-.015em;color:var(--hi);overflow-wrap:anywhere}
+.lp .chan{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;margin:16px 0 0}
+.lp .chan .name{min-width:0;font-size:var(--t-chan);font-weight:600;line-height:1.3;color:var(--hi);overflow-wrap:anywhere}
+.lp .chan .btns{display:flex;flex-wrap:wrap;gap:12px}
+.lp .pill{display:inline-flex;align-items:center;justify-content:center;min-height:var(--btn-h);padding:0 24px;border:0;border-radius:999px;background:#262a30;color:var(--hi);font-size:var(--t-btn);font-weight:600;line-height:1;text-decoration:none;white-space:nowrap;cursor:pointer;transition:background 140ms,color 140ms}
+.lp .pill.teal{background:var(--teal);color:var(--ink);font-weight:700}
+.lp .pill:hover{background:#fff;color:#000}
+.lp .pill:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.lp .pill.teal:focus-visible{outline-color:var(--teal)}
+
+/* ---- DESCRIPTION BOX: Hope's summary, three lines then Read more ---- */
+.lp .desc{margin-top:20px;padding:var(--desc-pad) calc(var(--desc-pad) + 4px);border-radius:16px;background:var(--surf)}
+.lp .desc .top{margin:0 0 8px;font-size:var(--t-sub);font-weight:600;color:var(--mid)}
+.lp .desc .body{margin:0;font-size:var(--t-desc);line-height:1.6;color:var(--mid);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+.lp .desc.open .body{-webkit-line-clamp:unset;display:block}
+.lp .desc .more{margin:10px 0 0;padding:0;border:0;background:none;font-size:var(--t-desc);font-weight:600;color:var(--teal);cursor:pointer}
+.lp .desc .more:hover{text-decoration:underline;text-underline-offset:4px}
+.lp .desc .more:focus-visible{outline:2px solid var(--teal);outline-offset:4px;border-radius:4px}
+
+/* ---- PLAYLIST PANEL: rounded outline, fills the left column height, rows scroll inside ---- */
+.lp .panel{position:absolute;inset:0;display:flex;flex-direction:column;border:1px solid #3a3f47;border-radius:20px;background:#000;overflow:hidden}
+.lp .phead{flex:none;display:flex;align-items:baseline;justify-content:space-between;padding:var(--panel-pad) calc(var(--panel-pad) + 8px) 6px}
+.lp .phead h2{margin:0;font-size:var(--t-head);font-weight:600;letter-spacing:-.01em;color:var(--hi)}
+.lp .phead .count{font-size:var(--t-count);font-weight:600;color:var(--mid);font-variant-numeric:tabular-nums}
+.lp .fields{flex:none;display:flex;gap:10px;padding:8px calc(var(--panel-pad) + 4px) 14px}
+.lp .fld{position:relative;height:var(--fld-h);border:1px solid var(--field-bd);border-radius:12px;background:var(--field)}
+.lp .fld.search{flex:1 1 0;min-width:0}
+.lp .fld.chsel{flex:0 0 40%;min-width:0}
+.lp .fld input,.lp .fld select{width:100%;height:100%;border:0;background:transparent;padding:0 14px;font-size:var(--t-fld);color:#f0f7f2;border-radius:12px;appearance:none;-webkit-appearance:none;text-overflow:ellipsis;outline:none}
+.lp .fld input::placeholder{color:#90a097;opacity:1}
+.lp .fld input::-webkit-search-cancel-button{display:none}
+.lp .fld.chsel select{padding-left:42px;cursor:pointer}
+.lp .fld.chsel select option{background:#12161c;color:#f0f7f2}
+.lp .fld.chsel svg{position:absolute;left:14px;top:50%;width:18px;height:18px;margin-top:-9px;stroke:#c9ced6;stroke-width:2.2;stroke-linecap:round;fill:none;pointer-events:none}
+.lp .fld:focus-within{outline:2px solid rgba(45,212,191,.65);outline-offset:2px}
+.lp .rows{position:relative;flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:2px calc(var(--panel-pad) - 4px) var(--panel-pad);scrollbar-width:thin;scrollbar-color:#3a3f47 transparent}
+
+/* ---- ROW: rank (plain number), thumbnail, title (2 lines), channel, one meta line ---- */
+.lp .row{display:grid;grid-template-columns:var(--rank-w) var(--thumb-w) minmax(0,1fr);align-items:center;column-gap:var(--row-gap);width:100%;padding:var(--row-pad) calc(var(--row-pad) + 2px) var(--row-pad) 6px;border:0;border-radius:14px;background:transparent;text-align:left;cursor:pointer;color:var(--mid);transition:background 120ms}
+.lp .row .rank{justify-self:center;font-size:var(--t-meta);font-variant-numeric:tabular-nums;color:var(--dim)}
+.lp .row .thumb{display:block;width:var(--thumb-w);aspect-ratio:16/9;border-radius:10px;background:#1a1d21;object-fit:cover}
+.lp .row .txt{min-width:0}
+.lp .row .rt{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:var(--t-row);font-weight:600;line-height:1.3;color:var(--hi)}
+.lp .row .rc{display:block;margin-top:5px;font-size:var(--t-sub);font-weight:600;line-height:1.3;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lp .row .rm{display:block;margin-top:2px;font-size:var(--t-meta);line-height:1.35;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lp .row:hover{background:var(--hover)}
+.lp .row:focus-visible{outline:2px solid #fff;outline-offset:-2px;background:var(--hover)}
+.lp .row[aria-current="true"]{background:var(--teal)}
+.lp .row[aria-current="true"] .rt,.lp .row[aria-current="true"] .rc,.lp .row[aria-current="true"] .rm,.lp .row[aria-current="true"] .rank{color:#000}
+.lp .row[aria-current="true"] .rm,.lp .row[aria-current="true"] .rc{opacity:.8}
+.lp .row[aria-current="true"]:focus-visible{outline-color:#000}
+.lp .empty{padding:28px 20px;font-size:var(--t-desc);line-height:1.5;color:var(--dim)}
+@media (prefers-reduced-motion:reduce){.lp .row,.lp .pill{transition:none}}
+
+/* ---- FIELD ROW LAYOUT PER TIER (must sit after the base .fld rules). Mid tier: panel is ~370 wide, so search and channel stack. ---- */
+@container lp (min-width:820px) and (max-width:1199px){.lp .fields{flex-direction:column;gap:8px}.lp .fld.search,.lp .fld.chsel{flex:none;width:100%}}

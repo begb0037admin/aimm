@@ -1,0 +1,79 @@
+/* AIMM Library, minimal neutral pass v2 (Jules, 23 Nov 2026). Design only: nothing built into index.html.
+   Kevin 23 Nov: neutral dark Mix Check cards, no coloured fills or bars. The section palette survives ONLY as bold title TEXT colour
+   (Add blue, Review purple, Videos pink, Notes orange, Saved chats yellow; Browse white). --c on .card[data-sec] now drives title text only.
+   Append AFTER the existing Library rules to preview; Codex should instead edit the originals in place (see SPEC.md section 4) and delete this file.
+   Neutral surfaces = Mix Check tokens (#mixcheck.oz-mixcheck): --card #1b1d20, --card-bd #2c3034, --inset #16181b, --ink #e8ebed, --muted #9aa0a6.
+   Teal #2dd4bf with black ink is the accent for selected/playing row, primary buttons, hover pills everywhere, links, focus ring. */
+
+/* 0. tokens: palette variables removed, neutral set added */
+#library{--teal:#2dd4bf;--teal-hi:#5eead4;--surf:#1b1d20;--line:#2c3034;--inset:#16181b;--bar-hover:#202327;
+  --hi:#e8ebed;--ink:#c4cad3;--dim:#9aa0a6;--track:#2c3034;--bad:#f87171;--hov:#2dd4bf}
+#library .card{--hov:var(--teal)}   /* replaces the old per-section hover colour (--hov:var(--c)); --c stays defined by the data-sec rules for title text */
+
+/* 1. CARD + BAR: one neutral card, the bar is the same surface, separated by a flush hairline (no inset, no colour fill) */
+#library .card{background:var(--surf);border:1px solid var(--line);border-radius:10px}
+#library .bar{background:var(--surf);color:var(--c)}   /* title text in the section colour, bold 700 as before */
+#library .bar:hover{background:var(--bar-hover)}
+#library .card[data-open=true]>.bar{border-bottom:1px solid var(--line)}
+#library .bar .n{color:var(--dim);opacity:1}
+#library .fold{color:var(--dim)}
+#library .bar:hover .fold,#library .grp:hover .fold{color:var(--hi)}
+#library .grp .fold{color:var(--dim)}
+
+/* 2. BUTTONS: grey at rest with visible light ink; teal for primary and hover; teal focus ring */
+#library .btn{background:var(--track);color:var(--hi)}
+#library .btn.pri{background:var(--teal);color:#000}
+#library .btn:hover:not(:disabled){background:var(--teal);color:#000}
+#library .btn.pri:hover:not(:disabled){background:var(--teal-hi);color:#000}
+#library .btn:focus-visible{background:var(--teal);color:#000;box-shadow:none}
+#library .btn.pri:focus-visible{background:var(--teal-hi)}
+#library .btn:disabled{background:var(--track);color:var(--dim)}
+#library :is(.btn,.tx,.more,.pill .main,.pill .star):focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+#library :is(.tx,.more):is(:hover,:focus-visible):not(:disabled){background:var(--teal);color:#000}
+#library :is(.tx,.more):focus-visible{box-shadow:none}
+#library :is(.bar,.grp):focus-visible{outline:2px solid var(--teal);outline-offset:-2px;box-shadow:none}
+
+/* 3. FIELDS: Mix Check input look (inset fill, hairline), teal focus ring */
+#library .field{background:var(--inset);box-shadow:inset 0 0 0 1px var(--line)}
+#library .field:focus{box-shadow:inset 0 0 0 2px var(--teal)}
+
+/* 4. STATUS TEXT: the orange error colour is a section colour, so errors use Mix Check's own --red */
+#library .frow .fmsg.bad,#library .ent .stat.bad{color:var(--bad)}
+
+/* 5. FAVOURITE PILLS (snapshot pills, only if still rendered in Library): grey, teal on hover. Star keeps the plain purple of the UI standard. */
+#library .pill:hover,#library .pill:has(:focus-visible){background:var(--teal)}
+#library .pill:has(:focus-visible){box-shadow:none}
+
+/* 6. PLAYER + PLAYLIST: layout untouched (Kevin: keep). Only surfaces and hover/focus colours join the neutral set. */
+.lp{--surf:#1b1d20;--line:#2c3034;--hover:#202327}
+#library .lp .video-pill{background:var(--track);color:var(--hi)}
+#library .lp .video-pill:hover{background:var(--teal);color:#000}
+#library .lp .video-pill.teal:hover{background:var(--teal-hi);color:#000}
+.lp .video-pill:focus-visible,.lp .video-pill.teal:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+.lp .row:focus-visible{outline:2px solid var(--teal)}
+.lp .row[aria-current="true"]:focus-visible{outline-color:#000}
+
+/* 7. ONE SECTION-TITLE SIZE (Kevin 23 Nov, rev 3). Measured on the real page: the Browse heading is 22px / 700 (`.browse-head h3`, line-height 1.25, colour #f3f4f6).
+   Every section title (Add to Hope's library, Hope's review, Browse, Videos, Notes, Saved chats) takes that exact size and weight.
+   Sub-headings inside a section (Mastering, Vocal techniques, Favourites, Sessions, Results for...) stay 16px / 700 white (.grp, .rhead h3). */
+#library .bar{min-height:calc(64*var(--u));padding-top:calc(12*var(--u));padding-bottom:calc(12*var(--u));font:700 calc(22*var(--u))/1.25 Inter,sans-serif;letter-spacing:0}
+#library .bar .n{font:600 calc(16*var(--u))/1.3 Inter,sans-serif;color:var(--dim)}
+#library .fold{width:calc(22*var(--u))}
+
+/* 8. BROWSE CARD. Needs one markup change (see SPEC section 3b): the Browse title becomes a .bar like the others, inside
+   <section class="card" data-sec="browse">; its body holds .browse-head (search, channel, Expand all, Collapse all, NO h3) and #libBrowse (Videos, Notes, Saved chats). */
+#library .card[data-sec=browse]{--c:#fff;margin:0 0 calc(40*var(--u))}
+#library .card[data-sec=browse] .browse-head{display:grid;grid-template-columns:minmax(0,1fr) calc(280*var(--u)) auto;grid-template-areas:"s c e";gap:calc(12*var(--u)) calc(24*var(--u));align-items:center;margin:0;padding:calc(18*var(--u)) var(--rowx-r) calc(18*var(--u)) var(--rowx-l)}
+#library .card[data-sec=browse] .browse-head input.field{grid-area:s;width:100%;flex:none}
+#library .card[data-sec=browse] .browse-head .channel-select{grid-area:c;width:100%;flex:none}
+#library .card[data-sec=browse] .browse-head .ends{grid-area:e;justify-self:end;display:flex;gap:var(--pill-gap)}
+@container card (max-width:900px){
+  #library .card[data-sec=browse] .browse-head{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"s s" "c e"}
+}
+@container card (max-width:520px){
+  #library .card[data-sec=browse] .browse-head{grid-template-columns:minmax(0,1fr);grid-template-areas:"s" "c" "e"}
+  #library .card[data-sec=browse] .browse-head .ends{justify-self:end}
+}
+/* the three children are flush sections inside the Browse card: no second border, no second radius, a hairline above each */
+#library .card[data-sec=browse] .lib-group{gap:0;margin:0}
+#library .card[data-sec=browse] .lib-group>.card{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0}

@@ -1,0 +1,71 @@
+/* AIMM MixBus, minimal neutral pass (Jules, 23 Nov 2026). Design only: nothing built into index.html.
+   Same language as the approved Library: neutral Mix Check cards (#1b1d20, border #2c3034, radius 10), flush 64px bars,
+   section titles 22px / 700 in the palette colour per bus (title TEXT only), grey counts and fold glyphs,
+   teal #2dd4bf with black ink as the only accent (buttons, selected row, hover pills, focus ring).
+   Append AFTER the existing MixBus rules to preview; Codex should edit the originals in place (SPEC section 4) and delete this file.
+   Bus title colours (unchanged mapping, already set as --bus at index.html 426-430): Master orange #f97316, Vocal yellow #e8b45a, 808 / Bass blue #36a8ed, Drum pink #f472b6, FX Returns purple #b970ff. */
+#mixbus{--teal:#2dd4bf;--teal-hi:#5eead4;--surf:#1b1d20;--line:#2c3034;--bar-hover:#202327;--row-hover:#202327;--hi:#e8ebed;--dim:#9aa0a6}
+
+/* 1. CARD + BAR: neutral card, bar on the same surface, flush hairline when open, title in --bus, 22/700, 64px */
+#mixbus .bus-grid{gap:12px}
+#mixbus .bus-col,#mixbus .bus-col.is-empty{background:var(--surf);border:1px solid var(--line);border-radius:10px;box-shadow:none}
+#mixbus .bus-col h4,#mixbus .bus-col.is-empty h4{min-height:calc(64px*var(--inv-text-scale,1));padding:12px 12px 12px 14px;background:var(--surf);color:var(--bus);font:700 calc(22px*var(--inv-text-scale,1))/1.25 Inter,-apple-system,sans-serif;letter-spacing:0}
+#mixbus .bus-col h4:hover{background:var(--bar-hover)}
+#mixbus .bus-col:not(.is-closed) h4{border-bottom:1px solid var(--line)}
+#mixbus .bus-col h4:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
+#mixbus .bus-fold{color:var(--dim)}
+#mixbus .bus-col h4:hover .bus-fold{color:var(--hi)}
+/* optional count (needs one markup change: <span class="n">N</span> after .bus-title when the bus has plugins) */
+#mixbus .bus-col h4 .n{font:600 calc(16px*var(--inv-text-scale,1))/1.3 Inter,sans-serif;color:var(--dim);font-variant-numeric:tabular-nums}
+
+/* 2. CLEAR in the bar: grey text, teal hover pill, no box at rest */
+#mixbus .bus-col h4 .clear-bus-btn{min-height:calc(32px*var(--inv-text-scale,1));padding:0 12px;border-radius:999px;background:transparent;color:var(--dim);font:600 calc(14px*var(--inv-text-scale,1)) Inter,-apple-system,sans-serif;opacity:1;transition:background 160ms ease,color 160ms ease}
+#mixbus .bus-col h4 .clear-bus-btn:hover,#mixbus .bus-col h4 .clear-bus-btn:focus-visible{background:var(--teal);color:#000;opacity:1;text-decoration:none;outline:0}
+
+/* 3. PLUGIN ROWS: neutral hover (selected stays teal with black ink, so hover and selected never look alike) */
+#mixbus .chain-item:hover:not(.selected),#mixbus .chain-item:focus-visible:not(.selected){background:var(--row-hover);outline:0}
+#mixbus .chain-item:hover:not(.selected) :is(.row-icon,.name,.chain-meta,.chain-actions button),#mixbus .chain-item:focus-visible:not(.selected) :is(.row-icon,.name,.chain-meta,.chain-actions button){color:#fff}
+#mixbus .chain-item:focus-visible{box-shadow:inset 0 0 0 2px var(--teal)}
+#mixbus .chain-item.selected:focus-visible{box-shadow:inset 0 0 0 2px #000}
+#mixbus .chain-actions button:hover,#mixbus .chain-actions button:focus-visible{color:#fff;outline:0}
+#mixbus .chain-item.selected .chain-actions button:hover{color:#000}
+#mixbus .chain-list>.chain-add:hover,#mixbus .chain-list>.chain-add:focus-visible{background:var(--row-hover);color:#fff;outline:0}
+#mixbus .chain-list>.chain-add:hover .add-icon,#mixbus .chain-list>.chain-add:focus-visible .add-icon{color:#fff}
+#mixbus .chain-list>.chain-add:focus-visible{box-shadow:inset 0 0 0 2px var(--teal)}
+/* drag and drop keeps working: ghost and dragged row are neutral, not bus-coloured */
+#mixbus .chain-list .sortable-ghost{opacity:.4;background:var(--row-hover)}
+#mixbus .chain-list .sortable-drag{opacity:.95;background:var(--line);box-shadow:0 8px 24px rgba(0,0,0,.55)}
+#mixbus .chain-list .sortable-drag :is(.row-icon,.name,.chain-meta,.chain-actions button){color:var(--hi)}
+
+/* 4. SETTINGS PANEL under a bus */
+#mixbus .bus-col .chain-panel{border-top:1px solid var(--line)}
+#mixbus .chain-panel-title{color:#fff}
+#mixbus .chain-panel-edit{min-height:calc(32px*var(--inv-text-scale,1));padding:0 12px;margin-right:calc(-12px*var(--inv-text-scale,1));border-radius:999px;background:transparent;color:var(--hi);font:600 calc(14px*var(--inv-text-scale,1)) Inter,-apple-system,sans-serif;text-decoration:none;transition:background 160ms ease,color 160ms ease}
+#mixbus .chain-panel-edit:hover,#mixbus .chain-panel-edit:focus-visible{background:var(--teal);color:#000;text-decoration:none}
+#mixbus .chain-setting-input{background:#16181b;border:0;box-shadow:inset 0 0 0 1px var(--line)}
+#mixbus .chain-setting-input:focus{outline:0;box-shadow:inset 0 0 0 2px var(--teal)}
+#mixbus .chain-edit-actions .save{background:var(--teal);color:#000}
+#mixbus .chain-edit-actions .cancel,#mixbus .chain-edit-actions .restore{background:var(--line);color:var(--hi)}
+#mixbus .chain-edit-actions button:hover,#mixbus .chain-edit-actions button:focus-visible{background:var(--teal);color:#000;outline:0}
+#mixbus .chain-edit-actions .save:hover,#mixbus .chain-edit-actions .save:focus-visible{background:var(--teal-hi)}
+#mixbus .chain-edit-actions button:focus-visible{box-shadow:0 0 0 2px #000,0 0 0 4px var(--teal)}
+
+/* 5. REPLACEMENT LIST (edit mode): selected = solid teal row with black ink, hover neutral, cyan stage text and purple hover retired */
+#mixbus .replacement-list{background:#16181b;border:0;box-shadow:inset 0 0 0 1px var(--line)}
+#mixbus .replacement-group-title{color:var(--hi);font:700 16px/1.3 Inter,-apple-system,sans-serif;letter-spacing:0}
+#mixbus .replacement-option .stage{color:var(--dim)}
+#mixbus .replacement-option:hover,#mixbus .replacement-option:focus-visible{background:var(--row-hover);color:#fff}
+#mixbus .replacement-option:hover .option-meta span,#mixbus .replacement-option:focus-visible .option-meta span{color:#fff}
+#mixbus .replacement-option:focus-visible{box-shadow:inset 0 0 0 2px var(--teal)}
+#mixbus .replacement-option[aria-checked="true"],#mixbus .replacement-option[aria-checked="true"]:hover,#mixbus .replacement-option[aria-checked="true"]:focus-visible{background:var(--teal);color:#000;box-shadow:none}
+#mixbus .replacement-option[aria-checked="true"] :is(.publisher,.stage,.separator,.name){color:#000}
+#mixbus .replacement-filters input,#mixbus .replacement-filters select{background:#16181b;border:0;box-shadow:inset 0 0 0 1px var(--line)}
+#mixbus .replacement-filters input:focus{box-shadow:inset 0 0 0 2px var(--teal)}
+#mixbus .replacement-filters select:focus-visible{outline:2px solid var(--teal)}
+
+/* 6. TOOLBAR (Load preset, Auto-fill settings, Revert): one teal primary, the rest grey with teal hover. Purple Load preset button retired. */
+#mixbus #presetsBtn,#mixbus #revertFillBtn{background:var(--line);color:var(--hi)}
+#mixbus #autoFillBtn{background:var(--teal);color:#000}
+#mixbus .chain-toolbar button:hover,#mixbus .chain-toolbar button:focus-visible,#mixbus #presetsBtn:hover,#mixbus #presetsBtn:focus-visible,#mixbus #revertFillBtn:hover,#mixbus #revertFillBtn:focus-visible{background:var(--teal);color:#000}
+#mixbus #autoFillBtn:hover,#mixbus #autoFillBtn:focus-visible{background:var(--teal-hi)}
+#mixbus .chain-toolbar button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}

@@ -42,10 +42,10 @@ Each tip is a table row (no tick; columns in section 9): title = Hope's one-line
 
 ## 7. Browse
 Column templates are in section 9. Contents per card:
-- **Videos**: Channel, Added date (or "Library" for repo videos), Edit, View/Hide (the summary note under the title), Open video, Re-summarise, Delete (only for videos added from the dashboard; the column is empty for repo videos), Hope reads tick. "Show 39 more" is a plain text row at the end of a group (12 at a time).
-- **Notes**: tags as plain dim text directly under the title; Source ("Written by you", "Tip from Hope", "Imported file"), Added, Edit, View/Hide, Summary/Raw, Re-summarise, Delete, Hope reads tick.
+- **Videos**: Channel, Added date (or "Library" for repo videos), Edit, View/Hide (the summary note under the title), Open video. Six columns in all: Title, Channel, Added, Edit, Show, Link. No Re-summarise, no Remove column and no Hope reads tick (Kevin removed them; Hope reads everything). A dashboard-added video can still be deleted from inside its Edit view. "Show 39 more" is a plain text row at the end of a group (12 at a time).
+- **Notes**: tags as plain dim text directly under the title; Source ("Written by you", "Tip from Hope", "Imported file"), Added, Edit, View/Hide, Summary/Raw, Remove. No Re-summarise and no Hope reads tick.
 - **Saved chats**: group **Favourites** = pill grid (section 8); group **Sessions** = table rows (own header inside the group): Contents, Saved, Edit, View/Hide, Apply to MixBus (only with a chain), Favourite/Unfavourite, Copy, Delete. Open shows the summary then the turns, "You" and "Hope" bold, 12px apart, no hairlines inside a row. No tick column.
-- Tick: plain check (Hope reads) or dash (Hope skips), no box, centred in its column; `aria-pressed` and `aria-label` ("Hope reads this" / "Hope skips this").
+- No Hope reads tick anywhere: Hope reads everything.
 - Search: one field full width of the line after "Browse"; groups with matches open, groups with none hide, cards with none show "No matches."
 
 ## 8. Snapshot pills (kept behaviour, new look)
@@ -55,8 +55,8 @@ Filled favourites only; the 24 empty "+ snapshot a chat" slots are removed (maxi
 Every entry in a card uses one fixed column template (`--grid` on the card), and a quiet header row (13px/600 dim plain text, no fill, no rule) names the columns. Title takes the remaining width and wraps cleanly (never cut off). Every other column is its own fixed-width cell, left-aligned under its header, 24px gaps; a missing action (for example Delete on a repo video, Apply to MixBus on a chat-only session) leaves its column empty so nothing shifts. Hairline `#2a2e35` full width between rows, 22px above and below it. No boxes, no fills, no hover on the row. The summary or open text sits directly under its own title and runs the full row width (grid-column 1 to the last).
 | Card | Columns (widths at 100%) |
 |---|---|
-| Videos | Title (1fr) / Channel 180 / Added 110 / Edit 56 / Show 64 (View or Hide) / Link 100 (Open video) / Summary 120 (Re-summarise) / Remove 72 (Delete) / Hope reads 72 (tick) |
-| Notes | Title (tags directly under it) / Source 180 / Added 110 / Edit 56 / Show 64 / Mode 100 (Summary or Raw) / Summary 120 (Re-summarise) / Remove 72 / Hope reads 72 |
+| Videos | Title (1fr) / Channel 180 / Added 110 / Edit 56 / Show 64 (View or Hide) / Link 100 (Open video). Six columns. |
+| Notes | Title (tags directly under it) / Source 180 / Added 110 / Edit 56 / Show 64 / Mode 100 (Summary or Raw) / Remove 72 |
 | Saved chats, Sessions | Title / Contents 170 (Chat only, or Chat and MixBus chain) / Saved 120 / Edit 56 / Show 64 / MixBus chain 130 (Apply to MixBus) / Favourite 110 / Copy 56 / Remove 72 |
 | To review | Title / Files under 190 / Received 150 / Edit 56 / Delete 72 / Keep 112 (button) |
 | Approval list | Title / Channel 190 / Length and views 170 / Link 100 / Dismiss 80 / Add 112 (button) |

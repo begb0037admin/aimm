@@ -1,0 +1,22 @@
+/* AIMM unified title role (spec draft) */
+:root{--aimm-page-heading-size:var(--aimm-section-title-size);--aimm-panel-heading-size:var(--aimm-section-title-size);--aimm-mixcheck-title-color:var(--aimm-page-heading-color);--aimm-panel-heading-color:var(--aimm-page-heading-color)}
+/* intro */
+.tab-intro{margin:0 0 16px}
+.tab-intro h2{font-weight:500}
+/* Mix Check */
+#mixcheck.oz-mixcheck #mcSpecsTitle,#mixcheck.oz-mixcheck .oz-spec-title{font:500 var(--aimm-section-title-size)/var(--aimm-heading-line-height) var(--aimm-font-display);letter-spacing:var(--aimm-heading-letter-spacing);color:var(--aimm-page-heading-color)}
+#mixcheck.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) .mc-drop-title{font:500 var(--aimm-section-title-size)/var(--aimm-heading-line-height) var(--aimm-font-display);letter-spacing:var(--aimm-heading-letter-spacing);color:var(--aimm-page-heading-color)}
+/* Library */
+.lp .title,.lp .phead h2,.lp .fail h3,#library .rhead h3{font:500 var(--aimm-section-title-size)/var(--aimm-heading-line-height) var(--aimm-font-display);letter-spacing:var(--aimm-heading-letter-spacing);color:var(--aimm-page-heading-color)}
+.lp #libPlayerChannel{font-size:16px;color:#c9ced6}
+/* Library bars + MixBus bars: tracking only */
+#library .bar,#mixbus .bus-col h4,#mixbus .bus-col.is-empty h4{letter-spacing:var(--aimm-heading-letter-spacing)}
+/* Plugins */
+#plugins .inv-title,#plugins .vocal-fav-head h2{font:500 var(--aimm-section-title-size)/var(--aimm-heading-line-height) var(--aimm-font-display);letter-spacing:var(--aimm-heading-letter-spacing);color:var(--aimm-page-heading-color)}
+#plugins #invSidebar .inv-sidebar-section-toggle,#plugins #invSidebar .inv-sidebar-section-toggle:hover:not(:disabled){font:500 var(--aimm-section-title-size)/var(--aimm-heading-line-height) var(--aimm-font-display);letter-spacing:var(--aimm-heading-letter-spacing)}
+/* Settings */
+#settings .settings-section>h3,#settings .settings-companion-title,.settings-guide-heading strong{font:500 var(--aimm-section-title-size)/var(--aimm-heading-line-height) var(--aimm-font-display)!important;letter-spacing:var(--aimm-heading-letter-spacing);color:var(--aimm-page-heading-color)}
+/* Modals */
+.modal-header h3,#pickerModal .modal-header h3,.inv-product-meta-dialog h3,.inv-note-dialog h3,#invProductMetaOverlay h3,#invNoteOverlay h3,#invTagManagerOverlay .inv-tag-manager-head h2{font:500 var(--aimm-section-title-size)/var(--aimm-heading-line-height) var(--aimm-font-display);letter-spacing:var(--aimm-heading-letter-spacing);color:var(--aimm-page-heading-color)}
+#kbModal .modal-header h3{color:#0b0d10}
+#editPillModal .modal-header h3,#applyPillModal .modal-header h3{color:var(--sink)!important}

@@ -1,0 +1,257 @@
+{
+  "mixcheck-1900": {
+    "intro": {
+      "text": "Compare your mix with a reference",
+      "size": "20px",
+      "weight": "500",
+      "spacing": "-0.7px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    },
+    "card": {
+      "text": "Audio Specs",
+      "size": "20px",
+      "weight": "500",
+      "spacing": "-0.7px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    }
+  },
+  "library-1900": {
+    "intro": {
+      "text": "Build a library Hope can learn from",
+      "size": "20px",
+      "weight": "500",
+      "spacing": "-0.7px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    },
+    "card": {
+      "text": "Add to Hope's library",
+      "size": "20px",
+      "weight": "500",
+      "spacing": "-0.7px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "flex"
+    }
+  },
+  "mixbus-1900": {
+    "intro": {
+      "text": "Build your mix, one bus at a time",
+      "size": "20px",
+      "weight": "500",
+      "spacing": "-0.7px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    },
+    "card": {
+      "text": "Master Bus\u2212",
+      "size": "20px",
+      "weight": "500",
+      "spacing": "-0.7px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "flex"
+    }
+  },
+  "plugins-1900": {
+    "intro": {
+      "text": "Find the right tools for your sound",
+      "size": "20px",
+      "weight": "500",
+      "spacing": "-0.7px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    },
+    "card": {
+      "text": "Plugin inventory",
+      "size": "20px",
+      "weight": "500",
+      "spacing": "-0.7px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    }
+  },
+  "settings-1900": {
+    "intro": {
+      "text": "Set up AIMM to fit your workflow",
+      "size": "20px",
+      "weight": "500",
+      "spacing": "-0.7px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    },
+    "card": {
+      "text": "API keys & Agent access",
+      "size": "20px",
+      "weight": "500",
+      "spacing": "-0.7px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    }
+  },
+  "marketing-1900": {
+    "intro": {
+      "text": "Shape your release and how people find you",
+      "size": "20px",
+      "weight": "500",
+      "spacing": "-0.7px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    },
+    "card": null
+  },
+  "community-1900": {
+    "intro": {
+      "text": "Connect with artists and collaborators",
+      "size": "20px",
+      "weight": "500",
+      "spacing": "-0.7px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    },
+    "card": null
+  },
+  "mixcheck-560": {
+    "intro": {
+      "text": "Compare your mix with a reference",
+      "size": "18px",
+      "weight": "500",
+      "spacing": "-0.63px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    },
+    "card": {
+      "text": "Audio Specs",
+      "size": "18px",
+      "weight": "500",
+      "spacing": "-0.63px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    }
+  },
+  "library-560": {
+    "intro": {
+      "text": "Build a library Hope can learn from",
+      "size": "18px",
+      "weight": "500",
+      "spacing": "-0.63px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    },
+    "card": {
+      "text": "Add to Hope's library",
+      "size": "18px",
+      "weight": "500",
+      "spacing": "-0.63px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "flex"
+    }
+  },
+  "mixbus-560": {
+    "intro": {
+      "text": "Build your mix, one bus at a time",
+      "size": "18px",
+      "weight": "500",
+      "spacing": "-0.63px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    },
+    "card": {
+      "text": "Master Bus\u2212",
+      "size": "18px",
+      "weight": "500",
+      "spacing": "-0.63px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "flex"
+    }
+  },
+  "plugins-560": {
+    "intro": {
+      "text": "Find the right tools for your sound",
+      "size": "18px",
+      "weight": "500",
+      "spacing": "-0.63px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    },
+    "card": {
+      "text": "Plugin inventory",
+      "size": "18px",
+      "weight": "500",
+      "spacing": "-0.63px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    }
+  },
+  "settings-560": {
+    "intro": {
+      "text": "Set up AIMM to fit your workflow",
+      "size": "18px",
+      "weight": "500",
+      "spacing": "-0.63px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    },
+    "card": {
+      "text": "API keys & Agent access",
+      "size": "18px",
+      "weight": "500",
+      "spacing": "-0.63px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    }
+  },
+  "marketing-560": {
+    "intro": {
+      "text": "Shape your release and how people find you",
+      "size": "18px",
+      "weight": "500",
+      "spacing": "-0.63px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    },
+    "card": null
+  },
+  "community-560": {
+    "intro": {
+      "text": "Connect with artists and collaborators",
+      "size": "18px",
+      "weight": "500",
+      "spacing": "-0.63px",
+      "color": "rgb(243, 247, 251)",
+      "family": "Inter, -apple-system, sans-serif",
+      "display": "block"
+    },
+    "card": null
+  },
+  "modal-picker-560": {
+    "size": "18px",
+    "weight": "500",
+    "spacing": "-0.63px",
+    "color": "rgb(243, 247, 251)",
+    "family": "Inter, -apple-system, sans-serif"
+  }
+}

@@ -34,12 +34,15 @@ test('video browse starts closed, search opens matching groups, clearing closes 
   assert.match(html, /data-sec="videos" data-open="false"><button class="bar" type="button" aria-expanded="false"/);
   const bar={expanded:null,setAttribute(_key,value){this.expanded=value}};
   const card={dataset:{open:'false'},querySelector:()=>bar};
+  const browseBar={expanded:null,setAttribute(_key,value){this.expanded=value}};
+  const browse={dataset:{open:'false'},querySelector:()=>browseBar};
   const search={value:'compression'};
   let renders=0;
-  const ctx={document:{querySelector:()=>card,getElementById:id=>id==='libSearch'?search:{value:''}},LIB_UI:{groups:{vmixing:false,nmixing:false}},libraryRender:()=>renders++};
+  const ctx={document:{querySelector:selector=>selector.includes('data-sec=browse')?browse:card,getElementById:id=>id==='libSearch'?search:{value:''}},LIB_UI:{groups:{vmixing:false,nmixing:false}},libraryRender:()=>renders++};
   vm.runInNewContext(code('function libSearchChanged','function libFoldAll'),ctx);
   ctx.libSearchChanged();
   assert.equal(card.dataset.open,'true');assert.equal(bar.expanded,'true');
+  assert.equal(browse.dataset.open,'true');assert.equal(browseBar.expanded,'true');
   assert.equal(ctx.LIB_UI.groups.vmixing,true);assert.equal(ctx.LIB_UI.groups.nmixing,false);
   search.value='  ';ctx.libSearchChanged();
   assert.equal(card.dataset.open,'false');assert.equal(bar.expanded,'false');assert.equal(renders,2);
@@ -82,6 +85,33 @@ test('undated videos display an en dash',()=>{
   assert.equal(ctx.libDate(null,'–'),'–');
   assert.equal(ctx.libDate(null),'Library');
   assert.match(html,/libDate\(v\.added,'–'\)/);
+});
+test('video View uses the matching summary note without fetching a transcript',async()=>{
+  const video={video_id:'summary-1',url:'https://youtu.be/summary-1'};
+  const ctx={
+    YT_KB:{videos:[video]},STATE:{knowledge:[{source:video.url,summary:'A concise video summary.'}]},
+    LIB_UI:{open:{},videoText:{}},fetch:()=>{throw Error('Transcript should not be fetched');},libraryRender:()=>{}
+  };
+  vm.runInNewContext(code('function libDate','function libChatTurns'),ctx);
+  vm.runInNewContext(code('async function libViewVideo','async function libVideoNote'),ctx);
+  await ctx.libViewVideo(video.video_id);
+  assert.equal(ctx.libVideoContent(video,ctx.STATE.knowledge),'A concise video summary.');
+  assert.equal(ctx.LIB_UI.open['video'+video.video_id],true);
+  assert.match(code('function libraryRender','async function libAddLink'),/libVideoContent\(v,notes\)/);
+  assert.match(code('function libraryRender','async function libAddLink'),/\['Title','Channel','Added','Edit','Show','Link'\]/);
+});
+test('video View falls back to transcript text without YAML front matter',async()=>{
+  const video={video_id:'transcript-1',url:'https://youtu.be/transcript-1'};
+  const transcript='---\r\ntitle: "Video title"\r\nsource: "https://youtu.be/transcript-1"\r\n---\r\n\r\nActual transcript words.';
+  const ctx={
+    YT_KB:{videos:[video]},STATE:{knowledge:[]},LIB_UI:{open:{},videoText:{}},
+    AIMM_PROXY_URL:'https://example.test',fetch:async()=>({ok:true,text:async()=>transcript}),libraryRender:()=>{}
+  };
+  vm.runInNewContext(code('function libDate','function libChatTurns'),ctx);
+  vm.runInNewContext(code('async function libViewVideo','async function libVideoNote'),ctx);
+  await ctx.libViewVideo(video.video_id);
+  assert.equal(ctx.libVideoContent(video,[]),'Actual transcript words.');
+  assert.doesNotMatch(ctx.libVideoContent(video,[]),/---|title:|source:/i);
 });
 test('dashboard video Delete remains available in Edit when its transcript fails',async()=>{
   const fields=Object.fromEntries(['kbTitle','kbSource','kbContent','kbVideoDelete'].map(id=>[id,{value:'',hidden:true}]));
