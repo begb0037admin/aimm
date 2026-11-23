@@ -1,0 +1,83 @@
+/* AIMM state model v2 (Jules, 23 Nov 2026). Replaces every hover fill, glow, lift, scale and
+   multi-property transition. Codex: delete the legacy rules listed in SPEC.md section 6, then add this
+   block once, at the END of the main <style>. Nothing below uses !important. */
+:root{
+  --aimm-ink-rest:#9ca3af;      /* resting label + icon */
+  --aimm-ink-hover:#e8ebed;     /* hover label + icon: the ONLY hover change */
+  --aimm-teal:#2dd4bf;          /* selection fill + focus ring */
+  --aimm-black:#0b0d10;         /* ink on teal */
+  /* HOVER SWITCH. A (default) = approved solid teal hover with black ink. B = neutral hover (colour only).
+     To switch, set <html data-aimm-hover="neutral"> or change the two lines below to B's values. */
+  --aimm-hover-bg:var(--aimm-teal);
+  --aimm-hover-ink:var(--aimm-black);
+  --aimm-hover-bd:transparent;
+  --aimm-motion-scale:1;        /* preview slow-motion only */
+  --aimm-t-colour:calc(120ms * var(--aimm-motion-scale));
+  --aimm-t-press:calc(80ms * var(--aimm-motion-scale));
+  --aimm-t-rotate:calc(180ms * var(--aimm-motion-scale));
+  --aimm-ease:cubic-bezier(.22,1,.36,1);        /* colour, opacity */
+  --aimm-ease-rotate:cubic-bezier(.65,0,.35,1); /* fold plus/chevron only */
+}
+html[data-aimm-hover="neutral"]{--aimm-hover-bg:initial;--aimm-hover-bd:initial;--aimm-hover-ink:var(--aimm-ink-hover)}  /* B */
+/* 0. First paint: no transition or animation until the page has settled (JS adds .aimm-ready after 2 frames) */
+html:not(.aimm-ready) *,html:not(.aimm-ready) *::before,html:not(.aimm-ready) *::after{transition:none!important;animation:none!important}
+
+/* 1. Icons: one size per context, never scaled, never filtered, pixel aligned */
+.ic{display:block;flex:none;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;
+    width:var(--ic,20px);height:var(--ic,20px);stroke-width:var(--ic-sw,1.75);opacity:1;transform:none;filter:none}
+.ic-16{--ic:16px;--ic-sw:2}.ic-20{--ic:20px;--ic-sw:1.75}.ic-24{--ic:24px;--ic-sw:1.5}
+
+/* 2. Hover, two kinds of control.
+   (a) Controls that already show a button or pill surface at rest (tabs, buttons, pills, sidebar nav buttons, settings links,
+       segmented modes): hover = the switch tokens. A: solid teal + black ink. B: same surface, brighter ink.
+       The surface and the ink tween together in 120ms. Nothing else changes (no scale, lift, glow, ring, filter).
+   (b) Icon-only controls (no surface at rest): colour only. Never a box behind a small icon.
+   Set --rest-bg on each (a) control to its own resting surface so B can keep it. */
+.aimm-btn,.tab.oz-tab,.inv-side-row,.settings-nav a{
+  background-color:var(--rest-bg,transparent);border-color:var(--rest-bd,transparent);color:var(--aimm-ink-rest);cursor:pointer;
+  transition:background-color var(--aimm-t-colour) var(--aimm-ease),border-color var(--aimm-t-colour) var(--aimm-ease),color var(--aimm-t-colour) var(--aimm-ease)}
+.aimm-c,.ref-t-btn:not(.aimm-btn),.fact-action-btn,.close-btn,.inv-fav,.inv-product-actions{
+  color:var(--aimm-ink-rest);transition:color var(--aimm-t-colour) var(--aimm-ease);cursor:pointer}
+@media (hover:hover) and (pointer:fine){
+  .aimm-btn:hover,.tab.oz-tab:not(.active):hover,.inv-side-row:not(.active):hover,.settings-nav a:hover{
+    background-color:var(--aimm-hover-bg,var(--rest-bg,transparent));border-color:var(--aimm-hover-bd,var(--rest-bd,transparent));color:var(--aimm-hover-ink)}
+  .aimm-c:hover,.fact-action-btn:hover,.close-btn:hover,.inv-fav:hover,.inv-product-actions:hover{color:var(--aimm-ink-hover)}
+}
+.aimm-c.is-danger:hover{color:#f87171}
+.aimm-btn:active,.aimm-c:active,.tab.oz-tab:active{opacity:.8;transition:opacity var(--aimm-t-press) linear}
+
+/* 3. Selected: solid teal, black ink, border transparent. Applied at once. Hover leaves it unchanged. */
+.tab.oz-tab.active,.tab.oz-tab[aria-selected="true"],.inv-side-row.active,.aimm-sel{background-color:var(--aimm-teal);border-color:transparent;color:var(--aimm-black);transition:none}
+.tab.oz-tab.active:hover,.inv-side-row.active:hover,.aimm-sel:hover{background-color:var(--aimm-teal);color:var(--aimm-black)}
+
+/* 4. Keyboard focus only: a solid ring, no fade, no mouse-click ring */
+:is(button,a,summary,[tabindex],input,select):focus{outline:0}
+:is(button,a,summary,[tabindex],input,select):focus-visible{outline:2px solid var(--aimm-teal);outline-offset:2px;transition:none}
+
+/* 5. Rows and list items: NO hover state at all. Row actions appear with opacity only. */
+.aimm-row,.lp .row,.fact-chip,.rt-pill,.preset-card,.inv-list-row,.plugin-row{background-color:inherit}
+.aimm-actions{opacity:0;transition:opacity var(--aimm-t-colour) var(--aimm-ease)}
+.aimm-row:hover .aimm-actions,.aimm-row:focus-within .aimm-actions,.fact-chip:hover .fact-actions,.fact-chip:focus-within .fact-actions,
+.rt-pill:hover .rt-pill-actions,.rt-pill:focus-within .rt-pill-actions{opacity:1}
+@media (hover:none){.aimm-actions,.fact-actions,.rt-pill-actions{opacity:1}}
+
+/* 6. Fold: the glyph rotates; content appears at once (no fade, no height animation) */
+.aimm-fold .fold-v{transform-box:fill-box;transform-origin:center;transition:transform var(--aimm-t-rotate) var(--aimm-ease-rotate),opacity var(--aimm-t-rotate) var(--aimm-ease-rotate)}
+[aria-expanded="true"] .aimm-fold .fold-v,.aimm-fold[aria-expanded="true"] .fold-v{transform:rotate(90deg);opacity:0}
+.aimm-chev{transition:transform var(--aimm-t-rotate) var(--aimm-ease-rotate)}
+[aria-expanded="true"] .aimm-chev{transform:rotate(180deg)}
+
+/* 7. Busy / success / fail: opacity crossfade only, one spinner */
+.aimm-swap{position:relative;display:inline-grid;width:var(--ic,20px);height:var(--ic,20px)}
+.aimm-swap>.ic{grid-area:1/1;opacity:0;transition:opacity var(--aimm-t-colour) var(--aimm-ease)}
+.aimm-swap[data-state="idle"]>.ic-idle,.aimm-swap[data-state="busy"]>.ic-busy,.aimm-swap[data-state="ok"]>.ic-ok,.aimm-swap[data-state="fail"]>.ic-fail{opacity:1}
+.aimm-swap[data-state="busy"]>.ic-busy{animation:aimm-spin .8s linear infinite}
+.aimm-swap[data-state="ok"]>.ic-ok{color:var(--aimm-teal)}.aimm-swap[data-state="fail"]>.ic-fail{color:#f87171}
+@keyframes aimm-spin{to{transform:rotate(360deg)}}
+
+/* 8. Reduced motion: rotation and spin stop; opacity and colour stay */
+@media (prefers-reduced-motion:reduce){
+  .aimm-fold .fold-v,.aimm-chev{transition:none}
+  .aimm-swap[data-state="busy"]>.ic-busy{animation:aimm-pulse 1.2s ease-in-out infinite}
+}
+@keyframes aimm-pulse{50%{opacity:.4}}

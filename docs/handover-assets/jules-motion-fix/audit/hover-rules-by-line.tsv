@@ -1,0 +1,350 @@
+line	action	selector	declarations
+40	DELETE rule	.btn:hover	background:rgb(109, 40, 217); background-color:rgb(109, 40, 217); background-image:initial
+42	DELETE rule	.btn.secondary:hover	background:rgb(75, 85, 99); background-color:rgb(75, 85, 99); background-image:initial
+44	DELETE rule	.btn.ghost:hover	border-color:rgb(107, 114, 128)
+46	DELETE rule	.btn.green:hover	background:rgb(4, 120, 87); background-color:rgb(4, 120, 87); background-image:initial
+47	DELETE rule	.btn.red:hover	background:rgb(185, 28, 28); background-color:rgb(185, 28, 28); background-image:initial
+48	DELETE rule	.btn.amber:hover	background:rgb(146, 64, 14); background-color:rgb(146, 64, 14); background-image:initial
+50	DELETE rule	.btn.purple:hover	background:rgb(147, 51, 234); background-color:rgb(147, 51, 234); background-image:initial; box-shadow:rgb(216, 180, 254
+62	DELETE rule	.tab:hover	background:rgba(255, 255, 255, 0.02); background-color:rgba(255, 255, 255, 0.02); background-image:initial
+68	n/a	.tab.active	transform:translateY(1px)
+68	n/a	.tab.active	background:rgb(31, 41, 55); background-color:rgb(31, 41, 55); background-image:initial; transform:translateY(1px); borde
+77	n/a	.tab.active[data-persona-label]	transform:translateY(1px)
+80	n/a	.tab.active .tab-ico	filter:drop-shadow(rgba(168, 85, 247, 0.55) 0px 0px 10px)
+91	n/a	.tab:not(:last-child):not(.active)::after	background:rgb(55, 65, 81); background-color:rgb(55, 65, 81); background-image:initial; opacity:0.6
+92	DELETE rule	.tab:not(.active):hover	background:rgba(31, 41, 55, 0.3); background-color:rgba(31, 41, 55, 0.3); background-image:initial
+114	DELETE rule	.tab:hover .tab-ico	transform:scale(1.08)
+121	n/a	.tab.active .tab-ico.pop	animation:2.4s ease-in-out 0s infinite normal none running tab-pop
+126	DELETE rule	.cs-btn:hover	border-color:rgb(107, 114, 128)
+128	DELETE rule	.cs.open .cs-btn, .cs .cs-btn:hover	background:var(--send-blue); border-color:rgb(47, 111, 174)
+139	DELETE rule	.cs-tile:hover	background:rgb(42, 31, 61); background-color:rgb(42, 31, 61); background-image:initial; border-color:rgb(167, 139, 250)
+156	DELETE rule	.eq-tool-btn:hover	background:rgb(55, 65, 81); background-color:rgb(55, 65, 81); background-image:initial; border-color:rgb(107, 114, 128)
+157	n/a	.eq-tool-btn.active	background:rgb(59, 23, 100); background-color:rgb(59, 23, 100); background-image:initial; border-color:rgb(167, 139, 250
+158	DELETE rule	.eq-tool-btn.active:hover	background:rgb(91, 33, 182); background-color:rgb(91, 33, 182); background-image:initial
+170	DELETE rule	.eq-tile-delete:hover	background:rgb(185, 28, 28); background-color:rgb(185, 28, 28); background-image:initial
+175	DELETE rule	.eq-add-tile-claude:hover	background:rgba(124, 58, 237, 0.08); background-color:rgba(124, 58, 237, 0.08); background-image:initial; border-color:r
+181	DELETE rule	.eq-add-tile:hover	background:rgba(167, 139, 250, 0.06); background-color:rgba(167, 139, 250, 0.06); background-image:initial; border-color
+189	n/a	.eq-add-form input:focus, .eq-add-form textarea:focus	border-color:rgb(167, 139, 250)
+194	DELETE rule	.eq-add-form-actions button.save:hover	background:rgb(91, 33, 182); background-color:rgb(91, 33, 182); background-image:initial
+196	DELETE rule	.eq-add-form-actions button.cancel:hover	background:rgb(55, 65, 81); background-color:rgb(55, 65, 81); background-image:initial
+200	DELETE rule	.symptom:hover	background:rgb(55, 65, 81); background-color:rgb(55, 65, 81); background-image:initial; border-color:rgb(75, 85, 99)
+293	DELETE rule	.collapse-bar .pill-btn:hover	background:rgb(55, 65, 81); background-color:rgb(55, 65, 81); background-image:initial; border-color:rgb(167, 139, 250)
+309	DELETE rule	.fact-cat-head:hover	background:rgb(37, 47, 63); background-color:rgb(37, 47, 63); background-image:initial
+318	DELETE rule	.fact-add-mini:hover	background:rgb(59, 23, 100); background-color:rgb(59, 23, 100); background-image:initial; border-color:rgb(167, 139, 250
+320	DELETE rule	.fact-chip:hover	background:rgb(17, 24, 39); background-color:rgb(17, 24, 39); background-image:initial; border-color:rgb(167, 139, 250)
+328	keep	.fact-chip:hover .fact-actions, .fact-chip.editing .fact-actions	opacity:1
+328	REWRITE to colour only	.fact-chip:hover .fact-actions, .fact-chip:focus-within .fact-actions, .fact-chip.editing .fact-actions	transform:none; opacity:1
+330	DELETE rule	.fact-action-btn:hover	background:rgb(167, 139, 250); background-color:rgb(167, 139, 250); background-image:initial
+331	DELETE rule	.fact-action-btn.danger:hover	background:rgb(220, 38, 38); background-color:rgb(220, 38, 38); background-image:initial
+365	DELETE rule	#mixbus .chain-toolbar button:hover	filter:brightness(1.1)
+365	DELETE rule	#mixbus .chain-toolbar button:hover, #mixbus .chain-toolbar button:focus-visible	background:var(--mb-teal); filter:none
+375	DELETE rule	#mixbus .chain-item.selected, #mixbus .chain-item.selected:hover	background:var(--mb-teal); box-shadow:none; outline:0px
+388	DELETE rule	#mixbus .chain-actions button:hover, #mixbus .chain-actions button:focus-visible	outline:1px solid var(--mb-teal)
+388	DELETE rule	#mixbus .chain-actions button:hover, #mixbus .chain-actions button:focus-visible	background:none; background-color:initial; background-image:none; outline:0px
+391	DELETE rule	#mixbus .bus-col.is-empty .empty-add:hover, #mixbus .bus-col.is-empty .empty-add:focus-visible	background:var(--mb-hover); border-color:transparent
+407	n/a	#mixbus .chain-setting-input:focus	box-shadow:inset 0 0 0 2px var(--mb-teal); outline:0px
+415	DELETE rule	#mixbus .restore:hover, #mixbus .restore:focus-visible	background:var(--mb-teal); outline:0px; border-color:var(--mb-teal)
+430	DELETE rule	#mixbus .bus-col h4:hover	background:var(--mb-hover)
+433	n/a	#mixbus .bus-col h4:focus-visible	outline:2px solid var(--mb-teal)
+438	REWRITE to colour only	#mixbus .bus-col h4 .clear-bus-btn:hover, #mixbus .bus-col h4 .clear-bus-btn:focus-visible	background:var(--mb-teal); outline:0px; text-decoration:none; opacity:1
+454	DELETE rule	#mixbus .chain-item:hover:not(.selected), #mixbus .chain-item:focus-visible:not(.selected)	background:var(--mb-hover); outline:0px
+454	n/a	#mixbus .chain-item:focus-visible	box-shadow:inset 0 0 0 2px var(--mb-teal)
+458	n/a	#mixbus .chain-item.selected:focus-visible	background:var(--mb-teal); box-shadow:rgb(0, 0, 0) 0px 0px 0px 2px inset; outline:0px
+466	DELETE rule	#mixbus .chain-list > .chain-add:hover, #mixbus .chain-list > .chain-add:focus-visible	background:var(--mb-hover); outline:0px
+466	n/a	#mixbus .chain-list > .chain-add:focus-visible	box-shadow:inset 0 0 0 2px var(--mb-teal)
+475	DELETE rule	#mixbus .chain-panel-edit:hover, #mixbus .chain-panel-edit:focus-visible	background:var(--mb-teal); outline:0px; text-decoration:none
+479	DELETE rule	#mixbus .chain-edit-actions button:hover, #mixbus .chain-edit-actions button:focus-visible	background:var(--mb-teal); outline:0px
+479	n/a	#mixbus .chain-edit-actions button:focus-visible	box-shadow:0 0 0 2px #000,0 0 0 4px var(--mb-teal)
+480	DELETE rule	#mixbus .chain-edit-actions .save:hover, #mixbus .chain-edit-actions .save:focus-visible	background:rgb(94, 234, 212); background-color:rgb(94, 234, 212); background-image:initial
+486	n/a	#mixbus .chain-toolbar button:focus-visible	outline:2px solid var(--mb-teal)
+488	DELETE rule	#mixbus #autoFillBtn:hover, #mixbus #autoFillBtn:focus-visible	background:rgb(94, 234, 212); background-color:rgb(94, 234, 212); background-image:initial
+514	DELETE rule	.preset-card-rename:hover	background:rgb(59, 23, 100); background-color:rgb(59, 23, 100); background-image:initial
+516	DELETE rule	.preset-card-delete:hover	background:rgb(127, 29, 29); background-color:rgb(127, 29, 29); background-image:initial
+523	DELETE rule	.plugin-option:hover	background:rgb(55, 65, 81); background-color:rgb(55, 65, 81); background-image:initial
+544	DELETE rule	#pickerModal .plugin-option:hover, #pickerModal .plugin-option:focus-visible	background:linear-gradient(135deg, rgb(148, 66, 220), rgb(185, 112, 255)); background-color:initial; background-image:li
+544	n/a	#pickerModal .plugin-option:focus-visible	box-shadow:rgb(232, 235, 237) 0px 0px 0px 2px inset
+545	DELETE rule	#mixbus .replacement-option:hover, #mixbus .replacement-option:focus-visible	background:var(--mb-hover); outline:none
+545	n/a	#mixbus .replacement-option:focus-visible	box-shadow:inset 0 0 0 2px var(--mb-teal)
+550	DELETE rule	#mixbus .replacement-option[aria-checked="true"], #mixbus .replacement-option[aria-checked="true"]:hover, #mixbus .replacement-option[aria-c	background:var(--mb-teal); box-shadow:none
+555	n/a	#pickerModal .modal-filters input:focus	box-shadow:rgb(45, 212, 191) 0px 0px 0px 1px inset; outline:none; border-color:rgb(45, 212, 191)
+556	n/a	#mixbus .replacement-filters input:focus	box-shadow:inset 0 0 0 2px var(--mb-teal); outline:none
+559	n/a	#pickerModal .modal-filters select:focus-visible, #mixbus .replacement-filters select:focus-visible	outline:rgb(45, 212, 191) solid 2px
+565	DELETE rule	#mixbus .chain-edit-actions .save:disabled:hover	background:var(--mb-teal); border-color:var(--mb-teal)
+584	n/a	.symptom.active	background:rgb(88, 28, 135); background-color:rgb(88, 28, 135); background-image:initial; border-color:rgb(167, 139, 250
+587	DELETE rule	.symptom.fail:hover	background:rgba(220, 38, 38, 0.28); background-color:rgba(220, 38, 38, 0.28); background-image:initial; border-color:rgb
+588	DELETE rule	.symptom.warn:hover	background:rgba(245, 158, 11, 0.25); background-color:rgba(245, 158, 11, 0.25); background-image:initial; border-color:r
+600	n/a	.meter-override input:focus	outline:none; border-color:rgb(167, 139, 250)
+646	DELETE rule	.lib-pub-pill:hover	border-color:rgb(107, 114, 128)
+652	DELETE rule	.lib-pub-pill.clear:hover:not(:disabled)	background:rgb(127, 29, 29); background-color:rgb(127, 29, 29); background-image:initial; border-color:rgb(185, 28, 28)
+656	n/a	.lib-search-wrap:focus-within	border-color:rgb(167, 139, 250)
+664	DELETE rule	.lib-search-clear:hover	background:rgb(55, 65, 81); background-color:rgb(55, 65, 81); background-image:initial
+706	n/a	.aichat-compose textarea:focus	outline:none; border-color:rgb(124, 58, 237)
+715	DELETE rule	.aichat-compose #aiChatSend:hover:not(:disabled)	background:rgb(13, 138, 106); background-color:rgb(13, 138, 106); background-image:initial
+719	DELETE rule	.aichat-compose #aiChatImageBtn:hover	background:rgb(147, 51, 234); background-color:rgb(147, 51, 234); background-image:initial
+724	DELETE rule	.aichat-quick-prompt:hover	background:rgb(31, 41, 55); background-color:rgb(31, 41, 55); background-image:initial; border-color:rgb(55, 65, 81)
+727	DELETE rule	.aichat-compose #aiChatClearInput:hover	border-color:rgb(127, 29, 29)
+733	DELETE rule	#aiChatImagePreview .ai-img-clear:hover	background:rgb(127, 29, 29); background-color:rgb(127, 29, 29); background-image:initial
+750	DELETE rule	.aichat-tts-btn:hover	border-color:rgb(16, 163, 127)
+752	DELETE rule	.aichat-copy-btn:hover	border-color:rgb(167, 139, 250)
+776	n/a	.kb-card.active	border-color:rgb(251, 191, 36)
+843	DELETE rule	#importImagePreview .imp-img-clear:hover	background:rgb(127, 29, 29); background-color:rgb(127, 29, 29); background-image:initial
+849	DELETE rule	.genre-pick-opt:hover	background:rgb(31, 41, 55); background-color:rgb(31, 41, 55); background-image:initial
+877	DELETE rule	.mic-btn:hover	box-shadow:rgba(249, 115, 22, 0.5) 0px 6px 18px; transform:scale(1.03)
+878	n/a	.mic-btn:active	transform:scale(0.97)
+896	n/a	.speaking-indicator.active::before	background:linear-gradient(90deg, transparent, rgb(52, 211, 153), transparent); background-color:initial; background-ima
+955	DELETE rule	.voice-mode-toggle .vmt-btn:hover	background:rgb(31, 41, 55); background-color:rgb(31, 41, 55); background-image:initial
+956	n/a	.voice-mode-toggle .vmt-btn.active	background:rgb(124, 58, 237); background-color:rgb(124, 58, 237); background-image:initial; border-color:rgb(167, 139, 2
+957	DELETE rule	.voice-mode-toggle .vmt-btn.active:hover	background:rgb(109, 40, 217); background-color:rgb(109, 40, 217); background-image:initial
+963	DELETE rule	.preset-card:hover	background:rgb(31, 41, 55); background-color:rgb(31, 41, 55); background-image:initial; border-color:rgb(167, 139, 250)
+988	DELETE rule	.journal-entry-head:hover	background:rgb(31, 41, 55); background-color:rgb(31, 41, 55); background-image:initial
+1053	DELETE rule	.rt-pill:hover	background:rgb(55, 65, 81); background-color:rgb(55, 65, 81); background-image:initial; border-color:rgb(75, 85, 99)
+1061	REWRITE to colour only	.rt-pill:hover .rt-pill-actions, .rt-pill:focus-within .rt-pill-actions	transform:none; opacity:1
+1064	DELETE rule	.rt-pill .rt-pill-act:hover	background:rgba(255, 255, 255, 0.14); background-color:rgba(255, 255, 255, 0.14); background-image:initial; transform:tr
+1064	DELETE rule	.rt-pill .rt-pill-act:hover	background:none; background-color:initial; background-image:none; transform:none
+1065	n/a	.rt-pill .rt-pill-act:active	transform:translateY(0px)
+1068	DELETE rule	.rt-pill .rt-pill-act.apply:hover	background:rgb(5, 150, 105); background-color:rgb(5, 150, 105); background-image:initial; border-color:rgb(52, 211, 153)
+1070	DELETE rule	.rt-pill .rt-pill-act.fav:hover	background:rgba(250, 204, 21, 0.2); background-color:rgba(250, 204, 21, 0.2); background-image:initial; border-color:rgb
+1072	DELETE rule	.rt-pill .rt-pill-act.edit:hover	background:rgba(59, 130, 246, 0.22); background-color:rgba(59, 130, 246, 0.22); background-image:initial; border-color:r
+1074	DELETE rule	.rt-pill .rt-pill-act.copy:hover	background:rgba(139, 92, 246, 0.22); background-color:rgba(139, 92, 246, 0.22); background-image:initial; border-color:r
+1076	DELETE rule	.rt-pill .rt-pill-act.delete:hover	background:rgb(153, 27, 27); background-color:rgb(153, 27, 27); background-image:initial; border-color:rgb(239, 68, 68)
+1078	DELETE rule	.rt-pill .rt-pill-act.danger:hover	background:rgb(127, 29, 29); background-color:rgb(127, 29, 29); background-image:initial
+1080	DELETE rule	.rt-pill.populated:hover	background:rgb(107, 33, 168); background-color:rgb(107, 33, 168); background-image:initial; border-color:rgb(196, 181, 2
+1082	DELETE rule	.rt-pill.empty:hover	background:transparent; background-color:transparent; background-image:initial; border-color:rgb(55, 65, 81)
+1109	DELETE rule	.rt-cost-card .actions button:hover	background:rgb(55, 65, 81); background-color:rgb(55, 65, 81); background-image:initial
+1111	DELETE rule	.rt-cost-card .actions button.topup:hover	background:rgb(69, 26, 3); background-color:rgb(69, 26, 3); background-image:initial
+1113	DELETE rule	.rt-cost-card .actions button.update-balance:hover	background:rgb(46, 16, 101); background-color:rgb(46, 16, 101); background-image:initial
+1130	n/a	.profile-panel textarea:focus	outline:none; border-color:rgb(124, 58, 237)
+1153	DELETE rule	.rt-tool-card button.linkbtn:hover	background:rgb(55, 65, 81); background-color:rgb(55, 65, 81); background-image:initial
+1171	DELETE rule	.rt-call-btn:hover:not(:disabled)	transform:scale(1.02)
+1223	DELETE rule	.ref-dz-btn:hover	background:rgb(109, 40, 217); background-color:rgb(109, 40, 217); background-image:initial
+1230	DELETE rule	.ref-dz-clear:hover	border-color:rgb(248, 113, 113)
+1236	DELETE rule	.ref-t-btn:hover	background:rgb(75, 85, 99); background-color:rgb(75, 85, 99); background-image:initial
+1238	DELETE rule	.ref-t-btn.ref-play-pause:hover	background:rgb(109, 40, 217); background-color:rgb(109, 40, 217); background-image:initial
+1295	DELETE rule	#dashOverlay .dash-ov-actions a:hover	text-decoration:underline
+1297	DELETE rule	#dashOverlay .dash-ov-actions button:hover	background:rgb(43, 54, 72); background-color:rgb(43, 54, 72); background-image:initial
+1334	DELETE rule	.mm-apply:hover	background:rgba(79, 216, 255, 0.22); background-color:rgba(79, 216, 255, 0.22); background-image:initial
+1351	n/a	#hopeRail, #hopeRail:focus-within	background:linear-gradient(rgb(27, 29, 32) 0%, rgb(21, 24, 27) 100%); background-color:initial; background-image:linear-
+1361	DELETE rule	#railReopen:hover	border-color:rgba(79, 216, 255, 0.4)
+1385	n/a	.tabs.oz-tabstrip .tab.oz-tab.active	background:rgb(35, 38, 41); background-color:rgb(35, 38, 41); background-image:initial; box-shadow:rgba(90, 169, 230, 0.
+1385	n/a	.tabs.oz-tabstrip .tab.oz-tab.active	background:var(--send-blue); box-shadow:rgba(90, 169, 230, 0.28) 0px 0px 16px
+1385	n/a	.tabs.oz-tabstrip .tab.oz-tab.active	background:var(--mixing-state-fill); box-shadow:rgb(10, 21, 32) 0px 0px 0px 2px, rgba(45, 95, 134, 0.92) 0px 0px 0px 5
+1385	n/a	.tabs.oz-tabstrip .tab.oz-tab.active, .tabs.oz-tabstrip .tab.oz-tab[aria-selected="true"], .tabs.oz-tabstrip .tab.oz-tab[aria-current]:not([	box-shadow:none; filter:none; outline:none; border-color:transparent
+1385	n/a	.tabs.oz-tabstrip .tab.oz-tab.active, .tabs.oz-tabstrip .tab.oz-tab[aria-selected="true"], .tabs.oz-tabstrip .tab.oz-tab[aria-current]:not([	background:var(--pv-teal); box-shadow:none; filter:none; transform:none; border-color:transparent; border:1.5px solid tr
+1413	n/a	#mixcheck.oz-mixcheck #mcTransport, #mixcheck.oz-mixcheck #mcTransport > #refDropZone, #mixcheck.oz-mixcheck #mcTransport > #refDropZone:foc	background:var(--pv-neutral-bg); box-shadow:none; border:1px solid var(--pv-neutral-bd)
+1435	DELETE rule	#mixcheck.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) > #refDropZone:hover, #mixcheck.oz-mixcheck #mcTransport:not(:has(#refDzL	background:radial-gradient(at 50% 0%, rgba(47, 161, 230, 0.14), transparent 58%) ; background-color:initial; background-
+1480	DELETE rule	#mixcheck.oz-mixcheck .mc-input-folder:hover	background:rgb(36, 27, 48); background-color:rgb(36, 27, 48); background-image:initial; border-color:rgb(141, 88, 200)
+1482	DELETE rule	#mixcheck.oz-mixcheck .mc-input-main:hover, #mixcheck.oz-mixcheck .mc-input-caret:hover	filter:brightness(1.06)
+1486	DELETE rule	#mixcheck.oz-mixcheck .mc-input-menu button:hover	background:var(--grad)
+1731	n/a	#mixcheck.oz-mixcheck .mc-spotify-ref-controls input:focus	outline:rgba(79, 195, 232, 0.6) solid 2px
+1733	DELETE rule	#mixcheck.oz-mixcheck .mc-spotify-ref-controls button:hover	background:rgb(39, 207, 99); background-color:rgb(39, 207, 99); background-image:initial
+1763	DELETE rule	#mixcheck.oz-mixcheck .mc-spotify-result button:hover	background:rgba(79, 195, 232, 0.18); background-color:rgba(79, 195, 232, 0.18); background-image:initial; border-color:r
+1764	n/a	#mixcheck.oz-mixcheck .mc-spotify-result button:focus-visible	outline:rgb(101, 211, 229) solid 2px
+1768	DELETE rule	#mixcheck.oz-mixcheck .mc-spotify-load-more:hover	background:rgba(79, 195, 232, 0.18); background-color:rgba(79, 195, 232, 0.18); background-image:initial; border-color:r
+1777	DELETE rule	#mixcheck.oz-mixcheck .mc-spotify-result-art:hover, #mixcheck.oz-mixcheck .mc-spotify-result-art:focus-visible	outline:rgba(142, 227, 161, 0.72) solid 2px
+1791	DELETE rule	#mixcheck.oz-mixcheck .mc-spotify-artist-fallback > summary:hover	background:rgba(101, 211, 229, 0.035); background-color:rgba(101, 211, 229, 0.035); background-image:initial
+1792	n/a	#mixcheck.oz-mixcheck .mc-spotify-artist-fallback > summary:focus-visible	outline:rgb(101, 211, 229) solid 2px
+1802	DELETE rule	#mixcheck.oz-mixcheck .mc-spotify-result--compact:hover, #mixcheck.oz-mixcheck .mc-spotify-result--compact.is-selected	background:rgb(34, 38, 43); background-color:rgb(34, 38, 43); background-image:initial; border-color:rgb(79, 127, 140)
+1865	DELETE rule	#mixcheck.oz-mixcheck .mcq-showall:hover	border-color:rgb(58, 64, 72)
+1870	DELETE rule	#mixcheck.oz-mixcheck .mcq-x:hover	border-color:var(--red)
+1889	DELETE rule	#mixcheck.oz-mixcheck .mcq-acts button.mcq-hope:hover	border-color:rgb(76, 29, 149)
+1894	DELETE rule	#mixcheck.oz-mixcheck .mcq-acts button.mcq-done:hover	background:rgb(32, 64, 52); background-color:rgb(32, 64, 52); background-image:initial; border-color:var(--green)
+1935	n/a	#mixcheck.oz-mixcheck .tp-vol-range:focus	outline:none
+1936	n/a	#mixcheck.oz-mixcheck .tp-vol-range:focus-visible	outline:2px solid var(--accent-a)
+1940	DELETE rule	#mixcheck.oz-mixcheck .tp-vol-range:hover::-webkit-slider-thumb, #mixcheck.oz-mixcheck .tp-vol-range:focus-visible::-webkit-slider-thumb	box-shadow:rgba(0, 0, 0, 0.5) 0px 1px 2px, rgba(47, 161, 230, 0.22) 0px 0px 0px 3
+1969	DELETE rule	#hopeRail .rail-head button:hover	border-color:rgb(90, 169, 230)
+1980	DELETE rule	#hopeRail .aichat-bar button:hover	background:rgb(44, 48, 52); background-color:rgb(44, 48, 52); background-image:initial; border-color:rgb(90, 169, 230)
+2024	DELETE rule	#hopeRail .aichat-copy-btn:hover	background:rgba(52, 211, 153, 0.08); background-color:rgba(52, 211, 153, 0.08); background-image:initial; border-color:r
+2025	n/a	#hopeRail .aichat-copy-btn:active, #hopeRail .aichat-copy-btn.ok	background:rgba(52, 211, 153, 0.16); background-color:rgba(52, 211, 153, 0.16); background-image:initial; border-color:r
+2028	DELETE rule	#hopeRail .aichat-speak-message:hover	background:rgba(167, 139, 250, 0.08); background-color:rgba(167, 139, 250, 0.08); background-image:initial; border-color
+2029	n/a	#hopeRail .aichat-speak-message:active, #hopeRail .aichat-speak-message.playing, #hopeRail .aichat-speak-message[aria-pressed="true"]	background:rgba(167, 139, 250, 0.16); background-color:rgba(167, 139, 250, 0.16); background-image:initial; border-color
+2064	DELETE rule	.aichat-msg.fixaction .am-acts button.am-done:hover	background:rgb(32, 64, 52); background-color:rgb(32, 64, 52); background-image:initial; border-color:rgb(52, 211, 153)
+2077	n/a	#hopeRail .aichat-compose textarea:focus	border-color:rgb(90, 169, 230)
+2084	DELETE rule	#hopeRail .aichat-compose .send-col #aiChatSend, #hopeRail .aichat-compose .send-col #aiChatSend:is(:hover, :active, :focus, :focus-visible)	box-shadow:none; outline:none; border:1px solid var(--pv-teal)
+2087	DELETE rule	#hopeRail #aiChatImageBtn:hover	background:rgb(44, 48, 52); background-color:rgb(44, 48, 52); background-image:initial
+2089	DELETE rule	#hopeRail #aiChatClearInput:hover	border-color:rgb(90, 38, 38)
+2094	REWRITE to colour only	#hopeRail .coach-info-wrap:hover #hopeUsageStatus, #hopeRail .coach-info-wrap:focus-within #hopeUsageStatus	transform:translateY(-50%); opacity:1
+2108	DELETE rule	#hopeRail .aichat-quick-prompt:hover	border-color:rgba(79, 195, 232, 0.5)
+2180	DELETE rule	#mcTransport .tp-clear:hover	border-color:rgb(248, 113, 113)
+2261	DELETE rule	.cs .cs-btn:hover	border-color:rgb(90, 169, 230)
+2304	DELETE rule	#hopeRail #aiChatSend, #hopeRail #aiChatSend:hover:not(:disabled)	background:var(--mixing-state-fill)
+2313	DELETE rule	#hopeRail #aiChatTranscript:hover::-webkit-scrollbar-thumb	background:rgb(69, 75, 83); background-color:rgb(69, 75, 83); background-image:initial
+2367	n/a	#mixcheck.oz-mixcheck .mc-stem-row:focus-visible	outline:rgb(38, 42, 47) solid 2px
+2380	DELETE rule	#mixcheck.oz-mixcheck .mc-stem-remove:hover	border-color:rgb(249, 115, 22)
+2395	DELETE rule	#mixcheck.oz-mixcheck #mcStemStack .mc-stem-big-play:hover	background:rgb(45, 212, 191); background-color:rgb(45, 212, 191); background-image:initial; box-shadow:none; transform:s
+2396	n/a	#mixcheck.oz-mixcheck #mcStemStack .mc-stem-big-play:focus-visible	outline:rgb(38, 42, 47) solid 3px
+2407	DELETE rule	#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover	background:rgb(27, 29, 32); background-color:rgb(27, 29, 32); background-image:initial; box-shadow:none; transform:none;
+2407	DELETE rule	#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover:not(:disabled)	background:rgb(27, 29, 32); background-color:rgb(27, 29, 32); background-image:initial; border-color:rgb(38, 42, 47); bo
+2505	DELETE rule	.settings-nav a:hover, .settings-nav a:focus-visible	background:rgb(32, 43, 52); background-color:rgb(32, 43, 52); background-image:initial; border-color:rgb(68, 132, 170)
+2519	DELETE rule	#settings #aimm-account-preview > button:hover	background:rgb(32, 43, 52); background-color:rgb(32, 43, 52); background-image:initial; border-color:rgb(68, 132, 170)
+2525	DELETE rule	#settings #aimm-account-preview .account-row button:hover	background:rgb(32, 43, 52); background-color:rgb(32, 43, 52); background-image:initial; border-color:rgb(68, 132, 170)
+2538	DELETE rule	#settings #settingsKeys .rt-key-inputs button:hover	background:rgb(32, 43, 52); background-color:rgb(32, 43, 52); background-image:initial; border-color:rgb(68, 132, 170)
+2554	n/a	#settings #settingsSafety #autoPause:focus-visible, #settings #aimm-account-preview .account-tools-toggle input:focus-visible	outline:rgb(47, 161, 230) solid 2px
+2565	DELETE rule	#settings .settings-companion-connect-row button:hover	background:rgb(32, 43, 52); background-color:rgb(32, 43, 52); background-image:initial; border-color:rgb(68, 132, 170)
+2574	n/a	#settings a:focus-visible, #settings button:focus-visible, #settings input:focus-visible, #settings select:focus-visible	outline:rgb(47, 161, 230) solid 2px
+2583	n/a	.settings-guide summary:focus-visible	outline:rgb(120, 135, 255) solid 2px
+2603	n/a	#invInstallManagerOverlay button:focus-visible	outline:rgb(96, 165, 250) solid 2px
+2610	DELETE rule	#invInstallManagerOverlay .im-btn:hover:not(:disabled)	background:rgb(37, 47, 60); background-color:rgb(37, 47, 60); background-image:initial; border-color:rgb(103, 157, 224)
+2622	DELETE rule	#invInstallManagerOverlay .im-vendor:hover	background:rgb(36, 40, 48); background-color:rgb(36, 40, 48); background-image:initial
+2701	n/a	#mixcheck.oz-mixcheck #refDzEmpty:focus-visible	outline:rgb(99, 214, 228) solid 2px
+2752	n/a	#mixcheck.oz-mixcheck #mcSpecs .mc-more-measurements summary:focus-visible	outline:2px solid var(--tile-teal)
+2776	n/a	#mixcheck.oz-mixcheck #mcSpecs #mcTempoTile.is-tappable:focus-visible	outline:rgb(237, 246, 248) solid 2px
+2778	n/a	#mixcheck.oz-mixcheck #mcSpecs #mcTempoTile:is(.is-tapping, .is-awaiting-tap:active, .is-awaiting-tap:focus-visible)	background-color:rgb(45, 212, 191)
+2781	DELETE rule	#mixcheck.oz-mixcheck #mcSpecs #mcTempoTile.is-awaiting-tap:hover	background-color:rgb(45, 212, 191)
+2806	DELETE rule	#mixcheck.oz-mixcheck .mc-saved-targets-toggle:hover	background:rgba(101, 211, 229, 0.035); background-color:rgba(101, 211, 229, 0.035); background-image:initial
+2807	n/a	#mixcheck.oz-mixcheck .mc-saved-targets-toggle:focus-visible, #mixcheck.oz-mixcheck .mc-saved-target-option:focus-visible, #mixcheck.oz-mixc	outline:rgb(101, 211, 229) solid 2px
+2813	DELETE rule	#mixcheck.oz-mixcheck .mc-saved-target-option:hover, #mixcheck.oz-mixcheck .mc-saved-target-option[aria-pressed="true"]	background:rgb(34, 38, 43); background-color:rgb(34, 38, 43); background-image:initial; border-color:rgb(79, 127, 140)
+2815	DELETE rule	#mixcheck.oz-mixcheck .mc-saved-target-delete:hover	background:rgb(48, 32, 35); background-color:rgb(48, 32, 35); background-image:initial; border-color:rgb(138, 76, 82)
+2827	DELETE rule	#mixcheck.oz-mixcheck .mc-spotify-reference:hover, #mixcheck.oz-mixcheck .mc-spotify-reference:focus-within	box-shadow:rgba(79, 195, 232, 0.25) 0px 0px 22px, rgba(201, 161, 90, 0.18) 0px 0p
+2827	DELETE rule	#mixcheck.oz-mixcheck .mc-spotify-reference:hover, #mixcheck.oz-mixcheck .mc-spotify-reference:focus-within	background:radial-gradient(60% 55% at 45% 0%, rgba(74, 124, 140, 0.55), transpare; background-color:initial; background-
+2834	n/a	#mixcheck.oz-mixcheck #mcSpotifyReference .mc-spotify-mark:focus-visible	outline:rgb(111, 227, 255) solid 2px
+2835	DELETE rule	#mixcheck.oz-mixcheck #mcSpotifyReference .mc-spotify-mark:hover	box-shadow:rgba(111, 227, 255, 0.7) 0px 0px 22px
+2855	DELETE rule	#mixcheck.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCapture:hover	background:linear-gradient(90deg, rgb(111, 211, 240) 0%, rgb(220, 180, 110) 100%); background-color:initial; background-
+2857	DELETE rule	#mixcheck.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyConnect:hover, #mixcheck.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefMatch:ho	background:rgba(79, 195, 232, 0.18); background-color:rgba(79, 195, 232, 0.18); background-image:initial; border-color:r
+2858	n/a	#mixcheck.oz-mixcheck .mc-spotify-ref-controls button:focus-visible	outline:rgb(101, 211, 229) solid 2px
+2895	n/a	#hopeRail .rail-head .coach-info:focus-visible	outline:rgb(101, 211, 229) solid 2px
+2897	REWRITE to colour only	#hopeRail .coach-info:not([data-dismissed="true"]):hover .coach-tooltip, #hopeRail .coach-info:not([data-dismissed="true"]):focus-visible .c	transform:translateY(0px); opacity:1
+2939	DELETE rule	#hopeRail #aiChatSend:hover:not(:disabled), #mixcheck.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect, #mcSpotifyRefMatch, #mcSpo	background:linear-gradient(90deg, rgb(111, 227, 255) 0%, rgb(142, 230, 232) 50%, ; background-color:initial; background-
+2969	n/a	.tabs.oz-tabstrip .tab.oz-tab:is(.active, [aria-selected="true"], [aria-current]:not([aria-current="false"]))	background:var(--pv-teal); box-shadow:none; border-color:transparent; border:1.5px solid transparent
+2969	DELETE rule	.tabs.oz-tabstrip .tab.oz-tab:is(.active, [aria-selected="true"], [aria-current]:not([aria-current="false"])):hover, #mixcheck.oz-mixcheck #	background:var(--pv-teal); box-shadow:none; filter:none; transform:none; border-color:transparent; border:1.5px solid tr
+2969	keep	.tabs.oz-tabstrip .tab.oz-tab:is(.active, [aria-selected="true"], [aria-current]:not([aria-current="false"])):hover *, #mixcheck.oz-mixcheck	opacity:1
+2969	n/a	.tabs.oz-tabstrip .tab.oz-tab:is(.active, [aria-selected="true"], [aria-current]:not([aria-current="false"]))	background:radial-gradient(90% 160% at 0% 0%, rgba(74, 140, 160, 0.36), transpare; background-color:initial; background-
+2971	n/a	.tabs.oz-tabstrip .tab.oz-tab:not(.active):not([aria-selected="true"]):not([aria-current])	background:var(--pv-neutral-bg); box-shadow:none; border:1px solid var(--pv-neutral-bd)
+2971	n/a	.tabs.oz-tabstrip .tab.oz-tab:not(.active):not([aria-selected="true"]):not([aria-current]:not([aria-current="false"]))	background:transparent; background-color:transparent; background-image:initial; box-shadow:none; transform:none; border-
+2986	DELETE rule	#mixcheck.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect, #mcSpotifyRefMatch, #mcSpotifyCapture):hover:not(:disabled):not(:activ	background:rgb(22, 24, 27); background-color:rgb(22, 24, 27); background-image:initial; box-shadow:rgba(79, 195, 232, 0.
+2986	n/a	#mixcheck.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect, #mcSpotifyRefMatch, #mcSpotifyCapture):active:not(:disabled)	background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%; box-shadow:none; transform:none; bord
+2992	n/a	#hopeRail #aiChatTranscript :is(.aichat-copy-btn, .aichat-speak-message):is(:active, .active, [aria-pressed="true"], [aria-selected="true"])	background:var(--pv-teal); box-shadow:none; border-color:transparent; border:1.5px solid transparent
+2992	DELETE rule	#hopeRail #aiChatTranscript :is(.aichat-copy-btn, .aichat-speak-message), #hopeRail #aiChatTranscript :is(.aichat-copy-btn, .aichat-speak-me	background:var(--pv-neutral-bg); box-shadow:none; transform:none; border:1px solid var(--pv-neutral-bd)
+2992	DELETE rule	#hopeRail #aiChatTranscript :is(.aichat-copy-btn, .aichat-speak-message):hover:not(:disabled)	border-color:rgb(156, 163, 175)
+2992	DELETE rule	#hopeRail #aiChatTranscript :is(.aichat-copy-btn, .aichat-speak-message):hover:not(:disabled):not(:active):not(.active):not([aria-pressed="t	background:transparent; background-color:transparent; background-image:initial; box-shadow:rgba(79, 195, 232, 0.28) 0px 
+2992	n/a	#hopeRail #aiChatTranscript :is(.aichat-copy-btn, .aichat-speak-message):is(:active, .active, [aria-pressed="true"], [aria-selected="true"])	background:var(--mixing-state-fill) padding-box,linear-gradient(135deg,#4fc3e8 0%; box-shadow:none; transform:none; bord
+3084	DELETE rule	#hopeRail .aichat-compose .send-col :is(#aiChatSend, #aiChatClear, #hopeVoiceRouteBtn, #hopeAccountBtn):is(:hover, :focus-visible):not(:disa	border-color:rgb(156, 163, 175)
+3084	DELETE rule	#hopeRail .aichat-compose .send-col :is(#aiChatSend, #aiChatClear, #hopeVoiceRouteBtn, #hopeAccountBtn):hover:not(:disabled), #hopeRail .aic	background:var(--pv-neutral-bg); box-shadow:none; transform:none; border:1px solid var(--pv-teal)
+3084	DELETE rule	#hopeRail .aichat-compose .send-col :is(#aiChatSend, #aiChatClear, #hopeVoiceRouteBtn, #hopeAccountBtn):hover:not(:disabled), #hopeRail .aic	background:var(--pv-teal); box-shadow:none; border-color:transparent; border:1.5px solid transparent
+3084	DELETE rule	#hopeRail .aichat-compose .send-col :is(#aiChatSend, #aiChatClear, #hopeVoiceRouteBtn, #hopeAccountBtn):not(:hover):not(:disabled)	background:transparent; background-color:transparent; background-image:initial
+3084	DELETE rule	#hopeRail .aichat-compose .send-col :is(#aiChatSend, #aiChatClear, #hopeVoiceRouteBtn, #hopeAccountBtn):hover:not(:disabled)	background:rgb(32, 35, 39); background-color:rgb(32, 35, 39); background-image:initial
+3084	n/a	#hopeRail .aichat-compose .send-col :is(#aiChatSend, #aiChatClear, #hopeVoiceRouteBtn, #hopeAccountBtn):focus-visible	outline:rgb(90, 169, 230) solid 2px
+3084	DELETE rule	#hopeRail .aichat-compose .send-col :is(#aiChatSend, #aiChatClear, #hopeVoiceRouteBtn, #hopeAccountBtn):hover:not(:disabled)	background:rgb(27, 29, 32); background-color:rgb(27, 29, 32); background-image:initial; box-shadow:rgba(79, 195, 232, 0.
+3091	DELETE rule	#hopeRail .aichat-compose .send-col #aiChatSend:is(:hover, :focus-visible):not(:disabled)	border:1px solid var(--pv-teal)
+3122	keep	#hopeRail .aichat-msg:hover .aichat-actions-row, #hopeRail .aichat-msg .aichat-actions-row:focus-within	opacity:1
+3146	DELETE rule	#hopeRail .aichat-actions-row .aichat-copy-btn:hover:not(:disabled), #hopeRail .aichat-actions-row .aichat-speak-message:hover:not(:disabled	background:var(--pv-neutral-bg); border:1px solid var(--pv-teal)
+3267	n/a	#library :focus	outline:0px
+3275	DELETE rule	#library .bar:hover	background:rgb(32, 35, 39); background-color:rgb(32, 35, 39); background-image:initial
+3278	n/a	#library .bar:focus-visible	outline:2px solid var(--teal)
+3288	DELETE rule	#library .btn:hover:not(:disabled), #library .btn:focus-visible	background:var(--teal)
+3288	n/a	#library .btn:focus-visible	outline:2px solid var(--teal)
+3289	DELETE rule	#library .btn.pri:hover:not(:disabled), #library .btn.pri:focus-visible	background:var(--teal-hi)
+3297	n/a	#library .field:focus	box-shadow:inset 0 0 0 2px var(--teal)
+3387	n/a	#library .grp:focus-visible	outline:2px solid var(--teal)
+3396	DELETE rule	#library .pill:hover, #library .pill:has(:focus-visible)	background:var(--teal)
+3396	n/a	#library .pill:has(:focus-visible)	box-shadow:none
+3399	n/a	#library .pill :focus-visible	outline:2px solid var(--teal)
+3412	DELETE rule	#library :is(.tx, .more):is(:hover, :focus-visible):not(:disabled)	background:var(--hov)
+3412	n/a	#library :is(.tx, .more):focus-visible	outline:2px solid var(--teal)
+3502	DELETE rule	.lp .video-pill:hover	background:var(--teal)
+3503	DELETE rule	.lp .video-pill.teal:hover	background:rgb(94, 234, 212); background-color:rgb(94, 234, 212); background-image:initial
+3504	n/a	.lp .video-pill:focus-visible	outline:2px solid var(--teal)
+3513	DELETE rule	.lp .desc .more:hover	text-decoration:underline
+3514	n/a	.lp .desc .more:focus-visible	outline:2px solid var(--teal)
+3531	n/a	.lp .fld:focus-within	outline:rgba(45, 212, 191, 0.65) solid 2px
+3542	DELETE rule	.lp .row:hover	background:var(--hover)
+3543	n/a	.lp .row:focus-visible	background:var(--hover); outline:2px solid var(--teal)
+3544	n/a	.lp .row[aria-current="true"]	background:var(--teal)
+3545	n/a	.lp .row[aria-current="true"] .rm, .lp .row[aria-current="true"] .rc	opacity:0.8
+3557	DELETE rule	#library .lp .video-pill:hover	background:var(--teal)
+3558	DELETE rule	#library .lp .video-pill.teal:hover	background:rgb(94, 234, 212); background-color:rgb(94, 234, 212); background-image:initial
+3561	DELETE rule	#library .lp .desc .more:hover	background:none; background-color:initial; background-image:none; text-decoration:underline
+4494	DELETE rule	#plugins .fav-card:hover	border-color:rgb(58, 65, 75)
+4521	DELETE rule	#plugins .inv-btn:hover, #plugins .inv-format:hover	border-color:rgb(68, 132, 170)
+4521	n/a	#plugins .inv-cards-quick.active	background:rgb(24, 48, 65); background-color:rgb(24, 48, 65); background-image:initial; border-color:rgb(57, 150, 200)
+4551	DELETE rule	#plugins .inv-vst-option:hover, #plugins .inv-vst-option:focus-visible	background:rgb(41, 45, 52); background-color:rgb(41, 45, 52); background-image:initial; outline:none; border-color:rgb(6
+4563	DELETE rule	#plugins .inv-tag-filter-option:hover	background:rgb(41, 45, 52); background-color:rgb(41, 45, 52); background-image:initial; border-color:rgb(66, 73, 85)
+4563	DELETE rule	#plugins .inv-tag-filter-option:hover	background:var(--pm-grad)
+4578	DELETE rule	#plugins .inv-view-option:hover	background:rgb(36, 40, 46); background-color:rgb(36, 40, 46); background-image:initial
+4585	DELETE rule	#plugins .inv-list-row:hover	background:rgb(29, 34, 40); background-color:rgb(29, 34, 40); background-image:initial
+4662	DELETE rule	#plugins .inv-more:hover	background:rgb(36, 42, 50); background-color:rgb(36, 42, 50); background-image:initial
+4667	DELETE rule	#plugins .inv-action:hover	background:rgb(40, 48, 58); background-color:rgb(40, 48, 58); background-image:initial; border-color:rgb(83, 98, 114)
+4668	DELETE rule	#plugins .inv-action.hub:hover	background:rgb(32, 70, 56); background-color:rgb(32, 70, 56); background-image:initial; border-color:rgb(69, 164, 125)
+4670	DELETE rule	#plugins .inv-product-actions:hover, #plugins .inv-product-actions[aria-expanded="true"]	background:rgb(48, 55, 65); background-color:rgb(48, 55, 65); background-image:initial
+4678	DELETE rule	#invProductMenu .inv-menu-row:hover	background:rgb(48, 55, 65); background-color:rgb(48, 55, 65); background-image:initial
+4683	DELETE rule	#invProductMenu .inv-menu-row.disabled:hover	background:transparent; background-color:transparent; background-image:initial
+4692	DELETE rule	#invProductMetaOverlay .inv-product-meta-option:hover, #invProductMetaOverlay .inv-product-meta-option.selected	background:rgb(40, 35, 52); background-color:rgb(40, 35, 52); background-image:initial; border-color:rgb(133, 99, 199)
+4706	DELETE rule	#invTagManagerOverlay .inv-tag-done:hover, #invTagManagerOverlay .inv-tag-action:hover	background:rgb(48, 42, 61); background-color:rgb(48, 42, 61); background-image:initial; border-color:rgb(133, 99, 199)
+4714	DELETE rule	#invTagManagerOverlay .inv-tag-order button:hover:not(:disabled)	background:rgb(58, 63, 73); background-color:rgb(58, 63, 73); background-image:initial
+4724	DELETE rule	#invTagManagerOverlay .inv-tag-icon:hover	border-color:rgb(69, 76, 87)
+4742	DELETE rule	#invTagManagerOverlay .inv-tag-plugin:hover	background:rgb(40, 44, 51); background-color:rgb(40, 44, 51); background-image:initial
+4742	DELETE rule	#invTagManagerOverlay .inv-tag-plugin:hover	background:var(--pv-neutral-bg)
+4774	n/a	#plugins .inv-status-detail a:focus-visible	outline:rgb(174, 183, 193) solid 2px
+4791	DELETE rule	#mixcheck.oz-mixcheck #mcSpecs:hover, #mixcheck.oz-mixcheck #mcSpecs:hover, #mixcheck.oz-mixcheck #mcSpecs:focus-within	background:radial-gradient(at 50% 0%, rgba(47, 161, 230, 0.07), transparent 58%) ; background-color:initial; background-
+4791	DELETE rule	#mixcheck.oz-mixcheck #mcSpecs:hover, #mixcheck.oz-mixcheck #mcSpecs:focus-within, #mixcheck.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.	box-shadow:rgba(0, 0, 0, 0.4) 0px 10px 30px, rgba(79, 195, 232, 0.25) 0px 0px 22p
+4796	DELETE rule	#hopeRail:hover, #hopeRail:focus-within	background:radial-gradient(115% 78% at 0% 0%, rgba(47, 161, 230, 0.15), transpare; background-color:initial; background-
+4843	DELETE rule	#mixcheck.oz-mixcheck .mc-spotify-result:hover	background:rgb(22, 27, 33); background-color:rgb(22, 27, 33); background-image:initial; border-color:rgba(79, 195, 232, 
+4845	n/a	.tabs.oz-tabstrip .tab.oz-tab[data-tab="mixcheck"].active:is(.active)	background:radial-gradient(90% 160% at 0% 0%, rgba(74, 140, 160, 0.36), transpare; background-color:initial; background-
+4853	DELETE rule	.tabs.oz-tabstrip .tab.oz-tab:not(:disabled):not(.active):not([aria-selected="true"]):not([aria-current]:not([aria-current="false"])):hover	background:transparent; background-color:transparent; background-image:initial; box-shadow:rgba(79, 195, 232, 0.28) 0px 
+4896	DELETE rule	#mixcheck.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop:hover:not(:disabled)	box-shadow:rgba(148, 66, 220, 0.25) 0px 0px 0px 4px; filter:brightness(1.1)
+4897	n/a	#mixcheck.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop:active:not(:disabled)	transform:scale(0.96)
+4898	n/a	#mixcheck.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyRefStop:focus-visible	outline:rgb(208, 164, 242) solid 2px
+4905	DELETE rule	#mixcheck.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyClear:hover	box-shadow:rgba(148, 66, 220, 0.25) 0px 0px 0px 4px; filter:brightness(1.1)
+4906	n/a	#mixcheck.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyClear:active	transform:scale(0.96)
+4907	n/a	#mixcheck.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyClear:focus-visible	outline:rgb(208, 164, 242) solid 2px
+4945	DELETE rule	#mixcheck.oz-mixcheck .mcq-acts button:hover:not(:disabled), #hopeRail .aichat-msg.fixaction .am-acts button:hover:not(:disabled)	background:var(--pv-neutral-bg); box-shadow:none; transform:none; border-color:rgb(156, 163, 175)
+4955	n/a	#mixcheck.oz-mixcheck .mcq-acts button:focus-visible, #hopeRail .aichat-msg.fixaction .am-acts button:focus-visible	outline:rgb(90, 169, 230) solid 2px
+4955	n/a	#mixcheck.oz-mixcheck .mcq-acts button:focus-visible	outline:rgb(111, 227, 255) solid 2px
+4966	DELETE rule	#mixcheck.oz-mixcheck .mcq-acts button:is(:hover, :focus-visible, :active):not(:disabled)	background:rgb(45, 212, 191); background-color:rgb(45, 212, 191); background-image:initial; box-shadow:none; border-colo
+5020	DELETE rule	#hopeRail .aichat-msg.fixaction .am-acts button:is(:hover, :focus-visible, :active, [aria-pressed="true"], [aria-selected="true"], .active, 	background:rgb(45, 212, 191); background-color:rgb(45, 212, 191); background-image:initial; box-shadow:none; border-colo
+5034	DELETE rule	#mixcheck.oz-mixcheck .mcq-nav button:is(:hover, :focus-visible, :active):not(:disabled)	background:rgb(45, 212, 191); background-color:rgb(45, 212, 191); background-image:initial; border-color:rgb(45, 212, 19
+5039	DELETE rule	#mixcheck.oz-mixcheck .mcq-select:is(:hover, :focus-visible), #mixcheck.oz-mixcheck .mcq-select[aria-current="true"]	background:rgb(23, 50, 47); background-color:rgb(23, 50, 47); background-image:initial
+5046	DELETE rule	#mixcheck.oz-mixcheck .mcs-all button:is(:hover, :focus-visible), #mixcheck.oz-mixcheck .mcs-all button[aria-current="true"]	background:rgb(23, 50, 47); background-color:rgb(23, 50, 47); background-image:initial; border-color:rgb(45, 212, 191)
+5075	n/a	#plugins :is(.inv-btn.primary, .inv-format.on, .inv-format[aria-pressed="true"], .inv-cards-quick.active, .inv-vst-filter.on > summary, .inv	background:var(--pv-teal)
+5106	DELETE rule	#plugins .inv-fav.on:is(:hover, :focus-visible)	background:none; background-color:initial; background-image:none; box-shadow:none; outline:none; border-color:currentcol
+5108	DELETE rule	#plugins button.inv-fav.fav-card-star.on, #plugins button.inv-fav.fav-card-star.on:is(:hover, :focus-visible)	background:none; background-color:initial; background-image:none; box-shadow:none; outline:none; border-color:currentcol
+5110	DELETE rule	#plugins button.inv-fav.on.on, #plugins button.inv-fav.on.on:is(:hover, :focus-visible), #snapshots .journal-entry button.journal-star.on, #	background:none; background-color:initial; background-image:none; box-shadow:none; outline:none; border-color:currentcol
+5139	n/a	#plugins :is(textarea, input, select, button, summary, a, details):is(:focus, :focus-visible, :active), #invNoteOverlay :is(textarea, input,	box-shadow:none; outline:none; border-color:transparent
+5173	DELETE rule	#invProductMetaOverlay button:hover:not(.primary):not(:disabled)	background:linear-gradient(135deg, rgb(148, 66, 220), rgb(185, 112, 255)); background-color:initial; background-image:li
+5187	DELETE rule	#plugins #invSidebar .inv-sidebar-head button:hover, #plugins #invSidebar .inv-sidebar-head button:focus-visible	background:transparent; background-color:transparent; background-image:initial
+5187	n/a	#plugins #invSidebar .inv-sidebar-head button:focus-visible	outline:rgb(54, 168, 237) solid 2px
+5197	DELETE rule	#plugins #invSidebar .inv-sidebar-section-toggle, #plugins #invSidebar .inv-sidebar-section-toggle:hover:not(:disabled)	background:var(--section-colour); border-color:currentcolor; border:0px
+5198	n/a	#plugins #invSidebar .inv-sidebar-section-toggle:focus-visible, #plugins #invSidebar .inv-side-button:focus-visible	outline:rgb(54, 168, 237) solid 2px
+5210	DELETE rule	#plugins #invSidebar .inv-side-button.active, #plugins #invSidebar .inv-side-button.active:hover	background:var(--pv-teal); box-shadow:none; border-color:currentcolor; border:0px
+5236	DELETE rule	#plugins #invSidebar .inv-side-button:hover:not(.active):not(:disabled), #plugins #invSidebar .inv-side-button:focus-visible:not(.active):no	background:var(--section-colour,#36a8ed)
+5265	DELETE rule	#knowledge .kb-toolbar .btn:hover, #knowledge .hope-memory-meta .btn:hover	background:rgb(255, 255, 255); background-color:rgb(255, 255, 255); background-image:initial
+5267	DELETE rule	#knowledge .kb-toolbar .btn[onclick]:hover, #knowledge .hope-memory-meta .btn[onclick^="expandAll"]:hover, #knowledge .hope-memory-meta .btn	background:var(--c)
+5271	n/a	#knowledge .kb-yt-in:focus	outline:rgb(185, 112, 255) solid 2px
+5273	DELETE rule	#knowledge .kb-yt .btn:hover, #knowledge .kb-yt .btn:focus-visible	background:rgb(255, 255, 255); background-color:rgb(255, 255, 255); background-image:initial
+5282	DELETE rule	#knowledge .fact-cat-head:hover, #knowledge .fact-cat-head:focus-visible	background:var(--c)
+5292	DELETE rule	#knowledge .insight-add:hover, #knowledge .fact-add-mini:hover	background:var(--c)
+5296	n/a	#knowledge .kb-card.active	border-color:currentcolor; border:0px
+5297	DELETE rule	#knowledge .kb-card:hover:not(.expanded), #knowledge .kb-card:focus-within:not(.expanded), #knowledge .fact-chip:hover, #knowledge .fact-chi	background:var(--c)
+5306	DELETE rule	#knowledge .kb-meta a:hover	text-decoration:underline
+5309	DELETE rule	#knowledge .kb-card .kb-actions button:hover	text-decoration:underline
+5321	DELETE rule	#knowledge .fact-chip.inactive:hover	background:var(--c)
+5327	DELETE rule	#knowledge .fact-action-btn:hover, #knowledge .fact-action-btn.danger:hover	background:transparent; background-color:transparent; background-image:initial
+5332	n/a	#knowledge :focus-visible, #kbModal :focus-visible	outline:rgb(54, 168, 237) solid 2px
+5341	DELETE rule	#kbModal .btn:hover	background:rgb(255, 255, 255); background-color:rgb(255, 255, 255); background-image:initial
+5386	DELETE rule	#snapshots .rt-pill .rt-pill-act:hover	background:var(--sink); transform:none
+5387	DELETE rule	#snapshots .rt-pill .rt-pill-act.delete:hover	background:rgb(248, 113, 113); background-color:rgb(248, 113, 113); background-image:initial
+5388	DELETE rule	#snapshots .rt-pill .rt-pill-act.fav:hover	background:var(--sink)
+5395	DELETE rule	#snapshots .rt-pill.populated:is(:hover, :focus-visible), #snapshots .journal-toolbar .btn:is(:hover, :focus-visible), #snapshots .journal-e	background:var(--sgrad)
+5404	DELETE rule	#snapshots .journal-entry-head .btn:is(:hover, :focus-visible)	background:var(--sink)
+5405	DELETE rule	#snapshots .journal-entry-head .journal-star.on:hover	background:var(--steal)
+5423	DELETE rule	#editPillModal .btn.green:hover, #applyPillModal .btn.purple:hover	background:var(--sgrad)
+5478	DELETE rule	#settings :is(#elKeySave, #hopeUsageSttTokenSave, #rtKeySave):is(:hover, :focus-visible)	background-color:transparent; background-image:var(--ggrad)
+5486	DELETE rule	#settings .settings-guide summary:is(:hover, :focus-visible) .settings-guide-icon	background:rgba(11, 13, 16, 0.35); background-color:rgba(11, 13, 16, 0.35); background-image:initial
+	REWRITE to colour only	.aimm-ic:hover .ic	transform:scale(var(--aimm-ico-hover-scale)); opacity:1
+	n/a	.aimm-ic:active .ic	transform:scale(var(--aimm-ico-press-scale)); opacity:1
+	n/a	.aimm-ic:focus-visible, .aimm-tab:focus-visible	outline:0px
+	n/a	.aimm-ic:focus-visible::after, .aimm-tab:focus-visible::after	opacity:1
+	REWRITE to colour only	.aimm-tab:hover .ic	transform:scale(var(--aimm-ico-hover-scale)); opacity:1
+	n/a	.aimm-tab:active .ic	transform:scale(var(--aimm-ico-press-scale))
+	n/a	.aimm-tab[aria-selected="true"]::before	opacity:1
+	n/a	.aimm-tab[aria-selected="true"] .ic	opacity:1; animation:aimm-settle var(--aimm-dur-base) var(--aimm-ease-out)
+	REWRITE to colour only	.aimm-row:hover .aimm-actions .aimm-ic, .aimm-row:focus-within .aimm-actions .aimm-ic	transform:none; opacity:1
+	n/a	.rt-pill .rt-pill-act:active .ic	transform:scale(var(--aimm-ico-press-scale))
+	REWRITE to colour only	.rt-pill .rt-pill-act:hover .ic	transform:scale(var(--aimm-ico-hover-scale)); opacity:1
+	n/a	.rt-pill .rt-pill-act:focus-visible	outline:2px solid var(--aimm-teal)
+	REWRITE to colour only	:is(.close-btn, .inv-fav, .inv-product-actions):hover .ic	transform:scale(var(--aimm-ico-hover-scale)); opacity:1
+	n/a	:is(.close-btn, .inv-fav, .inv-product-actions):active .ic	transform:scale(var(--aimm-ico-press-scale))
+	n/a	:is(.close-btn, .inv-fav, .inv-product-actions):focus-visible	outline:2px solid var(--aimm-teal)
+	REWRITE to colour only	:is(.oz-tab, .inv-side-row, .ref-t-btn, .fact-action-btn, .eq-tool-btn):hover .ic	transform:scale(var(--aimm-ico-hover-scale)); opacity:1
+	n/a	:is(.oz-tab, .inv-side-row, .ref-t-btn, .fact-action-btn, .eq-tool-btn):active .ic	transform:scale(var(--aimm-ico-press-scale))
+	n/a	:is(.oz-tab, .inv-side-row, .ref-t-btn, .fact-action-btn, .eq-tool-btn):focus-visible	outline:2px solid var(--aimm-teal)
+	n/a	:is(.oz-tab, .inv-side-row)[aria-selected="true"] .ic, :is(.oz-tab, .inv-side-row)[aria-pressed="true"] .ic	opacity:1; animation:aimm-settle var(--aimm-dur-base) var(--aimm-ease-out)

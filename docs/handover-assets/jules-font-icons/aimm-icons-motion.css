@@ -1,0 +1,125 @@
+/* AIMM icons + motion + font tokens. Design draft by Jules, 23 Nov 2026. Codex: lift into the main <style>. */
+
+/* ---------- 1. Font (one stack for the whole app) ---------- */
+@font-face{font-family:"Inter Fallback";src:local("Arial");size-adjust:107.4%;ascent-override:90.2%;descent-override:22.5%;line-gap-override:0%}
+@font-face{
+  font-family:"Inter";
+  src:url("/fonts/inter-latin-wght.woff2") format("woff2");
+  font-weight:100 900;           /* variable wght axis, one file covers every weight */
+  font-style:normal;
+  font-display:swap;             /* text shows at once in the fallback, then swaps; no invisible text */
+}
+:root{
+  --aimm-font:Inter,"Inter Fallback",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --aimm-font-display:var(--aimm-font);               /* existing token, now an alias of the one stack */
+  --aimm-font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;   /* ONLY for code, keys, URLs */
+}
+html,body,button,input,select,textarea,summary,table,th,td,label,option,optgroup{font-family:var(--aimm-font)}
+.num,.mc-rv,.oz-band-val{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+code,pre,kbd,samp,.aimm-mono{font-family:var(--aimm-font-mono)}
+
+/* ---------- 2. Motion tokens ---------- */
+:root{
+  --aimm-motion-scale:1;                     /* preview slow-motion only; production leaves it at 1 */
+  --aimm-dur-instant:calc(90ms  * var(--aimm-motion-scale));   /* press */
+  --aimm-dur-fast:   calc(140ms * var(--aimm-motion-scale));   /* hover, reveal, swap */
+  --aimm-dur-base:   calc(200ms * var(--aimm-motion-scale));   /* fold, chevron, selection */
+  --aimm-dur-slow:   calc(280ms * var(--aimm-motion-scale));   /* tab surface, fail nudge */
+  --aimm-dur-spin:   800ms;                                    /* one revolution, never scaled */
+  --aimm-ease-out:   cubic-bezier(.22,1,.36,1);    /* things arriving: hover, reveal, settle */
+  --aimm-ease-inout: cubic-bezier(.65,0,.35,1);    /* things that change shape: fold, rotate */
+  --aimm-ease-in:    cubic-bezier(.5,0,.75,0);     /* things leaving fast */
+  --aimm-ico-rest:.72;                             /* resting opacity of an interactive icon */
+  --aimm-ico-hover-scale:1.08;
+  --aimm-ico-press-scale:.92;
+  --aimm-teal:#2dd4bf;
+  --aimm-ring:2px;
+}
+
+/* ---------- 3. Icon base (currentColor, one stroke, three sizes) ---------- */
+.ic{display:block;flex:none;width:var(--ic,20px);height:var(--ic,20px);fill:none;stroke:currentColor;
+    stroke-width:var(--ic-sw,1.75);stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.ic-16{--ic:16px;--ic-sw:2}      /* ~1.33px optical */
+.ic-20{--ic:20px;--ic-sw:1.75}   /* ~1.46px optical */
+.ic-24{--ic:24px;--ic-sw:1.6}    /* ~1.60px optical */
+.ic-solid{fill:currentColor}     /* play / pause / stop / star-on only */
+
+/* ---------- 4. Icon control: no box, no fill, no glow ---------- */
+.aimm-ic{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:6px;margin:-6px;background:none;border:0;color:#9aa0a6;cursor:pointer;border-radius:8px;
+    -webkit-tap-highlight-color:transparent}
+.aimm-ic .ic{opacity:var(--aimm-ico-rest);
+    transition:opacity var(--aimm-dur-fast) var(--aimm-ease-out),transform var(--aimm-dur-fast) var(--aimm-ease-out)}
+.aimm-ic:hover .ic{opacity:1;transform:scale(var(--aimm-ico-hover-scale))}
+.aimm-ic:active .ic{opacity:1;transform:scale(var(--aimm-ico-press-scale));transition-duration:var(--aimm-dur-instant)}
+.aimm-ic:hover{color:#e8ebed}
+/* keyboard ring: a pseudo element fades in, so no layout shift and no mouse-click ring */
+.aimm-ic::after,.aimm-tab::after{content:"";position:absolute;inset:-1px;border-radius:inherit;
+    border:var(--aimm-ring) solid var(--aimm-teal);opacity:0;pointer-events:none;
+    transition:opacity var(--aimm-dur-instant) linear}
+.aimm-ic:focus-visible,.aimm-tab:focus-visible{outline:0}
+.aimm-ic:focus-visible::after,.aimm-tab:focus-visible::after{opacity:1}
+
+/* selected = teal; the colour swaps at once, the icon settles in (opacity+transform only) */
+.aimm-ic[aria-pressed="true"],.aimm-ic.is-selected{color:var(--aimm-teal)}
+.aimm-ic[aria-pressed="true"] .ic,.aimm-ic.is-selected .ic{opacity:1;animation:aimm-settle var(--aimm-dur-base) var(--aimm-ease-out)}
+@keyframes aimm-settle{from{opacity:.5;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+
+/* ---------- 5. Swap stack: idle / busy / success / fail ---------- */
+.aimm-swap{position:relative;display:inline-grid;width:var(--ic,20px);height:var(--ic,20px)}
+.aimm-swap>.ic{grid-area:1/1;opacity:0;transform:scale(.8);
+    transition:opacity var(--aimm-dur-fast) var(--aimm-ease-out),transform var(--aimm-dur-fast) var(--aimm-ease-out)}
+.aimm-swap[data-state="idle"]>.ic-idle,.aimm-swap[data-state="busy"]>.ic-busy,
+.aimm-swap[data-state="ok"]>.ic-ok,.aimm-swap[data-state="fail"]>.ic-fail{opacity:1;transform:scale(1)}
+.aimm-swap[data-state="busy"]>.ic-busy{animation:aimm-spin var(--aimm-dur-spin) linear infinite}
+.aimm-swap[data-state="ok"]>.ic-ok{color:var(--aimm-teal)}
+.aimm-swap[data-state="fail"]>.ic-fail{color:#f87171;animation:aimm-nudge var(--aimm-dur-slow) var(--aimm-ease-inout) 1}
+@keyframes aimm-spin{to{transform:rotate(360deg)}}
+@keyframes aimm-nudge{0%,100%{transform:translateX(0)}25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}
+
+/* ---------- 6. Fold: plus becomes minus (plain glyph, no box) ---------- */
+.aimm-fold .fold-v{transform-box:fill-box;transform-origin:center;
+    transition:transform var(--aimm-dur-base) var(--aimm-ease-inout),opacity var(--aimm-dur-base) var(--aimm-ease-inout)}
+.aimm-fold[aria-expanded="true"] .fold-v{transform:rotate(90deg);opacity:0}
+.aimm-fold-body{opacity:0;transition:opacity var(--aimm-dur-fast) var(--aimm-ease-out)}
+.aimm-fold-body.is-open{opacity:1}         /* height changes at once; only opacity animates */
+/* chevron variant */
+.aimm-chev{transition:transform var(--aimm-dur-base) var(--aimm-ease-inout)}
+[aria-expanded="true"]>.aimm-chev,[aria-expanded="true"] .aimm-chev{transform:rotate(180deg)}
+.aimm-chev-r{transition:transform var(--aimm-dur-base) var(--aimm-ease-inout)}
+[aria-expanded="true"] .aimm-chev-r{transform:rotate(90deg)}
+
+/* ---------- 7. Tab selection ---------- */
+.aimm-tab{position:relative;isolation:isolate;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;
+    background:none;border:0;color:#9aa0a6;font:500 14px/1 var(--aimm-font);cursor:pointer}
+.aimm-tab::before{content:"";position:absolute;inset:0;border-radius:inherit;background:#1b1d20;opacity:0;
+    transition:opacity var(--aimm-dur-slow) var(--aimm-ease-out);z-index:-1}
+.aimm-tab .ic{opacity:var(--aimm-ico-rest);transition:opacity var(--aimm-dur-fast) var(--aimm-ease-out),transform var(--aimm-dur-fast) var(--aimm-ease-out)}
+.aimm-tab:hover .ic{opacity:1;transform:scale(var(--aimm-ico-hover-scale))}
+.aimm-tab:active .ic{transform:scale(var(--aimm-ico-press-scale));transition-duration:var(--aimm-dur-instant)}
+.aimm-tab[aria-selected="true"]{color:var(--aimm-teal)}
+.aimm-tab[aria-selected="true"]::before{opacity:1}
+.aimm-tab[aria-selected="true"] .ic{opacity:1;animation:aimm-settle var(--aimm-dur-base) var(--aimm-ease-out)}
+
+/* ---------- 8. Row actions reveal (edit / copy / delete) ---------- */
+.aimm-row .aimm-actions .aimm-ic{opacity:0;transform:translateX(4px);
+    transition:opacity var(--aimm-dur-fast) var(--aimm-ease-out) calc(var(--i,0) * 20ms),
+               transform var(--aimm-dur-fast) var(--aimm-ease-out) calc(var(--i,0) * 20ms)}
+.aimm-row:hover .aimm-actions .aimm-ic,.aimm-row:focus-within .aimm-actions .aimm-ic{opacity:1;transform:none}
+
+@media (hover:none){.aimm-row .aimm-actions .aimm-ic{opacity:1;transform:none}}
+
+/* ---------- 9. Reduced motion: no movement, opacity only ---------- */
+@media (prefers-reduced-motion:reduce){
+  :root{--aimm-ico-hover-scale:1;--aimm-ico-press-scale:1}
+  .aimm-ic:hover .ic,.aimm-ic:active .ic,.aimm-tab:hover .ic,.aimm-tab:active .ic{transform:none}
+  .aimm-swap>.ic{transform:none}
+  .aimm-swap[data-state="busy"]>.ic-busy{animation:aimm-pulse 1.2s ease-in-out infinite}
+  .aimm-swap[data-state="fail"]>.ic-fail{animation:none}
+  .aimm-ic[aria-pressed="true"] .ic,.aimm-ic.is-selected .ic,.aimm-tab[aria-selected="true"] .ic{animation:none}
+  .aimm-fold .fold-v{transform:none}                       /* vertical bar just fades out */
+  .aimm-chev,.aimm-chev-r{transition:none}
+  [aria-expanded="true"] .aimm-chev,[aria-expanded="true"]>.aimm-chev{transform:rotate(180deg)}
+  .aimm-row .aimm-actions .aimm-ic{transform:none}
+}
+@keyframes aimm-pulse{0%,100%{opacity:1}50%{opacity:.4}}

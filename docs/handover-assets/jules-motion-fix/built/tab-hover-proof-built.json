@@ -1,0 +1,243 @@
+{
+  "url": "http://127.0.0.1:8768/index.html",
+  "tabs": [
+    {
+      "name": "mixcheck",
+      "rest": {
+        "x": 85.75,
+        "y": 153.328125,
+        "width": 24,
+        "height": 24,
+        "transform": "none",
+        "boxShadow": "none",
+        "filter": "none",
+        "tabTransform": "none",
+        "tabBoxShadow": "none",
+        "tabFilter": "none",
+        "background": "rgb(45, 212, 191)",
+        "color": "rgb(11, 13, 16)"
+      },
+      "hover": {
+        "x": 85.75,
+        "y": 153.328125,
+        "width": 24,
+        "height": 24,
+        "transform": "none",
+        "boxShadow": "none",
+        "filter": "none",
+        "tabTransform": "none",
+        "tabBoxShadow": "none",
+        "tabFilter": "none",
+        "background": "rgb(45, 212, 191)",
+        "color": "rgb(11, 13, 16)"
+      },
+      "dx": 0,
+      "dy": 0
+    },
+    {
+      "name": "library",
+      "rest": {
+        "x": 302.25,
+        "y": 153.328125,
+        "width": 24,
+        "height": 24,
+        "transform": "none",
+        "boxShadow": "none",
+        "filter": "none",
+        "tabTransform": "none",
+        "tabBoxShadow": "none",
+        "tabFilter": "none",
+        "background": "rgb(27, 29, 32)",
+        "color": "rgb(113, 120, 126)"
+      },
+      "hover": {
+        "x": 302.25,
+        "y": 153.328125,
+        "width": 24,
+        "height": 24,
+        "transform": "none",
+        "boxShadow": "none",
+        "filter": "none",
+        "tabTransform": "none",
+        "tabBoxShadow": "none",
+        "tabFilter": "none",
+        "background": "rgb(45, 212, 191)",
+        "color": "rgb(11, 13, 16)"
+      },
+      "dx": 0,
+      "dy": 0
+    },
+    {
+      "name": "mixbus",
+      "rest": {
+        "x": 504.765625,
+        "y": 153.328125,
+        "width": 24,
+        "height": 24,
+        "transform": "none",
+        "boxShadow": "none",
+        "filter": "none",
+        "tabTransform": "none",
+        "tabBoxShadow": "none",
+        "tabFilter": "none",
+        "background": "rgb(27, 29, 32)",
+        "color": "rgb(113, 120, 126)"
+      },
+      "hover": {
+        "x": 504.765625,
+        "y": 153.328125,
+        "width": 24,
+        "height": 24,
+        "transform": "none",
+        "boxShadow": "none",
+        "filter": "none",
+        "tabTransform": "none",
+        "tabBoxShadow": "none",
+        "tabFilter": "none",
+        "background": "rgb(45, 212, 191)",
+        "color": "rgb(11, 13, 16)"
+      },
+      "dx": 0,
+      "dy": 0
+    },
+    {
+      "name": "plugins",
+      "rest": {
+        "x": 708.5,
+        "y": 153.328125,
+        "width": 24,
+        "height": 24,
+        "transform": "none",
+        "boxShadow": "none",
+        "filter": "none",
+        "tabTransform": "none",
+        "tabBoxShadow": "none",
+        "tabFilter": "none",
+        "background": "rgb(27, 29, 32)",
+        "color": "rgb(113, 120, 126)"
+      },
+      "hover": {
+        "x": 708.5,
+        "y": 153.328125,
+        "width": 24,
+        "height": 24,
+        "transform": "none",
+        "boxShadow": "none",
+        "filter": "none",
+        "tabTransform": "none",
+        "tabBoxShadow": "none",
+        "tabFilter": "none",
+        "background": "rgb(45, 212, 191)",
+        "color": "rgb(11, 13, 16)"
+      },
+      "dx": 0,
+      "dy": 0
+    },
+    {
+      "name": "settings",
+      "rest": {
+        "x": 909.015625,
+        "y": 153.328125,
+        "width": 24,
+        "height": 24,
+        "transform": "none",
+        "boxShadow": "none",
+        "filter": "none",
+        "tabTransform": "none",
+        "tabBoxShadow": "none",
+        "tabFilter": "none",
+        "background": "rgb(27, 29, 32)",
+        "color": "rgb(113, 120, 126)"
+      },
+      "hover": {
+        "x": 909.015625,
+        "y": 153.328125,
+        "width": 24,
+        "height": 24,
+        "transform": "none",
+        "boxShadow": "none",
+        "filter": "none",
+        "tabTransform": "none",
+        "tabBoxShadow": "none",
+        "tabFilter": "none",
+        "background": "rgb(45, 212, 191)",
+        "color": "rgb(11, 13, 16)"
+      },
+      "dx": 0,
+      "dy": 0
+    },
+    {
+      "name": "marketing",
+      "rest": {
+        "x": 1105.859375,
+        "y": 153.328125,
+        "width": 24,
+        "height": 24,
+        "transform": "none",
+        "boxShadow": "none",
+        "filter": "none",
+        "tabTransform": "none",
+        "tabBoxShadow": "none",
+        "tabFilter": "none",
+        "background": "rgb(27, 29, 32)",
+        "color": "rgb(113, 120, 126)"
+      },
+      "hover": {
+        "x": 1105.859375,
+        "y": 153.328125,
+        "width": 24,
+        "height": 24,
+        "transform": "none",
+        "boxShadow": "none",
+        "filter": "none",
+        "tabTransform": "none",
+        "tabBoxShadow": "none",
+        "tabFilter": "none",
+        "background": "rgb(45, 212, 191)",
+        "color": "rgb(11, 13, 16)"
+      },
+      "dx": 0,
+      "dy": 0
+    },
+    {
+      "name": "community",
+      "rest": {
+        "x": 1304.34375,
+        "y": 153.328125,
+        "width": 24,
+        "height": 24,
+        "transform": "none",
+        "boxShadow": "none",
+        "filter": "none",
+        "tabTransform": "none",
+        "tabBoxShadow": "none",
+        "tabFilter": "none",
+        "background": "rgb(27, 29, 32)",
+        "color": "rgb(113, 120, 126)"
+      },
+      "hover": {
+        "x": 1304.34375,
+        "y": 153.328125,
+        "width": 24,
+        "height": 24,
+        "transform": "none",
+        "boxShadow": "none",
+        "filter": "none",
+        "tabTransform": "none",
+        "tabBoxShadow": "none",
+        "tabFilter": "none",
+        "background": "rgb(45, 212, 191)",
+        "color": "rgb(11, 13, 16)"
+      },
+      "dx": 0,
+      "dy": 0
+    }
+  ],
+  "screenshots": [
+    "tabs-1900-rest.png",
+    "tabs-1900-hover.png",
+    "tabs-560-rest.png",
+    "tabs-560-hover.png"
+  ],
+  "errors": []
+}

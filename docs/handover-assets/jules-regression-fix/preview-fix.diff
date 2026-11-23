@@ -1,0 +1,170 @@
+--- a/standalone/assets/index.html	2026-11-23 21:53:27
++++ b/standalone/assets/index.html	2026-11-23 22:18:43
+@@ -298,7 +298,7 @@
+ #mixbus .bus-content{min-width:0;min-height:76px;padding:16px 18px;background:var(--mb-inset);border-radius:12px}
+ #mixbus .chain-list{display:flex;align-items:stretch;flex-wrap:wrap;min-width:0;width:100%;margin:0;row-gap:16px}
+ #mixbus .chain-item{position:relative;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;flex:0 1 180px;min-width:170px;min-height:104px;padding:14px 18px;background:#1d2126;border:0;border-radius:10px;box-shadow:inset 0 0 0 1px rgba(45,212,191,.35);cursor:grab;user-select:none}
+-#mixbus .chain-item.selected{background:#20262b;box-shadow:inset 0 0 0 2px var(--mb-teal)}
++#mixbus .chain-item.selected,#mixbus .chain-item.selected:hover{background:var(--mb-teal);box-shadow:none;outline:0}
+ #mixbus .chain-item:active{cursor:grabbing}
+ #mixbus .chain-item::after{content:"";position:absolute;left:100%;top:calc(50% - .5px);width:28px;height:1px;background:rgba(45,212,191,.35);pointer-events:none}
+ #mixbus .chain-item.selected::after,#mixbus .chain-item:has(+ .chain-item.selected)::after{top:calc(50% - 1px);height:2px;background:#2dd4bf}
+@@ -360,7 +360,7 @@
+ #mixbus .bus-fold{order:2;flex:none;width:calc(22px * var(--inv-text-scale,1));color:var(--mb-muted);font:500 calc(22px * var(--inv-text-scale,1))/1 var(--aimm-font);text-align:center}
+ #mixbus .bus-col h4:hover .bus-fold{color:var(--mb-hi)}
+ #mixbus .bus-col h4 .clear-bus-btn{order:1;margin-left:auto;min-height:calc(32px * var(--inv-text-scale,1));padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--mb-muted);font:500 calc(14px * var(--inv-text-scale,1)) var(--aimm-font);opacity:1}
+-#mixbus .bus-col h4 .clear-bus-btn:hover,#mixbus .bus-col h4 .clear-bus-btn:focus-visible{color:#000;opacity:1}
++#mixbus .bus-col h4 .clear-bus-btn:hover,#mixbus .bus-col h4 .clear-bus-btn:focus-visible{background:var(--mb-teal);color:var(--mb-ink);opacity:1}
+ #mixbus .bus-col h4:not(:has(.clear-bus-btn)) .bus-fold{margin-left:auto}
+ #mixbus .bus-content{min-height:0;padding:8px 6px;background:none;border-radius:0}
+ #mixbus .bus-col.is-empty .bus-content{display:block}
+@@ -385,27 +385,27 @@
+ #mixbus .chain-list .sortable-drag :is(.row-icon,.name,.chain-meta,.chain-actions button){color:var(--mb-hi)}
+ #mixbus .chain-list>.chain-add{flex:none;display:flex;align-self:stretch;align-items:center;justify-content:flex-start;gap:12px;width:auto;height:auto;min-width:0;min-height:calc(46px * var(--inv-text-scale,1));padding:8px 12px;border:0;border-radius:10px;background:transparent;color:#c4cad3;font:500 calc(15px * var(--inv-text-scale,1))/1.3 var(--aimm-font);text-align:left}
+ #mixbus .chain-list>.chain-add .add-icon{display:inline-flex;flex:none;align-items:center;justify-content:center;width:calc(28px * var(--inv-text-scale,1));height:calc(28px * var(--inv-text-scale,1));color:#aab2bd;font:400 calc(24px * var(--inv-text-scale,1))/1 var(--aimm-font)}
+-#mixbus .chain-list>.chain-add:hover,#mixbus .chain-list>.chain-add:focus-visible{color:#fff}
++#mixbus .chain-list>.chain-add:hover,#mixbus .chain-list>.chain-add:focus-visible{background:var(--mb-teal);color:var(--mb-ink)}
+ #mixbus .chain-list>.chain-add:focus-visible{box-shadow:inset 0 0 0 2px var(--mb-teal)}
+-#mixbus .chain-list>.chain-add:hover .add-icon,#mixbus .chain-list>.chain-add:focus-visible .add-icon{color:#fff}
++#mixbus .chain-list>.chain-add:hover .add-icon,#mixbus .chain-list>.chain-add:focus-visible .add-icon{color:var(--mb-ink)}
+ #mixbus .bus-col .chain-panel{margin:0 6px 8px;padding:14px 14px 16px;background:transparent;border-top:1px solid var(--mb-line);border-radius:0}
+ #mixbus .chain-panel-title{color:#fff;font-weight:500;font-size:calc(16px * var(--inv-text-scale,1))}
+ #mixbus .chain-panel-sub,#mixbus .chain-setting-label,#mixbus .chain-settings-empty{font-size:calc(13px * var(--inv-text-scale,1))}
+ #mixbus .chain-setting-value{font-size:calc(20px * var(--inv-text-scale,1));font-weight:500}
+ #mixbus .chain-setting-plain{font-size:calc(15px * var(--inv-text-scale,1))}
+ #mixbus .chain-panel-edit{margin-right:0;min-height:calc(32px * var(--inv-text-scale,1));padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--mb-hi);font:500 calc(14px * var(--inv-text-scale,1)) var(--aimm-font)}
+-#mixbus .chain-panel-edit:hover,#mixbus .chain-panel-edit:focus-visible{color:#000}
++#mixbus .chain-panel-edit:hover,#mixbus .chain-panel-edit:focus-visible{background:var(--mb-teal);color:var(--mb-ink)}
+ #mixbus .chain-edit-actions button{min-height:calc(40px * var(--inv-text-scale,1));padding:8px 14px;border:0;border-radius:10px;font:500 calc(14px * var(--inv-text-scale,1)) var(--aimm-font)}
+ #mixbus .chain-edit-actions .save{background:#2dd4bf;color:#000}
+ #mixbus .chain-edit-actions .cancel,#mixbus .chain-edit-actions .restore{background:var(--mb-line);color:var(--mb-hi)}
+-#mixbus .chain-edit-actions button:hover,#mixbus .chain-edit-actions button:focus-visible{color:#000}
++#mixbus .chain-edit-actions button:hover,#mixbus .chain-edit-actions button:focus-visible{background:var(--mb-teal);color:var(--mb-ink)}
+ 
+ #mixbus .chain-edit-actions button:focus-visible{box-shadow:0 0 0 2px #000,0 0 0 4px var(--mb-teal)}
+ #mixbus .chain-toolbar button{height:calc(44px * var(--inv-text-scale,1));padding:0 22px;border-radius:10px;color:#000;font:500 calc(15px * var(--inv-text-scale,1)) var(--aimm-font)}
+ #mixbus #presetsBtn{background:var(--mb-line);color:var(--mb-hi)}
+ #mixbus #autoFillBtn{background:#2dd4bf;color:#000}
+ #mixbus #revertFillBtn{background:var(--mb-line);color:var(--mb-hi);box-shadow:none}
+-#mixbus .chain-toolbar button:hover,#mixbus .chain-toolbar button:focus-visible{color:#000}
++#mixbus .chain-toolbar button:hover,#mixbus .chain-toolbar button:focus-visible{background:var(--mb-teal);color:var(--mb-ink)}
+ #mixbus .chain-toolbar button:focus-visible{outline:2px solid var(--mb-teal);outline-offset:2px}
+ #mixbus #autoFillBtn:hover,#mixbus #autoFillBtn:focus-visible{color:#000}
+ #mixbus .chain-toolbar-hint{width:auto;height:auto;padding:0 4px;border:0;color:#9aa0a6;font:500 calc(18px * var(--inv-text-scale,1)) var(--aimm-font);cursor:help}
+@@ -468,7 +468,7 @@
+ #mixbus .replacement-option:hover .option-meta span,#mixbus .replacement-option:focus-visible .option-meta span{color:#fff}
+ #pickerModal .plugin-option:focus-visible{box-shadow:inset 0 0 0 2px #e8ebed}
+ #mixbus .replacement-option:focus-visible{box-shadow:inset 0 0 0 2px var(--mb-teal)}
+-#mixbus .replacement-option[aria-checked="true"],#mixbus .replacement-option[aria-checked="true"]:hover,#mixbus .replacement-option[aria-checked="true"]:focus-visible{color:#000}
++#mixbus .replacement-option[aria-checked="true"],#mixbus .replacement-option[aria-checked="true"]:hover,#mixbus .replacement-option[aria-checked="true"]:focus-visible{background:var(--mb-teal);box-shadow:none;color:var(--mb-ink)}
+ #mixbus .replacement-option[aria-checked="true"] :is(.publisher,.stage,.separator,.name){color:#000}
+ #pickerModal .modal-filters input,#pickerModal .modal-filters select,#mixbus .replacement-filters input,#mixbus .replacement-filters select{box-sizing:border-box;height:48px;border-radius:12px;color:#e8ebed;font:500 15px var(--aimm-font)}
+ #pickerModal .modal-filters input{flex:1;min-width:0;padding:0 16px;background:#101214;border:1px solid #34383d}
+@@ -4842,7 +4842,7 @@
+ #invTagManagerOverlay .inv-tag-row.selected :is(.inv-tag-select,.inv-tag-name,.inv-tag-count){color:var(--pv-black)!important}
+ 
+ /* D. Hover and keyboard focus: purple gradient (#mixbus #presetsBtn, .chain-add:hover) */
+-#plugins :is(.inv-btn,.inv-format,.inv-action,.inv-more,.inv-side-button,.inv-vst-option,.inv-tag-filter-option,.inv-fav,.inv-product-actions,.inv-vendor-toggle,.inv-view-menu>summary):hover:not(:disabled):not(.active):not(.on):not([aria-disabled="true"]),
++#plugins :is(.inv-action,.inv-more,.inv-vst-option,.inv-tag-filter-option,.inv-fav,.inv-product-actions,.inv-vendor-toggle):hover:not(:disabled):not(.active):not(.on):not([aria-disabled="true"]),
+ #invPopoverLayer :is(.inv-vst-option,.inv-tag-filter-option):hover:not(.on),
+ #invProductMenu .inv-menu-row:hover:not(.disabled),
+ #invNoteOverlay button:hover:not(.primary),
+@@ -4945,13 +4945,9 @@
+ #plugins #invSidebar .inv-sidebar-head button:focus-visible{outline:2px solid var(--aimm-teal)!important;outline-offset:1px!important}
+ #plugins #invSidebar .inv-sidebar-head svg{width:calc(24px * var(--inv-text-scale,1));height:calc(24px * var(--inv-text-scale,1));fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+ #plugins #invSidebar .inv-sidebar-head [aria-expanded="false"] .inv-panel-tint{display:none}
+-#plugins #invSidebar .inv-sidebar-card{--section-colour:#36a8ed;position:relative;margin:0 0 12px;background:var(--pv-neutral-bg);border:1px solid var(--section-colour)!important;border-radius:12px;overflow:hidden}
+-#plugins #invSidebar .inv-sidebar-card[data-inv-section="tools"]{--section-colour:#e8b45a}
+-#plugins #invSidebar .inv-sidebar-card[data-inv-section="library"]{--section-colour:#b970ff}
+-#plugins #invSidebar .inv-sidebar-card[data-inv-section="video-chain-picks"]{--section-colour:#f472b6}
+-#plugins #invSidebar .inv-sidebar-card[data-inv-section="categories"]{--section-colour:#f97316}
+-#plugins #invSidebar .inv-sidebar-card.is-current{box-shadow:0 0 18px -4px var(--section-colour)!important}
+-#plugins #invSidebar .inv-sidebar-section-toggle,#plugins #invSidebar .inv-sidebar-section-toggle:hover:not(:disabled){display:flex;align-items:center;gap:calc(8px * var(--inv-text-scale,1));width:100%;min-height:calc(48px * var(--inv-text-scale,1));margin:0;padding:calc(8px * var(--inv-text-scale,1)) calc(12px * var(--inv-text-scale,1)) calc(8px * var(--inv-text-scale,1)) calc(14px * var(--inv-text-scale,1));border-radius:0;color:var(--pv-black)!important;font:500 var(--aimm-section-title-size)/var(--aimm-heading-line-height) var(--aimm-font-display);letter-spacing:var(--aimm-heading-letter-spacing);text-align:left;cursor:pointer}
++#plugins #invSidebar .inv-sidebar-card{position:relative;margin:0 0 12px;background:#1b1d20;border:1px solid #2c3034;border-radius:10px;overflow:hidden}
++#plugins #invSidebar .inv-sidebar-section-toggle,#plugins #invSidebar .inv-sidebar-section-toggle:hover:not(:disabled){display:flex;align-items:center;gap:calc(8px * var(--inv-text-scale,1));width:100%;min-height:calc(48px * var(--inv-text-scale,1));margin:0;padding:calc(8px * var(--inv-text-scale,1)) calc(12px * var(--inv-text-scale,1)) calc(8px * var(--inv-text-scale,1)) calc(14px * var(--inv-text-scale,1));border:0;border-radius:0;background:transparent;color:var(--aimm-page-heading-color);font:500 var(--aimm-section-title-size)/var(--aimm-heading-line-height) var(--aimm-font-display);letter-spacing:var(--aimm-heading-letter-spacing);text-align:left;cursor:pointer}
++#plugins #invSidebar .inv-sidebar-section-toggle[aria-expanded="true"]{border-bottom:1px solid #2c3034}
+ #plugins #invSidebar .inv-sidebar-section-toggle:focus-visible,#plugins #invSidebar .inv-side-button:focus-visible{outline:2px solid var(--aimm-teal)!important;outline-offset:-2px!important}
+ #plugins #invSidebar .inv-sidebar-heading-label{flex:1;min-width:0;overflow-wrap:break-word;text-wrap:balance}
+ #plugins #invSidebar .inv-sidebar-chevron{width:calc(22px * var(--inv-text-scale,1));height:calc(22px * var(--inv-text-scale,1));flex:none;background:none!important;border:0!important;box-shadow:none!important}
+@@ -4969,11 +4965,7 @@
+ #plugins #invSidebar .inv-side-icon{display:flex;align-items:center;justify-content:center;flex:none;width:calc(28px * var(--inv-text-scale,1));height:calc(28px * var(--inv-text-scale,1));color:#aab2bd}
+ #plugins #invSidebar .inv-side-icon svg{display:block;width:calc(24px * var(--inv-text-scale,1));height:calc(24px * var(--inv-text-scale,1));fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+ #plugins #invSidebar .inv-side-label{flex:1 1 0;min-width:0;overflow:visible;text-overflow:clip;white-space:normal;overflow-wrap:break-word;text-wrap:balance;hyphens:manual}
+-#plugins #invSidebar .inv-side-count{display:inline-flex;align-items:center;justify-content:center;flex:none;min-width:0;min-height:0;margin-left:auto;padding:0 calc(2px * var(--inv-text-scale,1));border:0;border-radius:0;background:none;box-shadow:none;text-align:center;color:#8993a2;font:700 calc(15px * var(--inv-text-scale,1))/1 var(--aimm-font);font-variant-numeric:tabular-nums}
+-#plugins #invSidebar [data-inv-scope="updates"] .inv-side-count{color:var(--st-red)!important}
+-#plugins #invSidebar [data-inv-scope="up-to-date"] .inv-side-count{color:var(--st-green)!important}
+-#plugins #invSidebar [data-inv-scope="manual-check"] .inv-side-count{color:var(--st-amber)!important}
+-#plugins #invSidebar [data-inv-scope="vendor-app"] .inv-side-count,#plugins #invSidebar [data-inv-scope="unchecked"] .inv-side-count{color:var(--st-grey)!important}
++#plugins #invSidebar .inv-side-count{display:inline-flex;align-items:center;justify-content:center;flex:none;min-width:0;min-height:0;margin-left:auto;padding:0 calc(2px * var(--inv-text-scale,1));border:0;border-radius:0;background:none;box-shadow:none;text-align:center;color:#9aa0a6;font:700 calc(15px * var(--inv-text-scale,1))/1 var(--aimm-font);font-variant-numeric:tabular-nums}
+ #plugins #invSidebar.is-collapsed{padding-left:calc(12px * var(--inv-text-scale,1));padding-right:calc(12px * var(--inv-text-scale,1))}
+ #plugins #invSidebar.is-collapsed .inv-sidebar-head{justify-content:center;min-height:calc(44px * var(--inv-text-scale,1))}
+ #plugins #invSidebar.is-collapsed .inv-sidebar-head button{min-width:calc(48px * var(--inv-text-scale,1));min-height:calc(44px * var(--inv-text-scale,1));margin-right:0}
+@@ -4991,7 +4983,7 @@
+ @media(prefers-reduced-motion:reduce){#plugins #invSidebar .inv-sidebar-section-content{transition:none!important;animation:none!important}}
+ /* Hover and keyboard focus use the section colour in both sidebar modes. */
+ #plugins #invSidebar .inv-side-button:hover:not(.active):not(:disabled),
+-#plugins #invSidebar .inv-side-button:focus-visible:not(.active):not(:disabled){color:var(--pv-black)!important}
++#plugins #invSidebar .inv-side-button:focus-visible:not(.active):not(:disabled){background:#2dd4bf;color:#0b0d10}
+ #plugins #invSidebar .inv-side-button:hover:not(.active):not(:disabled) :is(.inv-side-icon,.inv-side-label,.inv-side-count),
+ #plugins #invSidebar .inv-side-button:focus-visible:not(.active):not(:disabled) :is(.inv-side-icon,.inv-side-label,.inv-side-count){color:var(--pv-black)!important}
+ #settings #settingsPluginCompanion .settings-scan-folders{margin-top:16px}
+@@ -5203,15 +5195,15 @@
+ #settings .rt-key-status.err{color:#f87171!important}
+ 
+ /* C. Surfaces. Directly on the black page: #1a1d21 */
+-#settings :is(.settings-nav a,.settings-guide,.settings-section,#aimm-account-preview){background:var(--g1)!important}
+-#settings .settings-nav a{color:var(--gink)!important}
++#settings :is(.settings-nav a,.settings-guide,.settings-section,#aimm-account-preview){background:var(--g1)}
++#settings .settings-nav a{color:var(--gink)}
+ /* Inside a #1a1d21 card: #2a2e35 panels */
+-#settings :is(.rt-key-wrap,.rt-opts,.rt-tools-panel,.settings-route-card,.settings-guide-grid article,.rt-cost-card,#mcSpotifyCompanionSettingsStatus,#pcCompanionSettingsStatus,.tip-box.warn,#aimm-account-preview .account-preview-content,.settings-guide-icon,.settings-companion-connect-row button,#settingsReset #resetBtn){background:var(--g2)!important}
++#settings :is(.rt-key-wrap,.rt-opts,.rt-tools-panel,.settings-route-card,.settings-guide-grid article,.rt-cost-card,#mcSpotifyCompanionSettingsStatus,#pcCompanionSettingsStatus,.tip-box.warn,#aimm-account-preview .account-preview-content,.settings-guide-icon,.settings-companion-connect-row button,#settingsReset #resetBtn){background:var(--g2)}
+ #settings .settings-guide-icon{color:var(--gink)!important}
+ /* On a #2a2e35 panel: #1a1d21 controls and tiles */
+-#settings :is(.rt-key-inputs input,.rt-key-inputs button,.rt-opts select,.rt-tool-card,.rt-cost-metrics .row,.rt-cost-card .actions button,#aimm-account-preview .account-row input,#aimm-account-preview .account-row button,#aimm-account-preview .account-result){background-color:var(--g1)!important}
++#settings :is(.rt-key-inputs input,.rt-key-inputs button,.rt-opts select,.rt-tool-card,.rt-cost-metrics .row,.rt-cost-card .actions button,#aimm-account-preview .account-row input,#aimm-account-preview .account-row button,#aimm-account-preview .account-result){background-color:var(--g1)}
+ #settings :is(.rt-key-inputs input,.rt-opts select,#aimm-account-preview .account-row input){color:var(--gink)!important}
+-#settings :is(.rt-key-inputs button,.rt-cost-card .actions button,#aimm-account-preview .account-row button){color:var(--gink)!important}
++#settings :is(.rt-key-inputs button,.rt-cost-card .actions button,#aimm-account-preview .account-row button){color:var(--gink)}
+ #settings :is(input,select)::placeholder{color:var(--goff)!important}
+ /* On a #1a1d21 tool tile: #2a2e35 select */
+ #settings #settingsSafety .rt-tool-card select{background-color:var(--g2)!important;color:var(--gink)!important}
+@@ -5233,7 +5225,7 @@
+ #settings :is(input[type=checkbox],input[type=radio],input[type=range]){accent-color:var(--gteal)!important}
+ 
+ /* F. Hover and keyboard focus: purple gradient, white text */
+-#settings :is(.settings-nav a,.rt-key-inputs button,.rt-cost-card .actions button,.settings-companion-connect-row button,#settingsReset #resetBtn,#aimm-account-preview>button,#aimm-account-preview .account-row button):is(:hover,:focus-visible):not(:disabled),
++#settings :is(.settings-nav a,.rt-key-inputs button,.rt-cost-card .actions button,.settings-companion-connect-row button,#settingsReset #resetBtn,#aimm-account-preview>button,#aimm-account-preview .account-row button):is(:hover,:focus-visible):not(:disabled){background:var(--aimm-hover-bg);color:var(--aimm-hover-ink)}
+ #settings .settings-guide summary:is(:hover,:focus-visible){color:#fff!important}
+ 
+ #settings .settings-guide summary:is(:hover,:focus-visible) :is(strong,small,.settings-guide-icon){color:#fff!important}
+@@ -5242,14 +5234,14 @@
+ #settings :is(button,input,select):disabled{color:var(--goff)!important;opacity:.76!important}
+ 
+ /* H. Destructive actions: red text on the grey (Remove key, Reset) */
+-#settings :is(#elKeyClear,#hopeUsageSttTokenClear,#rtKeyClear,#settingsReset #resetBtn){color:#f87171!important}
+-#settings :is(#elKeyClear,#hopeUsageSttTokenClear,#rtKeyClear,#settingsReset #resetBtn):hover{color:#fff!important}
++#settings :is(#elKeyClear,#hopeUsageSttTokenClear,#rtKeyClear,#settingsReset #resetBtn){color:#f87171}
++#settings :is(#elKeyClear,#hopeUsageSttTokenClear,#rtKeyClear,#settingsReset #resetBtn):hover{color:var(--aimm-hover-ink)}
+ 
+ /* I. Reset warning box: solid grey, no yellow bar */
+ #settings #settingsReset .tip-box.warn,#settings #browserWarn{background:var(--g2)!important;color:var(--gink)!important}
+ #settings #settingsReset .tip-box.warn strong,#settings #browserWarn strong{color:var(--gink)!important}
+ /* F2. Save buttons are matched by id above, so their hover is matched by id too */
+-#settings :is(#elKeySave,#hopeUsageSttTokenSave,#rtKeySave):is(:hover,:focus-visible){color:#fff!important}
++#settings :is(#elKeySave,#hopeUsageSttTokenSave,#rtKeySave):is(:hover,:focus-visible){color:var(--aimm-hover-ink)}
+ /* G2. A disabled teal button goes back to grey */
+ #settings :is(#elKeySave,#hopeUsageSttTokenSave,#rtKeySave):disabled{background:var(--g1)!important;background-color:var(--g1)!important;color:var(--goff)!important}
+ /* F3. Guide row hover: every line of text white on the gradient */
+@@ -27980,9 +27972,9 @@
+ :where(.mc-rv,.oz-meter-big,.mc-tile-v,.tile .v,.mc-core-value,.mc-measure-value,.tp-time,.mc-stem-clock,.ref-scrub-times,.inv-stat,.inv-version,.lib-count-badge,.rt-timer,.rt-cost,.aichat-cost,.chain-setting-value,.chain-setting-input,.meter-card input[type=number],.settings-cost-row .row .v,#buildStamp){font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+ 
+ /* Shared surfaced-control state. The neutral switch preserves each resting surface. */
+-:is(.btn,.pill,.video-pill,.lib-pub-pill,.eq-tool-btn,.collapse-bar .pill-btn,.settings-nav a,#plugins .inv-side-button,#plugins .inv-format,#plugins summary.inv-btn,#mixcheck .mcq-acts button,#mixcheck .mcq-nav button,#mcSpotifyCapture,#mcSpotifyConnect,#mcSpotifyRefMatch,.chain-add,.empty-add,.aichat-quick-prompt,.aichat-copy-btn,.aichat-tts-btn,.aichat-speak-message){transition:background-color var(--aimm-t-colour) var(--aimm-ease),border-color var(--aimm-t-colour) var(--aimm-ease),color var(--aimm-t-colour) var(--aimm-ease)}
++:is(.btn,.pill,.video-pill,.lib-pub-pill,.eq-tool-btn,.collapse-bar .pill-btn,.settings-nav a,#plugins .inv-side-button,#plugins .inv-format,#plugins summary.inv-btn,#mixcheck .mcq-acts button,#mixcheck .mcq-nav button,#mcSpotifyCapture,#mcSpotifyConnect,#mcSpotifyRefMatch,.chain-add,.empty-add,#library .tx,.aichat-quick-prompt,.aichat-copy-btn,.aichat-tts-btn,.aichat-speak-message){transition:background-color var(--aimm-t-colour) var(--aimm-ease),border-color var(--aimm-t-colour) var(--aimm-ease),color var(--aimm-t-colour) var(--aimm-ease)}
+ @media (hover:hover) and (pointer:fine){
+-:is(.btn,.pill,.video-pill,.lib-pub-pill,.eq-tool-btn,.collapse-bar .pill-btn,.settings-nav a,#plugins .inv-side-button,#plugins .inv-format,#plugins summary.inv-btn,#mixcheck .mcq-acts button,#mixcheck .mcq-nav button,#mcSpotifyCapture,#mcSpotifyConnect,#mcSpotifyRefMatch,.chain-add,.empty-add,.aichat-quick-prompt,.aichat-copy-btn,.aichat-tts-btn,.aichat-speak-message):not(.active):not(.is-active):not([aria-selected="true"]):not([aria-pressed="true"]):hover{background-color:var(--aimm-hover-bg,var(--rest-bg,transparent));border-color:var(--aimm-hover-bd,var(--rest-bd,transparent));color:var(--aimm-hover-ink);box-shadow:none;filter:none;transform:none}
++:is(.btn,.pill,.video-pill,.lib-pub-pill,.eq-tool-btn,.collapse-bar .pill-btn,.settings-nav a,#plugins .inv-side-button,#plugins .inv-format,#plugins summary.inv-btn,#mixcheck .mcq-acts button,#mixcheck .mcq-nav button,#mcSpotifyCapture,#mcSpotifyConnect,#mcSpotifyRefMatch,.chain-add,.empty-add,#library .tx,.aichat-quick-prompt,.aichat-copy-btn,.aichat-tts-btn,.aichat-speak-message):not(.active):not(.is-active):not([aria-selected="true"]):not([aria-pressed="true"]):hover{background-color:var(--aimm-hover-bg,var(--rest-bg,transparent));border-color:var(--aimm-hover-bd,var(--rest-bd,transparent));color:var(--aimm-hover-ink);box-shadow:none;filter:none;transform:none}
+ }
+ #plugins #invSidebar .inv-side-button.active,#mixcheck .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]),#mixcheck .mc-stem-modes button[aria-pressed="true"]{background:#2dd4bf;border-color:transparent;color:#0b0d10;box-shadow:none;filter:none;transform:none;transition:none}
+ :is(.lp .row,#library .bar,#plugins .inv-list-row,.fact-chip,.kb-card,.rt-pill,.preset-card,.symptom,.journal-entry-head,.fact-cat-head):hover{box-shadow:none;filter:none;transform:none}

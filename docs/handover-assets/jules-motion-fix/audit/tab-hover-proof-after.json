@@ -1,0 +1,296 @@
+{
+ "mixcheck": {
+  "rest": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(45, 212, 191)",
+   "col": "rgb(11, 13, 16)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 41,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none"
+  },
+  "hov": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(45, 212, 191)",
+   "col": "rgb(11, 13, 16)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 41,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none",
+   "trans": "none"
+  },
+  "hovB": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(45, 212, 191)",
+   "col": "rgb(11, 13, 16)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 41,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none"
+  }
+ },
+ "library": {
+  "rest": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(26, 29, 33)",
+   "col": "rgb(156, 163, 175)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 188.359375,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none"
+  },
+  "hov": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(45, 212, 191)",
+   "col": "rgb(11, 13, 16)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 188.359375,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none",
+   "trans": "background-color 0.12s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.12s cubic-bezier(0.22, 1, 0.36, 1), color 0.12s cubic-bezier(0.22, 1, 0.36, 1)"
+  },
+  "hovB": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(26, 29, 33)",
+   "col": "rgb(232, 235, 237)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 188.359375,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none"
+  }
+ },
+ "mixbus": {
+  "rest": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(26, 29, 33)",
+   "col": "rgb(156, 163, 175)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 312.171875,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none"
+  },
+  "hov": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(45, 212, 191)",
+   "col": "rgb(11, 13, 16)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 312.171875,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none",
+   "trans": "background-color 0.12s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.12s cubic-bezier(0.22, 1, 0.36, 1), color 0.12s cubic-bezier(0.22, 1, 0.36, 1)"
+  },
+  "hovB": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(26, 29, 33)",
+   "col": "rgb(232, 235, 237)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 312.171875,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none"
+  }
+ },
+ "plugins": {
+  "rest": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(26, 29, 33)",
+   "col": "rgb(156, 163, 175)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 438.203125,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none"
+  },
+  "hov": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(45, 212, 191)",
+   "col": "rgb(11, 13, 16)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 438.203125,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none",
+   "trans": "background-color 0.12s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.12s cubic-bezier(0.22, 1, 0.36, 1), color 0.12s cubic-bezier(0.22, 1, 0.36, 1)"
+  },
+  "hovB": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(26, 29, 33)",
+   "col": "rgb(232, 235, 237)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 438.203125,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none"
+  }
+ },
+ "settings": {
+  "rest": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(26, 29, 33)",
+   "col": "rgb(156, 163, 175)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 564.15625,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none"
+  },
+  "hov": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(45, 212, 191)",
+   "col": "rgb(11, 13, 16)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 564.15625,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none",
+   "trans": "background-color 0.12s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.12s cubic-bezier(0.22, 1, 0.36, 1), color 0.12s cubic-bezier(0.22, 1, 0.36, 1)"
+  },
+  "hovB": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(26, 29, 33)",
+   "col": "rgb(232, 235, 237)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 564.15625,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none"
+  }
+ },
+ "marketing": {
+  "rest": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(26, 29, 33)",
+   "col": "rgb(156, 163, 175)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 696.015625,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none"
+  },
+  "hov": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(45, 212, 191)",
+   "col": "rgb(11, 13, 16)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 696.015625,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none",
+   "trans": "background-color 0.12s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.12s cubic-bezier(0.22, 1, 0.36, 1), color 0.12s cubic-bezier(0.22, 1, 0.36, 1)"
+  },
+  "hovB": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(26, 29, 33)",
+   "col": "rgb(232, 235, 237)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 696.015625,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none"
+  }
+ },
+ "community": {
+  "rest": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(26, 29, 33)",
+   "col": "rgb(156, 163, 175)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 840.625,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none"
+  },
+  "hov": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(45, 212, 191)",
+   "col": "rgb(11, 13, 16)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 840.625,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none",
+   "trans": "background-color 0.12s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.12s cubic-bezier(0.22, 1, 0.36, 1), color 0.12s cubic-bezier(0.22, 1, 0.36, 1)"
+  },
+  "hovB": {
+   "tf": "none",
+   "sh": "none",
+   "bg": "rgb(26, 29, 33)",
+   "col": "rgb(232, 235, 237)",
+   "y": 196.75,
+   "svgW": 24,
+   "svgH": 24,
+   "svgX": 840.625,
+   "icoTf": "none",
+   "svgTf": "none",
+   "filter": "none"
+  }
+ }
+}

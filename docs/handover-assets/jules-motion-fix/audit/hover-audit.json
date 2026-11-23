@@ -1,0 +1,3305 @@
+{
+ "load1": [
+  {
+   "t": "wave-bar",
+   "n": "background-color",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "box-shadow",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "height",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "background-color",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "box-shadow",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "height",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "background-color",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "box-shadow",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "height",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "background-color",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "box-shadow",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "background-color",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "box-shadow",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "height",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "background-color",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "box-shadow",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "height",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "background-color",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "box-shadow",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "height",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "background-color",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "box-shadow",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "height",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "background-color",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "box-shadow",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "height",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "background-color",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "box-shadow",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "height",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "background-color",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "box-shadow",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "height",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "background-color",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "box-shadow",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "height",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "background-color",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "box-shadow",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "height",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "background-color",
+   "type": "CSSTransition"
+  },
+  {
+   "t": "wave-bar",
+   "n": "box-shadow",
+   "type": "CSSTransition"
+  }
+ ],
+ "tabs": [
+  "mixcheck",
+  "library",
+  "mixbus",
+  "plugins",
+  "settings",
+  "marketing",
+  "community"
+ ],
+ "perTab": {
+  "mixcheck": [
+   {
+    "sig": "BUTTON.coach-info#",
+    "txt": "i",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(197, 208, 220)",
+      "to": "rgb(232, 235, 237)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(87, 100, 115)",
+      "to": "rgb(90, 169, 230)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(197, 208, 220)",
+      "to": "rgb(232, 235, 237)"
+     }
+    ],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.aichat-quick-prompt#",
+    "txt": "▶ What should I fix firs",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(21, 26, 32)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 51, 64)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "background, color, border-color",
+    "td": "0.12s, 0.12s, 0.12s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.aichat-quick-prompt#",
+    "txt": "▶ How does my mix compar",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(21, 26, 32)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 51, 64)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "background, color, border-color",
+    "td": "0.12s, 0.12s, 0.12s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.#aiChatSend",
+    "txt": "Send",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.btn.ghost.sm#aiChatClear",
+    "txt": "Clear chat",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.hope-voice-route-btn#hopeVoiceRouteBtn",
+    "txt": "ElevenLabs",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.hope-voice-route-btn#hopeAccountBtn",
+    "txt": "Auto",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.tab.oz-tab#",
+    "txt": "Mix Check",
+    "diffs": [
+     {
+      "part": "ic",
+      "k": "transform",
+      "from": "none",
+      "to": "matrix(1.08, 0, 0, 1.08, 0, 0)"
+     },
+     {
+      "part": "ic",
+      "k": "opacity",
+      "from": "0.72",
+      "to": "1"
+     }
+    ],
+    "tp": "none",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.tab.oz-tab#",
+    "txt": "Library",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(26, 29, 33)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "borderTopColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "transform",
+      "from": "none",
+      "to": "matrix(1.08, 0, 0, 1.08, 0, 0)"
+     },
+     {
+      "part": "ic",
+      "k": "opacity",
+      "from": "0.72",
+      "to": "1"
+     },
+     {
+      "part": "ic",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "transform, box-shadow, color, border-color",
+    "td": "0.18s, 0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.#",
+    "txt": "Mixing",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.#",
+    "txt": "Mastering\nComing soon",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "DIV.ref-dz-empty#refDzEmpty",
+    "txt": "Drop your mix here\nWAV o",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.mc-saved-targets-toggle#mcSavedTargetsToggle",
+    "txt": "Saved Targets\nFlat",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgba(101, 211, 229, 0.035)"
+     }
+    ],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "SPAN.mc-spotify-mark#",
+    "txt": "Connect Spotify",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "boxShadow",
+      "from": "rgba(79, 195, 232, 0.35) 0px 0px 18px 0px",
+      "to": "rgba(111, 227, 255, 0.7) 0px 0px 22px 0px"
+     }
+    ],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.#mcSpotifyCapture",
+    "txt": "Capture",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "transform",
+      "from": "none",
+      "to": "matrix(1, 0, 0, 1, 0, -2)"
+     }
+    ],
+    "tp": "transform, box-shadow, color, border-color",
+    "td": "0.18s, 0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease, ease"
+   }
+  ],
+  "library": [
+   {
+    "sig": "BUTTON.coach-info#",
+    "txt": "i",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(197, 208, 220)",
+      "to": "rgb(232, 235, 237)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(87, 100, 115)",
+      "to": "rgb(90, 169, 230)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(197, 208, 220)",
+      "to": "rgb(232, 235, 237)"
+     }
+    ],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.aichat-quick-prompt#",
+    "txt": "▶ What should I fix firs",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(21, 26, 32)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 51, 64)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "background, color, border-color",
+    "td": "0.12s, 0.12s, 0.12s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.aichat-quick-prompt#",
+    "txt": "▶ How does my mix compar",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(21, 26, 32)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 51, 64)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "background, color, border-color",
+    "td": "0.12s, 0.12s, 0.12s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.#aiChatSend",
+    "txt": "Send",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.btn.ghost.sm#aiChatClear",
+    "txt": "Clear chat",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.hope-voice-route-btn#hopeVoiceRouteBtn",
+    "txt": "ElevenLabs",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.hope-voice-route-btn#hopeAccountBtn",
+    "txt": "Auto",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.tab.oz-tab#",
+    "txt": "Mix Check",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(26, 29, 33)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "borderTopColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "transform",
+      "from": "none",
+      "to": "matrix(1.08, 0, 0, 1.08, 0, 0)"
+     },
+     {
+      "part": "ic",
+      "k": "opacity",
+      "from": "0.72",
+      "to": "1"
+     },
+     {
+      "part": "ic",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "transform, box-shadow, color, border-color",
+    "td": "0.18s, 0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.tab.oz-tab#",
+    "txt": "Library",
+    "diffs": [
+     {
+      "part": "ic",
+      "k": "transform",
+      "from": "none",
+      "to": "matrix(1.08, 0, 0, 1.08, 0, 0)"
+     },
+     {
+      "part": "ic",
+      "k": "opacity",
+      "from": "0.72",
+      "to": "1"
+     }
+    ],
+    "tp": "none",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "A.video-pill.teal#libPlayerOpen",
+    "txt": "Open on YouTube",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(45, 212, 191)",
+      "to": "rgb(94, 234, 212)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(11, 13, 16)",
+      "to": "rgb(0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(11, 13, 16)",
+      "to": "rgb(0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(11, 13, 16)",
+      "to": "rgb(0, 0, 0)"
+     }
+    ],
+    "tp": "background, color",
+    "td": "0.14s, 0.14s",
+    "te": "ease, ease"
+   },
+   {
+    "sig": "BUTTON.video-pill#libPlayerCopy",
+    "txt": "Copy link",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(44, 48, 52)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(255, 255, 255)",
+      "to": "rgb(0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(255, 255, 255)",
+      "to": "rgb(0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(255, 255, 255)",
+      "to": "rgb(0, 0, 0)"
+     }
+    ],
+    "tp": "background, color",
+    "td": "0.14s, 0.14s",
+    "te": "ease, ease"
+   },
+   {
+    "sig": "BUTTON.more#libPlayerMore",
+    "txt": "Read more",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(45, 212, 191)",
+      "to": "rgb(94, 234, 212)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(45, 212, 191)",
+      "to": "rgb(94, 234, 212)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(45, 212, 191)",
+      "to": "rgb(94, 234, 212)"
+     },
+     {
+      "part": "self",
+      "k": "textDecorationLine",
+      "from": "none",
+      "to": "underline"
+     }
+    ],
+    "tp": "background, color",
+    "td": "0.16s, 0.16s",
+    "te": "ease, ease"
+   },
+   {
+    "sig": "SELECT.#libPlayerChannelFilter",
+    "txt": "Channel\nMix With The Mas",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.row#",
+    "txt": "1\nLogic Pro 101: Beginne",
+    "diffs": [],
+    "tp": "background",
+    "td": "0.12s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.row#",
+    "txt": "2\nMelodyne in Logic Pro ",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(32, 35, 39)"
+     }
+    ],
+    "tp": "background",
+    "td": "0.12s",
+    "te": "ease"
+   }
+  ],
+  "mixbus": [
+   {
+    "sig": "BUTTON.coach-info#",
+    "txt": "i",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(197, 208, 220)",
+      "to": "rgb(232, 235, 237)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(87, 100, 115)",
+      "to": "rgb(90, 169, 230)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(197, 208, 220)",
+      "to": "rgb(232, 235, 237)"
+     }
+    ],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.aichat-quick-prompt#",
+    "txt": "▶ What should I fix firs",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(21, 26, 32)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 51, 64)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "background, color, border-color",
+    "td": "0.12s, 0.12s, 0.12s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.aichat-quick-prompt#",
+    "txt": "▶ How does my mix compar",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(21, 26, 32)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 51, 64)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "background, color, border-color",
+    "td": "0.12s, 0.12s, 0.12s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.#aiChatSend",
+    "txt": "Send",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.btn.ghost.sm#aiChatClear",
+    "txt": "Clear chat",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.hope-voice-route-btn#hopeVoiceRouteBtn",
+    "txt": "ElevenLabs",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.hope-voice-route-btn#hopeAccountBtn",
+    "txt": "Auto",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.tab.oz-tab#",
+    "txt": "Mix Check",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(26, 29, 33)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "borderTopColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "transform",
+      "from": "none",
+      "to": "matrix(1.08, 0, 0, 1.08, 0, 0)"
+     },
+     {
+      "part": "ic",
+      "k": "opacity",
+      "from": "0.72",
+      "to": "1"
+     },
+     {
+      "part": "ic",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "transform, box-shadow, color, border-color",
+    "td": "0.18s, 0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.tab.oz-tab#",
+    "txt": "Library",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(26, 29, 33)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "borderTopColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "transform",
+      "from": "none",
+      "to": "matrix(1.08, 0, 0, 1.08, 0, 0)"
+     },
+     {
+      "part": "ic",
+      "k": "opacity",
+      "from": "0.72",
+      "to": "1"
+     },
+     {
+      "part": "ic",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "transform, box-shadow, color, border-color",
+    "td": "0.18s, 0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.btn.ghost.sm#presetsBtn",
+    "txt": "Load preset",
+    "diffs": [],
+    "tp": "background",
+    "td": "0.15s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.btn.ghost.sm#autoFillBtn",
+    "txt": "Auto-fill settings",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(45, 212, 191)",
+      "to": "rgb(94, 234, 212)"
+     }
+    ],
+    "tp": "background",
+    "td": "0.15s",
+    "te": "ease"
+   },
+   {
+    "sig": "H4.#",
+    "txt": "Master Bus\n−",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(27, 29, 32)",
+      "to": "rgb(32, 35, 39)"
+     }
+    ],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.chain-add#",
+    "txt": "+\nAdd plugin",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(32, 35, 39)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(196, 202, 211)",
+      "to": "rgb(255, 255, 255)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(196, 202, 211)",
+      "to": "rgb(255, 255, 255)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(196, 202, 211)",
+      "to": "rgb(255, 255, 255)"
+     }
+    ],
+    "tp": "background, color, border-color",
+    "td": "0.16s, 0.16s, 0.16s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "H4.#",
+    "txt": "Vocal Bus\n−",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(27, 29, 32)",
+      "to": "rgb(32, 35, 39)"
+     }
+    ],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.chain-add#",
+    "txt": "+\nAdd plugin",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(32, 35, 39)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(196, 202, 211)",
+      "to": "rgb(255, 255, 255)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(196, 202, 211)",
+      "to": "rgb(255, 255, 255)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(196, 202, 211)",
+      "to": "rgb(255, 255, 255)"
+     }
+    ],
+    "tp": "background, color, border-color",
+    "td": "0.16s, 0.16s, 0.16s",
+    "te": "ease, ease, ease"
+   }
+  ],
+  "plugins": [
+   {
+    "sig": "BUTTON.coach-info#",
+    "txt": "i",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(197, 208, 220)",
+      "to": "rgb(232, 235, 237)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(87, 100, 115)",
+      "to": "rgb(90, 169, 230)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(197, 208, 220)",
+      "to": "rgb(232, 235, 237)"
+     }
+    ],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.aichat-quick-prompt#",
+    "txt": "▶ What should I fix firs",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(21, 26, 32)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 51, 64)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "background, color, border-color",
+    "td": "0.12s, 0.12s, 0.12s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.aichat-quick-prompt#",
+    "txt": "▶ How does my mix compar",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(21, 26, 32)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 51, 64)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "background, color, border-color",
+    "td": "0.12s, 0.12s, 0.12s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.#aiChatSend",
+    "txt": "Send",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.btn.ghost.sm#aiChatClear",
+    "txt": "Clear chat",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.hope-voice-route-btn#hopeVoiceRouteBtn",
+    "txt": "ElevenLabs",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.hope-voice-route-btn#hopeAccountBtn",
+    "txt": "Auto",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.tab.oz-tab#",
+    "txt": "Mix Check",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(26, 29, 33)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "borderTopColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "transform",
+      "from": "none",
+      "to": "matrix(1.08, 0, 0, 1.08, 0, 0)"
+     },
+     {
+      "part": "ic",
+      "k": "opacity",
+      "from": "0.72",
+      "to": "1"
+     },
+     {
+      "part": "ic",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "transform, box-shadow, color, border-color",
+    "td": "0.18s, 0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.tab.oz-tab#",
+    "txt": "Library",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(26, 29, 33)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "borderTopColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "transform",
+      "from": "none",
+      "to": "matrix(1.08, 0, 0, 1.08, 0, 0)"
+     },
+     {
+      "part": "ic",
+      "k": "opacity",
+      "from": "0.72",
+      "to": "1"
+     },
+     {
+      "part": "ic",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "transform, box-shadow, color, border-color",
+    "td": "0.18s, 0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.#invSidebarToggle",
+    "txt": "Collapse filters",
+    "diffs": [],
+    "tp": "background",
+    "td": "0.15s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.inv-sidebar-section.inv-sidebar-section-toggle#",
+    "txt": "Status",
+    "diffs": [],
+    "tp": "background",
+    "td": "0.15s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.inv-side-button#",
+    "txt": "All plugins\n0",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.inv-side-button#",
+    "txt": "Updates available\n0",
+    "diffs": [],
+    "tp": "background, color, border-color",
+    "td": "0.16s, 0.16s, 0.16s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.inv-sidebar-section.inv-sidebar-section-toggle#",
+    "txt": "Tools",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.inv-btn.primary#invAddRootBtn",
+    "txt": "Manage AIMM scan folders",
+    "diffs": [],
+    "tp": "background, color, border-color",
+    "td": "0.16s, 0.16s, 0.16s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.inv-btn#invScanBtn",
+    "txt": "Scan connected folders",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.inv-btn#invUpdateCheckBtn",
+    "txt": "Check AIMM vendor source",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.inv-format.on#",
+    "txt": "All formats",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.inv-format#",
+    "txt": "AU",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(27, 29, 32)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "backgroundImage",
+      "from": "none",
+      "to": "linear-gradient(135deg, rgb(148, 66, 220), rgb(185, 112, 255))"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(203, 208, 214)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(203, 208, 214)",
+      "to": "rgb(255, 255, 255)"
+     }
+    ],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "SUMMARY.inv-format#",
+    "txt": "VST",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(27, 29, 32)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "backgroundImage",
+      "from": "none",
+      "to": "linear-gradient(135deg, rgb(148, 66, 220), rgb(185, 112, 255))"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(203, 208, 214)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(203, 208, 214)",
+      "to": "rgb(255, 255, 255)"
+     }
+    ],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.inv-format#",
+    "txt": "CLAP",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(27, 29, 32)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "backgroundImage",
+      "from": "none",
+      "to": "linear-gradient(135deg, rgb(148, 66, 220), rgb(185, 112, 255))"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(203, 208, 214)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(203, 208, 214)",
+      "to": "rgb(255, 255, 255)"
+     }
+    ],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "SUMMARY.inv-btn#",
+    "txt": "My Tags\n0",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(27, 29, 32)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "backgroundImage",
+      "from": "none",
+      "to": "linear-gradient(135deg, rgb(148, 66, 220), rgb(185, 112, 255))"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(203, 208, 214)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(203, 208, 214)",
+      "to": "rgb(255, 255, 255)"
+     }
+    ],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "LABEL.inv-search#",
+    "txt": "Find",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.inv-btn.inv-cards-quick#invCardsQuickBtn",
+    "txt": "Cards",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "SUMMARY.inv-btn#",
+    "txt": "View",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(27, 29, 32)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "backgroundImage",
+      "from": "none",
+      "to": "linear-gradient(135deg, rgb(148, 66, 220), rgb(185, 112, 255))"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(203, 208, 214)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(203, 208, 214)",
+      "to": "rgb(255, 255, 255)"
+     },
+     {
+      "part": "ic",
+      "k": "outlineColor",
+      "from": "rgb(203, 208, 214)",
+      "to": "rgb(255, 255, 255)"
+     },
+     {
+      "part": "ic",
+      "k": "color",
+      "from": "rgb(203, 208, 214)",
+      "to": "rgb(255, 255, 255)"
+     }
+    ],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   }
+  ],
+  "settings": [
+   {
+    "sig": "BUTTON.coach-info#",
+    "txt": "i",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(197, 208, 220)",
+      "to": "rgb(232, 235, 237)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(87, 100, 115)",
+      "to": "rgb(90, 169, 230)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(197, 208, 220)",
+      "to": "rgb(232, 235, 237)"
+     }
+    ],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.aichat-quick-prompt#",
+    "txt": "▶ What should I fix firs",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(21, 26, 32)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 51, 64)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "background, color, border-color",
+    "td": "0.12s, 0.12s, 0.12s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.aichat-quick-prompt#",
+    "txt": "▶ How does my mix compar",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(21, 26, 32)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 51, 64)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "background, color, border-color",
+    "td": "0.12s, 0.12s, 0.12s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.#aiChatSend",
+    "txt": "Send",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.btn.ghost.sm#aiChatClear",
+    "txt": "Clear chat",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.hope-voice-route-btn#hopeVoiceRouteBtn",
+    "txt": "ElevenLabs",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.hope-voice-route-btn#hopeAccountBtn",
+    "txt": "Auto",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.tab.oz-tab#",
+    "txt": "Mix Check",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(26, 29, 33)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "borderTopColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "transform",
+      "from": "none",
+      "to": "matrix(1.08, 0, 0, 1.08, 0, 0)"
+     },
+     {
+      "part": "ic",
+      "k": "opacity",
+      "from": "0.72",
+      "to": "1"
+     },
+     {
+      "part": "ic",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "transform, box-shadow, color, border-color",
+    "td": "0.18s, 0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.tab.oz-tab#",
+    "txt": "Library",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(26, 29, 33)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "borderTopColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "transform",
+      "from": "none",
+      "to": "matrix(1.08, 0, 0, 1.08, 0, 0)"
+     },
+     {
+      "part": "ic",
+      "k": "opacity",
+      "from": "0.72",
+      "to": "1"
+     },
+     {
+      "part": "ic",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "transform, box-shadow, color, border-color",
+    "td": "0.18s, 0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease, ease"
+   },
+   {
+    "sig": "A.#",
+    "txt": "API keys & agents",
+    "diffs": [],
+    "tp": "background",
+    "td": "0.15s",
+    "te": "ease"
+   },
+   {
+    "sig": "A.#",
+    "txt": "Session safety",
+    "diffs": [],
+    "tp": "background",
+    "td": "0.15s",
+    "te": "ease"
+   },
+   {
+    "sig": "SUMMARY.#",
+    "txt": "?\nWhat do these settings",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "LABEL.#",
+    "txt": "ELEVENLABS API KEY — Aut",
+    "diffs": [],
+    "tp": "background, color, border-color",
+    "td": "0.16s, 0.16s, 0.16s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.btn.ghost.sm#elKeyShow",
+    "txt": "Show",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.btn.secondary.sm#elKeySave",
+    "txt": "Save",
+    "diffs": [],
+    "tp": "background, color, border-color",
+    "td": "0.16s, 0.16s, 0.16s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.btn.ghost.sm#elKeyClear",
+    "txt": "Remove",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "LABEL.#",
+    "txt": "AIMM DEEPGRAM ROUTE ACCE",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.btn.secondary.sm#hopeUsageSttTokenSave",
+    "txt": "Save",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.btn.ghost.sm#hopeUsageSttTokenClear",
+    "txt": "Remove",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.#elAccountPrimary",
+    "txt": "Primary",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.#elAccountBackup",
+    "txt": "Backup",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.topup#elTopup",
+    "txt": "Top up",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.topup#elAccountLink",
+    "txt": "Account",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.update-balance#elUpdate",
+    "txt": "Update balance",
+    "diffs": [],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   }
+  ],
+  "marketing": [
+   {
+    "sig": "BUTTON.coach-info#",
+    "txt": "i",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(197, 208, 220)",
+      "to": "rgb(232, 235, 237)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(87, 100, 115)",
+      "to": "rgb(90, 169, 230)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(197, 208, 220)",
+      "to": "rgb(232, 235, 237)"
+     }
+    ],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.aichat-quick-prompt#",
+    "txt": "▶ What should I fix firs",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(21, 26, 32)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 51, 64)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "background, color, border-color",
+    "td": "0.12s, 0.12s, 0.12s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.aichat-quick-prompt#",
+    "txt": "▶ How does my mix compar",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(21, 26, 32)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 51, 64)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "background, color, border-color",
+    "td": "0.12s, 0.12s, 0.12s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.#aiChatSend",
+    "txt": "Send",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.btn.ghost.sm#aiChatClear",
+    "txt": "Clear chat",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.hope-voice-route-btn#hopeVoiceRouteBtn",
+    "txt": "ElevenLabs",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.hope-voice-route-btn#hopeAccountBtn",
+    "txt": "Auto",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.tab.oz-tab#",
+    "txt": "Mix Check",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(26, 29, 33)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "borderTopColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "transform",
+      "from": "none",
+      "to": "matrix(1.08, 0, 0, 1.08, 0, 0)"
+     },
+     {
+      "part": "ic",
+      "k": "opacity",
+      "from": "0.72",
+      "to": "1"
+     },
+     {
+      "part": "ic",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "transform, box-shadow, color, border-color",
+    "td": "0.18s, 0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.tab.oz-tab#",
+    "txt": "Library",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(26, 29, 33)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "borderTopColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "transform",
+      "from": "none",
+      "to": "matrix(1.08, 0, 0, 1.08, 0, 0)"
+     },
+     {
+      "part": "ic",
+      "k": "opacity",
+      "from": "0.72",
+      "to": "1"
+     },
+     {
+      "part": "ic",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "transform, box-shadow, color, border-color",
+    "td": "0.18s, 0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease, ease"
+   }
+  ],
+  "community": [
+   {
+    "sig": "BUTTON.coach-info#",
+    "txt": "i",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(197, 208, 220)",
+      "to": "rgb(232, 235, 237)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(87, 100, 115)",
+      "to": "rgb(90, 169, 230)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(197, 208, 220)",
+      "to": "rgb(232, 235, 237)"
+     }
+    ],
+    "tp": "all",
+    "td": "0s",
+    "te": "ease"
+   },
+   {
+    "sig": "BUTTON.aichat-quick-prompt#",
+    "txt": "▶ What should I fix firs",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(21, 26, 32)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 51, 64)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "background, color, border-color",
+    "td": "0.12s, 0.12s, 0.12s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.aichat-quick-prompt#",
+    "txt": "▶ How does my mix compar",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(21, 26, 32)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 51, 64)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(180, 192, 207)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "background, color, border-color",
+    "td": "0.12s, 0.12s, 0.12s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.#aiChatSend",
+    "txt": "Send",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.btn.ghost.sm#aiChatClear",
+    "txt": "Clear chat",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.hope-voice-route-btn#hopeVoiceRouteBtn",
+    "txt": "ElevenLabs",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.hope-voice-route-btn#hopeAccountBtn",
+    "txt": "Auto",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgba(0, 0, 0, 0)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(243, 244, 246)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "box-shadow, color, background",
+    "td": "0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.tab.oz-tab#",
+    "txt": "Mix Check",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(26, 29, 33)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "borderTopColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "transform",
+      "from": "none",
+      "to": "matrix(1.08, 0, 0, 1.08, 0, 0)"
+     },
+     {
+      "part": "ic",
+      "k": "opacity",
+      "from": "0.72",
+      "to": "1"
+     },
+     {
+      "part": "ic",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "transform, box-shadow, color, border-color",
+    "td": "0.18s, 0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease, ease"
+   },
+   {
+    "sig": "BUTTON.tab.oz-tab#",
+    "txt": "Library",
+    "diffs": [
+     {
+      "part": "self",
+      "k": "backgroundColor",
+      "from": "rgb(26, 29, 33)",
+      "to": "rgb(45, 212, 191)"
+     },
+     {
+      "part": "self",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "self",
+      "k": "borderTopColor",
+      "from": "rgb(42, 46, 53)",
+      "to": "rgba(0, 0, 0, 0)"
+     },
+     {
+      "part": "self",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "outlineColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "borderTopColor",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     },
+     {
+      "part": "ic",
+      "k": "transform",
+      "from": "none",
+      "to": "matrix(1.08, 0, 0, 1.08, 0, 0)"
+     },
+     {
+      "part": "ic",
+      "k": "opacity",
+      "from": "0.72",
+      "to": "1"
+     },
+     {
+      "part": "ic",
+      "k": "color",
+      "from": "rgb(156, 163, 175)",
+      "to": "rgb(11, 13, 16)"
+     }
+    ],
+    "tp": "transform, box-shadow, color, border-color",
+    "td": "0.18s, 0.18s, 0.18s, 0.18s",
+    "te": "ease, ease, ease, ease"
+   }
+  ]
+ }
+}

@@ -51,12 +51,12 @@ test('cost page chooses the Worker subscription URL for each account',()=>{
 });
 
 test('ElevenLabs account action opens settings in a new tab',()=>{
-  const actions=html.match(/<div class="actions">\s*(<button[^>]+>[^<]*<\/button>\s*){3}<\/div>/g)
+  const actions=html.match(/<div class="actions">\s*(<button[^>]+>[\s\S]*?<\/button>\s*){3}<\/div>/g)
     ?.find(block=>block.includes('id="elAccountLink"'));
   assert.ok(actions);
   assert.ok(actions.indexOf('id="elTopup"')<actions.indexOf('id="elAccountLink"'));
   assert.ok(actions.indexOf('id="elAccountLink"')<actions.indexOf('id="elUpdate"'));
-  assert.match(actions,/id="elAccountLink" title="Open your ElevenLabs account settings in a new tab">Account ↗<\/button>/);
+  assert.match(actions,/id="elAccountLink" title="Open your ElevenLabs account settings in a new tab">Account <svg[^>]*><use href="#i-external"\/><\/svg><\/button>/);
 
   const start=html.indexOf("const elAccountLink=document.getElementById('elAccountLink');");
   const end=html.indexOf("const elUpdate=document.getElementById('elUpdate');",start);

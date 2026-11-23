@@ -1,0 +1,124 @@
+{
+  "build": "2026-11-23.23",
+  "branch": "library-bars",
+  "committed": false,
+  "tests": {
+    "command": "node --test tests/*.test.mjs",
+    "passed": 188,
+    "failed": 0
+  },
+  "servedPage": "http://127.0.0.1:8769/index.html",
+  "browser": "Google Chrome via puppeteer-core, real page.mouse.move, 320 ms settle",
+  "viewports": [
+    1900,
+    560
+  ],
+  "populatedContrast": {
+    "1900": 0,
+    "560": 0,
+    "areas": [
+      "Plugins cards",
+      "Plugins list",
+      "Plugins ledger",
+      "selected Updates",
+      "product menu",
+      "MixBus rest",
+      "MixBus hover",
+      "MixBus edit mode",
+      "Add plugin picker"
+    ]
+  },
+  "productMetaOverlay": {
+    "opened": true,
+    "contrastFlags": 0
+  },
+  "sevenTabContrast": {
+    "mixcheck": {
+      "rest": 0,
+      "hover": 0,
+      "focus": 0
+    },
+    "library": {
+      "rest": 0,
+      "hover": 0,
+      "focus": 0
+    },
+    "plugins": {
+      "rest": 0,
+      "hover": 0,
+      "focus": 0
+    },
+    "mixbus": {
+      "rest": 0,
+      "hover": 0,
+      "focus": 0
+    },
+    "settings": {
+      "rest": 6,
+      "hover": 0,
+      "focus": 0
+    },
+    "marketing": {
+      "rest": 0,
+      "hover": 0,
+      "focus": 0
+    },
+    "community": {
+      "rest": 0,
+      "hover": 0,
+      "focus": 0
+    }
+  },
+  "focusedChecks": {
+    "pluginsSidebar": "neutral card, neutral counts, teal/black row hover",
+    "mixbus": "selected solid teal/black; Add, Clear, Edit hover teal/black",
+    "settings": "nav, Save and Connect hover teal/black",
+    "library": "text-button hover teal/black; More colour only",
+    "tabStrip": "24x24 icons, fill none, no transform/shadow, teal/black hover"
+  },
+  "screenshots": [
+    "check-1900-mixbus.png",
+    "check-1900-plugins.png",
+    "check-1900-settings.png",
+    "check-560-mixbus.png",
+    "check-560-plugins.png",
+    "check-560-settings.png",
+    "meta-1900.png",
+    "pop-560-mixbus-edit.png",
+    "pop-560-mixbus.png",
+    "pop-560-picker.png",
+    "pop-560-plugins-cards.png",
+    "pop-560-plugins-ledger.png",
+    "pop-560-plugins-list.png",
+    "pop-560-plugins-selected.png",
+    "pop-final-mixbus-edit.png",
+    "pop-final-mixbus.png",
+    "pop-final-picker.png",
+    "pop-final-plugins-cards.png",
+    "pop-final-plugins-ledger.png",
+    "pop-final-plugins-list.png",
+    "pop-final-plugins-selected.png"
+  ],
+  "notFixed": [
+    {
+      "item": "Six Settings helper labels at rest remain below 4.5:1 (four API key hints and two cost-card labels, 3.5\u20134.34:1).",
+      "reason": "Outside the SPEC damage list and its explicit scope limit; no hover or focus failures on Settings after 320 ms."
+    },
+    {
+      "item": "Screenshots not sent to Jules.",
+      "reason": "No Jules contact or delivery channel was provided; screenshots are in this built directory."
+    },
+    {
+      "item": "The broad static dark-ink-hover grep reports 17 line-level candidates.",
+      "reason": "The guard matches existing child text and icon rules whose parent supplies the background, plus rules outside the approved edits. Real-mouse contrast scans found no hover failures after settling."
+    }
+  ],
+  "staticGuard": {
+    "darkInkHoverWithoutBackground": "17 line-level candidates remain in existing CSS; several are child-ink rules on parent teal fills",
+    "newImportantDeclarations": 0
+  },
+  "notes": [
+    "Original supplied pop.mjs did not open the product metadata overlay; a separate real-mouse check opened Category and found zero flags after the selected-option hover fix.",
+    "The supplied 11-item checklist was exercised on the served page; populated contrast was also run at 560 pixels."
+  ]
+}

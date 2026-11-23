@@ -1,0 +1,159 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIMM tab strip v3 - preview (Jules, 23 Nov 2026)</title>
+<style>
+@font-face{font-family:"Inter Fallback";src:local("Arial");size-adjust:107.4%;ascent-override:90.2%;descent-override:22.5%;line-gap-override:0%}
+@font-face{font-family:"Inter";src:url("fonts/inter-latin-wght.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+:root{--aimm-font:Inter,"Inter Fallback",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+ --aimm-ink-rest:#9ca3af;--aimm-teal:#2dd4bf;--aimm-black:#0b0d10;--aimm-t-colour:120ms;--aimm-ease:cubic-bezier(.22,1,.36,1)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000;color:#e5e7eb;font-family:var(--aimm-font);padding:20px 24px 60px;line-height:1.4}
+h1{font:500 20px/1.2 var(--aimm-font);letter-spacing:-.035em;color:#f3f7fb;margin-bottom:6px}
+h2{font:500 14px/1.2 var(--aimm-font);color:#9ca3af;margin:26px 0 10px;letter-spacing:0}
+p.note{font-size:13px;color:#8b95a1;max-width:900px}
+.ctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0}
+.ctl button{font:600 13px var(--aimm-font);padding:7px 14px;border-radius:999px;border:1px solid #2c3034;background:#1b1d20;color:#9ca3af;cursor:pointer}
+.ctl button[aria-pressed=true]{background:#e5e7eb;color:#000;border-color:#e5e7eb}
+.ctl input{width:260px}
+.stage{transform-origin:0 0}
+.page{background:#000;border:1px dashed #23272c;position:relative;padding-top:0}
+.lab{font:600 11px var(--aimm-font);color:#5f6873;margin:0 0 4px;letter-spacing:.04em;text-transform:uppercase}
+.row{margin:0 0 14px}
+.rowname{font:600 12px var(--aimm-font);color:#7a8591;margin:12px 0 2px}
+.afr{border:0;display:block;background:#000}
+.awrap{overflow:hidden;position:relative}
+#sprite{position:absolute;width:0;height:0;overflow:hidden}
+/* ===== PRODUCTION CSS (tabbar.css, inlined verbatim) ===== */
+/*PROD*/
+/* ==========================================================================
+   AIMM TAB STRIP v3 - Jules, 23 Nov 2026. Replaces EVERY old tab-strip rule (SPEC.md section 2).
+   Place ONCE at the END of the last <style> in index.html. No !important anywhere.
+   Scope: .tabs.oz-tabstrip and its 7 .tab.oz-tab buttons only. Nothing else.
+   Keyed on the class JS already toggles (.active). aria-selected / aria-current are NOT used by CSS.
+   ========================================================================== */
+
+/* ---- 1. Strip: a grid that always holds 7 pills on one line, never scrolls, never clips ---- */
+.tabs.oz-tabstrip{
+  --tab-bg:#1b1d20;                         /* rest surface */
+  --tab-bd:#2c3034;                         /* rest border */
+  --tab-ink:var(--aimm-ink-rest,#9ca3af);   /* rest label + icon */
+  --tab-on:var(--aimm-teal,#2dd4bf);        /* hover + selected surface, focus ring */
+  --tab-on-ink:var(--aimm-black,#0b0d10);   /* ink on teal */
+  --tab-press:#26b9a7;                      /* pressed surface (teal, 12% darker) */
+  --tab-h:54px;                             /* pill height */
+  --tab-gap:8px;
+  container-type:inline-size;               /* tiers below follow the STRIP width, not the window (Hope rail eats width) */
+  display:grid;
+  grid-auto-flow:column;                    /* any number of tabs, DOM order = visual order */
+  grid-auto-columns:minmax(max-content,1fr);/* equal widths when there is room; grow to fit text only when tight; never truncate */
+  gap:var(--tab-gap);
+  align-items:center;
+  grid-column:1;                            /* keep the shell-grid column the old rule set */
+  margin:0;
+  padding:0;                                /* pills sit flush with the column edges, like the cards below */
+  border:0;
+  background:none;
+  overflow:visible;                         /* focus ring must never be clipped */
+}
+
+/* ---- 2. Pill (rest) ---- */
+.tabs.oz-tabstrip .tab{
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:9px;
+  height:var(--tab-h);
+  margin:9px 0;                             /* with the 54px pill = the 72px strip height the layout already has */
+  padding:0 14px;
+  border:1px solid var(--tab-bd);
+  border-radius:999px;
+  background:var(--tab-bg);
+  color:var(--tab-ink);
+  font:650 calc(var(--inv-text-scale,1) * 15px)/1 var(--aimm-font,Inter,system-ui,sans-serif);
+  letter-spacing:0;
+  white-space:nowrap;
+  cursor:pointer;
+  -webkit-appearance:none;appearance:none;
+  -webkit-tap-highlight-color:transparent;
+  transition:background-color var(--aimm-t-colour,120ms) var(--aimm-ease,ease),
+             border-color var(--aimm-t-colour,120ms) var(--aimm-ease,ease),
+             color var(--aimm-t-colour,120ms) var(--aimm-ease,ease);
+}
+
+/* ---- 3. Icon: stroke only, 24px, currentColor, never filled ---- */
+.tabs.oz-tabstrip .tab-ico{display:inline-flex;flex:none;width:24px;height:24px}
+.tabs.oz-tabstrip .tab-ico svg{
+  display:block;width:24px;height:24px;
+  fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;
+}
+.tabs.oz-tabstrip .tab-label{color:inherit}  /* label always follows the button ink; nothing else sets colour */
+
+/* ---- 4. States. Only background, border colour and ink ever change. ---- */
+@media (hover:hover) and (pointer:fine){      /* no sticky hover on touch */
+  .tabs.oz-tabstrip .tab:not(.active):hover{background:var(--tab-on);border-color:var(--tab-on);color:var(--tab-on-ink)}
+}
+.tabs.oz-tabstrip .tab:not(.active):active{background:var(--tab-press);border-color:var(--tab-press);color:var(--tab-on-ink)}  /* pressed */
+.tabs.oz-tabstrip .tab.active{background:var(--tab-on);border-color:var(--tab-on);color:var(--tab-on-ink);cursor:default}  /* selected; hover cannot change it */
+.tabs.oz-tabstrip .tab:focus-visible{outline:2px solid var(--tab-on);outline-offset:2px}  /* keyboard only */
+
+/* ---- 5. Width tiers (container = the strip). Chosen so nothing ever truncates. ---- */
+@container (max-width:979px){                 /* e.g. window 1300 with the Hope rail open: strip is 872 */
+  .tabs.oz-tabstrip .tab{gap:7px;padding:0 8px;font-size:calc(var(--inv-text-scale,1) * 14px)}
+}
+@container (max-width:839px){                 /* icon-only: all 7 destinations stay visible, no scrolling, no "M..." */
+  .tabs.oz-tabstrip .tab{--tab-h:48px;margin:7px 0;padding:0;gap:0}
+  .tabs.oz-tabstrip .tab-label{                /* visually hidden, still the accessible name */
+    position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+}
+
+/* ---- 6. Reduced motion ---- */
+@media (prefers-reduced-motion:reduce){
+  .tabs.oz-tabstrip .tab{transition:none}
+}
+</style><style id="forced"></style></head><body>
+<h1>AIMM tab strip v3 - preview</h1>
+<p class="note">B is the new strip, running the exact production CSS (inlined from tabbar.css) with the app's real Inter and tab icon sprite. Hover, press (hold the mouse), Tab key for focus ring, click to select. A is the live current build in an iframe (build 2026-11-23.21 at 127.0.0.1:8768, same width) and a captured image of it.</p>
+<div class="ctl" id="wctl">
+ <button data-w="1900" aria-pressed="true">Window 1900 (strip 1440)</button>
+ <button data-w="1300">Window 1300 (strip 872)</button>
+ <button data-w="560">Window 560 (strip 536)</button>
+ <label style="font-size:12px;color:#8b95a1">Free strip width <input id="free" type="range" min="360" max="1500" value="1440"> <b id="fv" style="color:#e5e7eb">1440</b></label>
+</div>
+<h2>B - NEW (interactive)</h2>
+<div id="stageB" class="stage"><div class="page" id="pageB"><div class="tabs oz-tabstrip" id="live"></div>
+ <div style="height:14px"></div></div></div>
+<h2>A - CURRENT BUILD .21 (live iframe, interactive, cropped to the strip)</h2>
+<div id="stageA" class="stage"><div class="awrap" id="aw"><iframe class="afr" id="aif" src="http://127.0.0.1:8768/" title="current build"></iframe></div></div>
+<h2>State sheet (same CSS, states forced by a generated copy of the rules: :hover to .f-hover, :active to .f-active, :focus-visible to .f-focus)</h2>
+<div id="stageS" class="stage"><div class="page" id="sheet"></div></div>
+<div id="sprite"><svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="i-tab-mixcheck" viewBox="0 0 24 24"><path d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"/></symbol><symbol id="i-tab-library" viewBox="0 0 24 24"><path d="m16 6 4 14"/> <path d="M12 6v14"/> <path d="M8 8v12"/> <path d="M4 4v16"/></symbol><symbol id="i-tab-mixbus" viewBox="0 0 24 24"><path d="M10 8h4"/> <path d="M12 21v-9"/> <path d="M12 8V3"/> <path d="M17 16h4"/> <path d="M19 12V3"/> <path d="M19 21v-5"/> <path d="M3 14h4"/> <path d="M5 10V3"/> <path d="M5 21v-7"/></symbol><symbol id="i-tab-plugins" viewBox="0 0 24 24"><path d="M12 22v-5"/> <path d="M15 8V2"/> <path d="M17 8a1 1 0 0 1 1 1v4a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1z"/> <path d="M9 8V2"/></symbol><symbol id="i-tab-settings" viewBox="0 0 24 24"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/> <circle cx="12" cy="12" r="3"/></symbol><symbol id="i-tab-marketing" viewBox="0 0 24 24"><path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/> <path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"/> <path d="M8 6v8"/></symbol><symbol id="i-tab-community" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/> <path d="M16 3.128a4 4 0 0 1 0 7.744"/> <path d="M22 21v-2a4 4 0 0 0-3-3.87"/> <circle cx="9" cy="7" r="4"/></symbol></svg></div>
+<script>
+const TABS=[["mixcheck","Mix Check"],["library","Library"],["mixbus","MixBus"],["plugins","Plugins"],["settings","Settings"],["marketing","Marketing"],["community","Community"]];
+const SZ={1900:{s:1440,l:32,ay:0},1300:{s:872,l:16,ay:0},560:{s:536,l:12,ay:0}};
+function btn(id,label,cls){return `<button class="tab oz-tab${cls||''}" data-tab="${id}" data-label="${label}" title="${label}"><span class="tab-ico"><svg class="ic ic-24" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-tab-${id}"/></svg></span><span class="tab-label">${label}</span></button>`}
+const live=document.getElementById('live');
+live.innerHTML=TABS.map((t,i)=>btn(t[0],t[1],i==0?' active':'')).join('');
+live.addEventListener('click',e=>{const b=e.target.closest('.tab');if(!b)return;live.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active')});
+// forced-state copy of the production CSS
+const prod=document.querySelector('style').textContent.split('/*PROD*/')[1]||'';
+document.getElementById('forced').textContent=prod.replace(/(?<!hover):hover/g,'.f-hover').replace(/:active/g,'.f-active').replace(/:focus-visible/g,'.f-focus');
+const STATES=[["Rest",()=>''],["Hover (unselected)",()=>' f-hover'],["Selected (each tab selected in turn)",null],["Pressed",()=>' f-active'],["Keyboard focus-visible",()=>' f-focus']];
+const sheet=document.getElementById('sheet');
+function build(S,L){
+ document.getElementById('pageB').style.cssText=`width:${S+L*2}px;padding-left:${L}px;padding-right:${L}px`;
+ live.style.width=S+'px';
+ sheet.style.cssText=`width:${S+L*2}px;padding:0 ${L}px`;
+ sheet.innerHTML=STATES.map(([n,f],r)=>`<div class="rowname">${n}</div><div class="tabs oz-tabstrip" style="width:${S}px">${TABS.map((t,i)=>btn(t[0],t[1],r==2?' active':(f?f():''))).join('')}</div>`).join('');
+ // selected row: show a single selected tab per strip? all selected is honest for glyph check
+}
+let W=1900,S=1440;
+function fit(){const avail=document.documentElement.clientWidth-48;const full=S+64;const z=Math.min(1,avail/Math.max(full,W));
+ for(const [id,w,h] of [['stageB',S+64,null],['stageS',S+64,null]]){const el=document.getElementById(id);el.style.transform=`scale(${z})`;el.style.width=(S+64)+'px';el.style.marginBottom=(-(el.offsetHeight*(1-z)))+'px'}
+ const a=document.getElementById('stageA'),aw=document.getElementById('aw'),f=document.getElementById('aif');
+ f.style.width=W+'px';f.style.height='900px';
+ aw.style.width=W+'px';aw.style.height='96px';a.style.transform=`scale(${Math.min(1,avail/W)})`;a.style.width=W+'px';a.style.marginBottom=(-(96*(1-Math.min(1,avail/W))))+'px'}
+const TOP={1900:0,1300:0,560:0};
+function setW(w,s){W=w;S=s;build(S,Math.round((W-S)>0&&SZ[w]?SZ[w].l:16));document.getElementById('free').value=S;document.getElementById('fv').textContent=S;
+ document.getElementById('aif').style.marginTop='-'+(window.AY&&AY[w]||0)+'px';fit()}
+document.querySelectorAll('#wctl button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#wctl button').forEach(x=>x.setAttribute('aria-pressed',x===b));const w=+b.dataset.w;setW(w,SZ[w].s)});
+document.getElementById('free').oninput=e=>{document.querySelectorAll('#wctl button').forEach(x=>x.setAttribute('aria-pressed',false));W=Math.max(W,+e.target.value+64);setW(W,+e.target.value)};
+window.AY={1900:119,1300:119,560:99};
+setW(1900,1440);addEventListener('resize',fit);
+</script></body></html>

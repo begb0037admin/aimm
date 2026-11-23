@@ -1,0 +1,324 @@
+.btn.ghost:hover
+   REM border-color:#6b7280
+   CHG 
+.eq-tool-btn:hover
+   REM background:#374151; border-color:#6b7280
+   CHG 
+.eq-tile-delete:hover
+   REM background:#b91c1c
+   CHG 
+.eq-add-tile-claude:hover
+   REM border-color:#a78bfa; background:rgba(124,58,237,.08)
+   CHG 
+.eq-add-tile:hover
+   REM border-color:#a78bfa; background:rgba(167,139,250,.06)
+   CHG 
+.eq-add-form-actions button.cancel:hover
+   REM background:#374151
+   CHG 
+.collapse-bar .pill-btn:hover
+   REM background:#374151; border-color:#a78bfa
+   CHG 
+.fact-add-mini:hover
+   REM background:#3b1764; border-color:#a78bfa
+   CHG 
+.fact-action-btn:hover
+   REM background:#a78bfa
+   CHG 
+#mixbus .chain-actions button:hover,#mixbus .chain-actions button:focus-visible
+   REM outline:0; background:none
+   CHG 
+#mixbus .bus-col.is-empty .empty-add:hover,#mixbus .bus-col.is-empty .empty-add:focus-visible
+   REM background:var(--mb-hover); border-color:transparent
+   CHG 
+#mixbus .restore:hover,#mixbus .restore:focus-visible
+   REM background:var(--mb-teal); border-color:var(--mb-teal); outline:0
+   CHG 
+#mixbus .bus-col h4 .clear-bus-btn:hover,#mixbus .bus-col h4 .clear-bus-btn:focus-visible
+   REM background:var(--mb-teal); outline:0
+   CHG 
+#mixbus .chain-list>.chain-add:hover,#mixbus .chain-list>.chain-add:focus-visible
+   REM background:var(--mb-hover); outline:0
+   CHG 
+#mixbus .chain-panel-edit:hover,#mixbus .chain-panel-edit:focus-visible
+   REM background:var(--mb-teal); outline:0
+   CHG 
+#mixbus .chain-edit-actions button:hover,#mixbus .chain-edit-actions button:focus-visible
+   REM background:var(--mb-teal); outline:0
+   CHG 
+#mixbus .chain-toolbar button:hover,#mixbus .chain-toolbar button:focus-visible
+   REM background:var(--mb-teal)
+   CHG 
+#mixbus #autoFillBtn:hover,#mixbus #autoFillBtn:focus-visible
+   REM background:#5eead4
+   CHG 
+.preset-card-rename:hover
+   REM background:#3b1764
+   CHG 
+.preset-card-delete:hover
+   REM background:#7f1d1d
+   CHG 
+#pickerModal .plugin-option:hover,#pickerModal .plugin-option:focus-visible
+   REM background:linear-gradient(135deg,#9442dc,#b970ff); outline:none
+   CHG 
+#mixbus .replacement-option[aria-checked="true"],#mixbus .replacement-option[aria-checked="true"]:hover,#mixbus .replacement-option[aria-checked="true"]:focus-visible
+   REM background:var(--mb-teal); box-shadow:none
+   CHG 
+#mixbus .chain-edit-actions .save:disabled:hover
+   REM background:var(--mb-teal); border-color:var(--mb-teal)
+   CHG 
+.lib-pub-pill:hover
+   REM border-color:#6b7280
+   CHG 
+.lib-pub-pill.clear:hover:not(:disabled)
+   REM background:#7f1d1d; border-color:#b91c1c
+   CHG 
+.lib-search-clear:hover
+   REM background:#374151
+   CHG 
+.aichat-quick-prompt:hover
+   REM background:#1f2937; border-color:#374151
+   CHG 
+.aichat-compose #aiChatClearInput:hover
+   REM border-color:#7f1d1d
+   CHG 
+#aiChatImagePreview .ai-img-clear:hover
+   REM background:#7f1d1d
+   CHG 
+.aichat-tts-btn:hover
+   REM border-color:#10a37f
+   CHG 
+.aichat-copy-btn:hover
+   REM border-color:#a78bfa
+   CHG 
+#importImagePreview .imp-img-clear:hover
+   REM background:#7f1d1d
+   CHG 
+.voice-mode-toggle .vmt-btn:hover
+   REM background:#1f2937
+   CHG 
+.rt-pill:hover
+   REM background:#374151; border-color:#4b5563
+   CHG 
+.rt-pill .rt-pill-act:hover
+   REM background:rgba(255,255,255,.14)
+   CHG 
+.rt-pill .rt-pill-act.apply:hover
+   REM background:#059669; border-color:#34d399
+   CHG 
+.rt-pill .rt-pill-act.fav:hover
+   REM background:rgba(250,204,21,.2); border-color:rgba(250,204,21,.65)
+   CHG 
+.rt-pill .rt-pill-act.edit:hover
+   REM background:rgba(59,130,246,.22); border-color:rgba(96,165,250,.65)
+   CHG 
+.rt-pill .rt-pill-act.copy:hover
+   REM background:rgba(139,92,246,.22); border-color:rgba(167,139,250,.65)
+   CHG 
+.rt-pill .rt-pill-act.delete:hover
+   REM background:#991b1b; border-color:#ef4444
+   CHG 
+.rt-pill.populated:hover
+   REM background:#6b21a8; border-color:#c4b5fd
+   CHG 
+.rt-pill.empty:hover
+   REM background:transparent; border-color:#374151
+   CHG 
+.rt-cost-card .actions button:hover
+   REM background:#374151
+   CHG 
+.rt-cost-card .actions button.topup:hover
+   REM background:#451a03
+   CHG 
+.rt-cost-card .actions button.update-balance:hover
+   REM background:#2e1065
+   CHG 
+.rt-tool-card button.linkbtn:hover
+   REM background:#374151
+   CHG 
+.ref-dz-clear:hover
+   REM border-color:#f87171
+   CHG 
+.tabs.oz-tabstrip
+   REM border-radius:999px; box-shadow:none !important
+   CHG background:transparent !important=>none; border:0 !important=>0
+#mixcheck.oz-mixcheck .mc-input-folder:hover
+   REM background:#241b30; border-color:#8d58c8
+   CHG 
+#mixcheck.oz-mixcheck .mc-input-menu button:hover
+   REM background:var(--grad)
+   CHG 
+#mixcheck.oz-mixcheck .mc-spotify-result-art:hover,#mixcheck.oz-mixcheck .mc-spotify-result-art:focus-visible
+   REM outline:2px solid rgba(142,227,161,.72)
+   CHG 
+#mixcheck.oz-mixcheck .mcq-showall:hover
+   REM border-color:#3a4048
+   CHG 
+#mixcheck.oz-mixcheck .mcq-x:hover
+   REM border-color:var(--red)
+   CHG 
+#mixcheck.oz-mixcheck .mcq-acts button.mcq-hope:hover
+   REM border-color:#4c1d95
+   CHG 
+#mixcheck.oz-mixcheck .mcq-acts button.mcq-done:hover
+   REM border-color:var(--green); background:#204034
+   CHG 
+.aichat-msg.fixaction .am-acts button.am-done:hover
+   REM border-color:#34d399; background:#204034
+   CHG 
+#mcTransport .tp-clear:hover
+   REM border-color:#f87171
+   CHG 
+.cs.open .cs-btn,.cs .cs-btn:hover
+   REM background:var(--send-blue); border-color:#2f6fae
+   CHG 
+#mixcheck.oz-mixcheck .mc-stem-remove:hover
+   REM border-color:#f97316
+   CHG 
+@media (hover:hover) and (pointer:fine) #mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover
+   REM background:#1b1d20; border-color:#262a2f; box-shadow:none
+   CHG 
+.settings-nav a:hover,.settings-nav a:focus-visible
+   REM border-color:#4484aa; background:#202b34
+   CHG 
+#settings #aimm-account-preview>button:hover
+   REM border-color:#4484aa; background:#202b34
+   CHG 
+#settings #aimm-account-preview .account-row button:hover
+   REM border-color:#4484aa; background:#202b34
+   CHG 
+#settings .settings-companion-connect-row button:hover
+   REM border-color:#4484aa; background:#202b34
+   CHG 
+@media (hover:hover) #mixcheck.oz-mixcheck #mcSpecs #mcTempoTile.is-awaiting-tap:hover
+   REM background-color:#2dd4bf!important
+   CHG 
+#mixcheck.oz-mixcheck .mc-saved-target-delete:hover
+   REM border-color:#8a4c52; background:#302023
+   CHG 
+#mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"])
+   REM border-radius:999px; outline:none
+   CHG background:radial-gradient(ellipse 90% 160% at 0% 0=>var(--pv-teal) !important; border:1.5px solid transparent=>1.5px solid transparent !important; box-shadow:none=>none !important; color:var(--mixing-state-ink)=>var(--pv-black) !important
+#mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]) *
+   REM fill:currentColor !important
+   CHG 
+#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"] *
+   REM fill:currentColor !important
+   CHG 
+#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover:not(:disabled)
+   REM background:#1b1d20 !important; border:1px solid #262a2f !important
+   CHG 
+#library .btn:hover:not(:disabled),#library .btn:focus-visible
+   REM background:var(--teal)
+   CHG 
+.lp .video-pill:hover
+   REM background:var(--teal)
+   CHG 
+#library .lp .video-pill:hover
+   REM background:var(--teal)
+   CHG 
+#library .lp .desc .more:hover
+   REM background:none
+   CHG 
+#plugins .inv-more:hover
+   REM background:#242a32
+   CHG 
+#plugins .inv-action:hover
+   REM border-color:#536272; background:#28303a
+   CHG 
+#plugins .inv-product-actions:hover,#plugins .inv-product-actions[aria-expanded="true"]
+   REM background:#303741
+   CHG 
+#invTagManagerOverlay .inv-tag-order button:hover:not(:disabled)
+   REM background:#3a3f49
+   CHG 
+#invTagManagerOverlay .inv-tag-icon:hover
+   REM border-color:#454c57
+   CHG 
+@media (hover:hover) and (pointer:fine) #mixcheck.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture):hover:not(:disabled):no
+   REM background:#16181b; border:1px solid #3a4046; box-shadow:0 0 0 1px rgba(79,195,232,.28),0 0 14px rgba(79,19
+   CHG 
+#mixcheck.oz-mixcheck .mcq-acts button:is(:hover,:focus-visible,:active):not(:disabled)
+   REM background:#2dd4bf!important; border-color:#2dd4bf!important; box-shadow:none!important
+   CHG 
+#mixcheck.oz-mixcheck .mcq-nav button:is(:hover,:focus-visible,:active):not(:disabled)
+   REM background:#2dd4bf; border-color:#2dd4bf
+   CHG 
+#mixcheck.oz-mixcheck .mcq-select:is(:hover,:focus-visible),#mixcheck.oz-mixcheck .mcq-select[aria-current="true"]
+   REM background:#17322f
+   CHG 
+#mixcheck.oz-mixcheck .mcs-all button:is(:hover,:focus-visible),#mixcheck.oz-mixcheck .mcs-all button[aria-current="true"]
+   REM border-color:#2dd4bf; background:#17322f
+   CHG 
+#plugins :is(.inv-btn,.inv-format,.inv-action,.inv-more,.inv-side-button,.inv-vst-option,.inv-tag-filter-option,.inv-fav,.inv-product-actions,.inv-vendor-toggle,.inv-view
+   REM background:var(--pm-grad)!important; border-color:transparent!important; outline-color:transparent!important
+   CHG 
+#plugins .inv-fav.on:is(:hover,:focus-visible)
+   REM background:none!important; border:0!important; outline:none!important; box-shadow:none!important
+   CHG 
+#plugins button.inv-fav.fav-card-star.on,#plugins button.inv-fav.fav-card-star.on:is(:hover,:focus-visible)
+   REM background:none!important; border:0!important; outline:none!important; box-shadow:none!important
+   CHG 
+#invProductMetaOverlay button:hover:not(.primary):not(:disabled)
+   REM background:linear-gradient(135deg,#9442dc,#b970ff)!important
+   CHG 
+#plugins #invSidebar .inv-sidebar-head button:hover,#plugins #invSidebar .inv-sidebar-head button:focus-visible
+   REM background:transparent!important
+   CHG 
+#plugins #invSidebar .inv-sidebar-head button:focus-visible
+   REM 
+   CHG outline:2px solid #36a8ed!important=>2px solid var(--aimm-teal)!important
+#plugins #invSidebar .inv-sidebar-section-toggle,#plugins #invSidebar .inv-sidebar-section-toggle:hover:not(:disabled)
+   REM border:0!important; background:var(--section-colour)!important
+   CHG 
+#plugins #invSidebar .inv-sidebar-section-toggle:focus-visible,#plugins #invSidebar .inv-side-button:focus-visible
+   REM 
+   CHG outline:2px solid #36a8ed!important=>2px solid var(--aimm-teal)!important
+#plugins #invSidebar .inv-side-button.active,#plugins #invSidebar .inv-side-button.active:hover
+   REM background:var(--pv-teal)!important; border:0!important; box-shadow:none!important
+   CHG 
+#plugins #invSidebar .inv-side-button:hover:not(.active):not(:disabled), #plugins #invSidebar .inv-side-button:focus-visible:not(.active):not(:disabled)
+   REM background:var(--section-colour,#36a8ed)!important
+   CHG 
+#knowledge .kb-toolbar .btn:hover,#knowledge .hope-memory-meta .btn:hover
+   REM background:#fff
+   CHG 
+#knowledge .kb-toolbar .btn[onclick]:hover,#knowledge .hope-memory-meta .btn[onclick^="expandAll"]:hover,#knowledge .hope-memory-meta .btn[onclick^="collapseAll"]:hover,#
+   REM background:var(--c)
+   CHG 
+#knowledge .kb-yt .btn:hover,#knowledge .kb-yt .btn:focus-visible
+   REM background:#fff
+   CHG 
+#knowledge .fact-cat-head:hover,#knowledge .fact-cat-head:focus-visible
+   REM background:var(--c)
+   CHG 
+#knowledge .insight-add:hover,#knowledge .fact-add-mini:hover
+   REM background:var(--c)
+   CHG 
+#knowledge .kb-card:hover:not(.expanded),#knowledge .kb-card:focus-within:not(.expanded),#knowledge .fact-chip:hover,#knowledge .fact-chip:focus-within
+   REM background:var(--c)
+   CHG 
+#knowledge .fact-action-btn:hover,#knowledge .fact-action-btn.danger:hover
+   REM background:transparent
+   CHG 
+#kbModal .btn:hover
+   REM background:#fff
+   CHG 
+#snapshots .rt-pill .rt-pill-act:hover
+   REM background:var(--sink)!important
+   CHG 
+#snapshots .rt-pill.populated:is(:hover,:focus-visible), #snapshots .journal-toolbar .btn:is(:hover,:focus-visible), #snapshots .journal-entry-head:hover, #editPillModal 
+   REM background:var(--sgrad)!important
+   CHG 
+#snapshots .journal-entry-head .btn:is(:hover,:focus-visible)
+   REM background:var(--sink)!important
+   CHG 
+#editPillModal .btn.green:hover,#applyPillModal .btn.purple:hover
+   REM background:var(--sgrad)!important
+   CHG 
+#settings :is(.settings-nav a,.rt-key-inputs button,.rt-cost-card .actions button,.settings-companion-connect-row button,#settingsReset #resetBtn,#aimm-account-preview>bu
+   REM background:var(--ggrad)!important; background-color:transparent!important; background-image:var(--ggrad)!important
+   CHG 
+#settings :is(#elKeySave,#hopeUsageSttTokenSave,#rtKeySave):is(:hover,:focus-visible)
+   REM background:var(--ggrad)!important; background-color:transparent!important; background-image:var(--ggrad)!important
+   CHG 

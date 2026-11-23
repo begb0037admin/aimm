@@ -1,0 +1,83 @@
+/* ==========================================================================
+   AIMM TAB STRIP v3 - Jules, 23 Nov 2026. Replaces EVERY old tab-strip rule (SPEC.md section 2).
+   Place ONCE at the END of the last <style> in index.html. No !important anywhere.
+   Scope: .tabs.oz-tabstrip and its 7 .tab.oz-tab buttons only. Nothing else.
+   Keyed on the class JS already toggles (.active). aria-selected / aria-current are NOT used by CSS.
+   ========================================================================== */
+
+/* ---- 1. Strip: a grid that always holds 7 pills on one line, never scrolls, never clips ---- */
+.tabs.oz-tabstrip{
+  --tab-bg:#1b1d20;                         /* rest surface */
+  --tab-bd:#2c3034;                         /* rest border */
+  --tab-ink:var(--aimm-ink-rest,#9ca3af);   /* rest label + icon */
+  --tab-on:var(--aimm-teal,#2dd4bf);        /* hover + selected surface, focus ring */
+  --tab-on-ink:var(--aimm-black,#0b0d10);   /* ink on teal */
+  --tab-press:#26b9a7;                      /* pressed surface (teal, 12% darker) */
+  --tab-h:54px;                             /* pill height */
+  --tab-gap:8px;
+  container-type:inline-size;               /* tiers below follow the STRIP width, not the window (Hope rail eats width) */
+  display:grid;
+  grid-auto-flow:column;                    /* any number of tabs, DOM order = visual order */
+  grid-auto-columns:minmax(max-content,1fr);/* equal widths when there is room; grow to fit text only when tight; never truncate */
+  gap:var(--tab-gap);
+  align-items:center;
+  grid-column:1;                            /* keep the shell-grid column the old rule set */
+  margin:0;
+  padding:0;                                /* pills sit flush with the column edges, like the cards below */
+  border:0;
+  background:none;
+  overflow:visible;                         /* focus ring must never be clipped */
+}
+
+/* ---- 2. Pill (rest) ---- */
+.tabs.oz-tabstrip .tab{
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:9px;
+  height:var(--tab-h);
+  margin:9px 0;                             /* with the 54px pill = the 72px strip height the layout already has */
+  padding:0 14px;
+  border:1px solid var(--tab-bd);
+  border-radius:999px;
+  background:var(--tab-bg);
+  color:var(--tab-ink);
+  font:650 calc(var(--inv-text-scale,1) * 15px)/1 var(--aimm-font,Inter,system-ui,sans-serif);
+  letter-spacing:0;
+  white-space:nowrap;
+  cursor:pointer;
+  -webkit-appearance:none;appearance:none;
+  -webkit-tap-highlight-color:transparent;
+  transition:background-color var(--aimm-t-colour,120ms) var(--aimm-ease,ease),
+             border-color var(--aimm-t-colour,120ms) var(--aimm-ease,ease),
+             color var(--aimm-t-colour,120ms) var(--aimm-ease,ease);
+}
+
+/* ---- 3. Icon: stroke only, 24px, currentColor, never filled ---- */
+.tabs.oz-tabstrip .tab-ico{display:inline-flex;flex:none;width:24px;height:24px}
+.tabs.oz-tabstrip .tab-ico svg{
+  display:block;width:24px;height:24px;
+  fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;
+}
+.tabs.oz-tabstrip .tab-label{color:inherit}  /* label always follows the button ink; nothing else sets colour */
+
+/* ---- 4. States. Only background, border colour and ink ever change. ---- */
+@media (hover:hover) and (pointer:fine){      /* no sticky hover on touch */
+  .tabs.oz-tabstrip .tab:not(.active):hover{background:var(--tab-on);border-color:var(--tab-on);color:var(--tab-on-ink)}
+}
+.tabs.oz-tabstrip .tab:not(.active):active{background:var(--tab-press);border-color:var(--tab-press);color:var(--tab-on-ink)}  /* pressed */
+.tabs.oz-tabstrip .tab.active{background:var(--tab-on);border-color:var(--tab-on);color:var(--tab-on-ink);cursor:default}  /* selected; hover cannot change it */
+.tabs.oz-tabstrip .tab:focus-visible{outline:2px solid var(--tab-on);outline-offset:2px}  /* keyboard only */
+
+/* ---- 5. Width tiers (container = the strip). Chosen so nothing ever truncates. ---- */
+@container (max-width:979px){                 /* e.g. window 1300 with the Hope rail open: strip is 872 */
+  .tabs.oz-tabstrip .tab{gap:7px;padding:0 8px;font-size:calc(var(--inv-text-scale,1) * 14px)}
+}
+@container (max-width:839px){                 /* icon-only: all 7 destinations stay visible, no scrolling, no "M..." */
+  .tabs.oz-tabstrip .tab{--tab-h:48px;margin:7px 0;padding:0;gap:0}
+  .tabs.oz-tabstrip .tab-label{                /* visually hidden, still the accessible name */
+    position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+}
+
+/* ---- 6. Reduced motion ---- */
+@media (prefers-reduced-motion:reduce){
+  .tabs.oz-tabstrip .tab{transition:none}
+}
