@@ -1,3 +1,9 @@
+## 2026-11-23 Library follow-ups and player redesign (NOT DEPLOYED; hope-memory build .9 is LIVE)
+- Hope memory core/archive deployed as build 2026-11-22.9 (main 142e049a); memory_search registered on Hope's live agent (74 tools).
+- Library visual fixes (flush bars, hover pills, rest ink, Jules review fixes, video summary view, 6-column Videos) are built on branch library-bars, uncommitted, preview only, awaiting Jules re-review and Kevin's yes.
+- Next design: Library with the real YouTube player (Jules, docs/handover-assets/jules-library-player/). Decisions so far: YouTube's own player, no custom controls; YouTube videos only; dark playlist layout plus channel grid. Data limits: chunks carry no timestamps; likes, comments, subscribers and avatars need the YouTube Data API (key, quotas).
+- Standing decision: AIMM is Cloudflare-standalone only; nothing is served from a Mac. MWTM clip and full-recording playback is parked (docs/CLAUDE.md hard rules).
+
 ## 2026-11-22 build 2026-11-22.9 — Hope memory core and archive (BUILT, NOT DEPLOYED)
 
 Hope now sends up to 15 active core facts within a 1500-byte digest. End-of-call extraction keeps only durable facts scored 4 or 5, then a Luna call merges overlap and selects the core; originals stay searchable in the archive. `memory_search` is in the page, manifest and agent registration list, but has not been registered on the live ElevenLabs agent. On the first load with a Hope token, the migration stores a full pre-migration facts backup in browser localStorage key `hopeMemoryFactsBackup_v1` before assigning tiers; completion is marked by `hopeMemoryTierMigration_v1`. Migration waits and retries if no token is present. No new Library UI. All 180 Node tests pass. No commit, push or deploy.
