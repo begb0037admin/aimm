@@ -16,6 +16,10 @@ function setup(extra={}){
   return ctx;
 }
 const video=(id,title,channel='A')=>({video_id:id,title,channel,url:`https://www.youtube.com/watch?v=${id}`,ingested:'2026-05-22'});
+function storage(){
+  const values=new Map();
+  return {values,getItem:key=>values.get(key)||null,setItem:(key,value)=>values.set(key,value)};
+}
 
 test('playlist builds only from real YouTube IDs in the runtime store',()=>{
   const ctx=setup();ctx.YT_KB.videos=[video('6WPtHxWkY2k','Logic Pro'),{video_id:'mwtm_clip',title:'Clip',channel:'MWTM'}];
@@ -33,6 +37,7 @@ test('Library opens on the landing with real private recordings and newest non-M
   assert.equal(vm.runInNewContext('LIB_PLAYER.id',ctx),null);
   assert.equal(count.textContent,'5');
   assert.doesNotMatch(rows.innerHTML,/aria-current="true"/);
+  assert.doesNotMatch(landing.innerHTML,/Last played/);
   const masters=landing.innerHTML.split('Recently added')[0];
   assert.match(masters,/New recording/);assert.match(masters,/Old recording/);
   assert.ok(masters.indexOf('New recording')<masters.indexOf('Old recording'));
@@ -42,6 +47,62 @@ test('Library opens on the landing with real private recordings and newest non-M
   assert.doesNotMatch(landing.innerHTML,/Masters trailer/);
   assert.match(landing.innerHTML,/href="#i-play"/);
   assert.doesNotMatch(section,/if\(!LIB_PLAYER\.id&&videos\.length\)libPlayerSelect/);
+});
+test('Last played appears first with the four newest selections of either kind',()=>{
+  const saved=storage(),landing={innerHTML:''};
+  const ctx=setup({localStorage:saved,document:{getElementById:id=>id==='libPlayerLanding'?landing:null}});
+  vm.runInNewContext("LIB_PLAYER.privateVideos=[{video_id:'lesson-1',title:'Private lesson',channel:'Mix With The Masters',thumb:'/mwtm/f/lesson.jpg',local:true}]",ctx);
+  ctx.YT_KB.videos=[video('AbCdEfGhI12','Public lesson')];
+  ctx.libPlayerRemember(ctx.YT_KB.videos[0],'AbCdEfGhI12');
+  ctx.libPlayerRemember(ctx.libPlayerVideos()[0],'lesson-1');
+  ctx.libPlayerRenderLanding();
+  const [played,masters,recent]=landing.innerHTML.split(/(?=<div class="landing-section">)/).filter(Boolean);
+  assert.match(played,/Last played/);
+  assert.ok(played.indexOf('Private lesson')<played.indexOf('Public lesson'));
+  assert.match(masters,/Mix With The Masters/);
+  assert.match(recent,/Recently added/);
+  assert.match(played,/libPlayerSelectLastPlayed\('lesson-1'\)/);
+  assert.match(played,/libPlayerSelectLastPlayed\('AbCdEfGhI12'\)/);
+  assert.match(html,/\.landing-card-title\{[^}]*font:500 20px\/1\.4 Inter,sans-serif/);
+  assert.doesNotMatch(html,/landing-section\.recent \.landing-card-title/);
+  const rows=JSON.parse(saved.getItem('aimmLibLastPlayed_v1'));
+  assert.deepEqual(rows.map(row=>row.kind),['private','youtube']);
+  assert.deepEqual(Object.keys(rows[0]).sort(),['channel','id','kind','thumb','time','title']);
+});
+test('Last played deduplicates, caps storage at 20, and resumes a saved YouTube selection',()=>{
+  const saved=storage(),ctx=setup({localStorage:saved});
+  for(let i=0;i<23;i++)ctx.libPlayerRemember(null,String(i).padStart(11,'0'),{title:`Video ${i}`,channel:'Archive'});
+  const latest='00000000022';
+  ctx.libPlayerRemember(null,latest,{title:'Updated video',channel:'Archive'});
+  const rows=JSON.parse(saved.getItem('aimmLibLastPlayed_v1'));
+  assert.equal(rows.length,20);
+  assert.equal(rows.filter(row=>row.id===latest).length,1);
+  assert.equal(rows[0].title,'Updated video');
+  let selected;
+  ctx.libPlayerSelect=(...args)=>{selected=args};
+  ctx.libPlayerSelectLastPlayed(latest);
+  assert.equal(selected[0],latest);
+  assert.equal(selected[1],true);
+  assert.equal(selected[2].title,'Updated video');
+});
+test('Last played landing shows no more than four playable cards',()=>{
+  const saved=storage(),landing={innerHTML:''};
+  const ctx=setup({localStorage:saved,document:{getElementById:id=>id==='libPlayerLanding'?landing:null}});
+  for(let i=0;i<5;i++)ctx.libPlayerRemember(null,String(i).padStart(11,'0'),{title:`History ${i}`,channel:'Archive'});
+  ctx.libPlayerRenderLanding();
+  assert.equal((landing.innerHTML.match(/class="landing-card"/g)||[]).length,4);
+  assert.doesNotMatch(landing.innerHTML,/History 0/);
+  assert.ok(landing.innerHTML.indexOf('History 4')<landing.innerHTML.indexOf('History 3'));
+});
+test('Last played tolerates unavailable or malformed browser storage',()=>{
+  const unavailable={getItem(){throw Error('blocked')},setItem(){throw Error('blocked')}};
+  const ctx=setup({localStorage:unavailable});
+  assert.deepEqual(Array.from(ctx.libPlayerLastPlayed()),[]);
+  assert.doesNotThrow(()=>ctx.libPlayerRemember(video('AbCdEfGhI12','Lesson'),'AbCdEfGhI12'));
+  const saved=storage();saved.setItem('aimmLibLastPlayed_v1','{broken');
+  const fallback=setup({localStorage:saved});
+  assert.deepEqual(Array.from(fallback.libPlayerLastPlayed()),[]);
+  assert.doesNotThrow(()=>fallback.libPlayerRemember(video('AbCdEfGhI12','Lesson'),'AbCdEfGhI12'));
 });
 test('empty private manifest omits the Masters landing row',()=>{
   const landing={innerHTML:''};const ctx=setup({document:{getElementById:id=>id==='libPlayerLanding'?landing:null}});
@@ -115,15 +176,18 @@ test('private selection uses local player, description and recording link; YouTu
   const nodes={};for(const id of ['libPlayerTitle','libPlayerChannel','libPlayerDescriptionText','libPlayerOpen','libPlayerFailLink','libPlayerIframe'])nodes[id]={textContent:'',href:'',hidden:false,removeAttribute(name){this.removed=name}};
   nodes.libPlayer={classList:{remove(){}}};nodes.libPlayerFrame={classList:{remove(){}}};
   const local={shown:[],hidden:0,show(o){this.shown.push(o)},hide(){this.hidden++}};
-  const ctx=setup({document:{getElementById:id=>nodes[id]},AimmLocalPlayer:{attach:()=>local}});
+  const saved=storage();
+  const ctx=setup({localStorage:saved,document:{getElementById:id=>nodes[id]},AimmLocalPlayer:{attach:()=>local}});
   ctx.libPlayerRenderRows=()=>{};ctx.libPlayerUpdateMore=()=>{};ctx.libPlayerEnsureApi=()=>{};
-  vm.runInNewContext("LIB_PLAYER.privateVideos=[{video_id:'lesson-1',title:'Lesson',channel:'Mix With The Masters',src:'/mwtm/one.mp4',description:'A recording',local:true}]",ctx);
+  vm.runInNewContext("LIB_PLAYER.privateVideos=[{video_id:'lesson-1',title:'Lesson',channel:'Mix With The Masters',src:'/mwtm/one.mp4',thumb:'/mwtm/f/one.jpg',description:'A recording',local:true}]",ctx);
   ctx.libPlayerSelect('lesson-1',true);
   assert.equal(nodes.libPlayerOpen.href,'/mwtm/one.mp4');assert.equal(nodes.libPlayerOpen.textContent,'Open recording');
   assert.equal(nodes.libPlayerDescriptionText.textContent,'A recording');assert.equal(local.shown[0].autoplay,true);
+  assert.equal(JSON.parse(saved.getItem('aimmLibLastPlayed_v1'))[0].kind,'private');
   ctx.libPlayerSelect('6WPtHxWkY2k');
   assert.equal(local.hidden,1);assert.equal(nodes.libPlayerOpen.hidden,true);
   assert.match(nodes.libPlayerIframe.src,/youtube\.com\/embed\/6WPtHxWkY2k/);
+  assert.deepEqual(JSON.parse(saved.getItem('aimmLibLastPlayed_v1')).map(row=>row.kind),['youtube','private']);
 });
 
 test('local player uses shared Lucide sprite and scoped controls',()=>{

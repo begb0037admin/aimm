@@ -2372,7 +2372,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #libPlayerFrame.is-local iframe{display:none}
 #libPlayerFrame.is-local .fail{display:none}
 .lp #libPlayerOpen[hidden]{display:none}
-/* Library landing, based on Jules's option 2. The frame grows to fit both rows. */
+/* Library landing. The frame grows to fit the available rows. */
 .lp.is-landing .meta,.lp.is-landing .desc{display:none}
 .lp .frame.is-landing{aspect-ratio:auto;min-height:280px;background:#0b0d10}
 .lp .frame.is-landing iframe{display:none}
@@ -2389,8 +2389,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .lp .landing-card:hover .landing-thumb svg,.lp .landing-card:focus-visible .landing-thumb svg{opacity:1}
 .lp .landing-card:focus-visible{outline:none}
 .lp .landing-card:focus-visible .landing-thumb{outline:2px solid var(--teal);outline-offset:3px}
-.lp .landing-card-title{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin-top:10px;font-size:14px;line-height:1.4;font-weight:500;color:var(--mid)}
-.lp .landing-section.recent .landing-card-title{-webkit-line-clamp:1;font-size:13px;font-weight:400;color:var(--dim)}
+.lp .landing-card-title{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin-top:10px;font:500 20px/1.4 Inter,sans-serif;color:var(--mid)}
 @container lib-landing (max-width:519px){.lp .landing-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:819px){.lp .landing{padding:20px 20px 24px}}
 @media(prefers-reduced-motion:reduce){.lp .landing *{transition:none!important}}
@@ -6123,7 +6122,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.32';
+const AIMM_BUILD = '2026-11-23.33';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -22569,17 +22568,46 @@ function libYouTubeIdFromLink(value){
   }catch(_){return null;}
 }
 function libPlayerVideos(){return LIB_PLAYER.privateVideos.concat((YT_KB.videos||[]).filter(v=>libYouTubeId(v)));}
-function libPlayerLandingCard(video){
+const LIB_LAST_PLAYED_KEY='aimmLibLastPlayed_v1';
+function libPlayerLastPlayed(){
+  try{
+    const rows=JSON.parse(localStorage.getItem(LIB_LAST_PLAYED_KEY)||'[]');
+    if(!Array.isArray(rows))return [];
+    return rows.filter(row=>row&&typeof row.id==='string'&&typeof row.title==='string'&&typeof row.channel==='string'&&typeof row.thumb==='string'&&Number.isFinite(row.time)&&
+      ((row.kind==='youtube'&&/^[A-Za-z0-9_-]{11}$/.test(row.id))||(row.kind==='private'&&/^[A-Za-z0-9._-]{1,160}$/.test(row.id)&&row.thumb.startsWith('/mwtm/f/'))))
+      .sort((a,b)=>b.time-a.time).slice(0,20);
+  }catch(_){return [];}
+}
+function libPlayerRemember(video,id,external){
+  const kind=video?.local?'private':'youtube';
+  const current=video||external||{};
+  const row={id,kind,title:String(current.title||'YouTube video'),channel:String(current.channel||'YouTube'),
+    thumb:kind==='private'?video.thumb:`https://i.ytimg.com/vi/${id}/mqdefault.jpg`,time:Date.now()};
+  const rows=[row,...libPlayerLastPlayed().filter(item=>item.id!==id)].slice(0,20);
+  try{localStorage.setItem(LIB_LAST_PLAYED_KEY,JSON.stringify(rows));}catch(_){}
+}
+function libPlayerSelectLastPlayed(id){
+  const row=libPlayerLastPlayed().find(item=>item.id===id);
+  if(!row)return;
+  if(row.kind==='private'&&!LIB_PLAYER.privateVideos.some(video=>video.video_id===id))return;
+  libPlayerSelect(id,true,row.kind==='youtube'?{title:row.title,channel:row.channel}:null);
+}
+function libPlayerLandingCard(video,lastPlayed=false){
   const thumb=video.local?video.thumb:`https://i.ytimg.com/vi/${video.video_id}/mqdefault.jpg`;
-  return `<button class="landing-card" type="button" data-video-id="${escapeHtml(video.video_id)}" onclick="libPlayerSelect('${escapeJs(video.video_id)}',true)"><span class="landing-thumb"><img loading="lazy" src="${escapeHtml(thumb)}" alt=""><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span class="landing-card-title">${escapeHtml(video.title)}</span></button>`;
+  const select=lastPlayed?'libPlayerSelectLastPlayed':'libPlayerSelect';
+  const args=lastPlayed?'':',true';
+  return `<button class="landing-card" type="button" data-video-id="${escapeHtml(video.video_id)}" onclick="${select}('${escapeJs(video.video_id)}'${args})"><span class="landing-thumb"><img loading="lazy" src="${escapeHtml(thumb)}" alt=""><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span class="landing-card-title">${escapeHtml(video.title)}</span></button>`;
 }
 function libPlayerRenderLanding(){
   const host=document.getElementById('libPlayerLanding');if(!host)return;
   const newest=(a,b)=>String(b.added||b.ingested||'').localeCompare(String(a.added||a.ingested||''));
+  const played=libPlayerLastPlayed().filter(row=>row.kind==='youtube'||LIB_PLAYER.privateVideos.some(video=>video.video_id===row.id)).slice(0,4)
+    .map(row=>({video_id:row.id,title:row.title,thumb:row.thumb,local:row.kind==='private'}));
   const privateVideos=LIB_PLAYER.privateVideos.slice().sort(newest).slice(0,4);
   const recent=(YT_KB.videos||[]).filter(v=>libYouTubeId(v)&&v.channel!=='Mix With The Masters').sort(newest).slice(0,4);
-  host.innerHTML=(privateVideos.length?`<div class="landing-section"><h3>Mix With The Masters</h3><div class="landing-cards">${privateVideos.map(libPlayerLandingCard).join('')}</div></div>`:'')
-    +(recent.length?`<div class="landing-section recent"><h3>Recently added</h3><div class="landing-cards">${recent.map(libPlayerLandingCard).join('')}</div></div>`:'');
+  host.innerHTML=(played.length?`<div class="landing-section"><h3>Last played</h3><div class="landing-cards">${played.map(video=>libPlayerLandingCard(video,true)).join('')}</div></div>`:'')
+    +(privateVideos.length?`<div class="landing-section"><h3>Mix With The Masters</h3><div class="landing-cards">${privateVideos.map(libPlayerLandingCard).join('')}</div></div>`:'')
+    +(recent.length?`<div class="landing-section"><h3>Recently added</h3><div class="landing-cards">${recent.map(libPlayerLandingCard).join('')}</div></div>`:'');
 }
 function libPlayerEmbedUrl(id,play=false){
   const params=new URLSearchParams({enablejsapi:'1',origin:location.origin,rel:'0',playsinline:'1'});
@@ -22634,6 +22662,7 @@ function libPlayerToggleDescription(){LIB_PLAYER.descriptionOpen=!LIB_PLAYER.des
 function libPlayerSelect(id,play=false,external=null){
   const video=libPlayerVideos().find(v=>v.video_id===id)||null;
   if(!video&&!/^[A-Za-z0-9_-]{11}$/.test(id))return;
+  libPlayerRemember(video,id,external);
   document.getElementById('libPlayer').classList.remove('is-landing');
   document.getElementById('libPlayerFrame').classList.remove('is-landing');
   if(video?.local){
