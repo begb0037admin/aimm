@@ -219,8 +219,30 @@ test('embed URL includes YouTube API origin and native player parameters',()=>{
   assert.equal(url.hostname,'www.youtube.com');assert.equal(url.pathname,'/embed/6WPtHxWkY2k');
   assert.equal(url.searchParams.get('enablejsapi'),'1');assert.equal(url.searchParams.get('origin'),'http://localhost:8765');
   assert.equal(url.searchParams.get('rel'),'0');assert.equal(url.searchParams.get('playsinline'),'1');
+  assert.equal(url.searchParams.get('cc_load_policy'),'0');
   assert.equal(url.searchParams.get('autoplay'),'1');
   assert.match(html,/onError:event=>/);assert.match(html,/<iframe id="libPlayerIframe"/);
+});
+test('YouTube player unloads both caption modules on ready, API change, and state change',()=>{
+  const calls=[];let events;
+  const player={unloadModule:module=>calls.push(module)};
+  const Player=class{constructor(_id,options){events=options.events;return player}};
+  const ctx=setup({window:{YT:{Player}},YT:{Player}});
+  ctx.libPlayerEnsureApi();
+  for(const event of ['onReady','onApiChange','onStateChange'])events[event]({target:player});
+  assert.deepEqual(calls,['captions','cc','captions','cc','captions','cc']);
+  player.unloadModule=module=>{if(module==='captions')throw Error('unavailable');calls.push(module)};
+  assert.doesNotThrow(()=>events.onApiChange({target:player}));
+  assert.equal(calls.at(-1),'cc');
+});
+test('YouTube iframe load can unload captions before the API player exists',()=>{
+  const commands=[];
+  const iframe={contentWindow:{postMessage:(message,origin)=>commands.push({message:JSON.parse(message),origin})}};
+  const ctx=setup({document:{getElementById:id=>id==='libPlayerIframe'?iframe:null}});
+  ctx.libPlayerUnloadCaptions(null);
+  assert.deepEqual(commands.map(({message})=>message.args[0]),['captions','cc']);
+  assert.ok(commands.every(({message,origin})=>message.event==='command'&&message.func==='unloadModule'&&origin==='https://www.youtube.com'));
+  assert.match(html,/<iframe id="libPlayerIframe"[^>]*onload="libPlayerUnloadCaptions\(null\)"/);
 });
 test('YouTube embed error shows the cannot-embed state',()=>{
   let failed=false;
@@ -242,7 +264,7 @@ test('private manifest resolves unique R2 keys and preserves YouTube rows',async
   assert.equal('description' in ctx.libPlayerVideos()[0],false);
   assert.equal(ctx.libPlayerVideos()[0].src,'/mwtm/f/lessons/lesson-1.mp4');
   assert.equal(ctx.libPlayerVideos()[0].thumb,'/mwtm/f/thumbs/lesson-1.jpg');
-  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.41');
+  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.42');
   assert.equal(rendered,1);
 });
 
