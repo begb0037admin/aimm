@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIMM local player, stand-alone preview (Jules)</title>
+<link rel="stylesheet" href="local-player.css">
+<style>
+html,body{margin:0;background:#000;color:#c9ced6;font-family:Inter,Arial,sans-serif}
+.page{max-width:1000px;margin:0 auto;padding:40px 24px}
+#libPlayerFrame{position:relative;aspect-ratio:16/9;width:100%;background:#000;border-radius:18px;overflow:hidden}
+#libPlayerFrame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+p{color:#9aa3af}
+</style></head>
+<body><div class="page">
+<div id="libPlayerFrame"><iframe id="libPlayerIframe" title="YouTube video player"></iframe></div>
+<p>Stand-alone copy. The real review page is the Library mock (see SPEC.md). Serve this folder with HTTP Range support.</p>
+</div>
+<script src="local-player.js"></script>
+<script>
+const lp=AimmLocalPlayer.attach(document.getElementById('libPlayerFrame'));
+lp.show({id:new URLSearchParams(location.search).get('v')||'mwtm-sample-01',title:'Bainz - Young Thug Yea Yea Yea, Part 1: Drums',channel:'Mix With The Masters',src:'sample.mp4'});
+</script></body></html>

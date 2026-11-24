@@ -199,6 +199,26 @@ test('local player uses shared Lucide sprite and scoped controls',()=>{
   assert.match(html,/fetch\('\/mwtm\/manifest\.json'\)/);
 });
 
+test('private player matches the measured centre controls at wide and 560 widths',()=>{
+  const between=(source,start,end)=>source.slice(source.indexOf(start),source.indexOf(end,source.indexOf(start)));
+  const centre=between(html,'.lpl .lpl-mid{','.lpl .lpl-osd{');
+  assert.match(centre,/\.lpl \.lpl-big\{width:56px;height:56px;margin:0 34px;padding:10px;border-radius:50%;background:rgba\(0,0,0,\.3\);font-size:36px\}/);
+  assert.match(centre,/\.lpl \.lpl-sk\{width:48px;height:48px;padding:6px;background:none;font-size:24px\}/);
+  assert.match(centre,/\.lpl \.lpl-sk span\{[^}]*width:36px;height:36px;padding:6px;border-radius:50%;background:rgba\(0,0,0,\.3\)/);
+  assert.match(centre,/\.lpl:not\(\.lpl-idle\):not\(\.lpl-scrub\):not\(\.lpl-is-fail\):not\(\.lpl-menu-open\):not\(\.lpl-is-loading\) \.lpl-mid\{opacity:1;visibility:visible\}/);
+  assert.match(html,/\.lpl \.lpl-in\{[^\n]*--bar:48px;--ic:24px;/);
+  assert.match(html,/@container lpl \(min-width:900px\)\{\.lpl \.lpl-in\{--bar:54px;--ic:27px;/);
+  assert.match(html,/@container lpl \(min-width:1400px\)\{\.lpl \.lpl-in\{--bar:60px;--ic:30px;/);
+  assert.match(html,/\.lpl \.lpl-ctl\{[^}]*transition:opacity 140ms[^}]*\}/);
+  assert.match(html,/\.lpl\.lpl-idle \.lpl-ctl\{[^}]*transition:opacity 280ms[^}]*\}/);
+  assert.doesNotMatch(between(html,'.lpl .lpl-in{','.lpl .lpl-ctl{'),/--bw|--bh/);
+  assert.doesNotMatch(centre,/background:#f00|rounded rectangle/);
+  assert.match(html,/id="i-sk-back"[^]*?<text[^>]*>10<\/text><\/symbol><symbol id="i-sk-fwd"/);
+  assert.match(html,/class="lpl-mid"[^]*?class="lpl-sk lpl-sk-b"[^]*?class="lpl-big lpl-fill"[^]*?class="lpl-sk lpl-sk-f"/);
+  assert.match(html,/HIDE_MS=4700/);
+  assert.match(html,/bSkB\.addEventListener\('click',\(\)=>seekBy\(-10\)\);bSkF\.addEventListener\('click',\(\)=>seekBy\(10\)\)/);
+});
+
 test('private thumbnail and channel use the ordinary Playlist row and filter',()=>{
   const rows={innerHTML:'',querySelector:()=>({scrollIntoView(){}})},count={textContent:''},search={value:'drum'},select={value:'Mix With The Masters',innerHTML:''};
   const nodes={libPlayerRows:rows,libPlayerCount:count,libPlayerSearch:search,libPlayerChannelFilter:select};

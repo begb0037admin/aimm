@@ -1,0 +1,159 @@
+/* AIMM Library local video player, YouTube-embed look (Jules, 24 Nov 2026). Design only, not built into index.html.
+   Everything lives inside .lpl, a layer that fills #libPlayerFrame. Colours here are YouTube's (red progress, near-black menus),
+   on purpose: Kevin wants the swap from the YouTube embed to be unnoticeable. The rest of the page stays AIMM teal.
+   Font: Roboto (OFL, self-hosted, one variable file) because that is what the YouTube embed uses. */
+@font-face{font-family:"Roboto";src:url("roboto-latin-wght.woff2") format("woff2");font-weight:400 500;font-display:swap}
+
+#libPlayerFrame .lpl{position:absolute;inset:0;z-index:2;display:none;background:#000;color:#fff;overflow:hidden;
+  font-family:"YouTube Noto",Roboto,Arial,sans-serif;container:lpl/inline-size;user-select:none;-webkit-user-select:none;outline:none}
+#libPlayerFrame.is-local .lpl{display:block}
+#libPlayerFrame.is-local iframe{display:none}
+#libPlayerFrame.is-local .fail{display:none}
+.lpl *{box-sizing:border-box}
+.lpl:fullscreen{width:100vw;height:100vh}
+.lpl video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;display:block}
+.lpl svg.lpl-i{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;display:block}
+
+/* ---- size tiers by layer width (library column, or fullscreen) ---- */
+.lpl .lpl-in{position:absolute;inset:0;--bar:48px;--ic:24px;--pad:12px;--t:13px;--title:18px;--chan:13px;--menu-w:251px;--row:40px;--prog-hit:16px;--osd:40px}
+@container lpl (min-width:900px){.lpl .lpl-in{--bar:54px;--ic:27px;--pad:16px;--t:14px;--title:21px;--chan:14px;--menu-w:280px;--row:44px;--osd:48px}}
+@container lpl (min-width:1400px){.lpl .lpl-in{--bar:60px;--ic:30px;--pad:24px;--t:16px;--title:26px;--chan:16px;--menu-w:320px;--row:50px;--prog-hit:20px;--osd:56px}}
+
+/* ---- layers that fade together ---- */
+.lpl .lpl-ctl{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:1;visibility:visible;
+  transition:opacity 140ms cubic-bezier(.22,1,.36,1),visibility 0s}
+.lpl.lpl-idle .lpl-ctl{opacity:0;visibility:hidden;transition:opacity 280ms cubic-bezier(.22,1,.36,1),visibility 0s 280ms}
+.lpl.lpl-idle{cursor:none}
+.lpl .lpl-gtop{position:absolute;left:0;right:0;top:0;height:min(100%,calc(var(--title) * 5.2));background:linear-gradient(to bottom,rgba(0,0,0,.7),rgba(0,0,0,.35) 55%,rgba(0,0,0,0))}
+.lpl .lpl-gbot{position:absolute;left:0;right:0;bottom:0;height:min(100%,calc(var(--bar) * 2.6));background:linear-gradient(to top,rgba(0,0,0,.8),rgba(0,0,0,.45) 55%,rgba(0,0,0,0))}
+
+/* title and channel, top left */
+.lpl .lpl-head{position:absolute;left:0;right:0;top:0;padding:calc(var(--pad) + 2px) calc(var(--pad) + 4px) 0;pointer-events:none}
+.lpl .lpl-head .lpl-t{font-size:var(--title);font-weight:500;line-height:1.25;color:#fff;text-shadow:0 0 2px rgba(0,0,0,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lpl .lpl-head .lpl-c{margin-top:2px;font-size:var(--chan);font-weight:400;line-height:1.3;color:rgba(255,255,255,.75);text-shadow:0 0 2px rgba(0,0,0,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.lpl .lpl-bar{position:absolute;left:0;right:0;bottom:0;padding:0 var(--pad);pointer-events:auto}
+
+/* ---- progress: red, 3px, 5px on hover, red dot ---- */
+.lpl .lpl-prog{position:relative;height:var(--prog-hit);display:flex;align-items:center;cursor:pointer;touch-action:none;outline:none;border-radius:4px;margin-bottom:-2px}
+.lpl .lpl-prog:focus-visible{outline:2px solid #2dd4bf;outline-offset:2px}
+.lpl .lpl-track{position:relative;width:100%;height:5px;background:rgba(255,255,255,.2);overflow:hidden;transform:scaleY(.6);transition:transform 140ms cubic-bezier(.22,1,.36,1)}
+.lpl .lpl-prog:hover .lpl-track,.lpl .lpl-prog.lpl-drag .lpl-track,.lpl .lpl-prog:focus-visible .lpl-track{transform:scaleY(1)}
+.lpl .lpl-track b{position:absolute;inset:0;transform-origin:0 50%;transform:scaleX(0)}
+.lpl .lpl-buf{background:rgba(255,255,255,.4)}
+.lpl .lpl-hov{background:rgba(255,255,255,.5);opacity:0;transition:opacity 90ms}
+.lpl .lpl-prog:hover .lpl-hov,.lpl .lpl-prog.lpl-drag .lpl-hov{opacity:1}
+.lpl .lpl-played{background:#f00}
+.lpl .lpl-dot{position:absolute;left:0;top:50%;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;border-radius:50%;background:#f00;pointer-events:none;
+  --dx:0px;transform:translateX(var(--dx)) scale(0);transition:transform 140ms cubic-bezier(.22,1,.36,1)}
+.lpl .lpl-prog:hover .lpl-dot,.lpl .lpl-prog.lpl-drag .lpl-dot,.lpl .lpl-prog:focus-visible .lpl-dot{transform:translateX(var(--dx)) scale(1)}
+.lpl .lpl-tip{position:absolute;bottom:calc(100% + 4px);left:0;padding:5px 9px;border-radius:4px;background:rgba(28,28,28,.9);color:#fff;
+  font-size:13px;font-weight:500;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none;opacity:0;
+  transform:translateX(var(--tx,0px));transition:opacity 90ms}
+.lpl .lpl-prog:hover .lpl-tip,.lpl .lpl-prog.lpl-drag .lpl-tip{opacity:1}
+
+/* ---- button row ---- */
+.lpl .lpl-row{display:flex;align-items:center;height:var(--bar)}
+.lpl .lpl-sp{flex:1}
+.lpl .lpl-cb{position:relative;flex:none;width:calc(var(--bar) - 4px);height:var(--bar);padding:0;border:0;background:none;color:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:var(--ic);outline:none;border-radius:8px}
+.lpl .lpl-cb svg.lpl-i{opacity:.9;transition:opacity 140ms}
+.lpl .lpl-cb:hover svg.lpl-i,.lpl .lpl-cb:focus-visible svg.lpl-i{opacity:1}
+.lpl .lpl-cb:focus-visible{outline:2px solid #2dd4bf;outline-offset:-4px}
+.lpl .lpl-fill svg.lpl-i{fill:currentColor}
+.lpl .lpl-cb[hidden]{display:none}
+.lpl .lpl-gear{transition:transform 200ms cubic-bezier(.65,0,.35,1)}
+.lpl .lpl-cb.lpl-open .lpl-gear{transform:rotate(45deg)}
+.lpl svg.lpl-i.lpl-ia{display:none}
+.lpl.lpl-is-playing svg.lpl-i.lpl-ic-pause,.lpl.lpl-is-muted svg.lpl-i.lpl-ic-mute,.lpl.lpl-is-full svg.lpl-i.lpl-ic-min,.lpl.lpl-is-ended svg.lpl-i.lpl-ic-replay{display:block}
+.lpl.lpl-is-playing svg.lpl-i.lpl-ic-play,.lpl.lpl-is-muted svg.lpl-i.lpl-ic-vol,.lpl.lpl-is-full svg.lpl-i.lpl-ic-max,.lpl.lpl-is-ended svg.lpl-i.lpl-ic-playmain{display:none}
+
+.lpl .lpl-time{margin-left:4px;font-size:var(--t);font-weight:400;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap;color:#fff;
+  transform:translateX(0);transition:transform 200ms cubic-bezier(.22,1,.36,1)}
+.lpl .lpl-vol{position:relative;flex:none;display:flex;align-items:center}
+.lpl .lpl-slide{position:absolute;left:calc(var(--bar) - 8px);top:50%;width:84px;height:24px;margin-top:-12px;display:flex;align-items:center;
+  transform-origin:0 50%;transform:scaleX(.4);opacity:0;pointer-events:none;transition:opacity 140ms,transform 200ms cubic-bezier(.22,1,.36,1)}
+.lpl .lpl-vol:hover .lpl-slide,.lpl .lpl-vol:focus-within .lpl-slide{opacity:1;transform:scaleX(1);pointer-events:auto}
+.lpl .lpl-vol:hover~.lpl-time,.lpl .lpl-vol:focus-within~.lpl-time{transform:translateX(88px)}
+.lpl .lpl-vol input{--v:100%;-webkit-appearance:none;appearance:none;width:64px;height:24px;margin:0 6px;background:transparent;cursor:pointer;outline:none;border-radius:4px}
+.lpl .lpl-vol input::-webkit-slider-runnable-track{height:3px;border-radius:2px;background:linear-gradient(to right,#fff var(--v),rgba(255,255,255,.3) var(--v))}
+.lpl .lpl-vol input::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;margin-top:-4.5px;border-radius:50%;background:#fff;border:0}
+.lpl .lpl-vol input::-moz-range-track{height:3px;border-radius:2px;background:rgba(255,255,255,.3)}
+.lpl .lpl-vol input::-moz-range-progress{height:3px;border-radius:2px;background:#fff}
+.lpl .lpl-vol input::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#fff;border:0}
+.lpl .lpl-vol input:focus-visible{outline:2px solid #2dd4bf;outline-offset:2px}
+@container lpl (max-width:479px){.lpl .lpl-slide{display:none}.lpl .lpl-vol:hover~.lpl-time,.lpl .lpl-vol:focus-within~.lpl-time{transform:none}}
+@media (pointer:coarse){.lpl .lpl-slide{display:none}.lpl .lpl-vol:hover~.lpl-time{transform:none}}
+
+/* ---- settings menu (YouTube dark panel) ---- */
+.lpl .lpl-menu{position:absolute;right:var(--pad);bottom:calc(var(--bar) + var(--prog-hit) + 8px);width:var(--menu-w);max-height:calc(100% - var(--bar) - var(--prog-hit) - 24px);
+  overflow:auto;overscroll-behavior:contain;padding:8px 0;border-radius:12px;background:rgba(28,28,28,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);pointer-events:auto;
+  opacity:0;visibility:hidden;transform:translateY(6px);transform-origin:100% 100%;scrollbar-width:thin;
+  transition:opacity 140ms cubic-bezier(.22,1,.36,1),transform 140ms cubic-bezier(.22,1,.36,1),visibility 0s 140ms}
+.lpl .lpl-menu.lpl-open{opacity:1;visibility:visible;transform:none;transition:opacity 140ms cubic-bezier(.22,1,.36,1),transform 200ms cubic-bezier(.22,1,.36,1),visibility 0s}
+.lpl .lpl-mi{display:flex;align-items:center;gap:12px;width:100%;min-height:var(--row);padding:0 16px;border:0;background:none;color:#fff;text-align:left;
+  font:400 var(--t)/1.2 "YouTube Noto",Roboto,Arial,sans-serif;cursor:pointer;outline:none}
+.lpl .lpl-mi:hover{background:rgba(255,255,255,.1)}
+.lpl .lpl-mi:focus-visible{outline:2px solid #2dd4bf;outline-offset:-2px}
+.lpl .lpl-mi .lpl-lbl{flex:1}
+.lpl .lpl-mi .lpl-val{color:rgba(255,255,255,.7)}
+.lpl .lpl-mi svg.lpl-i{font-size:20px}
+.lpl .lpl-mi .lpl-ck{width:20px;visibility:hidden}
+.lpl .lpl-mi[aria-checked=true] .lpl-ck{visibility:visible}
+.lpl .lpl-mi.lpl-head2{position:sticky;top:-8px;margin-top:-8px;background:rgb(40,40,40);font-weight:500;border-bottom:1px solid rgba(255,255,255,.2);margin-bottom:8px;z-index:1}
+.lpl .lpl-mi .lpl-back{transform:scaleX(-1)}
+
+/* ---- button tooltip ---- */
+.lpl .lpl-btip{position:absolute;bottom:calc(var(--bar) + var(--prog-hit) + 2px);left:0;padding:5px 9px;border-radius:4px;background:rgba(28,28,28,.9);color:#fff;
+  font-size:13px;font-weight:500;line-height:1;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 90ms}
+.lpl .lpl-btip.lpl-on{opacity:1}
+.lpl.lpl-idle .lpl-btip{opacity:0}
+
+/* ---- centre: big play (YouTube's rounded rectangle), OSD, spinner, mini progress ---- */
+/* Centre cluster, measured from the real YouTube embed (24 Nov 2026): FIXED size at every width, it does not scale.
+   Pause/play: 56px circle, rgba(0,0,0,.3), 36px icon. Skip 10: 48px hit area, 36px circle rgba(0,0,0,.3), 24px icon.
+   34px side margin on the pause/play circle, so the centres sit 86px either side. Shows with the controls, hides with them. */
+.lpl .lpl-mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;z-index:3;pointer-events:none;
+  opacity:0;visibility:hidden;transition:visibility 0s}
+.lpl:not(.lpl-idle):not(.lpl-scrub):not(.lpl-is-fail):not(.lpl-menu-open):not(.lpl-is-loading) .lpl-mid{opacity:1;visibility:visible}
+.lpl .lpl-big,.lpl .lpl-sk{flex:none;border:0;color:#fff;cursor:pointer;outline:none;pointer-events:auto;display:flex;align-items:center;justify-content:center}
+.lpl .lpl-big{width:56px;height:56px;margin:0 34px;padding:10px;border-radius:50%;background:rgba(0,0,0,.3);font-size:36px}
+.lpl .lpl-sk{width:48px;height:48px;padding:6px;background:none;font-size:24px}
+.lpl .lpl-sk span{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:36px;height:36px;padding:6px;border-radius:50%;background:rgba(0,0,0,.3);filter:drop-shadow(0 0 1px rgba(0,0,0,.8))}
+.lpl .lpl-big svg.lpl-i{fill:currentColor;stroke:none;filter:drop-shadow(0 0 1px rgba(0,0,0,.8))}
+.lpl .lpl-sk svg.lpl-i{fill:none;stroke-width:1.8}
+.lpl .lpl-big .lpl-ic-replay{fill:none;stroke:currentColor}
+.lpl .lpl-big:focus-visible,.lpl .lpl-sk:focus-visible{outline:2px solid #2dd4bf;outline-offset:3px}
+.lpl .lpl-big svg.lpl-ia{display:none}
+.lpl.lpl-is-playing .lpl-big svg.lpl-ic-bigpause{display:block}
+.lpl.lpl-is-playing .lpl-big svg.lpl-ic-playmain,.lpl.lpl-is-ended .lpl-big svg.lpl-ic-bigpause{display:none}
+.lpl.lpl-is-ended .lpl-big svg.lpl-ic-replay{display:block}
+
+.lpl .lpl-osd{position:absolute;left:50%;top:44%;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.7);
+  font-size:calc(var(--t) + 4px);font-weight:500;line-height:1.2;font-variant-numeric:tabular-nums;opacity:0;transform:translate(-50%,-50%) scale(.92);z-index:1}
+.lpl .lpl-osd svg.lpl-i{font-size:var(--osd);filter:drop-shadow(0 2px 8px rgba(0,0,0,.6))}
+.lpl .lpl-osd.lpl-show{opacity:1;transform:translate(-50%,-50%) scale(1);transition:opacity 90ms,transform 200ms cubic-bezier(.22,1,.36,1)}
+.lpl .lpl-osd.lpl-out{transition:opacity 280ms cubic-bezier(.22,1,.36,1),transform 280ms cubic-bezier(.22,1,.36,1)}
+
+.lpl .lpl-spin{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;color:#fff;font-size:56px;pointer-events:none;opacity:0;transition:opacity 140ms;z-index:1}
+.lpl .lpl-spin svg.lpl-i{stroke-width:1.75;animation:lplspin 800ms linear infinite}
+.lpl.lpl-is-loading .lpl-spin{opacity:1}
+@keyframes lplspin{to{transform:rotate(360deg)}}
+
+.lpl .lpl-mini{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.2);pointer-events:none;opacity:0;transition:opacity 280ms cubic-bezier(.22,1,.36,1);z-index:1}
+.lpl .lpl-mini i{position:absolute;inset:0;background:#f00;transform-origin:0 50%;transform:scaleX(0)}
+.lpl.lpl-idle.lpl-is-playing:not(.lpl-is-fail) .lpl-mini{opacity:1}
+
+.lpl .lpl-failbox{position:absolute;inset:0;z-index:4;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:28px;text-align:center;background:#0b0d10}
+.lpl.lpl-is-fail .lpl-failbox{display:flex}
+.lpl.lpl-is-fail .lpl-ctl,.lpl.lpl-is-fail .lpl-big,.lpl.lpl-is-fail .lpl-spin{display:none}
+.lpl .lpl-failbox h3{margin:0;font-size:clamp(18px,3.4cqw,24px);font-weight:500;color:#fff}
+.lpl .lpl-failbox button{min-height:44px;padding:0 24px;border:0;border-radius:999px;background:#2dd4bf;color:#0b0d10;font:700 15px/1 "YouTube Noto",Roboto,Arial,sans-serif;cursor:pointer}
+.lpl .lpl-failbox button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.lpl .lpl-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (prefers-reduced-motion:reduce){
+  .lpl *,.lpl *::before{transition-duration:.01ms!important;transition-delay:0s!important}
+  .lpl .lpl-spin svg.lpl-i{animation:lplpulse 1.4s ease-in-out infinite}
+  @keyframes lplpulse{50%{opacity:.35}}
+}
