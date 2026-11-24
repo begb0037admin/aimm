@@ -6101,7 +6101,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.30';
+const AIMM_BUILD = '2026-11-23.31';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -22517,9 +22517,9 @@ loadKbSearchIndex();
 // Existing note and snapshot storage and handlers remain the source of truth.
 const LIB_UI={results:null,query:'',excluded:0,hopeSearch:false,groups:{},more:{},open:{},editTip:null,kept:null,videoText:{},busy:false,addingAll:false};
 const LIB_PLAYER={id:null,external:null,api:null,apiLoading:false,descriptionOpen:false,selection:0,privateVideos:[],manifestLoading:false,manifestLoaded:false,local:null};
-function libPrivateUrl(value){
-  if(typeof value!=='string'||!value||value.startsWith('//'))return null;
-  try{const url=new URL(value,location.origin);return url.origin===location.origin&&/^https?:$/.test(url.protocol)?url.pathname+url.search+url.hash:null;}catch(_){return null;}
+function libPrivateKeyUrl(value){
+  if(typeof value!=='string'||!value||value.startsWith('/')||value.includes('..')||value.includes('\\')||/[:?#\0]/.test(value))return null;
+  return '/mwtm/f/'+value.split('/').map(part=>encodeURIComponent(part)).join('/');
 }
 async function libPlayerLoadManifest(){
   if(LIB_PLAYER.manifestLoading||LIB_PLAYER.manifestLoaded)return;
@@ -22529,7 +22529,7 @@ async function libPlayerLoadManifest(){
     const used=new Set((YT_KB.videos||[]).map(v=>v.video_id));
     LIB_PLAYER.privateVideos=data.flatMap(item=>{
       if(!item||typeof item.id!=='string'||!/^[A-Za-z0-9._-]{1,160}$/.test(item.id)||used.has(item.id)||typeof item.title!=='string'||!item.title.trim())return [];
-      const src=libPrivateUrl(item.video),thumb=libPrivateUrl(item.thumb);if(!src||!thumb)return [];
+      const src=libPrivateKeyUrl(item.video),thumb=libPrivateKeyUrl(item.thumb);if(!src||!thumb)return [];
       used.add(item.id);return [{video_id:item.id,title:item.title,channel:'Mix With The Masters',added:typeof item.added==='string'?item.added:'',src,thumb,description:typeof item.description==='string'?item.description:'',local:true}];
     });
   }catch(_){LIB_PLAYER.privateVideos=[];}

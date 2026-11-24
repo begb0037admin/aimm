@@ -1,6 +1,14 @@
 name = "aimm"
 main = "src/index.js"
 compatibility_date = "2026-10-31"
+# The aimixmasters.com Custom Domain is managed in Cloudflare, so keep routes
+# out of this file. Disable public workers.dev and preview URL bypasses of Access.
+workers_dev = false
+preview_urls = false
+
+[[r2_buckets]]
+binding = "MWTM"
+bucket_name = "aimm-mwtm"
 
 [assets]
 directory = "./assets"

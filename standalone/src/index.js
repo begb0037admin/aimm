@@ -542,9 +542,62 @@ async function checkVendorSources(request) {
   return json({ ok: true, checkedAt, sourcesChecked: sourceResults.filter(result => !result.error).length, sourcePagesChecked: sourcesToFetch.length, sourcePagesTotal: allSources.length, sourceErrors, nextSourcePageOffset, results }, 200, origin);
 }
 
+function mwtmRange(value, size) {
+  const match = /^bytes=(\d*)-(\d*)$/.exec(value);
+  if (!match || (!match[1] && !match[2])) return null;
+  const first = match[1] ? Number(match[1]) : null;
+  const last = match[2] ? Number(match[2]) : null;
+  if ((first !== null && !Number.isSafeInteger(first)) || (last !== null && !Number.isSafeInteger(last)) || size === 0) return null;
+  const start = first === null ? Math.max(0, size - last) : first;
+  const end = first === null ? size - 1 : last === null ? size - 1 : Math.min(last, size - 1);
+  return start >= size || end < start ? null : { start, end };
+}
+
+async function serveMwtm(request, env, key) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    return new Response('Method not allowed', { status: 405, headers: { Allow: 'GET, HEAD' } });
+  }
+  if (!key || key.includes('..') || key.includes('\\') || key.includes('\0')) return new Response('Not found', { status: 404 });
+  const object = await env.MWTM.get(key);
+  if (!object || !object.body) return new Response('Not found', { status: 404 });
+  const size = object.size;
+  const rangeHeader = request.headers.get('Range');
+  const ifRange = request.headers.get('If-Range');
+  const useRange = rangeHeader && (!ifRange || ifRange === object.httpEtag);
+  const range = useRange ? mwtmRange(rangeHeader, size) : null;
+  const headers = new Headers({
+    'Accept-Ranges': 'bytes',
+    'Cache-Control': 'private, max-age=3600',
+    'Content-Type': /\.mp4$/i.test(key) ? 'video/mp4' : /\.jpe?g$/i.test(key) ? 'image/jpeg' : /\.json$/i.test(key) ? 'application/json' : 'application/octet-stream',
+    'ETag': object.httpEtag,
+  });
+  if (useRange && !range) {
+    headers.set('Content-Range', `bytes */${size}`);
+    return new Response(null, { status: 416, headers });
+  }
+  if (range) {
+    headers.set('Content-Range', `bytes ${range.start}-${range.end}/${size}`);
+    headers.set('Content-Length', String(range.end - range.start + 1));
+    if (request.method === 'HEAD') return new Response(null, { status: 206, headers });
+    const partial = await env.MWTM.get(key, { range: { offset: range.start, length: range.end - range.start + 1 } });
+    return new Response(partial.body, { status: 206, headers });
+  }
+  headers.set('Content-Length', String(size));
+  return new Response(request.method === 'HEAD' ? null : object.body, { status: 200, headers });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    // Read the raw path so encoded dot segments cannot be normalised away by URL.
+    const rawPath = request.url.match(/^[a-z]+:\/\/[^/]+([^?#]*)/i)?.[1] || '/';
+    if (rawPath === '/mwtm/manifest.json') return serveMwtm(request, env, 'manifest.json');
+    if (rawPath.startsWith('/mwtm/f/')) {
+      let key;
+      try { key = decodeURIComponent(rawPath.slice('/mwtm/f/'.length)); }
+      catch { return new Response('Not found', { status: 404 }); }
+      return serveMwtm(request, env, key);
+    }
     if (url.pathname === '/api/vendor-check') return checkVendorSources(request);
     if (url.pathname.startsWith('/docs/') && (request.method === 'GET' || request.method === 'HEAD')) {
       // Knowledge-base and roadmap files live in the repo's docs/ folder, served by GitHub Pages.

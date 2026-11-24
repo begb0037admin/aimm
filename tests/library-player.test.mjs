@@ -60,15 +60,19 @@ test('YouTube embed error shows the cannot-embed state',()=>{
   assert.equal(failed,true);
 });
 
-test('private manifest adds only unique same-origin recordings and preserves YouTube rows',async()=>{
-  const item={id:'lesson-1',title:'Drum lesson',channel:'Ignored',added:'2026-11-21',video:'/mwtm/lesson-1.mp4',thumb:'/mwtm/lesson-1.jpg',description:'Private lesson'};
-  const ctx=setup({fetch:async()=>({ok:true,json:async()=>[item,{...item,id:'lesson-2',video:'https://elsewhere.example/video.mp4'},{...item,id:'lesson-3',thumb:'//elsewhere.example/image.jpg'},{...item,id:'lesson-1'}]})});
+test('private manifest resolves unique R2 keys and preserves YouTube rows',async()=>{
+  const item={id:'lesson-1',title:'Drum lesson',channel:'Ignored',added:'2026-11-21',video:'lessons/lesson-1.mp4',thumb:'thumbs/lesson-1.jpg',description:'Private lesson'};
+  let fetched='';
+  const ctx=setup({fetch:async url=>{fetched=url;return {ok:true,json:async()=>[item,{...item,id:'lesson-2',video:'https://elsewhere.example/video.mp4'},{...item,id:'lesson-3',thumb:'../secret.jpg'},{...item,id:'lesson-1'}]}}});
   ctx.YT_KB.videos=[video('6WPtHxWkY2k','YouTube lesson')];
   let rendered=0;ctx.libPlayerRender=()=>{rendered++};
   await ctx.libPlayerLoadManifest();
   assert.deepEqual(Array.from(ctx.libPlayerVideos(),v=>v.title),['Drum lesson','YouTube lesson']);
   assert.equal(ctx.libPlayerVideos()[0].channel,'Mix With The Masters');
   assert.equal(ctx.libPlayerVideos()[0].description,'Private lesson');
+  assert.equal(ctx.libPlayerVideos()[0].src,'/mwtm/f/lessons/lesson-1.mp4');
+  assert.equal(ctx.libPlayerVideos()[0].thumb,'/mwtm/f/thumbs/lesson-1.jpg');
+  assert.equal(fetched,'/mwtm/manifest.json');
   assert.equal(rendered,1);
 });
 
