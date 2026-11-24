@@ -1,3 +1,6 @@
+## 2026-11-24 build 2026-11-23.30 — Library private recording player (BUILT, NOT DEPLOYED)
+The standalone Library loads optional same-origin recordings from `/mwtm/manifest.json` into the Playlist. Private rows use the Jules HTML5 player, self-hosted Roboto and shared Lucide sprite; YouTube rows keep the native iframe. The Open button appears only for private recordings and Copy uses the corresponding source. No manifest or media is bundled. The Cloudflare Worker route for R2, manifest provisioning and hosting rights remain open. All 190 Node tests pass.
+
 ## 2026-11-23 build 2026-11-23.23 — Library redesign, MixBus restyle, new tab strip, Inter bundled, icons and motion (LIVE)
 Deployed 23 Nov 2026 after Kevin's "approve - deploy" (main 8b001396, Worker aimm version d841e73b). Verified live: AIMM_BUILD 2026-11-23.23, /fonts/inter-latin-wght.woff2 served (immutable cache), real-browser check of tabs and titles, no page errors.
 - Library: embedded YouTube player + 494-video playlist, Browse card, neutral cards, tab intro. MixBus restyled neutral. Tab order: Mix Check, Library, MixBus, Plugins, Settings, Marketing, Community.

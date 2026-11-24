@@ -2360,6 +2360,157 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 @media(max-width:1023px){#mixcheck.oz-mixcheck #mcSpecs{padding:14px}#mixcheck.oz-mixcheck .mc-row{padding-top:7px;padding-bottom:7px}}
 
 
+/* AIMM Library local video player, YouTube-embed look (Jules, 24 Nov 2026). Integrated for private Library recordings.
+   Everything lives inside .lpl, a layer that fills #libPlayerFrame. Colours here are YouTube's (red progress, near-black menus),
+   on purpose: Kevin wants the swap from the YouTube embed to be unnoticeable. The rest of the page stays AIMM teal.
+   Font: Roboto (OFL, self-hosted, one variable file) because that is what the YouTube embed uses. */
+@font-face{font-family:"Roboto";src:url("/fonts/roboto-latin-wght.woff2") format("woff2");font-weight:400 500;font-display:swap}
+
+#libPlayerFrame .lpl{position:absolute;inset:0;z-index:2;display:none;background:#000;color:#fff;overflow:hidden;
+  font-family:"YouTube Noto",Roboto,Arial,sans-serif;container:lpl/inline-size;user-select:none;-webkit-user-select:none;outline:none}
+#libPlayerFrame.is-local .lpl{display:block}
+#libPlayerFrame.is-local iframe{display:none}
+#libPlayerFrame.is-local .fail{display:none}
+.lp #libPlayerOpen[hidden]{display:none}
+.lpl *{box-sizing:border-box}
+.lpl:fullscreen{width:100vw;height:100vh}
+.lpl video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;display:block}
+.lpl svg.lpl-i{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;display:block}
+
+/* ---- size tiers by layer width (library column, or fullscreen) ---- */
+.lpl .lpl-in{position:absolute;inset:0;--bar:48px;--ic:24px;--pad:12px;--t:13px;--title:18px;--chan:13px;--bw:68px;--bh:48px;--menu-w:251px;--row:40px;--prog-hit:16px;--osd:40px}
+@container lpl (min-width:900px){.lpl .lpl-in{--bar:54px;--ic:27px;--pad:16px;--t:14px;--title:21px;--chan:14px;--bw:76px;--bh:54px;--menu-w:280px;--row:44px;--osd:48px}}
+@container lpl (min-width:1400px){.lpl .lpl-in{--bar:60px;--ic:30px;--pad:24px;--t:16px;--title:26px;--chan:16px;--bw:92px;--bh:65px;--menu-w:320px;--row:50px;--prog-hit:20px;--osd:56px}}
+
+/* ---- layers that fade together ---- */
+.lpl .lpl-ctl{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:1;visibility:visible;
+  transition:opacity 140ms cubic-bezier(.22,1,.36,1),visibility 0s}
+.lpl.lpl-idle .lpl-ctl{opacity:0;visibility:hidden;transition:opacity 280ms cubic-bezier(.22,1,.36,1),visibility 0s 280ms}
+.lpl.lpl-idle{cursor:none}
+.lpl .lpl-gtop{position:absolute;left:0;right:0;top:0;height:min(100%,calc(var(--title) * 5.2));background:linear-gradient(to bottom,rgba(0,0,0,.7),rgba(0,0,0,.35) 55%,rgba(0,0,0,0))}
+.lpl .lpl-gbot{position:absolute;left:0;right:0;bottom:0;height:min(100%,calc(var(--bar) * 2.6));background:linear-gradient(to top,rgba(0,0,0,.8),rgba(0,0,0,.45) 55%,rgba(0,0,0,0))}
+
+/* title and channel, top left */
+.lpl .lpl-head{position:absolute;left:0;right:0;top:0;padding:calc(var(--pad) + 2px) calc(var(--pad) + 4px) 0;pointer-events:none}
+.lpl .lpl-head .lpl-t{font-size:var(--title);font-weight:500;line-height:1.25;color:#fff;text-shadow:0 0 2px rgba(0,0,0,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lpl .lpl-head .lpl-c{margin-top:2px;font-size:var(--chan);font-weight:400;line-height:1.3;color:rgba(255,255,255,.75);text-shadow:0 0 2px rgba(0,0,0,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.lpl .lpl-bar{position:absolute;left:0;right:0;bottom:0;padding:0 var(--pad);pointer-events:auto}
+
+/* ---- progress: red, 3px, 5px on hover, red dot ---- */
+.lpl .lpl-prog{position:relative;height:var(--prog-hit);display:flex;align-items:center;cursor:pointer;touch-action:none;outline:none;border-radius:4px;margin-bottom:-2px}
+.lpl .lpl-prog:focus-visible{outline:2px solid #2dd4bf;outline-offset:2px}
+.lpl .lpl-track{position:relative;width:100%;height:5px;background:rgba(255,255,255,.2);overflow:hidden;transform:scaleY(.6);transition:transform 140ms cubic-bezier(.22,1,.36,1)}
+.lpl .lpl-prog:hover .lpl-track,.lpl .lpl-prog.lpl-drag .lpl-track,.lpl .lpl-prog:focus-visible .lpl-track{transform:scaleY(1)}
+.lpl .lpl-track b{position:absolute;inset:0;transform-origin:0 50%;transform:scaleX(0)}
+.lpl .lpl-buf{background:rgba(255,255,255,.4)}
+.lpl .lpl-hov{background:rgba(255,255,255,.5);opacity:0;transition:opacity 90ms}
+.lpl .lpl-prog:hover .lpl-hov,.lpl .lpl-prog.lpl-drag .lpl-hov{opacity:1}
+.lpl .lpl-played{background:#f00}
+.lpl .lpl-dot{position:absolute;left:0;top:50%;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;border-radius:50%;background:#f00;pointer-events:none;
+  --dx:0px;transform:translateX(var(--dx)) scale(0);transition:transform 140ms cubic-bezier(.22,1,.36,1)}
+.lpl .lpl-prog:hover .lpl-dot,.lpl .lpl-prog.lpl-drag .lpl-dot,.lpl .lpl-prog:focus-visible .lpl-dot{transform:translateX(var(--dx)) scale(1)}
+.lpl .lpl-tip{position:absolute;bottom:calc(100% + 4px);left:0;padding:5px 9px;border-radius:4px;background:rgba(28,28,28,.9);color:#fff;
+  font-size:13px;font-weight:500;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none;opacity:0;
+  transform:translateX(var(--tx,0px));transition:opacity 90ms}
+.lpl .lpl-prog:hover .lpl-tip,.lpl .lpl-prog.lpl-drag .lpl-tip{opacity:1}
+
+/* ---- button row ---- */
+.lpl .lpl-row{display:flex;align-items:center;height:var(--bar)}
+.lpl .lpl-sp{flex:1}
+.lpl .lpl-cb{position:relative;flex:none;width:calc(var(--bar) - 4px);height:var(--bar);padding:0;border:0;background:none;color:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:var(--ic);outline:none;border-radius:8px}
+.lpl .lpl-cb svg.lpl-i{opacity:.9;transition:opacity 140ms}
+.lpl .lpl-cb:hover svg.lpl-i,.lpl .lpl-cb:focus-visible svg.lpl-i{opacity:1}
+.lpl .lpl-cb:focus-visible{outline:2px solid #2dd4bf;outline-offset:-4px}
+.lpl .lpl-fill svg.lpl-i{fill:currentColor}
+.lpl .lpl-cb[hidden]{display:none}
+.lpl .lpl-gear{transition:transform 200ms cubic-bezier(.65,0,.35,1)}
+.lpl .lpl-cb.lpl-open .lpl-gear{transform:rotate(45deg)}
+.lpl svg.lpl-i.lpl-ia{display:none}
+.lpl.lpl-is-playing svg.lpl-i.lpl-ic-pause,.lpl.lpl-is-muted svg.lpl-i.lpl-ic-mute,.lpl.lpl-is-full svg.lpl-i.lpl-ic-min,.lpl.lpl-is-ended svg.lpl-i.lpl-ic-replay{display:block}
+.lpl.lpl-is-playing svg.lpl-i.lpl-ic-play,.lpl.lpl-is-muted svg.lpl-i.lpl-ic-vol,.lpl.lpl-is-full svg.lpl-i.lpl-ic-max,.lpl.lpl-is-ended svg.lpl-i.lpl-ic-playmain{display:none}
+
+.lpl .lpl-time{margin-left:4px;font-size:var(--t);font-weight:400;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap;color:#fff;
+  transform:translateX(0);transition:transform 200ms cubic-bezier(.22,1,.36,1)}
+.lpl .lpl-vol{position:relative;flex:none;display:flex;align-items:center}
+.lpl .lpl-slide{position:absolute;left:calc(var(--bar) - 8px);top:50%;width:84px;height:24px;margin-top:-12px;display:flex;align-items:center;
+  transform-origin:0 50%;transform:scaleX(.4);opacity:0;pointer-events:none;transition:opacity 140ms,transform 200ms cubic-bezier(.22,1,.36,1)}
+.lpl .lpl-vol:hover .lpl-slide,.lpl .lpl-vol:focus-within .lpl-slide{opacity:1;transform:scaleX(1);pointer-events:auto}
+.lpl .lpl-vol:hover~.lpl-time,.lpl .lpl-vol:focus-within~.lpl-time{transform:translateX(88px)}
+.lpl .lpl-vol input{--v:100%;-webkit-appearance:none;appearance:none;width:64px;height:24px;margin:0 6px;background:transparent;cursor:pointer;outline:none;border-radius:4px}
+.lpl .lpl-vol input::-webkit-slider-runnable-track{height:3px;border-radius:2px;background:linear-gradient(to right,#fff var(--v),rgba(255,255,255,.3) var(--v))}
+.lpl .lpl-vol input::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;margin-top:-4.5px;border-radius:50%;background:#fff;border:0}
+.lpl .lpl-vol input::-moz-range-track{height:3px;border-radius:2px;background:rgba(255,255,255,.3)}
+.lpl .lpl-vol input::-moz-range-progress{height:3px;border-radius:2px;background:#fff}
+.lpl .lpl-vol input::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#fff;border:0}
+.lpl .lpl-vol input:focus-visible{outline:2px solid #2dd4bf;outline-offset:2px}
+@container lpl (max-width:479px){.lpl .lpl-slide{display:none}.lpl .lpl-vol:hover~.lpl-time,.lpl .lpl-vol:focus-within~.lpl-time{transform:none}}
+@media (pointer:coarse){.lpl .lpl-slide{display:none}.lpl .lpl-vol:hover~.lpl-time{transform:none}}
+
+/* ---- settings menu (YouTube dark panel) ---- */
+.lpl .lpl-menu{position:absolute;right:var(--pad);bottom:calc(var(--bar) + var(--prog-hit) + 8px);width:var(--menu-w);max-height:calc(100% - var(--bar) - var(--prog-hit) - 24px);
+  overflow:auto;overscroll-behavior:contain;padding:8px 0;border-radius:12px;background:rgba(28,28,28,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);pointer-events:auto;
+  opacity:0;visibility:hidden;transform:translateY(6px);transform-origin:100% 100%;scrollbar-width:thin;
+  transition:opacity 140ms cubic-bezier(.22,1,.36,1),transform 140ms cubic-bezier(.22,1,.36,1),visibility 0s 140ms}
+.lpl .lpl-menu.lpl-open{opacity:1;visibility:visible;transform:none;transition:opacity 140ms cubic-bezier(.22,1,.36,1),transform 200ms cubic-bezier(.22,1,.36,1),visibility 0s}
+.lpl .lpl-mi{display:flex;align-items:center;gap:12px;width:100%;min-height:var(--row);padding:0 16px;border:0;background:none;color:#fff;text-align:left;
+  font:400 var(--t)/1.2 "YouTube Noto",Roboto,Arial,sans-serif;cursor:pointer;outline:none}
+.lpl .lpl-mi:hover{background:rgba(255,255,255,.1)}
+.lpl .lpl-mi:focus-visible{outline:2px solid #2dd4bf;outline-offset:-2px}
+.lpl .lpl-mi .lpl-lbl{flex:1}
+.lpl .lpl-mi .lpl-val{color:rgba(255,255,255,.7)}
+.lpl .lpl-mi svg.lpl-i{font-size:20px}
+.lpl .lpl-mi .lpl-ck{width:20px;visibility:hidden}
+.lpl .lpl-mi[aria-checked=true] .lpl-ck{visibility:visible}
+.lpl .lpl-mi.lpl-head2{position:sticky;top:-8px;margin-top:-8px;background:rgb(40,40,40);font-weight:500;border-bottom:1px solid rgba(255,255,255,.2);margin-bottom:8px;z-index:1}
+.lpl .lpl-mi .lpl-back{transform:scaleX(-1)}
+
+/* ---- button tooltip ---- */
+.lpl .lpl-btip{position:absolute;bottom:calc(var(--bar) + var(--prog-hit) + 2px);left:0;padding:5px 9px;border-radius:4px;background:rgba(28,28,28,.9);color:#fff;
+  font-size:13px;font-weight:500;line-height:1;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 90ms}
+.lpl .lpl-btip.lpl-on{opacity:1}
+.lpl.lpl-idle .lpl-btip{opacity:0}
+
+/* ---- centre: big play (YouTube's rounded rectangle), OSD, spinner, mini progress ---- */
+.lpl .lpl-big{position:absolute;left:50%;top:50%;width:var(--bw);height:var(--bh);margin:calc(var(--bh) / -2) 0 0 calc(var(--bw) / -2);padding:0;border:0;border-radius:calc(var(--bh) * .25);
+  background:rgba(33,33,33,.8);color:#fff;font-size:calc(var(--bh) * .5);display:flex;align-items:center;justify-content:center;cursor:pointer;outline:none;z-index:1;
+  opacity:0;visibility:hidden;transition:opacity 140ms cubic-bezier(.22,1,.36,1),background-color 140ms,visibility 0s 140ms}
+.lpl .lpl-big svg.lpl-i{fill:currentColor}
+.lpl .lpl-big .lpl-ic-replay{fill:none}
+.lpl .lpl-big:hover{background:#f00}
+.lpl .lpl-big:focus-visible{outline:2px solid #2dd4bf;outline-offset:3px}
+.lpl.lpl-is-paused:not(.lpl-scrub):not(.lpl-is-fail):not(.lpl-menu-open):not(.lpl-is-loading) .lpl-big{opacity:1;visibility:visible;transition:opacity 200ms cubic-bezier(.22,1,.36,1),background-color 140ms,visibility 0s}
+
+.lpl .lpl-osd{position:absolute;left:50%;top:44%;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.7);
+  font-size:calc(var(--t) + 4px);font-weight:500;line-height:1.2;font-variant-numeric:tabular-nums;opacity:0;transform:translate(-50%,-50%) scale(.92);z-index:1}
+.lpl .lpl-osd svg.lpl-i{font-size:var(--osd);filter:drop-shadow(0 2px 8px rgba(0,0,0,.6))}
+.lpl .lpl-osd.lpl-show{opacity:1;transform:translate(-50%,-50%) scale(1);transition:opacity 90ms,transform 200ms cubic-bezier(.22,1,.36,1)}
+.lpl .lpl-osd.lpl-out{transition:opacity 280ms cubic-bezier(.22,1,.36,1),transform 280ms cubic-bezier(.22,1,.36,1)}
+
+.lpl .lpl-spin{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;color:#fff;font-size:56px;pointer-events:none;opacity:0;transition:opacity 140ms;z-index:1}
+.lpl .lpl-spin svg.lpl-i{stroke-width:1.75;animation:lplspin 800ms linear infinite}
+.lpl.lpl-is-loading .lpl-spin{opacity:1}
+@keyframes lplspin{to{transform:rotate(360deg)}}
+
+.lpl .lpl-mini{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.2);pointer-events:none;opacity:0;transition:opacity 280ms cubic-bezier(.22,1,.36,1);z-index:1}
+.lpl .lpl-mini i{position:absolute;inset:0;background:#f00;transform-origin:0 50%;transform:scaleX(0)}
+.lpl.lpl-idle.lpl-is-playing:not(.lpl-is-fail) .lpl-mini{opacity:1}
+
+.lpl .lpl-failbox{position:absolute;inset:0;z-index:4;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:28px;text-align:center;background:#0b0d10}
+.lpl.lpl-is-fail .lpl-failbox{display:flex}
+.lpl.lpl-is-fail .lpl-ctl,.lpl.lpl-is-fail .lpl-big,.lpl.lpl-is-fail .lpl-spin{display:none}
+.lpl .lpl-failbox h3{margin:0;font-size:clamp(18px,3.4cqw,24px);font-weight:500;color:#fff}
+.lpl .lpl-failbox button{min-height:44px;padding:0 24px;border:0;border-radius:999px;background:#2dd4bf;color:#0b0d10;font:700 15px/1 "YouTube Noto",Roboto,Arial,sans-serif;cursor:pointer}
+.lpl .lpl-failbox button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.lpl .lpl-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (prefers-reduced-motion:reduce){
+  .lpl *,.lpl *::before{transition-duration:.01ms!important;transition-delay:0s!important}
+  .lpl .lpl-spin svg.lpl-i{animation:lplpulse 1.4s ease-in-out infinite}
+  @keyframes lplpulse{50%{opacity:.35}}
+}
+
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
      ~30 KB, MIT, no jQuery. Pinned to v1 (latest 1.x). -->
@@ -3365,7 +3516,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 </head>
 <body>
 <!-- Icons: Lucide, ISC licence -->
-<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="i-tab-mixcheck" viewBox="0 0 24 24"><path d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"/></symbol><symbol id="i-tab-library" viewBox="0 0 24 24"><path d="m16 6 4 14"/> <path d="M12 6v14"/> <path d="M8 8v12"/> <path d="M4 4v16"/></symbol><symbol id="i-tab-mixbus" viewBox="0 0 24 24"><path d="M10 8h4"/> <path d="M12 21v-9"/> <path d="M12 8V3"/> <path d="M17 16h4"/> <path d="M19 12V3"/> <path d="M19 21v-5"/> <path d="M3 14h4"/> <path d="M5 10V3"/> <path d="M5 21v-7"/></symbol><symbol id="i-tab-plugins" viewBox="0 0 24 24"><path d="M12 22v-5"/> <path d="M15 8V2"/> <path d="M17 8a1 1 0 0 1 1 1v4a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1z"/> <path d="M9 8V2"/></symbol><symbol id="i-tab-settings" viewBox="0 0 24 24"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/> <circle cx="12" cy="12" r="3"/></symbol><symbol id="i-tab-marketing" viewBox="0 0 24 24"><path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/> <path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"/> <path d="M8 6v8"/></symbol><symbol id="i-tab-community" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/> <path d="M16 3.128a4 4 0 0 1 0 7.744"/> <path d="M22 21v-2a4 4 0 0 0-3-3.87"/> <circle cx="9" cy="7" r="4"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/></symbol><symbol id="i-pause" viewBox="0 0 24 24"><rect x="14" y="3" width="5" height="18" rx="1"/> <rect x="5" y="3" width="5" height="18" rx="1"/></symbol><symbol id="i-stop" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/></symbol><symbol id="i-skip-start" viewBox="0 0 24 24"><path d="M17.971 4.285A2 2 0 0 1 21 6v12a2 2 0 0 1-3.029 1.715l-9.997-5.998a2 2 0 0 1-.003-3.432z"/> <path d="M3 20V4"/></symbol><symbol id="i-back-10" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/> <path d="M3 3v5h5"/></symbol><symbol id="i-fwd-10" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/> <path d="M21 3v5h-5"/></symbol><symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/> <path d="M16 9a5 5 0 0 1 0 6"/> <path d="M19.364 18.364a9 9 0 0 0 0-12.728"/></symbol><symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 19v3"/> <path d="M19 10v2a7 7 0 0 1-14 0v-2"/> <rect x="9" y="2" width="6" height="13" rx="3"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3"/> <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/> <path d="m7 10 5 5 5-5"/></symbol><symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 3v12"/> <path d="m17 8-5-5-5 5"/> <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></symbol><symbol id="i-edit" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/> <path d="m15 5 4 4"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/> <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol><symbol id="i-delete" viewBox="0 0 24 24"><path d="M10 11v6"/> <path d="M14 11v6"/> <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/> <path d="M3 6h18"/> <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol><symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/> <circle cx="6" cy="12" r="3"/> <circle cx="18" cy="19" r="3"/> <line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/> <line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></symbol><symbol id="i-external" viewBox="0 0 24 24"><path d="M15 3h6v6"/> <path d="M10 14 21 3"/> <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol><symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/> <path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/> <path d="M21 3v5h-5"/> <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/> <path d="M8 16H3v5"/></symbol><symbol id="i-save" viewBox="0 0 24 24"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/> <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/> <path d="M7 3v4a1 1 0 0 0 1 1h7"/></symbol><symbol id="i-drag" viewBox="0 0 24 24"><circle cx="9" cy="12" r="1"/> <circle cx="9" cy="5" r="1"/> <circle cx="9" cy="19" r="1"/> <circle cx="15" cy="12" r="1"/> <circle cx="15" cy="5" r="1"/> <circle cx="15" cy="19" r="1"/></symbol><symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/> <circle cx="12" cy="5" r="1"/> <circle cx="12" cy="19" r="1"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/> <circle cx="11" cy="11" r="8"/></symbol><symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18"/> <path d="m6 6 12 12"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-star" viewBox="0 0 24 24"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></symbol><symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z"/></symbol><symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/> <circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></symbol><symbol id="i-show" viewBox="0 0 24 24"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/> <circle cx="12" cy="12" r="3"/></symbol><symbol id="i-hide" viewBox="0 0 24 24"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/> <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/> <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/> <path d="m2 2 20 20"/></symbol><symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-chevron-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></symbol><symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/> <path d="M12 5v14"/></symbol><symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol><symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/> <path d="M12 16v-4"/> <path d="M12 8h.01"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/> <path d="M12 9v4"/> <path d="M12 17h.01"/></symbol><symbol id="i-error" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/> <line x1="12" x2="12" y1="8" y2="12"/> <line x1="12" x2="12.01" y1="16" y2="16"/></symbol><symbol id="i-success" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/> <path d="m16 9-5.5 5.5L8 12"/></symbol><symbol id="i-pending" viewBox="0 0 24 24"><path d="M10.1 2.182a10 10 0 0 1 3.8 0"/> <path d="M13.9 21.818a10 10 0 0 1-3.8 0"/> <path d="M17.609 3.721a10 10 0 0 1 2.69 2.7"/> <path d="M2.182 13.9a10 10 0 0 1 0-3.8"/> <path d="M20.279 17.609a10 10 0 0 1-2.7 2.69"/> <path d="M21.818 10.1a10 10 0 0 1 0 3.8"/> <path d="M3.721 6.391a10 10 0 0 1 2.7-2.69"/> <path d="M6.391 20.279a10 10 0 0 1-2.69-2.7"/></symbol><symbol id="i-off" viewBox="0 0 24 24"><path d="m2 2 20 20"/> <path d="M8.35 2.69A10 10 0 0 1 21.3 15.65"/> <path d="M19.08 19.08A10 10 0 1 1 4.92 4.92"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/> <path d="M12 6v6l4 2"/></symbol><symbol id="i-busy" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></symbol><symbol id="i-all" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/> <rect width="7" height="7" x="14" y="3" rx="1"/> <rect width="7" height="7" x="14" y="14" rx="1"/> <rect width="7" height="7" x="3" y="14" rx="1"/></symbol><symbol id="i-updates" viewBox="0 0 24 24"><path d="M12 15V3"/> <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/> <path d="m7 10 5 5 5-5"/></symbol><symbol id="i-vendor-app" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/> <path d="M10 4v4"/> <path d="M2 8h20"/> <path d="M6 4v4"/></symbol><symbol id="i-install" viewBox="0 0 24 24"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/> <path d="M12 22V12"/> <polyline points="3.29 7 12 12 20.71 7"/> <path d="m7.5 4.27 9 5.15"/></symbol><symbol id="i-batch" viewBox="0 0 24 24"><path d="M13 5h8"/> <path d="M13 12h8"/> <path d="M13 19h8"/> <path d="m3 17 2 2 4-4"/> <path d="m3 7 2 2 4-4"/></symbol><symbol id="i-duplicates" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/> <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol><symbol id="i-ilok" viewBox="0 0 24 24"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/> <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></symbol><symbol id="i-vault" viewBox="0 0 24 24"><circle cx="12" cy="16" r="1"/> <rect x="3" y="10" width="18" height="12" rx="2"/> <path d="M7 10V7a5 5 0 0 1 10 0v3"/></symbol><symbol id="i-licence" viewBox="0 0 24 24"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/> <path d="m16 9-5.5 5.5L8 12"/></symbol><symbol id="i-compare" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/> <path d="M12 3v18"/></symbol><symbol id="i-tags" viewBox="0 0 24 24"><path d="M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z"/> <path d="M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193"/> <circle cx="10.5" cy="6.5" r=".5" fill="currentColor"/></symbol><symbol id="i-piano" viewBox="0 0 24 24"><path d="M10 13v4"/> <path d="M14 13v4"/> <path d="M18 13v4"/> <path d="M2 13h20"/> <path d="M22 11.5A3.5 3.5 0 0018.5 8a3.52 3.52 0 01-3.173-2A7 7 0 002 9v10a2 2 0 002 2h16a2 2 0 002-2z"/> <path d="M6 13v4"/></symbol><symbol id="i-metering" viewBox="0 0 24 24"><path d="m12 14 4-4"/> <path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol><symbol id="i-eq" viewBox="0 0 24 24"><path d="M10 5H3"/> <path d="M12 19H3"/> <path d="M14 3v4"/> <path d="M16 17v4"/> <path d="M21 12h-9"/> <path d="M21 19h-5"/> <path d="M21 5h-7"/> <path d="M8 10v4"/> <path d="M8 12H3"/></symbol><symbol id="i-colour-eq" viewBox="0 0 24 24"><circle cx="15" cy="9" r="7"/> <circle cx="9" cy="15" r="7"/></symbol><symbol id="i-compressor" viewBox="0 0 24 24"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></symbol><symbol id="i-char-comp" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol><symbol id="i-saturation" viewBox="0 0 24 24"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></symbol><symbol id="i-transient" viewBox="0 0 24 24"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/></symbol><symbol id="i-limiter" viewBox="0 0 24 24"><path d="M2 10v3"/> <path d="M6 6v11"/> <path d="M10 3v18"/> <path d="M14 8v7"/> <path d="M18 5v13"/> <path d="M22 10v3"/></symbol><symbol id="i-clipper" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/> <path d="M8.12 8.12 12 12"/> <path d="M20 4 8.12 15.88"/> <circle cx="6" cy="18" r="3"/> <path d="M14.8 14.8 20 20"/></symbol><symbol id="i-de-ess" viewBox="0 0 24 24"><path d="M16 3h5v5"/> <path d="M8 3H3v5"/> <path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/> <path d="m15 9 6-6"/></symbol><symbol id="i-bass" viewBox="0 0 24 24"><path d="m2 2 8 8"/> <path d="m22 2-8 8"/> <ellipse cx="12" cy="9" rx="10" ry="5"/> <path d="M7 13.4v7.9"/> <path d="M12 14v8"/> <path d="M17 13.4v7.9"/> <path d="M2 9v8a10 5 0 0 0 20 0V9"/></symbol><symbol id="i-tuner" viewBox="0 0 24 24"><path d="M21 16V3a1 1 0 0 0-1.28-.96l-10 2.917a1 1 0 0 0-.72.96V19"/> <circle cx="18" cy="16" r="3"/> <circle cx="6" cy="19" r="3"/></symbol><symbol id="i-vocal" viewBox="0 0 24 24"><path d="m11 7.601-5.994 8.19a1 1 0 0 0 .1 1.298l.817.818a1 1 0 0 0 1.314.087L15.09 12"/> <path d="M16.5 21.174C15.5 20.5 14.372 20 13 20c-2.058 0-3.928 2.356-6 2-2.072-.356-2.775-3.369-1.5-4.5"/> <circle cx="16" cy="7" r="5"/></symbol><symbol id="i-imager" viewBox="0 0 24 24"><path d="m15 15 6 6"/> <path d="m15 9 6-6"/> <path d="M21 16v5h-5"/> <path d="M21 8V3h-5"/> <path d="M3 16v5h5"/> <path d="m3 21 6-6"/> <path d="M3 8V3h5"/> <path d="M9 9 3 3"/></symbol><symbol id="i-reverb" viewBox="0 0 24 24"><path d="M2 12q2.5 2 5 0t5 0 5 0 5 0"/> <path d="M2 19q2.5 2 5 0t5 0 5 0 5 0"/> <path d="M2 5q2.5 2 5 0t5 0 5 0 5 0"/></symbol><symbol id="i-delay" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/> <path d="M3 11v-1a4 4 0 0 1 4-4h14"/> <path d="m7 22-4-4 4-4"/> <path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol><symbol id="i-modulation" viewBox="0 0 24 24"><path d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"/></symbol><symbol id="i-repair" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></symbol><symbol id="i-fx" viewBox="0 0 24 24"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/> <path d="m14 7 3 3"/> <path d="M5 6v4"/> <path d="M19 14v4"/> <path d="M10 2v2"/> <path d="M7 8H3"/> <path d="M21 16h-4"/> <path d="M11 3H9"/></symbol><symbol id="i-mixing" viewBox="0 0 24 24"><path d="M10 5H3"/> <path d="M12 19H3"/> <path d="M14 3v4"/> <path d="M16 17v4"/> <path d="M21 12h-9"/> <path d="M21 19h-5"/> <path d="M21 5h-7"/> <path d="M8 10v4"/> <path d="M8 12H3"/></symbol><symbol id="i-mastering" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/> <path d="M6 12c0-1.7.7-3.2 1.8-4.2"/> <circle cx="12" cy="12" r="2"/> <path d="M18 12c0 1.7-.7 3.2-1.8 4.2"/></symbol><symbol id="i-stems" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol><symbol id="i-hiphop" viewBox="0 0 24 24"><path d="m11 7.601-5.994 8.19a1 1 0 0 0 .1 1.298l.817.818a1 1 0 0 0 1.314.087L15.09 12"/> <path d="M16.5 21.174C15.5 20.5 14.372 20 13 20c-2.058 0-3.928 2.356-6 2-2.072-.356-2.775-3.369-1.5-4.5"/> <circle cx="16" cy="7" r="5"/></symbol><symbol id="i-rnb" viewBox="0 0 24 24"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></symbol><symbol id="i-pop" viewBox="0 0 24 24"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/> <path d="M20 2v4"/> <path d="M22 4h-4"/> <circle cx="4" cy="20" r="2"/></symbol><symbol id="i-afrobeats" viewBox="0 0 24 24"><path d="m2 2 8 8"/> <path d="m22 2-8 8"/> <ellipse cx="12" cy="9" rx="10" ry="5"/> <path d="M7 13.4v7.9"/> <path d="M12 14v8"/> <path d="M17 13.4v7.9"/> <path d="M2 9v8a10 5 0 0 0 20 0V9"/></symbol><symbol id="i-lofi" viewBox="0 0 24 24"><path d="M10 2v2"/> <path d="M14 2v2"/> <path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/> <path d="M6 2v2"/></symbol><symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></symbol><symbol id="i-lightbulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/> <path d="M9 18h6"/> <path d="M10 22h4"/></symbol></svg>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="i-tab-mixcheck" viewBox="0 0 24 24"><path d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"/></symbol><symbol id="i-tab-library" viewBox="0 0 24 24"><path d="m16 6 4 14"/> <path d="M12 6v14"/> <path d="M8 8v12"/> <path d="M4 4v16"/></symbol><symbol id="i-tab-mixbus" viewBox="0 0 24 24"><path d="M10 8h4"/> <path d="M12 21v-9"/> <path d="M12 8V3"/> <path d="M17 16h4"/> <path d="M19 12V3"/> <path d="M19 21v-5"/> <path d="M3 14h4"/> <path d="M5 10V3"/> <path d="M5 21v-7"/></symbol><symbol id="i-tab-plugins" viewBox="0 0 24 24"><path d="M12 22v-5"/> <path d="M15 8V2"/> <path d="M17 8a1 1 0 0 1 1 1v4a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1z"/> <path d="M9 8V2"/></symbol><symbol id="i-tab-settings" viewBox="0 0 24 24"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/> <circle cx="12" cy="12" r="3"/></symbol><symbol id="i-tab-marketing" viewBox="0 0 24 24"><path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/> <path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"/> <path d="M8 6v8"/></symbol><symbol id="i-tab-community" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/> <path d="M16 3.128a4 4 0 0 1 0 7.744"/> <path d="M22 21v-2a4 4 0 0 0-3-3.87"/> <circle cx="9" cy="7" r="4"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/></symbol><symbol id="i-pause" viewBox="0 0 24 24"><rect x="14" y="3" width="5" height="18" rx="1"/> <rect x="5" y="3" width="5" height="18" rx="1"/></symbol><symbol id="i-stop" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/></symbol><symbol id="i-skip-start" viewBox="0 0 24 24"><path d="M17.971 4.285A2 2 0 0 1 21 6v12a2 2 0 0 1-3.029 1.715l-9.997-5.998a2 2 0 0 1-.003-3.432z"/> <path d="M3 20V4"/></symbol><symbol id="i-back-10" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/> <path d="M3 3v5h5"/></symbol><symbol id="i-fwd-10" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/> <path d="M21 3v5h-5"/></symbol><symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/> <path d="M16 9a5 5 0 0 1 0 6"/> <path d="M19.364 18.364a9 9 0 0 0 0-12.728"/></symbol><symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 19v3"/> <path d="M19 10v2a7 7 0 0 1-14 0v-2"/> <rect x="9" y="2" width="6" height="13" rx="3"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3"/> <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/> <path d="m7 10 5 5 5-5"/></symbol><symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 3v12"/> <path d="m17 8-5-5-5 5"/> <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></symbol><symbol id="i-edit" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/> <path d="m15 5 4 4"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/> <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol><symbol id="i-delete" viewBox="0 0 24 24"><path d="M10 11v6"/> <path d="M14 11v6"/> <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/> <path d="M3 6h18"/> <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol><symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/> <circle cx="6" cy="12" r="3"/> <circle cx="18" cy="19" r="3"/> <line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/> <line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></symbol><symbol id="i-external" viewBox="0 0 24 24"><path d="M15 3h6v6"/> <path d="M10 14 21 3"/> <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol><symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/> <path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/> <path d="M21 3v5h-5"/> <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/> <path d="M8 16H3v5"/></symbol><symbol id="i-save" viewBox="0 0 24 24"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/> <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/> <path d="M7 3v4a1 1 0 0 0 1 1h7"/></symbol><symbol id="i-drag" viewBox="0 0 24 24"><circle cx="9" cy="12" r="1"/> <circle cx="9" cy="5" r="1"/> <circle cx="9" cy="19" r="1"/> <circle cx="15" cy="12" r="1"/> <circle cx="15" cy="5" r="1"/> <circle cx="15" cy="19" r="1"/></symbol><symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/> <circle cx="12" cy="5" r="1"/> <circle cx="12" cy="19" r="1"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/> <circle cx="11" cy="11" r="8"/></symbol><symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18"/> <path d="m6 6 12 12"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-star" viewBox="0 0 24 24"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></symbol><symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z"/></symbol><symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/> <circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></symbol><symbol id="i-show" viewBox="0 0 24 24"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/> <circle cx="12" cy="12" r="3"/></symbol><symbol id="i-hide" viewBox="0 0 24 24"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/> <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/> <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/> <path d="m2 2 20 20"/></symbol><symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-chevron-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></symbol><symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/> <path d="M12 5v14"/></symbol><symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol><symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/> <path d="M12 16v-4"/> <path d="M12 8h.01"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/> <path d="M12 9v4"/> <path d="M12 17h.01"/></symbol><symbol id="i-error" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/> <line x1="12" x2="12" y1="8" y2="12"/> <line x1="12" x2="12.01" y1="16" y2="16"/></symbol><symbol id="i-success" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/> <path d="m16 9-5.5 5.5L8 12"/></symbol><symbol id="i-pending" viewBox="0 0 24 24"><path d="M10.1 2.182a10 10 0 0 1 3.8 0"/> <path d="M13.9 21.818a10 10 0 0 1-3.8 0"/> <path d="M17.609 3.721a10 10 0 0 1 2.69 2.7"/> <path d="M2.182 13.9a10 10 0 0 1 0-3.8"/> <path d="M20.279 17.609a10 10 0 0 1-2.7 2.69"/> <path d="M21.818 10.1a10 10 0 0 1 0 3.8"/> <path d="M3.721 6.391a10 10 0 0 1 2.7-2.69"/> <path d="M6.391 20.279a10 10 0 0 1-2.69-2.7"/></symbol><symbol id="i-off" viewBox="0 0 24 24"><path d="m2 2 20 20"/> <path d="M8.35 2.69A10 10 0 0 1 21.3 15.65"/> <path d="M19.08 19.08A10 10 0 1 1 4.92 4.92"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/> <path d="M12 6v6l4 2"/></symbol><symbol id="i-busy" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></symbol><symbol id="i-all" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/> <rect width="7" height="7" x="14" y="3" rx="1"/> <rect width="7" height="7" x="14" y="14" rx="1"/> <rect width="7" height="7" x="3" y="14" rx="1"/></symbol><symbol id="i-updates" viewBox="0 0 24 24"><path d="M12 15V3"/> <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/> <path d="m7 10 5 5 5-5"/></symbol><symbol id="i-vendor-app" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/> <path d="M10 4v4"/> <path d="M2 8h20"/> <path d="M6 4v4"/></symbol><symbol id="i-install" viewBox="0 0 24 24"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/> <path d="M12 22V12"/> <polyline points="3.29 7 12 12 20.71 7"/> <path d="m7.5 4.27 9 5.15"/></symbol><symbol id="i-batch" viewBox="0 0 24 24"><path d="M13 5h8"/> <path d="M13 12h8"/> <path d="M13 19h8"/> <path d="m3 17 2 2 4-4"/> <path d="m3 7 2 2 4-4"/></symbol><symbol id="i-duplicates" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/> <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol><symbol id="i-ilok" viewBox="0 0 24 24"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/> <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></symbol><symbol id="i-vault" viewBox="0 0 24 24"><circle cx="12" cy="16" r="1"/> <rect x="3" y="10" width="18" height="12" rx="2"/> <path d="M7 10V7a5 5 0 0 1 10 0v3"/></symbol><symbol id="i-licence" viewBox="0 0 24 24"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/> <path d="m16 9-5.5 5.5L8 12"/></symbol><symbol id="i-compare" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/> <path d="M12 3v18"/></symbol><symbol id="i-tags" viewBox="0 0 24 24"><path d="M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z"/> <path d="M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193"/> <circle cx="10.5" cy="6.5" r=".5" fill="currentColor"/></symbol><symbol id="i-piano" viewBox="0 0 24 24"><path d="M10 13v4"/> <path d="M14 13v4"/> <path d="M18 13v4"/> <path d="M2 13h20"/> <path d="M22 11.5A3.5 3.5 0 0018.5 8a3.52 3.52 0 01-3.173-2A7 7 0 002 9v10a2 2 0 002 2h16a2 2 0 002-2z"/> <path d="M6 13v4"/></symbol><symbol id="i-metering" viewBox="0 0 24 24"><path d="m12 14 4-4"/> <path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol><symbol id="i-eq" viewBox="0 0 24 24"><path d="M10 5H3"/> <path d="M12 19H3"/> <path d="M14 3v4"/> <path d="M16 17v4"/> <path d="M21 12h-9"/> <path d="M21 19h-5"/> <path d="M21 5h-7"/> <path d="M8 10v4"/> <path d="M8 12H3"/></symbol><symbol id="i-colour-eq" viewBox="0 0 24 24"><circle cx="15" cy="9" r="7"/> <circle cx="9" cy="15" r="7"/></symbol><symbol id="i-compressor" viewBox="0 0 24 24"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></symbol><symbol id="i-char-comp" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol><symbol id="i-saturation" viewBox="0 0 24 24"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></symbol><symbol id="i-transient" viewBox="0 0 24 24"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/></symbol><symbol id="i-limiter" viewBox="0 0 24 24"><path d="M2 10v3"/> <path d="M6 6v11"/> <path d="M10 3v18"/> <path d="M14 8v7"/> <path d="M18 5v13"/> <path d="M22 10v3"/></symbol><symbol id="i-clipper" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/> <path d="M8.12 8.12 12 12"/> <path d="M20 4 8.12 15.88"/> <circle cx="6" cy="18" r="3"/> <path d="M14.8 14.8 20 20"/></symbol><symbol id="i-de-ess" viewBox="0 0 24 24"><path d="M16 3h5v5"/> <path d="M8 3H3v5"/> <path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/> <path d="m15 9 6-6"/></symbol><symbol id="i-bass" viewBox="0 0 24 24"><path d="m2 2 8 8"/> <path d="m22 2-8 8"/> <ellipse cx="12" cy="9" rx="10" ry="5"/> <path d="M7 13.4v7.9"/> <path d="M12 14v8"/> <path d="M17 13.4v7.9"/> <path d="M2 9v8a10 5 0 0 0 20 0V9"/></symbol><symbol id="i-tuner" viewBox="0 0 24 24"><path d="M21 16V3a1 1 0 0 0-1.28-.96l-10 2.917a1 1 0 0 0-.72.96V19"/> <circle cx="18" cy="16" r="3"/> <circle cx="6" cy="19" r="3"/></symbol><symbol id="i-vocal" viewBox="0 0 24 24"><path d="m11 7.601-5.994 8.19a1 1 0 0 0 .1 1.298l.817.818a1 1 0 0 0 1.314.087L15.09 12"/> <path d="M16.5 21.174C15.5 20.5 14.372 20 13 20c-2.058 0-3.928 2.356-6 2-2.072-.356-2.775-3.369-1.5-4.5"/> <circle cx="16" cy="7" r="5"/></symbol><symbol id="i-imager" viewBox="0 0 24 24"><path d="m15 15 6 6"/> <path d="m15 9 6-6"/> <path d="M21 16v5h-5"/> <path d="M21 8V3h-5"/> <path d="M3 16v5h5"/> <path d="m3 21 6-6"/> <path d="M3 8V3h5"/> <path d="M9 9 3 3"/></symbol><symbol id="i-reverb" viewBox="0 0 24 24"><path d="M2 12q2.5 2 5 0t5 0 5 0 5 0"/> <path d="M2 19q2.5 2 5 0t5 0 5 0 5 0"/> <path d="M2 5q2.5 2 5 0t5 0 5 0 5 0"/></symbol><symbol id="i-delay" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/> <path d="M3 11v-1a4 4 0 0 1 4-4h14"/> <path d="m7 22-4-4 4-4"/> <path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol><symbol id="i-modulation" viewBox="0 0 24 24"><path d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"/></symbol><symbol id="i-repair" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></symbol><symbol id="i-fx" viewBox="0 0 24 24"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/> <path d="m14 7 3 3"/> <path d="M5 6v4"/> <path d="M19 14v4"/> <path d="M10 2v2"/> <path d="M7 8H3"/> <path d="M21 16h-4"/> <path d="M11 3H9"/></symbol><symbol id="i-mixing" viewBox="0 0 24 24"><path d="M10 5H3"/> <path d="M12 19H3"/> <path d="M14 3v4"/> <path d="M16 17v4"/> <path d="M21 12h-9"/> <path d="M21 19h-5"/> <path d="M21 5h-7"/> <path d="M8 10v4"/> <path d="M8 12H3"/></symbol><symbol id="i-mastering" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/> <path d="M6 12c0-1.7.7-3.2 1.8-4.2"/> <circle cx="12" cy="12" r="2"/> <path d="M18 12c0 1.7-.7 3.2-1.8 4.2"/></symbol><symbol id="i-stems" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol><symbol id="i-hiphop" viewBox="0 0 24 24"><path d="m11 7.601-5.994 8.19a1 1 0 0 0 .1 1.298l.817.818a1 1 0 0 0 1.314.087L15.09 12"/> <path d="M16.5 21.174C15.5 20.5 14.372 20 13 20c-2.058 0-3.928 2.356-6 2-2.072-.356-2.775-3.369-1.5-4.5"/> <circle cx="16" cy="7" r="5"/></symbol><symbol id="i-rnb" viewBox="0 0 24 24"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></symbol><symbol id="i-pop" viewBox="0 0 24 24"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/> <path d="M20 2v4"/> <path d="M22 4h-4"/> <circle cx="4" cy="20" r="2"/></symbol><symbol id="i-afrobeats" viewBox="0 0 24 24"><path d="m2 2 8 8"/> <path d="m22 2-8 8"/> <ellipse cx="12" cy="9" rx="10" ry="5"/> <path d="M7 13.4v7.9"/> <path d="M12 14v8"/> <path d="M17 13.4v7.9"/> <path d="M2 9v8a10 5 0 0 0 20 0V9"/></symbol><symbol id="i-lofi" viewBox="0 0 24 24"><path d="M10 2v2"/> <path d="M14 2v2"/> <path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/> <path d="M6 2v2"/></symbol><symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></symbol><symbol id="i-lightbulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/> <path d="M9 18h6"/> <path d="M10 22h4"/></symbol><symbol id="i-volume-x" viewBox="0 0 24 24"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></symbol><symbol id="i-maximize" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></symbol><symbol id="i-minimize" viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></symbol><symbol id="i-pip" viewBox="0 0 24 24"><path d="M21 9V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h4"/><rect width="10" height="7" x="12" y="13" rx="2"/></symbol><symbol id="i-loader" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></symbol></svg>
 <div class="container">
 <!-- R3 step 6: #hopeRail is now the FIRST child of .container (grid column 2,
      align-self:stretch). Moved out from mid-list (was between the header and
@@ -3711,10 +3862,10 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
      wrapping. The Snapshot → Luna chat creator stays on Conversation
      so saving is in-context with the chat. -->
 <div class="panel" id="library">
-  <section class="lp" id="libPlayer" aria-label="YouTube player and playlist">
+  <section class="lp" id="libPlayer" aria-label="Video player and playlist">
     <div class="grid">
       <div class="player"><div class="frame" id="libPlayerFrame"><iframe id="libPlayerIframe" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="fail"><h3>This video can't be played here</h3><a class="video-pill teal" id="libPlayerFailLink" target="_blank" rel="noopener">Open on YouTube</a></div></div></div>
-      <div class="meta"><h3 class="title" id="libPlayerTitle"></h3><div class="chan"><span class="name" id="libPlayerChannel"></span><div class="btns"><a class="video-pill teal" id="libPlayerOpen" target="_blank" rel="noopener">Open on YouTube</a><button class="video-pill" id="libPlayerCopy" type="button" onclick="libPlayerCopyLink()">Copy link</button></div></div></div>
+      <div class="meta"><h3 class="title" id="libPlayerTitle"></h3><div class="chan"><span class="name" id="libPlayerChannel"></span><div class="btns"><a class="video-pill teal" id="libPlayerOpen" target="_blank" rel="noopener" hidden>Open on YouTube</a><button class="video-pill" id="libPlayerCopy" type="button" onclick="libPlayerCopyLink()">Copy link</button></div></div></div>
       <div class="desc" id="libPlayerDescription"><p class="body" id="libPlayerDescriptionText"></p><button class="more" id="libPlayerMore" type="button" onclick="libPlayerToggleDescription()">Read more</button></div>
       <div class="list"><div class="panel"><div class="phead"><h2>Playlist</h2><span class="count" id="libPlayerCount">0</span></div><div class="fields"><div class="fld search"><input id="libPlayerSearch" type="search" aria-label="Search playlist or paste a YouTube link" placeholder="Search or paste a link" oninput="libPlayerRenderRows()" onkeydown="if(event.key==='Enter')libPlayerSearchEnter(event)"></div><div class="fld chsel"><span class="plus" aria-hidden="true">+</span><select id="libPlayerChannelFilter" aria-label="Filter playlist by channel" onchange="libPlayerRenderRows()"><option value="">Channel</option></select></div></div><div class="rows" id="libPlayerRows"></div></div></div>
     </div>
@@ -5778,8 +5929,179 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
+/* AIMM Library local video player (Jules, 24 Nov 2026). Integrated for private Library recordings.
+   Usage:  const lp = AimmLocalPlayer.attach(document.getElementById('libPlayerFrame'));
+           lp.show({id, title, channel, src, autoplay});   // switches the frame to local mode
+           lp.hide();                                      // back to the YouTube iframe (pauses and clears the video)
+   The YouTube iframe code is never touched: this only adds/removes class "is-local" on the frame. */
+(function(){
+const ic=(id,cls)=>'<svg class="lpl-i'+(cls?' '+cls.split(' ').map(x=>'lpl-'+x).join(' '):'')+'"><use href="#i-'+({'chev':'chevron-right','gear':'tab-settings'}[id]||id)+'"/></svg>';
+const HTML=''
++'<div class="lpl-in"><video playsinline preload="metadata"></video><div class="lpl-mini" aria-hidden="true"><i></i></div>'
++'<div class="lpl-ctl"><div class="lpl-gtop"></div><div class="lpl-gbot"></div>'
++'<div class="lpl-head"><div class="lpl-t"></div><div class="lpl-c"></div></div>'
++'<div class="lpl-bar"><div class="lpl-prog" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0:00">'
++'<div class="lpl-track"><b class="lpl-buf"></b><b class="lpl-hov"></b><b class="lpl-played"></b></div><i class="lpl-dot"></i><div class="lpl-tip">0:00</div></div>'
++'<div class="lpl-row">'
++'<button class="lpl-cb lpl-fill lpl-b-play" type="button" data-tip="Play (k)" aria-label="Play">'+ic('play','ic-play')+ic('pause','ia ic-pause')+'</button>'
++'<div class="lpl-vol"><button class="lpl-cb lpl-b-mute" type="button" data-tip="Mute (m)" aria-label="Mute">'+ic('volume','ic-vol')+ic('volume-x','ia ic-mute')+'</button>'
++'<div class="lpl-slide"><input class="lpl-vrange" type="range" min="0" max="100" step="1" value="100" aria-label="Volume"></div></div>'
++'<span class="lpl-time" aria-hidden="true">0:00 / 0:00</span><span class="lpl-sp"></span>'
++'<button class="lpl-cb lpl-b-gear" type="button" data-tip="Settings" aria-label="Settings" aria-haspopup="menu" aria-expanded="false">'+ic('gear','gear')+'</button>'
++'<button class="lpl-cb lpl-b-pip" type="button" data-tip="Picture-in-picture" aria-label="Picture-in-picture">'+ic('pip')+'</button>'
++'<button class="lpl-cb lpl-b-full" type="button" data-tip="Full screen (f)" aria-label="Full screen">'+ic('maximize','ic-max')+ic('minimize','ia ic-min')+'</button>'
++'</div></div>'
++'<div class="lpl-menu" role="menu" aria-label="Settings"></div><div class="lpl-btip" aria-hidden="true"></div>'
++'<button class="lpl-big lpl-fill" type="button" aria-label="Play">'+ic('play','ic-playmain')+ic('refresh','ia ic-replay')+'</button>'
++'<div class="lpl-osd" aria-hidden="true"><svg class="lpl-i"><use href="#i-play"/></svg><span></span></div>'
++'<div class="lpl-spin" aria-hidden="true">'+ic('loader')+'</div>'
++'<div class="lpl-failbox"><h3>This recording can\'t be played here</h3><button type="button" class="lpl-retry">Try again</button></div>'
++'<div class="lpl-sr" aria-live="polite"></div></div>';
+
+const SPEEDS=[.5,.75,1,1.25,1.5,1.75,2],HIDE_MS=2500,FPS=30;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const fmt=s=>{s=Math.max(0,Math.floor(s||0));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),r=s%60;return h?h+':'+String(m).padStart(2,'0')+':'+String(r).padStart(2,'0'):m+':'+String(r).padStart(2,'0')};
+const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,x)=>{try{localStorage.setItem(k,x)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+
+function attach(frame){
+  if(frame.__lpl)return frame.__lpl;
+  const L=document.createElement('div');L.className='lpl lpl-is-paused';L.tabIndex=-1;L.setAttribute('role','region');L.setAttribute('aria-label','Video player');L.innerHTML=HTML;frame.appendChild(L);
+  const q=s=>L.querySelector(s),v=q('video'),bar=q('.lpl-bar'),prog=q('.lpl-prog'),track=q('.lpl-track'),buf=q('.lpl-buf'),hovEl=q('.lpl-hov'),played=q('.lpl-played'),dot=q('.lpl-dot'),tip=q('.lpl-tip'),
+        mini=q('.lpl-mini i'),timeEl=q('.lpl-time'),menu=q('.lpl-menu'),btip=q('.lpl-btip'),osd=q('.lpl-osd'),live=q('.lpl-sr'),bPlay=q('.lpl-b-play'),bMute=q('.lpl-b-mute'),bGear=q('.lpl-b-gear'),bPip=q('.lpl-b-pip'),bFull=q('.lpl-b-full'),bBig=q('.lpl-big'),vol=q('.lpl-vrange'),
+        hT=q('.lpl-head .lpl-t'),hC=q('.lpl-head .lpl-c');
+  let vid='',hideT,menuOpen=false,dragging=false,barHover=false,active=false,rafId=0,pw=1,lastSave=0,spinT=0,view='main',tw=0,osdT,tipT,touchShown=false,lx=-1,ly=-1;
+  const KEY=()=>'aimm.mwtm.resume.'+vid,dur=()=>isFinite(v.duration)?v.duration:0,shown=()=>frame.classList.contains('is-local');
+
+  function sync(){const ended=v.ended,playing=!v.paused&&!ended;
+    L.classList.toggle('lpl-is-playing',playing);L.classList.toggle('lpl-is-paused',!playing);L.classList.toggle('lpl-is-ended',ended);
+    bPlay.setAttribute('aria-label',playing?'Pause':ended?'Replay':'Play');bPlay.dataset.tip=playing?'Pause (k)':ended?'Replay':'Play (k)';bBig.setAttribute('aria-label',ended?'Replay':'Play');showCtl()}
+  function syncVol(){const m=v.muted||v.volume===0;L.classList.toggle('lpl-is-muted',m);bMute.setAttribute('aria-label',m?'Unmute':'Mute');bMute.dataset.tip=m?'Unmute (m)':'Mute (m)';
+    const p=Math.round((m?0:v.volume)*100);vol.value=p;vol.style.setProperty('--v',p+'%')}
+
+  const canHide=()=>!v.paused&&!v.ended&&!menuOpen&&!dragging&&!barHover&&!bar.matches(':has(:focus-visible)');
+  function showCtl(){L.classList.remove('lpl-idle');clearTimeout(hideT);hideT=setTimeout(()=>{if(canHide())L.classList.add('lpl-idle')},HIDE_MS)}
+  L.addEventListener('pointermove',e=>{if(e.clientX===lx&&e.clientY===ly)return;lx=e.clientX;ly=e.clientY;showCtl()});
+  L.addEventListener('pointerleave',()=>{barHover=false;showCtl()});
+  bar.addEventListener('pointerenter',()=>{barHover=true});bar.addEventListener('pointerleave',()=>{barHover=false;showCtl()});
+  L.addEventListener('focusin',showCtl);
+
+  function showOsd(icon,label){const svg=osd.querySelector('svg');svg.style.display=icon?'':'none';if(icon)osd.querySelector('use').setAttribute('href','#i-'+icon);
+    osd.querySelector('span').textContent=label||'';osd.classList.remove('lpl-out');osd.classList.add('lpl-show');clearTimeout(osdT);
+    osdT=setTimeout(()=>{osd.classList.add('lpl-out');osd.classList.remove('lpl-show')},700);live.textContent=label||''}
+
+  function toggle(){if(v.ended)v.currentTime=0;v.paused||v.ended?v.play().catch(()=>{}):v.pause()}
+  function seekTo(t,i,txt){const d=dur();v.currentTime=clamp(t,0,d||t);paint();if(txt!==undefined)showOsd(i,txt);showCtl()}
+  function seekBy(dt){seekTo(v.currentTime+dt,dt<0?'back-10':'fwd-10',(dt<0?'-':'+')+Math.abs(dt)+' s')}
+  function setVol(x,flash){x=clamp(x,0,1);v.volume=x;v.muted=x===0;ls.set('aimm.mwtm.vol',x);if(flash)showOsd(x===0?'volume-x':'volume',Math.round(x*100)+'%')}
+  function toggleMute(flash){v.muted=!v.muted;if(!v.muted&&v.volume===0)v.volume=.5;if(flash)showOsd(v.muted?'volume-x':'volume',v.muted?'Muted':Math.round(v.volume*100)+'%')}
+  const spLabel=r=>r===1?'Normal':String(r);
+  function setSpeed(r,flash){r=clamp(r,.5,2);v.playbackRate=r;pw=r;ls.set('aimm.mwtm.speed',r);if(flash)showOsd(null,r===1?'Normal speed':r+'x');buildMenu()}
+  async function toggleFull(){const el=document.fullscreenElement||document.webkitFullscreenElement;
+    try{if(el){await(document.exitFullscreen||document.webkitExitFullscreen).call(document)}else{await(L.requestFullscreen||L.webkitRequestFullscreen).call(L)}}catch(e){}}
+  document.addEventListener('fullscreenchange',()=>{const f=document.fullscreenElement===L;L.classList.toggle('lpl-is-full',f);bFull.setAttribute('aria-label',f?'Exit full screen':'Full screen');bFull.dataset.tip=f?'Exit full screen (f)':'Full screen (f)';paint();showCtl()});
+  bPip.hidden=!document.pictureInPictureEnabled;
+  bPip.addEventListener('click',async()=>{try{document.pictureInPictureElement?await document.exitPictureInPicture():await v.requestPictureInPicture()}catch(e){}});
+
+  const measure=()=>{tw=track.clientWidth};new ResizeObserver(()=>{measure();paint()}).observe(track);
+  function paint(){const d=dur(),t=v.currentTime||0,p=d?t/d:0;played.style.transform='scaleX('+p+')';mini.style.transform='scaleX('+p+')';dot.style.setProperty('--dx',(p*tw)+'px');timeEl.textContent=fmt(t)+' / '+fmt(d)}
+  function paintBuf(){const d=dur();if(!d)return;const b=v.buffered,t=v.currentTime;let s=0,e=0;for(let i=0;i<b.length;i++){if(b.start(i)<=t+.25&&b.end(i)>=t){s=b.start(i);e=b.end(i);break}}buf.style.transform='translateX('+(s/d*100)+'%) scaleX('+((e-s)/d)+')'}
+  function aria(){prog.setAttribute('aria-valuemax',Math.floor(dur()));prog.setAttribute('aria-valuenow',Math.floor(v.currentTime));prog.setAttribute('aria-valuetext',fmt(v.currentTime)+' of '+fmt(dur()))}
+  function loop(){paint();rafId=(!v.paused&&!v.ended)?requestAnimationFrame(loop):0}
+  const startLoop=()=>{if(!rafId)rafId=requestAnimationFrame(loop)};
+
+  const pct=e=>{const r=track.getBoundingClientRect();return clamp((e.clientX-r.left)/r.width,0,1)};
+  function hoverAt(e){const p=pct(e);hovEl.style.transform='scaleX('+p+')';tip.textContent=fmt(p*dur());const w=tip.offsetWidth;tip.style.setProperty('--tx',clamp(p*tw-w/2,-4,tw-w+4)+'px')}
+  prog.addEventListener('pointermove',e=>{hoverAt(e);if(dragging){v.currentTime=pct(e)*dur();paint()}});
+  prog.addEventListener('pointerdown',e=>{if(e.button!==0)return;dragging=true;prog.classList.add('lpl-drag');L.classList.add('lpl-scrub');prog.setPointerCapture(e.pointerId);hoverAt(e);v.currentTime=pct(e)*dur();paint();showCtl();closeMenu()});
+  const endDrag=()=>{if(!dragging)return;dragging=false;prog.classList.remove('lpl-drag');L.classList.remove('lpl-scrub');showCtl();aria()};
+  prog.addEventListener('pointerup',e=>{endDrag();if(e.pointerType==='mouse')prog.blur()});prog.addEventListener('pointercancel',endDrag);
+
+  function mk(cls,html,attrs){const b=document.createElement('button');b.type='button';b.className='lpl-mi '+(cls?cls.split(' ').map(x=>'lpl-'+x).join(' '):'');b.innerHTML=html;b.setAttribute('role',(attrs&&attrs.role)||'menuitem');if(attrs)Object.keys(attrs).forEach(k=>k!=='role'&&b.setAttribute(k,attrs[k]));return b}
+  function buildMenu(){menu.replaceChildren();
+    if(view==='main'){const b=mk('','<span class="lpl-lbl">Playback speed</span><span class="lpl-val">'+spLabel(pw)+'</span>'+ic('chev'));b.onclick=()=>{view='speed';buildMenu();focusFirst(true)};menu.append(b)}
+    else{const h=mk('head2',ic('chev','back')+'<span class="lpl-lbl">Playback speed</span>');h.onclick=()=>{view='main';buildMenu();focusFirst()};menu.append(h);
+      SPEEDS.forEach(r=>{const b=mk('',ic('check','ck')+'<span class="lpl-lbl">'+spLabel(r)+'</span>',{role:'menuitemradio','aria-checked':String(r===pw)});b.dataset.r=r;b.onclick=()=>{setSpeed(r);closeMenu(true)};menu.append(b)})}}
+  function focusFirst(sel){const items=[...menu.querySelectorAll('.lpl-mi')],t=(sel&&menu.querySelector('[aria-checked=true]'))||items[0];if(t){t.focus();t.scrollIntoView({block:'nearest'})}}
+  function openMenu(kbd){view='main';buildMenu();menuOpen=true;L.classList.add('lpl-menu-open');menu.classList.add('lpl-open');bGear.classList.add('lpl-open');bGear.setAttribute('aria-expanded','true');showCtl();if(kbd)focusFirst()}
+  function closeMenu(refocus){if(!menuOpen)return;menuOpen=false;L.classList.remove('lpl-menu-open');menu.classList.remove('lpl-open');bGear.classList.remove('lpl-open');bGear.setAttribute('aria-expanded','false');if(refocus)bGear.focus({focusVisible:true});showCtl()}
+  bGear.addEventListener('click',e=>{menuOpen?closeMenu():openMenu(e.detail===0)});
+  menu.addEventListener('keydown',e=>{const items=[...menu.querySelectorAll('.lpl-mi')],i=items.indexOf(document.activeElement),k=e.key,stop=()=>{e.preventDefault();e.stopPropagation()};
+    if(k==='ArrowDown'){items[(i+1)%items.length].focus();stop()}else if(k==='ArrowUp'){items[(i-1+items.length)%items.length].focus();stop()}
+    else if(k==='ArrowLeft'&&view==='speed'){view='main';buildMenu();focusFirst();stop()}else if(k==='ArrowRight'&&view==='main'){items[0].click();stop()}
+    else if(k==='Escape'){closeMenu(true);stop()}else if(k==='Tab')closeMenu()});
+  document.addEventListener('pointerdown',e=>{active=L.contains(e.target);if(menuOpen&&!menu.contains(e.target)&&!bGear.contains(e.target))closeMenu()});
+  L.addEventListener('pointerenter',()=>{active=true});
+
+  function showBtip(b){clearTimeout(tipT);tipT=setTimeout(()=>{if(!b.dataset.tip||(menuOpen&&b===bGear))return;btip.textContent=b.dataset.tip;
+    const fr=L.getBoundingClientRect(),br=b.getBoundingClientRect(),w=btip.offsetWidth;btip.style.transform='translateX('+clamp(br.left-fr.left+br.width/2-w/2,8,fr.width-w-8)+'px)';btip.classList.add('lpl-on')},b===document.activeElement?0:450)}
+  const hideBtip=()=>{clearTimeout(tipT);btip.classList.remove('lpl-on')};
+  bar.querySelectorAll('.lpl-cb').forEach(b=>{b.addEventListener('pointerenter',()=>showBtip(b));b.addEventListener('pointerleave',hideBtip);
+    b.addEventListener('focus',()=>{if(b.matches(':focus-visible'))showBtip(b)});b.addEventListener('blur',hideBtip);b.addEventListener('click',e=>{hideBtip();if(e.detail>0)b.blur()})});
+
+  v.addEventListener('pointerdown',e=>{touchShown=(e.pointerType==='touch'&&L.classList.contains('lpl-idle'))});
+  v.addEventListener('click',()=>{if(menuOpen){closeMenu();return}if(touchShown){touchShown=false;showCtl();return}toggle();L.focus({preventScroll:true})});
+  v.addEventListener('dblclick',e=>{e.preventDefault();toggleFull()});
+  bBig.addEventListener('click',()=>toggle());bPlay.addEventListener('click',()=>toggle());bMute.addEventListener('click',()=>toggleMute());bFull.addEventListener('click',()=>toggleFull());
+  vol.addEventListener('input',()=>setVol(vol.value/100));
+  q('.lpl-retry').addEventListener('click',()=>{L.classList.remove('lpl-is-fail');v.load()});
+
+  /* capture phase on window so the page's own shortcuts (for example the spacebar push-to-talk) do not also fire */
+  window.addEventListener('keydown',e=>{
+    if(!shown()||e.ctrlKey||e.metaKey||e.altKey)return;
+    const t=e.target;if(!(active||L.contains(t)||document.fullscreenElement===L))return;
+    if(t.matches&&t.matches('input:not([type=range]),textarea,select,[contenteditable]'))return;
+    const k=e.key,onBtn=t.tagName==='BUTTON',onRange=t.type==='range';
+    if((k===' '||k==='Enter')&&onBtn){e.stopPropagation();return}
+    if(onRange&&k.startsWith('Arrow'))return;
+    if(menu.contains(t))return;
+    let used=true;
+    switch(k){
+      case' ':case'k':case'K':toggle();showOsd(v.paused?'pause':'play','');break;
+      case'j':case'J':seekBy(-10);break;case'l':case'L':seekBy(10);break;
+      case'ArrowLeft':seekBy(-5);break;case'ArrowRight':seekBy(5);break;
+      case'ArrowUp':setVol((v.muted?0:v.volume)+.05,true);break;case'ArrowDown':setVol((v.muted?0:v.volume)-.05,true);break;
+      case'm':case'M':toggleMute(true);break;case'f':case'F':toggleFull();break;
+      case'Home':seekTo(0,'back-10','0:00');break;case'End':seekTo(dur(),null,fmt(dur()));break;
+      case',':if(v.paused){seekTo(v.currentTime-1/FPS);showOsd(null,'Previous frame')}else used=false;break;
+      case'.':if(v.paused){seekTo(v.currentTime+1/FPS);showOsd(null,'Next frame')}else used=false;break;
+      case'<':setSpeed(SPEEDS[Math.max(0,SPEEDS.indexOf(pw)-1)],true);break;
+      case'>':setSpeed(SPEEDS[Math.min(SPEEDS.length-1,SPEEDS.indexOf(pw)+1)],true);break;
+      case'Escape':if(menuOpen)closeMenu(true);else used=false;break;
+      default:if(/^[0-9]$/.test(k)&&dur())seekTo(dur()*Number(k)/10,null,k*10+'%');else used=false}
+    if(used){e.preventDefault();e.stopPropagation();showCtl()}
+  },true);
+
+  const spinOn=()=>{clearTimeout(spinT);spinT=setTimeout(()=>L.classList.add('lpl-is-loading'),250)},spinOff=()=>{clearTimeout(spinT);L.classList.remove('lpl-is-loading')};
+  ['waiting','seeking','loadstart','stalled'].forEach(n=>v.addEventListener(n,spinOn));
+  ['canplay','playing','seeked','loadeddata'].forEach(n=>v.addEventListener(n,()=>{if(v.readyState>=3||(n==='loadeddata'&&v.readyState>=2))spinOff()}));
+  v.addEventListener('play',()=>{sync();startLoop()});v.addEventListener('pause',()=>{sync();paint();save(true)});
+  v.addEventListener('ended',()=>{sync();paint();ls.del(KEY())});v.addEventListener('volumechange',syncVol);v.addEventListener('ratechange',()=>{pw=v.playbackRate});
+  v.addEventListener('progress',paintBuf);v.addEventListener('timeupdate',()=>{paintBuf();aria();save()});v.addEventListener('durationchange',()=>{measure();paint();paintBuf();aria()});
+  v.addEventListener('error',()=>{if(!v.getAttribute('src'))return;spinOff();L.classList.add('lpl-is-fail')});
+  v.addEventListener('loadedmetadata',()=>{measure();const s=parseFloat(ls.get(KEY())),d=dur();if(s>5&&d&&s<d-10){v.currentTime=s;showOsd(null,'Resumed at '+fmt(s))}paint()});
+  function save(force){const now=Date.now();if(!force&&now-lastSave<3000)return;lastSave=now;if(!vid||!shown())return;const t=v.currentTime,d=dur();if(!d||v.ended)return;if(t>5&&t<d-10)ls.set(KEY(),String(t));else ls.del(KEY())}
+  addEventListener('pagehide',()=>save(true));document.addEventListener('visibilitychange',()=>{if(document.hidden)save(true)});
+
+  const sv=parseFloat(ls.get('aimm.mwtm.vol'));if(!isNaN(sv))v.volume=clamp(sv,0,1);
+  const ss=parseFloat(ls.get('aimm.mwtm.speed'));if(SPEEDS.indexOf(ss)>-1){v.playbackRate=ss;pw=ss}
+  syncVol();sync();buildMenu();
+
+  const api={el:L,video:v,
+    show(o){ /* o: {id,title,channel,src,autoplay} */
+      if(vid&&vid!==o.id)save(true);
+      v.pause();vid=o.id;hT.textContent=o.title||'';hC.textContent=o.channel||'';L.classList.remove('lpl-is-fail','lpl-is-ended','lpl-scrub','lpl-menu-open');closeMenu();
+      frame.classList.add('is-local');
+      v.src=o.src+(o.src.indexOf('#')<0?'#t=0.1':'');v.load();v.playbackRate=pw;
+      if(o.autoplay)v.play().catch(()=>{});sync();measure();paint();L.classList.remove('lpl-idle');spinOn()},
+    hide(){save(true);v.pause();v.removeAttribute('src');v.load();vid='';closeMenu();frame.classList.remove('is-local');
+      if(document.fullscreenElement===L)document.exitFullscreen().catch(()=>{})}};
+  frame.__lpl=api;return api;
+}
+window.AimmLocalPlayer={attach};
+})();
+
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.29';
+const AIMM_BUILD = '2026-11-23.30';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -22194,7 +22516,25 @@ loadKbSearchIndex();
 // Library: player, notes, saved chats, additions and review share the tab.
 // Existing note and snapshot storage and handlers remain the source of truth.
 const LIB_UI={results:null,query:'',excluded:0,hopeSearch:false,groups:{},more:{},open:{},editTip:null,kept:null,videoText:{},busy:false,addingAll:false};
-const LIB_PLAYER={id:null,external:null,api:null,apiLoading:false,descriptionOpen:false,selection:0};
+const LIB_PLAYER={id:null,external:null,api:null,apiLoading:false,descriptionOpen:false,selection:0,privateVideos:[],manifestLoading:false,manifestLoaded:false,local:null};
+function libPrivateUrl(value){
+  if(typeof value!=='string'||!value||value.startsWith('//'))return null;
+  try{const url=new URL(value,location.origin);return url.origin===location.origin&&/^https?:$/.test(url.protocol)?url.pathname+url.search+url.hash:null;}catch(_){return null;}
+}
+async function libPlayerLoadManifest(){
+  if(LIB_PLAYER.manifestLoading||LIB_PLAYER.manifestLoaded)return;
+  LIB_PLAYER.manifestLoading=true;
+  try{const response=await fetch('/mwtm/manifest.json');if(!response.ok)throw Error('Manifest unavailable');
+    const data=await response.json();if(!Array.isArray(data))throw Error('Invalid manifest');
+    const used=new Set((YT_KB.videos||[]).map(v=>v.video_id));
+    LIB_PLAYER.privateVideos=data.flatMap(item=>{
+      if(!item||typeof item.id!=='string'||!/^[A-Za-z0-9._-]{1,160}$/.test(item.id)||used.has(item.id)||typeof item.title!=='string'||!item.title.trim())return [];
+      const src=libPrivateUrl(item.video),thumb=libPrivateUrl(item.thumb);if(!src||!thumb)return [];
+      used.add(item.id);return [{video_id:item.id,title:item.title,channel:'Mix With The Masters',added:typeof item.added==='string'?item.added:'',src,thumb,description:typeof item.description==='string'?item.description:'',local:true}];
+    });
+  }catch(_){LIB_PLAYER.privateVideos=[];}
+  LIB_PLAYER.manifestLoading=false;LIB_PLAYER.manifestLoaded=true;libPlayerRender();
+}
 function libYouTubeId(video){
   const id=String(video?.video_id||'');
   return /^[A-Za-z0-9_-]{11}$/.test(id)&&(!video.url||libYouTubeIdFromLink(video.url)===id)?id:null;
@@ -22206,7 +22546,7 @@ function libYouTubeIdFromLink(value){
     return /^[A-Za-z0-9_-]{11}$/.test(id)?id:null;
   }catch(_){return null;}
 }
-function libPlayerVideos(){return (YT_KB.videos||[]).filter(v=>libYouTubeId(v));}
+function libPlayerVideos(){return LIB_PLAYER.privateVideos.concat((YT_KB.videos||[]).filter(v=>libYouTubeId(v)));}
 function libPlayerEmbedUrl(id,play=false){
   const params=new URLSearchParams({enablejsapi:'1',origin:location.origin,rel:'0',playsinline:'1'});
   if(play)params.set('autoplay','1');
@@ -22229,12 +22569,13 @@ function libPlayerRenderRows(scroll=false){
   const filtered=libPlayerFiltered(videos,select.value,document.getElementById('libPlayerSearch').value);
   const position=filtered.findIndex(v=>v.video_id===LIB_PLAYER.id);
   document.getElementById('libPlayerCount').textContent=position<0?String(videos.length):`${position+1}/${filtered.length}`;
-  host.innerHTML=filtered.length?filtered.map((v,i)=>`<button class="row" type="button" aria-current="${v.video_id===LIB_PLAYER.id}" data-video-id="${escapeHtml(v.video_id)}" onclick="libPlayerSelect('${escapeJs(v.video_id)}',true)"><span class="rank">${i+1}</span><img class="thumb" loading="lazy" src="https://i.ytimg.com/vi/${v.video_id}/mqdefault.jpg" alt=""><span class="txt"><span class="rt">${escapeHtml(v.title||'YouTube video')}</span><span class="rc">${escapeHtml(v.channel||'YouTube')}</span><span class="rm">Added ${libDate(v.added||v.ingested,'–')}</span></span></button>`).join(''):'<p class="empty">No videos match.</p>';
+  host.innerHTML=filtered.length?filtered.map((v,i)=>`<button class="row" type="button" aria-current="${v.video_id===LIB_PLAYER.id}" data-video-id="${escapeHtml(v.video_id)}" onclick="libPlayerSelect('${escapeJs(v.video_id)}',true)"><span class="rank">${i+1}</span><img class="thumb" loading="lazy" src="${v.local?escapeHtml(v.thumb):`https://i.ytimg.com/vi/${v.video_id}/mqdefault.jpg`}" alt=""><span class="txt"><span class="rt">${escapeHtml(v.title||'YouTube video')}</span><span class="rc">${escapeHtml(v.channel||'YouTube')}</span><span class="rm">Added ${libDate(v.added||v.ingested,'–')}</span></span></button>`).join(''):'<p class="empty">No videos match.</p>';
   if(scroll&&position>=0)host.querySelector('[aria-current="true"]')?.scrollIntoView({block:'nearest'});
 }
 async function libPlayerDescription(video,selection){
   const node=document.getElementById('libPlayerDescriptionText');
   if(!video){node.textContent='Hope has not read this video yet.';libPlayerUpdateMore();return;}
+  if(video.local){node.textContent=video.description;libPlayerUpdateMore();return;}
   const note=(STATE.knowledge||[]).find(n=>!n.toReview&&n.source===video.url&&n.summary);
   if(note){node.textContent=note.summary;libPlayerUpdateMore();return;}
   node.textContent='Loading transcript…';libPlayerUpdateMore();
@@ -22257,27 +22598,41 @@ function libPlayerUpdateMore(){
 }
 function libPlayerToggleDescription(){LIB_PLAYER.descriptionOpen=!LIB_PLAYER.descriptionOpen;libPlayerUpdateMore();}
 function libPlayerSelect(id,play=false,external=null){
-  if(!/^[A-Za-z0-9_-]{11}$/.test(id))return;
   const video=libPlayerVideos().find(v=>v.video_id===id)||null;
+  if(!video&&!/^[A-Za-z0-9_-]{11}$/.test(id))return;
+  if(video?.local){
+    LIB_PLAYER.id=id;LIB_PLAYER.external=null;LIB_PLAYER.descriptionOpen=false;const selection=++LIB_PLAYER.selection;
+    document.getElementById('libPlayerTitle').textContent=video.title;
+    document.getElementById('libPlayerChannel').textContent=video.channel;
+    const open=document.getElementById('libPlayerOpen');open.hidden=false;open.textContent='Open recording';open.href=video.src;
+    document.getElementById('libPlayerFrame').classList.remove('is-fail');
+    document.getElementById('libPlayerIframe').removeAttribute('src');
+    if(!LIB_PLAYER.local)LIB_PLAYER.local=AimmLocalPlayer.attach(document.getElementById('libPlayerFrame'));
+    LIB_PLAYER.local.show({id,title:video.title,channel:video.channel,src:video.src,autoplay:play});
+    libPlayerDescription(video,selection);libPlayerRenderRows(true);return;
+  }
+  LIB_PLAYER.local?.hide();
   LIB_PLAYER.id=id;LIB_PLAYER.external=video?null:external||{title:'YouTube video',channel:'YouTube'};
   LIB_PLAYER.descriptionOpen=false;const selection=++LIB_PLAYER.selection;
   const current=video||LIB_PLAYER.external;
   document.getElementById('libPlayerTitle').textContent=current.title||'YouTube video';
   document.getElementById('libPlayerChannel').textContent=current.channel||'YouTube';
   const link=`https://www.youtube.com/watch?v=${id}`;
+  document.getElementById('libPlayerOpen').hidden=true;
   document.getElementById('libPlayerOpen').href=link;document.getElementById('libPlayerFailLink').href=link;
   document.getElementById('libPlayerFrame').classList.remove('is-fail');
   document.getElementById('libPlayerIframe').src=libPlayerEmbedUrl(id,play);
   libPlayerEnsureApi();libPlayerDescription(video,selection);libPlayerRenderRows(true);
 }
 function libPlayerRender(){
+  if(!LIB_PLAYER.manifestLoaded&&!LIB_PLAYER.manifestLoading)libPlayerLoadManifest();
   const videos=libPlayerVideos();
   if(!LIB_PLAYER.id&&videos.length)libPlayerSelect(videos[0].video_id);
   else if(LIB_PLAYER.id){
     const video=videos.find(v=>v.video_id===LIB_PLAYER.id);
     if(video&&LIB_PLAYER.external){LIB_PLAYER.external=null;libPlayerSelect(video.video_id);}
     else{
-      const note=video&&(STATE.knowledge||[]).find(n=>!n.toReview&&n.source===video.url&&n.summary);
+      const note=video&&!video.local&&(STATE.knowledge||[]).find(n=>!n.toReview&&n.source===video.url&&n.summary);
       if(note&&document.getElementById('libPlayerDescriptionText').textContent!==note.summary){document.getElementById('libPlayerDescriptionText').textContent=note.summary;libPlayerUpdateMore();}
       libPlayerRenderRows();
     }
@@ -22293,7 +22648,8 @@ async function libPlayerSearchEnter(event){
 }
 async function libPlayerCopyLink(){
   if(!LIB_PLAYER.id)return;
-  await navigator.clipboard.writeText(`https://www.youtube.com/watch?v=${LIB_PLAYER.id}`);
+  const local=LIB_PLAYER.privateVideos.find(v=>v.video_id===LIB_PLAYER.id);
+  await navigator.clipboard.writeText(local?new URL(local.src,location.origin).href:`https://www.youtube.com/watch?v=${LIB_PLAYER.id}`);
   const button=document.getElementById('libPlayerCopy');button.textContent='Copied';setTimeout(()=>button.textContent='Copy link',1800);
 }
 function libFold(button){
