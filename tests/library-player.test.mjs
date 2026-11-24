@@ -22,6 +22,30 @@ function storage(){
   return {values,getItem:key=>values.get(key)||null,setItem:(key,value)=>values.set(key,value)};
 }
 
+test('search sits full width below the player title at wide and 560px layouts',()=>{
+  const library=html.slice(html.indexOf('<section class="lp is-landing"'),html.indexOf('</section>',html.indexOf('<section class="lp is-landing"')));
+  assert.ok(library.indexOf('id="libPlayerTitle"')<library.indexOf('id="libPlayerSearch"'));
+  assert.ok(library.indexOf('id="libPlayerSearch"')<library.indexOf('<div class="list">'));
+  assert.equal((library.match(/id="libPlayerSearch"/g)||[]).length,1);
+  assert.match(library,/class="fld searchbar"><input id="libPlayerSearch"[^>]*placeholder="Search or paste a link"[^>]*oninput="libPlayerRenderRows\(\)"[^>]*libPlayerSearchEnter\(event\)/);
+  assert.match(html,/\.lp \.grid\{[^}]*grid-template-areas:"player list" "meta list" "search list"/);
+  assert.match(html,/@container lp \(max-width:819px\)\{\.lp \.grid\{[^}]*grid-template-areas:"player" "meta" "search" "list"/);
+  assert.match(html,/\.lp \.searchbar\{[^}]*margin-top:24px/);
+  assert.match(html,/\.lp \.searchbar\.fld\{width:100%;background:#16191c\}/);
+  assert.match(html,/\.lp \.fld:focus-within\{outline:2px solid rgba\(45,212,191,\.65\)/);
+});
+
+test('playlist has only the full-width alphabetical channel filter and no description path',()=>{
+  const library=html.slice(html.indexOf('<section class="lp is-landing"'),html.indexOf('</section>',html.indexOf('<section class="lp is-landing"')));
+  const panel=library.slice(library.indexOf('<div class="list">'));
+  assert.doesNotMatch(panel,/id="libPlayerSearch"|class="fld search"/);
+  assert.match(panel,/class="fld chsel"><span class="plus"[^>]*>\+<\/span><select id="libPlayerChannelFilter"/);
+  assert.match(html,/\.lp \.fld\.chsel\{width:100%;min-width:0\}/);
+  assert.match(html,/return \[\.\.\.counts\]\.sort\(\(a,b\)=>a\[0\]\.localeCompare\(b\[0\]/);
+  assert.doesNotMatch(html,/libPlayerDescription|libPlayerMore|libPlayerToggleDescription|libPlayerUpdateMore|\.lp \.desc|descriptionOpen|--desc-pad/);
+  assert.doesNotMatch(section,/\/kb\/transcript|LIB_UI\.videoText|libVideoTranscript/);
+});
+
 test('playlist builds only from real YouTube IDs in the runtime store',()=>{
   const ctx=setup();ctx.YT_KB.videos=[video('6WPtHxWkY2k','Logic Pro'),{video_id:'mwtm_clip',title:'Clip',channel:'MWTM'}];
   assert.deepEqual(Array.from(ctx.libPlayerVideos(),v=>v.title),['Logic Pro']);
@@ -157,10 +181,10 @@ test('private manifest resolves unique R2 keys and preserves YouTube rows',async
   await ctx.libPlayerLoadManifest();
   assert.deepEqual(Array.from(ctx.libPlayerVideos(),v=>v.title),['Drum lesson','YouTube lesson']);
   assert.equal(ctx.libPlayerVideos()[0].channel,'Mix With The Masters');
-  assert.equal(ctx.libPlayerVideos()[0].description,'Private lesson');
+  assert.equal('description' in ctx.libPlayerVideos()[0],false);
   assert.equal(ctx.libPlayerVideos()[0].src,'/mwtm/f/lessons/lesson-1.mp4');
   assert.equal(ctx.libPlayerVideos()[0].thumb,'/mwtm/f/thumbs/lesson-1.jpg');
-  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.36');
+  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.37');
   assert.equal(rendered,1);
 });
 
@@ -173,17 +197,17 @@ test('missing or empty private manifest keeps the existing YouTube playlist',asy
   }
 });
 
-test('private selection uses local player, description and recording link; YouTube switches back',async()=>{
-  const nodes={};for(const id of ['libPlayerTitle','libPlayerChannel','libPlayerDescriptionText','libPlayerOpen','libPlayerFailLink','libPlayerIframe'])nodes[id]={textContent:'',href:'',hidden:false,removeAttribute(name){this.removed=name}};
+test('private selection uses local player and recording link; YouTube switches back',async()=>{
+  const nodes={};for(const id of ['libPlayerTitle','libPlayerChannel','libPlayerOpen','libPlayerFailLink','libPlayerIframe'])nodes[id]={textContent:'',href:'',hidden:false,removeAttribute(name){this.removed=name}};
   nodes.libPlayer={classList:{remove(){}}};nodes.libPlayerFrame={classList:{remove(){}}};
   const local={shown:[],hidden:0,show(o){this.shown.push(o)},hide(){this.hidden++}};
   const saved=storage();
   const ctx=setup({localStorage:saved,document:{getElementById:id=>nodes[id]},AimmLocalPlayer:{attach:()=>local}});
-  ctx.libPlayerRenderRows=()=>{};ctx.libPlayerUpdateMore=()=>{};ctx.libPlayerEnsureApi=()=>{};
-  vm.runInNewContext("LIB_PLAYER.privateVideos=[{video_id:'lesson-1',title:'Lesson',channel:'Mix With The Masters',src:'/mwtm/one.mp4',thumb:'/mwtm/f/one.jpg',description:'A recording',local:true}]",ctx);
+  ctx.libPlayerRenderRows=()=>{};ctx.libPlayerEnsureApi=()=>{};
+  vm.runInNewContext("LIB_PLAYER.privateVideos=[{video_id:'lesson-1',title:'Lesson',channel:'Mix With The Masters',src:'/mwtm/one.mp4',thumb:'/mwtm/f/one.jpg',local:true}]",ctx);
   ctx.libPlayerSelect('lesson-1',true);
   assert.equal(nodes.libPlayerOpen.href,'/mwtm/one.mp4');assert.equal(nodes.libPlayerOpen.textContent,'Open recording');
-  assert.equal(nodes.libPlayerDescriptionText.textContent,'A recording');assert.equal(local.shown[0].autoplay,true);
+  assert.equal(local.shown[0].autoplay,true);
   assert.equal(JSON.parse(saved.getItem('aimmLibLastPlayed_v1'))[0].kind,'private');
   ctx.libPlayerSelect('6WPtHxWkY2k');
   assert.equal(local.hidden,1);assert.equal(nodes.libPlayerOpen.hidden,true);
