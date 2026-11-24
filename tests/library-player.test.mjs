@@ -34,15 +34,21 @@ test('search sits full width below the player title at wide and 560px layouts',(
   assert.match(html,/\.lp \.grid\{[^}]*grid-template-areas:"player list" "meta list" "search list"/);
   assert.match(html,/@container lp \(max-width:819px\)\{\.lp \.grid\{[^}]*grid-template-areas:"player" "meta" "search" "list"/);
   assert.doesNotMatch(html,/\.lp \.searchbar\.fld/);
-  assert.match(html,/\.lp \.fld:focus-within\{outline:2px solid rgba\(45,212,191,\.65\)/);
+  assert.match(html,/\.lp \.fld:not\(\.chsel\):focus-within\{outline:2px solid rgba\(45,212,191,\.65\)/);
 });
 
 test('playlist has only the full-width alphabetical channel filter and no description path',()=>{
   const library=html.slice(html.indexOf('<section class="lp is-landing"'),html.indexOf('</section>',html.indexOf('<section class="lp is-landing"')));
   const panel=library.slice(library.indexOf('<div class="list">'));
   assert.doesNotMatch(panel,/id="libPlayerSearch"|class="fld search"/);
-  assert.match(panel,/class="fld chsel"><span class="plus"[^>]*>\+<\/span><select id="libPlayerChannelFilter"/);
+  assert.match(panel,/class="fld chsel" id="libPlayerChannelField"><button id="libPlayerChannelFilter"[^>]*role="combobox"[^>]*aria-controls="libPlayerChannelMenu"/);
+  assert.match(panel,/<use href="#i-plus"\/>/);
+  assert.match(panel,/id="libPlayerChannelMenu" class="channel-menu" role="listbox"/);
   assert.match(html,/\.lp \.fld\.chsel\{width:100%;min-width:0\}/);
+  assert.match(html,/\.lp \.channel-menu\{[^}]*width:100%;max-height:320px;overflow-y:auto[^}]*border:1px solid #2c3034[^}]*background:#1b1d20/);
+  assert.match(html,/\.lp \.channel-option\.is-active,\.lp \.channel-option:hover\{background:#2dd4bf;color:#000\}/);
+  assert.match(html,/\.lp \.channel-trigger:focus-visible\{outline:2px solid #2dd4bf/);
+  assert.doesNotMatch(html,/\.lp \.fld\.chsel select|<select id="libPlayerChannelFilter"/);
   assert.match(html,/return \[\.\.\.counts\]\.sort\(\(a,b\)=>a\[0\]\.localeCompare\(b\[0\]/);
   assert.doesNotMatch(html,/libPlayerDescription|libPlayerMore|libPlayerToggleDescription|libPlayerUpdateMore|\.lp \.desc|descriptionOpen|--desc-pad/);
   assert.doesNotMatch(section,/\/kb\/transcript|LIB_UI\.videoText|libVideoTranscript/);
@@ -150,6 +156,35 @@ test('playlist channel filter and search combine, then keep the current row teal
   assert.match(rows.innerHTML,/Bass compression/);assert.equal(count.textContent,'3');
   assert.match(html,/\.lp \.row\[aria-current="true"\]\{background:var\(--teal\)/);
 });
+test('custom channel combobox keeps its value API and supports keyboard, type-ahead and outside click',()=>{
+  const classes=new Set(),attributes=new Map(),listeners=new Map();
+  const trigger={value:'',focused:false,setAttribute:(k,v)=>attributes.set(k,v),removeAttribute:k=>attributes.delete(k),focus(){this.focused=true}};
+  const field={classList:{contains:k=>classes.has(k),add:k=>classes.add(k),remove:k=>classes.delete(k)},contains:target=>target===trigger};
+  const label={textContent:''};
+  const optionNodes=Array.from({length:3},(_,i)=>({id:`libPlayerChannelOption${i}`,classList:{toggle(){}},scrollIntoView(){}}));
+  const menu={innerHTML:'',querySelectorAll:()=>optionNodes,querySelector:selector=>optionNodes.find(row=>`#${row.id}`===selector)};
+  const rows={innerHTML:''},count={textContent:''},search={value:''};
+  const nodes={libPlayerRows:rows,libPlayerCount:count,libPlayerSearch:search,libPlayerChannelFilter:trigger,libPlayerChannelField:field,libPlayerChannelMenu:menu,libPlayerChannelLabel:label};
+  const document={getElementById:id=>nodes[id],addEventListener:(type,fn)=>listeners.set(type,fn),removeEventListener:type=>listeners.delete(type)};
+  const ctx=setup({document,libChannels:videos=>[...new Set(videos.map(v=>v.channel))].sort((a,b)=>a.localeCompare(b)).map(name=>[name,videos.filter(v=>v.channel===name).length])});
+  ctx.YT_KB.videos=[video('6WPtHxWkY2k','One','Zulu'),video('AbCdEfGhI12','Two','Alpha'),video('ZyXwVuTsR98','Three','Alpha')];
+  ctx.libPlayerRenderRows();
+  assert.equal(trigger.value,'');assert.equal(label.textContent,'Channel');
+  assert.ok(menu.innerHTML.indexOf('All channels')<menu.innerHTML.indexOf('Alpha'));
+  assert.ok(menu.innerHTML.indexOf('Alpha')<menu.innerHTML.indexOf('Zulu'));
+  assert.match(menu.innerHTML,/channel-count">3/);
+  assert.match(menu.innerHTML,/channel-count">2/);
+  const key=(keyName)=>{let prevented=false;ctx.libPlayerChannelKeydown({key:keyName,currentTarget:trigger,preventDefault(){prevented=true}});return prevented};
+  assert.equal(key('ArrowDown'),true);assert.equal(attributes.get('aria-expanded'),'true');
+  assert.equal(attributes.get('aria-activedescendant'),'libPlayerChannelOption1');
+  key('Enter');assert.equal(trigger.value,'Alpha');assert.equal(label.textContent,'Alpha');assert.equal(attributes.get('aria-expanded'),'false');
+  assert.equal(trigger.focused,true);assert.match(rows.innerHTML,/Two/);assert.doesNotMatch(rows.innerHTML,/One/);
+  key(' ');key('z');assert.equal(attributes.get('aria-activedescendant'),'libPlayerChannelOption2');
+  key('Escape');assert.equal(attributes.get('aria-expanded'),'false');
+  key('End');assert.equal(attributes.get('aria-activedescendant'),'libPlayerChannelOption2');
+  listeners.get('pointerdown')({target:{}});assert.equal(attributes.get('aria-expanded'),'false');
+  trigger.value='Missing';ctx.libPlayerRenderRows();assert.equal(trigger.value,'');
+});
 test('pasted YouTube link uses the existing add path',async()=>{
   let added=0,selected='';const input={value:'https://youtu.be/6WPtHxWkY2k'},field={value:''};
   const ctx=setup({document:{getElementById:id=>id==='libLink'?field:null}});
@@ -186,7 +221,7 @@ test('private manifest resolves unique R2 keys and preserves YouTube rows',async
   assert.equal('description' in ctx.libPlayerVideos()[0],false);
   assert.equal(ctx.libPlayerVideos()[0].src,'/mwtm/f/lessons/lesson-1.mp4');
   assert.equal(ctx.libPlayerVideos()[0].thumb,'/mwtm/f/thumbs/lesson-1.jpg');
-  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.38');
+  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.39');
   assert.equal(rendered,1);
 });
 
