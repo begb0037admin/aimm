@@ -38,3 +38,9 @@ Hope's 16 `inventory_*` tools are registered on the ElevenLabs agent: the first 
 For each confirmed action, first call with `confirmed: false`. Hope must read the returned `summary` aloud, obtain Kev's yes, then repeat with `confirmed: true`. Trash also requires `confirmed_trash: true`. An unconfirmed call does not change state. Companion actions send IDs only, retain the companion's 500-item batch limit, and return per-item failure reasons.
 
 Legacy names `pluginhub_navigate`, `pluginhub_search_inventory` and `pluginhub_add_to_bus` still route to their `inventory_*` equivalents.
+
+# Hope video cueing — build 2026-11-23.46 (BUILT, NOT DEPLOYED)
+
+`cue_video(video_id, title?, channel?)` accepts an exact 11-character YouTube ID, switches to Library, and selects the video in the existing player with autoplay off. It returns `{ok:true,cued:true,title}`. Title and channel label videos that are not already ingested. `search_youtube_videos(query)` POSTs to the same `/kb/search-youtube` proxy endpoint as the Library search and returns up to five `{video_id,title,channel,duration}` results. Hope cues the first result only when it clearly matches Kev's request; otherwise she asks which result he wants.
+
+When a plugin chain or advice uses an ingested YouTube source from `search_yt_knowledge` / `read_yt_knowledge`, Hope calls `cue_video` for that source and says, “I have cued it in the player if you want to have a look.” A private Mix With The Masters recording with a non-YouTube ID cannot be passed to this 11-character YouTube tool; Hope must not invent an ID or claim it was cued. Typed chat and the other page providers inherit both tools from `TOOL_DEFS`. The ElevenLabs agent itself remains unchanged until its two client tools and prompt guidance are registered there.

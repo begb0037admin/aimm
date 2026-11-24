@@ -281,5 +281,45 @@
         "confirmed"
       ]
     }
+  },
+  {
+    "name": "cue_video",
+    "description": "Cue an 11-character YouTube video in the Library player without autoplay. When answering a plugin chain or advice from an ingested YouTube video, call this for the source and say \"I have cued it in the player if you want to have a look.\"",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "video_id": {
+          "type": "string",
+          "description": "Exact 11-character YouTube video ID."
+        },
+        "title": {
+          "type": "string",
+          "description": "Source title for a video outside the ingested Library."
+        },
+        "channel": {
+          "type": "string",
+          "description": "Source channel for a video outside the ingested Library."
+        }
+      },
+      "required": [
+        "video_id"
+      ]
+    }
+  },
+  {
+    "name": "search_youtube_videos",
+    "description": "Search YouTube for a video Kev asks to find or show. Returns up to five IDs, titles, channels and durations. If the first clearly matches, call cue_video and say what you cued; if unclear ask which result he wants.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Video title, creator and/or topic."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
   }
 ]
