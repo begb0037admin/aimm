@@ -58,7 +58,7 @@ test('manifest and media return their cache headers and correct types', async ()
 
 test('versioned manifest URL ignores the query string when selecting its R2 key', async () => {
   const { env, calls } = environment();
-  const response = await request('/mwtm/manifest.json?b=2026-11-23.37', {}, env);
+  const response = await request('/mwtm/manifest.json?b=2026-11-23.38', {}, env);
   assert.equal(response.status, 200);
   assert.equal(response.headers.get('Content-Type'), 'application/json');
   assert.equal(response.headers.get('Cache-Control'), 'private, no-cache');

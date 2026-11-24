@@ -27,11 +27,13 @@ test('search sits full width below the player title at wide and 560px layouts',(
   assert.ok(library.indexOf('id="libPlayerTitle"')<library.indexOf('id="libPlayerSearch"'));
   assert.ok(library.indexOf('id="libPlayerSearch"')<library.indexOf('<div class="list">'));
   assert.equal((library.match(/id="libPlayerSearch"/g)||[]).length,1);
-  assert.match(library,/class="fld searchbar"><input id="libPlayerSearch"[^>]*placeholder="Search or paste a link"[^>]*oninput="libPlayerRenderRows\(\)"[^>]*libPlayerSearchEnter\(event\)/);
+  assert.match(library,/class="searchbar"><svg class="ic"[^>]*><use href="#i-search"\/><\/svg><input id="libPlayerSearch"[^>]*placeholder="Search or paste a link"[^>]*oninput="libPlayerRenderRows\(\)"[^>]*libPlayerSearchEnter\(event\)/);
+  assert.match(html,/\.lp \.searchbar\{[^}]*min-height:76px[^}]*margin-top:20px[^}]*padding:24px 28px[^}]*border-radius:18px[^}]*background:#1b1d20/);
+  assert.match(html,/\.lp \.searchbar input::placeholder\{color:var\(--mid\);opacity:1\}/);
+  assert.match(html,/\.lp \.searchbar:focus-within\{outline:2px solid var\(--teal\)/);
   assert.match(html,/\.lp \.grid\{[^}]*grid-template-areas:"player list" "meta list" "search list"/);
   assert.match(html,/@container lp \(max-width:819px\)\{\.lp \.grid\{[^}]*grid-template-areas:"player" "meta" "search" "list"/);
-  assert.match(html,/\.lp \.searchbar\{[^}]*margin-top:24px/);
-  assert.match(html,/\.lp \.searchbar\.fld\{width:100%;background:#16191c\}/);
+  assert.doesNotMatch(html,/\.lp \.searchbar\.fld/);
   assert.match(html,/\.lp \.fld:focus-within\{outline:2px solid rgba\(45,212,191,\.65\)/);
 });
 
@@ -184,7 +186,7 @@ test('private manifest resolves unique R2 keys and preserves YouTube rows',async
   assert.equal('description' in ctx.libPlayerVideos()[0],false);
   assert.equal(ctx.libPlayerVideos()[0].src,'/mwtm/f/lessons/lesson-1.mp4');
   assert.equal(ctx.libPlayerVideos()[0].thumb,'/mwtm/f/thumbs/lesson-1.jpg');
-  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.37');
+  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.38');
   assert.equal(rendered,1);
 });
 
