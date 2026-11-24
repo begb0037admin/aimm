@@ -3530,6 +3530,17 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .lp .row[aria-current="true"] .rm,.lp .row[aria-current="true"] .rc{opacity:.8}
 .lp .row[aria-current="true"]:focus-visible{outline-color:#000}
 .lp .empty{padding:28px 20px;font-size:var(--t-desc);line-height:1.5;color:var(--dim)}
+.lp .youtube-title{margin:22px 12px 8px;font:500 calc(var(--aimm-section-title-size) * .72)/1.3 var(--aimm-font-display);color:var(--dim)}
+.lp .search-status{margin:10px 18px;font-size:var(--t-meta);line-height:1.4;color:var(--dim)}
+.lp .result-row{padding-bottom:8px}
+.lp .result-row .row:hover{background:var(--hover)}
+.lp .result-row .row[aria-current="true"]:hover{background:var(--teal)}
+.lp .result-actions{margin:0 8px 0 calc(var(--rank-w) + var(--thumb-w) + var(--row-gap) * 2 + 6px)}
+.lp .add-hope{padding:5px 10px;border:0;border-radius:999px;background:transparent;color:var(--teal);font-size:var(--t-meta);cursor:pointer}
+.lp .add-hope:hover,.lp .add-hope:focus-visible{background:var(--teal);color:#000}
+.lp .add-hope:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.lp .add-hope:disabled{opacity:.6;cursor:default}
+@container lp (max-width:560px){.lp .grid{--thumb-w:100px;--rank-w:20px;--row-gap:8px;--row-pad:8px}.lp .searchbar{padding:18px;min-height:60px}.lp .result-actions{margin-left:calc(var(--rank-w) + var(--thumb-w) + var(--row-gap) * 2 + 6px)}}
 @media (prefers-reduced-motion:reduce){.lp .row,.lp .video-pill{transition:none}}
 
 #library .lp .panel{padding:0;box-shadow:none}
@@ -3894,7 +3905,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     <div class="grid">
       <div class="player"><div class="frame is-landing" id="libPlayerFrame"><div class="landing" id="libPlayerLanding" aria-label="Choose a video"></div><iframe id="libPlayerIframe" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="fail"><h3>This video can't be played here</h3><a class="video-pill teal" id="libPlayerFailLink" target="_blank" rel="noopener">Open on YouTube</a></div></div></div>
       <div class="meta"><h3 class="title" id="libPlayerTitle"></h3><div class="chan"><span class="name" id="libPlayerChannel"></span><div class="btns"><a class="video-pill teal" id="libPlayerOpen" target="_blank" rel="noopener" hidden>Open on YouTube</a><button class="video-pill" id="libPlayerCopy" type="button" onclick="libPlayerCopyLink()">Copy link</button></div></div></div>
-      <div class="searchbar"><svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-search"/></svg><input id="libPlayerSearch" type="search" aria-label="Search playlist or paste a YouTube link" placeholder="Search or paste a link" oninput="libPlayerRenderRows()" onkeydown="if(event.key==='Enter')libPlayerSearchEnter(event)"></div>
+      <div class="searchbar"><svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-search"/></svg><input id="libPlayerSearch" type="search" aria-label="Search library and YouTube or paste a YouTube link" aria-controls="libPlayerRows" placeholder="Search or paste a link" oninput="libPlayerSearchChanged()" onkeydown="if(event.key==='Enter')libPlayerSearchEnter(event)"></div>
       <div class="list"><div class="panel"><div class="phead"><h2>Playlist</h2><span class="count" id="libPlayerCount">0</span></div><div class="fields"><div class="fld chsel" id="libPlayerChannelField"><button id="libPlayerChannelFilter" class="channel-trigger" type="button" value="" role="combobox" aria-label="Filter playlist by channel" aria-haspopup="listbox" aria-expanded="false" aria-controls="libPlayerChannelMenu" onclick="libPlayerChannelToggle()" onkeydown="libPlayerChannelKeydown(event)"><svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-plus"/></svg><span class="channel-label" id="libPlayerChannelLabel">Channel</span></button><div id="libPlayerChannelMenu" class="channel-menu" role="listbox" aria-label="Channels"></div></div></div><div class="rows" id="libPlayerRows"></div></div></div>
     </div>
   </section>
@@ -6131,7 +6142,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.40';
+const AIMM_BUILD = '2026-11-23.41';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -22547,6 +22558,7 @@ loadKbSearchIndex();
 // Existing note and snapshot storage and handlers remain the source of truth.
 const LIB_UI={results:null,query:'',excluded:0,hopeSearch:false,groups:{},more:{},open:{},editTip:null,kept:null,busy:false,addingAll:false};
 const LIB_PLAYER={id:null,external:null,api:null,apiLoading:false,privateVideos:[],manifestLoading:false,manifestLoaded:false,local:null};
+const LIB_SEARCH={query:'',videos:[],loading:false,error:'',timer:null,request:0,adding:new Set(),addError:''};
 function libPrivateKeyUrl(value){
   if(typeof value!=='string'||!value||value.startsWith('/')||value.includes('..')||value.includes('\\')||/[:?#\0]/.test(value))return null;
   return '/mwtm/f/'+value.split('/').map(part=>encodeURIComponent(part)).join('/');
@@ -22700,11 +22712,59 @@ function libPlayerRenderRows(scroll=false){
   const host=document.getElementById('libPlayerRows');if(!host)return;
   const videos=libPlayerVideos(),select=document.getElementById('libPlayerChannelFilter');
   libPlayerChannelRender(videos);
-  const filtered=libPlayerFiltered(videos,select.value,document.getElementById('libPlayerSearch').value);
+  const query=document.getElementById('libPlayerSearch').value.trim(),linkId=libYouTubeIdFromLink(query);
+  const filtered=linkId?videos.filter(v=>v.video_id===linkId):libPlayerFiltered(videos,select.value,query);
   const position=filtered.findIndex(v=>v.video_id===LIB_PLAYER.id);
-  document.getElementById('libPlayerCount').textContent=position<0?String(videos.length):`${position+1}/${filtered.length}`;
-  host.innerHTML=filtered.length?filtered.map((v,i)=>`<button class="row" type="button" aria-current="${v.video_id===LIB_PLAYER.id}" data-video-id="${escapeHtml(v.video_id)}" onclick="libPlayerSelect('${escapeJs(v.video_id)}',true)"><span class="rank">${i+1}</span><img class="thumb" loading="lazy" src="${v.local?escapeHtml(v.thumb):`https://i.ytimg.com/vi/${v.video_id}/mqdefault.jpg`}" alt=""><span class="txt"><span class="rt">${escapeHtml(v.title||'YouTube video')}</span><span class="rc">${escapeHtml(v.channel||'YouTube')}</span><span class="rm">Added ${libDate(v.added||v.ingested,'–')}</span></span></button>`).join(''):'<p class="empty">No videos match.</p>';
+  document.getElementById('libPlayerCount').textContent=query||select.value?`${filtered.length}/${videos.length}`:String(videos.length);
+  const libraryRows=filtered.map((v,i)=>`<button class="row" type="button" aria-current="${v.video_id===LIB_PLAYER.id}" data-video-id="${escapeHtml(v.video_id)}" aria-label="Play ${escapeHtml(v.title||'YouTube video')}" onclick="libPlayerSelect('${escapeJs(v.video_id)}',true)"><span class="rank">${i+1}</span><img class="thumb" loading="lazy" src="${v.local?escapeHtml(v.thumb):`https://i.ytimg.com/vi/${v.video_id}/mqdefault.jpg`}" alt=""><span class="txt"><span class="rt">${escapeHtml(v.title||'YouTube video')}</span><span class="rc">${escapeHtml(v.channel||'YouTube')}</span><span class="rm">Added ${libDate(v.added||v.ingested,'–')}</span></span></button>`).join('');
+  const known=new Set(videos.map(v=>v.video_id));
+  const external=(linkId&&!known.has(linkId)?[{video_id:linkId,title:'YouTube video',channel:'YouTube'},...LIB_SEARCH.videos]:LIB_SEARCH.videos)
+    .filter((v,i,arr)=>/^[A-Za-z0-9_-]{11}$/.test(v.video_id)&&!known.has(v.video_id)&&arr.findIndex(item=>item.video_id===v.video_id)===i);
+  if(linkId){const found=LIB_SEARCH.videos.find(v=>v.video_id===linkId);if(found&&external.length){external[0]={...external[0],...found};}}
+  const youtubeRows=external.map((v,i)=>`<div class="result-row"><button class="row" type="button" aria-current="${v.video_id===LIB_PLAYER.id}" data-video-id="${escapeHtml(v.video_id)}" aria-label="Play ${escapeHtml(v.title||'YouTube video')}" onclick="libPlayerPlayExternal('${escapeJs(v.video_id)}')"><span class="rank">${i+1}</span><img class="thumb" loading="lazy" src="https://i.ytimg.com/vi/${v.video_id}/mqdefault.jpg" alt=""><span class="txt"><span class="rt">${escapeHtml(v.title||'YouTube video')}</span><span class="rc">${escapeHtml(v.channel||'YouTube')}</span><span class="rm">Not in library</span></span></button><div class="result-actions"><button class="add-hope" type="button" aria-label="Add ${escapeHtml(v.title||'YouTube video')} to Hope" ${LIB_SEARCH.adding.has(v.video_id)?'disabled':''} onclick="libPlayerAddToHope('${escapeJs(v.video_id)}')">${LIB_SEARCH.adding.has(v.video_id)?'Adding...':'Add to Hope'}</button></div></div>`).join('');
+  const searching=LIB_SEARCH.loading&&LIB_SEARCH.query===query;
+  const error=LIB_SEARCH.error&&LIB_SEARCH.query===query;
+  host.innerHTML=libraryRows+(youtubeRows?`<h3 class="youtube-title">On YouTube</h3>${youtubeRows}`:'')
+    +(searching?'<p class="search-status" role="status">Searching YouTube...</p>':'')
+    +(error?`<p class="search-status" role="status">${escapeHtml(LIB_SEARCH.error)}</p>`:'')
+    +(LIB_SEARCH.addError?`<p class="search-status" role="status">${escapeHtml(LIB_SEARCH.addError)}</p>`:'')
+    +(!libraryRows&&!youtubeRows&&!searching&&!error?`<p class="empty">${query?'No videos found. Try another search or paste a YouTube link.':'Your playlist is empty. Add a video to Hope to get started.'}</p>`:'');
   if(scroll&&position>=0)host.querySelector('[aria-current="true"]')?.scrollIntoView({block:'nearest'});
+}
+function libPlayerSearchChanged(){
+  const query=document.getElementById('libPlayerSearch').value.trim(),linkId=libYouTubeIdFromLink(query);
+  clearTimeout(LIB_SEARCH.timer);LIB_SEARCH.request++;LIB_SEARCH.query=query;LIB_SEARCH.videos=[];LIB_SEARCH.error='';LIB_SEARCH.addError='';
+  LIB_SEARCH.loading=linkId?!libPlayerVideos().some(v=>v.video_id===linkId):query.length>=3;
+  libPlayerRenderRows();
+  if(LIB_SEARCH.loading)LIB_SEARCH.timer=setTimeout(()=>libPlayerSearchYouTube(query,LIB_SEARCH.request),500);
+}
+async function libPlayerSearchYouTube(query,request){
+  try{
+    const response=await fetch(AIMM_PROXY_URL.replace(/\/+$/,'')+'/kb/search-youtube',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query})});
+    const data=await response.json();if(!response.ok)throw Error(data.error||'YouTube search is unavailable.');
+    if(request!==LIB_SEARCH.request)return;
+    const linkId=libYouTubeIdFromLink(query);
+    LIB_SEARCH.videos=(Array.isArray(data.videos)?data.videos:[]).filter(v=>v&&/^[A-Za-z0-9_-]{11}$/.test(v.video_id)&&(!linkId||v.video_id===linkId));
+    if(linkId&&!LIB_SEARCH.videos.length&&!libPlayerVideos().some(v=>v.video_id===linkId)){
+      try{const meta=await fetch('https://www.youtube.com/oembed?url='+encodeURIComponent(`https://www.youtube.com/watch?v=${linkId}`)+'&format=json');
+        if(meta.ok){const item=await meta.json();if(request===LIB_SEARCH.request)LIB_SEARCH.videos=[{video_id:linkId,title:item.title||'YouTube video',channel:item.author_name||'YouTube'}];}
+      }catch(_){}
+    }
+  }catch(_){if(request!==LIB_SEARCH.request)return;LIB_SEARCH.error='YouTube search is unavailable. Library results are still shown.';}
+  finally{if(request===LIB_SEARCH.request){LIB_SEARCH.loading=false;libPlayerRenderRows();}}
+}
+function libPlayerPlayExternal(id){
+  const video=LIB_SEARCH.videos.find(v=>v.video_id===id);
+  libPlayerSelect(id,true,video?{title:video.title||'YouTube video',channel:video.channel||'YouTube'}:null);
+}
+async function libPlayerAddToHope(id){
+  if(LIB_SEARCH.adding.has(id)||typeof kbYtWorking!=='undefined'&&kbYtWorking)return;
+  LIB_SEARCH.adding.add(id);LIB_SEARCH.addError='';libPlayerRenderRows();
+  const input=document.getElementById('kbYtInput');input.value=`https://www.youtube.com/watch?v=${id}`;
+  document.getElementById('kbYtGo').disabled=false;
+  try{await kbAddYoutube();if(!libPlayerVideos().some(v=>v.video_id===id))LIB_SEARCH.addError=document.getElementById('kbYtMsg')?.textContent||'Could not add this video. Try again.';}
+  catch(_){LIB_SEARCH.addError='Could not add this video. Try again.';}
+  finally{LIB_SEARCH.adding.delete(id);libraryRender();}
 }
 function libPlayerSelect(id,play=false,external=null){
   const video=libPlayerVideos().find(v=>v.video_id===id)||null;
@@ -22745,12 +22805,16 @@ function libPlayerRender(){
   }else{libPlayerRenderLanding();libPlayerRenderRows();}
 }
 async function libPlayerSearchEnter(event){
-  const value=event.currentTarget.value.trim(),id=libYouTubeIdFromLink(value);if(!id)return;
-  event.preventDefault();libPlayerSelect(id,true);
-  const field=document.getElementById('libLink');field.value=value;
-  await libAddLink();
-  const video=libPlayerVideos().find(v=>v.video_id===id);if(video)libPlayerSelect(id,false);
-  event.currentTarget.value='';libPlayerRenderRows(true);
+  const value=event.currentTarget.value.trim(),id=libYouTubeIdFromLink(value);
+  event.preventDefault();
+  if(id){
+    clearTimeout(LIB_SEARCH.timer);
+    const known=libPlayerVideos().some(v=>v.video_id===id);
+    if(LIB_SEARCH.query!==value&&!known)libPlayerSearchChanged();
+    clearTimeout(LIB_SEARCH.timer);
+    if(!known&&!LIB_SEARCH.videos.some(v=>v.video_id===id))await libPlayerSearchYouTube(value,LIB_SEARCH.request);
+    if(known){LIB_SEARCH.request++;LIB_SEARCH.loading=false;LIB_SEARCH.query=value;libPlayerSelect(id,true);}else libPlayerPlayExternal(id);
+  }else if(value.length>=3){clearTimeout(LIB_SEARCH.timer);LIB_SEARCH.query=value;LIB_SEARCH.loading=true;libPlayerRenderRows();await libPlayerSearchYouTube(value,++LIB_SEARCH.request);}
 }
 async function libPlayerCopyLink(){
   if(!LIB_PLAYER.id)return;

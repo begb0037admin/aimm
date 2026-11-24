@@ -8,7 +8,7 @@ const build=html.match(/const AIMM_BUILD = '([^']+)'/)?.[1];
 const manifest=JSON.parse(readFileSync(new URL('../docs/knowledge/index.json',import.meta.url),'utf8'));
 const section=html.slice(html.indexOf('const LIB_PLAYER='),html.indexOf('function libFold(button){'));
 function setup(extra={}){
-  const ctx={URL,URLSearchParams,AIMM_BUILD:build,location:{origin:'http://localhost:8765'},YT_KB:{videos:[]},
+  const ctx={URL,URLSearchParams,setTimeout,clearTimeout,AIMM_BUILD:build,location:{origin:'http://localhost:8765'},YT_KB:{videos:[]},
     escapeHtml:s=>String(s),escapeJs:s=>String(s),libDate:s=>s||'–',
     libChannels:videos=>[...new Map(videos.map(v=>[v.channel,0]))].map(([name])=>[name,videos.filter(v=>v.channel===name).length]),
     libFilterVideos:(videos,channel,query)=>videos.filter(v=>(!channel||v.channel===channel)&&(!query||[v.title,v.channel].some(x=>x.toLowerCase().includes(query.toLowerCase())))),
@@ -42,7 +42,7 @@ test('search sits full width below the player title at wide and 560px layouts',(
   assert.ok(library.indexOf('id="libPlayerTitle"')<library.indexOf('id="libPlayerSearch"'));
   assert.ok(library.indexOf('id="libPlayerSearch"')<library.indexOf('<div class="list">'));
   assert.equal((library.match(/id="libPlayerSearch"/g)||[]).length,1);
-  assert.match(library,/class="searchbar"><svg class="ic"[^>]*><use href="#i-search"\/><\/svg><input id="libPlayerSearch"[^>]*placeholder="Search or paste a link"[^>]*oninput="libPlayerRenderRows\(\)"[^>]*libPlayerSearchEnter\(event\)/);
+  assert.match(library,/class="searchbar"><svg class="ic"[^>]*><use href="#i-search"\/><\/svg><input id="libPlayerSearch"[^>]*placeholder="Search or paste a link"[^>]*oninput="libPlayerSearchChanged\(\)"[^>]*libPlayerSearchEnter\(event\)/);
   assert.match(html,/\.lp \.searchbar\{[^}]*min-height:76px[^}]*margin-top:20px[^}]*padding:24px 28px[^}]*border-radius:18px[^}]*background:#1b1d20/);
   assert.match(html,/\.lp \.searchbar input::placeholder\{color:var\(--mid\);opacity:1\}/);
   assert.match(html,/\.lp \.searchbar:focus-within\{outline:2px solid var\(--teal\)/);
@@ -166,9 +166,9 @@ test('playlist channel filter and search combine, then keep the current row teal
   vm.runInNewContext("LIB_PLAYER.id='6WPtHxWkY2k'",ctx);
   ctx.libPlayerRenderRows();
   assert.match(rows.innerHTML,/Bass EQ/);assert.doesNotMatch(rows.innerHTML,/Vocal EQ|Bass compression/);
-  assert.match(rows.innerHTML,/aria-current="true"/);assert.equal(count.textContent,'1/1');
+  assert.match(rows.innerHTML,/aria-current="true"/);assert.equal(count.textContent,'1/3');
   select.value='B';ctx.libPlayerRenderRows();
-  assert.match(rows.innerHTML,/Bass compression/);assert.equal(count.textContent,'3');
+  assert.match(rows.innerHTML,/Bass compression/);assert.equal(count.textContent,'1/3');
   assert.match(html,/\.lp \.row\[aria-current="true"\]\{background:var\(--teal\)/);
 });
 test('custom channel combobox keeps its value API and supports keyboard, type-ahead and outside click',()=>{
@@ -200,13 +200,19 @@ test('custom channel combobox keeps its value API and supports keyboard, type-ah
   listeners.get('pointerdown')({target:{}});assert.equal(attributes.get('aria-expanded'),'false');
   trigger.value='Missing';ctx.libPlayerRenderRows();assert.equal(trigger.value,'');
 });
-test('pasted YouTube link uses the existing add path',async()=>{
-  let added=0,selected='';const input={value:'https://youtu.be/6WPtHxWkY2k'},field={value:''};
-  const ctx=setup({document:{getElementById:id=>id==='libLink'?field:null}});
-  ctx.libPlayerSelect=id=>{selected=id};ctx.libAddLink=async()=>{added++};ctx.libPlayerRenderRows=()=>{};
+test('pasted YouTube link plays without adding',async()=>{
+  const input={value:'https://youtu.be/6WPtHxWkY2k'};
+  const ctx=setup({document:{getElementById:()=>null}});
+  let selected,added=0;
+  ctx.libPlayerSelect=(...args)=>{selected=args};
+  ctx.libPlayerSearchChanged=()=>{};
+  ctx.libPlayerSearchYouTube=async()=>{};
+  ctx.kbAddYoutube=async()=>{added++};
   await ctx.libPlayerSearchEnter({currentTarget:input,preventDefault(){}});
-  assert.equal(added,1);assert.equal(selected,'6WPtHxWkY2k');assert.equal(field.value,'https://youtu.be/6WPtHxWkY2k');
-  assert.equal(input.value,'');
+  assert.equal(selected[0],'6WPtHxWkY2k');
+  assert.equal(selected[1],true);
+  assert.equal(added,0);
+  assert.equal(input.value,'https://youtu.be/6WPtHxWkY2k');
 });
 test('embed URL includes YouTube API origin and native player parameters',()=>{
   const ctx=setup();const url=new URL(ctx.libPlayerEmbedUrl('6WPtHxWkY2k',true));
@@ -236,7 +242,7 @@ test('private manifest resolves unique R2 keys and preserves YouTube rows',async
   assert.equal('description' in ctx.libPlayerVideos()[0],false);
   assert.equal(ctx.libPlayerVideos()[0].src,'/mwtm/f/lessons/lesson-1.mp4');
   assert.equal(ctx.libPlayerVideos()[0].thumb,'/mwtm/f/thumbs/lesson-1.jpg');
-  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.40');
+  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.41');
   assert.equal(rendered,1);
 });
 
@@ -310,5 +316,72 @@ test('private thumbnail and channel use the ordinary Playlist row and filter',()
   assert.match(rows.innerHTML,/Added 2026-11-21/);
   assert.match(rows.innerHTML,/aria-current="true"/);
   assert.doesNotMatch(rows.innerHTML,/Vocal lesson/);
-  assert.equal(count.textContent,'1/1');
+  assert.equal(count.textContent,'1/2');
+});
+
+function searchHarness(fetchImpl){
+  const rows={innerHTML:'',querySelector:()=>null},count={textContent:''},search={value:''},select={value:''};
+  const nodes={libPlayerRows:rows,libPlayerCount:count,libPlayerSearch:search,libPlayerChannelFilter:select};
+  const timers=[];
+  const ctx=setup({document:{getElementById:id=>nodes[id]},AIMM_PROXY_URL:'https://proxy.example/',fetch:fetchImpl,
+    setTimeout:fn=>{timers.push(fn);return timers.length},clearTimeout:()=>{}});
+  return {ctx,rows,count,search,timers,nodes};
+}
+
+test('one search filters the library and adds fresh YouTube rows after a debounce',async()=>{
+  const calls=[];
+  const h=searchHarness(async (url,options)=>{calls.push({url,options});return {ok:true,json:async()=>({videos:[video('6WPtHxWkY2k','Known bass'),video('ZyXwVuTsR98','Fresh bass','Studio')]})};});
+  h.ctx.YT_KB.videos=[video('6WPtHxWkY2k','Known bass'),video('AbCdEfGhI12','Other')];
+  h.search.value='bass';h.ctx.libPlayerSearchChanged();
+  assert.match(h.rows.innerHTML,/Known bass/);assert.doesNotMatch(h.rows.innerHTML,/Fresh bass/);
+  assert.match(h.rows.innerHTML,/Searching YouTube/);assert.equal(calls.length,0);
+  await h.timers[0]();
+  assert.equal(calls[0].url,'https://proxy.example/kb/search-youtube');
+  assert.equal(JSON.parse(calls[0].options.body).query,'bass');
+  assert.equal((h.rows.innerHTML.match(/Known bass/g)||[]).length,2); // title and aria-label, no duplicate row
+  assert.match(h.rows.innerHTML,/On YouTube/);assert.match(h.rows.innerHTML,/Fresh bass/);
+  assert.match(h.rows.innerHTML,/https:\/\/i.ytimg.com\/vi\/ZyXwVuTsR98\/mqdefault.jpg/);
+  assert.match(h.rows.innerHTML,/Not in library/);assert.match(h.rows.innerHTML,/Add to Hope/);
+  assert.equal(h.count.textContent,'1/2');
+});
+
+test('stale responses and proxy errors leave library matches intact',async()=>{
+  let resolveFirst;
+  const h=searchHarness((_url,options)=>JSON.parse(options.body).query==='bass'?new Promise(resolve=>{resolveFirst=resolve}):Promise.resolve({ok:false,json:async()=>({error:'down'})}));
+  h.ctx.YT_KB.videos=[video('6WPtHxWkY2k','Bass lesson')];
+  h.search.value='bass';h.ctx.libPlayerSearchChanged();const pending=h.ctx.libPlayerSearchYouTube('bass',1);
+  h.search.value='less';h.ctx.libPlayerSearchChanged();await h.ctx.libPlayerSearchYouTube('less',2);
+  resolveFirst({ok:true,json:async()=>({videos:[video('ZyXwVuTsR98','Stale')]})});await pending;
+  assert.match(h.rows.innerHTML,/Bass lesson/);assert.doesNotMatch(h.rows.innerHTML,/Stale/);
+  assert.match(h.rows.innerHTML,/YouTube search is unavailable/);
+});
+
+test('pasted link shows one external row and Add to Hope moves it into the library',async()=>{
+  const id='ZyXwVuTsR98';
+  const h=searchHarness(async()=>({ok:true,json:async()=>({videos:[video(id,'New lesson','Studio')]})}));
+  h.search.value='https://youtu.be/'+id;h.ctx.libPlayerSearchChanged();await h.timers[0]();
+  assert.equal((h.rows.innerHTML.match(/class="result-row"/g)||[]).length,1);
+  assert.match(h.rows.innerHTML,/New lesson/);
+  const input={value:''};h.nodes.kbYtInput=input;h.nodes.kbYtGo={disabled:true};
+  h.ctx.kbAddYoutube=async()=>{h.ctx.YT_KB.videos.push(video(id,'New lesson','Studio'))};
+  h.ctx.libraryRender=()=>h.ctx.libPlayerRenderRows();
+  await h.ctx.libPlayerAddToHope(id);
+  assert.equal(input.value,'https://www.youtube.com/watch?v='+id);
+  assert.doesNotMatch(h.rows.innerHTML,/Not in library|Add to Hope|class="result-row"/);
+  assert.match(h.rows.innerHTML,/New lesson/);
+});
+
+test('Enter searches text immediately and a bare link stays playable when metadata is unavailable',async()=>{
+  const calls=[];
+  const h=searchHarness(async (url,options)=>{calls.push({url,options});return {ok:true,json:async()=>({videos:[]})};});
+  h.search.value='drums';
+  await h.ctx.libPlayerSearchEnter({currentTarget:h.search,preventDefault(){}});
+  assert.equal(calls.length,1);
+  assert.equal(JSON.parse(calls[0].options.body).query,'drums');
+  assert.match(h.rows.innerHTML,/No videos found/);
+  h.search.value='https://youtu.be/ZyXwVuTsR98';
+  h.ctx.libPlayerSearchChanged();
+  await h.timers.at(-1)();
+  assert.match(h.rows.innerHTML,/YouTube video/);
+  assert.match(h.rows.innerHTML,/Not in library/);
 });
