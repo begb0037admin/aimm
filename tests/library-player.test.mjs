@@ -200,6 +200,52 @@ test('custom channel combobox keeps its value API and supports keyboard, type-ah
   listeners.get('pointerdown')({target:{}});assert.equal(attributes.get('aria-expanded'),'false');
   trigger.value='Missing';ctx.libPlayerRenderRows();assert.equal(trigger.value,'');
 });
+test('choosing a channel clears a pasted link and search state without changing playback',()=>{
+  const classes=new Set(),attributes=new Map(),cancelled=[];
+  const trigger={value:'',setAttribute:(key,value)=>attributes.set(key,value),removeAttribute:key=>attributes.delete(key),focus(){}};
+  const field={classList:{remove:key=>classes.delete(key)}};
+  const rows={innerHTML:''},count={textContent:''},search={value:'https://youtu.be/6WPtHxWkY2k'},clear={hidden:true};
+  const nodes={libPlayerRows:rows,libPlayerCount:count,libPlayerSearch:search,libPlayerSearchClear:clear,libPlayerChannelFilter:trigger,libPlayerChannelField:field};
+  const ctx=setup({document:{getElementById:id=>nodes[id],removeEventListener(){}},setTimeout:()=>17,clearTimeout:id=>cancelled.push(id)});
+  ctx.YT_KB.videos=[video('6WPtHxWkY2k','First','A'),video('AbCdEfGhI12','Second','B'),video('ZyXwVuTsR98','Third','B')];
+  vm.runInNewContext("LIB_PLAYER.id='6WPtHxWkY2k'",ctx);
+  ctx.libPlayerSearchChanged();
+  assert.match(rows.innerHTML,/First/);assert.doesNotMatch(rows.innerHTML,/Second/);
+  assert.equal(clear.hidden,false);
+  vm.runInNewContext("LIB_SEARCH.timer=17;LIB_SEARCH.videos=[{video_id:'QwErTyUiO12'}];LIB_SEARCH.error='error';LIB_SEARCH.addError='add error'",ctx);
+  const request=vm.runInNewContext('LIB_SEARCH.request',ctx);
+  const index=vm.runInNewContext("LIB_PLAYER_CHANNEL.options.findIndex(([name])=>name==='B')",ctx);
+  ctx.libPlayerChannelChoose(index);
+  assert.equal(search.value,'');assert.equal(clear.hidden,true);assert.equal(trigger.value,'B');
+  assert.match(rows.innerHTML,/Second/);assert.match(rows.innerHTML,/Third/);assert.doesNotMatch(rows.innerHTML,/First/);
+  assert.equal(count.textContent,'2/3');assert.ok(cancelled.includes(17));
+  assert.equal(vm.runInNewContext('LIB_SEARCH.request',ctx),request+1);
+  assert.equal(vm.runInNewContext('LIB_SEARCH.query',ctx),'');
+  assert.equal(vm.runInNewContext('LIB_SEARCH.videos.length',ctx),0);
+  assert.equal(vm.runInNewContext('LIB_SEARCH.error+LIB_SEARCH.addError',ctx),'');
+  assert.equal(vm.runInNewContext('LIB_SEARCH.loading',ctx),false);
+  assert.equal(vm.runInNewContext('LIB_PLAYER.id',ctx),'6WPtHxWkY2k');
+});
+test('clear search button resets results, restores rows, and refocuses the input',()=>{
+  const rows={innerHTML:''},count={textContent:''},search={value:'',focused:false,focus(){this.focused=true}},clear={hidden:true},select={value:''};
+  const nodes={libPlayerRows:rows,libPlayerCount:count,libPlayerSearch:search,libPlayerSearchClear:clear,libPlayerChannelFilter:select};
+  const cancelled=[];
+  const ctx=setup({document:{getElementById:id=>nodes[id]},setTimeout:()=>29,clearTimeout:id=>cancelled.push(id)});
+  ctx.YT_KB.videos=[video('6WPtHxWkY2k','First'),video('AbCdEfGhI12','Second')];
+  search.value='https://youtu.be/6WPtHxWkY2k';ctx.libPlayerSearchChanged();
+  assert.equal(clear.hidden,false);assert.match(rows.innerHTML,/First/);assert.doesNotMatch(rows.innerHTML,/Second/);
+  vm.runInNewContext("LIB_SEARCH.timer=29;LIB_SEARCH.videos=[{video_id:'QwErTyUiO12'}];LIB_SEARCH.error='error';LIB_SEARCH.addError='add error'",ctx);
+  const request=vm.runInNewContext('LIB_SEARCH.request',ctx);
+  ctx.libPlayerSearchClear();
+  assert.equal(search.value,'');assert.equal(clear.hidden,true);assert.equal(search.focused,true);
+  assert.match(rows.innerHTML,/First/);assert.match(rows.innerHTML,/Second/);assert.equal(count.textContent,'2');
+  assert.ok(cancelled.includes(29));assert.equal(vm.runInNewContext('LIB_SEARCH.request',ctx),request+1);
+  assert.equal(vm.runInNewContext('LIB_SEARCH.videos.length',ctx),0);
+  assert.equal(vm.runInNewContext('LIB_SEARCH.error+LIB_SEARCH.addError',ctx),'');
+  assert.equal(vm.runInNewContext('LIB_SEARCH.loading',ctx),false);
+  assert.match(html,/id="libPlayerSearchClear"[^>]*aria-label="Clear search"[^>]*onclick="libPlayerSearchClear\(\)" hidden/);
+  assert.match(html,/\.lp \.searchbar \.search-clear:focus-visible\{outline:2px solid var\(--teal\)/);
+});
 test('pasted YouTube link plays without adding',async()=>{
   const input={value:'https://youtu.be/6WPtHxWkY2k'};
   const ctx=setup({document:{getElementById:()=>null}});
@@ -282,7 +328,7 @@ test('private manifest resolves unique R2 keys and preserves YouTube rows',async
   assert.equal('description' in ctx.libPlayerVideos()[0],false);
   assert.equal(ctx.libPlayerVideos()[0].src,'/mwtm/f/lessons/lesson-1.mp4');
   assert.equal(ctx.libPlayerVideos()[0].thumb,'/mwtm/f/thumbs/lesson-1.jpg');
-  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.43');
+  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.44');
   assert.equal(rendered,1);
 });
 
