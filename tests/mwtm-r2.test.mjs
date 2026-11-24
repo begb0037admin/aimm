@@ -56,6 +56,16 @@ test('manifest and media return their cache headers and correct types', async ()
   }
 });
 
+test('versioned manifest URL ignores the query string when selecting its R2 key', async () => {
+  const { env, calls } = environment();
+  const response = await request('/mwtm/manifest.json?b=2026-11-23.36', {}, env);
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('Content-Type'), 'application/json');
+  assert.equal(response.headers.get('Cache-Control'), 'private, no-cache');
+  assert.equal(await response.text(), '0123456789');
+  assert.deepEqual(calls.map(call => call.key), ['manifest.json']);
+});
+
 test('manifest revalidates with ETag while media keeps its existing response', async () => {
   for (const method of ['GET', 'HEAD']) {
     for (const ifNoneMatch of ['"abc123"', 'W/"abc123"', '"other", "abc123"', '*']) {

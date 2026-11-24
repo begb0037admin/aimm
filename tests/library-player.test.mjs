@@ -4,10 +4,11 @@ import {test} from 'node:test';
 import vm from 'node:vm';
 
 const html=readFileSync(new URL('../standalone/assets/index.html',import.meta.url),'utf8');
+const build=html.match(/const AIMM_BUILD = '([^']+)'/)?.[1];
 const manifest=JSON.parse(readFileSync(new URL('../docs/knowledge/index.json',import.meta.url),'utf8'));
 const section=html.slice(html.indexOf('const LIB_PLAYER='),html.indexOf('function libFold(button){'));
 function setup(extra={}){
-  const ctx={URL,URLSearchParams,location:{origin:'http://localhost:8765'},YT_KB:{videos:[]},
+  const ctx={URL,URLSearchParams,AIMM_BUILD:build,location:{origin:'http://localhost:8765'},YT_KB:{videos:[]},
     escapeHtml:s=>String(s),escapeJs:s=>String(s),libDate:s=>s||'–',
     libChannels:videos=>[...new Map(videos.map(v=>[v.channel,0]))].map(([name])=>[name,videos.filter(v=>v.channel===name).length]),
     libFilterVideos:(videos,channel,query)=>videos.filter(v=>(!channel||v.channel===channel)&&(!query||[v.title,v.channel].some(x=>x.toLowerCase().includes(query.toLowerCase())))),
@@ -159,7 +160,7 @@ test('private manifest resolves unique R2 keys and preserves YouTube rows',async
   assert.equal(ctx.libPlayerVideos()[0].description,'Private lesson');
   assert.equal(ctx.libPlayerVideos()[0].src,'/mwtm/f/lessons/lesson-1.mp4');
   assert.equal(ctx.libPlayerVideos()[0].thumb,'/mwtm/f/thumbs/lesson-1.jpg');
-  assert.equal(fetched,'/mwtm/manifest.json');
+  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.36');
   assert.equal(rendered,1);
 });
 
@@ -196,7 +197,7 @@ test('local player uses shared Lucide sprite and scoped controls',()=>{
   assert.match(html,/window\.AimmLocalPlayer=\{attach\}/);
   assert.match(html,/href="#i-.*?"/);
   assert.doesNotMatch(html,/id="lpi-/);
-  assert.match(html,/fetch\('\/mwtm\/manifest\.json'\)/);
+  assert.match(html,/fetch\('\/mwtm\/manifest\.json\?b=' \+ encodeURIComponent\(AIMM_BUILD\)\)/);
 });
 
 test('private player matches the measured centre controls at wide and 560 widths',()=>{

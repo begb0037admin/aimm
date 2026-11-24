@@ -6131,7 +6131,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.35';
+const AIMM_BUILD = '2026-11-23.36';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -22554,7 +22554,7 @@ function libPrivateKeyUrl(value){
 async function libPlayerLoadManifest(){
   if(LIB_PLAYER.manifestLoading||LIB_PLAYER.manifestLoaded)return;
   LIB_PLAYER.manifestLoading=true;
-  try{const response=await fetch('/mwtm/manifest.json');if(!response.ok)throw Error('Manifest unavailable');
+  try{const response=await fetch('/mwtm/manifest.json?b=' + encodeURIComponent(AIMM_BUILD));if(!response.ok)throw Error('Manifest unavailable');
     const data=await response.json();if(!Array.isArray(data))throw Error('Invalid manifest');
     const used=new Set((YT_KB.videos||[]).map(v=>v.video_id));
     LIB_PLAYER.privateVideos=data.flatMap(item=>{
