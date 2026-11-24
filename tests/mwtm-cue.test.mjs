@@ -6,6 +6,7 @@ import vm from 'node:vm';
 const html=readFileSync(new URL('../standalone/assets/index.html',import.meta.url),'utf8');
 const mapper=readFileSync(new URL('../standalone/assets/mwtm-cue-map.js',import.meta.url),'utf8');
 const library=html.slice(html.indexOf('const LIB_PLAYER='),html.indexOf('function libFold(button){'));
+const helper=html.slice(html.indexOf('const HOPE_VIDEO_TRANSCRIPTS=new Map();'),html.indexOf('async function handleToolCall(name,args){'));
 const cue=html.slice(html.indexOf("case 'cue_video':")+"case 'cue_video':".length,html.indexOf("case 'search_youtube_videos':"));
 const kbId='mwtm-ben-baptie-michael-kiwanuka-beautiful-life-p05';
 const privateId='mwtm-Ben_Baptie_Michael_Kiwanuka_Beautiful_Life_Mixing-05';
@@ -24,7 +25,7 @@ function setup(){
     escapeHtml:String,escapeJs:String,libDate:String,libChannels:()=>[],libFilterVideos:()=>[]});
   vm.runInContext(mapper,ctx);vm.runInContext(library,ctx);
   vm.runInContext('libPlayerRender=()=>{};libPlayerRenderRows=()=>{};libPlayerEnsureApi=()=>{};ensureYtKbLoaded=async()=>{};',ctx);
-  const run=vm.runInContext(`async function cue(args)${cue};cue`,ctx);
+  const run=vm.runInContext(`${helper} async function cue(args)${cue};cue`,ctx);
   return {ctx,nodes,shown,tab,run};
 }
 
@@ -50,13 +51,15 @@ test('cue_video waits for a manifest load already in progress',async()=>{
   assert.equal(shown[0].autoplay,false);
 });
 
-test('cue_video opens the Library private recording paused for either MWTM ID form',async()=>{
+test('cue_video loads the private recording paused without switching tabs',async()=>{
   for(const id of [kbId,privateId]){
     const {run,shown,tab,nodes}=setup();
     const result=await run({video_id:id});
     assert.equal(result.video_id,privateId);
     assert.equal(result.cued,true);
-    assert.equal(tab.clicked,true);
+    assert.equal(result.transcript_status,'in_library');
+    assert.equal(tab.clicked,undefined);
+    assert.equal(result.tab_switched,false);
     assert.equal(shown.length,1);
     assert.equal(shown[0].autoplay,false);
     assert.equal(shown[0].id,privateId);

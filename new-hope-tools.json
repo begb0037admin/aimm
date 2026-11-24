@@ -284,21 +284,25 @@
   },
   {
     "name": "cue_video",
-    "description": "Cue an 11-character YouTube video in the Library player without autoplay. When answering a plugin chain or advice from an ingested YouTube video, call this for the source and say \"I have cued it in the player if you want to have a look.\"",
+    "description": "Cue a YouTube video or private Mix With The Masters lesson paused in the Library player. Keep Kev on his current tab by default; set switch_to_library true only when he asks to see or watch the video. When building a chain from a video, put the chain on the MixBus first, then cue the video without switching tabs and tell Kev it is ready when he wants it. A non-library YouTube transcript starts reading in the background; use read_video_transcript to answer questions without asking Kev to run through it. Library and mwtm- lessons use read_yt_knowledge.",
     "parameters": {
       "type": "object",
       "properties": {
         "video_id": {
           "type": "string",
-          "description": "Exact 11-character YouTube video ID."
+          "description": "An 11-character YouTube ID or an mwtm- lesson ID (KB slug-pNN or private Set-NN form)."
         },
         "title": {
           "type": "string",
-          "description": "Source title for a video outside the ingested Library."
+          "description": "Source title, especially for a video outside the ingested Library."
         },
         "channel": {
           "type": "string",
-          "description": "Source channel for a video outside the ingested Library."
+          "description": "Source channel, especially for a video outside the ingested Library."
+        },
+        "switch_to_library": {
+          "type": "boolean",
+          "description": "True only when Kev asks to see or watch the video; otherwise keep the current tab."
         }
       },
       "required": [
@@ -319,6 +323,48 @@
       },
       "required": [
         "query"
+      ]
+    }
+  },
+  {
+    "name": "read_video_transcript",
+    "description": "Get relevant excerpts from a cued YouTube video outside the library. The transcript starts reading automatically when cued. If it is still loading, tell Kev 'give me a sec while I read the transcript', then answer from the returned excerpts. Do not ask whether to run through the transcript. This does not add the video.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "video_id": {
+          "type": "string",
+          "description": "Exact 11-character YouTube video ID."
+        },
+        "query": {
+          "type": "string",
+          "description": "Optional topic or question to find the most relevant transcript chunks."
+        }
+      },
+      "required": [
+        "video_id"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "add_video_to_library",
+    "description": "Add a YouTube video to Hope’s transcript library only after Kev has heard the findings from read_video_transcript and clearly says to add it. First call with confirmed false for the summary; call with confirmed true only after that clear instruction.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "video_id": {
+          "type": "string",
+          "description": "Exact 11-character YouTube video ID."
+        },
+        "confirmed": {
+          "type": "boolean",
+          "description": "True only after Kev clearly confirms adding this video."
+        }
+      },
+      "required": [
+        "video_id",
+        "confirmed"
       ]
     }
   }

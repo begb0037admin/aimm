@@ -76,6 +76,51 @@ test('duplicate user video skips Apify',async()=>{
   const r=await request('/kb/add-youtube','POST',{url:'https://youtu.be/'+sampleId});
   assert.equal((await r.json()).already,true);
 });
+test('peek writes only its one-hour cache and add reuses it without another Apify call',async()=>{
+  const original=globalThis.fetch;
+  const {request,data,env,vectors}=setup();
+  const writes=[];
+  const put=env.AIMM_KV.put;
+  env.AIMM_KV.put=async (key,value,options)=>{writes.push({key,options});return put(key,value);};
+  let apifyCalls=0;
+  globalThis.fetch=async (url,options)=>{
+    if(String(url).includes('apify.com')){apifyCalls++;return Response.json([{videoId:sampleId,videoTitle:'Preview lesson',channelName:'Studio',segments:[{text:'kick drum compression tips'}]}]);}
+    if(String(url).includes('voyageai.com')){
+      const batch=JSON.parse(options.body).inputs[0];
+      return Response.json({data:[{data:batch.map((_,i)=>({index:i,embedding:[0.2,0.3]}))}]});
+    }
+    throw new Error('Unexpected URL '+url);
+  };
+  try{
+    const url='https://youtu.be/'+sampleId;
+    const peek=await request('/kb/peek-youtube','POST',{url});
+    assert.equal(peek.status,200);
+    assert.deepEqual(await peek.json(),{ok:true,video_id:sampleId,title:'Preview lesson',channel:'Studio',chunks:['kick drum compression tips'],already:false});
+    assert.deepEqual(writes,[{key:'yt-peek:'+sampleId,options:{expirationTtl:3600}}]);
+    assert.equal(vectors.length,0);
+    assert.equal(data.has('yt-user:'+sampleId),false);
+    assert.equal(data.has('yt-user:index'),false);
+    const added=await request('/kb/add-youtube','POST',{url});
+    assert.equal(added.status,200);
+    assert.equal((await added.json()).already,false);
+    assert.equal(apifyCalls,1);
+    assert.equal(vectors.length,1);
+    assert.equal(data.has('yt-user:'+sampleId),true);
+  }finally{globalThis.fetch=original;}
+});
+test('peek reads an existing user-library transcript without writing or calling Apify',async()=>{
+  const {request,data,env}=setup();
+  data.set('yt-user:index',JSON.stringify([{video_id:sampleId,title:'Saved lesson',channel:'Studio',chunks:2}]));
+  data.set('yt-user:'+sampleId,JSON.stringify({transcript:'## Chunk 1\n\nFirst point.\n\n## Chunk 2\n\nSecond point.'}));
+  env.AIMM_KV.put=async()=>{throw new Error('peek must not write');};
+  const original=globalThis.fetch;
+  globalThis.fetch=async()=>{throw new Error('peek must not call Apify');};
+  try{
+    const response=await request('/kb/peek-youtube','POST',{url:'https://youtu.be/'+sampleId});
+    assert.equal(response.status,200);
+    assert.deepEqual(await response.json(),{ok:true,video_id:sampleId,title:'Saved lesson',channel:'Studio',chunks:['First point.','Second point.'],already:true});
+  }finally{globalThis.fetch=original;}
+});
 test('no captions and service errors have plain messages without upstream body or token',async()=>{
   const original=globalThis.fetch;
   try {

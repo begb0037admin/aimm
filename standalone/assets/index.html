@@ -6147,7 +6147,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.47';
+const AIMM_BUILD = '2026-11-23.48';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -13416,8 +13416,10 @@ Tabs:
 - settings (Settings) — provider access and app preferences
 
 Brief Kev verbally as you do it: "ok, hopping over to Library" or "let me pull up the Plugin Library" — keep it natural, ONE short phrase. Do NOT say "I\'m calling switch_tab" or any other meta narration. Don\'t switch tabs gratuitously — only when it\'s genuinely the right surface for what he asked.`,parameters:{type:'object',properties:{tab:{type:'string',enum:['mixcheck','library','mixbus','plugins','community','marketing','settings','knowledge','snapshots'],description:'Tab id matching the visible label; knowledge and snapshots open Library; chain and eq are legacy aliases.'}},required:['tab']}},
-  {type:'function',name:'cue_video',description:'Cue a YouTube video or private Mix With The Masters lesson in the Library player without playing it. Pass the video_id returned by search_yt_knowledge, read_yt_knowledge or search_youtube_videos directly. Tell Kev it is cued in the player and use the returned title.',parameters:{type:'object',properties:{video_id:{type:'string',description:'An 11-character YouTube ID or an mwtm- lesson ID (KB slug-pNN or private Set-NN form).'},title:{type:'string',description:'Source title, especially for a video outside the ingested Library.'},channel:{type:'string',description:'Source channel, especially for a video outside the ingested Library.'}},required:['video_id']}},
+  {type:'function',name:'cue_video',description:'Cue a YouTube video or private Mix With The Masters lesson paused in the Library player. Keep Kev on his current tab by default; set switch_to_library true only when he asks to see or watch the video. When building a chain from a video, put the chain on the MixBus first, then cue the video without switching tabs and tell Kev it is ready when he wants it. A non-library YouTube transcript starts reading in the background; use read_video_transcript to answer questions without asking Kev to run through it. Library and mwtm- lessons use read_yt_knowledge.',parameters:{type:'object',properties:{video_id:{type:'string',description:'An 11-character YouTube ID or an mwtm- lesson ID (KB slug-pNN or private Set-NN form).'},title:{type:'string',description:'Source title, especially for a video outside the ingested Library.'},channel:{type:'string',description:'Source channel, especially for a video outside the ingested Library.'},switch_to_library:{type:'boolean',description:'True only when Kev asks to see or watch the video; otherwise keep the current tab.'}},required:['video_id']}},
   {type:'function',name:'search_youtube_videos',description:'Search YouTube by title or topic for a video Kev asks to find or show. Returns up to five video IDs, titles, channels and durations. If the first result clearly matches his request, call cue_video on it and say what you cued; otherwise ask which result he means.',parameters:{type:'object',properties:{query:{type:'string',description:'Video title, creator and/or topic to search for.'}},required:['query']}},
+  {type:'function',name:'read_video_transcript',description:'Get relevant excerpts from a cued YouTube video outside the library. The transcript starts reading automatically when cued. If it is still loading, tell Kev "give me a sec while I read the transcript", then answer from the returned excerpts. Do not ask whether to run through the transcript. This does not add the video.',parameters:{type:'object',properties:{video_id:{type:'string',description:'Exact 11-character YouTube video ID.'},query:{type:'string',description:'Optional topic or question to find the most relevant transcript chunks.'}},required:['video_id']}},
+  {type:'function',name:'add_video_to_library',description:'Add a YouTube video to Hope’s transcript library only after Kev has heard the findings from read_video_transcript and clearly says to add it. First call with confirmed false for the summary; call with confirmed true only after that clear instruction.',parameters:{type:'object',properties:{video_id:{type:'string',description:'Exact 11-character YouTube video ID.'},confirmed:{type:'boolean',description:'True only after Kev clearly confirms adding this video.'}},required:['video_id','confirmed']}},
   {type:'function',name:'inventory_navigate',description:'Navigate the live AIMM inventory sidebar. This opens the Plugins tab if needed, then selects the requested status, Library filter, category, or tool. Returns a snapshot of the whole sidebar plus the selected live view. This changes only the visible view; it does not scan, download, share, or add anything. Use it whenever Kev asks to open or inspect one of the AIMM inventory menu items. Disabled items return their current unavailable reason; connected items can open their existing screen.',parameters:{type:'object',properties:{item:{type:'string',enum:['all_plugins','updates_available','up_to_date','manual_check','vendor_app','unchecked','stale_results','check_errors','install_manager','batch_management','remove_old_installers','duplicates','unused','license_vault','share_plugin_list','compare_profiles','aimm_license','ilok_license_manager','library_all_plugins','favorites','my_tags','tag_manager','hidden','eq_filter','dynamics','pitch_modulation','reverb','delay','distortion_amps','utility_metering','imaging','instruments_midi','restoration','channel_strips_multi_fx','status_section','tools_section','library_section'],description:'The exact AIMM inventory sidebar item to open.'}},required:['item']}},
   {type:'function',name:'inventory_search',description:'Read the current local AIMM scan without changing the visible Plugins view. Returns product status and known latest versions; synthetic preview rows are not proof of installed plug-ins. Use scan results to verify an installed plug-in before discussing it or adding it to a MixBus.',parameters:{type:'object',properties:{query:{type:'string',description:'Words from the plug-in or publisher name; an empty query lists the current scanned inventory.'},format:{type:'string',enum:['AU','VST2','VST3','CLAP'],description:'Optional exact plug-in format filter.'},status:{type:'string',enum:['updates_available','up_to_date','manual_check','vendor_app','unchecked'],description:'Optional product update status filter.'},offset:{type:'integer',minimum:0,description:'Zero-based result offset for paging.'},limit:{type:'integer',minimum:1,maximum:50,description:'Number of product results to return, maximum 50.'}},required:[]}},
   {type:'function',name:'inventory_summary',description:'Read the current local AIMM scan totals, formats, update statuses and leading vendors without changing the visible Plugins view. Does not scan folders.',parameters:{type:'object',properties:{},required:[]}},
@@ -16993,7 +16995,7 @@ const HOPE_USAGE_VOICE = {
   sessionTurns:0, sessionInputSeconds:0, sessionSpeechChars:0, sessionSpeechCredits:0,
   sessionSpeechCreditsKnown:true, sessionLlmCost:0, sessionLlmModel:'', sessionLlmInputTokens:0, sessionLlmOutputTokens:0, lunaAbort:null,
 };
-const HOPE_CHAIN_BUILD_RULES = `Building a chain from a video: 1) Search the videos. Name the video and its creator, and read out the plugin list exactly as the video shows it. Never call something "from the video" if it is not. Call cue_video with the source video_id (YouTube or mwtm-) so Kev can inspect it without autoplay; say "I have cued it in the player if you want to have a look." 2) For each plugin, read vocal_favorites_read for the matching bus chain (vocal, drums, 808 or master) and prefer owned, then close version, then owned equivalent, then Logic Pro 13 stock. Verify scanned ownership. If a video plug-in is swapped, say plainly which favourite replaces it and why. 3) Clear the bus, then add the plugins in the video's order. 4) Go through the chain one plugin at a time. Pin that plugin's settings first, then say them out loud. The highlight moves to that plugin, so Kev can see its settings as you talk. 5) Tell Kev which plugins are swaps and which are exact matches.`;
+const HOPE_CHAIN_BUILD_RULES = `Building a chain from a video: 1) Search the videos. Name the video and its creator, and read out the plugin list exactly as the video shows it. Never call something "from the video" if it is not. 2) For each plugin, read vocal_favorites_read for the matching bus chain (vocal, drums, 808 or master) and prefer owned, then close version, then owned equivalent, then Logic Pro 13 stock. Verify scanned ownership. If a video plug-in is swapped, say plainly which favourite replaces it and why. 3) Build the chain on the MixBus first: clear the bus, then use add_plugin_to_bus and the chain tools to add the plugins in the video's order. 4) Go through the chain one plugin at a time. Pin that plugin's settings first, then say them out loud. The highlight moves to that plugin, so Kev can see its settings as you talk. 5) Tell Kev which plugins are swaps and which are exact matches. Only after the chain is on the MixBus, call cue_video with the source video_id (YouTube or mwtm-) without switch_to_library. Do not switch tabs; keep Kev on the MixBus so he can see the chain. Tell Kev the chain is on the MixBus and the video is cued for when he wants it. Set switch_to_library true only when Kev asks to see or watch the video.`;
 const HOPE_INVENTORY_RULES = `Two separate plug-in lists exist. The MixBus library/catalogue in context is what AIMM recommends from; it is not an installed inventory or installed count. Kev's INSTALLED plug-ins are the Plugin Companion scan shown in the Plugins tab. For any question about what he has installed, how many plug-ins he has, updates, duplicates, Unused, vendor apps, a vendor's plug-ins, or the companion, use inventory_summary, inventory_search, inventory_status, inventory_duplicates or inventory_unused as appropriate. Never answer these questions from MixBus catalogue numbers and never guess a number. If no scan is available, say the Plugins tab has no scan loaded and the companion may not be connected. Synthetic preview rows are not installed plug-ins. Use inventory_navigate to open a requested inventory sidebar item and report disabled items' unavailable reason. inventory_search and inventory_summary leave the visible view unchanged. Use inventory_set_favorite for scanned or installed plug-ins, and toggle_favorite only for the MixBus catalogue; say whether the saved change succeeded, was already set, was ambiguous, was not found, or was not saved. Starring needs no confirmation. vocal_favorites_read reads the video favourites; for vocal_favorites_apply, read the proposed counts aloud with confirmed false, wait for Kev’s clear yes, then call confirmed true and report verified starred, already and unresolved counts. When building a chain from a video read the matching bus chain favourites first (vocal, drums, 808 or master) and prefer in order: owned, close version, equivalent, Logic stock; say which video plug-in was swapped for which favourite. inventory_reveal and inventory_rescan use the existing controls. For every inventory change tool — inventory_move_to_unused, inventory_restore, inventory_move_to_trash, inventory_mark_vendor_app_checked, inventory_unmark_vendor_check, inventory_keep_newest_duplicates and inventory_add_to_bus — call with confirmed false first, read the returned summary aloud briefly, wait for Kev's clear yes, then call with confirmed true. Trash needs a separate yes before setting confirmed_trash true. For inventory_add_to_bus, first verify the exact installed name and publisher in the scan and choose a valid bus and stage; only use it when Kev explicitly asks. Menu navigation alone does not authorize scanning folders, downloading installers, sharing the inventory, or changing MixBus.`;
 const HOPE_COVERAGE_RULES = `Hope's active core memory is brief; use memory_search when older preferences or details may be in the archive. Unlicensed UAD products are excluded from the installed library and inventory counts because UA installs products the account may not own. The Plugins summary in your live context is the installed scan, not the MixBus catalogue. After inventory_rescan, use its completed before_total, after_total and lastScanAt; if timed_out, say the scan was not verified. For snapshots_apply, snapshots_add_note, plugin_tag_set, plugin_hide, saved_target_apply, mixbus_load_preset, mixbus_auto_fill and clear_bus, call with confirmed false, read the summary aloud, wait for Kev's clear yes, then repeat with confirmed true. Report a write as successful only when its result says ok true. Mix Check audio-file loading stays manual through the browser file picker. settings_status is read-only; never open Settings or reveal any key, token or secret value. Report only the credits returned by settings_status, never state a dollar spent figure, and say you can't see anything the tool does not return.`;
 const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural and complete: lead with the answer, stay under about 120 words, and finish the sentence before stopping; never end mid-sentence. Usually use one or two sentences and 20–35 words. Answer directly; use contractions and producer language. For how-to questions, give the usable steps from the knowledge base directly and in order, using numbered steps (at most five); ask a clarifying question only when the knowledge base has nothing usable. For recommendations, use only plug-ins confirmed in the MixBus library/catalogue. For installed-plug-in questions, use the inventory tools and their live scan. Use available AIMM tools for live measurements and MixBus actions; never guess when live state is available. Voice and typed chat are the same Hope and have the same full AIMM tool set. For mixing, production, plugin or factual questions, search the knowledge base first. If Kev names a video title, read that video; for an unnamed video reference, use the shared vague-video candidate list, choose one candidate based on its title, channel, and transcript content, and explain in one sentence in your own words what that video covers; never quote or copy the transcript, and follow the page's closest-match fallback if no candidate title is named. Otherwise read the top-ranked search result. Only if search_yt_knowledge and read_yt_knowledge, where relevant, return nothing that answers the question, call web_search_fallback once, then answer from its result and say it came from the web. Never use web_search_fallback first. When Kev asks for a MixBus action, call the matching tool and report its actual result; do not tell him to do it manually if a tool exists. Use write tools only for what he actually asked you to change; if he says explain only, make no changes. Use set_stem_selection for loaded stem selection and playback control. If a requested action has no matching tool, say so plainly. Do not narrate internal work.`;
@@ -17792,7 +17794,7 @@ async function buildDashboardDigest(){
 // Tools added after the original bulk registration. This retained helper
 // registers any that are missing — idempotent (reuses same-name workspace
 // tools, append-only PATCH of the agent's tool_ids).
-const AIMM_NEW_AGENT_TOOLS = ['memory_search', 'manage_roadmap_inbox', 'propose_mix_move', 'set_stem_selection', 'list_symptom_tiles', 'add_symptom_tile', 'delete_symptom_tile', 'inventory_navigate', 'inventory_search', 'inventory_summary', 'inventory_set_favorite', 'vocal_favorites_read', 'vocal_favorites_apply', 'inventory_add_to_bus', 'inventory_status', 'inventory_duplicates', 'inventory_unused', 'inventory_reveal', 'inventory_move_to_unused', 'inventory_restore', 'inventory_move_to_trash', 'inventory_rescan', 'inventory_mark_vendor_app_checked', 'inventory_unmark_vendor_check', 'inventory_keep_newest_duplicates', 'snapshots_list', 'snapshots_read', 'snapshots_apply', 'snapshots_add_note', 'plugin_tags_read', 'plugin_tag_set', 'hidden_list', 'plugin_hide', 'reference_status', 'saved_targets_list', 'saved_target_apply', 'mixbus_load_preset', 'mixbus_auto_fill', 'settings_status', 'find_youtube_videos', 'cue_video', 'search_youtube_videos'];
+const AIMM_NEW_AGENT_TOOLS = ['memory_search', 'manage_roadmap_inbox', 'propose_mix_move', 'set_stem_selection', 'list_symptom_tiles', 'add_symptom_tile', 'delete_symptom_tile', 'inventory_navigate', 'inventory_search', 'inventory_summary', 'inventory_set_favorite', 'vocal_favorites_read', 'vocal_favorites_apply', 'inventory_add_to_bus', 'inventory_status', 'inventory_duplicates', 'inventory_unused', 'inventory_reveal', 'inventory_move_to_unused', 'inventory_restore', 'inventory_move_to_trash', 'inventory_rescan', 'inventory_mark_vendor_app_checked', 'inventory_unmark_vendor_check', 'inventory_keep_newest_duplicates', 'snapshots_list', 'snapshots_read', 'snapshots_apply', 'snapshots_add_note', 'plugin_tags_read', 'plugin_tag_set', 'hidden_list', 'plugin_hide', 'reference_status', 'saved_targets_list', 'saved_target_apply', 'mixbus_load_preset', 'mixbus_auto_fill', 'settings_status', 'find_youtube_videos', 'cue_video', 'search_youtube_videos', 'read_video_transcript', 'add_video_to_library'];
 async function registerInboxTool(){
   const sts=document.getElementById('regInboxToolStatus');
   const set=(m,ok)=>{if(sts){sts.textContent=m;sts.className='rt-key-status'+(ok===true?' ok':ok===false?' err':'');}};
@@ -17956,6 +17958,28 @@ function hopeSettingsStatus(){
   return {ok:true,providers:{luna:!!AIMM_PROXY_URL,elevenlabs:!!(AIMM_PROXY_URL||localStorage.getItem(EL_KEY_STORAGE)),luna_usage_access:!!localStorage.getItem(RT_KEY_STORAGE),companion:pcCompanionConnected===true},credits:{elevenlabs_primary:credits('primary'),elevenlabs_backup:credits('backup')},models:{typed_chat:selected,tts:document.getElementById('aiChatTtsModel')?.value||null},companion:{connected:pcCompanionConnected===true,scanning:!!(pcCompanionCapability?.scanning||pcCompanionBusy),last_scan_at:INV_SCAN_INFO.generatedAt||null}};
 }
 let hopeReferenceBridge=null;
+// A cued external video starts reading immediately; subsequent questions share the request.
+const HOPE_VIDEO_TRANSCRIPTS=new Map();
+function hopePrefetchVideoTranscript(id){
+  const cached=HOPE_VIDEO_TRANSCRIPTS.get(id);
+  if(cached)return cached;
+  // Keep settled entries too: a later question must never start another peek.
+  const entry={status:'loading',chunks:[],promise:null};
+  HOPE_VIDEO_TRANSCRIPTS.set(id,entry);
+  entry.promise=Promise.resolve().then(async()=>{
+    try{
+      const response=await fetch(AIMM_PROXY_URL.replace(/\/+$/,'')+'/kb/peek-youtube',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:'https://www.youtube.com/watch?v='+id})});
+      const data=await response.json();
+      if(!response.ok)throw new Error(data.error||'This video’s transcript is unavailable.');
+      entry.title=data.title||'YouTube video';entry.channel=data.channel||'YouTube';entry.already=!!data.already;
+      entry.chunks=Array.isArray(data.chunks)?data.chunks.map(String):[];
+      if(!entry.chunks.length)throw new Error('This video has no readable transcript or captions.');
+      entry.status='ready';
+    }catch(error){entry.status='failed';entry.error=error.message||'This video’s transcript is unavailable.';}
+    return entry;
+  });
+  return entry;
+}
 async function handleToolCall(name,args){
   try{
     args=args||{};
@@ -18106,11 +18130,14 @@ async function handleToolCall(name,args){
         const selectedId=privateVideo?.video_id||id;
         const tab=document.querySelector('.tab[data-tab="library"]');
         if(!tab)throw new Error('Library tab is not available.');
-        if(!tab.classList.contains('active')){if(typeof EL!=='undefined')EL.suppressNextTabChange=true;tab.click();}
         const known=privateVideo||libPlayerVideos().find(video=>video.video_id===selectedId);
         const external=known?null:{title:String(args.title||'YouTube video'),channel:String(args.channel||'YouTube')};
         libPlayerSelect(selectedId,false,external);
-        return {ok:true,cued:true,video_id:selectedId,title:known?.title||external.title};
+        let tab_switched=false;
+        if(args.switch_to_library===true&&!tab.classList.contains('active')){if(typeof EL!=='undefined')EL.suppressNextTabChange=true;tab.click();tab_switched=true;}
+        const inLibrary=!youtube||!!kbVideo||!!known;
+        const transcript_status=inLibrary?'in_library':hopePrefetchVideoTranscript(id).status;
+        return {ok:true,cued:true,video_id:selectedId,title:known?.title||external.title,transcript_status,tab_switched};
       }
       case 'search_youtube_videos':{
         const query=String(args.query||'').trim();
@@ -18119,6 +18146,61 @@ async function handleToolCall(name,args){
         const data=await response.json();
         if(!response.ok)throw new Error(data.error||'YouTube search is unavailable.');
         return {ok:true,videos:(Array.isArray(data.videos)?data.videos:[]).filter(video=>video&&/^[A-Za-z0-9_-]{11}$/.test(video.video_id)).slice(0,5).map(video=>({video_id:video.video_id,title:video.title||'YouTube video',channel:video.channel||'YouTube',duration:video.duration??null}))};
+      }
+      case 'read_video_transcript':{
+        const id=String(args.video_id||'').trim();
+        if(!/^[A-Za-z0-9_-]{11}$/.test(id))return {ok:false,video_id:id,error:'video_id must be an 11-character YouTube ID.'};
+        const entry=hopePrefetchVideoTranscript(id);
+        if(entry.status==='loading'){
+          let timer;
+          try{await Promise.race([entry.promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('The transcript is still loading. Give me a sec while I read the transcript.')),90000);})]);}
+          catch(error){return {ok:false,video_id:id,error:error.message};}
+          finally{if(typeof clearTimeout==='function')clearTimeout(timer);}
+        }
+        if(entry.status==='failed')return {ok:false,video_id:id,error:'I couldn’t read this video’s transcript: '+entry.error};
+        const parts=entry.chunks.map((text,index)=>({text,index}));
+        const q=String(args.query||'').trim().toLowerCase();
+        let hits=[];
+        if(q){
+          const terms=[...new Set(kbSearchTok(q))];
+          hits=parts.map(part=>({...part,score:terms.reduce((score,term)=>score+kbSearchTok(part.text).filter(token=>token===term).length,0)})).filter(part=>part.score>0).sort((a,b)=>b.score-a.score);
+        }
+        const chosen=hits.length?(()=>{const selected=new Set([hits[0].index-1,hits[0].index,hits[0].index+1].filter(index=>index>=0&&index<parts.length));for(const hit of hits){if(selected.size>=3)break;selected.add(hit.index);}return [...selected].sort((a,b)=>a-b).map(index=>parts[index]);})():parts.slice(0,3);
+        let result=chosen.map(part=>'## Chunk '+(part.index+1)+'\n\n'+part.text).join('\n\n');
+        const truncated=result.length>4000;
+        if(truncated)result=result.slice(0,4000)+'\n\n[truncated]';
+        return {ok:true,video_id:id,video:entry.title,channel:entry.channel,already_in_library:entry.already,query:q||undefined,total_chunks:parts.length,chunks_matched:hits.length,chunks_returned:chosen.length,truncated,result};
+      }
+      case 'add_video_to_library':{
+        const id=String(args.video_id||'').trim();
+        if(!/^[A-Za-z0-9_-]{11}$/.test(id))return {ok:false,video_id:id,error:'video_id must be an 11-character YouTube ID.'};
+        await ensureYtKbLoaded();
+        const existing=YT_KB.videos.find(video=>video.video_id===id);
+        if(existing)return {ok:true,video_id:id,title:existing.title,channel:existing.channel||'YouTube',already_in_library:true};
+        let metadata=LIB_SEARCH.videos.find(video=>video.video_id===id);
+        if(!metadata){
+          try{
+            const response=await fetch('https://www.youtube.com/oembed?url='+encodeURIComponent('https://www.youtube.com/watch?v='+id)+'&format=json');
+            if(response.ok){const item=await response.json();metadata={title:item.title,channel:item.author_name};}
+          }catch(_){}
+        }
+        const title=metadata?.title||'YouTube video',channel=metadata?.channel||'YouTube';
+        if(args.confirmed!==true)return {ok:true,needs_confirmation:true,video_id:id,title,channel,already_in_library:false,summary:'Add '+title+' by '+channel+' to Hope’s library?'};
+        if(kbYtWorking||LIB_SEARCH.adding.has(id))return {ok:false,video_id:id,title,already_in_library:false,error:'A video is already being added. Please try again when it finishes.'};
+        let timer;
+        try{
+          await Promise.race([
+            libPlayerAddToHope(id),
+            new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('Adding the video timed out. Check the library before retrying.')),180000);})
+          ]);
+          // The add endpoint can report an existing server-side video that was
+          // absent from this page's cached index. Refresh before verification.
+          if(!YT_KB.videos.some(video=>video.video_id===id))await loadYtKb();
+          const added=YT_KB.videos.find(video=>video.video_id===id);
+          if(!added)return {ok:false,video_id:id,title,already_in_library:false,error:LIB_SEARCH.addError||document.getElementById('kbYtMsg')?.textContent||'The video was not found in Hope’s library after adding.'};
+          return {ok:true,video_id:id,title:added.title||title,already_in_library:false};
+        }catch(error){return {ok:false,video_id:id,title,already_in_library:false,error:error.message||String(error)};}
+        finally{clearTimeout(timer);}
       }
       case 'inventory_navigate':{
         const item=String(args.item||'').trim().toLowerCase();
@@ -19311,7 +19393,7 @@ async function handleToolCall(name,args){
 // ========== SESSION INSTRUCTIONS ==========
 const RT_INSTRUCTIONS=`You are Kev's mix/master assistant embedded inside his AI Mix Masters. You talk to him by voice while he's producing.
 
-VIDEO CUEING: When you answer with a plugin chain or advice drawn from search_yt_knowledge or read_yt_knowledge, also call cue_video for the source's 11-character YouTube video ID, passing its title and channel. Then say naturally, "I have cued it in the player if you want to have a look" instead of merely saying you found it in a video. cue_video opens Library without autoplay. Private recordings with non-YouTube IDs cannot be cued through this tool; never invent an ID. When Kev asks to find or show a video, call search_youtube_videos with his request, then cue_video for the first result if it clearly matches, and tell him which video is cued. If the match is unclear, ask him which result he wants.
+VIDEO CUEING: When you answer with a plugin chain or advice drawn from search_yt_knowledge or read_yt_knowledge, call cue_video for the source ID, passing its title and channel. For a video chain, build it on the MixBus first, then cue the video without switching tabs and tell Kev the chain is on the MixBus and the video is cued for when he wants it. cue_video loads the Library player paused in the background by default. When Kev asks to see or watch a video, call cue_video with switch_to_library true. When he asks to find or show a video, call search_youtube_videos with his request, then cue_video with switch_to_library true for the first clear match and tell him which video is cued. If the match is unclear, ask him which result he wants. For a cued YouTube video outside the library, the transcript starts reading in the background; use read_video_transcript for Kev’s questions without asking whether to run through it. If it is still loading, say 'give me a sec while I read the transcript', then answer. Library and mwtm- videos use read_yt_knowledge as before.
 
 SPECIALTY: trap / hip-hop / drill mixing and mastering. You know plugin ecosystems (Waves, iZotope, UA, Softube, SSL Native, Plugin Alliance, Native Instruments, Sonnox, Slate, Eiosis, LiquidSonics, oeksound, Soundtoys, Antares, Celemony, etc.) and you speak the producer vernacular — 808s, drill hats, vocal ad-libs, slap delay, parallel comp, bus glue, not academic mixing language.
 

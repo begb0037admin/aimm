@@ -188,6 +188,32 @@ function youtubeChunks(segments){
   return chunks;
 }
 
+const YOUTUBE_TRANSCRIPT_ERROR = 'The transcript service is not available right now. Try again in a minute.';
+const YOUTUBE_QUOTA_ERROR = 'The monthly limit for adding videos has been reached. It resets next month.';
+
+async function fetchYoutubeTranscript(id, env){
+  let response;
+  try {
+    response = await fetch(`https://api.apify.com/v2/acts/B2eTssvcBFUCcAgtJ/run-sync-get-dataset-items?token=${encodeURIComponent(env.APIFY_TOKEN)}`,{
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({urls:[`https://www.youtube.com/watch?v=${id}`]})
+    });
+  } catch (_) { return {error:YOUTUBE_TRANSCRIPT_ERROR,code:'apify_failed',status:502}; }
+  if (response.status === 402 || response.status === 429) return {error:YOUTUBE_QUOTA_ERROR,code:'quota',status:429};
+  if (!response.ok) return {error:YOUTUBE_TRANSCRIPT_ERROR,code:'apify_failed',status:502};
+  let items;
+  try { items = await response.json(); } catch (_) { items = []; }
+  const item = Array.isArray(items) ? items.find(v => v.videoId === id) : null;
+  const chunks = youtubeChunks(item?.segments || []);
+  if (!chunks.length) return {error:'This video has no captions, so there is no transcript to add.',code:'no_captions',status:422};
+  return {ok:true,video_id:id,title:String(item.videoTitle || id).slice(0,300),channel:String(item.channelName || 'YouTube').slice(0,200),chunks};
+}
+
+function storedYoutubeChunks(transcript){
+  return String(transcript || '').split(/(?=^## Chunk \d+\s*$)/m)
+    .filter(part => /^## Chunk \d+/m.test(part))
+    .map(part => part.replace(/^## Chunk \d+\s*/,'').trim());
+}
+
 async function upsertVideo(body, env){
   validateUpsertBody(body);
   const videoId = body.video_id.trim();
@@ -812,39 +838,47 @@ export default {
       const video = await env.AIMM_KV.get(`yt-user:${id}`, 'json');
       return video ? corsJsonResponse(video,200,origin,request) : corsJsonResponse({ error:'Transcript not found' },404,origin,request);
     }
-    if (url.pathname === '/kb/add-youtube'){
+    if (url.pathname === '/kb/add-youtube' || url.pathname === '/kb/peek-youtube'){
+      const peeking = url.pathname === '/kb/peek-youtube';
       if (request.method !== 'POST') return corsJsonResponse({ error:'Method not allowed' },405,origin,request);
-      if (!env.HOPE_STT_LIMIT) return corsJsonResponse({ error:'The transcript service is not available right now. Try again in a minute.',code:'service_unavailable' },503,origin,request);
+      if (!env.HOPE_STT_LIMIT) return corsJsonResponse({ error:YOUTUBE_TRANSCRIPT_ERROR,code:'service_unavailable' },503,origin,request);
       const { success } = await env.HOPE_STT_LIMIT.limit({ key:request.headers.get('CF-Connecting-IP') || 'unknown' });
-      if (!success) return corsJsonResponse({ error:'The monthly limit for adding videos has been reached. It resets next month.',code:'quota' },429,origin,request);
+      if (!success) return corsJsonResponse({ error:YOUTUBE_QUOTA_ERROR,code:'quota' },429,origin,request);
       if (Number(request.headers.get('content-length') || 0) > 2048) return corsJsonResponse({ error:'Link is too long' },413,origin,request);
       let body;
       try { body = await request.text(); if (body.length > 2048) throw new Error(); body = JSON.parse(body); }
       catch (_) { return corsJsonResponse({ error:'Invalid request' },400,origin,request); }
       const id = youtubeVideoId(body?.url);
       if (!id) return corsJsonResponse({ error:'That is not a YouTube link. Paste a link from the Share button.',code:'invalid_url' },400,origin,request);
-      if (!env.AIMM_KV || !env.VEC_YT_KB || !env.VOYAGE_API_KEY || !env.APIFY_TOKEN) return corsJsonResponse({ error:'The transcript service is not available right now. Try again in a minute.',code:'service_unavailable' },503,origin,request);
+      if (!env.AIMM_KV || !env.APIFY_TOKEN || (!peeking && (!env.VEC_YT_KB || !env.VOYAGE_API_KEY))) return corsJsonResponse({ error:YOUTUBE_TRANSCRIPT_ERROR,code:'service_unavailable' },503,origin,request);
       const index = await env.AIMM_KV.get('yt-user:index','json') || [];
       const existing = index.find(v => v.video_id === id);
       if (existing || REPO_YT_VIDEOS.has(id)) {
         const video = existing || REPO_YT_VIDEOS.get(id);
+        if (peeking) {
+          let chunks = [];
+          if (existing) {
+            const stored = await env.AIMM_KV.get(`yt-user:${id}`,'json');
+            chunks = storedYoutubeChunks(stored?.transcript);
+          } else {
+            try {
+              const source = await fetch(`https://begb0037admin.github.io/aimm/docs/knowledge/${id}.md`);
+              if (!source.ok) throw new Error('Library transcript unavailable');
+              chunks = storedYoutubeChunks(await source.text());
+            } catch (_) { return corsJsonResponse({error:YOUTUBE_TRANSCRIPT_ERROR,code:'service_unavailable'},502,origin,request); }
+          }
+          if (!chunks.length) return corsJsonResponse({error:'This video has no captions, so there is no transcript to add.',code:'no_captions'},422,origin,request);
+          return corsJsonResponse({ok:true,video_id:id,title:video.title,channel:video.channel,chunks,already:true},200,origin,request);
+        }
         return corsJsonResponse({ ok:true,already:true,video_id:id,title:video.title,channel:video.channel,chunks:video.chunks },200,origin,request);
       }
-      let response;
-      try {
-        response = await fetch(`https://api.apify.com/v2/acts/B2eTssvcBFUCcAgtJ/run-sync-get-dataset-items?token=${encodeURIComponent(env.APIFY_TOKEN)}`,{
-          method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({urls:[`https://www.youtube.com/watch?v=${id}`]})
-        });
-      } catch (_) { return corsJsonResponse({ error:'The transcript service is not available right now. Try again in a minute.',code:'apify_failed' },502,origin,request); }
-      if (response.status === 402 || response.status === 429) return corsJsonResponse({ error:'The monthly limit for adding videos has been reached. It resets next month.',code:'quota' },429,origin,request);
-      if (!response.ok) return corsJsonResponse({ error:'The transcript service is not available right now. Try again in a minute.',code:'apify_failed' },502,origin,request);
-      let items;
-      try { items = await response.json(); } catch (_) { items = []; }
-      const item = Array.isArray(items) ? items.find(v => v.videoId === id) : null;
-      const chunks = youtubeChunks(item?.segments || []);
-      if (!chunks.length) return corsJsonResponse({ error:'This video has no captions, so there is no transcript to add.',code:'no_captions' },422,origin,request);
-      const title = String(item.videoTitle || id).slice(0,300);
-      const channel = String(item.channelName || 'YouTube').slice(0,200);
+      const parsed = await env.AIMM_KV.get(`yt-peek:${id}`,'json') || await fetchYoutubeTranscript(id,env);
+      if (!parsed.ok) return corsJsonResponse({error:parsed.error,code:parsed.code},parsed.status,origin,request);
+      const {chunks,title,channel} = parsed;
+      if (peeking) {
+        await env.AIMM_KV.put(`yt-peek:${id}`,JSON.stringify(parsed),{expirationTtl:3600});
+        return corsJsonResponse({...parsed,already:false},200,origin,request);
+      }
       try {
         await upsertVideo({ video_id:id,chunks:chunks.map((text,i)=>({chunk:i+1,title,channel,text})) },env);
         const entry = { video_id:id,title,channel,url:`https://www.youtube.com/watch?v=${id}`,added:new Date().toISOString(),chunks:chunks.length };
