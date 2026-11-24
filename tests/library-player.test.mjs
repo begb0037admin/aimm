@@ -8,7 +8,7 @@ const build=html.match(/const AIMM_BUILD = '([^']+)'/)?.[1];
 const manifest=JSON.parse(readFileSync(new URL('../docs/knowledge/index.json',import.meta.url),'utf8'));
 const section=html.slice(html.indexOf('const LIB_PLAYER='),html.indexOf('function libFold(button){'));
 function setup(extra={}){
-  const ctx={URL,URLSearchParams,setTimeout,clearTimeout,AIMM_BUILD:build,location:{origin:'http://localhost:8765'},YT_KB:{videos:[]},
+  const ctx={URL,URLSearchParams,setTimeout,clearTimeout,AIMM_BUILD:build,location:{origin:'http://localhost:8765'},YT_KB:{videos:[]},document:{getElementById:()=>null},
     escapeHtml:s=>String(s),escapeJs:s=>String(s),libDate:s=>s||'–',
     libChannels:videos=>[...new Map(videos.map(v=>[v.channel,0]))].map(([name])=>[name,videos.filter(v=>v.channel===name).length]),
     libFilterVideos:(videos,channel,query)=>videos.filter(v=>(!channel||v.channel===channel)&&(!query||[v.title,v.channel].some(x=>x.toLowerCase().includes(query.toLowerCase())))),
@@ -235,19 +235,37 @@ test('YouTube player unloads both caption modules on ready, API change, and stat
   assert.doesNotThrow(()=>events.onApiChange({target:player}));
   assert.equal(calls.at(-1),'cc');
 });
-test('YouTube iframe load can unload captions before the API player exists',()=>{
-  const commands=[];
-  const iframe={contentWindow:{postMessage:(message,origin)=>commands.push({message:JSON.parse(message),origin})}};
+test('YouTube iframe load calls the actual caption helper after script setup',()=>{
+  const commands=[];let onload;
+  const iframe={addEventListener:(name,handler)=>{if(name==='load')onload=handler},contentWindow:{postMessage:(message,origin)=>commands.push({message:JSON.parse(message),origin})}};
   const ctx=setup({document:{getElementById:id=>id==='libPlayerIframe'?iframe:null}});
-  ctx.libPlayerUnloadCaptions(null);
+  assert.equal(typeof onload,'function');
+  assert.doesNotThrow(()=>onload());
   assert.deepEqual(commands.map(({message})=>message.args[0]),['captions','cc']);
   assert.ok(commands.every(({message,origin})=>message.event==='command'&&message.func==='unloadModule'&&origin==='https://www.youtube.com'));
-  assert.match(html,/<iframe id="libPlayerIframe"[^>]*onload="libPlayerUnloadCaptions\(null\)"/);
+  assert.doesNotMatch(html,/<iframe id="libPlayerIframe"[^>]*\sonload=/);
+  assert.equal(typeof ctx.libPlayerUnloadCaptions,'function');
+});
+test('caption callbacks resolve in the full page script and use API plus iframe commands',()=>{
+  const start=html.indexOf('<script>',html.indexOf('<script src="./uad-licence.js"'))+8;
+  const fullScript=html.slice(start,html.indexOf('</script>',start));
+  const global={window:{},document:{getElementById(){throw Error('stop startup')}},requestAnimationFrame:()=>{}};
+  assert.throws(()=>vm.runInNewContext(fullScript,global),/stop startup/);
+  assert.equal(typeof global.libPlayerUnloadCaptions,'function');
+  assert.equal(typeof global.libPlayerSelect,'function');
+
+  const calls=[],commands=[];
+  const iframe={addEventListener(){},contentWindow:{postMessage:message=>commands.push(JSON.parse(message).args[0])}};
+  const player={unloadModule:module=>calls.push(module)};
+  const ctx=setup({document:{getElementById:id=>id==='libPlayerIframe'?iframe:null}});
+  assert.doesNotThrow(()=>ctx.libPlayerUnloadCaptions(player));
+  assert.deepEqual(calls,['captions','cc']);
+  assert.deepEqual(commands,['captions','cc']);
 });
 test('YouTube embed error shows the cannot-embed state',()=>{
   let failed=false;
   const Player=class{constructor(_id,options){options.events.onError({data:101});}};
-  const ctx=setup({window:{YT:{Player}},YT:{Player},document:{getElementById:()=>({classList:{add:()=>{failed=true}}})}});
+  const ctx=setup({window:{YT:{Player}},YT:{Player},document:{getElementById:()=>({addEventListener(){},classList:{add:()=>{failed=true}}})}});
   ctx.libPlayerEnsureApi();
   assert.equal(failed,true);
 });
@@ -264,7 +282,7 @@ test('private manifest resolves unique R2 keys and preserves YouTube rows',async
   assert.equal('description' in ctx.libPlayerVideos()[0],false);
   assert.equal(ctx.libPlayerVideos()[0].src,'/mwtm/f/lessons/lesson-1.mp4');
   assert.equal(ctx.libPlayerVideos()[0].thumb,'/mwtm/f/thumbs/lesson-1.jpg');
-  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.42');
+  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.43');
   assert.equal(rendered,1);
 });
 
@@ -278,7 +296,7 @@ test('missing or empty private manifest keeps the existing YouTube playlist',asy
 });
 
 test('private selection uses local player and recording link; YouTube switches back',async()=>{
-  const nodes={};for(const id of ['libPlayerTitle','libPlayerChannel','libPlayerOpen','libPlayerFailLink','libPlayerIframe'])nodes[id]={textContent:'',href:'',hidden:false,removeAttribute(name){this.removed=name}};
+  const nodes={};for(const id of ['libPlayerTitle','libPlayerChannel','libPlayerOpen','libPlayerFailLink','libPlayerIframe'])nodes[id]={textContent:'',href:'',hidden:false,addEventListener(){},removeAttribute(name){this.removed=name}};
   nodes.libPlayer={classList:{remove(){}}};nodes.libPlayerFrame={classList:{remove(){}}};
   const local={shown:[],hidden:0,show(o){this.shown.push(o)},hide(){this.hidden++}};
   const saved=storage();
