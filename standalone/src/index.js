@@ -553,7 +553,7 @@ function mwtmRange(value, size) {
   return start >= size || end < start ? null : { start, end };
 }
 
-async function serveMwtm(request, env, key) {
+async function serveMwtm(request, env, key, isManifest = false) {
   if (request.method !== 'GET' && request.method !== 'HEAD') {
     return new Response('Method not allowed', { status: 405, headers: { Allow: 'GET, HEAD' } });
   }
@@ -567,10 +567,17 @@ async function serveMwtm(request, env, key) {
   const range = useRange ? mwtmRange(rangeHeader, size) : null;
   const headers = new Headers({
     'Accept-Ranges': 'bytes',
-    'Cache-Control': 'private, max-age=3600',
+    'Cache-Control': isManifest ? 'private, no-cache' : 'private, max-age=3600',
     'Content-Type': /\.mp4$/i.test(key) ? 'video/mp4' : /\.jpe?g$/i.test(key) ? 'image/jpeg' : /\.json$/i.test(key) ? 'application/json' : 'application/octet-stream',
     'ETag': object.httpEtag,
   });
+  if (isManifest) {
+    const ifNoneMatch = request.headers.get('If-None-Match');
+    const etag = object.httpEtag.replace(/^W\//, '');
+    if (ifNoneMatch?.split(',').some(value => value.trim() === '*' || value.trim().replace(/^W\//, '') === etag)) {
+      return new Response(null, { status: 304, headers });
+    }
+  }
   if (useRange && !range) {
     headers.set('Content-Range', `bytes */${size}`);
     return new Response(null, { status: 416, headers });
@@ -591,7 +598,7 @@ export default {
     const url = new URL(request.url);
     // Read the raw path so encoded dot segments cannot be normalised away by URL.
     const rawPath = request.url.match(/^[a-z]+:\/\/[^/]+([^?#]*)/i)?.[1] || '/';
-    if (rawPath === '/mwtm/manifest.json') return serveMwtm(request, env, 'manifest.json');
+    if (rawPath === '/mwtm/manifest.json') return serveMwtm(request, env, 'manifest.json', true);
     if (rawPath.startsWith('/mwtm/f/')) {
       let key;
       try { key = decodeURIComponent(rawPath.slice('/mwtm/f/'.length)); }

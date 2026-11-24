@@ -38,21 +38,41 @@ test('Wrangler keeps the dashboard Custom Domain and binds private R2', () => {
   assert.doesNotMatch(config, /^\s*(?:routes?\s*=|\[\[routes\]\])/m);
 });
 
-test('manifest and media return private headers and correct types', async () => {
-  for (const [path, type] of [
-    ['/mwtm/manifest.json', 'application/json'],
-    ['/mwtm/f/film/clip.mp4', 'video/mp4'],
-    ['/mwtm/f/film/thumb.jpg', 'image/jpeg'],
+test('manifest and media return their cache headers and correct types', async () => {
+  for (const [path, type, cacheControl] of [
+    ['/mwtm/manifest.json', 'application/json', 'private, no-cache'],
+    ['/mwtm/f/film/clip.mp4', 'video/mp4', 'private, max-age=3600'],
+    ['/mwtm/f/film/thumb.jpg', 'image/jpeg', 'private, max-age=3600'],
+    ['/mwtm/f/manifest.json', 'application/json', 'private, max-age=3600'],
   ]) {
     const response = await request(path);
     assert.equal(response.status, 200);
     assert.equal(response.headers.get('Content-Type'), type);
-    assert.equal(response.headers.get('Cache-Control'), 'private, max-age=3600');
+    assert.equal(response.headers.get('Cache-Control'), cacheControl);
     assert.equal(response.headers.get('ETag'), '"abc123"');
     assert.equal(response.headers.get('Accept-Ranges'), 'bytes');
     assert.equal(response.headers.get('Content-Length'), '10');
     assert.equal(await response.text(), '0123456789');
   }
+});
+
+test('manifest revalidates with ETag while media keeps its existing response', async () => {
+  for (const method of ['GET', 'HEAD']) {
+    for (const ifNoneMatch of ['"abc123"', 'W/"abc123"', '"other", "abc123"', '*']) {
+      const response = await request('/mwtm/manifest.json', { method, headers: { 'If-None-Match': ifNoneMatch } });
+      assert.equal(response.status, 304);
+      assert.equal(response.headers.get('Cache-Control'), 'private, no-cache');
+      assert.equal(response.headers.get('ETag'), '"abc123"');
+      assert.equal(response.headers.get('Content-Length'), null);
+      assert.equal(await response.text(), '');
+    }
+  }
+  const changed = await request('/mwtm/manifest.json', { headers: { 'If-None-Match': '"old"' } });
+  assert.equal(changed.status, 200);
+  assert.equal(await changed.text(), '0123456789');
+  const media = await request('/mwtm/f/film/clip.mp4', { headers: { 'If-None-Match': '"abc123"' } });
+  assert.equal(media.status, 200);
+  assert.equal(media.headers.get('Cache-Control'), 'private, max-age=3600');
 });
 
 test('single, open-ended and suffix ranges read only requested bytes', async () => {
