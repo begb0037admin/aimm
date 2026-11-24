@@ -3149,7 +3149,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
    No boxes, no fills. Hairline between rows, 22px above and below it. The summary opens under its own title and runs the full row width. */
 #library .card[data-sec=add]{--grid:minmax(0,1fr) calc(190*var(--u)) calc(170*var(--u)) calc(100*var(--u)) calc(80*var(--u)) calc(112*var(--u))}            /* Title | Channel | Length, views | Open video | Dismiss | Add */
 #library .card[data-sec=review]{--grid:minmax(0,1fr) calc(190*var(--u)) calc(150*var(--u)) calc(56*var(--u)) calc(72*var(--u)) calc(112*var(--u))}          /* Title | Files under | Received | Edit | Delete | Keep */
-#library .card[data-sec=videos]{--grid:minmax(0,1fr) calc(180*var(--u)) calc(110*var(--u)) calc(56*var(--u)) calc(64*var(--u)) calc(100*var(--u))}   /* Title | Channel | Added | Edit | Show | Link */
 #library .card[data-sec=notes]{--grid:minmax(0,1fr) calc(180*var(--u)) calc(110*var(--u)) calc(56*var(--u)) calc(64*var(--u)) calc(100*var(--u)) calc(72*var(--u))}    /* Title | Source | Added | Edit | Show | Mode | Remove */
 #library .card[data-sec=chats]{--grid:minmax(0,1fr) calc(170*var(--u)) calc(120*var(--u)) calc(56*var(--u)) calc(64*var(--u)) calc(130*var(--u)) calc(110*var(--u)) calc(56*var(--u)) calc(72*var(--u))}   /* Title | Contents | Saved | Edit | Hide | Apply to MixBus | Favourite | Copy | Delete */
 #library .thead,#library .ent{display:grid;grid-template-columns:var(--grid);column-gap:calc(24*var(--u));align-items:center;padding-left:var(--rowx-l);padding-right:var(--rowx-r)}
@@ -3197,7 +3196,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
   #library .btn{min-width:calc(88*var(--u))}
 }
 
-/* 6. GROUPS inside Videos and Notes (the six categories) and Saved chats (Favourites, Sessions): a hairline row, count beside the name, fold at the right */
+/* 6. GROUPS inside Notes (the six categories) and Saved chats (Favourites, Sessions): a hairline row, count beside the name, fold at the right */
 #library .grp{display:flex;align-items:center;gap:calc(12*var(--u));width:100%;min-height:calc(56*var(--u));padding:0 var(--rowx-r) 0 var(--rowx-l);background:none;border:0;border-top:1px solid var(--track);color:#fff;font:500 calc(16*var(--u))/1.3 var(--aimm-font);text-align:left;cursor:pointer}
 #library .cbody>.g:first-child>.grp{border-top:0}
 #library .grp .n{font:500 calc(15*var(--u))/1.3 var(--aimm-font);color:var(--dim);font-variant-numeric:tabular-nums}
@@ -3215,13 +3214,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #library .pill:has(:focus-visible){box-shadow:none}
 #library .pill :focus-visible{outline:2px solid var(--teal);outline-offset:2px}
 
-/* 8. BROWSE: search across the library and filter videos by channel */
-#library .card[data-sec=browse]{margin:0 0 calc(40*var(--u))}
-#library .card[data-sec=browse] .browse-head{display:grid;grid-template-columns:minmax(0,1fr) calc(280*var(--u)) auto;grid-template-areas:"s c e";gap:calc(12*var(--u)) calc(24*var(--u));align-items:center;margin:0;padding:calc(18*var(--u)) var(--rowx-r) calc(18*var(--u)) var(--rowx-l)}
-#library .browse-head input.field{grid-area:s;width:100%}
-#library .browse-head .channel-select{position:relative;grid-area:c;width:100%;min-width:0}
-#library .browse-head .channel-select select.field{width:100%;padding-right:calc(46*var(--u));appearance:none;-webkit-appearance:none}
-#library .browse-head .channel-select::after{content:"+";position:absolute;right:calc(16*var(--u));top:50%;transform:translateY(-50%);pointer-events:none;color:var(--hi);font:500 calc(22*var(--u))/1 var(--aimm-font);text-align:center;width:calc(22*var(--u))}
 /* 0. tokens */
 #library{--hov:#2dd4bf;--pill-h:calc(32*var(--u));--pill-x:calc(12*var(--u));--pill-gap:calc(12*var(--u));--ctl-y:calc(14*var(--u));--ctl-r:calc(16*var(--u))}
 
@@ -3253,17 +3245,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 
 /* 6. INLINE ACTION IN A SENTENCE (Kept. Filed in Notes under X. Undo): pill starts 4 after the full stop, never over it */
 #library .none .tx{margin:calc(-5*var(--u)) 0 calc(-5*var(--u)) calc(4*var(--u));vertical-align:middle}
-
-/* 7. BROWSE ROW AND FLUSH CHILD SECTIONS */
-#library .browse-head .ends{grid-area:e;justify-self:end;display:flex;gap:var(--pill-gap)}
-@container card (max-width:900px){
-  #library .card[data-sec=browse] .browse-head{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"s s" "c e"}
-}
-@container card (max-width:520px){
-  #library .card[data-sec=browse] .browse-head{grid-template-columns:minmax(0,1fr);grid-template-areas:"s" "c" "e"}
-}
-#library .card[data-sec=browse] .lib-group{gap:0;margin:0}
-#library .card[data-sec=browse] .lib-group>.card{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0}
 
 /* 8. STACKED MODE (card under 1300, includes 1300 and 560 windows): the action row is box-aligned (pill box edge on the title edge),
       boxes 8 apart, so text is 32 apart and no pill can touch. */
@@ -3739,6 +3720,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     </div>
   </section>
   <div class="lib-group">
+    <section class="card" data-sec="notes" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Notes <span class="n" id="libNoteCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libNoteRows"></div></section>
+    <section class="card" data-sec="chats" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Saved chats <span class="n" id="libChatCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libChatRows"></div></section>
     <section class="card" data-sec="add" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Add to Hope's library<span class="fold" aria-hidden="true"></span></button><div class="cbody">
       <div class="frow"><label class="lbl" for="libLink">Paste a link</label><input class="field" id="libLink" type="url" placeholder="YouTube link" onkeydown="if(event.key==='Enter'){event.preventDefault();libAddLink()}"><div class="btns"><button class="btn pri" type="button" id="libLinkGo" onclick="libAddLink()">Add</button></div><p class="fmsg" id="libLinkMsg"></p><div class="prog" id="libLinkProgress" hidden><i></i></div></div>
       <div class="frow"><label class="lbl" for="libFind">Find videos</label><input class="field" id="libFind" type="search" placeholder="e.g. 808s in hip hop" onkeydown="if(event.key==='Enter'){event.preventDefault();libFindVideos()}"><div class="btns"><button class="btn pri" type="button" id="libFindGo" onclick="libFindVideos()">Find</button></div><p class="fmsg" id="libFindMsg"></p><div class="prog" id="libFindProgress" hidden><i></i></div></div>
@@ -3747,12 +3730,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     </div></section>
     <section class="card" data-sec="review" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Hope's review <span class="n" id="libReviewCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libReviewRows"></div></section>
   </div>
-  <section class="card" data-sec="browse" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Browse<span class="fold" aria-hidden="true"></span></button><div class="cbody"><div class="browse-head"><input class="field" type="search" id="libSearch" aria-label="Search library" placeholder="Search videos, notes and saved chats" oninput="libSearchChanged()"><span class="channel-select"><select class="field" id="libChannel" aria-label="Filter videos by channel" onchange="libChannelChanged()"><option value="">All channels</option></select></span><div class="ends"><button class="tx" type="button" onclick="libFoldAll(true)">Expand all</button><button class="tx" type="button" onclick="libFoldAll(false)">Collapse all</button></div></div>
-  <div class="lib-group" id="libBrowse">
-    <section class="card" data-sec="videos" data-open="false"><button class="bar" type="button" aria-expanded="false" onclick="libFold(this)">Videos <span class="n" id="libVideoCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libVideoRows"></div></section>
-    <section class="card" data-sec="notes" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Notes <span class="n" id="libNoteCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libNoteRows"></div></section>
-    <section class="card" data-sec="chats" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Saved chats <span class="n" id="libChatCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libChatRows"></div></section>
-  </div></div></section>
 </div>
 <div class="panel" id="snapshots">
   <div class="section-head">
@@ -5776,7 +5753,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
       <label style="display:flex;align-items:center;gap:8px;color:#9ca3af;font-size:12px;cursor:pointer;"><input type="checkbox" id="kbAutoSummarise" checked> Auto-summarise with Hope — raw text is kept too.</label>
       <div class="actions">
         <button class="btn ghost sm" id="kbCancel">Cancel</button>
-        <button class="btn secondary" id="kbVideoDelete" type="button" hidden>Delete video</button>
         <button class="btn green" id="kbSave">Save</button>
       </div>
     </div>
@@ -5803,7 +5779,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.25';
+const AIMM_BUILD = '2026-11-23.28';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -13988,7 +13964,7 @@ function ensureYtKbLoaded() {
 // attempting (and failing) to be the discovery mechanism itself.
 function buildYtKbDigest() {
   if (!YT_KB.loaded || !YT_KB.videos.length) return '';
-  const readable = YT_KB.videos.filter(v => typeof libVideoReads !== 'function' || libVideoReads(v.video_id));
+  const readable = YT_KB.videos;
   const total = readable.length;
   const totalChunks = readable.reduce((a, v) => a + (v.chunks || 0), 0);
   return `=== YOUTUBE KNOWLEDGE BASE ===\nSearchable YouTube KB: ${total} video${total === 1 ? '' : 's'} / ${totalChunks} chunks. Use search_yt_knowledge(query) to find relevant content on ANY mixing/production/plugin question — it searches the full corpus, not just a static list. Once you've found a promising video, call read_yt_knowledge(video_id, query) for more of that specific transcript BEFORE concluding you lack a specific detail — this is mandatory for a video_id starting with "mwtm-" (a full Mix With The Masters lesson transcript, not a trailer). Cite the video title and channel when you draw from either tool's result.`;
@@ -14520,7 +14496,6 @@ function kbOpenAdd(category){
   document.getElementById('kbContent').value = '';
   document.getElementById('kbAutoSummarise').checked = true;
   document.getElementById('kbAutoSummarise').closest('label').hidden = false;
-  document.getElementById('kbVideoDelete').hidden = true;
   document.getElementById('kbModal').classList.add('open');
   setTimeout(()=>document.getElementById('kbTitle').focus(), 30);
 }
@@ -14535,7 +14510,6 @@ function kbEdit(id){
   document.getElementById('kbContent').value = n.raw||'';
   document.getElementById('kbAutoSummarise').checked = false;
   document.getElementById('kbAutoSummarise').closest('label').hidden = true;
-  document.getElementById('kbVideoDelete').hidden = true;
   document.getElementById('kbModal').classList.add('open');
 }
 function kbCloseModal(){
@@ -18420,7 +18394,6 @@ async function handleToolCall(name,args){
           fused = rerankedIds.map(id => byId.get(id)).filter(Boolean);
         }
         fused = kbPromoteNamedVideo(HOPE_KB_DECISION.question, query, fused, n);
-        if (typeof libVideoReads === 'function') fused = fused.filter(c => libVideoReads(c.video_id));
         const hits = fused.slice(0, n);
 
         // Existing behaviour: BM25 excerpts centre on a literal query term;
@@ -18510,7 +18483,7 @@ async function handleToolCall(name,args){
         // search_yt_knowledge -> read_yt_knowledge routing can chain these
         // two calls in quick succession right after page load.
         await ensureYtKbLoaded();
-        const knownVideo = YT_KB.videos.find(v => v.video_id === reqId && (typeof libVideoReads !== 'function' || libVideoReads(reqId)));
+        const knownVideo = YT_KB.videos.find(v => v.video_id === reqId);
         if (!knownVideo) throw new Error(`read_yt_knowledge: video_id "${reqId}" not found in knowledge base. Available: ${YT_KB.videos.map(v=>v.video_id).join(', ') || 'none loaded'}`);
         let src = '';
         try {
@@ -22218,8 +22191,8 @@ ensureYtKbLoaded();
 // head start, not a correctness requirement.
 loadKbSearchIndex();
 
-// Library: one surface for additions, review and browsing. Existing note and
-// snapshot storage and handlers remain the source of truth.
+// Library: player, notes, saved chats, additions and review share the tab.
+// Existing note and snapshot storage and handlers remain the source of truth.
 const LIB_UI={results:null,query:'',excluded:0,hopeSearch:false,groups:{},more:{},open:{},editTip:null,kept:null,videoText:{},busy:false,addingAll:false};
 const LIB_PLAYER={id:null,external:null,api:null,apiLoading:false,descriptionOpen:false,selection:0};
 function libYouTubeId(video){
@@ -22310,7 +22283,6 @@ function libPlayerRender(){
     }
   }else libPlayerRenderRows();
 }
-function libPlayerWatch(id){libPlayerSelect(id,true);document.getElementById('libPlayer').scrollIntoView({block:'start',behavior:'smooth'});}
 async function libPlayerSearchEnter(event){
   const value=event.currentTarget.value.trim(),id=libYouTubeIdFromLink(value);if(!id)return;
   event.preventDefault();libPlayerSelect(id,true);
@@ -22324,35 +22296,18 @@ async function libPlayerCopyLink(){
   await navigator.clipboard.writeText(`https://www.youtube.com/watch?v=${LIB_PLAYER.id}`);
   const button=document.getElementById('libPlayerCopy');button.textContent='Copied';setTimeout(()=>button.textContent='Copy link',1800);
 }
-function libVideoReads(){return true;}
 function libFold(button){
   const card=button.closest('.card');card.dataset.open=card.dataset.open==='false'?'true':'false';
   button.setAttribute('aria-expanded',card.dataset.open);
 }
-function libSearchChanged(){
-  const card=document.querySelector('#libBrowse .card[data-sec=videos]');
-  if(card){
-    const open=!!(document.getElementById('libSearch')?.value.trim()||document.getElementById('libChannel')?.value);
-    if(open){const browse=document.querySelector('#library .card[data-sec=browse]');if(browse){browse.dataset.open='true';browse.querySelector('.bar').setAttribute('aria-expanded','true');}}
-    card.dataset.open=String(open);
-    card.querySelector('.bar').setAttribute('aria-expanded',String(open));
-    if(open)for(const key of Object.keys(LIB_UI.groups))if(key.startsWith('v'))LIB_UI.groups[key]=true;
-  }
-  libraryRender();
-}
-function libChannelChanged(){libSearchChanged();}
 function libChannels(videos){
   const counts=new Map();
   for(const video of videos){const channel=video.channel||'YouTube';counts.set(channel,(counts.get(channel)||0)+1);}
-  return [...counts].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+  return [...counts].sort((a,b)=>a[0].localeCompare(b[0],undefined,{sensitivity:'base'}));
 }
 function libFilterVideos(videos,channel,query){
   const q=query.trim().toLowerCase();
   return videos.filter(v=>(!channel||(v.channel||'YouTube')===channel)&&(!q||[v.title,v.channel].some(text=>String(text||'').toLowerCase().includes(q))));
-}
-function libFoldAll(open){
-  document.querySelectorAll('#libBrowse .card').forEach(card=>{card.dataset.open=String(open);card.querySelector('.bar').setAttribute('aria-expanded',String(open));});
-  document.querySelectorAll('#libBrowse .g').forEach(group=>{group.dataset.open=String(open);group.querySelector('.grp').setAttribute('aria-expanded',String(open));LIB_UI.groups[group.dataset.key]=open;});
 }
 function libGroupToggle(button){
   const group=button.closest('.g'),open=group.dataset.open==='false';
@@ -22361,10 +22316,6 @@ function libGroupToggle(button){
 function libDate(value,fallback='Library'){return value?new Date(value).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):fallback;}
 function libVideoTranscript(text){
   return String(text||'').replace(/^\uFEFF?\s*---[ \t]*\r?\n[\s\S]*?\r?\n---[ \t]*(?:\r?\n|$)/,'').trim();
-}
-function libVideoContent(video,notes){
-  const note=notes.find(n=>n.source===video.url&&n.summary);
-  return note?.summary||LIB_UI.videoText[video.video_id]||'Loading…';
 }
 function libChatTurns(text){
   return String(text||'').split(/\n+/).map(line=>{
@@ -22385,51 +22336,30 @@ function libraryRender(){
   libPlayerRender();
   const all=STATE.knowledge||[];knowledgeMigrateCategories();
   const notes=all.filter(n=>!n.toReview),tips=all.filter(n=>n.toReview);
-  const chats=STATE.journal||[],videos=YT_KB.videos||[];
+  const chats=STATE.journal||[];
   const set=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text;};
   set('libReviewCount',tips.length);set('libNoteCount',notes.length);set('libChatCount',chats.length);
-  const channelSelect=document.getElementById('libChannel');
-  const channels=libChannels(videos);
-  const selectedChannel=channelSelect?.value||'';
-  if(channelSelect){
-    channelSelect.innerHTML='<option value="">All channels</option>'+channels.map(([name,count])=>`<option value="${escapeHtml(name)}">${escapeHtml(name)} ${count}</option>`).join('');
-    channelSelect.value=channels.some(([name])=>name===selectedChannel)?selectedChannel:'';
-  }
-  const q=(document.getElementById('libSearch')?.value||'').trim().toLowerCase();
-  const matches=(...parts)=>!q||parts.some(v=>String(v||'').toLowerCase().includes(q));
   const tipHost=document.getElementById('libReviewRows');
   tipHost.innerHTML=tips.length?libHead(['Title','Files under','Received','Edit','Delete','Keep'])+tips.map(n=>{
     const id=escapeJs(n.id),editing=LIB_UI.editTip===n.id;
     if(editing)return `<div class="ent nk"><div class="t"><input class="field" id="libTipTitle" value="${escapeHtml(n.title)}" aria-label="Tip title"></div><div class="meta"><select class="field" id="libTipCategory" aria-label="Category">${KB_CATEGORIES.map(c=>`<option value="${c.id}" ${n.category===c.id?'selected':''}>${escapeHtml(c.label)}</option>`).join('')}</select></div><div class="body"><textarea class="field" id="libTipBody" aria-label="Tip text">${escapeHtml(n.raw)}</textarea></div><div class="acts">${libAction('Cancel','LIB_UI.editTip=null;libraryRender()')}<button class="btn pri" type="button" onclick="libSaveTip('${id}')">Save</button></div></div>`;
     return `<div class="ent nk"><div class="t"><h4>${escapeHtml(n.title)}</h4><p class="sub">${escapeHtml(n.raw)}</p></div><div class="meta"><span class="c">${escapeHtml(libCategory(n.category))}</span><span class="c d">${libDate(n.ts)}</span></div><div class="acts"><span class="c">${libAction('Edit',`LIB_UI.editTip='${id}';libraryRender()`)}</span><span class="c">${libAction('Delete',`libDeleteTip('${id}')`,'dim')}</span><span class="c"><button class="btn pri" type="button" onclick="libKeepTip('${id}')">Keep</button></span></div></div>`;
   }).join(''):(LIB_UI.kept?`<p class="none">Kept. Filed in Notes under ${escapeHtml(libCategory(LIB_UI.kept.category))}. ${libAction('Undo','libUndoTip()')}</p>`:'<p class="none">Nothing to review.</p>');
-  const vh=document.getElementById('libVideoRows'),nh=document.getElementById('libNoteRows'),ch=document.getElementById('libChatRows');
-  const channel=channelSelect?.value||'';
-  const filteredVideos=libFilterVideos(videos,channel,q);
-  set('libVideoCount',channel||q?`${filteredVideos.length} of ${videos.length}`:videos.length);
-  vh.innerHTML=filteredVideos.length?KB_CATEGORIES.map(c=>{
-    const arr=filteredVideos.filter(v=>kbCategorize({title:v.title})===c.id);
-    return arr.length?libGroup('v'+c.id,c.label,arr,v=>{
-      const id=escapeJs(v.video_id),open=!!LIB_UI.open['video'+id];
-      return `<div class="ent"><div class="t"><h4>${escapeHtml(v.title)}</h4></div><div class="meta"><span class="c">${escapeHtml(v.channel||'YouTube')}</span><span class="c d">${libDate(v.added,'–')}</span></div><div class="acts"><span class="c">${libAction('Edit',`libVideoNote('${id}')`)}</span><span class="c">${libAction(open?'Hide':'View',`libViewVideo('${id}')`,'hi')}</span><span class="c">${libYouTubeId(v)?libAction('Watch',`libPlayerWatch('${id}')`,'hi'):''}</span></div>${open?`<div class="body"><p class="sum">${escapeHtml(libVideoContent(v,notes))}</p></div>`:''}</div>`;
-    },['Title','Channel','Added','Edit','Show','Link']):'';
-  }).join(''):'<p class="none">'+(q?'No matches.':'No videos yet.')+'</p>';
-  const filteredNotes=notes.filter(n=>matches(n.title,n.tags?.join(' '),n.raw,n.summary));
-  nh.innerHTML=(filteredNotes.length?KB_CATEGORIES.map(c=>{
-    const arr=filteredNotes.filter(n=>n.category===c.id);
+  const nh=document.getElementById('libNoteRows'),ch=document.getElementById('libChatRows');
+  nh.innerHTML=(notes.length?KB_CATEGORIES.map(c=>{
+    const arr=notes.filter(n=>n.category===c.id);
     return arr.length?libGroup('n'+c.id,c.label,arr,n=>{
       const id=escapeJs(n.id),open=!!LIB_UI.open['note'+id];
       return `<div class="ent"><div class="t"><h4>${escapeHtml(n.title)}</h4><p class="sub">${escapeHtml((n.tags||[]).join(', '))}</p></div><div class="meta"><span class="c">${n.origin==='hope'?'Tip from Hope':n.source?'Imported file':'Written by you'}</span><span class="c d">${libDate(n.ts)}</span></div><div class="acts"><span class="c">${libAction('Edit',`kbEdit('${id}')`)}</span><span class="c">${libAction(open?'Hide':'View',`libTextButton('${id}','note',${open})`,'hi')}</span><span class="c">${n.summary?libAction(n.useSummary?'Summary':'Raw',`kbToggleSummary('${id}')`,'hi'):''}</span><span class="c">${libAction('Delete',`kbDelete('${id}')`,'dim')}</span></div>${open?`<div class="body"><p class="sum">${escapeHtml(kbActiveText(n))}</p></div>`:''}</div>`;
     },['Title','Source','Added','Edit','Show','Mode','Remove']):'';
-  }).join(''):'<p class="none">'+(q?'No matches.':'No notes yet.')+'</p>')+'<div class="foot">'+libAction('Export notes','kbExport()')+'</div>';
-  const filteredChats=chats.filter(e=>matches(e.subject,e.text,e.tldr));
+  }).join(''):'<p class="none">No notes yet.</p>')+'<div class="foot">'+libAction('Export notes','kbExport()')+'</div>';
   // Favourites use the existing recallFavourite path; only filled pills render.
-  const favs=filteredChats.filter(e=>e.favourite).slice(0,FAV_PILLS_MAX);
+  const favs=chats.filter(e=>e.favourite).slice(0,FAV_PILLS_MAX);
   ch.innerHTML=`<div class="g" data-key="favourites" data-open="${LIB_UI.groups.favourites!==false}"><button class="grp" type="button" aria-expanded="${LIB_UI.groups.favourites!==false}" onclick="libGroupToggle(this)">Favourites <span class="n">${favs.length}</span><span class="fold"></span></button><div class="gbody">${favs.length?`<div class="pills">${favs.map(e=>`<div class="pill"><button class="main" type="button" onclick="recallFavourite('${escapeJs(e.id)}')">${escapeHtml(e.subject||'Untitled chat')}</button><button class="star" type="button" aria-label="Unfavourite" onclick="toggleFavourite('${escapeJs(e.id)}')"><svg class="ic ic-16" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-star"/></svg></button></div>`).join('')}</div>`:'<p class="none">No favourites yet.</p>'}</div></div>`;
-  ch.innerHTML+=filteredChats.length?libGroup('sessions','Sessions',filteredChats,e=>{
+  ch.innerHTML+=chats.length?libGroup('sessions','Sessions',chats,e=>{
     const id=escapeJs(e.id),open=!!LIB_UI.open['chat'+id],hasChain=!!e.workbenchSnapshot?.chain||Object.values(e.chain||{}).some(a=>Array.isArray(a)&&a.length);
     return `<div class="ent"><div class="t"><h4>${escapeHtml(e.subject||'Session snapshot')}</h4></div><div class="meta"><span class="c">${hasChain?'Chat and MixBus chain':'Chat only'}</span><span class="c d">${libDate(e.ts)}</span></div><div class="acts"><span class="c">${libAction('Edit',`editJournalEntry('${id}')`)}</span><span class="c">${libAction(open?'Hide':'View',`libTextButton('${id}','chat',${open})`,'hi')}</span><span class="c">${hasChain?libAction('Apply to MixBus',e.workbenchSnapshot?.chain?`openApplyPillModal('${id}')`:`restoreFromJournal('${id}')`,'hi'):''}</span><span class="c">${!e.favourite&&getFavouriteEntries().length>=FAV_PILLS_MAX?'<button class="tx" type="button" disabled title="Favourites are full">Favourite</button>':libAction(e.favourite?'Unfavourite':'Favourite',`toggleFavourite('${id}')`)}</span><span class="c">${libAction('Copy',`copyJournal('${id}')`)}</span><span class="c">${libAction('Delete',`deleteJournal('${id}')`,'dim')}</span></div>${open?`<div class="body"><p class="sum">${escapeHtml(e.tldr||'')}</p>${libChatTurns(e.text)}</div>`:''}</div>`;
-  },['Title','Contents','Saved','Edit','Show','MixBus chain','Favourite','Copy','Remove']):'<p class="none">'+(q?'No matches.':'No saved chats yet.')+'</p>';
+  },['Title','Contents','Saved','Edit','Show','MixBus chain','Favourite','Copy','Remove']):'<p class="none">No saved chats yet.</p>';
   ch.innerHTML+='<div class="foot">'+libAction('Export all',"document.getElementById('journalExport').click()")+libAction('Clear all',"document.getElementById('journalClear').click()")+'</div>';
 }
 async function libAddLink(){
@@ -22465,54 +22395,6 @@ function libKeepTip(id){const n=STATE.knowledge.find(x=>x.id===id);if(!n)return;
 function libUndoTip(){const n=STATE.knowledge.find(x=>x.id===LIB_UI.kept?.id);if(n){n.toReview=true;n.active=false;saveState();knowledgeRender();}LIB_UI.kept=null;libraryRender();}
 function libDeleteTip(id){if(!confirm('Delete this tip?'))return;STATE.knowledge=STATE.knowledge.filter(n=>n.id!==id);saveState();knowledgeRender();}
 function libSaveTip(id){const n=STATE.knowledge.find(x=>x.id===id);if(!n)return;n.title=document.getElementById('libTipTitle').value.trim()||n.title;n.raw=document.getElementById('libTipBody').value.trim()||n.raw;n.category=document.getElementById('libTipCategory').value;LIB_UI.editTip=null;saveState();libraryRender();}
-async function libViewVideo(id){
-  const open=!!LIB_UI.open['video'+id];LIB_UI.open['video'+id]=!open;
-  const v=YT_KB.videos.find(x=>x.video_id===id);
-  const note=(STATE.knowledge||[]).find(n=>!n.toReview&&n.source===v?.url&&n.summary);
-  if(!open&&!note&&!LIB_UI.videoText[id]){
-    try{
-      const r=await fetch(v?.added?AIMM_PROXY_URL.replace(/\/+$/,'')+'/kb/transcript?id='+encodeURIComponent(id):'./docs/knowledge/'+encodeURIComponent(id)+'.md');
-      if(r.ok){
-        const data=v?.added?await r.json():await r.text();
-        LIB_UI.videoText[id]=libVideoTranscript(typeof data==='string'?data:String(data.transcript||'')).slice(0,1500)||'Transcript unavailable.';
-      }else LIB_UI.videoText[id]='Transcript unavailable.';
-    }catch(_){LIB_UI.videoText[id]='Transcript unavailable.';}
-  }
-  libraryRender();
-}
-async function libVideoNote(id){
-  const v=YT_KB.videos.find(item=>item.video_id===id);if(!v)return;
-  let note=(STATE.knowledge||[]).find(n=>n.source===v.url);
-  if(note){kbEdit(note.id);}
-  else{
-    let raw='';
-    try{
-      const url=v.added?AIMM_PROXY_URL.replace(/\/+$/,'')+'/kb/transcript?id='+encodeURIComponent(id):'./docs/knowledge/'+encodeURIComponent(id)+'.md';
-      const r=await fetch(url);if(!r.ok)throw Error('Transcript unavailable');
-      const data=v.added?await r.json():await r.text();
-      raw=String(typeof data==='string'?data:data.transcript||'').slice(0,12000);
-      if(!raw)throw Error('Transcript unavailable');
-    }catch(e){
-      if(!v.added){toast(e.message||'Could not open this video.',true);return;}
-      toast('Transcript unavailable. You can still delete this video.',true);
-    }
-    kbOpenAdd();document.getElementById('kbTitle').value=v.title;document.getElementById('kbSource').value=v.url;document.getElementById('kbContent').value=raw;
-  }
-  const remove=document.getElementById('kbVideoDelete');
-  remove.hidden=!v.added;
-  if(v.added)remove.onclick=()=>libDeleteVideo(id);
-}
-async function libDeleteVideo(id){
-  if(!confirm('Delete this dashboard video from Hope’s library?'))return;
-  try{
-    const r=await fetch(AIMM_PROXY_URL.replace(/\/+$/,'')+'/kb/user-videos/'+encodeURIComponent(id),{method:'DELETE'});
-    if(!r.ok)throw Error('Could not delete the video.');
-    await loadYtKb();
-    kbCloseModal();
-    toast('Video deleted');
-  }catch(e){toast(e.message||'Could not delete the video.',true);}
-}
-
 renderJournal();
 // Render the favourite snapshot pills flanking START CALL. Reads from
 // STATE.journal (already loaded above by loadState). Safe to call before

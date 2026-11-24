@@ -5,7 +5,7 @@ import vm from 'node:vm';
 
 const html=readFileSync(new URL('../standalone/assets/index.html',import.meta.url),'utf8');
 const manifest=JSON.parse(readFileSync(new URL('../docs/knowledge/index.json',import.meta.url),'utf8'));
-const section=html.slice(html.indexOf('const LIB_PLAYER='),html.indexOf('function libVideoReads(){'));
+const section=html.slice(html.indexOf('const LIB_PLAYER='),html.indexOf('function libFold(button){'));
 function setup(extra={}){
   const ctx={URL,URLSearchParams,location:{origin:'http://localhost:8765'},YT_KB:{videos:[]},
     escapeHtml:s=>String(s),escapeJs:s=>String(s),libDate:s=>s||'–',
