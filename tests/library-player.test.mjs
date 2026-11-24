@@ -17,6 +17,21 @@ function setup(extra={}){
   return ctx;
 }
 const video=(id,title,channel='A')=>({video_id:id,title,channel,url:`https://www.youtube.com/watch?v=${id}`,ingested:'2026-05-22'});
+test('Playlist and landing thumbnails have one outside black rim without changing image geometry',()=>{
+  const playlist=html.match(/\.lp \.row \.thumb\{([^}]*)\}/g)||[];
+  const landing=html.match(/\.lp \.landing-thumb\{([^}]*)\}/g)||[];
+  assert.equal(playlist.length,1);
+  assert.equal(landing.length,1);
+  for(const [rule,radius] of [[playlist[0],'10px'],[landing[0],'12px']]){
+    assert.match(rule,/box-shadow:0 0 0 3px #000/);
+    assert.match(rule,new RegExp(`border-radius:${radius}`));
+    assert.doesNotMatch(rule,/border:|inset|padding:/);
+  }
+  assert.match(playlist[0],/width:var\(--thumb-w\);aspect-ratio:16\/9/);
+  assert.match(landing[0],/aspect-ratio:16\/9/);
+  assert.match(html,/\.lp \.row\{[^}]*grid-template-columns:var\(--rank-w\) var\(--thumb-w\) minmax\(0,1fr\)/);
+  assert.match(html,/\.lp \.frame\.is-landing\{[^}]*background:#0b0d10/);
+});
 function storage(){
   const values=new Map();
   return {values,getItem:key=>values.get(key)||null,setItem:(key,value)=>values.set(key,value)};
@@ -221,7 +236,7 @@ test('private manifest resolves unique R2 keys and preserves YouTube rows',async
   assert.equal('description' in ctx.libPlayerVideos()[0],false);
   assert.equal(ctx.libPlayerVideos()[0].src,'/mwtm/f/lessons/lesson-1.mp4');
   assert.equal(ctx.libPlayerVideos()[0].thumb,'/mwtm/f/thumbs/lesson-1.jpg');
-  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.39');
+  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.40');
   assert.equal(rendered,1);
 });
 

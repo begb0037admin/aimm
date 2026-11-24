@@ -2382,7 +2382,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .lp .landing h3{margin:0 0 16px;font:500 calc(var(--inv-text-scale, 1) * 20px)/var(--aimm-heading-line-height) var(--aimm-font);letter-spacing:var(--aimm-heading-letter-spacing);color:var(--aimm-page-heading-color)}
 .lp .landing-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 18px}
 .lp .landing-card{display:block;min-width:0;padding:0;border:0;background:none;text-align:left;cursor:pointer;color:var(--mid)}
-.lp .landing-thumb{position:relative;display:block;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#15181c}
+.lp .landing-thumb{position:relative;display:block;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#15181c;box-shadow:0 0 0 3px #000}
 .lp .landing-thumb img{display:block;width:100%;height:100%;object-fit:cover;transition:opacity 160ms}
 .lp .landing-thumb svg{position:absolute;left:50%;top:50%;width:26px;height:26px;transform:translate(-50%,-50%);fill:#fff;stroke:#fff;stroke-width:2;opacity:0;transition:opacity 160ms;filter:drop-shadow(0 1px 6px rgba(0,0,0,.6))}
 .lp .landing-card:hover .landing-thumb img,.lp .landing-card:focus-visible .landing-thumb img{opacity:.72}
@@ -3519,7 +3519,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 /* ---- ROW: rank (plain number), thumbnail, title (2 lines), channel, one meta line ---- */
 .lp .row{display:grid;grid-template-columns:var(--rank-w) var(--thumb-w) minmax(0,1fr);align-items:center;column-gap:var(--row-gap);width:100%;padding:var(--row-pad) calc(var(--row-pad) + 2px) var(--row-pad) 6px;border:0;border-radius:14px;background:transparent;text-align:left;cursor:pointer;color:var(--mid);transition:background 120ms}
 .lp .row .rank{justify-self:center;font-size:var(--t-meta);font-variant-numeric:tabular-nums;color:var(--dim)}
-.lp .row .thumb{display:block;width:var(--thumb-w);aspect-ratio:16/9;border-radius:10px;background:#1a1d21;object-fit:cover}
+.lp .row .thumb{display:block;width:var(--thumb-w);aspect-ratio:16/9;border-radius:10px;background:#1a1d21;object-fit:cover;box-shadow:0 0 0 3px #000}
 .lp .row .txt{min-width:0}
 .lp .row .rt{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:var(--t-row);font-weight:500;line-height:1.3;color:var(--hi)}
 .lp .row .rc{display:block;margin-top:5px;font-size:var(--t-sub);font-weight:500;line-height:1.3;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -6131,7 +6131,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.39';
+const AIMM_BUILD = '2026-11-23.40';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
