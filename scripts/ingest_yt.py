@@ -38,14 +38,21 @@ OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'docs', 'knowledge')
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def extract_video_id(url: str) -> str:
-    """Extract YouTube video ID from any youtube.com or youtu.be URL."""
+    """Extract an 11-character ID from a supported YouTube URL."""
     parsed = urlparse(url)
-    if parsed.hostname in ('youtu.be',):
-        return parsed.path.lstrip('/')
-    if parsed.hostname in ('www.youtube.com', 'youtube.com'):
-        qs = parse_qs(parsed.query)
-        if 'v' in qs:
-            return qs['v'][0]
+    video_id = ''
+    if parsed.scheme in ('http', 'https'):
+        host = (parsed.hostname or '').lower()
+        if host in ('youtu.be', 'www.youtu.be'):
+            video_id = parsed.path.split('/')[1]
+        elif host in ('youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com'):
+            parts = parsed.path.split('/')
+            if parsed.path == '/watch':
+                video_id = parse_qs(parsed.query).get('v', [''])[0]
+            elif len(parts) > 2 and parts[1] in ('embed', 'live', 'shorts', 'v'):
+                video_id = parts[2]
+    if re.fullmatch(r'[A-Za-z0-9_-]{11}', video_id):
+        return video_id
     raise ValueError(f"Could not extract video ID from URL: {url}")
 
 

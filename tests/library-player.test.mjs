@@ -17,6 +17,20 @@ function setup(extra={}){
   return ctx;
 }
 const video=(id,title,channel='A')=>({video_id:id,title,channel,url:`https://www.youtube.com/watch?v=${id}`,ingested:'2026-05-22'});
+test('Library accepts supported YouTube link shapes across desktop, mobile and music hosts',()=>{
+  const ctx=setup(),id='NIomo3319PQ';
+  for(const host of ['youtube.com','www.youtube.com','m.youtube.com','music.youtube.com']){
+    for(const path of ['watch?v='+id+'&si=x','embed/'+id,'live/'+id+'?si=x','shorts/'+id,'v/'+id]){
+      const url='https://'+host+'/'+path;
+      assert.equal(ctx.libYouTubeIdFromLink(url),id,url);
+      assert.equal(ctx.libYouTubeId({video_id:id,url}),id,url);
+    }
+  }
+  assert.equal(ctx.libYouTubeIdFromLink('https://youtu.be/'+id+'?si=x'),id);
+  for(const url of ['https://www.youtube.com/live/'+id.slice(1),'https://www.youtube.com/v/'+id+'extra','https://youtube.com.evil.test/live/'+id]){
+    assert.equal(ctx.libYouTubeIdFromLink(url),null,url);
+  }
+});
 test('Playlist and landing thumbnails have one outside black rim without changing image geometry',()=>{
   const playlist=html.match(/\.lp \.row \.thumb\{([^}]*)\}/g)||[];
   const landing=html.match(/\.lp \.landing-thumb\{([^}]*)\}/g)||[];
@@ -328,7 +342,7 @@ test('private manifest resolves unique R2 keys and preserves YouTube rows',async
   assert.equal('description' in ctx.libPlayerVideos()[0],false);
   assert.equal(ctx.libPlayerVideos()[0].src,'/mwtm/f/lessons/lesson-1.mp4');
   assert.equal(ctx.libPlayerVideos()[0].thumb,'/mwtm/f/thumbs/lesson-1.jpg');
-  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.44');
+  assert.equal(fetched,'/mwtm/manifest.json?b=2026-11-23.45');
   assert.equal(rendered,1);
 });
 

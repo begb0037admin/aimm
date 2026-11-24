@@ -17,6 +17,23 @@ function setup(){
   return {data,vectors,env,request};
 }
 const sampleId = 'dQw4w9WgXcQ';
+test('Add to Hope accepts every supported YouTube link shape and host',async()=>{
+  const {request,data}=setup();
+  data.set('yt-user:index',JSON.stringify([{video_id:sampleId,title:'Existing',chunks:3}]));
+  for(const host of ['youtube.com','www.youtube.com','m.youtube.com','music.youtube.com']){
+    for(const path of ['watch?v='+sampleId+'&si=x','embed/'+sampleId,'live/'+sampleId+'?si=x','shorts/'+sampleId,'v/'+sampleId]){
+      const url='https://'+host+'/'+path;
+      const response=await request('/kb/add-youtube','POST',{url});
+      assert.equal(response.status,200,url);
+      assert.equal((await response.json()).video_id,sampleId,url);
+    }
+  }
+  for(const url of ['https://www.youtube.com/live/'+sampleId.slice(1),'https://www.youtube.com/v/'+sampleId+'extra']){
+    const response=await request('/kb/add-youtube','POST',{url});
+    assert.equal(response.status,400,url);
+    assert.equal((await response.json()).code,'invalid_url',url);
+  }
+});
 test('rejects non-YouTube hosts and unsupported paths before any upstream request',async()=>{
   const {request}=setup();
   for (const url of ['https://youtube.com.evil.test/watch?v='+sampleId,'https://example.com/'+sampleId,'https://youtube.com/channel/'+sampleId]) {

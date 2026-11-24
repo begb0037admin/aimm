@@ -6146,7 +6146,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.44';
+const AIMM_BUILD = '2026-11-23.45';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -22587,7 +22587,10 @@ function libYouTubeId(video){
 }
 function libYouTubeIdFromLink(value){
   try{const url=new URL(value);const host=url.hostname.toLowerCase().replace(/^www\./,'');let id='';
-    if(host==='youtube.com'||host==='m.youtube.com')id=url.pathname.startsWith('/embed/')?url.pathname.split('/')[2]:url.searchParams.get('v')||'';
+    if(host==='youtube.com'||host==='m.youtube.com'||host==='music.youtube.com'){
+      if(url.pathname==='/watch')id=url.searchParams.get('v')||'';
+      else if(/^\/(embed|live|shorts|v)\//.test(url.pathname))id=url.pathname.split('/')[2]||'';
+    }
     else if(host==='youtu.be')id=url.pathname.slice(1).split('/')[0];
     return /^[A-Za-z0-9_-]{11}$/.test(id)?id:null;
   }catch(_){return null;}
