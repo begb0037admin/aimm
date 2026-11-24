@@ -753,15 +753,41 @@ export default {
       catch (_) { return corsJsonResponse({ error:'Invalid request' },400,origin,request); }
       const query = typeof body?.query === 'string' ? body.query.trim().slice(0,200) : '';
       if (!query) return corsJsonResponse({ error:'Enter a video topic.' },400,origin,request);
-      let upstream;
-      try {
-        upstream = await fetch(`https://api.apify.com/v2/acts/streamers~youtube-scraper/run-sync-get-dataset-items?token=${encodeURIComponent(env.APIFY_TOKEN)}`,{
-          method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({searchQueries:[query],maxResults:20,maxResultsShorts:0,maxResultStreams:0})
-        });
-      } catch (_) { return corsJsonResponse({ error:'Search failed. Try again.' },502,origin,request); }
-      if (!upstream.ok) return corsJsonResponse({ error:'Search failed. Try again.' },502,origin,request);
       let items;
-      try { items = await upstream.json(); } catch (_) { items = []; }
+      const innertubeController = new AbortController();
+      const innertubeTimer = setTimeout(()=>innertubeController.abort(),6000);
+      try {
+        const upstream = await fetch('https://www.youtube.com/youtubei/v1/search?prettyPrint=false',{
+          method:'POST',headers:{'Content-Type':'application/json'},signal:innertubeController.signal,
+          body:JSON.stringify({context:{client:{clientName:'WEB',clientVersion:'2.20250101.00.00',hl:'en',gl:'GB'}},query})
+        });
+        if (!upstream.ok) throw new Error('Innertube search failed');
+        const payload = await upstream.json();
+        const sections = payload?.contents?.twoColumnSearchResultsRenderer?.primaryContents?.sectionListRenderer?.contents || [];
+        items = sections.flatMap(section=>section?.itemSectionRenderer?.contents || [])
+          .map(entry=>entry?.videoRenderer).filter(video=>video && /^[A-Za-z0-9_-]{11}$/.test(video.videoId)).map(video=>({
+            id:video.videoId,
+            title:video.title?.runs?.map(run=>run.text).join('') || video.title?.simpleText,
+            channel:video.ownerText?.runs?.map(run=>run.text).join('') || video.ownerText?.simpleText,
+            duration:video.lengthText?.simpleText || video.lengthText?.runs?.map(run=>run.text).join('') || null,
+            views:Number((video.viewCountText?.simpleText || video.viewCountText?.runs?.map(run=>run.text).join('') || '').match(/[\d,]+/)?.[0].replace(/,/g,'')) || 0,
+            description:video.descriptionSnippet?.runs?.map(run=>run.text).join('') || video.descriptionSnippet?.simpleText || ''
+          }));
+      } catch (_) { items = []; }
+      finally { clearTimeout(innertubeTimer); }
+      if (!items.length){
+        const apifyController = new AbortController();
+        const apifyTimer = setTimeout(()=>apifyController.abort(),25000);
+        try {
+          const upstream = await fetch(`https://api.apify.com/v2/acts/streamers~youtube-scraper/run-sync-get-dataset-items?token=${encodeURIComponent(env.APIFY_TOKEN)}`,{
+            method:'POST',headers:{'Content-Type':'application/json'},signal:apifyController.signal,
+            body:JSON.stringify({searchQueries:[query],maxResults:8,maxResultsShorts:0,maxResultStreams:0})
+          });
+          if (!upstream.ok) throw new Error('Apify search failed');
+          try { items = await upstream.json(); } catch (_) { items = []; }
+        } catch (_) { return corsJsonResponse({ error:'Search failed. Try again.' },502,origin,request); }
+        finally { clearTimeout(apifyTimer); }
+      }
       const userVideos = await env.AIMM_KV.get('yt-user:index','json') || [];
       const known = new Set([...REPO_YT_VIDEOS.keys(),...userVideos.map(v=>v.video_id)]);
       const seen = new Set();
@@ -774,6 +800,7 @@ export default {
         if (known.has(id)){ excluded++; continue; }
         const description = String(item.description || '').replace(/\s+/g,' ').trim();
         videos.push({id,video_id:id,title:String(item.title || item.videoTitle || id).slice(0,300),channel:String(item.channelName || item.channel || 'YouTube').slice(0,200),duration:item.duration || null,views:item.viewCount || item.views || 0,url:`https://www.youtube.com/watch?v=${id}`,reason:description ? description.slice(0,180) : `Matches your search for ${query}.`});
+        if (videos.length >= 20) break;
       }
       return corsJsonResponse({query,videos,excluded},200,origin,request);
     }

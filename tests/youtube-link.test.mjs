@@ -75,8 +75,11 @@ test('search returns approval candidates and excludes repo and dashboard video i
   data.set('yt-user:index',JSON.stringify([{video_id:sampleId,title:'Already added'}]));
   const fresh='QWERTY12345';
   globalThis.fetch=async (url,options)=>{
+    if(String(url).includes('youtubei/v1/search')) throw new Error('Innertube unavailable');
     assert.match(String(url),/streamers~youtube-scraper/);
     assert.deepEqual(JSON.parse(options.body).searchQueries,['808 drums']);
+    assert.equal(JSON.parse(options.body).maxResults,8);
+    assert.ok(options.signal);
     return Response.json([
       {url:'https://www.youtube.com/watch?v=6WPtHxWkY2k',title:'Repo'},
       {url:'https://youtu.be/'+sampleId,title:'User'},
@@ -93,6 +96,47 @@ test('search returns approval candidates and excludes repo and dashboard video i
     assert.deepEqual(body.videos[0],{id:fresh,video_id:fresh,title:'Fresh',channel:'Studio',duration:'11:42',views:312000,url:'https://www.youtube.com/watch?v='+fresh,reason:'Matches your search for 808 drums.'});
     assert.equal(data.has('yt-user:'+fresh),false);
   }finally{globalThis.fetch=original;}
+});
+test('search uses Innertube videos and excludes known videos without calling Apify',async()=>{
+  const original=globalThis.fetch;
+  const {request,data}=setup();
+  data.set('yt-user:index',JSON.stringify([{video_id:sampleId}]));
+  const fresh='QWERTY12345';
+  const renderer=(videoId,title)=>({videoRenderer:{videoId,title:{runs:[{text:title}]},ownerText:{runs:[{text:'Mix '},{text:'School'}]},lengthText:{simpleText:'8:42'},viewCountText:{simpleText:'12,345 views'},descriptionSnippet:{runs:[{text:'A useful '},{text:'tutorial'}]}}});
+  let calls=0;
+  globalThis.fetch=async (url,options)=>{
+    calls++;
+    assert.equal(String(url),'https://www.youtube.com/youtubei/v1/search?prettyPrint=false');
+    assert.ok(options.signal);
+    assert.deepEqual(JSON.parse(options.body),{context:{client:{clientName:'WEB',clientVersion:'2.20250101.00.00',hl:'en',gl:'GB'}},query:'sidechain compression'});
+    return Response.json({contents:{twoColumnSearchResultsRenderer:{primaryContents:{sectionListRenderer:{contents:[{itemSectionRenderer:{contents:[renderer('6WPtHxWkY2k','Repo'),renderer(sampleId,'User'),renderer(fresh,'Fresh'),renderer(fresh,'Duplicate')]}}]}}}}});
+  };
+  try {
+    const response=await request('/kb/search-youtube','POST',{query:'sidechain compression'});
+    assert.equal(response.status,200);
+    const body=await response.json();
+    assert.equal(calls,1);
+    assert.equal(body.query,'sidechain compression');
+    assert.equal(body.excluded,2);
+    assert.deepEqual(body.videos,[{id:fresh,video_id:fresh,title:'Fresh',channel:'Mix School',duration:'8:42',views:12345,url:'https://www.youtube.com/watch?v='+fresh,reason:'A useful tutorial'}]);
+  } finally { globalThis.fetch=original; }
+});
+test('search falls back to Apify when Innertube has no videos',async()=>{
+  const original=globalThis.fetch;
+  const {request}=setup();
+  let calls=0;
+  globalThis.fetch=async url=>{
+    calls++;
+    if(String(url).includes('youtubei/v1/search')) return Response.json({contents:{twoColumnSearchResultsRenderer:{primaryContents:{sectionListRenderer:{contents:[]}}}}});
+    assert.match(String(url),/streamers~youtube-scraper/);
+    return Response.json([{id:'QWERTY12345',title:'Fallback'}]);
+  };
+  try {
+    const response=await request('/kb/search-youtube','POST',{query:'sidechain compression'});
+    assert.equal(response.status,200);
+    assert.equal(calls,2);
+    assert.equal((await response.json()).videos[0].title,'Fallback');
+  } finally { globalThis.fetch=original; }
 });
 test('deleting a dashboard video removes its vector chunks and index entry',async()=>{
   const {request,data,vectors,env}=setup();
