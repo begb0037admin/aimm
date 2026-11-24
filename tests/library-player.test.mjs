@@ -23,6 +23,32 @@ test('playlist builds only from real YouTube IDs in the runtime store',()=>{
   assert.equal(ctx.libPlayerVideos().length,1);
   assert.ok(manifest.videos.length>0);
 });
+test('Library opens on the landing with real private recordings and newest non-Masters YouTube videos',()=>{
+  const landing={innerHTML:''},rows={innerHTML:''},count={textContent:''},search={value:''},select={value:'',innerHTML:''};
+  const nodes={libPlayerLanding:landing,libPlayerRows:rows,libPlayerCount:count,libPlayerSearch:search,libPlayerChannelFilter:select};
+  const ctx=setup({document:{getElementById:id=>nodes[id]}});
+  vm.runInNewContext("LIB_PLAYER.manifestLoading=true;LIB_PLAYER.privateVideos=[{video_id:'old',title:'Old recording',channel:'Mix With The Masters',added:'2026-01-01',thumb:'/mwtm/old.jpg',local:true},{video_id:'new',title:'New recording',channel:'Mix With The Masters',added:'2026-11-23',thumb:'/mwtm/new.jpg',local:true}]",ctx);
+  ctx.YT_KB.videos=[{...video('AbCdEfGhI12','Older YouTube'),'added':'2026-11-20'},{...video('ZyXwVuTsR98','Newest YouTube'),'added':'2026-11-23'},video('6WPtHxWkY2k','Masters trailer','Mix With The Masters')];
+  ctx.libPlayerRender();
+  assert.equal(vm.runInNewContext('LIB_PLAYER.id',ctx),null);
+  assert.equal(count.textContent,'5');
+  assert.doesNotMatch(rows.innerHTML,/aria-current="true"/);
+  const masters=landing.innerHTML.split('Recently added')[0];
+  assert.match(masters,/New recording/);assert.match(masters,/Old recording/);
+  assert.ok(masters.indexOf('New recording')<masters.indexOf('Old recording'));
+  assert.doesNotMatch(masters,/YouTube|Masters trailer|i\.ytimg/);
+  assert.match(landing.innerHTML,/Newest YouTube/);
+  assert.ok(landing.innerHTML.indexOf('Newest YouTube')<landing.innerHTML.indexOf('Older YouTube'));
+  assert.doesNotMatch(landing.innerHTML,/Masters trailer/);
+  assert.match(landing.innerHTML,/href="#i-play"/);
+  assert.doesNotMatch(section,/if\(!LIB_PLAYER\.id&&videos\.length\)libPlayerSelect/);
+});
+test('empty private manifest omits the Masters landing row',()=>{
+  const landing={innerHTML:''};const ctx=setup({document:{getElementById:id=>id==='libPlayerLanding'?landing:null}});
+  ctx.YT_KB.videos=[video('AbCdEfGhI12','YouTube video')];ctx.libPlayerRenderLanding();
+  assert.doesNotMatch(landing.innerHTML,/Mix With The Masters/);
+  assert.match(landing.innerHTML,/Recently added/);
+});
 test('playlist channel filter and search combine, then keep the current row teal',()=>{
   const rows={innerHTML:'',querySelector:()=>({scrollIntoView(){}})},count={textContent:''},search={value:'bass'},select={value:'A',innerHTML:''};
   const nodes={libPlayerRows:rows,libPlayerCount:count,libPlayerSearch:search,libPlayerChannelFilter:select};
@@ -87,7 +113,7 @@ test('missing or empty private manifest keeps the existing YouTube playlist',asy
 
 test('private selection uses local player, description and recording link; YouTube switches back',async()=>{
   const nodes={};for(const id of ['libPlayerTitle','libPlayerChannel','libPlayerDescriptionText','libPlayerOpen','libPlayerFailLink','libPlayerIframe'])nodes[id]={textContent:'',href:'',hidden:false,removeAttribute(name){this.removed=name}};
-  nodes.libPlayerFrame={classList:{remove(){} }};
+  nodes.libPlayer={classList:{remove(){}}};nodes.libPlayerFrame={classList:{remove(){}}};
   const local={shown:[],hidden:0,show(o){this.shown.push(o)},hide(){this.hidden++}};
   const ctx=setup({document:{getElementById:id=>nodes[id]},AimmLocalPlayer:{attach:()=>local}});
   ctx.libPlayerRenderRows=()=>{};ctx.libPlayerUpdateMore=()=>{};ctx.libPlayerEnsureApi=()=>{};

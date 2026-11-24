@@ -2372,6 +2372,28 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #libPlayerFrame.is-local iframe{display:none}
 #libPlayerFrame.is-local .fail{display:none}
 .lp #libPlayerOpen[hidden]{display:none}
+/* Library landing, based on Jules's option 2. The frame grows to fit both rows. */
+.lp.is-landing .meta,.lp.is-landing .desc{display:none}
+.lp .frame.is-landing{aspect-ratio:auto;min-height:280px;background:#0b0d10}
+.lp .frame.is-landing iframe{display:none}
+.lp .landing{display:none;container:lib-landing/inline-size;padding:28px 28px 32px}
+.lp .frame.is-landing .landing{display:block}
+.lp .landing-section+.landing-section{margin-top:32px}
+.lp .landing h3{margin:0 0 16px;font:500 calc(var(--inv-text-scale, 1) * 20px)/var(--aimm-heading-line-height) var(--aimm-font);letter-spacing:var(--aimm-heading-letter-spacing);color:var(--aimm-page-heading-color)}
+.lp .landing-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 18px}
+.lp .landing-card{display:block;min-width:0;padding:0;border:0;background:none;text-align:left;cursor:pointer;color:var(--mid)}
+.lp .landing-thumb{position:relative;display:block;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#15181c}
+.lp .landing-thumb img{display:block;width:100%;height:100%;object-fit:cover;transition:opacity 160ms}
+.lp .landing-thumb svg{position:absolute;left:50%;top:50%;width:26px;height:26px;transform:translate(-50%,-50%);fill:#fff;stroke:#fff;stroke-width:2;opacity:0;transition:opacity 160ms;filter:drop-shadow(0 1px 6px rgba(0,0,0,.6))}
+.lp .landing-card:hover .landing-thumb img,.lp .landing-card:focus-visible .landing-thumb img{opacity:.72}
+.lp .landing-card:hover .landing-thumb svg,.lp .landing-card:focus-visible .landing-thumb svg{opacity:1}
+.lp .landing-card:focus-visible{outline:none}
+.lp .landing-card:focus-visible .landing-thumb{outline:2px solid var(--teal);outline-offset:3px}
+.lp .landing-card-title{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin-top:10px;font-size:14px;line-height:1.4;font-weight:500;color:var(--mid)}
+.lp .landing-section.recent .landing-card-title{-webkit-line-clamp:1;font-size:13px;font-weight:400;color:var(--dim)}
+@container lib-landing (max-width:519px){.lp .landing-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:819px){.lp .landing{padding:20px 20px 24px}}
+@media(prefers-reduced-motion:reduce){.lp .landing *{transition:none!important}}
 .lpl *{box-sizing:border-box}
 .lpl:fullscreen{width:100vw;height:100vh}
 .lpl video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;display:block}
@@ -3862,9 +3884,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
      wrapping. The Snapshot → Luna chat creator stays on Conversation
      so saving is in-context with the chat. -->
 <div class="panel" id="library">
-  <section class="lp" id="libPlayer" aria-label="Video player and playlist">
+  <section class="lp is-landing" id="libPlayer" aria-label="Video player and playlist">
     <div class="grid">
-      <div class="player"><div class="frame" id="libPlayerFrame"><iframe id="libPlayerIframe" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="fail"><h3>This video can't be played here</h3><a class="video-pill teal" id="libPlayerFailLink" target="_blank" rel="noopener">Open on YouTube</a></div></div></div>
+      <div class="player"><div class="frame is-landing" id="libPlayerFrame"><div class="landing" id="libPlayerLanding" aria-label="Choose a video"></div><iframe id="libPlayerIframe" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="fail"><h3>This video can't be played here</h3><a class="video-pill teal" id="libPlayerFailLink" target="_blank" rel="noopener">Open on YouTube</a></div></div></div>
       <div class="meta"><h3 class="title" id="libPlayerTitle"></h3><div class="chan"><span class="name" id="libPlayerChannel"></span><div class="btns"><a class="video-pill teal" id="libPlayerOpen" target="_blank" rel="noopener" hidden>Open on YouTube</a><button class="video-pill" id="libPlayerCopy" type="button" onclick="libPlayerCopyLink()">Copy link</button></div></div></div>
       <div class="desc" id="libPlayerDescription"><p class="body" id="libPlayerDescriptionText"></p><button class="more" id="libPlayerMore" type="button" onclick="libPlayerToggleDescription()">Read more</button></div>
       <div class="list"><div class="panel"><div class="phead"><h2>Playlist</h2><span class="count" id="libPlayerCount">0</span></div><div class="fields"><div class="fld search"><input id="libPlayerSearch" type="search" aria-label="Search playlist or paste a YouTube link" placeholder="Search or paste a link" oninput="libPlayerRenderRows()" onkeydown="if(event.key==='Enter')libPlayerSearchEnter(event)"></div><div class="fld chsel"><span class="plus" aria-hidden="true">+</span><select id="libPlayerChannelFilter" aria-label="Filter playlist by channel" onchange="libPlayerRenderRows()"><option value="">Channel</option></select></div></div><div class="rows" id="libPlayerRows"></div></div></div>
@@ -6101,7 +6123,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.31';
+const AIMM_BUILD = '2026-11-23.32';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -22547,6 +22569,18 @@ function libYouTubeIdFromLink(value){
   }catch(_){return null;}
 }
 function libPlayerVideos(){return LIB_PLAYER.privateVideos.concat((YT_KB.videos||[]).filter(v=>libYouTubeId(v)));}
+function libPlayerLandingCard(video){
+  const thumb=video.local?video.thumb:`https://i.ytimg.com/vi/${video.video_id}/mqdefault.jpg`;
+  return `<button class="landing-card" type="button" data-video-id="${escapeHtml(video.video_id)}" onclick="libPlayerSelect('${escapeJs(video.video_id)}',true)"><span class="landing-thumb"><img loading="lazy" src="${escapeHtml(thumb)}" alt=""><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span class="landing-card-title">${escapeHtml(video.title)}</span></button>`;
+}
+function libPlayerRenderLanding(){
+  const host=document.getElementById('libPlayerLanding');if(!host)return;
+  const newest=(a,b)=>String(b.added||b.ingested||'').localeCompare(String(a.added||a.ingested||''));
+  const privateVideos=LIB_PLAYER.privateVideos.slice().sort(newest).slice(0,4);
+  const recent=(YT_KB.videos||[]).filter(v=>libYouTubeId(v)&&v.channel!=='Mix With The Masters').sort(newest).slice(0,4);
+  host.innerHTML=(privateVideos.length?`<div class="landing-section"><h3>Mix With The Masters</h3><div class="landing-cards">${privateVideos.map(libPlayerLandingCard).join('')}</div></div>`:'')
+    +(recent.length?`<div class="landing-section recent"><h3>Recently added</h3><div class="landing-cards">${recent.map(libPlayerLandingCard).join('')}</div></div>`:'');
+}
 function libPlayerEmbedUrl(id,play=false){
   const params=new URLSearchParams({enablejsapi:'1',origin:location.origin,rel:'0',playsinline:'1'});
   if(play)params.set('autoplay','1');
@@ -22600,6 +22634,8 @@ function libPlayerToggleDescription(){LIB_PLAYER.descriptionOpen=!LIB_PLAYER.des
 function libPlayerSelect(id,play=false,external=null){
   const video=libPlayerVideos().find(v=>v.video_id===id)||null;
   if(!video&&!/^[A-Za-z0-9_-]{11}$/.test(id))return;
+  document.getElementById('libPlayer').classList.remove('is-landing');
+  document.getElementById('libPlayerFrame').classList.remove('is-landing');
   if(video?.local){
     LIB_PLAYER.id=id;LIB_PLAYER.external=null;LIB_PLAYER.descriptionOpen=false;const selection=++LIB_PLAYER.selection;
     document.getElementById('libPlayerTitle').textContent=video.title;
@@ -22627,8 +22663,7 @@ function libPlayerSelect(id,play=false,external=null){
 function libPlayerRender(){
   if(!LIB_PLAYER.manifestLoaded&&!LIB_PLAYER.manifestLoading)libPlayerLoadManifest();
   const videos=libPlayerVideos();
-  if(!LIB_PLAYER.id&&videos.length)libPlayerSelect(videos[0].video_id);
-  else if(LIB_PLAYER.id){
+  if(LIB_PLAYER.id){
     const video=videos.find(v=>v.video_id===LIB_PLAYER.id);
     if(video&&LIB_PLAYER.external){LIB_PLAYER.external=null;libPlayerSelect(video.video_id);}
     else{
@@ -22636,7 +22671,7 @@ function libPlayerRender(){
       if(note&&document.getElementById('libPlayerDescriptionText').textContent!==note.summary){document.getElementById('libPlayerDescriptionText').textContent=note.summary;libPlayerUpdateMore();}
       libPlayerRenderRows();
     }
-  }else libPlayerRenderRows();
+  }else{libPlayerRenderLanding();libPlayerRenderRows();}
 }
 async function libPlayerSearchEnter(event){
   const value=event.currentTarget.value.trim(),id=libYouTubeIdFromLink(value);if(!id)return;
