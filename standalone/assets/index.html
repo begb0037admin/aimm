@@ -3720,8 +3720,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
     </div>
   </section>
   <div class="lib-group">
-    <section class="card" data-sec="notes" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Notes <span class="n" id="libNoteCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libNoteRows"></div></section>
-    <section class="card" data-sec="chats" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Saved chats <span class="n" id="libChatCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libChatRows"></div></section>
     <section class="card" data-sec="add" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Add to Hope's library<span class="fold" aria-hidden="true"></span></button><div class="cbody">
       <div class="frow"><label class="lbl" for="libLink">Paste a link</label><input class="field" id="libLink" type="url" placeholder="YouTube link" onkeydown="if(event.key==='Enter'){event.preventDefault();libAddLink()}"><div class="btns"><button class="btn pri" type="button" id="libLinkGo" onclick="libAddLink()">Add</button></div><p class="fmsg" id="libLinkMsg"></p><div class="prog" id="libLinkProgress" hidden><i></i></div></div>
       <div class="frow"><label class="lbl" for="libFind">Find videos</label><input class="field" id="libFind" type="search" placeholder="e.g. 808s in hip hop" onkeydown="if(event.key==='Enter'){event.preventDefault();libFindVideos()}"><div class="btns"><button class="btn pri" type="button" id="libFindGo" onclick="libFindVideos()">Find</button></div><p class="fmsg" id="libFindMsg"></p><div class="prog" id="libFindProgress" hidden><i></i></div></div>
@@ -3729,6 +3727,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
       <div class="res" id="libResults" hidden></div>
     </div></section>
     <section class="card" data-sec="review" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Hope's review <span class="n" id="libReviewCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libReviewRows"></div></section>
+    <section class="card" data-sec="chats" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Saved chats <span class="n" id="libChatCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libChatRows"></div></section>
+    <section class="card" data-sec="notes" data-open="true"><button class="bar" type="button" aria-expanded="true" onclick="libFold(this)">Notes <span class="n" id="libNoteCount">0</span><span class="fold" aria-hidden="true"></span></button><div class="cbody" id="libNoteRows"></div></section>
   </div>
 </div>
 <div class="panel" id="snapshots">
@@ -5779,7 +5779,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 // answerable at a glance, never by guesswork.
 // STATUS 2026-11-19.4: ElevenLabs Costs actions link to account settings.
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.28';
+const AIMM_BUILD = '2026-11-23.29';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);

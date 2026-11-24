@@ -21,12 +21,13 @@ test("Hope tip stays in Hope's review until Keep, and Undo restores it",()=>{
   ctx.libUndoTip();
   assert.equal(note.toReview,true);assert.equal(note.active,false);
 });
-test('Library cards follow the player with normal titles and no Browse or Videos card',()=>{
+test('Library cards follow the player in source order with normal titles and no Browse or Videos card',()=>{
   const library=html.slice(html.indexOf('<div class="panel" id="library">'),html.indexOf('<div class="panel" id="snapshots">'));
-  const positions=['id="libPlayer"','data-sec="notes"','data-sec="chats"','data-sec="add"','data-sec="review"'].map(marker=>library.indexOf(marker));
+  const positions=['id="libPlayer"','data-sec="add"','data-sec="review"','data-sec="chats"','data-sec="notes"'].map(marker=>library.indexOf(marker));
   assert.ok(positions.every((position,i)=>position>=0&&(i===0||position>positions[i-1])));
+  assert.deepEqual([...library.matchAll(/<section class="card" data-sec="([^"]+)"/g)].map(([,section])=>section),['add','review','chats','notes']);
   assert.doesNotMatch(library,/data-sec="(?:browse|videos)"|id="(?:libBrowse|libVideoRows|libVideoCount|libSearch|libChannel)"/);
-  assert.match(library,/<div class="lib-group">\s*<section class="card" data-sec="notes"/);
+  assert.match(library,/<div class="lib-group">\s*<section class="card" data-sec="add"/);
   assert.match(html,/#library \.bar\{[^}]*color:var\(--aimm-page-heading-color\)/);
   assert.match(library,/id="libPlayerSearch"/);
   assert.match(library,/id="libPlayerChannelFilter"/);
