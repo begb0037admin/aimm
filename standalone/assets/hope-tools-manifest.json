@@ -80,13 +80,13 @@
   },
   {
     "name": "cue_video",
-    "description": "Cue an 11-character YouTube video in the Library player without playing it. When answering a plugin chain or advice from an ingested YouTube video, call this for that source video and tell Kev \"I have cued it in the player if you want to have a look.\" Use the returned title. Private recording IDs are not YouTube video IDs.",
+    "description": "Cue a YouTube video or private Mix With The Masters lesson in the Library player without playing it. Pass the video_id returned by search_yt_knowledge, read_yt_knowledge or search_youtube_videos directly. Tell Kev it is cued in the player and use the returned title.",
     "parameters": {
       "type": "object",
       "properties": {
         "video_id": {
           "type": "string",
-          "description": "Exact 11-character YouTube video ID from search_yt_knowledge, read_yt_knowledge or search_youtube_videos."
+          "description": "An 11-character YouTube ID or an mwtm- lesson ID (KB slug-pNN or private Set-NN form)."
         },
         "title": {
           "type": "string",
@@ -1276,7 +1276,7 @@
   },
   {
     "name": "read_yt_knowledge",
-    "description": "Fetch the full transcript of an ingested YouTube video from the YOUTUBE KNOWLEDGE BASE. Call this AFTER search_yt_knowledge has identified a relevant video_id, to pull more of that specific video's transcript — mandatory before telling Kev you don't have a specific detail when a relevant video_id (especially one starting with \"mwtm-\") was already returned. Optionally pass a query to get back only the most relevant chunks (recommended — keeps output lean). Returns up to ~4KB of transcript content. Brief Kev before calling: \"hold on, checking my notes from that video…\". Cite the video title and channel when you draw from the result, call cue_video for its 11-character YouTube ID, and tell Kev it is cued in the player.",
+    "description": "Fetch the full transcript of an ingested YouTube video from the YOUTUBE KNOWLEDGE BASE. Call this AFTER search_yt_knowledge has identified a relevant video_id, to pull more of that specific video's transcript — mandatory before telling Kev you don't have a specific detail when a relevant video_id (especially one starting with \"mwtm-\") was already returned. Optionally pass a query to get back only the most relevant chunks (recommended — keeps output lean). Returns up to ~4KB of transcript content. Brief Kev before calling: \"hold on, checking my notes from that video…\". Cite the video title and channel when you draw from the result, call cue_video for its returned video_id, and tell Kev it is cued in the player.",
     "parameters": {
       "type": "object",
       "properties": {

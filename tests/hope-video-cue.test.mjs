@@ -24,19 +24,19 @@ test('video tools are available in the shared catalogue and registration files',
 test('cue_video opens Library and selects a known video without autoplay',async()=>{
   let selected,clicked=0;
   const tab={classList:{contains:()=>false},click:()=>{clicked++}};
-  const ctx={document:{querySelector:()=>tab},EL:{},libPlayerVideos:()=>[{video_id:'AbCdEfGhI12',title:'Known lesson',channel:'Known channel'}],libPlayerSelect:(...args)=>{selected=args}};
+  const ctx={document:{querySelector:()=>tab},EL:{},YT_KB:{videos:[]},MwtmCueMap:{parts:()=>null},libPlayerVideos:()=>[{video_id:'AbCdEfGhI12',title:'Known lesson',channel:'Known channel'}],libPlayerSelect:(...args)=>{selected=args}};
   vm.runInNewContext(runSource,ctx);
   const result=await ctx.run('cue_video',{video_id:'AbCdEfGhI12'});
   assert.equal(clicked,1);
   assert.equal(ctx.EL.suppressNextTabChange,true);
   assert.deepEqual([...selected],['AbCdEfGhI12',false,null]);
-  assert.deepEqual({...result},{ok:true,cued:true,title:'Known lesson'});
+  assert.deepEqual({...result},{ok:true,cued:true,video_id:'AbCdEfGhI12',title:'Known lesson'});
   await assert.rejects(ctx.run('cue_video',{video_id:'invalid'}),/11-character/);
 });
 
 test('cue_video passes metadata for an external video',async()=>{
   let selected;
-  const ctx={document:{querySelector:()=>({classList:{contains:()=>true}})},libPlayerVideos:()=>[],libPlayerSelect:(...args)=>{selected=args}};
+  const ctx={document:{querySelector:()=>({classList:{contains:()=>true}})},YT_KB:{videos:[]},MwtmCueMap:{parts:()=>null},libPlayerVideos:()=>[],libPlayerSelect:(...args)=>{selected=args}};
   vm.runInNewContext(runSource,ctx);
   const result=await ctx.run('cue_video',{video_id:'AbCdEfGhI12',title:'External lesson',channel:'Studio'});
   assert.equal(selected[1],false);
