@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fix Queue alignment preview (Jules)</title>
+<style>
+@font-face{font-family:Inter;src:url("../../../standalone/assets/fonts/inter-latin-wght.woff2") format("woff2");font-weight:100 900;font-display:swap}
+:root{--pv-teal:#2dd4bf;--aimm-font:Inter,"Inter Fallback",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:#000;color:#e5e7eb;font-family:var(--aimm-font);line-height:1.5}
+/* page width is set by the test harness; the card is the outer box */
+.card{background:#17191c;border-radius:14px;padding:28px;margin:0}
+.host{container-type:inline-size;min-width:0}
+.ic{display:block;flex:none;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;width:18px;height:18px;stroke-width:1.8}
+
+.mcq-head{display:flex;align-items:center;gap:24px;margin-bottom:20px}
+.mcq-t{font:500 20px var(--aimm-font);letter-spacing:-.035em;color:#f1f2f4;white-space:nowrap}
+.mcq-count{font:400 14px var(--aimm-font);color:#9ca2ae;white-space:nowrap}
+.mcq-track{height:2px;background:#30343a;flex:1;min-width:24px}
+
+/* ---- SPEC: one set of shared tokens drives list rows AND transporter ---- */
+.mcq-layout{display:grid;grid-template-columns:minmax(506px,524px) minmax(0,1fr);gap:32px;min-width:0}
+.mcq-left{
+  --mcq-pad:20px;      /* left inset of every row and of the transporter */
+  --mcq-rank:28px;     /* number column width */
+  --mcq-rank-gap:14px; /* number column -> fix name */
+  --mcq-act:20px;      /* tick / cross column width */
+  --mcq-act-gap:14px;
+  --mcq-end:16px;      /* right inset of rows */
+  min-width:0}
+.mcq-list{min-width:0}
+.mcq-item{width:100%;min-height:54px;display:flex;align-items:center;gap:var(--mcq-rank-gap);
+  padding:8px var(--mcq-end) 8px var(--mcq-pad);border-top:1px solid #272b30;font:500 16px var(--aimm-font);color:#e8b45a;position:relative}
+.mcq-item[aria-current="true"]{box-shadow:inset 2px 0 var(--pv-teal)}
+.mcq-rank{width:var(--mcq-rank);flex:none;color:#7b8190;font-size:14px;font-variant-numeric:tabular-nums}
+.mcq-name{min-width:0;flex:1;overflow-wrap:anywhere}
+.mcq-item:nth-child(2){color:#c9a05a}
+.mcq-row-actions{display:flex;align-items:center;gap:var(--mcq-act-gap);flex:none}
+.mcq-row-action{width:var(--mcq-act);height:24px;display:grid;place-items:center;padding:0;border:0;background:none;color:#7b8190;cursor:pointer}
+.mcq-row-action:hover,.mcq-row-action:focus-visible{color:var(--pv-teal)}
+
+/* transporter: same left inset, same rank column */
+.mcq-transport{display:flex;align-items:center;flex-wrap:wrap;column-gap:36px;row-gap:12px;margin-top:24px;
+  padding:0 var(--mcq-end) 0 var(--mcq-pad);white-space:nowrap}
+.mcq-play{width:24px;height:24px;flex:none;display:grid;justify-items:start;align-items:center;padding:0;border:0;background:none;color:#e8ebee;cursor:pointer}
+/* The play and pause paths start at x=5 in the 24px viewBox. */
+.mcq-play svg{width:24px;height:24px;stroke-width:1.5;margin-left:-3.5px}
+.mcq-play:is(:hover,:focus-visible){color:var(--pv-teal);outline:none}
+.mcq-modes{display:flex;gap:36px;min-width:0;flex:none}
+.mcq-mode{background:none;border:0;padding:0;color:#7b8190;font:500 13.5px var(--aimm-font);letter-spacing:-.1px;cursor:pointer;white-space:nowrap}
+.mcq-mode[aria-pressed="true"],.mcq-mode:hover,.mcq-mode:focus-visible{color:var(--pv-teal);font-weight:600}
+
+.mcq-detail{min-width:0;color:#d6d9df;overflow-wrap:anywhere}
+.mcq-title{margin:0 0 22px;color:#e8b45a;font:500 22px/1.25 var(--aimm-font);letter-spacing:-.03em}
+.mcq-section{margin-top:16px;font:400 15px/1.45 var(--aimm-font)}
+.mcq-section-label{display:block;color:var(--pv-teal);font-size:13px;margin-bottom:4px}
+
+@container (max-width:899px){.mcq-layout{grid-template-columns:minmax(0,1fr);gap:26px}}
+@container (width < 506px){.mcq-modes{gap:20px}}
+@container (width < 458px){.mcq-transport{display:block}.mcq-modes{margin-top:12px;flex-wrap:wrap;gap:12px 20px}}
+</style></head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+</svg>
+<div class="card"><div class="host" id="host">
+  <div class="mcq-head"><span class="mcq-t">Fix Queue</span><span class="mcq-count">0 done</span><span class="mcq-track"></span></div>
+  <div class="mcq-layout">
+    <div class="mcq-left">
+      <div class="mcq-list" role="group" aria-label="Fixes">
+        <div class="mcq-item" aria-current="true"><span class="mcq-rank">01</span><span class="mcq-name">Integrated loudness</span>
+          <span class="mcq-row-actions"><button class="mcq-row-action" aria-label="Mark done"><svg class="ic"><use href="#i-check"/></svg></button><button class="mcq-row-action" aria-label="Skip"><svg class="ic"><use href="#i-close"/></svg></button></span></div>
+        <div class="mcq-item" aria-current="false"><span class="mcq-rank">02</span><span class="mcq-name">Sub energy</span>
+          <span class="mcq-row-actions"><button class="mcq-row-action" aria-label="Mark done"><svg class="ic"><use href="#i-check"/></svg></button><button class="mcq-row-action" aria-label="Skip"><svg class="ic"><use href="#i-close"/></svg></button></span></div>
+      </div>
+      <div class="mcq-transport">
+        <button type="button" class="mcq-play" aria-label="Play stem mix" title="Play stem mix"><svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-play"/></svg></button>
+        <div class="mcq-modes" role="group" aria-label="Stem playback selection">
+          <button class="mcq-mode" aria-pressed="true">Full song</button>
+          <button class="mcq-mode" aria-pressed="false">Vocals only</button>
+          <button class="mcq-mode" aria-pressed="false">Instrumental</button>
+          <button class="mcq-mode" aria-pressed="false">Drums + Bass</button>
+        </div>
+      </div>
+    </div>
+    <div class="mcq-detail">
+      <h3 class="mcq-title">Integrated loudness</h3>
+      <div class="mcq-section"><span class="mcq-section-label">What we measured</span>Integrated loudness is -9.1 LUFS, 3.4 LU louder than the -12.5 LUFS target.</div>
+      <div class="mcq-section"><span class="mcq-section-label">Analysis</span>The master is pushed hard. Pull the limiter ceiling down so the chorus can breathe.</div>
+    </div>
+  </div>
+</div></div>
+</body></html>

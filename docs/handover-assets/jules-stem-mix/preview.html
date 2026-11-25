@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stem mix transporter preview (Jules)</title>
+<style>
+:root{--pv-teal:#2dd4bf;--aimm-section-title-size:20px;--aimm-font:Inter,"Inter Fallback",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+@media(max-width:560px){:root{--aimm-section-title-size:18px}}
+*{box-sizing:border-box}
+body{margin:0;padding:28px;background:#000;color:#e5e7eb;font-family:var(--aimm-font);line-height:1.5}
+.label{font:500 12px var(--aimm-font);color:#7b8190;letter-spacing:.06em;text-transform:uppercase;margin:28px 0 10px}
+.label:first-child{margin-top:0}
+.ic{display:block;flex:none;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+
+/* ================= CURRENT LOOK (copied from live CSS, for comparison) ================= */
+.old{gap:0;padding:18px 18px 12px;background:#15181b;border:1px solid #262a2f;border-radius:14px}
+.old .head{display:flex;align-items:center;gap:14px;min-width:0;flex-wrap:wrap}
+.old .big{width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;border:0;border-radius:50%;background:#2dd4bf;color:#06201c}
+.old .big svg{width:20px;height:20px}
+.old .meta{display:grid;gap:4px;min-width:0;flex:1 1 180px}
+.old .meta>strong{font:700 20px/1.15 var(--aimm-font);color:#eef1f4}
+.old .facts{color:#9aa0a6;font:500 12px var(--aimm-font)}
+.old .clock{display:flex;gap:6px;color:#6b7280;font:500 14px var(--aimm-font)}
+.old .clock strong{font-size:20px;font-weight:700;color:#eef1f4}
+.old .modes{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 14px}
+.old .modes button{min-height:34px;padding:7px 14px;border:1px solid #262a2f;border-radius:999px;background:#1b1d20;color:#9aa0a6;font:600 13px var(--aimm-font)}
+.old .modes button[aria-pressed="true"]{border-color:#2dd4bf;background:#2dd4bf;color:#06201c;font-weight:700}
+
+/* ================= NEW LOOK (SPEC.md) ================= */
+.stem{container-type:inline-size;padding:18px 18px 12px;background:#15181b;border:1px solid #262a2f;border-radius:14px;min-width:0}
+.stem-head{display:flex;align-items:flex-start;gap:24px;min-width:0}
+.stem-meta{flex:1 1 auto;min-width:0}
+.stem-title{margin:0;font:500 var(--aimm-section-title-size)/1.2 var(--aimm-font);letter-spacing:-.035em;color:#f1f2f4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stem-facts{margin-top:6px;display:flex;flex-wrap:wrap;color:#7b8190;font:400 13.5px/1.4 var(--aimm-font);font-variant-numeric:tabular-nums}
+.stem-facts>span{white-space:nowrap}
+.stem-facts>span+span::before{content:' · ';white-space:pre}
+.stem-clock{flex:none;display:flex;gap:6px;color:#7b8190;font:500 14px/1.2 var(--aimm-font);font-variant-numeric:tabular-nums;white-space:nowrap;padding-top:3px}
+.stem-clock strong{font-weight:500;color:#e8ebee}
+
+.stem-transport{display:flex;align-items:center;flex-wrap:wrap;column-gap:36px;row-gap:12px;margin-top:24px;white-space:nowrap}
+.stem-play{width:24px;height:24px;display:grid;justify-items:start;align-items:center;padding:0;border:0;background:none;color:#e8ebee;cursor:pointer}
+.stem-play svg{width:24px;height:24px;stroke-width:1.5;margin-left:-3.5px}
+.stem-play:hover,.stem-play:focus-visible{color:var(--pv-teal);outline:none}
+.stem-modes{display:flex;gap:36px;min-width:0;flex:none}
+.stem-mode{background:none;border:0;padding:0;color:#7b8190;font:500 13.5px var(--aimm-font);cursor:pointer;white-space:nowrap}
+.stem-mode[aria-pressed="true"],.stem-mode:hover,.stem-mode:focus-visible{color:var(--pv-teal);font-weight:600;outline:none}
+/* disabled (no stems) */
+.stem[data-empty="true"] .stem-play,.stem[data-empty="true"] .stem-mode{opacity:.4;cursor:default;pointer-events:none}
+.stem[data-empty="true"] .stem-mode[aria-pressed="true"]{color:#7b8190;font-weight:500}
+
+@container (max-width:471px){.stem-modes{gap:20px}.stem-transport{column-gap:24px}}
+@container (max-width:411px){.stem-transport{display:block}.stem-modes{margin-top:12px;flex-wrap:wrap;gap:12px 20px}}
+</style></head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><rect x="14" y="3" width="5" height="18" rx="1"/><rect x="5" y="3" width="5" height="18" rx="1"/></symbol>
+</svg>
+
+<div class="label">Current look</div>
+<div class="old">
+  <div class="head"><div class="big"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></div>
+    <div class="meta"><strong>Stem mix</strong><div class="facts">Key · C minor approx · 99 bpm · 6 aligned stems</div></div>
+    <div class="clock"><strong>0:00</strong><span>/</span><span>3:42</span></div></div>
+  <div class="modes"><button aria-pressed="true">Full song</button><button aria-pressed="false">Vocals only</button><button aria-pressed="false">Instrumental</button><button aria-pressed="false">Drums + Bass</button></div>
+</div>
+
+<div class="label">New: stopped</div>
+<div class="stem" id="s1">
+  <div class="stem-head"><div class="stem-meta"><h3 class="stem-title">Stem mix</h3><div class="stem-facts"><span>Key · C minor approx</span><span>99 bpm</span><span>6 aligned stems</span></div></div>
+    <div class="stem-clock"><strong>0:00</strong><span>/</span><span>3:42</span></div></div>
+  <div class="stem-transport">
+    <button class="stem-play" aria-label="Play stem mix"><svg class="ic"><use href="#i-play"/></svg></button>
+    <div class="stem-modes" role="group" aria-label="Stem playback selection"><button class="stem-mode" aria-pressed="true">Full song</button><button class="stem-mode" aria-pressed="false">Vocals only</button><button class="stem-mode" aria-pressed="false">Instrumental</button><button class="stem-mode" aria-pressed="false">Drums + Bass</button></div>
+  </div>
+</div>
+
+<div class="label">New: playing, Vocals only selected (play icon becomes pause)</div>
+<div class="stem" id="s2">
+  <div class="stem-head"><div class="stem-meta"><h3 class="stem-title">Stem mix</h3><div class="stem-facts"><span>Key · C minor approx</span><span>99 bpm</span><span>6 aligned stems</span></div></div>
+    <div class="stem-clock"><strong>1:08</strong><span>/</span><span>3:42</span></div></div>
+  <div class="stem-transport">
+    <button class="stem-play" aria-label="Pause stem mix"><svg class="ic"><use href="#i-pause"/></svg></button>
+    <div class="stem-modes" role="group" aria-label="Stem playback selection"><button class="stem-mode" aria-pressed="false">Full song</button><button class="stem-mode" aria-pressed="true">Vocals only</button><button class="stem-mode" aria-pressed="false">Instrumental</button><button class="stem-mode" aria-pressed="false">Drums + Bass</button></div>
+  </div>
+</div>
+
+<div class="label">New: disabled, no stems yet</div>
+<div class="stem" id="s3" data-empty="true">
+  <div class="stem-head"><div class="stem-meta"><h3 class="stem-title">Stem mix</h3><div class="stem-facts"><span>Key · —</span><span>— BPM</span><span>0 aligned stems</span></div></div>
+    <div class="stem-clock"><strong>0:00</strong><span>/</span><span>0:00</span></div></div>
+  <div class="stem-transport">
+    <button class="stem-play" aria-label="Play stem mix" aria-disabled="true" tabindex="-1"><svg class="ic"><use href="#i-play"/></svg></button>
+    <div class="stem-modes" role="group" aria-label="Stem playback selection"><button class="stem-mode" aria-pressed="true" aria-disabled="true" tabindex="-1">Full song</button><button class="stem-mode" aria-pressed="false" aria-disabled="true" tabindex="-1">Vocals only</button><button class="stem-mode" aria-pressed="false" aria-disabled="true" tabindex="-1">Instrumental</button><button class="stem-mode" aria-pressed="false" aria-disabled="true" tabindex="-1">Drums + Bass</button></div>
+  </div>
+</div>
+</body></html>

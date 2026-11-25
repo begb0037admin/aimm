@@ -53,7 +53,7 @@ test('selected fix gets an explain-only engineer note without a browser token an
   }}));
   const {queue,host}=makeQueue(storage,{fetch});
   queue.derive(analysis,null,'mix-hope');
-  assert.match(host.innerHTML,/>AIMM Coach<\/span>/);
+  assert.match(host.innerHTML,/>Analysis<\/span>/);
   assert.match(host.innerHTML,/Preparing engineering note…/);
   assert.doesNotMatch(host.innerHTML,/Hey Kev/);
   assert.doesNotMatch(host.innerHTML,/data-act="hope"|Ask Hope about this|#i-mic/);
@@ -91,9 +91,9 @@ test('a failed note shows the error and retries on next open', async () => {
   const {queue,host}=makeQueue(new Map(),{fetch,answer:'The measured deviation warrants an audition.'});
   queue.derive({__testItems:fixtures},null,'mix-retry');
   await new Promise(setImmediate);
-  assert.match(host.innerHTML,/>AIMM Coach<\/span>/);
+  assert.match(host.innerHTML,/>Analysis<\/span>/);
   assert.doesNotMatch(host.innerHTML,/Move #01/);
-  assert.match(host.innerHTML,/AIMM Coach could not connect/);
+  assert.match(host.innerHTML,/Analysis could not connect/);
   assert.match(host.innerHTML,/Try again/);
   assert.equal(calls,2);
   queue.select('#01');
@@ -163,6 +163,40 @@ const fixtures = ['#01', '#02'].map(id => ({
   focusBand: 'broadband', freqRange: { loHz: 20, hiHz: 20000 },
   impact: 'high', confidence: 'high', playFromSec: null,
 }));
+
+test('mix Fix Queue details omit the tag line and retain the item metadata', () => {
+  const { queue, host } = makeQueue(new Map());
+  queue.derive({ __testItems: fixtures }, null, 'mix-detail');
+  assert.match(host.innerHTML, /What we measured.*Measured #01/);
+  assert.doesNotMatch(host.innerHTML, /mcq-meta|Broadband · High impact · High confidence/);
+  assert.doesNotMatch(html, /\.mcq-meta\b/);
+  const { focusBand, impact, confidence } = queue.list()[0];
+  assert.deepEqual({ focusBand, impact, confidence }, {
+    focusBand: 'broadband', impact: 'high', confidence: 'high',
+  });
+});
+
+test('stem Fix Queue cards show the measured reason and move without the tag line', () => {
+  const start = html.indexOf('function stemReviewRender(){');
+  const end = html.indexOf('function stemReviewSchedule(){', start);
+  assert.ok(start >= 0 && end > start, 'stem Fix Queue renderer is present');
+  const host = { innerHTML: '', querySelectorAll: () => [] };
+  const stem = { key: 'bass', label: 'Bass', status: 'ok' };
+  const review = {
+    status: 'ready', items: [fixtures[0]],
+    measurements: { li: -20, tp: -3, crestDb: 10, correlation: 0.9 },
+  };
+  vm.runInNewContext(html.slice(start, end) + '\nstemReviewRender();', {
+    document: { getElementById: () => host },
+    escapeHtml: String,
+    stemSession: [stem], stemSelectedKey: stem.key, stemRef: () => null,
+    stemReviewCache: new Map([[stem.key, review]]), stemReviewKey: item => item.key,
+    stemReviewState: () => ({ selectedId: '#01', applied: new Set(), dismissed: new Set(), open: true }),
+  });
+  assert.match(host.innerHTML, /class="mcs-card"/);
+  assert.match(host.innerHTML, /What we measured.*Measured #01.*Recommended move.*Move #01/);
+  assert.doesNotMatch(host.innerHTML, /FOCUS broadband · IMP high · CONF high/);
+});
 
 test('completed fixes remain navigable, undoable, and persist per mix', () => {
   const storage = new Map();

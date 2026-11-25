@@ -1696,21 +1696,30 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #mixcheck.oz-mixcheck .mcq-count{font:400 14px var(--aimm-font);color:#9ca2ae;white-space:nowrap}
 #mixcheck.oz-mixcheck .mcq-track{height:2px;background:#30343a;flex:1;min-width:24px}
 #mixcheck.oz-mixcheck .mcq-track i{display:block;height:100%;background:var(--pv-teal);transition:width .2s}
-#mixcheck.oz-mixcheck .mcq-layout{display:grid;grid-template-columns:minmax(480px,560px) minmax(0,1fr);gap:32px;min-width:0}
+#mixcheck.oz-mixcheck .mcq-layout{display:grid;grid-template-columns:minmax(506px,524px) minmax(0,1fr);gap:32px;min-width:0}
+#mixcheck.oz-mixcheck .mcq-left{
+  --mcq-pad:20px;
+  --mcq-rank:28px;
+  --mcq-rank-gap:14px;
+  --mcq-act:20px;
+  --mcq-act-gap:14px;
+  --mcq-end:16px;
+  min-width:0
+}
 #mixcheck.oz-mixcheck .mcq-list{min-width:0}
-#mixcheck.oz-mixcheck .mcq-item{width:100%;min-height:54px;display:flex;align-items:center;gap:14px;padding:8px 16px 8px 18px;border-top:1px solid #272b30;border-left:2px solid transparent;background:none;text-align:left;font:500 16px var(--aimm-font);color:#b98f48}
-#mixcheck.oz-mixcheck .mcq-select{display:flex;align-items:center;gap:24px;min-width:0;flex:1;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
-#mixcheck.oz-mixcheck .mcq-item[aria-current="true"]{border-left-color:var(--pv-teal);color:#e8b45a}
+#mixcheck.oz-mixcheck .mcq-item{width:100%;min-height:54px;display:flex;align-items:center;gap:var(--mcq-rank-gap);padding:8px var(--mcq-end) 8px var(--mcq-pad);border-top:1px solid #272b30;background:none;text-align:left;font:500 16px var(--aimm-font);color:#b98f48}
+#mixcheck.oz-mixcheck .mcq-select{display:flex;align-items:center;gap:var(--mcq-rank-gap);min-width:0;flex:1;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+#mixcheck.oz-mixcheck .mcq-item[aria-current="true"]{box-shadow:inset 2px 0 var(--pv-teal);color:#e8b45a}
 #mixcheck.oz-mixcheck .mcq-item:hover,#mixcheck.oz-mixcheck .mcq-item:focus-visible{color:var(--pv-teal)}
 #mixcheck.oz-mixcheck .mcq-select:focus-visible{outline:2px solid var(--pv-teal);outline-offset:2px}
 #mixcheck.oz-mixcheck .mcq-item.is-done{opacity:.65}
 #mixcheck.oz-mixcheck .mcq-item.is-skipped{opacity:.65;color:#7b8190}
-#mixcheck.oz-mixcheck .mcq-item .mcq-rank{width:28px;flex:none;color:#7b8190;font-size:14px}
+#mixcheck.oz-mixcheck .mcq-item .mcq-rank{width:var(--mcq-rank);flex:none;color:#7b8190;font-size:14px;font-variant-numeric:tabular-nums}
 #mixcheck.oz-mixcheck .mcq-item.is-done .mcq-rank{color:var(--pv-teal)}
 #mixcheck.oz-mixcheck .mcq-item .mcq-rank svg{width:18px;height:18px}
 #mixcheck.oz-mixcheck .mcq-item .mcq-name{min-width:0;flex:1;overflow-wrap:anywhere}
-#mixcheck.oz-mixcheck .mcq-row-actions{display:flex;align-items:center;gap:14px;flex:none}
-#mixcheck.oz-mixcheck .mcq-row-action{width:20px;height:24px;display:grid;place-items:center;padding:0;border:0;background:none;color:#7b8190;cursor:pointer}
+#mixcheck.oz-mixcheck .mcq-row-actions{display:flex;align-items:center;gap:var(--mcq-act-gap);flex:none}
+#mixcheck.oz-mixcheck .mcq-row-action{width:var(--mcq-act);height:24px;display:grid;place-items:center;padding:0;border:0;background:none;color:#7b8190;cursor:pointer}
 #mixcheck.oz-mixcheck .mcq-row-action svg{width:18px;height:18px}
 #mixcheck.oz-mixcheck .mcq-row-action:hover,#mixcheck.oz-mixcheck .mcq-row-action:focus-visible{color:var(--pv-teal)}
 #mixcheck.oz-mixcheck .mcq-row-action:focus-visible{outline:2px solid var(--pv-teal);outline-offset:2px}
@@ -1721,20 +1730,20 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #mixcheck.oz-mixcheck .mcq-section-label{display:block;color:var(--pv-teal);font-size:13px;margin-bottom:4px}
 #mixcheck.oz-mixcheck .mcq-hope-text.is-loading{color:#9299a5}
 #mixcheck.oz-mixcheck .mcq-hope-retry{display:block;width:max-content;margin-top:4px;padding:0;border:0;background:none;color:var(--pv-teal);font:inherit;text-decoration:underline;cursor:pointer}
-#mixcheck.oz-mixcheck .mcq-meta{margin-top:20px;color:var(--pv-teal);font:500 13px var(--aimm-font)}
-#mixcheck.oz-mixcheck .mcq-transport{display:flex;align-items:center;gap:18px;margin:24px 0 0 72px;white-space:nowrap}
-#mixcheck.oz-mixcheck .mcq-transport-controls{display:flex;gap:8px;flex:none}
-#mixcheck.oz-mixcheck .mcq-icon{width:32px;height:32px;display:inline-grid;place-items:center;background:none;border:0;padding:2px;color:#e8ebee;cursor:pointer}
-#mixcheck.oz-mixcheck .mcq-icon svg{width:26px;height:26px}
-#mixcheck.oz-mixcheck .mcq-icon:hover,#mixcheck.oz-mixcheck .mcq-icon:focus-visible{color:var(--pv-teal)}
-#mixcheck.oz-mixcheck .mcq-icon:focus-visible,#mixcheck.oz-mixcheck .mcq-mode:focus-visible{outline:2px solid var(--pv-teal);outline-offset:2px}
-#mixcheck.oz-mixcheck .mcq-modes{display:flex;gap:clamp(10px,2cqw,22px);white-space:nowrap;min-width:0}
-#mixcheck.oz-mixcheck .mcq-mode{background:none;border:0;padding:0;color:#7b8190;font:500 14px var(--aimm-font);cursor:pointer}
+#mixcheck.oz-mixcheck .mcq-transport{display:flex;align-items:center;flex-wrap:wrap;column-gap:36px;row-gap:12px;margin-top:24px;padding:0 var(--mcq-end) 0 var(--mcq-pad);white-space:nowrap}
+#mixcheck.oz-mixcheck .mc-play-toggle{width:24px;height:24px;flex:none;display:grid;justify-items:start;align-items:center;padding:0;border:0;background:none;color:#e8ebee;cursor:pointer}
+/* The play and pause symbols both start at x=5 in the 24px viewBox. */
+#mixcheck.oz-mixcheck .mc-play-toggle svg{width:24px;height:24px;stroke-width:1.5;margin-left:-3.5px}
+#mixcheck.oz-mixcheck .mc-play-toggle:not([aria-disabled="true"]):is(:hover,:focus-visible){color:var(--pv-teal);outline:none}
+#mixcheck.oz-mixcheck .mc-play-toggle[aria-disabled="true"]{opacity:.4;cursor:default;pointer-events:none}
+#mixcheck.oz-mixcheck .mcq-mode:focus-visible{outline:2px solid var(--pv-teal);outline-offset:2px}
+#mixcheck.oz-mixcheck .mcq-modes:not([hidden]){display:flex;gap:36px;min-width:0;flex:none}
+/* Allow for the selected, focused and hovered labels at weight 600 in the 506px column. */
+#mixcheck.oz-mixcheck .mcq-mode{background:none;border:0;padding:0;color:#7b8190;font:500 13.5px var(--aimm-font);letter-spacing:-.1px;cursor:pointer;white-space:nowrap}
 #mixcheck.oz-mixcheck .mcq-mode[aria-pressed="true"],#mixcheck.oz-mixcheck .mcq-mode:hover,#mixcheck.oz-mixcheck .mcq-mode:focus-visible{color:var(--pv-teal);font-weight:600}
-#mixcheck.oz-mixcheck .mcq-transport .mcq-icon{width:28px;height:28px;padding:0}
-#mixcheck.oz-mixcheck .mcq-transport .mcq-icon svg{width:24px;height:24px}
 @container (max-width:899px){#mixcheck.oz-mixcheck .mcq-layout{grid-template-columns:minmax(0,1fr);gap:26px}}
-@container (max-width:519px){#mixcheck.oz-mixcheck .mcq-transport{flex-wrap:wrap}#mixcheck.oz-mixcheck .mcq-modes{flex-wrap:wrap;white-space:normal}}
+@container (width < 506px){#mixcheck.oz-mixcheck .mcq-modes:not([hidden]){gap:20px}}
+@container (width < 458px){#mixcheck.oz-mixcheck .mcq-transport{display:block}#mixcheck.oz-mixcheck .mcq-modes:not([hidden]){margin-top:12px;flex-wrap:wrap;gap:12px 20px}}
 @media (max-width:600px){#mixcheck.oz-mixcheck #mcActions.oz-card{padding:20px}#mixcheck.oz-mixcheck .mcq-head{gap:12px;flex-wrap:wrap}#mixcheck.oz-mixcheck .mcq-track{flex-basis:100%}#mixcheck.oz-mixcheck .mcq-item{min-height:48px}}
 
 #mixcheck.oz-mixcheck #refDzLoaded.visible{display:flex;flex-direction:column;gap:10px;padding:0} /* board item 18: gap 12->10 */
@@ -2148,28 +2157,30 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 @media(max-width:720px){#mixcheck.oz-mixcheck .mc-stem-row{grid-template-columns:1fr;gap:8px}#mixcheck.oz-mixcheck .mc-stem-wave-box{height:54px}#mixcheck.oz-mixcheck .mc-stem-icon{width:32px;height:32px;flex-basis:32px}}
 #mixcheck.oz-mixcheck .mc-stem-input-notice{margin-top:7px;color:#e08282;font: calc(var(--inv-text-scale, 1) * 10px) var(--aimm-font)}
 
-/* Stem-player panel and row presentation around the existing controls and waveform canvas. */
-#mixcheck.oz-mixcheck #mcStemStack{gap:0;padding:18px 18px 12px;background:#15181b;border:1px solid #262a2f;border-radius:14px}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-player-head{display:flex;align-items:center;gap:14px;min-width:0;flex-wrap:wrap;padding:0}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-big-play{width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;border:0;border-radius:50%;background:#2dd4bf;color:#06201c;box-shadow:none;cursor:pointer;}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-big-play:focus-visible{outline:3px solid #262a2f;outline-offset:3px}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-big-play svg{width:20px;height:20px}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-track-meta{display:grid;gap:4px;min-width:0;flex:1 1 180px}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-track-meta>strong{font:700 calc(var(--inv-text-scale, 1) * 20px)/1.15 var(--aimm-font);color:#eef1f4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-track-facts{display:flex;align-items:center;gap:0;flex-wrap:nowrap;overflow:hidden;white-space:nowrap;color:#9aa0a6;font:500 calc(var(--inv-text-scale, 1) * 12px) var(--aimm-font);font-variant-numeric:tabular-nums}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-track-facts>span+span::before{content:' · ';white-space:pre}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-clock{display:flex;align-items:center;gap:6px;flex:0 0 auto;color:#6b7280;font:500 calc(var(--inv-text-scale, 1) * 14px) var(--aimm-font);font-variant-numeric:tabular-nums;white-space:nowrap}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-clock strong{font-size:calc(var(--inv-text-scale, 1) * 20px);font-weight:700;color:#eef1f4}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes{display:flex;gap:8px;flex-wrap:wrap;padding:0;margin:16px 0 14px}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button{min-height:34px;padding:7px 14px;border:1px solid #262a2f;border-radius:999px;background:#1b1d20;color:#9aa0a6;font:600 calc(var(--inv-text-scale, 1) * 13px) var(--aimm-font);cursor:pointer;transition:background 180ms ease,border-color 180ms ease,color 180ms ease}
-@media (hover:hover) and (pointer:fine){
-  #mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover{color:#eef1f4}
-}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"]{border-color:#2dd4bf;background:#2dd4bf;color:#06201c;font-weight:700;box-shadow:none}
-@media (prefers-reduced-motion:reduce){
-  #mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button{transition:none}
-}
-@media (prefers-reduced-motion:reduce) and (hover:hover) and (pointer:fine){}
+/* Stem mix header, transport and waveform rows. */
+#mixcheck.oz-mixcheck #mcTransport:has(#mcStemStack:not([hidden])),
+#mixcheck.oz-mixcheck #mcTransport:has(#mcStemStack:not([hidden])) > #refDropZone{padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+#mixcheck.oz-mixcheck #mcStemStack{container-type:inline-size;gap:0;min-width:0}
+#mcStemStack .mc-stem-player-head{display:flex;align-items:flex-start;gap:24px;min-width:0}
+#mcStemStack .mc-stem-track-meta{flex:1 1 auto;min-width:0}
+#mcStemStack .mc-stem-title{margin:0;font:500 var(--aimm-section-title-size)/1.2 var(--aimm-font);letter-spacing:-.035em;color:#f1f2f4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mcStemStack .mc-stem-track-facts{margin-top:6px;display:flex;flex-wrap:wrap;color:#7b8190;font:400 13.5px/1.4 var(--aimm-font);font-variant-numeric:tabular-nums}
+#mcStemStack .mc-stem-track-facts>span{white-space:nowrap}
+#mcStemStack .mc-stem-track-facts>span+span::before{content:' · ';white-space:pre}
+#mcStemStack .mc-stem-clock{flex:none;display:flex;gap:6px;color:#7b8190;font:500 14px/1.2 var(--aimm-font);font-variant-numeric:tabular-nums;white-space:nowrap;padding-top:3px}
+#mcStemStack .mc-stem-clock strong{font-weight:500;color:#e8ebee}
+
+#mcStemStack .mc-stem-transport{display:flex;align-items:center;flex-wrap:wrap;column-gap:36px;row-gap:12px;margin:24px 0 14px;white-space:nowrap}
+#mcStemStack .mc-stem-modes{display:flex;gap:36px;min-width:0;flex:none}
+#mcStemStack .mc-stem-modes button{background:none;border:0;padding:0;color:#7b8190;font:500 13.5px var(--aimm-font);cursor:pointer;white-space:nowrap}
+#mcStemStack .mc-stem-modes button[aria-pressed="true"],#mcStemStack .mc-stem-modes button:not([aria-disabled="true"]):hover,#mcStemStack .mc-stem-modes button:not([aria-disabled="true"]):focus-visible{color:var(--pv-teal);font-weight:600;outline:none}
+/* disabled (no stems) */
+#mcStemStack[data-empty="true"] .mc-stem-modes button{opacity:.4;cursor:default;pointer-events:none}
+#mcStemStack[data-empty="true"] .mc-stem-modes button[aria-pressed="true"]{color:#7b8190;font-weight:500}
+
+@container (width < 472px){#mcStemStack .mc-stem-modes{gap:20px}#mcStemStack .mc-stem-transport{column-gap:24px}}
+@container (width < 412px){#mcStemStack .mc-stem-transport{display:block}#mcStemStack .mc-stem-modes{margin-top:12px;flex-wrap:wrap;gap:12px 20px}}
+
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-status{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-rows{display:grid;gap:8px}
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-row{--stem-color:#f472b6;grid-template-columns:minmax(0,132px) minmax(0,1fr) auto;align-items:center;gap:12px;padding:8px 10px;background:#1b1d20;border:1px solid #262a2f;border-left:3px solid var(--stem-color);border-radius:10px;box-shadow:none}
@@ -2214,7 +2225,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #mixcheck.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) .mc-drop-formats{font:500 calc(var(--inv-text-scale, 1) * 12px)/1.5 var(--aimm-font);color:#89dcbc}
 #mixcheck.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #mcInput{margin-top:2px}
 #mixcheck.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #mcCtaSub{color:#96a6ba;max-width:none;font:500 calc(var(--inv-text-scale, 1) * 11px)/1.5 var(--aimm-font)}
-@media(max-width:720px){#mixcheck.oz-mixcheck #mcStemStack{padding:12px;border-radius:16px}#mixcheck.oz-mixcheck #mcStemStack .mc-stem-player-head{gap:11px}#mixcheck.oz-mixcheck #mcStemStack .mc-stem-big-play{width:48px;height:48px;flex-basis:48px}#mixcheck.oz-mixcheck #mcStemStack .mc-stem-big-play svg{width:34px;height:34px}#mixcheck.oz-mixcheck #mcStemStack .mc-stem-track-meta>strong{font-size:calc(var(--inv-text-scale, 1) * 18px)}#mixcheck.oz-mixcheck #mcStemStack .mc-stem-clock{font-size:calc(var(--inv-text-scale, 1) * 11px)}#mixcheck.oz-mixcheck #mcStemStack .mc-stem-clock strong{font-size:calc(var(--inv-text-scale, 1) * 13px)}#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes{gap:6px}#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button{min-height:34px;padding:7px 10px}}
 @media(max-width:720px){#mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes{min-height:48px;border-radius:18px;flex-wrap:wrap}#mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button{font-size:calc(var(--inv-text-scale, 1) * 11px);gap:5px;padding:7px 5px}#mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button small{font-size:calc(var(--inv-text-scale, 1) * 8px);padding:2px 4px}}
 
 /* 2026-11-03.98: preserve the original narrow specs rail and let the card use
@@ -2888,11 +2898,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]){background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-neutral-bd) !important;box-shadow:none !important;color:var(--pv-neutral-ink) !important}
 #mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]) *{color:var(--pv-neutral-ink) !important}
 
-/* ---- Stem mode buttons ---- */
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"]{background:var(--pv-teal) !important;border:1.5px solid transparent !important;box-shadow:none !important;color:var(--pv-black) !important}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"] *{color:var(--pv-black) !important}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]){background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-neutral-bd) !important;box-shadow:none !important;color:var(--pv-neutral-ink) !important}
-
 /* ---- Spotify buttons: enabled = teal, disabled = neutral ---- */
 #mixcheck.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture):not(:disabled){background:var(--pv-teal) !important;border:1.5px solid transparent !important;box-shadow:none !important;color:var(--pv-black) !important;opacity:1 !important}
 #mixcheck.oz-mixcheck .mc-spotify-ref-controls :is(#mcSpotifyConnect,#mcSpotifyRefMatch,#mcSpotifyCapture):not(:disabled) *{color:var(--pv-black) !important}
@@ -2951,9 +2956,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #mixcheck.oz-mixcheck .mc-spotify-ref-controls #mcSpotifyCapture[hidden]{display:inline-flex !important}
 
 /* ---- Round 2, PREVIEW ONLY: remove the remaining bronze and gold. The logo is left as it is. ---- */
-#mixcheck.oz-mixcheck #mcTransport,
-#mixcheck.oz-mixcheck #mcTransport > #refDropZone,
-#mixcheck.oz-mixcheck #mcTransport > #refDropZone:focus-within,
+#mixcheck.oz-mixcheck #mcTransport:where(:not(:has(#mcStemStack:not([hidden])))),
+#mixcheck.oz-mixcheck #mcTransport:where(:not(:has(#mcStemStack:not([hidden])))) > #refDropZone,
+#mixcheck.oz-mixcheck #mcTransport:where(:not(:has(#mcStemStack:not([hidden])))) > #refDropZone:focus-within,
 #mixcheck.oz-mixcheck #mcSpecs,
 #mixcheck.oz-mixcheck #mcSpecs:focus-within,
 #mixcheck.oz-mixcheck .oz-spec-card,
@@ -3028,8 +3033,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):hover:not(:disabled),
 #hopeRail .aichat-quick-prompt:hover:not(:disabled),
 #hopeRail .aichat-quick-prompts .aichat-quick-prompt:hover,
-#mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]):hover:not(:disabled),
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover:not(:disabled)
+#mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]):hover:not(:disabled)
 {background:var(--pv-neutral-bg) !important;border:1px solid var(--pv-teal) !important;color:#f3f4f6 !important;box-shadow:none !important;transform:none !important}
 
 /* Spotify buttons: enabled ones are already teal and keep their fill on hover, so no hover change here. */
@@ -3048,8 +3052,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):hover:not(:disabled),
 #hopeRail .aichat-quick-prompt:hover:not(:disabled),
 #hopeRail .aichat-quick-prompts .aichat-quick-prompt:hover,
-#mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]):hover:not(:disabled),
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover:not(:disabled)
+#mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]):hover:not(:disabled)
 {background:var(--pv-teal) !important;border:1.5px solid transparent !important;color:var(--pv-black) !important;box-shadow:none !important}
 #hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):hover:not(:disabled) *,
 #hopeRail .aichat-quick-prompt:hover:not(:disabled) *,
@@ -3067,16 +3070,12 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]) svg{stroke:#d1d5db !important}
 
 /* ---- Selected pill on hover: stays exactly as selected (teal fill, dark text and icon, no lift or glow), PREVIEW ONLY (Kevin: "hover state is not good, fix it for all"). ---- */
-#mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]):hover,
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"]:hover{color:var(--pv-black) !important}
+#mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]):hover{color:var(--pv-black) !important}
 #mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]):hover *{color:var(--pv-black) !important;stroke:currentColor !important;opacity:1 !important}
 
 /* ---- Hover on an UNSELECTED pill = same as selected: teal fill, dark text and dark icon. The icon line was staying light grey; now it goes dark on hover too. PREVIEW ONLY (Kevin). ---- */
 #mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]):hover:not(:disabled) svg,
-#mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]):hover:not(:disabled) svg *,
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover:not(:disabled) svg,
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover:not(:disabled) svg *{stroke:var(--pv-black) !important}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button:not([aria-pressed="true"]):hover:not(:disabled){color:#eef1f4 !important}
+#mixcheck.oz-mixcheck #mcTransport .mc-workspace-modes button:not(.is-active):not([aria-pressed="true"]):hover:not(:disabled) svg *{stroke:var(--pv-black) !important}
 
 
 
@@ -4023,17 +4022,19 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
           <div class="mc-wave-box wave">
             <canvas class="mc-wave" id="mcWave"></canvas>
           </div>
-          <div class="mc-stem-stack" id="mcStemStack" hidden>
+          <div class="mc-stem-stack" id="mcStemStack" data-empty="true" hidden>
             <div class="mc-stem-player-head">
-              <button class="mc-stem-big-play" id="mcStemBigPlay" type="button" onclick="refTogglePlay()" aria-label="Play stem mix" title="Play / pause stem mix"><svg class="ic ic-24 ic-solid" aria-hidden="true" id="mcStemBigPlaySvg" viewBox="0 0 24 24"><use href="#i-play"/></svg></button>
-              <div class="mc-stem-track-meta"><strong id="mcStemTrackTitle">Stem mix</strong><div class="mc-stem-track-facts"><span id="mcStemKeyFact">Key · —</span><span id="mcStemTempoFact">— BPM</span><span id="mcStemSongName">0 aligned stems</span></div></div>
+              <div class="mc-stem-track-meta"><h3 class="mc-stem-title" id="mcStemTrackTitle">Stem mix</h3><div class="mc-stem-track-facts"><span id="mcStemKeyFact">Key · —</span><span id="mcStemTempoFact">— BPM</span><span id="mcStemSongName">0 aligned stems</span></div></div>
               <div class="mc-stem-clock"><strong id="mcStemElapsed">0:00</strong><span>/</span><span id="mcStemDuration">0:00</span></div>
             </div>
-            <div class="mc-stem-modes" role="group" aria-label="Stem playback selection">
-              <button type="button" data-stem-mode="full" aria-pressed="true">Full song</button>
-              <button type="button" data-stem-mode="vocals" aria-pressed="false">Vocals only</button>
-              <button type="button" data-stem-mode="instrumental" aria-pressed="false">Instrumental</button>
-              <button type="button" data-stem-mode="drums-bass" aria-pressed="false">Drums + Bass</button>
+            <div class="mc-stem-transport">
+              <button class="mc-stem-play mc-play-toggle" id="mcStemBigPlay" type="button" onclick="if(this.getAttribute('aria-disabled')!=='true')refTogglePlay()" aria-disabled="true" tabindex="-1" aria-label="Play stem mix" title="Play stem mix"><svg class="ic" aria-hidden="true" id="mcStemBigPlaySvg" viewBox="0 0 24 24"><use href="#i-play"/></svg></button>
+              <div class="mc-stem-modes" role="group" aria-label="Stem playback selection">
+                <button type="button" aria-disabled="true" tabindex="-1" data-stem-mode="full" aria-pressed="true">Full song</button>
+                <button type="button" aria-disabled="true" tabindex="-1" data-stem-mode="vocals" aria-pressed="false">Vocals only</button>
+                <button type="button" aria-disabled="true" tabindex="-1" data-stem-mode="instrumental" aria-pressed="false">Instrumental</button>
+                <button type="button" aria-disabled="true" tabindex="-1" data-stem-mode="drums-bass" aria-pressed="false">Drums + Bass</button>
+              </div>
             </div>
             <div class="mc-stem-status" id="mcStemStatus" aria-live="polite"></div>
             <div class="mc-stem-rows" id="mcStemRows"></div>
@@ -5875,7 +5876,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.61';
+const AIMM_BUILD = '2026-11-23.62';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -13711,7 +13712,7 @@ Kev drops a rendered WAV of his mix/master here and the app analyses it. Nothing
 • When analysis finishes, post your spoken read into the chat (see MIX CHECK AWARENESS).
 
 THE FIX QUEUE (window.mcFixQueue — this is a live object you can read)
-After analysis the app builds a ranked queue of fixes. Each item is: an id ("#01", "#02", …), a measured title + why (the REAL deviation — e.g. "Low end +8.9 dB vs corridor (20–120 Hz)", "True peak -0.4 dBTP — 0.6 dB over the -1.0 ceiling"), a move (the concrete corrective recommendation, grounded in Kev's YouTube reference library — per song, not a template), a focus band, an impact (low/med/high) and a confidence. The panel shows a selectable list and one detail at a time. Opening a fix automatically shows a factual, explain-only engineering note in the “AIMM Coach” section. It gives the measured comparison, its practical implication, a library-supported move when available, and what to verify. The note is cached for that fix, analysis revision, and grounded move. Hope walks the fixes in ordinary chat. The panel keeps its done/undo, skip/restore and transport controls.
+After analysis the app builds a ranked queue of fixes. Each item is: an id ("#01", "#02", …), a measured title + why (the REAL deviation — e.g. "Low end +8.9 dB vs corridor (20–120 Hz)", "True peak -0.4 dBTP — 0.6 dB over the -1.0 ceiling"), a move (the concrete corrective recommendation, grounded in Kev's YouTube reference library — per song, not a template), a focus band, an impact (low/med/high) and a confidence. The panel shows a selectable list and one detail at a time. Opening a fix automatically shows a factual, explain-only engineering note in the “Analysis” section. It gives the measured comparison, its practical implication, a library-supported move when available, and what to verify. The note is cached for that fix, analysis revision, and grounded move. Hope walks the fixes in ordinary chat. The panel keeps its done/undo, skip/restore and transport controls.
 • get_context returns the full Fix Queue (every item, the current one, applied/total) plus the measured breakdown. Your live context bundle also carries it and refreshes every time the queue changes.
 • When Kev asks "about fix #02" / "why that one first?" / "is 8.9 dB right?" — you already have the item: its id, the measured reason, the move. Answer directly with the real numbers and the grounded move. NEVER ask where he saw it.
 
@@ -13849,7 +13850,7 @@ MIX CHECK TAB (tab id mixcheck) — full inventory
 • Drop zone / transport — drop a WAV (or click to pick). Once loaded: eject/clear control, skip / −10s / play / +10s / stop, elapsed + duration, and the #mcWave rendered-peak waveform (played span washed --send-blue #2fa1e6→#a557f4, unplayed grey, thin light playhead advancing during playback, click/drag to seek).
 • Audio Specs column — measured metric rows (Integrated LUFS, Short-term LUFS, True Peak, PLR / DR, correlation, crest, sample rate, bit depth, duration) + the CLASSIFIED block (Genre, Tempo, Key, then Subgenre / Production style / Energy / Mood / Dissonance as "with full analysis" placeholders until the analyst phase).
 • Spectral Balance analyser — the file's average spectrum vs Flat (a 0 dB line) or a selected saved Spotify target, with LOW / LOW-MID / MID / HIGH deviation meters.
-• Fix Queue (#mcActions) — a selectable list of every fix, including done and skipped ones. Each row has done/undo and skip/restore controls. The shared mix/stem transport sits below the list. The detail panel shows measured evidence, Hope’s automatically generated explanation, impact and confidence. The header counts done and skipped fixes separately.
+• Fix Queue (#mcActions) — a selectable list of every fix, including done and skipped ones. Each row has done/undo and skip/restore controls. The shared mix/stem transport sits below the list. The detail panel shows measured evidence and the automatically generated note in the “Analysis” section. The header counts done and skipped fixes separately.
 • On analysis complete: Hope's spoken read is posted into the chat.
 
 HOPE'S CHAT (persistent rail) — full inventory (NOT a tab — docked on every tab; retired as a standalone "Conversation" tab 2026-09-05)
@@ -15566,7 +15567,7 @@ You can see his current chain, meters, flagged symptoms, full plugin library, ge
 
 REPLY RELIABILITY: The user's current message is visible. Never say you did not get a readable reply or ask Kev to send the question again. Answer the question from the message and available context. If a tool fails or returns no result, explain that briefly and still give the best useful answer you can. Do not stop after a tool call without writing a reply.
 
-FIX QUEUE DETAIL: The “AIMM Coach” section generates its own explain-only engineering note from the selected fix’s measurements and any grounded move. Hope discusses those same facts in her own voice when Kev asks in conversation.
+FIX QUEUE DETAIL: The “Analysis” section generates its own explain-only engineering note from the selected fix’s measurements and any grounded move. Hope discusses those same facts in her own voice when Kev asks in conversation.
 
 FIX QUEUE WALKTHROUGH: When Mix Check analysis finishes, greet Kev by name. Say in a friendly way that he has just loaded a mix or stems and the analysis is ready. Give the Fix Queue count in words, offer to take the fixes one at a time, and vary the phrasing between sessions. Use contractions, short sentences, a little warmth and light humour where natural. Never open with “I found N items”. Keep the introduction under about 60 words before the first fix. Present ONE fix at a time in your own warm first-person voice: the item number in plain words, what is wrong in plain words (rounded numbers only; precise readings stay in the Fix Queue tab), the move you recommend with a plugin Kev owns and what it does, why it makes sense, and how confident you are and why. Ask ‘Want me to apply that to your <bus>?’. Challenge a questionable flag or offer a better owned plugin, gentler setting, or section check where warranted. Only on Kev’s clear yes, call add_plugin_to_bus, then set_plugin_settings, then mark_fix_applied with the fix_id for the item you just discussed; report what you did in one line and move to the next item. On no, offer one alternative or challenge; if he still declines, call skip_fix with that fix’s id and move to the next item. If Kev later says ‘do that one after all’, call skip_fix with that id and restore:true to reopen it. UNDO: When Kev says 'undo that' right after you applied a fix, remove the plug-in you added with remove_plugin_from_bus, or use clear_plugin_settings if you only changed settings, then call unmark_fix_applied to untick that fix. Say in one line what you undid. Never undo without Kev asking. Between fixes use a brief human transition, such as “Nice, that’s one down. Right, the next one…”; never sound cheesy or go long. After the last item, say the queue is clear. Never apply or mark done without a clear yes.
 
@@ -25606,11 +25607,11 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
     function hopeFailure(status,code){
       if(status===401)return 'You need to sign in again (refresh the page).';
       if(status===413||code==='luna_request_too_large')return 'The engineering note request was too large.';
-      if(code==='rate_limited'||status===429)return 'AIMM Coach is receiving too many requests. Try again shortly.';
+      if(code==='rate_limited'||status===429)return 'Analysis is receiving too many requests. Try again shortly.';
       if(status===503)return 'The engineering note is not available right now.';
       if(code==='luna_request_failed')return 'The engineering note request failed'+(status?' (HTTP '+status+')':'')+'.';
-      if(code==='network')return 'AIMM Coach could not connect. Check the connection and try again.';
-      return 'AIMM Coach could not generate a note'+(status?' (HTTP '+status+')':'')+'. Try again.';
+      if(code==='network')return 'Analysis could not connect. Check the connection and try again.';
+      return 'Analysis could not generate a note'+(status?' (HTTP '+status+')':'')+'. Try again.';
     }
     function hopeError(status,code,detail){
       const error=new Error(hopeFailure(status,code));
@@ -25979,15 +25980,13 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
       if(!items.length){host.className='';host.innerHTML='';return;}
       host.className='oz-card card actions';
       const done=applied.size, skipped=dismissed.size, it=selected(), state=status(it.id);
-      const word=v=>v==='med'?'Medium':v.charAt(0).toUpperCase()+v.slice(1);
       let h='<div class="mcq-head"><span class="mcq-t">Fix Queue</span><span class="mcq-count">'+done+' done'+(skipped?' · '+skipped+' skipped':'')+'</span><span class="mcq-track" role="progressbar" aria-label="Fixes done" aria-valuenow="'+done+'" aria-valuemin="0" aria-valuemax="'+items.length+'"><i style="width:'+(done/items.length*100)+'%"></i></span></div>';
       h+='<div class="mcq-layout"><div class="mcq-left"><div class="mcq-list" role="group" aria-label="Fixes">';
       items.forEach((q,i)=>{const st=status(q.id),doneAct=st==='done'?'undo':'done',resetAct=st==='dismissed'?'restore':'dismiss';h+='<div class="mcq-item'+(st==='done'?' is-done':st==='dismissed'?' is-skipped':'')+'" data-id="'+esc(q.id)+'" aria-current="'+(q.id===it.id)+'"><button type="button" class="mcq-select" data-act="select" aria-label="'+esc(shortName(q))+' — '+(st==='dismissed'?'skipped':st)+'"><span class="mcq-rank">'+(st==='done'?icon('check'):st==='dismissed'?icon('minus'):String(i+1).padStart(2,'0'))+'</span><span class="mcq-name">'+esc(shortName(q))+'</span></button><span class="mcq-row-actions"><button type="button" class="mcq-row-action" data-act="'+doneAct+'" aria-label="'+(st==='done'?'Undo done':'Mark done')+' — '+esc(shortName(q))+'" title="'+(st==='done'?'Undo done':'Mark done')+'">'+icon(st==='done'?'undo':'check')+'</button><button type="button" class="mcq-row-action" data-act="'+resetAct+'" aria-label="'+(resetAct==='restore'?'Restore to waiting':'Skip fix')+' — '+esc(shortName(q))+'" title="'+(resetAct==='restore'?'Restore to waiting':'Skip fix')+'">'+icon(resetAct==='restore'?'undo':'close')+'</button></span></div>';});
-      h+='</div><div class="mcq-transport"><div class="mcq-transport-controls"><button type="button" class="mcq-icon mcq-play" data-act="play" aria-label="Play mix" title="Play mix">'+icon('play')+'</button><button type="button" class="mcq-icon" data-act="stop" aria-label="Stop mix" title="Stop mix">'+icon('stop')+'</button></div><div class="mcq-modes" role="group" aria-label="Stem playback selection" hidden></div></div></div><div class="mcq-detail" data-id="'+esc(it.id)+'"><h3 class="mcq-title">'+esc(it.title)+(state==='dismissed'?'<span class="mcq-skipped"> · skipped</span>':'')+'</h3>';
+      h+='</div><div class="mcq-transport"><button type="button" class="mcq-play mc-play-toggle" onclick="if(this.getAttribute(\'aria-disabled\')!==\'true\')refTogglePlay()" aria-label="Play stem mix" title="Play stem mix">'+icon('play')+'</button><div class="mcq-modes" role="group" aria-label="Stem playback selection" hidden></div></div></div><div class="mcq-detail" data-id="'+esc(it.id)+'"><h3 class="mcq-title">'+esc(it.title)+(state==='dismissed'?'<span class="mcq-skipped"> · skipped</span>':'')+'</h3>';
       h+='<div class="mcq-section"><span class="mcq-section-label">What we measured</span>'+esc(it.why)+'</div>';
       const note=hopeText(it);
-      h+='<div class="mcq-section"><span class="mcq-section-label">AIMM Coach</span><div class="mcq-hope-text'+(note===COACH_LOADING?' is-loading':'')+'">'+esc(note)+'</div>'+(hopeFailed.has(it.id)?'<button type="button" class="mcq-hope-retry" data-act="hope-retry">Try again</button>':'')+'</div>';
-      h+='<div class="mcq-meta">'+esc(word(it.focusBand))+' · '+esc(word(it.impact))+' impact · '+esc(word(it.confidence))+' confidence</div>';
+      h+='<div class="mcq-section"><span class="mcq-section-label">Analysis</span><div class="mcq-hope-text'+(note===COACH_LOADING?' is-loading':'')+'">'+esc(note)+'</div>'+(hopeFailed.has(it.id)?'<button type="button" class="mcq-hope-retry" data-act="hope-retry">Try again</button>':'')+'</div>';
       h+='</div></div>';
       host.innerHTML=h;wire(host);
       if(typeof window.mcFixQueueTransportSync==='function')window.mcFixQueueTransportSync();
@@ -26002,8 +26001,6 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
         else if(act==='undo')unmarkApplied(id);
         else if(act==='dismiss')dismiss(id);
         else if(act==='restore')restore(id);
-        else if(act==='stop')window.mcTransport?.stop();
-        else if(act==='play'){const it=selected();const transport=window.mcTransport;if(transport?.snapshot().status==='playing')transport.pause();else if(it?.playFromSec!=null&&typeof window.refPlayFromTime==='function')window.refPlayFromTime(it.playFromSec);else transport?.play();}
       }));
     }
 
@@ -26759,7 +26756,12 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
   window.mcFixQueueTransportSync=function(){
     const host=document.getElementById('mcActions');if(!host||!host.querySelector)return;
     const play=host.querySelector('.mcq-play'),modes=host.querySelector('.mcq-modes');
-    if(play){const playing=!!refPlaying;play.innerHTML='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-'+(playing?'pause':'play')+'"/></svg>';play.setAttribute('aria-label',playing?'Pause mix':'Play mix');play.title=playing?'Pause mix':'Play mix';}
+    if(play){
+      const available=refActivePlaybackBuffers().length>0;
+      play.setAttribute('aria-disabled',String(!available));
+      if(available)play.removeAttribute('tabindex');else play.tabIndex=-1;
+      syncMixPlayToggle(play);
+    }
     if(modes){const available=!!(stemSession&&stemSession.some(s=>s.status==='ok'));modes.hidden=!available;
       if(available){modes.innerHTML=[['full','Full song'],['vocals','Vocals only'],['instrumental','Instrumental'],['drums-bass','Drums + Bass']].map(([mode,label])=>'<button type="button" class="mcq-mode" data-mode="'+mode+'" aria-pressed="'+(mode===stemPlaybackMode)+'">'+label+'</button>').join('');modes.querySelectorAll('button').forEach(button=>button.onclick=()=>stemSetPlaybackMode(button.dataset.mode));}
     }
@@ -26832,7 +26834,7 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
           const ordinal=a.items.findIndex(i=>i.id===q.selectedId)+1,it=a.items[ordinal-1];
           const state=q.applied.has(it.id)?'done':q.dismissed.has(it.id)?'dismissed':'pending';
           html+='<div class="mcs-actions mcs-nav"><button data-stem-action="previous" '+(ordinal===1?'disabled':'')+'>← Previous</button><span>Item '+ordinal+' of '+a.items.length+' · '+(state==='done'?'Done':state==='dismissed'?'Dismissed':'To do')+'</span><button data-stem-action="next" '+(ordinal===a.items.length?'disabled':'')+'>Next →</button></div>';
-          html+='<div class="mcs-card"><div class="mcs-note">Action item '+ordinal+' of '+a.items.length+'</div><div class="mcs-title">'+esc(it.title)+'</div><div class="mcs-note">FOCUS '+esc(it.focusBand)+' · IMP '+esc(it.impact)+' · CONF '+esc(it.confidence)+'</div><div class="mcs-actions"><button data-stem-action="'+(state==='done'?'undo':state==='dismissed'?'restore':'done')+'">'+(state==='done'?'<svg class="ic ic-16" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-undo"/></svg> Undo done':state==='dismissed'?'<svg class="ic ic-16" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-undo"/></svg> Restore':'<svg class="ic ic-16" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-check"/></svg> Mark done')+'</button>'+(state==='dismissed'?'':'<button data-stem-action="dismiss">× Dismiss</button>')+'<button data-stem-action="detail">'+(q.open?'Hide':'Show')+' full move</button><button data-stem-action="hope">Ask Hope about this</button></div>'+(q.open?'<div class="mcs-detail"><div class="mcs-section"><span class="mcs-section-label">What we measured</span>'+esc(it.why)+'</div><div class="mcs-section"><span class="mcs-section-label">Recommended move</span>'+esc(it.move)+'</div></div>':'')+'</div>';
+          html+='<div class="mcs-card"><div class="mcs-note">Action item '+ordinal+' of '+a.items.length+'</div><div class="mcs-title">'+esc(it.title)+'</div><div class="mcs-actions"><button data-stem-action="'+(state==='done'?'undo':state==='dismissed'?'restore':'done')+'">'+(state==='done'?'<svg class="ic ic-16" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-undo"/></svg> Undo done':state==='dismissed'?'<svg class="ic ic-16" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-undo"/></svg> Restore':'<svg class="ic ic-16" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-check"/></svg> Mark done')+'</button>'+(state==='dismissed'?'':'<button data-stem-action="dismiss">× Dismiss</button>')+'<button data-stem-action="detail">'+(q.open?'Hide':'Show')+' full move</button><button data-stem-action="hope">Ask Hope about this</button></div>'+(q.open?'<div class="mcs-detail"><div class="mcs-section"><span class="mcs-section-label">What we measured</span>'+esc(it.why)+'</div><div class="mcs-section"><span class="mcs-section-label">Recommended move</span>'+esc(it.move)+'</div></div>':'')+'</div>';
           if(a.items.length>1)html+='<div class="mcs-actions" style="margin-top:9px"><button data-stem-action="all">'+(q.expanded?'Hide':'Show all')+' items ('+a.items.length+')</button></div>';
           if(q.expanded)html+='<div class="mcs-all">'+a.items.map((i,j)=>'<button type="button" data-stem-action="select" data-fix-id="'+esc(i.id)+'" '+(i.id===q.selectedId?'aria-current="true"':'')+'>#'+String(j+1).padStart(2,'0')+' '+esc(i.title)+' · '+(q.applied.has(i.id)?'Done':q.dismissed.has(i.id)?'Dismissed':'To do')+'</button>').join('')+'</div>';
         }
@@ -27028,29 +27030,47 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
     keyFact.textContent='Key · '+(key&&key!=='– –'?key+' approx':'—');
     tempoFact.textContent=tempo&&tempo!=='– –'?tempo:'— BPM';
   }
+  function syncMixPlayToggle(button){
+    if(!button)return;
+    const isPlaying=button.getAttribute('aria-disabled')!=='true'&&!!refPlaying;
+    const playing=String(isPlaying);
+    if(button.dataset.playing===playing)return;
+    const label=isPlaying?'Pause stem mix':'Play stem mix';
+    button.dataset.playing=playing;
+    button.setAttribute('aria-label',label);
+    button.setAttribute('aria-pressed',playing);
+    button.title=label;
+    button.querySelector('use').setAttribute('href',isPlaying?'#i-pause':'#i-play');
+  }
   function stemPlayerSyncTransport(){
-    const elapsed=document.getElementById('mcStemElapsed'),duration=document.getElementById('mcStemDuration'),button=document.getElementById('mcStemBigPlay'),icon=document.getElementById('mcStemBigPlaySvg');
-    if(elapsed)elapsed.textContent=document.getElementById('refTimeElapsed')?.textContent||'0:00';
-    if(duration)duration.textContent=document.getElementById('refTimeDuration')?.textContent||'0:00';
-    const playing=String(!!refPlaying);
-    if(button&&button.dataset.playing!==playing){button.dataset.playing=playing;button.setAttribute('aria-label',refPlaying?'Pause stem mix':'Play stem mix');button.setAttribute('aria-pressed',playing);button.title=refPlaying?'Pause stem mix':'Play stem mix';}
+    const elapsed=document.getElementById('mcStemElapsed'),duration=document.getElementById('mcStemDuration'),button=document.getElementById('mcStemBigPlay');
+    const disabled=button?.getAttribute('aria-disabled')==='true';
+    if(elapsed)elapsed.textContent=(!disabled&&document.getElementById('refTimeElapsed')?.textContent)||'0:00';
+    if(duration)duration.textContent=(!disabled&&document.getElementById('refTimeDuration')?.textContent)||'0:00';
+    syncMixPlayToggle(button);
     window.mcFixQueueTransportSync();
-    if(icon&&(!button||button.dataset.iconPlaying!==playing)){if(button)button.dataset.iconPlaying=playing;icon.innerHTML=refPlaying?'<rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/>':'<path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/>';}
   }
   function stemRenderRows(){
     const stack=document.getElementById('mcStemStack'),rows=document.getElementById('mcStemRows'),status=document.getElementById('mcStemStatus');
     if(!stack||!rows||!status)return;
+    const ok=(stemSession||[]).filter(s=>s.status==='ok').length;
+    const empty=ok===0;
+    stack.dataset.empty=String(empty);
+    stack.querySelectorAll('.mc-stem-transport button').forEach(button=>{
+      button.setAttribute('aria-disabled',String(empty));
+      if(empty)button.tabIndex=-1;else button.removeAttribute('tabindex');
+    });
+    stack.querySelectorAll('.mc-stem-modes button').forEach(button=>{
+      const selected=button.dataset.stemMode===stemPlaybackMode;
+      button.setAttribute('aria-pressed',String(selected));
+      button.onclick=empty?null:()=>stemSetPlaybackMode(button.dataset.stemMode);
+    });
     if(!stemSession||!stemSession.length){stack.hidden=true;rows.innerHTML='';status.textContent='';return;}
-    stack.hidden=false;window.mcFixQueueTransportSync();const ref=stemRef(),ok=stemSession.filter(s=>s.status==='ok').length,excluded=stemSession.length-ok;
+    stack.hidden=false;window.mcFixQueueTransportSync();const ref=stemRef(),excluded=stemSession.length-ok;
     const progress=stemDecodeProgress?stemDecodeProgress+' · ':'';
     const active=stemPlaybackRows().map(s=>s.label);
     status.textContent=progress+ok+' aligned'+(active.length?' · audible: '+active.join(' + '):' · all stems muted')+(excluded?' · '+excluded+' excluded':'');
     stemPlayerSyncMetadata();stemPlayerSyncTransport();
-    stack.querySelectorAll('.mc-stem-modes button').forEach(button=>{
-      const selected=button.dataset.stemMode===stemPlaybackMode;
-      button.setAttribute('aria-pressed',String(selected));
-      button.onclick=()=>stemSetPlaybackMode(button.dataset.stemMode);
-    });
     rows.innerHTML=stemSession.map(stem=>{
       const isSelected=stem.status==='ok'&&stemAuditionKeys.includes(stem.key),isSolo=stemSoloKeys.has(stem.key),isImplicitMute=stemSoloKeys.size>0&&!isSolo,isModeMute=!stemSoloKeys.size&&!stemModeIncludes(stem),isMuted=stemMutedKeys.has(stem.key)||isImplicitMute||isModeMute,role=stemRoleForLabel(stem.label);
       const message=stem.status==='pending'?'Waiting to decode…':stem.message;
@@ -27800,8 +27820,6 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="guitar"] .mc-stem-toggle,#mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="guitar"] .mc-stem-remove{background:#1f7a43!important;border-color:transparent!important;color:#ffffff!important}
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="keys"] .mc-stem-toggle,#mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="keys"] .mc-stem-remove{background:#6a33c9!important;border-color:transparent!important;color:#ffffff!important}
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="other"] .mc-stem-toggle,#mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="other"] .mc-stem-remove{background:#a52660!important;border-color:transparent!important;color:#ffffff!important}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button{background:#1b1d20!important;color:#9aa0a6!important;border-color:#262a2f!important}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-modes button[aria-pressed="true"]{background:#2dd4bf!important;color:#06201c!important;border-color:#2dd4bf!important}
 
 </style>
 <style id="stems-playhead">/* White play line */
@@ -27951,7 +27969,7 @@ code,pre,kbd,samp,.aichat-msg .body code,.aichat-msg .body pre,.journal-body pre
 @media (hover:hover) and (pointer:fine){#library .card:is([data-sec=notes],[data-sec=chats]) .ent .acts .tx.note-icon:hover:not([aria-disabled="true"]){background:transparent;color:var(--aimm-teal);box-shadow:none}}
 #library .card:is([data-sec=notes],[data-sec=chats]) .ent .acts .tx.note-icon:focus-visible{background:transparent;color:var(--aimm-teal);outline:2px solid var(--aimm-teal);outline-offset:2px}
 @container card (max-width:1299px){#library .card:is([data-sec=notes],[data-sec=chats]) .ent .acts .tx.note-icon{margin-left:0}}
-#plugins #invSidebar .inv-side-button.active,#mixcheck .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]),#mixcheck .mc-stem-modes button[aria-pressed="true"]{background:#2dd4bf;border-color:transparent;color:#0b0d10;box-shadow:none;filter:none;transform:none;transition:none}
+#plugins #invSidebar .inv-side-button.active,#mixcheck .mc-workspace-modes button:is(.is-active,[aria-pressed="true"]){background:#2dd4bf;border-color:transparent;color:#0b0d10;box-shadow:none;filter:none;transform:none;transition:none}
 :is(.lp .row,#library .bar,#plugins .inv-list-row,.fact-chip,.kb-card,.rt-pill,.preset-card,.symptom,.journal-entry-head,.fact-cat-head):hover{box-shadow:none;filter:none;transform:none}
 /* ==========================================================================
    AIMM TAB STRIP v3 - Jules, 23 Nov 2026. Replaces EVERY old tab-strip rule (SPEC.md section 2).
