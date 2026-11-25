@@ -2121,7 +2121,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #mixcheck.oz-mixcheck .mcs-actions button{background:#232629;border:1px solid #383d42;border-radius:6px;color:#c7ccd0;padding:6px 9px;font: calc(var(--inv-text-scale, 1) * 11px) var(--aimm-font);cursor:pointer}
 #mixcheck.oz-mixcheck .mcs-progress{height:5px;background:#101214;border-radius:3px;overflow:hidden;margin:8px 0}
 #mixcheck.oz-mixcheck .mcs-progress i{display:block;height:100%;background:var(--grad)}
-#mixcheck.oz-mixcheck .mc-stem-label{overflow:hidden;text-overflow:ellipsis;max-width:50%;min-width:0}
+#mixcheck.oz-mixcheck .mc-stem-label{overflow:hidden;text-overflow:ellipsis;min-width:0}
 
 /* Manual multi-stem rows — scoped to Mix Check. */
 #mixcheck.oz-mixcheck .mc-stem-stack{margin-top:10px;display:flex;flex-direction:column;gap:7px}
@@ -5876,7 +5876,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.62';
+const AIMM_BUILD = '2026-11-23.63';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -13181,7 +13181,7 @@ Brief Kev verbally as you do it: "ok, hopping over to Library" or "let me pull u
   {type:'function',name:'mixbus_load_preset',description:'Replace the relevant MixBus chain with a saved or built-in preset matched by exact name. Read the summary aloud and wait for Kev’s yes before confirmed true.',parameters:{type:'object',properties:{name:{type:'string'},confirmed:{type:'boolean'}},required:['name','confirmed']}},
   {type:'function',name:'mixbus_auto_fill',description:'Run the existing MixBus Auto-fill settings action. Read the summary aloud and wait for Kev’s yes before confirmed true.',parameters:{type:'object',properties:{confirmed:{type:'boolean'}},required:['confirmed']}},
   {type:'function',name:'settings_status',description:'Read provider configured booleans, ElevenLabs credits used, limit and remaining per account, selected models, and companion status. Never returns keys, tokens, agent IDs or secret values. Settings cannot be opened or changed through this tool.',parameters:{type:'object',properties:{},required:[]}},
-  {type:'function',name:'set_stem_selection',description:'Control Mix Check stem selection and transport. Use exact loaded track labels or filenames. Actions: set/add/remove/clear the audition group; play/pause/stop; seek to an absolute position; skip by a relative offset; set playback volume; or read status. For play, tracks is optional: if supplied it selects that exact group before playback; if omitted, play the current audition or full mix. All track names are validated before changing selection. This never imports or removes audio files. Return the actual selected tracks, playhead, duration, playback state and volume; do not make another call just to confirm.',parameters:{type:'object',properties:{action:{type:'string',enum:['set','add','remove','clear','play','pause','stop','seek','skip','volume','status']},tracks:{type:'array',items:{type:'string'},description:'Exact loaded labels or filenames. Required for set/add/remove; optional for play to select a group before starting; empty for clear.'},position_seconds:{type:'number',description:'Absolute playhead position for seek.'},offset_seconds:{type:'number',description:'Relative seek offset for skip; negative rewinds, positive fast-forwards.'},volume_percent:{type:'integer',minimum:0,maximum:100,description:'Monitor playback volume from 0 to 100.'}},required:['action']}},
+  {type:'function',name:'set_stem_selection',description:'Control Mix Check stem selection and transport. Use exact Mix Check stem labels (such as Drums or Drums 2) or original filenames. Actions: set/add/remove/clear the audition group; play/pause/stop; seek to an absolute position; skip by a relative offset; set playback volume; or read status. For play, tracks is optional: if supplied it selects that exact group before playback; if omitted, play the current audition or full mix. All track names are validated before changing selection. This never imports or removes audio files. Return the actual selected tracks, playhead, duration, playback state and volume; do not make another call just to confirm.',parameters:{type:'object',properties:{action:{type:'string',enum:['set','add','remove','clear','play','pause','stop','seek','skip','volume','status']},tracks:{type:'array',items:{type:'string'},description:'Exact Mix Check stem labels (including any number) or original filenames. Required for set/add/remove; optional for play to select a group before starting; empty for clear.'},position_seconds:{type:'number',description:'Absolute playhead position for seek.'},offset_seconds:{type:'number',description:'Relative seek offset for skip; negative rewinds, positive fast-forwards.'},volume_percent:{type:'integer',minimum:0,maximum:100,description:'Monitor playback volume from 0 to 100.'}},required:['action']}},
   {type:'function',name:'set_platform',description:'Change the loudness target / platform (master bus reference).',parameters:{type:'object',properties:{platform:{type:'string',enum:['trap','spotify','apple','soundcloud']}},required:['platform']}},
   {type:'function',name:'add_plugin_to_bus',description:'Add a plugin to a bus. First verify ownership with list_plugins or get_library; the plugin list is not preloaded in the voice context. If it is a new plugin Kev named, call add_custom_plugin first. Position is 1-indexed; omit to append at end.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},plugin:{type:'string',description:'Plugin name; verify it is in Kev’s library with list_plugins or get_library before adding.'},position:{type:'integer',description:'1-indexed insertion point; omit to append'}},required:['bus','plugin']}},
   {type:'function',name:'remove_plugin_from_bus',description:'Remove a plugin from a bus by its 1-indexed position.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},position:{type:'integer'}},required:['bus','position']}},
@@ -13848,6 +13848,7 @@ WORKBENCH TAB — full button-by-button inventory
 
 MIX CHECK TAB (tab id mixcheck) — full inventory
 • Drop zone / transport — drop a WAV (or click to pick). Once loaded: eject/clear control, skip / −10s / play / +10s / stop, elapsed + duration, and the #mcWave rendered-peak waveform (played span washed --send-blue #2fa1e6→#a557f4, unplayed grey, thin light playhead advancing during playback, click/drag to seek).
+• Stem uploads show Vocals, Drums, Bass, Guitar, Keys or Other based on the filename. Duplicate roles get numbered labels (Drums, Drums 2). The original filename appears beneath each label.
 • Audio Specs column — measured metric rows (Integrated LUFS, Short-term LUFS, True Peak, PLR / DR, correlation, crest, sample rate, bit depth, duration) + the CLASSIFIED block (Genre, Tempo, Key, then Subgenre / Production style / Energy / Mood / Dissonance as "with full analysis" placeholders until the analyst phase).
 • Spectral Balance analyser — the file's average spectrum vs Flat (a 0 dB line) or a selected saved Spotify target, with LOW / LOW-MID / MID / HIGH deviation meters.
 • Fix Queue (#mcActions) — a selectable list of every fix, including done and skipped ones. Each row has done/undo and skip/restore controls. The shared mix/stem transport sits below the list. The detail panel shows measured evidence and the automatically generated note in the “Analysis” section. The header counts done and skipped fixes separately.
@@ -17964,12 +17965,10 @@ async function handleToolCall(name,args){
         if(resolveTracks&&!available.length)throw new Error('No playable Logic stems are loaded. Load aligned WAV stems in Mix Check first.');
         if(resolveTracks)for(const raw of tracks){
           const query=norm(raw);if(!query)throw new Error('A requested stem name is empty. No selection was changed.');
-          const found=rows.filter(row=>{
+          const exactLabels=rows.filter(row=>norm(row.trackName)===query);
+          const found=exactLabels.length?exactLabels:rows.filter(row=>{
             const filename=String(row.fileName||'');
-            const base=filename.replace(/\.[^.]+$/,'');
-            const aliases=[row.trackName,filename,base];
-            if(norm(row.trackName)==='808')aliases.push('bass');
-            return aliases.some(name=>norm(name)===query);
+            return norm(filename)===query||norm(filename.replace(/\.[^.]+$/,''))===query;
           });
           const playable=found.filter(row=>row.status==='ok');
           if(found.length>1||playable.length>1)throw new Error('Stem name "'+raw+'" is ambiguous. Use one exact loaded track name or filename. No selection was changed.');
@@ -19051,7 +19050,7 @@ Brief him verbally as you switch — ONE short natural phrase like "ok, hopping 
 
 AIMM PLUG-IN INVENTORY: Two separate plug-in lists exist. The MixBus library/catalogue in context is what AIMM recommends from; it is not an installed inventory or installed count. Kev's INSTALLED plug-ins are the Plugin Companion scan shown in the Plugins tab. For questions about what he has installed, how many plug-ins he has, updates, duplicates, Unused, vendor apps, a vendor's plug-ins or the companion, use inventory_summary, inventory_search, inventory_status, inventory_duplicates or inventory_unused as appropriate. Never answer these questions from MixBus catalogue numbers and never guess a number. If no scan is available, say the Plugins tab has no scan loaded and the companion may not be connected. Synthetic preview rows are not installed plug-ins. Use inventory_navigate to open requested sidebar items and report disabled items' unavailable reason. inventory_search and inventory_summary leave the visible view unchanged; use inventory_set_favorite for scanned or installed plug-ins and toggle_favorite only for the MixBus catalogue, reporting failed, ambiguous and already-set results accurately. Starring needs no confirmation. vocal_favorites_read reads the video favourites; for vocal_favorites_apply, read the proposed counts aloud with confirmed false, wait for Kev’s clear yes, then call confirmed true and report verified starred, already and unresolved counts. When building a chain from a video read the matching bus chain favourites first (vocal, drums, 808 or master) and prefer in order: owned, close version, equivalent, Logic stock; say which video plug-in was swapped for which favourite. inventory_reveal and inventory_rescan use existing controls. For every inventory change tool — inventory_move_to_unused, inventory_restore, inventory_move_to_trash, inventory_mark_vendor_app_checked, inventory_unmark_vendor_check, inventory_keep_newest_duplicates and inventory_add_to_bus — call with confirmed false first, read the returned summary aloud briefly, wait for Kev's clear yes, then call with confirmed true. Trash needs a separate yes before setting confirmed_trash true. For inventory_add_to_bus, first verify exact installed name and publisher in the scan and choose a valid bus and stage; only use it when Kev explicitly asks. Menu navigation alone does not authorize scanning folders, downloading installers, sharing the inventory or changing MixBus.
 
-When Kev asks to control loaded stems or playback, use set_stem_selection. Use exact loaded names. You can set, add, remove or clear the audition group; play, pause, stop, seek, skip, set monitor volume, or report status. Play can select tracks and start in one call. Report only the confirmed state returned by the tool. Never claim an action that failed.
+When Kev asks to control loaded stems or playback, use set_stem_selection with exact Mix Check stem labels (such as Drums or Drums 2) or original filenames. You can set, add, remove or clear the audition group; play, pause, stop, seek, skip, set monitor volume, or report status. Play can select tracks and start in one call. Report only the confirmed state returned by the tool. Never claim an action that failed.
 
 WHAT TAB ARE WE ON:
 You always know which tab Kev is currently looking at. The contextual update at the start of every call tells you. Each tab switch (whether Kev or you triggered it) sends another contextual update naming the new tab. So if Kev asks "what tab are we on?" or "where am I?" or "what am I looking at?", answer directly with the current tab name (e.g. "you're on the Plugin Library" / "we're on Insight"). DO NOT say "I don't know what tab you're on" — that means you missed a contextual update; default to the most recent one you saw.
@@ -26559,12 +26558,10 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
     };
     return {target:corr.label,basis:'same gain offset as the plotted cyan sum; mean of log-frequency spectral points vs the existing target corridor; contribution is the time-domain sum change after removing this track',bands:[band('low','Low',20,250),band('mid','Mid',250,3000),band('high','High',4000,20000)]};
   }
-  function stemWorkbenchBus(label){
-    if(/\b(808|sub|bass)\b/i.test(label))return '808 / Bass';
-    if(/\b(vocal|vox|voice)\b/i.test(label))return 'Vocal Bus';
-    if(/\b(drum|kick|snare|hat|perc|cymbal)\b/i.test(label))return 'Drum Bus';
-    if(/\b(fx|effects?)\b/i.test(label))return 'FX Returns';
-    return null;
+  function stemWorkbenchBus(stem){
+    const buses={bass:'808 / Bass',vocals:'Vocal Bus',drums:'Drum Bus'};
+    if(stem.role==='other'&&/\b(?:fx|effects?)\b/i.test(stem.fileName))return 'FX Returns';
+    return buses[stem.role]||null;
   }
   function stemSpectrumLeaveOutFor(stem,session){
     const existing=stemLeaveOutSpectra.get(stem.key);
@@ -26687,7 +26684,7 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
       const improves=Math.abs(wo)<Math.abs(d)-1;
       const crosses=Math.sign(wo)!==Math.sign(d)&&Math.abs(wo)>=1.5&&Math.abs(wo-d)>=3;
       if(!improves&&!crosses)continue;
-      const direction=d>0?'above':'below',bus=stemWorkbenchBus(track),busText=bus?'the '+bus+' bus':'the '+track+' source track';
+      const direction=d>0?'above':'below',bus=stemWorkbenchBus(stem),busText=bus?'the '+bus+' bus':'the '+track+' source track';
       const id='spectrum-'+band.id+'-'+String(comparison.target||'target').toLowerCase().replace(/[^a-z0-9]+/g,'-');
       items.push({id,title:track+' contribution — '+band.label.toLowerCase()+' '+(crosses?'crosses the '+comparison.target+' corridor':direction+' the '+comparison.target+' corridor'),focusBand:band.rangeHz[0]+'–'+band.rangeHz[1]+' Hz',impact:Math.abs(d)>=4?'high':'med',confidence:'med',workbenchBus:bus,why:'The summed stems sit '+(d>=0?'+':'')+d.toFixed(1)+' dB rel. to the active '+comparison.target+' corridor across '+band.rangeHz[0]+'–'+band.rangeHz[1]+' Hz. Removing '+track+' changes that to '+(wo>=0?'+':'')+wo.toFixed(1)+' dB rel.'+(crosses?' and moves the balance to the other side of the corridor.':' and moves the balance closer to its centre.')+' This is evidence that '+track+' materially influences the mix in this band; it is not a claim that the stem alone should match the full-mix corridor.',move:'On '+busText+', audition the summed mix and the version without '+track+'. Check the musical role and the purple target corridor, then adjust level or tone only if listening confirms this contribution is unwanted. No automatic processing is applied.'});
     }
@@ -26724,7 +26721,7 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
   function stemSelectedBuffers(){return stemAuditionKeys.map(key=>(stemSession||[]).find(s=>s.key===key&&s.status==='ok')?.buffer).filter(Boolean);}
   function stemPlaybackViewActive(){return stemSoloKeys.size>0||stemMutedKeys.size>0||stemPlaybackMode!=='full';}
   function stemModeIncludes(stem,mode=stemPlaybackMode){
-    const role=stemRoleForLabel(stem.label).role;
+    const {role}=stem;
     if(mode==='vocals')return role==='vocals';
     if(mode==='instrumental')return role!=='vocals';
     if(mode==='drums-bass')return role==='drums'||role==='bass';
@@ -26916,11 +26913,21 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
 
   function stemEnqueue(fn){ stemDecodeQueue = stemDecodeQueue.then(fn).catch(err=>console.warn('[stem] queue',err)); return stemDecodeQueue; }
   function stemFileKey(file){return file.name+'|'+file.size+'|'+file.lastModified;}
-  function stemLabel(file){
-    const dot=file.name.lastIndexOf('.'),base=dot>0?file.name.slice(0,dot):file.name;
-    const m=base.match(/\(([^()]+)\)$/);
-    const label=m?m[1].trim().charAt(0).toUpperCase()+m[1].trim().slice(1):base;
-    return /^bass$/i.test(label)?'Bass':label;
+  function detectStemRole(fileName){
+    const labels={
+      vocals:'Vocals',vocal:'Vocals',vox:'Vocals',voice:'Vocals',acapella:'Vocals',bv:'Vocals',backing:'Vocals',
+      drums:'Drums',drum:'Drums',kick:'Drums',snare:'Drums',hat:'Drums',hihat:'Drums',perc:'Drums',percussion:'Drums',cymbal:'Drums',
+      bass:'Bass','808':'Bass',sub:'Bass',
+      guitar:'Guitar',gtr:'Guitar',acoustic:'Guitar',
+      keys:'Keys',piano:'Keys',keyboard:'Keys',rhodes:'Keys',organ:'Keys',synth:'Keys',pad:'Keys'
+    };
+    // Only the final filename segment describes the stem when a song title is present.
+    const segments=fileName.replace(/\.[^.]+$/,'').toLowerCase().split(/[_()\p{Pd}]+/u);
+    const suffix=segments.findLast(segment=>segment.trim());
+    const tokens=suffix?.match(/[\p{L}\p{N}\p{M}]+/gu)||[];
+    const match=tokens.findLast(token=>Object.hasOwn(labels,token));
+    const label=match?labels[match]:'Other';
+    return {role:label.toLowerCase(),label};
   }
   function stemValidFile(file){return /\.wav$/i.test(file.name);}
   function stemShowInputNotice(msg){const el=document.getElementById('mcStemInputNotice');if(el){el.textContent=msg||'';el.hidden=!msg;}}
@@ -27007,15 +27014,6 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
       }else playhead.style.display='none';
     }
   }
-  function stemRoleForLabel(label){
-    const value=String(label||'').toLowerCase();
-    if(/vocal|voice/.test(value))return{role:'vocals',label:'Vocals'};
-    if(/drum|perc/.test(value))return{role:'drums',label:'Drums'};
-    if(/bass|808/.test(value))return{role:'bass',label:'Bass'};
-    if(/guitar/.test(value))return{role:'guitar',label:'Guitar'};
-    if(/piano|keys|keyboard/.test(value))return{role:'keys',label:'Keys'};
-    return{role:'other',label:'Other'};
-  }
   function stemIconMarkup(role){
     const names={vocals:'vocal',drums:'bass',bass:'bass',guitar:'tuner',keys:'piano',other:'modulation'};
     return '<svg class="ic ic-20" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-'+(names[role]||names.other)+'"/></svg>';
@@ -27072,10 +27070,10 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
     status.textContent=progress+ok+' aligned'+(active.length?' · audible: '+active.join(' + '):' · all stems muted')+(excluded?' · '+excluded+' excluded':'');
     stemPlayerSyncMetadata();stemPlayerSyncTransport();
     rows.innerHTML=stemSession.map(stem=>{
-      const isSelected=stem.status==='ok'&&stemAuditionKeys.includes(stem.key),isSolo=stemSoloKeys.has(stem.key),isImplicitMute=stemSoloKeys.size>0&&!isSolo,isModeMute=!stemSoloKeys.size&&!stemModeIncludes(stem),isMuted=stemMutedKeys.has(stem.key)||isImplicitMute||isModeMute,role=stemRoleForLabel(stem.label);
+      const isSelected=stem.status==='ok'&&stemAuditionKeys.includes(stem.key),isSolo=stemSoloKeys.has(stem.key),isImplicitMute=stemSoloKeys.size>0&&!isSolo,isModeMute=!stemSoloKeys.size&&!stemModeIncludes(stem),isMuted=stemMutedKeys.has(stem.key)||isImplicitMute||isModeMute;
       const message=stem.status==='pending'?'Waiting to decode…':stem.message;
-      const displayLabel=role.role==='bass'?'Bass':stem.label.replace(/piano/ig,'Keys'),displayFileName=stem.fileName.replace(/piano/ig,'Keys');
-      return '<div class="mc-stem-row" data-key="'+escapeHtml(stem.key)+'" data-role="'+role.role+'" data-status="'+stem.status+'" data-audition-selected="'+isSelected+'" data-solo="'+isSolo+'" data-muted="'+isMuted+'" role="group" tabindex="'+(stem.status==='ok'?'0':'-1')+'" aria-label="'+escapeHtml(displayLabel)+' stem controls"><div class="mc-stem-info"><div class="mc-stem-identity"><span class="mc-stem-icon" aria-hidden="true">'+stemIconMarkup(role.role)+'</span><span class="mc-stem-name-wrap"><span class="mc-stem-label">'+escapeHtml(displayLabel)+'</span><span class="mc-stem-source" title="'+escapeHtml(displayFileName)+'">'+escapeHtml(displayFileName)+'</span></span></div><div class="mc-stem-controls">'+(stem.status==='ok'?'<button type="button" class="mc-stem-toggle mc-stem-solo" data-key="'+escapeHtml(stem.key)+'" aria-label="Solo '+escapeHtml(displayLabel)+'" aria-pressed="'+isSolo+'" title="Solo '+escapeHtml(displayLabel)+'">S</button><button type="button" class="mc-stem-toggle mc-stem-mute" data-key="'+escapeHtml(stem.key)+'" aria-label="Mute '+escapeHtml(displayLabel)+'" aria-pressed="'+isMuted+'" title="Mute '+escapeHtml(displayLabel)+'">M</button>':'')+'<button type="button" class="mc-stem-remove" aria-label="Remove '+escapeHtml(displayLabel)+'" title="Remove '+escapeHtml(displayLabel)+'">&times;</button></div>'+(message?'<div class="mc-stem-message">'+escapeHtml(message)+'</div>':'')+'</div>'+(stem.status==='ok'?'<div class="mc-stem-wave-box" title="Shared leading/trailing silence is trimmed; stems remain aligned. Per-stem fade centers on detected audio. Playback levels are unchanged."><canvas class="mc-stem-wave" data-key="'+escapeHtml(stem.key)+'"></canvas></div>':'')+'</div>';
+      const label=escapeHtml(stem.label),fileName=escapeHtml(stem.fileName);
+      return '<div class="mc-stem-row" data-key="'+escapeHtml(stem.key)+'" data-role="'+stem.role+'" data-status="'+stem.status+'" data-audition-selected="'+isSelected+'" data-solo="'+isSolo+'" data-muted="'+isMuted+'" role="group" tabindex="'+(stem.status==='ok'?'0':'-1')+'" aria-label="'+label+' stem controls"><div class="mc-stem-info"><div class="mc-stem-identity"><span class="mc-stem-icon" aria-hidden="true">'+stemIconMarkup(stem.role)+'</span><span class="mc-stem-name-wrap"><span class="mc-stem-label">'+label+'</span><span class="mc-stem-source" title="'+fileName+'">'+fileName+'</span></span></div><div class="mc-stem-controls">'+(stem.status==='ok'?'<button type="button" class="mc-stem-toggle mc-stem-solo" data-key="'+escapeHtml(stem.key)+'" aria-label="Solo '+label+'" aria-pressed="'+isSolo+'" title="Solo '+label+'">S</button><button type="button" class="mc-stem-toggle mc-stem-mute" data-key="'+escapeHtml(stem.key)+'" aria-label="Mute '+label+'" aria-pressed="'+isMuted+'" title="Mute '+label+'">M</button>':'')+'<button type="button" class="mc-stem-remove" aria-label="Remove '+label+'" title="Remove '+label+'">&times;</button></div>'+(message?'<div class="mc-stem-message">'+escapeHtml(message)+'</div>':'')+'</div>'+(stem.status==='ok'?'<div class="mc-stem-wave-box" title="Shared leading/trailing silence is trimmed; stems remain aligned. Per-stem fade centers on detected audio. Playback levels are unchanged."><canvas class="mc-stem-wave" data-key="'+escapeHtml(stem.key)+'"></canvas></div>':'')+'</div>';
     }).join('');
     rows.querySelectorAll('.mc-stem-remove').forEach((btn,i)=>btn.addEventListener('click',()=>stemRemoveAt(i)));
     rows.querySelectorAll('.mc-stem-solo').forEach(btn=>btn.addEventListener('click',()=>stemToggleAudioControl(btn.dataset.key,'solo')));
@@ -27130,10 +27128,15 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
     stemShowInputNotice(bad.length?'Stem analysis requires WAV files.':'');
     if(!valid.length)return;
     if(!stemSession){stemSession=[];document.getElementById('refDzEmpty').style.display='none';document.getElementById('refDzLoaded').classList.add('visible');document.getElementById('refDropZone').classList.add('has-file');}
-    const fresh=[];
-    for(const file of valid){const key=stemFileKey(file);if(stemSession.some(s=>s.key===key)){continue;}
-      const dot=file.name.lastIndexOf('.'),base=dot>0?file.name.slice(0,dot):file.name;
-      const stem={key,fileName:file.name,label:stemLabel(file),sourceNote:base,status:'pending',message:'',buffer:null,peaks:null,bits:null,nativeSampleRate:null,nativeChannels:null,fileSize:file.size,lastModified:file.lastModified||0};stemSession.push(stem);fresh.push({file,stem});
+    const fresh=[],usedLabels=new Set(stemSession.map(stem=>stem.label));
+    for(const file of valid){
+      const key=stemFileKey(file);
+      if(stemSession.some(stem=>stem.key===key))continue;
+      const {role,label:roleLabel}=detectStemRole(file.name);
+      let label=roleLabel;
+      for(let number=2;usedLabels.has(label);number++)label=roleLabel+' '+number;
+      usedLabels.add(label);
+      const stem={key,fileName:file.name,role,label,status:'pending',message:'',buffer:null,peaks:null,bits:null,nativeSampleRate:null,nativeChannels:null,fileSize:file.size,lastModified:file.lastModified||0};stemSession.push(stem);fresh.push({file,stem});
     }
     stemRenderRows();
     MC_SPECS.show('mix'); // lock Audio Specs as soon as the stem session has rows
@@ -27803,17 +27806,17 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
 <style id="stems-candidate-final">
 /* Consolidated stem panel look (replaces earlier stacked patches) */
 #mixcheck.oz-mixcheck #mcStemRows{display:flex!important;flex-direction:column!important}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-row{min-height:58px!important;align-items:center!important;position:relative!important;border:0!important;border-radius:12px!important;grid-template-columns:minmax(0,132px) minmax(0,1fr) auto!important}
+#mixcheck.oz-mixcheck #mcStemStack .mc-stem-row{min-height:58px!important;align-items:center!important;position:relative!important;border:0!important;border-radius:12px!important;grid-template-columns:minmax(0,clamp(132px,11vw,164px)) minmax(0,1fr) auto!important}
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="vocals"]{background:#facc15!important;order:1}
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="drums"]{background:#f87171!important;order:2}
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="bass"]{background:#60a5fa!important;order:3}
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="guitar"]{background:#4ade80!important;order:4}
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="keys"]{background:#a78bfa!important;order:5}
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="other"]{background:#f472b6!important;order:6}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-row .mc-stem-wave-box{position:absolute!important;top:50%!important;transform:translateY(-50%)!important;left:-22px!important;right:124px!important;height:32px!important;margin:0!important;background:transparent!important;border:0!important;align-self:auto!important}
+#mixcheck.oz-mixcheck #mcStemStack .mc-stem-row .mc-stem-wave-box{position:absolute!important;top:50%!important;transform:translateY(-50%)!important;left:0!important;right:124px!important;height:32px!important;margin:0!important;background:transparent!important;border:0!important;align-self:auto!important}
 #mixcheck.oz-mixcheck .mc-stem-icon{display:none!important}
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-row .mc-stem-label{color:#ffffff!important;font-weight:700}
-#mixcheck.oz-mixcheck #mcStemStack .mc-stem-row .mc-stem-source{color:#ffffff!important;opacity:.85}
+#mixcheck.oz-mixcheck #mcStemStack .mc-stem-row .mc-stem-source{color:#30363d}
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="vocals"] .mc-stem-toggle,#mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="vocals"] .mc-stem-remove{background:#8a6a00!important;border-color:transparent!important;color:#ffffff!important}
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="drums"] .mc-stem-toggle,#mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="drums"] .mc-stem-remove{background:#a32626!important;border-color:transparent!important;color:#ffffff!important}
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="bass"] .mc-stem-toggle,#mixcheck.oz-mixcheck #mcStemStack .mc-stem-row[data-role="bass"] .mc-stem-remove{background:#2f56c0!important;border-color:transparent!important;color:#ffffff!important}

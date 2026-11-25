@@ -413,7 +413,9 @@ prove that the Bass stem alone is wrong. Browser upload of these files is unveri
 ChatGPT Chrome extension blocks local file access; the earlier 39/39 suite is from an older
 build and does not verify this worker path. **Naming rule and project name (Kevin, 2026-10-18):** the Logic project
 and source song for the current six-stem test set is `AI MM switching beats`. Name the project
-after the source song and each stem after its source Logic track. The transport label
+after the source song. Keep the source Logic track in the export filename. In build `.63`, Mix Check
+shows the detected role as the row title (for example, Drums or Drums 2) and the original filename
+directly below. The transport label
 `Stem mix · N stems` remains generic. **Next action:** Load the six files in the local Chrome app after enabling the
 extension's file-URL access and review the rendered readings. Kevin reviews before commit or
 deployment. The later page-layout redesign remains parked for Jules. Automatic Logic splitting

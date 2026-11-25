@@ -855,7 +855,7 @@
   },
   {
     "name": "set_stem_selection",
-    "description": "Control Mix Check stem selection and transport. Use exact loaded track labels or filenames. Actions: set/add/remove/clear the audition group; play/pause/stop; seek to an absolute position; skip by a relative offset; set playback volume; or read status. For play, tracks is optional: if supplied it selects that exact group before playback; if omitted, play the current audition or full mix. All track names are validated before changing selection. This never imports or removes audio files. Return the actual selected tracks, playhead, duration, playback state and volume; do not make another call just to confirm.",
+    "description": "Control Mix Check stem selection and transport. Use exact Mix Check stem labels (such as Drums or Drums 2) or original filenames. Actions: set/add/remove/clear the audition group; play/pause/stop; seek to an absolute position; skip by a relative offset; set playback volume; or read status. For play, tracks is optional: if supplied it selects that exact group before playback; if omitted, play the current audition or full mix. All track names are validated before changing selection. This never imports or removes audio files. Return the actual selected tracks, playhead, duration, playback state and volume; do not make another call just to confirm.",
     "parameters": {
       "type": "object",
       "properties": {
@@ -880,7 +880,7 @@
           "items": {
             "type": "string"
           },
-          "description": "Exact loaded labels or filenames. Required for set/add/remove; optional for play to select a group before starting; empty for clear."
+          "description": "Exact Mix Check stem labels (including any number) or original filenames. Required for set/add/remove; optional for play to select a group before starting; empty for clear."
         },
         "position_seconds": {
           "type": "number",
