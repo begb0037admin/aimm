@@ -1248,11 +1248,11 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
      head       head       ← per-view panel header (accent-word title + CTA)
      transport  transport  ← in-flow transport + waveform (was viewport-pinned #ozTransport)
      specs      analyser   ← Audio Specs rail | Spectral Balance + LOW/MID/HIGH bands
-     specs      actions    ← Audio Specs stretches level with the Fix Queue
+     actions    actions    ← Fix Queue uses the full app column beside Hope
    .oz-rail / .oz-center class names kept (only referenced in these scoped
    rules) — grid-area does the placement. */
 #mixcheck.oz-mixcheck{--card:#1b1d20;--card-bd:#2c3034;--inset:#16181b;--inset2:#101214;--ink:#e8ebed;--muted:#9aa0a6;--faint:#6b7280;--purple:#a78bfa;--accent-a:#2fa1e6;--accent-b:#a557f4;--grad:linear-gradient(90deg,var(--accent-a),var(--accent-b));--grad-ink:#0d1211;--green:#34d399;--amber:#fbbf24;--red:#f87171;display:none;grid-template-columns:var(--mc-rail-w) minmax(0,1fr);gap:var(--gutter);align-items:start;
-  grid-template-areas:"head head" "transport transport" "specs analyser" "specs actions"}
+  grid-template-areas:"head head" "transport transport" "specs analyser" "actions actions"}
 #mixcheck.oz-mixcheck.active{display:grid} /* higher specificity than .panel{display:none} needs an explicit .active-gated override, or MixCheck bleeds through on every tab */
 #mixcheck.oz-mixcheck .oz-card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px}
 #mixcheck.oz-mixcheck .oz-rail{grid-area:specs;align-self:stretch;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
@@ -1696,9 +1696,9 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #mixcheck.oz-mixcheck .mcq-count{font:400 14px var(--aimm-font);color:#9ca2ae;white-space:nowrap}
 #mixcheck.oz-mixcheck .mcq-track{height:2px;background:#30343a;flex:1;min-width:24px}
 #mixcheck.oz-mixcheck .mcq-track i{display:block;height:100%;background:var(--pv-teal);transition:width .2s}
-#mixcheck.oz-mixcheck .mcq-layout{display:grid;grid-template-columns:minmax(260px,420px) minmax(0,1fr);gap:32px}
+#mixcheck.oz-mixcheck .mcq-layout{display:grid;grid-template-columns:clamp(260px,40%,420px) minmax(0,1fr);gap:32px;min-width:0}
 #mixcheck.oz-mixcheck .mcq-list{min-width:0}
-#mixcheck.oz-mixcheck .mcq-item{width:100%;min-height:54px;display:flex;align-items:center;gap:24px;padding:8px 16px 8px 18px;border:0;border-top:1px solid #272b30;border-left:2px solid transparent;background:none;text-align:left;cursor:pointer;font:500 16px var(--aimm-font);color:#b98f48}
+#mixcheck.oz-mixcheck .mcq-item{width:100%;min-height:54px;display:flex;align-items:center;gap:24px;padding:8px 16px 8px 18px;border:0;border-top:1px solid #272b30;border-left:2px solid transparent;background:none;text-align:left;cursor:pointer;font:500 16px var(--aimm-font);color:#b98f48;overflow-wrap:anywhere}
 #mixcheck.oz-mixcheck .mcq-item[aria-current="true"]{border-left-color:var(--pv-teal);color:#e8b45a}
 #mixcheck.oz-mixcheck .mcq-item:hover,#mixcheck.oz-mixcheck .mcq-item:focus-visible{color:var(--pv-teal)}
 #mixcheck.oz-mixcheck .mcq-item:focus-visible{outline:2px solid var(--pv-teal);outline-offset:-2px}
@@ -1707,7 +1707,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #mixcheck.oz-mixcheck .mcq-item .mcq-rank{width:28px;flex:none;color:#7b8190;font-size:14px}
 #mixcheck.oz-mixcheck .mcq-item.is-done .mcq-rank{color:var(--pv-teal)}
 #mixcheck.oz-mixcheck .mcq-item .mcq-rank svg{width:18px;height:18px}
-#mixcheck.oz-mixcheck .mcq-detail{min-width:0;color:#d6d9df}
+#mixcheck.oz-mixcheck .mcq-detail{min-width:0;color:#d6d9df;overflow-wrap:anywhere}
 #mixcheck.oz-mixcheck .mcq-title{margin:0 0 22px;color:#e8b45a;font:500 22px/1.25 var(--aimm-font);letter-spacing:-.03em;text-transform:none}
 #mixcheck.oz-mixcheck .mcq-skipped{font:400 14px var(--aimm-font);letter-spacing:0;color:#7b8190}
 #mixcheck.oz-mixcheck .mcq-section{margin-top:16px;font:400 15px/1.45 var(--aimm-font)}
@@ -1723,7 +1723,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #mixcheck.oz-mixcheck .mcq-mode{background:none;border:0;padding:0;color:#7b8190;font:500 14px var(--aimm-font);cursor:pointer}
 #mixcheck.oz-mixcheck .mcq-mode[aria-pressed="true"],#mixcheck.oz-mixcheck .mcq-mode:hover,#mixcheck.oz-mixcheck .mcq-mode:focus-visible{color:var(--pv-teal);font-weight:600}
 #mixcheck.oz-mixcheck .mcq-actions{display:flex;gap:16px;margin-top:16px}
-@container (max-width:1299px){#mixcheck.oz-mixcheck .mcq-layout{grid-template-columns:1fr;gap:26px}}
+@container (max-width:759px){#mixcheck.oz-mixcheck .mcq-layout{grid-template-columns:minmax(0,1fr);gap:26px}}
 @media (max-width:600px){#mixcheck.oz-mixcheck #mcActions.oz-card{padding:20px}#mixcheck.oz-mixcheck .mcq-head{gap:12px;flex-wrap:wrap}#mixcheck.oz-mixcheck .mcq-track{flex-basis:100%}#mixcheck.oz-mixcheck .mcq-item{min-height:48px}}
 
 #mixcheck.oz-mixcheck #refDzLoaded.visible{display:flex;flex-direction:column;gap:10px;padding:0} /* board item 18: gap 12->10 */
@@ -1896,10 +1896,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
      minimum height. Its transcript scrolls internally, and its lower edge
      follows the app column (including the active tab's final panel). */
   .container > #hopeRail{grid-column:2;grid-row:1;align-self:stretch;position:sticky;top:var(--gutter);display:flex;height:auto;min-height:0;max-height:none}
-  /* When the Fix Queue has no cards, its named grid row is empty. Audio Specs
-     still spans that row, so let Spectral Balance span it too; otherwise the
-     chart stops one row early and leaves a black gap beside the lower specs. */
-  #mixcheck.oz-mixcheck:has(#mcActions:empty) .oz-center{grid-row:3 / 5}
   /* R3 round 13 REVERSED (header re-layout, 2026-09-02.5 — Kevin marked this on
      the live app): the Mix-Check-only left indent is gone. The tab strip is a
      block child of .app-col (flex column) so it spans the full content column —
@@ -5868,7 +5864,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.54';
+const AIMM_BUILD = '2026-11-23.55';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);

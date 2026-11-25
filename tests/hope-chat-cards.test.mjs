@@ -6,8 +6,8 @@ import vm from 'node:vm';
 const html=readFileSync(new URL('../standalone/assets/index.html',import.meta.url),'utf8');
 const catalogs=['../standalone/assets/hope-tools-manifest.json','../new-hope-tools.json','../elevenlabs-client-tools.json'].map(path=>JSON.parse(readFileSync(new URL(path,import.meta.url),'utf8')));
 
-test('build .54 uses ordinary Hope bubbles and keeps the NotebookLM pattern',()=>{
-  assert.match(html,/const AIMM_BUILD = '2026-11-23\.54'/);
+test('build .55 uses ordinary Hope bubbles and keeps the NotebookLM pattern',()=>{
+  assert.match(html,/const AIMM_BUILD = '2026-11-23\.55'/);
   assert.match(html,/isNbPrompt\?'ai hope-card'/);
   assert.match(html,/NotebookLM prompt for '\+escapeHtml\(m\.topic/);
   assert.match(html,/notebooklm-sources-label">Sources to add/);
