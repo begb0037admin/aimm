@@ -1696,35 +1696,45 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #mixcheck.oz-mixcheck .mcq-count{font:400 14px var(--aimm-font);color:#9ca2ae;white-space:nowrap}
 #mixcheck.oz-mixcheck .mcq-track{height:2px;background:#30343a;flex:1;min-width:24px}
 #mixcheck.oz-mixcheck .mcq-track i{display:block;height:100%;background:var(--pv-teal);transition:width .2s}
-#mixcheck.oz-mixcheck .mcq-layout{display:grid;grid-template-columns:clamp(260px,40%,420px) minmax(0,1fr);gap:32px;min-width:0}
+#mixcheck.oz-mixcheck .mcq-layout{display:grid;grid-template-columns:minmax(480px,560px) minmax(0,1fr);gap:32px;min-width:0}
 #mixcheck.oz-mixcheck .mcq-list{min-width:0}
-#mixcheck.oz-mixcheck .mcq-item{width:100%;min-height:54px;display:flex;align-items:center;gap:24px;padding:8px 16px 8px 18px;border:0;border-top:1px solid #272b30;border-left:2px solid transparent;background:none;text-align:left;cursor:pointer;font:500 16px var(--aimm-font);color:#b98f48;overflow-wrap:anywhere}
+#mixcheck.oz-mixcheck .mcq-item{width:100%;min-height:54px;display:flex;align-items:center;gap:14px;padding:8px 16px 8px 18px;border-top:1px solid #272b30;border-left:2px solid transparent;background:none;text-align:left;font:500 16px var(--aimm-font);color:#b98f48}
+#mixcheck.oz-mixcheck .mcq-select{display:flex;align-items:center;gap:24px;min-width:0;flex:1;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
 #mixcheck.oz-mixcheck .mcq-item[aria-current="true"]{border-left-color:var(--pv-teal);color:#e8b45a}
 #mixcheck.oz-mixcheck .mcq-item:hover,#mixcheck.oz-mixcheck .mcq-item:focus-visible{color:var(--pv-teal)}
-#mixcheck.oz-mixcheck .mcq-item:focus-visible{outline:2px solid var(--pv-teal);outline-offset:-2px}
+#mixcheck.oz-mixcheck .mcq-select:focus-visible{outline:2px solid var(--pv-teal);outline-offset:2px}
 #mixcheck.oz-mixcheck .mcq-item.is-done{opacity:.65}
 #mixcheck.oz-mixcheck .mcq-item.is-skipped{opacity:.65;color:#7b8190}
 #mixcheck.oz-mixcheck .mcq-item .mcq-rank{width:28px;flex:none;color:#7b8190;font-size:14px}
 #mixcheck.oz-mixcheck .mcq-item.is-done .mcq-rank{color:var(--pv-teal)}
 #mixcheck.oz-mixcheck .mcq-item .mcq-rank svg{width:18px;height:18px}
+#mixcheck.oz-mixcheck .mcq-item .mcq-name{min-width:0;flex:1;overflow-wrap:anywhere}
+#mixcheck.oz-mixcheck .mcq-row-actions{display:flex;align-items:center;gap:14px;flex:none}
+#mixcheck.oz-mixcheck .mcq-row-action{width:20px;height:24px;display:grid;place-items:center;padding:0;border:0;background:none;color:#7b8190;cursor:pointer}
+#mixcheck.oz-mixcheck .mcq-row-action svg{width:18px;height:18px}
+#mixcheck.oz-mixcheck .mcq-row-action:hover,#mixcheck.oz-mixcheck .mcq-row-action:focus-visible{color:var(--pv-teal)}
+#mixcheck.oz-mixcheck .mcq-row-action:focus-visible{outline:2px solid var(--pv-teal);outline-offset:2px}
 #mixcheck.oz-mixcheck .mcq-detail{min-width:0;color:#d6d9df;overflow-wrap:anywhere}
 #mixcheck.oz-mixcheck .mcq-title{margin:0 0 22px;color:#e8b45a;font:500 22px/1.25 var(--aimm-font);letter-spacing:-.03em;text-transform:none}
 #mixcheck.oz-mixcheck .mcq-skipped{font:400 14px var(--aimm-font);letter-spacing:0;color:#7b8190}
 #mixcheck.oz-mixcheck .mcq-section{margin-top:16px;font:400 15px/1.45 var(--aimm-font)}
 #mixcheck.oz-mixcheck .mcq-section-label{display:block;color:var(--pv-teal);font-size:13px;margin-bottom:4px}
 #mixcheck.oz-mixcheck .mcq-hope-text.is-loading{color:#9299a5}
+#mixcheck.oz-mixcheck .mcq-hope-retry{display:block;width:max-content;margin-top:4px;padding:0;border:0;background:none;color:var(--pv-teal);font:inherit;text-decoration:underline;cursor:pointer}
 #mixcheck.oz-mixcheck .mcq-meta{margin-top:20px;color:var(--pv-teal);font:500 13px var(--aimm-font)}
-#mixcheck.oz-mixcheck .mcq-transport{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:24px}
-#mixcheck.oz-mixcheck .mcq-transport-controls{display:flex;gap:12px}
+#mixcheck.oz-mixcheck .mcq-transport{display:flex;align-items:center;gap:18px;margin:24px 0 0 72px;white-space:nowrap}
+#mixcheck.oz-mixcheck .mcq-transport-controls{display:flex;gap:8px;flex:none}
 #mixcheck.oz-mixcheck .mcq-icon{width:32px;height:32px;display:inline-grid;place-items:center;background:none;border:0;padding:2px;color:#e8ebee;cursor:pointer}
 #mixcheck.oz-mixcheck .mcq-icon svg{width:26px;height:26px}
 #mixcheck.oz-mixcheck .mcq-icon:hover,#mixcheck.oz-mixcheck .mcq-icon:focus-visible{color:var(--pv-teal)}
 #mixcheck.oz-mixcheck .mcq-icon:focus-visible,#mixcheck.oz-mixcheck .mcq-mode:focus-visible{outline:2px solid var(--pv-teal);outline-offset:2px}
-#mixcheck.oz-mixcheck .mcq-modes{display:flex;gap:18px;flex-wrap:wrap}
+#mixcheck.oz-mixcheck .mcq-modes{display:flex;gap:clamp(10px,2cqw,22px);white-space:nowrap;min-width:0}
 #mixcheck.oz-mixcheck .mcq-mode{background:none;border:0;padding:0;color:#7b8190;font:500 14px var(--aimm-font);cursor:pointer}
 #mixcheck.oz-mixcheck .mcq-mode[aria-pressed="true"],#mixcheck.oz-mixcheck .mcq-mode:hover,#mixcheck.oz-mixcheck .mcq-mode:focus-visible{color:var(--pv-teal);font-weight:600}
-#mixcheck.oz-mixcheck .mcq-actions{display:flex;gap:16px;margin-top:16px}
-@container (max-width:759px){#mixcheck.oz-mixcheck .mcq-layout{grid-template-columns:minmax(0,1fr);gap:26px}}
+#mixcheck.oz-mixcheck .mcq-transport .mcq-icon{width:28px;height:28px;padding:0}
+#mixcheck.oz-mixcheck .mcq-transport .mcq-icon svg{width:24px;height:24px}
+@container (max-width:899px){#mixcheck.oz-mixcheck .mcq-layout{grid-template-columns:minmax(0,1fr);gap:26px}}
+@container (max-width:519px){#mixcheck.oz-mixcheck .mcq-transport{flex-wrap:wrap}#mixcheck.oz-mixcheck .mcq-modes{flex-wrap:wrap;white-space:normal}}
 @media (max-width:600px){#mixcheck.oz-mixcheck #mcActions.oz-card{padding:20px}#mixcheck.oz-mixcheck .mcq-head{gap:12px;flex-wrap:wrap}#mixcheck.oz-mixcheck .mcq-track{flex-basis:100%}#mixcheck.oz-mixcheck .mcq-item{min-height:48px}}
 
 #mixcheck.oz-mixcheck #refDzLoaded.visible{display:flex;flex-direction:column;gap:10px;padding:0} /* board item 18: gap 12->10 */
@@ -4023,7 +4033,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
               <button type="button" data-stem-mode="full" aria-pressed="true">Full song</button>
               <button type="button" data-stem-mode="vocals" aria-pressed="false">Vocals only</button>
               <button type="button" data-stem-mode="instrumental" aria-pressed="false">Instrumental</button>
-              <button type="button" data-stem-mode="drums-bass" aria-pressed="false">Drums + bass</button>
+              <button type="button" data-stem-mode="drums-bass" aria-pressed="false">Drums + Bass</button>
             </div>
             <div class="mc-stem-status" id="mcStemStatus" aria-live="polite"></div>
             <div class="mc-stem-rows" id="mcStemRows"></div>
@@ -5865,7 +5875,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.56';
+const AIMM_BUILD = '2026-11-23.58';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -13839,7 +13849,7 @@ MIX CHECK TAB (tab id mixcheck) — full inventory
 • Drop zone / transport — drop a WAV (or click to pick). Once loaded: eject/clear control, skip / −10s / play / +10s / stop, elapsed + duration, and the #mcWave rendered-peak waveform (played span washed --send-blue #2fa1e6→#a557f4, unplayed grey, thin light playhead advancing during playback, click/drag to seek).
 • Audio Specs column — measured metric rows (Integrated LUFS, Short-term LUFS, True Peak, PLR / DR, correlation, crest, sample rate, bit depth, duration) + the CLASSIFIED block (Genre, Tempo, Key, then Subgenre / Production style / Energy / Mood / Dissonance as "with full analysis" placeholders until the analyst phase).
 • Spectral Balance analyser — the file's average spectrum vs Flat (a 0 dB line) or a selected saved Spotify target, with LOW / LOW-MID / MID / HIGH deviation meters.
-• Fix Queue (#mcActions) — a selectable list of every fix, including done and skipped ones, with one detail panel showing measured evidence, Hope’s automatically generated explanation, impact and confidence, shared mix/stem transport, and icon controls for done/undo and skip/restore. The header counts done and skipped fixes separately.
+• Fix Queue (#mcActions) — a selectable list of every fix, including done and skipped ones. Each row has done/undo and skip/restore controls. The shared mix/stem transport sits below the list. The detail panel shows measured evidence, Hope’s automatically generated explanation, impact and confidence. The header counts done and skipped fixes separately.
 • On analysis complete: Hope's spoken read is posted into the chat.
 
 HOPE'S CHAT (persistent rail) — full inventory (NOT a tab — docked on every tab; retired as a standalone "Conversation" tab 2026-09-05)
@@ -25535,7 +25545,7 @@ csInit('csPlatform');
     let lastR=null;             // last analysis object seen (for recompute/breakdownData)
     let hopeAnswers={};         // successful explanations for this analysis revision
     let hopeInflight=new Set();
-    let hopeFailed=new Set();
+    let hopeFailed=new Map();
     const cbs=[];               // onChange subscribers
 
     const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -25581,8 +25591,22 @@ csInit('csPlatform');
     function hopeText(it){
       const saved=hopeAnswers[it.id];
       if(saved&&saved.fingerprint===hopeFingerprint(it))return saved.text;
-      if(hopeFailed.has(it.id))return groundedMove(it)||'Hope could not read this one yet. Try again in a moment.';
+      if(hopeFailed.has(it.id))return hopeFailed.get(it.id).message+(groundedMove(it)?' '+groundedMove(it):'');
       return 'Hope is reading this fix…';
+    }
+    function hopeFailure(status,code){
+      if(code==='no_stt_auth')return 'Hope speech access is not configured on the server.';
+      if(code==='invalid_stt_auth')return 'Hope’s speech token is invalid. Check Settings > Hope.';
+      if(code==='luna_request_too_large')return 'Hope’s request was too large.';
+      if(code==='rate_limited'||status===429)return 'Hope is being used too quickly. Try again shortly.';
+      if(code==='luna_request_failed')return 'Hope’s AI request failed'+(status?' (HTTP '+status+')':'')+'.';
+      if(code==='network')return 'Hope could not connect. Check the connection and try again.';
+      return 'Hope could not answer'+(status?' (HTTP '+status+')':'')+'. Try again.';
+    }
+    function hopeError(status,code,detail){
+      const error=new Error(hopeFailure(status,code));
+      error.status=status;error.code=code;error.detail=detail;
+      return error;
     }
     async function explainSelected(it){
       if(!it||hopeFailed.has(it.id))return;
@@ -25591,28 +25615,53 @@ csInit('csPlatform');
       const requestRev=rev,requestSig=sig;
       const requestKey=requestRev+'|'+it.id;
       if(hopeInflight.has(requestKey))return;
+      if(hopeInflight.size)return;
       hopeInflight.add(requestKey);
       try{
         const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE)||'';
-        if(!token)throw new Error('Hope token unavailable');
+        if(!token)throw hopeError(0,'missing_browser_token','No saved token in localStorage');
         const ordinal=items.findIndex(x=>x.id===it.id)+1;
-        const question=aimmBuildFixQueueQuestion({item:{...it,move:groundedMove(it)},ordinal});
-        let context='';
+        const question=aimmBuildFixQueueQuestion({item:{...it,title:String(it.title).slice(0,1000),why:String(it.why).slice(0,2500),move:groundedMove(it).slice(0,2500)},ordinal});
+        let context={};
         try{const ctx=buildContextSummary();
-          context='=== COMPACT LIVE AIMM STATE ===\n'+JSON.stringify({genre:ctx.genre,genre_label:ctx.genre_label,platform:ctx.platform,platform_label:ctx.platform_label,chain:ctx.chain,meters:ctx.meters,flagged_symptoms:ctx.flagged_symptoms,plugins_inventory:ctx.plugins_inventory,active_tab:activeTabId()});
+          context={genre:String(ctx.genre_label||ctx.genre||'').slice(0,100),platform:String(ctx.platform_label||ctx.platform||'').slice(0,100)};
         }catch(_){}
-        if(typeof buildMixCheckContextBlock==='function')context+='\n\n'+buildMixCheckContextBlock();
-        const system=HOPE_USAGE_SYSTEM+'\n\n'+HOPE_INVENTORY_RULES+'\n\n'+HOPE_COVERAGE_RULES+'\n\n'+HOPE_CHAIN_BUILD_RULES+'\n\n'+context+'\n\nFIX QUEUE EXCEPTION: The selected fix and its measured reason are already in the question. Answer directly without searching or calling knowledge-base tools. Explain only; do not change anything or mark the fix done. Return one plain paragraph.';
-        const response=await fetch(AIMM_PROXY_URL.replace(/\/+$/,'')+'/hope/luna',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({input:[{role:'system',content:system},{role:'user',content:question}],max_output_tokens:1000,tools:[]})});
-        if(!response.ok||!response.body)throw new Error('Hope explanation request failed');
-        const stream=await hopeUsageReadLunaStream(response.body.getReader(),new TextDecoder());
-        if(stream.errorMessage||stream.terminal==='response.incomplete')throw new Error('Hope explanation incomplete');
+        const system=HOPE_USAGE_SYSTEM+'\n\nFIX QUEUE EXCEPTION: Explain only the selected measured fix and grounded move. Answer from the supplied details without searching or calling tools. Do not change anything or mark the fix done. One plain paragraph. Context: '+JSON.stringify(context);
+        const body={input:[{role:'system',content:system},{role:'user',content:question}],max_output_tokens:1000,tools:[]};
+        const payload=JSON.stringify(body);
+        if(payload.length>=30000)throw hopeError(413,'luna_request_too_large','Client request exceeded 30000 characters');
+        let stream;
+        for(let attempt=0;attempt<2;attempt++){
+          try{
+            const response=await fetch(AIMM_PROXY_URL.replace(/\/+$/,'')+'/hope/luna',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:payload});
+            if(!response.ok){
+              let detail={};try{detail=await response.json();}catch(_){}
+              throw hopeError(response.status,detail.code||'',detail);
+            }
+            if(!response.body)throw hopeError(response.status,'network','No response stream');
+            stream=await hopeUsageReadLunaStream(response.body.getReader(),new TextDecoder());
+            if(stream.errorMessage||stream.terminal==='response.incomplete')throw hopeError(response.status,'luna_request_failed',stream);
+            break;
+          }catch(e){
+            const error=e&&e.code?e:hopeError(0,'network',e);
+            if(attempt===0&&(error.status===429||error.status>=500||error.code==='network')){
+              await new Promise(resolve=>setTimeout(resolve,3000));
+              if(rev!==requestRev||sig!==requestSig||selected()?.id!==it.id)return;
+              continue;
+            }
+            throw error;
+          }
+        }
         const answer=aichatStripMd(String(stream.text||'').replace(/(?:^|\n)\s*(?:[-*•]|\d+[.)])\s+/g,' ')).replace(/\s+/g,' ').trim();
         if(!answer)throw new Error('Hope explanation empty');
         if(rev!==requestRev||sig!==requestSig)return;
         hopeAnswers[it.id]={fingerprint:hopeFingerprint(it),text:answer};persistHope();
-      }catch(e){if(rev===requestRev&&sig===requestSig)hopeFailed.add(it.id);console.warn('[MC_FIXQUEUE] Hope explanation failed',e);}
-      finally{hopeInflight.delete(requestKey);if(rev===requestRev&&sig===requestSig&&selected()?.id===it.id)render();}
+      }catch(e){
+        const error=e&&e.code?e:hopeError(0,'network',e);
+        if(rev===requestRev&&sig===requestSig)hopeFailed.set(it.id,{status:error.status,code:error.code,message:error.code==='missing_browser_token'?'Hope’s speech token is not saved in this browser (Settings > Hope).':error.message});
+        console.warn('[MC_FIXQUEUE] Hope explanation failed',{fixId:it.id,status:error.status,code:error.code,detail:error.detail,error:e});
+      }
+      finally{hopeInflight.delete(requestKey);if(rev===requestRev&&sig===requestSig)render();}
     }
 
     // ── the ranked build ───────────────────────────────────────────────────
@@ -25918,23 +25967,22 @@ csInit('csPlatform');
       const done=applied.size, skipped=dismissed.size, it=selected(), state=status(it.id);
       const word=v=>v==='med'?'Medium':v.charAt(0).toUpperCase()+v.slice(1);
       let h='<div class="mcq-head"><span class="mcq-t">Fix Queue</span><span class="mcq-count">'+done+' done'+(skipped?' · '+skipped+' skipped':'')+'</span><span class="mcq-track" role="progressbar" aria-label="Fixes done" aria-valuenow="'+done+'" aria-valuemin="0" aria-valuemax="'+items.length+'"><i style="width:'+(done/items.length*100)+'%"></i></span></div>';
-      h+='<div class="mcq-layout"><div class="mcq-list" role="group" aria-label="Fixes">';
-      items.forEach((q,i)=>{const st=status(q.id);h+='<button type="button" class="mcq-item'+(st==='done'?' is-done':st==='dismissed'?' is-skipped':'')+'" data-act="select" data-id="'+esc(q.id)+'" aria-current="'+(q.id===it.id)+'" aria-label="'+esc(shortName(q))+' — '+(st==='dismissed'?'skipped':st)+'"><span class="mcq-rank">'+(st==='done'?icon('check'):st==='dismissed'?icon('minus'):String(i+1).padStart(2,'0'))+'</span><span>'+esc(shortName(q))+'</span></button>';});
-      h+='</div><div class="mcq-detail" data-id="'+esc(it.id)+'"><h3 class="mcq-title">'+esc(it.title)+(state==='dismissed'?'<span class="mcq-skipped"> · skipped</span>':'')+'</h3>';
+      h+='<div class="mcq-layout"><div class="mcq-left"><div class="mcq-list" role="group" aria-label="Fixes">';
+      items.forEach((q,i)=>{const st=status(q.id),doneAct=st==='done'?'undo':'done',resetAct=st==='dismissed'?'restore':'dismiss';h+='<div class="mcq-item'+(st==='done'?' is-done':st==='dismissed'?' is-skipped':'')+'" data-id="'+esc(q.id)+'" aria-current="'+(q.id===it.id)+'"><button type="button" class="mcq-select" data-act="select" aria-label="'+esc(shortName(q))+' — '+(st==='dismissed'?'skipped':st)+'"><span class="mcq-rank">'+(st==='done'?icon('check'):st==='dismissed'?icon('minus'):String(i+1).padStart(2,'0'))+'</span><span class="mcq-name">'+esc(shortName(q))+'</span></button><span class="mcq-row-actions"><button type="button" class="mcq-row-action" data-act="'+doneAct+'" aria-label="'+(st==='done'?'Undo done':'Mark done')+' — '+esc(shortName(q))+'" title="'+(st==='done'?'Undo done':'Mark done')+'">'+icon(st==='done'?'undo':'check')+'</button><button type="button" class="mcq-row-action" data-act="'+resetAct+'" aria-label="'+(resetAct==='restore'?'Restore to waiting':'Skip fix')+' — '+esc(shortName(q))+'" title="'+(resetAct==='restore'?'Restore to waiting':'Skip fix')+'">'+icon(resetAct==='restore'?'undo':'close')+'</button></span></div>';});
+      h+='</div><div class="mcq-transport"><div class="mcq-transport-controls"><button type="button" class="mcq-icon mcq-play" data-act="play" aria-label="Play mix" title="Play mix">'+icon('play')+'</button><button type="button" class="mcq-icon" data-act="stop" aria-label="Stop mix" title="Stop mix">'+icon('stop')+'</button></div><div class="mcq-modes" role="group" aria-label="Stem playback selection" hidden></div></div></div><div class="mcq-detail" data-id="'+esc(it.id)+'"><h3 class="mcq-title">'+esc(it.title)+(state==='dismissed'?'<span class="mcq-skipped"> · skipped</span>':'')+'</h3>';
       h+='<div class="mcq-section"><span class="mcq-section-label">What we measured</span>'+esc(it.why)+'</div>';
-      h+='<div class="mcq-section"><span class="mcq-section-label">AIMM Coach on this fix</span><div class="mcq-hope-text'+(hopeText(it)==='Hope is reading this fix…'?' is-loading':'')+'">'+esc(hopeText(it))+'</div></div>';
+      h+='<div class="mcq-section"><span class="mcq-section-label">AIMM Coach on this fix</span><div class="mcq-hope-text'+(hopeText(it)==='Hope is reading this fix…'?' is-loading':'')+'">'+esc(hopeText(it))+'</div>'+(hopeFailed.has(it.id)?'<button type="button" class="mcq-hope-retry" data-act="hope-retry">Try again</button>':'')+'</div>';
       h+='<div class="mcq-meta">'+esc(word(it.focusBand))+' · '+esc(word(it.impact))+' impact · '+esc(word(it.confidence))+' confidence</div>';
-      h+='<div class="mcq-transport"><div class="mcq-transport-controls"><button type="button" class="mcq-icon mcq-play" data-act="play" aria-label="Play mix" title="Play mix">'+icon('play')+'</button><button type="button" class="mcq-icon" data-act="stop" aria-label="Stop mix" title="Stop mix">'+icon('stop')+'</button></div><div class="mcq-modes" role="group" aria-label="Stem playback selection" hidden></div></div>';
-      const doneAct=state==='done'?'undo':'done',resetAct=state==='pending'?'dismiss':'restore';
-      h+='<div class="mcq-actions"><button type="button" class="mcq-icon" data-act="'+doneAct+'" aria-label="'+(state==='done'?'Undo done':'Mark done')+'" title="'+(state==='done'?'Undo done':'Mark done')+'">'+icon(state==='done'?'undo':'check')+'</button><button type="button" class="mcq-icon" data-act="'+resetAct+'" aria-label="'+(resetAct==='restore'?'Restore to waiting':'Skip fix')+'" title="'+(resetAct==='restore'?'Restore to waiting':'Skip fix')+'">'+icon(resetAct==='restore'?'undo':'close')+'</button></div></div></div>';
+      h+='</div></div>';
       host.innerHTML=h;wire(host);
       if(typeof window.mcFixQueueTransportSync==='function')window.mcFixQueueTransportSync();
       explainSelected(it);
     }
     function wire(host){
-      host.querySelectorAll('[data-act]').forEach(btn=>btn.addEventListener('click',()=>{
+      host.querySelectorAll('[data-act]').forEach(btn=>btn.addEventListener('click',event=>{
         const act=btn.dataset.act,id=btn.closest('[data-id]')?.dataset.id||selected()?.id;
         if(act==='select')select(id);
+        else if(act==='hope-retry'){hopeFailed.delete(id);render();}
         else if(act==='done')markApplied(id);
         else if(act==='undo')unmarkApplied(id);
         else if(act==='dismiss')dismiss(id);
@@ -26697,7 +26745,7 @@ csInit('csPlatform');
     const play=host.querySelector('.mcq-play'),modes=host.querySelector('.mcq-modes');
     if(play){const playing=!!refPlaying;play.innerHTML='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-'+(playing?'pause':'play')+'"/></svg>';play.setAttribute('aria-label',playing?'Pause mix':'Play mix');play.title=playing?'Pause mix':'Play mix';}
     if(modes){const available=!!(stemSession&&stemSession.some(s=>s.status==='ok'));modes.hidden=!available;
-      if(available){modes.innerHTML=[['full','Full song'],['vocals','Vocals only'],['instrumental','Instrumental'],['drums-bass','Drums + bass']].map(([mode,label])=>'<button type="button" class="mcq-mode" data-mode="'+mode+'" aria-pressed="'+(mode===stemPlaybackMode)+'">'+label+'</button>').join('');modes.querySelectorAll('button').forEach(button=>button.onclick=()=>stemSetPlaybackMode(button.dataset.mode));}
+      if(available){modes.innerHTML=[['full','Full song'],['vocals','Vocals only'],['instrumental','Instrumental'],['drums-bass','Drums + Bass']].map(([mode,label])=>'<button type="button" class="mcq-mode" data-mode="'+mode+'" aria-pressed="'+(mode===stemPlaybackMode)+'">'+label+'</button>').join('');modes.querySelectorAll('button').forEach(button=>button.onclick=()=>stemSetPlaybackMode(button.dataset.mode));}
     }
   };
   function stemSetPlaybackMode(mode){
