@@ -593,6 +593,37 @@ async function serveMwtm(request, env, key, isManifest = false) {
   return new Response(request.method === 'HEAD' ? null : object.body, { status: 200, headers });
 }
 
+async function explainWithHope(request, env) {
+  if (request.method !== 'POST') return json({ error: 'Use POST for Hope explanations.' }, 405);
+  if (!request.headers.get('Cf-Access-Jwt-Assertion')) return json({ error: 'Sign in to AIMM again.' }, 401);
+  if (!env.HOPE_INTERNAL_TOKEN) return json({ error: 'Hope explanation is not configured.', code: 'no_internal_auth' }, 503);
+  let raw;
+  try { raw = await readRequestBodyLimited(request, 59_999); }
+  catch (_) { return json({ error: 'Hope explanation request was too large.' }, 413); }
+  let body;
+  try {
+    body = JSON.parse(raw);
+  } catch (_) { return json({ error: 'Expected a JSON Hope explanation request.' }, 400); }
+  if (!body || typeof body !== 'object' || Array.isArray(body) ||
+      !Array.isArray(body.input) || body.input.length < 1 || body.input.length > 24 ||
+      !body.input.every(item => item && typeof item === 'object' && !Array.isArray(item) &&
+        (item.role === 'system' || item.role === 'user') && typeof item.content === 'string')) {
+    return json({ error: 'Hope explanation input must contain 1 to 24 text messages.' }, 400);
+  }
+  const requested = Number(body.max_output_tokens);
+  const forwarded = { ...body, max_output_tokens: Number.isFinite(requested) && requested > 0 ? Math.min(1000, Math.floor(requested)) : 1000 };
+  delete forwarded.tools;
+  delete forwarded.tool_choice;
+  try {
+    const upstream = await fetch('https://aimm-proxy.kevinlelitte.workers.dev/hope/luna', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + env.HOPE_INTERNAL_TOKEN },
+      body: JSON.stringify(forwarded),
+    });
+    return new Response(upstream.body, { status: upstream.status, headers: { 'Content-Type': upstream.headers.get('Content-Type') || 'application/octet-stream' } });
+  } catch (_) { return json({ error: 'Hope explanation is unavailable.' }, 502); }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -606,6 +637,7 @@ export default {
       return serveMwtm(request, env, key);
     }
     if (url.pathname === '/api/vendor-check') return checkVendorSources(request);
+    if (url.pathname === '/api/hope-explain') return explainWithHope(request, env);
     if (url.pathname.startsWith('/docs/') && (request.method === 'GET' || request.method === 'HEAD')) {
       // Knowledge-base and roadmap files live in the repo's docs/ folder, served by GitHub Pages.
       const upstream = await fetch('https://begb0037admin.github.io/aimm' + url.pathname, { cf: { cacheTtl: 300, cacheEverything: true } });

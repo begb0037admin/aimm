@@ -5875,7 +5875,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.58';
+const AIMM_BUILD = '2026-11-23.59';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -25595,10 +25595,10 @@ csInit('csPlatform');
       return 'Hope is reading this fix…';
     }
     function hopeFailure(status,code){
-      if(code==='no_stt_auth')return 'Hope speech access is not configured on the server.';
-      if(code==='invalid_stt_auth')return 'Hope’s speech token is invalid. Check Settings > Hope.';
-      if(code==='luna_request_too_large')return 'Hope’s request was too large.';
+      if(status===401)return 'You need to sign in again (refresh the page).';
+      if(status===413||code==='luna_request_too_large')return 'Hope’s request was too large.';
       if(code==='rate_limited'||status===429)return 'Hope is being used too quickly. Try again shortly.';
+      if(status===503)return 'Hope’s explanation is not available right now.';
       if(code==='luna_request_failed')return 'Hope’s AI request failed'+(status?' (HTTP '+status+')':'')+'.';
       if(code==='network')return 'Hope could not connect. Check the connection and try again.';
       return 'Hope could not answer'+(status?' (HTTP '+status+')':'')+'. Try again.';
@@ -25618,8 +25618,6 @@ csInit('csPlatform');
       if(hopeInflight.size)return;
       hopeInflight.add(requestKey);
       try{
-        const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE)||'';
-        if(!token)throw hopeError(0,'missing_browser_token','No saved token in localStorage');
         const ordinal=items.findIndex(x=>x.id===it.id)+1;
         const question=aimmBuildFixQueueQuestion({item:{...it,title:String(it.title).slice(0,1000),why:String(it.why).slice(0,2500),move:groundedMove(it).slice(0,2500)},ordinal});
         let context={};
@@ -25633,7 +25631,7 @@ csInit('csPlatform');
         let stream;
         for(let attempt=0;attempt<2;attempt++){
           try{
-            const response=await fetch(AIMM_PROXY_URL.replace(/\/+$/,'')+'/hope/luna',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:payload});
+            const response=await fetch('/api/hope-explain',{method:'POST',headers:{'Content-Type':'application/json'},body:payload});
             if(!response.ok){
               let detail={};try{detail=await response.json();}catch(_){}
               throw hopeError(response.status,detail.code||'',detail);
@@ -25643,7 +25641,7 @@ csInit('csPlatform');
             if(stream.errorMessage||stream.terminal==='response.incomplete')throw hopeError(response.status,'luna_request_failed',stream);
             break;
           }catch(e){
-            const error=e&&e.code?e:hopeError(0,'network',e);
+            const error=e&&typeof e.status==='number'?e:hopeError(0,'network',e);
             if(attempt===0&&(error.status===429||error.status>=500||error.code==='network')){
               await new Promise(resolve=>setTimeout(resolve,3000));
               if(rev!==requestRev||sig!==requestSig||selected()?.id!==it.id)return;
@@ -25657,8 +25655,8 @@ csInit('csPlatform');
         if(rev!==requestRev||sig!==requestSig)return;
         hopeAnswers[it.id]={fingerprint:hopeFingerprint(it),text:answer};persistHope();
       }catch(e){
-        const error=e&&e.code?e:hopeError(0,'network',e);
-        if(rev===requestRev&&sig===requestSig)hopeFailed.set(it.id,{status:error.status,code:error.code,message:error.code==='missing_browser_token'?'Hope’s speech token is not saved in this browser (Settings > Hope).':error.message});
+        const error=e&&typeof e.status==='number'?e:hopeError(0,'network',e);
+        if(rev===requestRev&&sig===requestSig)hopeFailed.set(it.id,{status:error.status,code:error.code,message:error.message});
         console.warn('[MC_FIXQUEUE] Hope explanation failed',{fixId:it.id,status:error.status,code:error.code,detail:error.detail,error:e});
       }
       finally{hopeInflight.delete(requestKey);if(rev===requestRev&&sig===requestSig)render();}

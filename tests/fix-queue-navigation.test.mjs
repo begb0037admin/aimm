@@ -41,16 +41,16 @@ function makeQueue(storage, options={}) {
   return { queue: context.queue, host, events };
 }
 
-test('selected fix gets one Hope explanation, persisted per revision; detail has no mic', async () => {
+test('selected fix gets one Hope explanation without a browser token, persisted per revision; detail has no mic', async () => {
   const storage=new Map(), requests=[];
   const fetch=async (url,init)=>{requests.push({url,body:JSON.parse(init.body)});return {ok:true,body:{getReader:()=>({})}};};
-  const {queue,host}=makeQueue(storage,{token:true,fetch});
+  const {queue,host}=makeQueue(storage,{fetch});
   queue.derive({__testItems:fixtures},null,'mix-hope');
   assert.match(host.innerHTML,/AIMM Coach on this fix/);
   assert.match(host.innerHTML,/Hope is reading this fix…/);
   assert.doesNotMatch(host.innerHTML,/data-act="hope"|Ask Hope about this|#i-mic/);
   assert.equal(requests.length,1);
-  assert.equal(requests[0].url,'/proxy/hope/luna');
+  assert.equal(requests[0].url,'/api/hope-explain');
   assert.deepEqual(requests[0].body.tools,[]);
   assert.ok(JSON.stringify(requests[0].body).length<30000);
   assert.doesNotMatch(requests[0].body.input[0].content,/inventory|coverage|chain|current mix context/);
@@ -64,7 +64,7 @@ test('selected fix gets one Hope explanation, persisted per revision; detail has
   await new Promise(setImmediate);
   queue.select('#01');
   assert.equal(requests.length,2);
-  const reloaded=makeQueue(storage,{token:true,fetch}).queue;
+  const reloaded=makeQueue(storage,{fetch}).queue;
   reloaded.derive({__testItems:fixtures},null,'mix-hope');
   assert.equal(requests.length,2);
   reloaded.recompute({__testItems:fixtures});
@@ -88,10 +88,10 @@ test('failed explanation shows the grounded move and retries on next open', asyn
   assert.match(host.innerHTML,/Hope’s own explanation/);
 });
 
-test('worker failure codes and missing browser token show specific reasons', async () => {
+test('explanation route failures show specific reasons', async () => {
   const cases=[
-    [401,'invalid_stt_auth',/speech token is invalid/],
-    [503,'no_stt_auth',/speech access is not configured/],
+    [401,'',/sign in again/],
+    [503,'no_internal_auth',/explanation is not available right now/],
     [413,'luna_request_too_large',/request was too large/],
     [429,'rate_limited',/being used too quickly/],
     [502,'luna_request_failed',/AI request failed \(HTTP 502\)/],
@@ -99,17 +99,13 @@ test('worker failure codes and missing browser token show specific reasons', asy
   for(const [status,code,reason] of cases){
     let calls=0;
     const fetch=async()=>{calls++;return {ok:false,status,json:async()=>({code,error:'worker detail'})};};
-    const {queue,host}=makeQueue(new Map(),{token:true,fetch});
+    const {queue,host}=makeQueue(new Map(),{fetch});
     queue.derive({__testItems:fixtures},null,'failure-'+code);
     await new Promise(setImmediate);
     assert.match(host.innerHTML,reason,code);
     assert.match(host.innerHTML,/Try again/,code);
     assert.equal(calls,status===429||status>=500?2:1,code);
   }
-  const {queue,host}=makeQueue(new Map());
-  queue.derive({__testItems:fixtures},null,'missing-token');
-  await new Promise(setImmediate);
-  assert.match(host.innerHTML,/not saved in this browser/);
 });
 
 test('even a verbose selected fix stays below the client request cap', async () => {
