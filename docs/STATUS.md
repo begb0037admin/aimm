@@ -1,3 +1,10 @@
+## 2026-11-25 builds 2026-11-23.55 and .56 — Fix Queue side by side, AIMM Coach explanation, Hope personality (LIVE)
+Live on aimixmasters.com (main 3fc87051, Worker `aimm`). ElevenLabs Hope agent_9001m42hnyrwedts40en5a5npapp published version agtvrsn_3801m89zt4h5f19r3np4gma2dhqs.
+- **.55** Fix Queue shows the list on the LEFT and the detail on the RIGHT whenever its container is about 760px or wider (it sits beside the open Hope rail, so about 1000px on a laptop). It stacks only below 760px. The old 1299px stack rule is deleted.
+- **.56** The detail section "Recommended move" is replaced by **AIMM Coach on this fix**: Hope's own explanation (same explain-only prompt the old Ask Hope about this button used), written the first time a fix is opened and cached per fix and analysis. The microphone icon is gone; the tick (done/undo) and cross (skip/undo) icons and the transporter stay.
+- **Personality:** the first message after Mix Check analysis greets Kev by name, says he has just loaded a mix or stems, gives the count in words and offers to go one at a time; short human transitions between fixes; wording varies. Added to the in-page rules (used by the Deepgram route: Flux transcribes, GPT-6 Luna replies, ElevenLabs Flash speaks, same TOOL_DEFS) and to the ElevenLabs prompt (section FIX QUEUE OPENING AND PERSONALITY). In the app Hope is called the AIMM Coach.
+- 263 Node tests pass. Not yet voice-tested by Kevin.
+
 ## 2026-11-25 builds 2026-11-23.48 to .54 — Hope as a conversation, new chat icons, Fix Queue redesign (LIVE)
 Live on aimixmasters.com (main d3adacab, Worker `aimm`). ElevenLabs Hope agent_9001m42hnyrwedts40en5a5npapp published version agtvrsn_8501m89s1gwmffqbme17apv026a8. Kevin approved each design from mockups before the build.
 - **.48** Hope puts a chain on the MixBus first, then cues the video without switching tabs; cued non-library videos have the transcript read in the background (`/kb/peek-youtube`); she spots golden nuggets and offers to add a video or plugin, never without a clear yes.
