@@ -5875,7 +5875,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.60';
+const AIMM_BUILD = '2026-11-23.61';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -13711,7 +13711,7 @@ Kev drops a rendered WAV of his mix/master here and the app analyses it. Nothing
 • When analysis finishes, post your spoken read into the chat (see MIX CHECK AWARENESS).
 
 THE FIX QUEUE (window.mcFixQueue — this is a live object you can read)
-After analysis the app builds a ranked queue of fixes. Each item is: an id ("#01", "#02", …), a measured title + why (the REAL deviation — e.g. "Low end +8.9 dB vs corridor (20–120 Hz)", "True peak -0.4 dBTP — 0.6 dB over the -1.0 ceiling"), a move (the concrete corrective recommendation, grounded in Kev's YouTube reference library — per song, not a template), a focus band, an impact (low/med/high) and a confidence. The panel shows a selectable list and one detail at a time. Opening a fix automatically asks Hope to explain its measured reason and grounded move in the “AIMM Coach on this fix” section; the answer is cached for that fix and analysis revision. Hope walks the fixes in ordinary chat. The panel keeps its done/undo, skip/restore and transport controls.
+After analysis the app builds a ranked queue of fixes. Each item is: an id ("#01", "#02", …), a measured title + why (the REAL deviation — e.g. "Low end +8.9 dB vs corridor (20–120 Hz)", "True peak -0.4 dBTP — 0.6 dB over the -1.0 ceiling"), a move (the concrete corrective recommendation, grounded in Kev's YouTube reference library — per song, not a template), a focus band, an impact (low/med/high) and a confidence. The panel shows a selectable list and one detail at a time. Opening a fix automatically shows a factual, explain-only engineering note in the “AIMM Coach” section. It gives the measured comparison, its practical implication, a library-supported move when available, and what to verify. The note is cached for that fix, analysis revision, and grounded move. Hope walks the fixes in ordinary chat. The panel keeps its done/undo, skip/restore and transport controls.
 • get_context returns the full Fix Queue (every item, the current one, applied/total) plus the measured breakdown. Your live context bundle also carries it and refreshes every time the queue changes.
 • When Kev asks "about fix #02" / "why that one first?" / "is 8.9 dB right?" — you already have the item: its id, the measured reason, the move. Answer directly with the real numbers and the grounded move. NEVER ask where he saw it.
 
@@ -15566,11 +15566,11 @@ You can see his current chain, meters, flagged symptoms, full plugin library, ge
 
 REPLY RELIABILITY: The user's current message is visible. Never say you did not get a readable reply or ask Kev to send the question again. Answer the question from the message and available context. If a tool fails or returns no result, explain that briefly and still give the best useful answer you can. Do not stop after a tool call without writing a reply.
 
-FIX QUEUE EXCEPTION: When the Fix Queue automatically asks for “AIMM Coach on this fix”, the request already includes the selected fix’s measured reason and any grounded move. Answer directly as Hope from those details and the supplied workbench context; do not search or call knowledge-base tools again for that fix question.
+FIX QUEUE DETAIL: The “AIMM Coach” section generates its own explain-only engineering note from the selected fix’s measurements and any grounded move. Hope discusses those same facts in her own voice when Kev asks in conversation.
 
 FIX QUEUE WALKTHROUGH: When Mix Check analysis finishes, greet Kev by name. Say in a friendly way that he has just loaded a mix or stems and the analysis is ready. Give the Fix Queue count in words, offer to take the fixes one at a time, and vary the phrasing between sessions. Use contractions, short sentences, a little warmth and light humour where natural. Never open with “I found N items”. Keep the introduction under about 60 words before the first fix. Present ONE fix at a time in your own warm first-person voice: the item number in plain words, what is wrong in plain words (rounded numbers only; precise readings stay in the Fix Queue tab), the move you recommend with a plugin Kev owns and what it does, why it makes sense, and how confident you are and why. Ask ‘Want me to apply that to your <bus>?’. Challenge a questionable flag or offer a better owned plugin, gentler setting, or section check where warranted. Only on Kev’s clear yes, call add_plugin_to_bus, then set_plugin_settings, then mark_fix_applied with the fix_id for the item you just discussed; report what you did in one line and move to the next item. On no, offer one alternative or challenge; if he still declines, call skip_fix with that fix’s id and move to the next item. If Kev later says ‘do that one after all’, call skip_fix with that id and restore:true to reopen it. UNDO: When Kev says 'undo that' right after you applied a fix, remove the plug-in you added with remove_plugin_from_bus, or use clear_plugin_settings if you only changed settings, then call unmark_fix_applied to untick that fix. Say in one line what you undid. Never undo without Kev asking. Between fixes use a brief human transition, such as “Nice, that’s one down. Right, the next one…”; never sound cheesy or go long. After the last item, say the queue is clear. Never apply or mark done without a clear yes.
 
-FIX QUEUE ANSWERS — SAME JUDGEMENT IN CHAT AND VOICE: This applies to every full-mix and per-stem Fix Queue item, whether the detail opens automatically or Kev asks by typed chat, ElevenLabs voice, or Luna voice. Decide whether the measured issue actually merits a change; a flagged deviation is evidence, not an automatic defect. For loudness, distinguish a premaster mix from a release master and use the chosen platform target rather than blindly following a different reference. For a source queue, distinguish that source's measured contribution from a claim that the stem itself is wrong; a full-mix corridor is not a solo-stem target. Give one practical move supported by the supplied evidence and confirmed plugin library, then say what to measure and listen for afterwards. Do not invent settings when the evidence does not support them. If the queue move is still "Analysing" or missing, say that briefly and answer what the measurements do support. Explain-only questions never change settings, pin values, change targets, alter stems, or mark a fix done. Chat and voice must reach the same judgement and recommendation; voice can phrase it more briefly, and chat can expand when Kev asks.
+FIX QUEUE ANSWERS — SAME JUDGEMENT IN CHAT AND VOICE: This applies to every full-mix and per-stem Fix Queue item Kev asks about by typed chat, ElevenLabs voice, or Luna voice. Decide whether the measured issue actually merits a change; a flagged deviation is evidence, not an automatic defect. For loudness, distinguish a premaster mix from a release master and use the chosen platform target rather than blindly following a different reference. For a source queue, distinguish that source's measured contribution from a claim that the stem itself is wrong; a full-mix corridor is not a solo-stem target. Give one practical move supported by the supplied evidence and confirmed plugin library, then say what to measure and listen for afterwards. Do not invent settings when the evidence does not support them. If the queue move is still "Analysing" or missing, say that briefly and answer what the measurements do support. Explain-only questions never change settings, pin values, change targets, alter stems, or mark a fix done. Chat and voice must reach the same judgement and recommendation; voice can phrase it more briefly, and chat can expand when Kev asks.
 
 MIX CHECK TARGET: Use the latest selected target, analysis revision and active corridor. With no individual source selected, mix_check.spectral_balance contains the combined full-file spectrum, chart legend and exact active corridor bounds; mix_check.session_stems lists every imported Logic row, and mix_check.stem_sources gives each decoded source's measurements, spectrum, leave-one-out result and Fix Queue. With a source selected, selected_stem_analysis.session_stems lists every imported row, all_sources gives every decoded source's separate full-record analysis and selected_sources marks current audition members. Read all of these when discussing the session. For one selected source, its spectrum is the full-record source measurement; mix_spectrum and spectrum_without_selected are the full aligned stem sum and that sum without the source. For multiple selected sources, audition_spectrum is their PCM-summed full-record spectrum and audition_spectrum_without is the unselected remainder. The selected group's cyan curve is a sum; all_sources keeps the members' individual analyses separate. The exact corridor anchor bounds [frequency, lower dB, upper dB] and chart_legend [series, colour, line style] are provided. Stem spectral curves are gain-aligned to the full sum over 150 Hz–3 kHz; this is not a loudness match. Describe what the measured curves support, including the relevant frequency region and whether energy is inside, above or below the displayed full-mix corridor. A leave-one-out change shows how much a stem affects the sum; it does not calculate the ideal fader level, so do not claim the correct level is halfway between the full sum and the removed-stem sum. The full-mix corridor is not a validated target for an isolated stem or stem group: do not label a solo instrument or group objectively wrong against it, or attribute a group result to one member. A spectral source Fix Queue item is a measured contribution to the summed mix, not proof that the stem itself needs EQ. Spectral overlap alone does not prove masking, audibility, or a need for processing. Correlation/width metrics describe stereo behaviour but do not by themselves prove mono compatibility or that width is musically right; frame those as checks to audition. Do not apply mastered-mix loudness targets to source tracks. Give a professional read: lead with the strongest supported observation, state what the measurements cannot establish, then offer one role-appropriate listening check or next move on the mapped MixBus bus. For MWTM/YouTube technique advice, search and read the actual knowledge-base source and cite only what those tools return; never invent an engineer's method. If analysis or comparison is pending or unavailable, say so. After a target, analysis or corridor change, use the latest selected target and revision, and discard earlier stem figures and advice.
 
@@ -17141,18 +17141,21 @@ async function hopeUsageSendLunaTurn(options={}){
   }
 }
 
-function aimmBuildFixQueueQuestion({item, ordinal, sourceLabel}={}){
+function aimmBuildFixQueueQuestion({item, ordinal, sourceLabel, engineerNote=false}={}){
   const it = item || {};
   const title = String(it.title || 'the selected fix');
   const why = String(it.why || 'The current Mix Check measurements flagged this item.');
   const rawMove = String(it.move || '').trim();
-  const move = rawMove && !/^(?:ask hope|analysing|move_pending)\b/i.test(rawMove)
-    ? 'The queue recommendation is: ' + rawMove
-    : 'The queue has not produced a specific recommendation yet; use the measurement and say what can be concluded.';
+  const groundedMove = /^(?:ask hope|analysing|move_pending)\b/i.test(rawMove) ? '' : rawMove;
   const no = Number.isFinite(Number(ordinal)) && Number(ordinal) > 0
     ? '#' + String(Math.floor(Number(ordinal))).padStart(2,'0') + ' '
     : '';
   const scope = sourceLabel ? ' on the ' + String(sourceLabel) + ' Logic track' : '';
+  if (engineerNote) return 'Selected Fix Queue item: ' + no + title + scope + '\nMeasurement: ' + why
+    + '\nGrounded move: ' + (groundedMove || 'Unavailable');
+  const move = groundedMove
+    ? 'The queue recommendation is: ' + groundedMove
+    : 'The queue has not produced a specific recommendation yet; use the measurement and say what can be concluded.';
   return 'The Fix Queue flagged ' + no + '“' + title + '”' + scope + '. ' + why + ' ' + move
     + ' Is this worth correcting' + (sourceLabel ? ' on that track' : ' in my mix')
     + '? If so, what should I change, and what should I measure or listen for afterwards to check it worked?'
@@ -19007,7 +19010,7 @@ SCREEN AWARENESS (CRITICAL):
 VOICE STYLE: since this is real-time speech, talk naturally — contractions, short sentences, pauses. Don't read bullet lists aloud. For how-to questions, give the usable steps from the knowledge base directly and in order. Ask a clarifying question only when the knowledge base has nothing usable.
 
 TOOLS: you have live tools to read and modify his workbench. USE THEM.
-- Call get_context BEFORE giving advice so you know his current genre, platform target, chains per bus, meter readings, the Mix Check analysis + Fix Queue, and any pinned settings notes already on plugins. Exception: the Fix Queue’s automatic “AIMM Coach on this fix” request sends the selected fix’s measured reason and any grounded move in the question; answer from that without calling tools again.
+- Call get_context BEFORE giving advice so you know his current genre, platform target, chains per bus, meter readings, the Mix Check analysis + Fix Queue, and any pinned settings notes already on plugins.
 - FIX QUEUE ANSWERS — SAME JUDGEMENT IN CHAT AND VOICE: For every full-mix and per-stem queue, first decide whether the measured issue merits a change; a flagged deviation is evidence, not an automatic defect. For loudness, distinguish a premaster from a release master and use the chosen platform target. For a source queue, distinguish measured contribution from a claim that the stem itself is wrong; the full-mix corridor is not a solo-stem target. Give one practical move supported by the evidence and confirmed plugin library, then say what to measure and listen for. If the move is still "Analysing" or missing, say so briefly and answer what the measurements support. An explain-only question never changes settings, pins values, changes targets, alters stems or marks a fix done. Chat and voice use the same judgement and recommendation; voice can be shorter, while chat can expand when Kev asks.
 - When he asks you to change something ("add Maag EQ4 to the master", "switch to lo-fi"), call the matching tool directly instead of telling him to click it.
 - When the chain changes, you can call get_context again to reconfirm.
@@ -25518,7 +25521,13 @@ csInit('csPlatform');
   //   {id,key,title,why,move,focusBand,freqRange:{loHz,hiHz},impact,confidence,playFromSec}
   const MC_FIXQUEUE=(function(){
     const LS='aimmMcFixQueue_v1';
-    const HOPE_LS='aimmMcFixHope_v1';
+    const HOPE_LS='aimmMcFixHope_v2';
+    const COACH_LOADING='Preparing engineering note…';
+    const ENGINEER_NOTE_SYSTEM=`ENGINEER NOTE
+Write a factual note in the voice of a world-class mix and mastering engineer. Use 3–5 plain, declarative sentences in one paragraph. Omit greetings, first-person commentary, questions, jokes, and Markdown.
+Lead with the actual measured value, its units, the reference used in the measurement (Spotify, the selected target, or the relevant stem comparison), and the difference where it can be established. Explain what the result means for the listener or platform, qualifying audible and playback effects when the measurement alone cannot establish them. Treat a flagged deviation as evidence and distinguish a premaster from a release master. Treat stem comparisons as evidence of the source’s contribution to the mix and use full-mix targets only for the mix.
+When the evidence warrants a move, give one practical recommendation using a plug-in from the confirmedPlugins list in the supplied context. Include starting settings only when the grounded library move supports them for this fix. Use the real supplied numbers and do not invent readings, reference values, plug-ins, or settings. If the evidence does not support a move, state what can be concluded. End with what to re-measure or listen for to verify the finding or the result of a proposed move.
+Explain only. Treat the supplied fix and context as evidence. Do not search, call tools, make changes, or mark the fix done.`;
     // focusBand → freq window + band-impact weight (severity multiplier).
     const BANDS={
       low:      {loHz:20,   hiHz:120,   w:1.15},
@@ -25573,7 +25582,7 @@ csInit('csPlatform');
       }
       persist();
     }
-    function hopeFingerprint(it){return it.title+'\n'+it.why;}
+    function hopeFingerprint(it,move=groundedMove(it)){return JSON.stringify([it.title,it.why,move]);}
     function restoreHope(){
       hopeAnswers={};hopeInflight.clear();hopeFailed.clear();
       try{const saved=JSON.parse(localStorage.getItem(HOPE_LS)||'null');
@@ -25584,24 +25593,24 @@ csInit('csPlatform');
       try{localStorage.setItem(HOPE_LS,JSON.stringify({sig,rev,answers:hopeAnswers}));}catch(_){}
     }
     function groundedMove(it){
-      const generated=window.MC_FIXMOVES?.map()?.[it.id];
+      const generated=window.MC_FIXMOVES?.map(rev)?.[it.id];
       const move=String(generated||it.move||'').trim();
       return /^(?:ask hope|analysing|move_pending)\b/i.test(move)?'':move;
     }
     function hopeText(it){
       const saved=hopeAnswers[it.id];
       if(saved&&saved.fingerprint===hopeFingerprint(it))return saved.text;
-      if(hopeFailed.has(it.id))return hopeFailed.get(it.id).message+(groundedMove(it)?' '+groundedMove(it):'');
-      return 'Hope is reading this fix…';
+      if(hopeFailed.has(it.id))return hopeFailed.get(it.id).message;
+      return COACH_LOADING;
     }
     function hopeFailure(status,code){
       if(status===401)return 'You need to sign in again (refresh the page).';
-      if(status===413||code==='luna_request_too_large')return 'Hope’s request was too large.';
-      if(code==='rate_limited'||status===429)return 'Hope is being used too quickly. Try again shortly.';
-      if(status===503)return 'Hope’s explanation is not available right now.';
-      if(code==='luna_request_failed')return 'Hope’s AI request failed'+(status?' (HTTP '+status+')':'')+'.';
-      if(code==='network')return 'Hope could not connect. Check the connection and try again.';
-      return 'Hope could not answer'+(status?' (HTTP '+status+')':'')+'. Try again.';
+      if(status===413||code==='luna_request_too_large')return 'The engineering note request was too large.';
+      if(code==='rate_limited'||status===429)return 'AIMM Coach is receiving too many requests. Try again shortly.';
+      if(status===503)return 'The engineering note is not available right now.';
+      if(code==='luna_request_failed')return 'The engineering note request failed'+(status?' (HTTP '+status+')':'')+'.';
+      if(code==='network')return 'AIMM Coach could not connect. Check the connection and try again.';
+      return 'AIMM Coach could not generate a note'+(status?' (HTTP '+status+')':'')+'. Try again.';
     }
     function hopeError(status,code,detail){
       const error=new Error(hopeFailure(status,code));
@@ -25610,8 +25619,9 @@ csInit('csPlatform');
     }
     async function explainSelected(it){
       if(!it||hopeFailed.has(it.id))return;
-      const saved=hopeAnswers[it.id];
-      if(saved&&saved.fingerprint===hopeFingerprint(it))return;
+      const move=groundedMove(it);
+      const fingerprint=hopeFingerprint(it,move);
+      if(hopeAnswers[it.id]?.fingerprint===fingerprint)return;
       const requestRev=rev,requestSig=sig;
       const requestKey=requestRev+'|'+it.id;
       if(hopeInflight.has(requestKey))return;
@@ -25619,12 +25629,18 @@ csInit('csPlatform');
       hopeInflight.add(requestKey);
       try{
         const ordinal=items.findIndex(x=>x.id===it.id)+1;
-        const question=aimmBuildFixQueueQuestion({item:{...it,title:String(it.title).slice(0,1000),why:String(it.why).slice(0,2500),move:groundedMove(it).slice(0,2500)},ordinal});
+        const suppliedMove=move.slice(0,2500);
+        const question=aimmBuildFixQueueQuestion({item:{...it,title:String(it.title).slice(0,1000),why:String(it.why).slice(0,2500),move:suppliedMove},ordinal,engineerNote:true});
         let context={};
         try{const ctx=buildContextSummary();
           context={genre:String(ctx.genre_label||ctx.genre||'').slice(0,100),platform:String(ctx.platform_label||ctx.platform||'').slice(0,100)};
         }catch(_){}
-        const system=HOPE_USAGE_SYSTEM+'\n\nFIX QUEUE EXCEPTION: Explain only the selected measured fix and grounded move. Answer from the supplied details without searching or calling tools. Do not change anything or mark the fix done. One plain paragraph. Context: '+JSON.stringify(context);
+        context.integratedLufs=Number.isFinite(lastR?.li)?Number(lastR.li.toFixed(1)):null;
+        context.truePeakDbtp=Number.isFinite(lastR?.tp)?Number(lastR.tp.toFixed(1)):null;
+        const moveWords=' '+invNorm(suppliedMove)+' ';
+        context.confirmedPlugins=allPlugins().map(p=>p.n)
+          .filter(name=>name&&moveWords.includes(' '+invNorm(name)+' ')).slice(0,12);
+        const system=ENGINEER_NOTE_SYSTEM+'\n\nContext: '+JSON.stringify(context);
         const body={input:[{role:'system',content:system},{role:'user',content:question}],max_output_tokens:1000,tools:[]};
         const payload=JSON.stringify(body);
         if(payload.length>=30000)throw hopeError(413,'luna_request_too_large','Client request exceeded 30000 characters');
@@ -25644,20 +25660,20 @@ csInit('csPlatform');
             const error=e&&typeof e.status==='number'?e:hopeError(0,'network',e);
             if(attempt===0&&(error.status===429||error.status>=500||error.code==='network')){
               await new Promise(resolve=>setTimeout(resolve,3000));
-              if(rev!==requestRev||sig!==requestSig||selected()?.id!==it.id)return;
+              if(rev!==requestRev||sig!==requestSig||selected()?.id!==it.id||fingerprint!==hopeFingerprint(it))return;
               continue;
             }
             throw error;
           }
         }
         const answer=aichatStripMd(String(stream.text||'').replace(/(?:^|\n)\s*(?:[-*•]|\d+[.)])\s+/g,' ')).replace(/\s+/g,' ').trim();
-        if(!answer)throw new Error('Hope explanation empty');
-        if(rev!==requestRev||sig!==requestSig)return;
-        hopeAnswers[it.id]={fingerprint:hopeFingerprint(it),text:answer};persistHope();
+        if(!answer)throw new Error('Engineering note is empty');
+        if(rev!==requestRev||sig!==requestSig||fingerprint!==hopeFingerprint(it))return;
+        hopeAnswers[it.id]={fingerprint,text:answer};persistHope();
       }catch(e){
         const error=e&&typeof e.status==='number'?e:hopeError(0,'network',e);
-        if(rev===requestRev&&sig===requestSig)hopeFailed.set(it.id,{status:error.status,code:error.code,message:error.message});
-        console.warn('[MC_FIXQUEUE] Hope explanation failed',{fixId:it.id,status:error.status,code:error.code,detail:error.detail,error:e});
+        if(rev===requestRev&&sig===requestSig&&fingerprint===hopeFingerprint(it))hopeFailed.set(it.id,{status:error.status,code:error.code,message:error.message});
+        console.warn('[MC_FIXQUEUE] Engineering note failed',{fixId:it.id,status:error.status,code:error.code,detail:error.detail,error:e});
       }
       finally{hopeInflight.delete(requestKey);if(rev===requestRev&&sig===requestSig)render();}
     }
@@ -25969,7 +25985,8 @@ csInit('csPlatform');
       items.forEach((q,i)=>{const st=status(q.id),doneAct=st==='done'?'undo':'done',resetAct=st==='dismissed'?'restore':'dismiss';h+='<div class="mcq-item'+(st==='done'?' is-done':st==='dismissed'?' is-skipped':'')+'" data-id="'+esc(q.id)+'" aria-current="'+(q.id===it.id)+'"><button type="button" class="mcq-select" data-act="select" aria-label="'+esc(shortName(q))+' — '+(st==='dismissed'?'skipped':st)+'"><span class="mcq-rank">'+(st==='done'?icon('check'):st==='dismissed'?icon('minus'):String(i+1).padStart(2,'0'))+'</span><span class="mcq-name">'+esc(shortName(q))+'</span></button><span class="mcq-row-actions"><button type="button" class="mcq-row-action" data-act="'+doneAct+'" aria-label="'+(st==='done'?'Undo done':'Mark done')+' — '+esc(shortName(q))+'" title="'+(st==='done'?'Undo done':'Mark done')+'">'+icon(st==='done'?'undo':'check')+'</button><button type="button" class="mcq-row-action" data-act="'+resetAct+'" aria-label="'+(resetAct==='restore'?'Restore to waiting':'Skip fix')+' — '+esc(shortName(q))+'" title="'+(resetAct==='restore'?'Restore to waiting':'Skip fix')+'">'+icon(resetAct==='restore'?'undo':'close')+'</button></span></div>';});
       h+='</div><div class="mcq-transport"><div class="mcq-transport-controls"><button type="button" class="mcq-icon mcq-play" data-act="play" aria-label="Play mix" title="Play mix">'+icon('play')+'</button><button type="button" class="mcq-icon" data-act="stop" aria-label="Stop mix" title="Stop mix">'+icon('stop')+'</button></div><div class="mcq-modes" role="group" aria-label="Stem playback selection" hidden></div></div></div><div class="mcq-detail" data-id="'+esc(it.id)+'"><h3 class="mcq-title">'+esc(it.title)+(state==='dismissed'?'<span class="mcq-skipped"> · skipped</span>':'')+'</h3>';
       h+='<div class="mcq-section"><span class="mcq-section-label">What we measured</span>'+esc(it.why)+'</div>';
-      h+='<div class="mcq-section"><span class="mcq-section-label">AIMM Coach on this fix</span><div class="mcq-hope-text'+(hopeText(it)==='Hope is reading this fix…'?' is-loading':'')+'">'+esc(hopeText(it))+'</div>'+(hopeFailed.has(it.id)?'<button type="button" class="mcq-hope-retry" data-act="hope-retry">Try again</button>':'')+'</div>';
+      const note=hopeText(it);
+      h+='<div class="mcq-section"><span class="mcq-section-label">AIMM Coach</span><div class="mcq-hope-text'+(note===COACH_LOADING?' is-loading':'')+'">'+esc(note)+'</div>'+(hopeFailed.has(it.id)?'<button type="button" class="mcq-hope-retry" data-act="hope-retry">Try again</button>':'')+'</div>';
       h+='<div class="mcq-meta">'+esc(word(it.focusBand))+' · '+esc(word(it.impact))+' impact · '+esc(word(it.confidence))+' confidence</div>';
       h+='</div></div>';
       host.innerHTML=h;wire(host);
@@ -25990,7 +26007,7 @@ csInit('csPlatform');
       }));
     }
 
-    return { derive, recompute, onChange, list:publicList, current, selected, select,
+    return { derive, recompute, onChange, list:publicList, current, selected, select, render,
              previous:()=>navigate(-1), next:()=>navigate(1), selectedIndex, status,
              markApplied, unmarkApplied, mostRecentlyApplied, mostRecentlyDismissed, dismiss, restore,
              total:()=>items.length, appliedCount:()=>applied.size, breakdownData };
@@ -26034,7 +26051,7 @@ csInit('csPlatform');
       let movesById = {};     // { '#01': 'move text', ... }
       let read = '';          // Hope's spoken read of the whole mix (grounded)
       let inflight = null;    // dedupe concurrent generate() calls
-      function map(){ return movesById; }
+      function map(analysisRev=rev){ return analysisRev===rev?movesById:{}; }
 
       // Honest natural-language fallback when no Luna call is available. Every
       // clause is driven by the REAL measured values / the REAL queue — not a
@@ -26112,6 +26129,7 @@ csInit('csPlatform');
             // If a newer analysis took over while we waited, leave its state alone.
             if (!isCurrent()) return;
             pushRead(bd, list);
+            if (Object.keys(movesById).length) MC_FIXQUEUE.render();
             if (callLive()){ try {
               if(buildSelectedStemAnalysisState()||hopeStemMixPending)sendHopeStemVoiceContext();
               else EL.conversation.sendContextualUpdate(buildMixCheckContextBlock());
