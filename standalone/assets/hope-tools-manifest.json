@@ -53,7 +53,7 @@
   },
   {
     "name": "switch_tab",
-    "description": "Navigate the app to a different tab so Kev physically sees what you're working on with him. Call this when he asks to \"look at\", \"open\", \"go to\", \"check\", or \"switch to\" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to Plugins; he wants to review his mix so you go to Mix Check; he wants to dig through saved research so you go to Library). The visual switch is the point — it confirms to Kev that you're collaborating with him on the same screen.\n\nTabs:\n- mixcheck (Mix Check) — mix analysis, reference comparison, transport and Fix Queue\n- library (Library) — videos, notes, tips and saved chats; knowledge and snapshots are aliases\n- mixbus (MixBus) — bus chains, plugin slots, settings notes\n- plugins (Plugins) — installed Plugin Companion scan plus separate MixBus recommendation catalogue\n- community (Community) — social presence\n- marketing (Marketing) — release strategy + Pop A&R thinking\n- settings (Settings) — provider access and app preferences\n\nBrief Kev verbally as you do it: \"ok, hopping over to Library\" or \"let me pull up the Plugin Library\" — keep it natural, ONE short phrase. Do NOT say \"I'm calling switch_tab\" or any other meta narration. Don't switch tabs gratuitously — only when it's genuinely the right surface for what he asked.",
+    "description": "Navigate the app to a different tab so Kev physically sees what you're working on with him. Call this when he asks to \"look at\", \"open\", \"go to\", \"check\", or \"switch to\" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to Plugins; he wants to review his mix so you go to Mix Check; he wants to dig through saved research so you go to Library). The visual switch is the point — it confirms to Kev that you're collaborating with him on the same screen.\n\nTabs:\n- mixcheck (Mix Check) — mix analysis, reference comparison, transport and Fix Queue\n- library (Library) — videos, notes, tips and favourites; knowledge and snapshots are aliases\n- mixbus (MixBus) — bus chains, plugin slots, settings notes\n- plugins (Plugins) — installed Plugin Companion scan plus separate MixBus recommendation catalogue\n- community (Community) — social presence\n- marketing (Marketing) — release strategy + Pop A&R thinking\n- settings (Settings) — provider access and app preferences\n\nBrief Kev verbally as you do it: \"ok, hopping over to Library\" or \"let me pull up the Plugin Library\" — keep it natural, ONE short phrase. Do NOT say \"I'm calling switch_tab\" or any other meta narration. Don't switch tabs gratuitously — only when it's genuinely the right surface for what he asked.",
     "parameters": {
       "type": "object",
       "properties": {
@@ -1341,13 +1341,34 @@
   },
   {
     "name": "emit_notebooklm_prompt",
-    "description": "Drop a NotebookLM prompt for a producer or technique into the Conversation transcript as a separate copyable bubble — without you reading the whole template aloud and burning TTS credits. USE THIS whenever you offer a NotebookLM prompt and Kev says yes. After calling, speak only a brief intro and topic line (e.g. \"alright, here you go — copy from the transcript. Topic is Wheezy synthesising his 808 signal flow\"), then a short closing reminder (\"paste the NotebookLM summary into Insight as a new KB note when you are back, and I will have it next call\"). DO NOT read the prompt body itself out loud — the tool puts it in the transcript so Kev can copy it directly via the Copy button.",
+    "description": "Drop a NotebookLM prompt and sources into the Conversation transcript as one copyable bubble without reading the template aloud. Before calling, search_youtube_videos for the best few videos on the topic; prefer Mix With The Masters and strong tutorials. Pass 2-5 actual search results as sources (title and https://www.youtube.com/watch?v=VIDEO_ID URL). Never invent links. If none are relevant or search fails, omit sources and tell Kev briefly. USE THIS whenever you offer a NotebookLM prompt and Kev says yes. After calling, speak only a brief intro and topic line, then remind Kev to paste the NotebookLM summary into Insight as a new KB note. DO NOT read the prompt body aloud.",
     "parameters": {
       "type": "object",
       "properties": {
         "topic": {
           "type": "string",
-          "description": "Short, specific topic from Kev's question — producer or technique name. Examples: \"Wheezy 808 signal flow\", \"Mike Dean low-end mixing\", \"Pierre Bourne signature sound\", \"Murda Beatz vocal chain\". Use Kev's phrasing where possible."
+          "description": "Short, specific topic from Kev's question — producer or technique name."
+        },
+        "sources": {
+          "type": "array",
+          "description": "Optional 2-5 real videos returned by search_youtube_videos. Omit when no relevant results are found; never invent links.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Video title from the search result."
+              },
+              "url": {
+                "type": "string",
+                "description": "YouTube watch URL built from the returned video_id."
+              }
+            },
+            "required": [
+              "title",
+              "url"
+            ]
+          }
         }
       },
       "required": [
@@ -1440,57 +1461,6 @@
       },
       "required": [
         "action"
-      ]
-    }
-  },
-  {
-    "name": "propose_mix_move",
-    "description": "Show Kev a structured MIX MOVE CARD in the transcript: one concrete processing recommendation with an Apply button that adds the plugin to the bus and pins the settings. Call this EVERY time you recommend a specific move (an EQ cut, a compressor setting, a plugin to add) instead of only describing it in speech. Verify the plugin is in Kev’s library with list_plugins or get_library before proposing the move. After calling, speak ONE short line (\"card's up — want me to apply it?\") and never read the card contents aloud. Several distinct moves = several cards.",
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "bus": {
-          "type": "string",
-          "enum": [
-            "master",
-            "vocal",
-            "808",
-            "drums",
-            "fx"
-          ],
-          "description": "Which bus the move applies to."
-        },
-        "plugin": {
-          "type": "string",
-          "description": "Plugin name; verify ownership with list_plugins or get_library before proposing a move."
-        },
-        "move": {
-          "type": "string",
-          "description": "Terse parameter summary of the move, e.g. \"+2.5 dB bell @ 3.2 kHz, Q 1.4\" or \"4:1, attack 30ms, release auto, 2-3dB GR\"."
-        },
-        "why": {
-          "type": "string",
-          "description": "One sentence: why this move fixes what Kev described."
-        },
-        "confidence": {
-          "type": "string",
-          "enum": [
-            "low",
-            "medium",
-            "high"
-          ],
-          "description": "How confident you are this is the right move for the symptom described."
-        },
-        "settings": {
-          "type": "string",
-          "description": "Optional multi-line settings note (one parameter per line) that Apply pins under the plugin in the chain view."
-        }
-      },
-      "required": [
-        "bus",
-        "plugin",
-        "move",
-        "confidence"
       ]
     }
   },
@@ -1712,13 +1682,45 @@
   },
   {
     "name": "mark_fix_applied",
-    "description": "Mark the CURRENT Mix Check fix as applied and advance the Fix Queue to the next item. Call this ONLY after Kev confirms he has handled the fix you were discussing (you asked something like \"want me to mark that done and bring in #02?\" and he said yes). Do NOT call it pre-emptively, and do NOT use it to skip a fix Kev has not acted on — skipping is what he does himself by dismissing the card in the panel. After calling, confirm in ONE short line and name the next fix. Operates on the active fix by default; pass fix_id only to target a specific queued item by its id.",
+    "description": "Mark the current full-mix Fix Queue item as applied after Kev clearly says yes and Hope has successfully called add_plugin_to_bus and set_plugin_settings for the agreed move. Never call on a no, a vague reply, an explanation-only request, or merely to skip an item. After marking, give a one-line confirmation and walk through the next item. Skip declined items with skip_fix after a final no.",
     "parameters": {
       "type": "object",
       "properties": {
         "fix_id": {
           "type": "string",
           "description": "Optional fix id such as \"#01\" or \"#02\". Omit to mark the current active fix — that is the normal case."
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "name": "skip_fix",
+    "description": "On Kev’s final no, skip the current full-mix Fix Queue item and move on. Use restore:true when he later asks to do a skipped fix after all. An optional id targets a specific fix.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Optional Fix Queue id such as #01. Omit to skip the current fix or restore the most recently skipped fix."
+        },
+        "restore": {
+          "type": "boolean",
+          "description": "True to restore a skipped fix to waiting."
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "name": "unmark_fix_applied",
+    "description": "Reopen a marked-done full-mix Fix Queue item only when Kev asks to undo a fix. After removing the plug-in Hope added (or clearing its settings as appropriate), call this to untick the fix. Omit id to reopen the most recently marked-done fix. Never undo without Kev asking.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Optional Fix Queue id such as \"#01\". Omit to reopen the most recently marked-done fix."
         }
       },
       "required": []

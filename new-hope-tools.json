@@ -367,5 +367,74 @@
         "confirmed"
       ]
     }
+  },
+  {
+    "name": "emit_notebooklm_prompt",
+    "description": "Drop a NotebookLM prompt and sources into the Conversation transcript as one copyable bubble without reading the template aloud. Before calling, search_youtube_videos for the best few videos on the topic; prefer Mix With The Masters and strong tutorials. Pass 2-5 actual search results as sources (title and https://www.youtube.com/watch?v=VIDEO_ID URL). Never invent links. If none are relevant or search fails, omit sources and tell Kev briefly. USE THIS whenever you offer a NotebookLM prompt and Kev says yes. After calling, speak only a brief intro and topic line, then remind Kev to paste the NotebookLM summary into Insight as a new KB note. DO NOT read the prompt body aloud.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string",
+          "description": "Short, specific topic from Kev's question — producer or technique name."
+        },
+        "sources": {
+          "type": "array",
+          "description": "Optional 2-5 real videos returned by search_youtube_videos. Omit when no relevant results are found; never invent links.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Video title from the search result."
+              },
+              "url": {
+                "type": "string",
+                "description": "YouTube watch URL built from the returned video_id."
+              }
+            },
+            "required": [
+              "title",
+              "url"
+            ]
+          }
+        }
+      },
+      "required": [
+        "topic"
+      ]
+    }
+  },
+  {
+    "name": "skip_fix",
+    "description": "On Kev’s final no, skip the current full-mix Fix Queue item and move on. Use restore:true when he later asks to do a skipped fix after all. An optional id targets a specific fix.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Optional Fix Queue id such as #01. Omit to skip the current fix or restore the most recently skipped fix."
+        },
+        "restore": {
+          "type": "boolean",
+          "description": "True to restore a skipped fix to waiting."
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "name": "unmark_fix_applied",
+    "description": "Reopen a marked-done full-mix Fix Queue item only when Kev asks to undo a fix. After removing the plug-in Hope added (or clearing its settings as appropriate), call this to untick the fix. Omit id to reopen the most recently marked-done fix. Never undo without Kev asking.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Optional Fix Queue id such as \"#01\". Omit to reopen the most recently marked-done fix."
+        }
+      },
+      "required": []
+    }
   }
 ]

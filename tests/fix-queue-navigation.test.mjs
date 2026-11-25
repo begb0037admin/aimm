@@ -49,8 +49,9 @@ test('completed fixes remain navigable, undoable, and persist per mix', () => {
   assert.equal(queue.appliedCount(), 2);
   assert.equal(queue.current(), null);
   assert.equal(queue.selected().id, '#02');
-  assert.match(host.innerHTML, /Undo done/);
-  assert.match(host.innerHTML, /Previous/);
+  assert.match(host.innerHTML, /aria-label="Undo done"/);
+  assert.match(host.innerHTML, /mcq-item/);
+  assert.doesNotMatch(host.innerHTML, /Previous|Next →|Hide items/);
   assert.equal(queue.previous(), true);
   assert.equal(queue.selected().id, '#01');
   assert.equal(queue.status('#01'), 'done');
@@ -69,4 +70,19 @@ test('completed fixes remain navigable, undoable, and persist per mix', () => {
   assert.equal(reloaded.selected().id, '#01');
   assert.equal(reloaded.appliedCount(), 0);
   assert.equal(reloaded.status('#02'), 'pending');
+});
+
+test('most recently completed fix follows marking order across reloads and undo', () => {
+  const storage = new Map();
+  const {queue} = makeQueue(storage);
+  queue.derive({__testItems: fixtures}, null, 'mix-c');
+  assert.equal(queue.mostRecentlyApplied(), null);
+  queue.markApplied('#02');
+  queue.markApplied('#01');
+  assert.equal(queue.mostRecentlyApplied().id, '#01');
+  const reloaded = makeQueue(storage).queue;
+  reloaded.derive({__testItems: fixtures}, null, 'mix-c');
+  assert.equal(reloaded.mostRecentlyApplied().id, '#01');
+  reloaded.unmarkApplied('#01');
+  assert.equal(reloaded.mostRecentlyApplied().id, '#02');
 });

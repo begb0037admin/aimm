@@ -45,20 +45,26 @@ test('playlist channels sort alphabetically and search combines with channel fil
   assert.equal(actual.reduce((sum,[,count])=>sum+count,0),manifest.videos.length);
   assert.ok(actual.every(([name],i)=>i===0||actual[i-1][0].localeCompare(name,undefined,{sensitivity:'base'})<=0));
 });
-test('Notes and Saved chats render and open without Browse search',()=>{
+test('Notes and Favourites render and open without Browse search',()=>{
   const elements=Object.fromEntries(['library','libReviewRows','libNoteRows','libChatRows','libReviewCount','libNoteCount','libChatCount'].map(id=>[id,{innerHTML:'',textContent:''}]));
-  const ctx={document:{getElementById:id=>elements[id]},STATE:{knowledge:[{id:'note1',title:'A note',raw:'Note body',category:'mixing'}],journal:[{id:'chat1',subject:'A chat',text:'Hope: Hello',tldr:'Chat body'}]},
+  const ctx={document:{getElementById:id=>elements[id]},STATE:{knowledge:[{id:'note1',title:'A note',raw:'Note body',category:'mixing'}],journal:[{id:'chat1',subject:'A chat',text:'Hope: Hello',tldr:'Chat body',favourite:true}]},
     LIB_UI:{groups:{},more:{},open:{},editTip:null,kept:null},KB_CATEGORIES:[{id:'mixing',label:'Mixing'}],FAV_PILLS_MAX:4,
-    knowledgeMigrateCategories:()=>{},libPlayerRender:()=>{},escapeHtml:s=>String(s),escapeJs:s=>String(s),kbActiveText:n=>n.raw,getFavouriteEntries:()=>[]};
+    knowledgeMigrateCategories:()=>{},libPlayerRender:()=>{},libPlayerVideos:()=>[],libYouTubeIdFromLink:()=>null,escapeHtml:s=>String(s),escapeJs:s=>String(s),kbActiveText:n=>n.raw,getFavouriteEntries:()=>[]};
   vm.runInNewContext(code('function libDate','async function libAddLink'),ctx);
   ctx.libraryRender();
   assert.match(elements.libNoteRows.innerHTML,/A note/);
   assert.match(elements.libChatRows.innerHTML,/A chat/);
   assert.match(elements.libNoteRows.innerHTML,/libTextButton\('note1','note'/);
   assert.match(elements.libChatRows.innerHTML,/libTextButton\('chat1','chat'/);
+  assert.doesNotMatch(elements.libChatRows.innerHTML,/Sessions|No saved chats yet|No favourites yet/);
   ctx.libTextButton('note1','note',false);ctx.libTextButton('chat1','chat',false);
   assert.match(elements.libNoteRows.innerHTML,/Note body/);
-  assert.match(elements.libChatRows.innerHTML,/Chat body/);
+  assert.match(elements.libChatRows.innerHTML,/Hope: Hello/);
   assert.equal(elements.libNoteCount.textContent,1);
   assert.equal(elements.libChatCount.textContent,1);
+  ctx.STATE.journal[0].favourite=false;ctx.libraryRender();
+  assert.match(elements.libChatRows.innerHTML,/A chat/);
+  ctx.STATE.journal=[];ctx.libraryRender();
+  assert.match(elements.libChatRows.innerHTML,/Star a message in Hope's chat to keep it here/);
+  assert.equal(elements.libChatCount.textContent,0);
 });

@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {test} from 'node:test';
+import vm from 'node:vm';
+const html=readFileSync(new URL('../standalone/assets/index.html',import.meta.url),'utf8');
+const code=html.slice(html.indexOf('function aichatFavouriteTitle('),html.indexOf('// Copy a message\'s plain-text content',html.indexOf('function aichatFavouriteTitle(')));
+test('a Hope reply star saves full text, title, preceding question and source in journal; unstar can be undone',()=>{
+  const history=[{role:'user',content:'How does Jaycen Joshua use NLS?'},{role:'ai',content:'## Jaycen Joshua NLS trick\nUse these settings: drive 3, trim -2.',source:'voice'}];
+  const ctx={AICHAT:{history},STATE:{journal:[]},aichatSave:()=>{},saveState:()=>{},aichatRender:()=>{},renderJournal:()=>{},renderFavouritePills:()=>{},toast:()=>{},Date,Math};
+  vm.runInNewContext(code,ctx);
+  ctx.aichatToggleFavourite(1);
+  assert.equal(ctx.STATE.journal.length,1);
+  assert.equal(ctx.STATE.journal[0].subject,'Jaycen Joshua NLS trick');
+  assert.equal(ctx.STATE.journal[0].text,history[1].content);
+  assert.equal(ctx.STATE.journal[0].context,history[0].content);
+  assert.equal(ctx.STATE.journal[0].source,'chat');
+  assert.equal(ctx.STATE.journal[0].messageSource,'voice');
+  assert.equal(ctx.STATE.journal[0].favourite,true);
+  ctx.aichatToggleFavourite(1);
+  assert.equal(ctx.STATE.journal.length,0);
+  ctx.aichatRestoreFavourite();
+  assert.equal(ctx.STATE.journal[0].favourite,true);
+});
+test('chat stars use the shared icon sprite and the Library has one Favourites panel',()=>{
+  assert.match(html,/class="aichat-favourite\$\{favEntry/);
+  assert.match(html,/aria-label="\$\{favEntry\?'Remove from Favourites':'Save to Favourites'\}"/);
+  assert.match(html,/<use href="#i-star"\/>/);
+  assert.match(html,/data-sec="chats"[^>]*>.*?Favourites <span class="n" id="libChatCount"/);
+  assert.doesNotMatch(html,/id="aiChatToJournal"|No saved chats yet|No favourites yet/);
+});

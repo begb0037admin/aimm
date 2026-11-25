@@ -1219,8 +1219,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .rail-body .section-head{display:none} /* redundant "CONVERSATION" heading — the rail-head above already names Hope; reference's panel has no second title row */
 .rail-body .aichat-bar{flex-wrap:wrap}
 .rail-body #aiChatTranscript{flex:0 1 auto;min-height:110px;max-height:38vh}
-#railReopen{position:fixed;right:14px;bottom:64px;z-index:1500;width:42px;height:42px;border-radius:50%;background:#1f2937;color:#e5e7eb;border:1px solid #374151;font-size:calc(var(--inv-text-scale, 1) * 18px);cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
-#railReopen:hover{border-color:#4fd8ff66}
 #buildStamp{align-self:center;margin:0 auto;font: 600 calc(var(--inv-text-scale, 1) * 9px) ui-monospace,Menlo,monospace;letter-spacing:.02em;color:#3d4650;pointer-events:none;user-select:text}
 #mcSpecs #buildStamp{align-self:center;margin: auto auto 0;padding:18px 0 14px;text-align:center;font-size:calc(var(--inv-text-scale, 1) * 8px);color:#5a636e}
 
@@ -2798,12 +2796,12 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
          analyser reading is available. data-speaking="1" -> aurora (PTT
          recording), "0" -> chrome shimmer (PTT idle). -->
     <div class="hope-wave" id="hopeWave" aria-hidden="true" data-speaking="0"></div>
-    <button id="railToggle" title="Collapse — reopen any time with the Chat button">⇥</button>
+    <button id="railToggle" title="Collapse Hope chat">⇥</button>
   </div>
   <div class="rail-body" id="hopeRailBody"></div>
 </div>
 <!-- R3 step 6 (BLOCKER-3 fallback): the app content (header + tab strip + every
-     .panel + the fixed build stamp / rail-reopen) is wrapped in ONE .app-col
+     .panel + the build stamp) is wrapped in ONE .app-col
      grid item so .container has exactly TWO children — .app-col (column 1) and
      #hopeRail (column 2). That lets #hopeRail align-self:stretch to the app
      column's height on desktop. `grid-row:1 / -1` alone did NOT span (no
@@ -2904,10 +2902,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
        "HOPE RAIL" IIFE) physically re-parents `.aichat-layout` back into
        that panel, before `#aichatHome`, whenever the rail is in its
        "closed" resting state below the 1024px breakpoint — deleting the
-       panel node would break that fallback. Mobile access is unaffected
-       either way: `#railReopen` is a global position:fixed button, not
-       scoped to any tab, so chat is reachable from any tab on mobile
-       regardless of where `.aichat-layout` is physically parked at rest.
+       panel node would break that fallback.
        Tab-strip width: no CSS change needed — `.tabs.oz-tabstrip .tab.oz-tab`
        already uses `flex:1 1 0` (R3 round 15, "the 9 tabs flex to share the
        strip width"), so the remaining tabs auto-grow to fill the freed
@@ -2971,7 +2966,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
      not null-crash. The Echo waveform (#hopeWave) in the rail header is the
      speech visual now. Owner: Markey - see issue #25. -->
 <span id="floatMic" hidden data-dormant="hope-orb-removed"></span>
-<button id="railReopen" hidden title="Dock Hope&#39;s chat to the side (visible on every tab)">Chat</button>
 <div class="panel" id="chain">
   <div class="recipes-strip" id="recipesStrip"></div>
   <div class="chain-toolbar">
@@ -20953,28 +20947,23 @@ csInit('csPlatform');
     if(!open && window.matchMedia('(min-width:1024px)').matches) return; /* R3: Hope rail is a permanent grid column on desktop */
     const railBody=document.getElementById('hopeRailBody');
     const home=document.getElementById('aichatHome');
-    const reopen=document.getElementById('railReopen');
     const el=layout();
     if(!railBody||!home||!el)return;
     if(open){
       railBody.appendChild(el);
       document.body.classList.add('rail-open');
-      if(reopen)reopen.hidden=true;
     }else{
       home.parentNode.insertBefore(el,home);
       document.body.classList.remove('rail-open');
-      if(reopen)reopen.hidden=false;
     }
     if(persist){try{localStorage.setItem(KEY,open?'open':'closed');}catch(_){}}
   }
   window.toggleHopeRail=function(open){setRail(open,true);};
   const tg=document.getElementById('railToggle');
   if(tg)tg.addEventListener('click',()=>setRail(false,true));
-  const ro=document.getElementById('railReopen');
-  if(ro)ro.addEventListener('click',()=>setRail(true,true));
   // R3 (Kevin 2026-08-30): Hope rail is column 3 on every tab, permanently
-  // docked on desktop (>=1024px). On mobile it stays an on-demand overlay via
-  // #railReopen. Collapse on desktop is a no-op (see the setRail guard above).
+  // docked on desktop (>=1024px). On mobile it stays an on-demand overlay.
+  // Collapse on desktop is a no-op (see the setRail guard above).
   setRail(window.matchMedia('(min-width:1024px)').matches,false);
 })();
 
