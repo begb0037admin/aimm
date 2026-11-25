@@ -617,7 +617,7 @@ async function explainWithHope(request, env) {
   try {
     const upstream = await fetch('https://aimm-proxy.kevinlelitte.workers.dev/hope/luna', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + env.HOPE_INTERNAL_TOKEN },
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + env.HOPE_INTERNAL_TOKEN, Origin: 'https://aimixmasters.com' },
       body: JSON.stringify(forwarded),
     });
     return new Response(upstream.body, { status: upstream.status, headers: { 'Content-Type': upstream.headers.get('Content-Type') || 'application/octet-stream' } });

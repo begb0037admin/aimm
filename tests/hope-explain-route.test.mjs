@@ -14,6 +14,14 @@ function proxyRequest(token) {
   }, body: JSON.stringify({ input, tools: [{ type: 'web_search' }], max_output_tokens: 1200 }) });
 }
 
+test('proxy rejects a request without Origin even with the internal bearer', async () => {
+  const request = proxyRequest('internal-secret');
+  request.headers.delete('Origin');
+  const response = await proxy.fetch(request, { HOPE_INTERNAL_TOKEN: 'internal-secret' });
+  assert.equal(response.status, 403);
+  assert.equal(await response.text(), 'Forbidden origin');
+});
+
 test('proxy accepts either token, rejects wrong token, and restricts internal requests', async () => {
   const keys = [];
   const env = { HOPE_STT_TOKEN: 'speech-secret', HOPE_INTERNAL_TOKEN: 'internal-secret', OPENAI_API_KEY: 'openai-secret',
@@ -56,7 +64,7 @@ test('site route requires Access and a valid compact text request', async () => 
   assert.equal((await missing.json()).code, 'no_internal_auth');
 });
 
-test('site route forwards internal bearer, strips tools, and streams status and content type', async () => {
+test('site route forwards the allowed origin and internal bearer, strips tools, and streams status and content type', async () => {
   const original = globalThis.fetch;
   let sent;
   let controller;
@@ -68,6 +76,8 @@ test('site route forwards internal bearer, strips tools, and streams status and 
     };
     const response = await site.fetch(siteRequest({ input, tools: [{ type: 'web_search' }], tool_choice: 'auto', max_output_tokens: 1500 }), { HOPE_INTERNAL_TOKEN: 'internal-secret' });
     assert.equal(sent.url, 'https://aimm-proxy.kevinlelitte.workers.dev/hope/luna');
+    assert.equal(sent.options.headers.Origin, 'https://aimixmasters.com');
+    assert.equal(sent.options.headers['Content-Type'], 'application/json');
     assert.equal(sent.options.headers.Authorization, 'Bearer internal-secret');
     assert.deepEqual(JSON.parse(sent.options.body), { input, max_output_tokens: 1000 });
     assert.equal(response.status, 429);
