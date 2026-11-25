@@ -9,7 +9,7 @@ const end = html.indexOf('window.MC_FIXQUEUE=MC_FIXQUEUE;', start);
 assert.ok(start >= 0 && end > start, 'Fix Queue engine is present');
 const engine = html.slice(start, end).replaceAll('items=build(r);', 'items=r&&r.__testItems?r.__testItems:build(r);');
 
-function makeQueue(storage) {
+function makeQueue(storage, options={}) {
   const host = {
     className: '', innerHTML: '',
     querySelector: () => null,
@@ -19,9 +19,18 @@ function makeQueue(storage) {
   const context = {
     document: { getElementById: id => id === 'mcActions' ? host : null },
     localStorage: {
-      getItem: key => storage.get(key) ?? null,
+      getItem: key => key==='token' && options.token ? 'test-token' : storage.get(key) ?? null,
       setItem: (key, value) => storage.set(key, value),
     },
+    HOPE_STT_TOKEN_STORAGE:'token', AIMM_PROXY_URL:'/proxy',
+    HOPE_USAGE_SYSTEM:'Hope system', HOPE_INVENTORY_RULES:'inventory',
+    HOPE_COVERAGE_RULES:'coverage', HOPE_CHAIN_BUILD_RULES:'chain',
+    buildMixCheckContextBlock:()=> 'current mix context',
+    aimmBuildFixQueueQuestion:({item,ordinal})=>`Fix #${ordinal}: ${item.why}. ${item.move}. Please explain only; do not change anything or mark the fix done.`,
+    hopeUsageReadLunaStream:async()=>({text:options.answer||'**Try a gentle cut.** Then listen again.',terminal:'response.completed'}),
+    aichatStripMd:text=>text.replaceAll('**',''),
+    fetch:options.fetch||(()=>{throw Error('offline')}),
+    TextDecoder,
     window: { dispatchEvent: event => events.push(event) },
     CustomEvent: class { constructor(type, options) { this.type = type; this.detail = options.detail; } },
     escapeHtml: value => String(value),
@@ -29,6 +38,48 @@ function makeQueue(storage) {
   vm.runInNewContext(`${engine}\nglobalThis.queue=MC_FIXQUEUE;`, context);
   return { queue: context.queue, host, events };
 }
+
+test('selected fix gets one Hope explanation, persisted per revision; detail has no mic', async () => {
+  const storage=new Map(), requests=[];
+  const fetch=async (url,init)=>{requests.push({url,body:JSON.parse(init.body)});return {ok:true,body:{getReader:()=>({})}};};
+  const {queue,host}=makeQueue(storage,{token:true,fetch});
+  queue.derive({__testItems:fixtures},null,'mix-hope');
+  assert.match(host.innerHTML,/AIMM Coach on this fix/);
+  assert.match(host.innerHTML,/Hope is reading this fix…/);
+  assert.doesNotMatch(host.innerHTML,/data-act="hope"|Ask Hope about this|#i-mic/);
+  assert.equal(requests.length,1);
+  assert.equal(requests[0].url,'/proxy/hope/luna');
+  assert.deepEqual(requests[0].body.tools,[]);
+  assert.match(requests[0].body.input[1].content,/Please explain only; do not change anything or mark the fix done/);
+  await new Promise(setImmediate);
+  assert.match(host.innerHTML,/Try a gentle cut. Then listen again/);
+  assert.doesNotMatch(host.innerHTML,/\*\*/);
+  queue.select('#02');
+  assert.equal(requests.length,2);
+  await new Promise(setImmediate);
+  queue.select('#01');
+  assert.equal(requests.length,2);
+  const reloaded=makeQueue(storage,{token:true,fetch}).queue;
+  reloaded.derive({__testItems:fixtures},null,'mix-hope');
+  assert.equal(requests.length,2);
+  reloaded.recompute({__testItems:fixtures});
+  assert.equal(requests.length,3);
+});
+
+test('failed explanation shows the grounded move and retries on next open', async () => {
+  let calls=0;
+  const fetch=async()=>{calls++;if(calls===1)throw Error('offline');return {ok:true,body:{getReader:()=>({})}};};
+  const {queue,host}=makeQueue(new Map(),{token:true,fetch,answer:'Hope’s own explanation.'});
+  queue.derive({__testItems:fixtures},null,'mix-retry');
+  await new Promise(setImmediate);
+  assert.match(host.innerHTML,/AIMM Coach on this fix/);
+  assert.match(host.innerHTML,/Move #01/);
+  assert.equal(calls,1);
+  queue.select('#01');
+  await new Promise(setImmediate);
+  assert.equal(calls,2);
+  assert.match(host.innerHTML,/Hope’s own explanation/);
+});
 
 const fixtures = ['#01', '#02'].map(id => ({
   id, key: id, title: `Fix ${id}`, why: `Measured ${id}`, move: `Move ${id}`,

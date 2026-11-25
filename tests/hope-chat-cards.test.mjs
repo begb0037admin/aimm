@@ -6,8 +6,8 @@ import vm from 'node:vm';
 const html=readFileSync(new URL('../standalone/assets/index.html',import.meta.url),'utf8');
 const catalogs=['../standalone/assets/hope-tools-manifest.json','../new-hope-tools.json','../elevenlabs-client-tools.json'].map(path=>JSON.parse(readFileSync(new URL(path,import.meta.url),'utf8')));
 
-test('build .55 uses ordinary Hope bubbles and keeps the NotebookLM pattern',()=>{
-  assert.match(html,/const AIMM_BUILD = '2026-11-23\.55'/);
+test('build .56 uses ordinary Hope bubbles and keeps the NotebookLM pattern',()=>{
+  assert.match(html,/const AIMM_BUILD = '2026-11-23\.56'/);
   assert.match(html,/isNbPrompt\?'ai hope-card'/);
   assert.match(html,/NotebookLM prompt for '\+escapeHtml\(m\.topic/);
   assert.match(html,/notebooklm-sources-label">Sources to add/);
@@ -42,7 +42,11 @@ test('NotebookLM prompt and real sources copy cleanly',()=>{
 
 test('walkthrough requires a clear yes and skips a final no',()=>{
   assert.match(html,/FIX QUEUE WALKTHROUGH: When Mix Check analysis finishes/);
-  assert.match(html,/Let’s deal with item N of M in your Fix Queue/);
+  assert.match(html,/greet Kev by name/);
+  assert.match(html,/Give the Fix Queue count in words/);
+  assert.match(html,/offer to take the fixes one at a time/);
+  assert.match(html,/Never open with “I found N items”/);
+  assert.match(html,/Between fixes use a brief human transition/);
   assert.match(html,/Only on Kev’s clear yes, call add_plugin_to_bus, then set_plugin_settings, then mark_fix_applied/);
   assert.match(html,/if he still declines, call skip_fix/);
   assert.match(html,/After the last item, say the queue is clear/);
