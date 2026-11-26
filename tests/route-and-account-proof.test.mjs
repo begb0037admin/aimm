@@ -23,7 +23,7 @@ const exhaustionSource = sliceFunctions(
   'usage exhaustion matcher'
 );
 const usageModeSource = sliceFunctions(
-  'const HOPE_USAGE_VOICE_ID =',
+  'const HOPE_USAGE_VOICE_MODE_KEY =',
   'function hopeAccountPaint(',
   'Hope route mode helpers'
 );
@@ -93,7 +93,6 @@ test('Auto retries one usage exhaustion with Backup, while Primary and Backup ne
       HOPE_ACCOUNT_CHOICE_KEY: 'aimmHopeAccountChoice',
       AIMM_HOPE_BACKUP_AGENT_ID: 'agent_2601kqm4g7txfsvv0pkvpe02389p',
       RT_ANT_KEY_STORAGE: 'rt-ant-key', EL_KEY_STORAGE: 'el-key',
-      HOPE_STT_TOKEN_STORAGE: 'hope-token',
       AIMM_PROXY_URL: 'https://worker.test',
       localStorage: localStorageStub({ aimmHopeAccountChoice: accountChoice }),
       console: { log() {}, warn() {}, error() {} },

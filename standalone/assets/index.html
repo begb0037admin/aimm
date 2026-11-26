@@ -3668,7 +3668,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         <button id="hopeVoiceRouteBtn" type="button" class="hope-voice-route-btn" aria-label="Voice route: ElevenLabs" title="Space starts voice when the message box is empty. Shift+Space starts voice while you have a draft. Click to switch routes." onclick="hopeUsageToggleRoute()">ElevenLabs</button>
         <button id="hopeAccountBtn" type="button" class="hope-voice-route-btn" aria-label="Hope account: Auto" title="Choose which ElevenLabs account Hope uses" onclick="hopeCycleAccount()">Auto</button>
       </div>
-      <span class="aichat-status" id="aiChatStatus">&nbsp;</span>
+      <span class="aichat-status" id="aiChatStatus" role="status">&nbsp;</span>
       <!-- DORMANT post-this-batch: the Quick Prompts column was retired since
            the compose area shrank and the Snapshots panel grew. The buttons
            are kept in a hidden wrapper so the document.querySelectorAll
@@ -5066,7 +5066,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #settings .rt-cost-card .row.balance .v:hover{color:#fff!important}
 
 /* E. Selected / primary: solid teal, black text (one teal primary per row) */
-#settings :is(#elKeySave,#hopeUsageSttTokenSave,#rtKeySave,.settings-companion-connect-row button,#aimm-account-preview .account-row button:nth-of-type(2),#settingsSafety #autoPause:checked){background:var(--gteal)!important;background-color:var(--gteal)!important;color:var(--gblk)!important}
+#settings :is(#elKeySave,#rtKeySave,.settings-companion-connect-row button,#aimm-account-preview .account-row button:nth-of-type(2),#settingsSafety #autoPause:checked){background:var(--gteal)!important;background-color:var(--gteal)!important;color:var(--gblk)!important}
 #settings #settingsSafety #autoPause{background:var(--g2)!important}
 #settings #settingsSafety #autoPause:checked{background:var(--gteal)!important}
 #settings #settingsSafety #autoPause::after{border-color:var(--gblk)!important}
@@ -5082,16 +5082,16 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #settings :is(button,input,select):disabled{color:var(--goff)!important;opacity:.76!important}
 
 /* H. Destructive actions: red text on the grey (Remove key, Reset) */
-#settings :is(#elKeyClear,#hopeUsageSttTokenClear,#rtKeyClear,#settingsReset #resetBtn){color:#f87171}
-#settings :is(#elKeyClear,#hopeUsageSttTokenClear,#rtKeyClear,#settingsReset #resetBtn):hover{color:var(--aimm-hover-ink)}
+#settings :is(#elKeyClear,#rtKeyClear,#settingsReset #resetBtn){color:#f87171}
+#settings :is(#elKeyClear,#rtKeyClear,#settingsReset #resetBtn):hover{color:var(--aimm-hover-ink)}
 
 /* I. Reset warning box: solid grey, no yellow bar */
 #settings #settingsReset .tip-box.warn,#settings #browserWarn{background:var(--g2)!important;color:var(--gink)!important}
 #settings #settingsReset .tip-box.warn strong,#settings #browserWarn strong{color:var(--gink)!important}
 /* F2. Save buttons are matched by id above, so their hover is matched by id too */
-#settings :is(#elKeySave,#hopeUsageSttTokenSave,#rtKeySave):is(:hover,:focus-visible){color:var(--aimm-hover-ink)}
+#settings :is(#elKeySave,#rtKeySave):is(:hover,:focus-visible){color:var(--aimm-hover-ink)}
 /* G2. A disabled teal button goes back to grey */
-#settings :is(#elKeySave,#hopeUsageSttTokenSave,#rtKeySave):disabled{background:var(--g1)!important;background-color:var(--g1)!important;color:var(--goff)!important}
+#settings :is(#elKeySave,#rtKeySave):disabled{background:var(--g1)!important;background-color:var(--g1)!important;color:var(--goff)!important}
 /* F3. Guide row hover: every line of text white on the gradient */
 #settings .settings-guide summary:is(:hover,:focus-visible) .settings-guide-heading small,#settings .settings-guide summary:is(:hover,:focus-visible) .settings-guide-heading strong{color:#fff!important}
 
@@ -5248,15 +5248,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         </div>
         <div class="rt-key-status" id="elKeyStatus">AIMM relay is configured in this build; provider keys stay in the Worker. Leave this blank unless using local direct-key mode.</div>
       </div>
-      <div class="rt-key-wrap">
-        <label>AIMM Deepgram route access token <span class="rt-keylabel-hint">— stored in this browser</span></label>
-        <div class="rt-key-inputs">
-          <input type="password" id="hopeUsageSttToken" placeholder="AIMM Deepgram route access token" autocomplete="off" spellcheck="false">
-          <button class="btn secondary sm" id="hopeUsageSttTokenSave">Save</button>
-          <button class="btn ghost sm" id="hopeUsageSttTokenClear" type="button" aria-label="Remove AIMM Deepgram route access token">Remove</button>
-        </div>
-        <div class="rt-key-status" id="hopeUsageSttTokenStatus">Lets this browser request a short-lived Deepgram speech ticket. Provider API credentials remain in the Worker.</div>
-      </div>
       <div class="rt-key-wrap"><label>Preferred ElevenLabs Agent — Fallback <span class="rt-keylabel-hint">— Auto uses this agent first</span></label>
         <div class="rt-key-inputs"><input type="text" id="elAgentId" aria-label="Preferred ElevenLabs Agent ID, Fallback" placeholder="agent_…" autocomplete="off" spellcheck="false" readonly></div>
       </div>
@@ -5390,7 +5381,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
         <p>Fallback is preferred; Default is its backup. If the preferred agent reports clear quota or credit exhaustion, Hope ends that session and retries the backup once. Network and other errors do not trigger a retry. Auto does not switch to Deepgram.</p>
       </section>
       <section class="settings-route-card"><h4>Deepgram — separate route</h4>
-        <p>Deepgram Flux transcribes your speech, GPT-6 Luna replies and can use AIMM tools, and ElevenLabs Flash speaks the reply. The browser’s AIMM access token requests a short-lived speech ticket; provider API credentials stay in the Worker.</p>
+        <p>Deepgram Flux transcribes your speech, GPT-6 Luna replies and can use AIMM tools, and ElevenLabs Flash speaks the reply. AIMM requests a short-lived speech ticket through your signed-in session.</p>
       </section>
       <section class="settings-route-card"><h4>Typed chat and research</h4>
         <p>Hope’s typed chat is separate from voice routing. Typed replies and research use GPT-6 Luna through the AIMM Worker.</p>
@@ -5844,7 +5835,8 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.65';
+const AIMM_BUILD = '2026-11-23.66';
+try { localStorage.removeItem('aiMixMastersHopeSttToken_v1'); } catch (_) {}
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -6706,7 +6698,6 @@ async function consolidateProfileFacts(){
   const over=candidates.filter(f=>f.tier==='core').length>PROFILE_CORE_MAX_FACTS || factsActiveBytes()>PROFILE_MAX_LEN;
   const recent=candidates.some(f=>f.tier==='archive' && f.lastUsed && f.lastUsed>(f.lastConsolidated||0));
   if(!over && !recent){syncLegacyProfileFromFacts();return true;}
-  if(!localStorage.getItem(HOPE_STT_TOKEN_STORAGE))return false;
   const payload=candidates.map(f=>({id:f.id,text:f.text,category:f.category,pinned:!!f.pinned,tier:f.tier,lastUsed:f.lastUsed||0}));
   const prompt='Choose a compact durable memory for Hope. Return strict JSON only: {"merges":[{"ids":["source-id-1","source-id-2"],"text":"clear combined fact","category":"misc"}],"core_ids":["existing-id"]}. Merge only genuinely overlapping facts. Never merge or demote pinned facts. Prefer durable preferences and recently used archive facts. Keep at most 15 core facts and about 1500 UTF-8 bytes. Every omitted fact will be archived, never deleted.';
   const raw=await aimmAiText(prompt,JSON.stringify(payload),1800);
@@ -6739,7 +6730,6 @@ async function consolidateProfileFacts(){
 }
 async function migrateProfileFacts(){
   if(localStorage.getItem(PROFILE_MIGRATION_KEY))return;
-  if(!localStorage.getItem(HOPE_STT_TOKEN_STORAGE))return;
   if(!localStorage.getItem(PROFILE_BACKUP_KEY)){
     localStorage.setItem(PROFILE_BACKUP_KEY,JSON.stringify({version:1,ts:Date.now(),facts:STATE.profileFacts,profile:STATE.profile}));
     setProfileStatus('Memory backup saved before archive migration', 'ok');
@@ -7069,17 +7059,13 @@ ${transcript}`;
 }
 
 // Orchestrator: at end of every call, if the transcript is substantial enough
-// to be worth extracting from and an AIMM token is saved, fire-and-forget a
+// to be worth extracting from, fire-and-forget a
 // Luna extraction. Resolves quietly on success/failure so callers don't have
 // to await it (callbacks like onDisconnect should not block on the network).
 async function maybeExtractProfile(){
   // Capture before cleanup wipes the transcript.
   const transcript = snapshotTranscript();
   if (!transcript || transcript.length < 200) return; // too short to bother
-  if (!localStorage.getItem(HOPE_STT_TOKEN_STORAGE)){
-    setProfileStatus('Add the Hope usage test access token in Settings → API Keys for Luna.', 'err');
-    return;
-  }
   setProfileStatus('Extracting facts from call…', 'busy');
   try {
     const newFacts = await extractProfile(transcript, STATE.profileFacts);
@@ -11919,18 +11905,14 @@ const MIC_SVG_FLOAT='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-w
 // Connecting spinner — same stroke family as the mic, no emoji.
 const SPIN_SVG_FLOAT='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" aria-hidden="true" class="mic-spin"><path d="M12 3a9 9 0 1 1-9 9" /></svg>';
 const RT_KEY_STORAGE='trapMasterApiKey_v1';
-const HOPE_STT_TOKEN_STORAGE='aiMixMastersHopeSttToken_v1';
 async function aimmAiText(system,user,max=1000,webSearch=false){
-  const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE)||'';
-  if(!token)throw new Error('Add the Hope usage test access token in Settings → API Keys for Luna.');
-  if(!AIMM_PROXY_URL)throw new Error('Luna service is unavailable.');
   if(Array.isArray(user)){
     user=await Promise.all(user.map(async part=>part.type==='image'
       ? {type:'image',data_url:await aimmAiFitImage('data:'+part.source.media_type+';base64,'+part.source.data)}
       : {type:'text',text:String(part.text||'')}));
   }
-  const response=await fetch(AIMM_PROXY_URL.replace(/\/+$/,'')+'/hope/ai',{
-    method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+  const response=await fetch('/api/hope/ai',{
+    method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({system,user,max_output_tokens:max,web_search:webSearch})
   });
   if(!response.ok){
@@ -11994,22 +11976,6 @@ function rtClearKey(){
   }catch(_){}
 }
 function rtSetKeyStatus(msg,cls){const s=document.getElementById('rtKeyStatus');s.textContent=msg;s.className='rt-key-status'+(cls?' '+cls:'');}
-
-function hopeUsageLoadToken(){
-  try{const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE);if(token){document.getElementById('hopeUsageSttToken').value=token;hopeUsageSetTokenStatus('AIMM Deepgram route token is saved in this browser.','ok');}}
-  catch(_){}
-}
-function hopeUsageSaveToken(){
-  const token=document.getElementById('hopeUsageSttToken').value.trim();
-  if(!token){hopeUsageSetTokenStatus('Paste the AIMM Deepgram route access token first.','err');return;}
-  try{localStorage.setItem(HOPE_STT_TOKEN_STORAGE,token);hopeUsageSetTokenStatus('AIMM Deepgram route token saved in this browser.','ok');toast('AIMM Deepgram route token saved');}
-  catch(e){hopeUsageSetTokenStatus('Save failed: '+e.message,'err');}
-}
-function hopeUsageClearToken(){
-  try{localStorage.removeItem(HOPE_STT_TOKEN_STORAGE);document.getElementById('hopeUsageSttToken').value='';hopeUsageSetTokenStatus('AIMM Deepgram route token removed from this browser.','ok');}
-  catch(e){hopeUsageSetTokenStatus('Remove failed: '+e.message,'err');}
-}
-function hopeUsageSetTokenStatus(msg,cls){const el=document.getElementById('hopeUsageSttTokenStatus');el.textContent=msg;el.className='rt-key-status'+(cls?' '+cls:'');}
 
 // ========== ELEVENLABS CONVERSATIONAL AI (voice-elevenlabs migration) ==========
 // Parallel voice stack to the OpenAI Realtime API path above. Selected at call
@@ -12409,9 +12375,6 @@ document.getElementById('rtKeySave').onclick=rtSaveKey;
 document.getElementById('rtKeyClear').onclick=rtClearKey;
 document.getElementById('rtKeyShow').onclick=()=>{const inp=document.getElementById('rtApiKey');RT.keyVisible=!RT.keyVisible;inp.type=RT.keyVisible?'text':'password';};
 document.getElementById('rtApiKey').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();rtSaveKey();}});
-document.getElementById('hopeUsageSttTokenSave').onclick=hopeUsageSaveToken;
-document.getElementById('hopeUsageSttTokenClear').onclick=hopeUsageClearToken;
-document.getElementById('hopeUsageSttToken').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();hopeUsageSaveToken();}});
 document.getElementById('rtModel').onchange=rtSavePrefs;
 document.getElementById('rtVoice').onchange=rtSavePrefs;
 // ElevenLabs key + agent + provider toggle wiring
@@ -13732,7 +13695,7 @@ Social / GitHub hub placeholder. Roadmap territory.
 
 SETTINGS TAB (accessed from the top navigation)
 Five sections:
-• API Keys — AIMM access token for Luna and an optional local ElevenLabs key field. Hope's Agent IDs are fixed in source; the old Realtime key field is dormant.
+• API Keys — Optional local ElevenLabs key field. Hope uses the AIMM sign-in. Hope's Agent IDs are fixed in source; the old Realtime key field is dormant.
 • Models — typed chat and research use GPT-6 Luna. Legacy Realtime selectors are dormant.
 • Costs — the ElevenLabs subscription card and typed Luna chat session cost.
 • Session safety — idle Auto call reminder and auto-pause controls.
@@ -13862,7 +13825,7 @@ MARKETING TAB — currently sparse (placeholder for the Katie persona). No notab
 COMMUNITY TAB — currently sparse (placeholder for social features). No notable buttons yet.
 
 SETTINGS TAB (accessed from the top navigation) — current controls
-1. **API keys & Agent access.** ElevenLabs key and Deepgram route token are editable. The preferred and backup ElevenLabs Agent IDs are displayed read-only. Agent tools are managed through the ElevenLabs connector. OpenAI Realtime controls remain hidden and dormant.
+1. **API keys & Agent access.** The optional local ElevenLabs key is editable. The preferred and backup ElevenLabs Agent IDs are displayed read-only. Agent tools are managed through the ElevenLabs connector. OpenAI Realtime controls remain hidden and dormant.
 2. **Costs.** ElevenLabs subscription card plus typed Luna session cost.
 3. **Session safety.** Auto call reminder, idle auto-pause, and ElevenLabs usage link.
 4. **Voice routes.** Auto uses the configured ElevenLabs Agent model; Deepgram uses GPT-6 Luna through the Worker.
@@ -14813,7 +14776,6 @@ async function kbExtractMetadata(text, filename){
     tags: [],
     summary: ''
   });
-  if (!localStorage.getItem(HOPE_STT_TOKEN_STORAGE)) return Object.assign(fallback(),{_noKey:true});
   // Cap input to avoid token blow-up on giant PDFs. 24K chars ≈ 6K tokens
   // input. Plenty for
   // metadata extraction even when the body itself is long.
@@ -14882,11 +14844,7 @@ async function kbImportFile(file){
   if (STATE.knowledge.length > KB_MAX_NOTES) STATE.knowledge = STATE.knowledge.slice(0, KB_MAX_NOTES);
   saveState();
   knowledgeRender();
-  // Surface the undo toast — Edit re-opens the modal pre-filled, Undo
-  // removes the just-imported note. If the AIMM token was missing, mention
-  // it so Kev knows to add one for proper auto-extract next time.
-  const noKeyHint = meta._noKey ? ' · (add the Hope usage test access token in Settings → API Keys for Hope auto-extract)' : '';
-  kbShowImportToast(note.id, note.title, noKeyHint);
+  kbShowImportToast(note.id, note.title);
 }
 
 // ----- Rich toast with Edit + Undo buttons -----
@@ -15033,7 +14991,7 @@ async function kbAddYoutube(){
       STATE.knowledge = STATE.knowledge || [];
       STATE.knowledge.unshift(note);
       if (STATE.knowledge.length > KB_MAX_NOTES) STATE.knowledge = STATE.knowledge.slice(0,KB_MAX_NOTES);
-      saveState(); knowledgeRender(); kbShowImportToast(note.id,note.title,meta._noKey ? ' · (add the Hope usage test access token in Settings → API Keys for Hope auto-extract)' : '');
+      saveState(); knowledgeRender(); kbShowImportToast(note.id,note.title);
       input.value = ''; kbYtStatus(`Added: {title}, ${result.chunks} chunks. Summary note added.`,'',result.title);
     } catch (_) { kbYtStatus(`Added: {title}, ${result.chunks} chunks. The summary note could not be written.`, 'warn',result.title); }
   } catch (_) { kbYtStatus('The transcript service is not available right now. Try again in a minute.', 'warn'); }
@@ -15662,7 +15620,7 @@ function aichatSave(){
 function aichatStatus(msg, cls){
   const el = document.getElementById('aiChatStatus');
   if (!el) return;
-  el.innerHTML = msg || '&nbsp;';
+  el.textContent = msg || '\u00a0';
   el.className = 'aichat-status' + (cls?' '+cls:'');
 }
 
@@ -15780,7 +15738,6 @@ async function aichatSpeakMessage(idx){
   if (!text){ aichatStatus('Nothing readable to speak.', 'err'); return; }
   const truncated = text.length > HOPE_READ_ALOUD_MAX_CHARS;
   if (truncated) text = text.slice(0, HOPE_READ_ALOUD_MAX_CHARS);
-  if (!AIMM_PROXY_URL){ aichatStatus('Hope voice service is unavailable.', 'err'); return; }
 
   aichatStopMessageSpeech();
   const token = ++HOPE_READ_ALOUD.token;
@@ -15790,8 +15747,7 @@ async function aichatSpeakMessage(idx){
   const controller = new AbortController();
   HOPE_READ_ALOUD.abort = controller;
   try{
-    const base = AIMM_PROXY_URL.replace(/\/+$/, '');
-    const response = await fetch(base + '/hope/read-aloud', {
+    const response = await fetch('/api/hope/read-aloud', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text, model_id: 'eleven_flash_v2_5', voice_settings: { stability: 0.5, similarity_boost: 0.8, speed: 1 } }),
@@ -16514,7 +16470,6 @@ async function executeAichatTool(name, input){
 // detection through the AIMM Worker; GPT-6 Luna streams the reply and AIMM
 // executes its tools; sentence chunks are spoken with Hope's ElevenLabs Flash
 // voice. No ElevenLabs Agent session is opened.
-const HOPE_USAGE_VOICE_ID = 'qFJ4KX1Kat5K6ywU2Rnm'; // read from Hope Fallback agent config, 2026-10-20
 const HOPE_USAGE_VOICE_MODE_KEY = 'aiMixMastersHopeVoiceMode_v1';
 let HOPE_KB_STATE = 'unchecked';
 let HOPE_WEB_REQUESTED = false;
@@ -16731,7 +16686,7 @@ function hopeToolThinkingLabel(name){
   return'Thinking · using tools';
 }
 
-async function hopeUsageExecuteLunaCall(call,{base,token,signal,onStatus}={}){
+async function hopeUsageExecuteLunaCall(call,{signal,onStatus}={}){
   let args={};try{args=JSON.parse(call.arguments||'{}');}catch(_){args={};}
   const allowed=hopeUsageSelectTools(HOPE_KB_DECISION.question).some(tool=>tool.name===call.name);
   if(!allowed)return{args,result:{ok:false,error:'Tool is not available on the Luna route.'}};
@@ -16739,7 +16694,7 @@ async function hopeUsageExecuteLunaCall(call,{base,token,signal,onStatus}={}){
     const decision=hopeKnowledgeDecision({tool:call.name,route:'luna'});
     if(!decision.allow)return{args,result:{error:decision.message}};
     if(onStatus)onStatus('Searching the web');
-    const response=await fetch(base+'/hope/web-search',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({query:args.query||''}),signal});
+    const response=await fetch('/api/hope/web-search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:args.query||''}),signal});
     let result;try{result=await response.json();}catch(_){result={error:'The web search returned an invalid response.'};}
     if(!response.ok)result={error:result.error||'Web search failed.'};
     return{args,result};
@@ -16804,14 +16759,13 @@ async function hopeUsageStartDeepgramStream(greetingError=''){
   }
   let stream=null,socket=null;
   try{
-    const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE)||'';
-    if(!token)throw new Error('Set the Hope usage access token in Settings before starting the microphone.');
-    const base=AIMM_PROXY_URL.replace(/\/+$/,'');
-    const ticketResponse=await fetch(base+'/hope/stt/ticket',{method:'POST',headers:{Authorization:'Bearer '+token}});
+    const ticketResponse=await fetch('/api/hope/stt/ticket',{method:'POST'});
     if(!ticketResponse.ok){const detail=await ticketResponse.json().catch(()=>({}));throw new Error(detail.error||'Could not prepare the secure speech connection.');}
     const ticketData=await ticketResponse.json();
     stream=await navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
-    const wsUrl=base.replace(/^http:/,'ws:').replace(/^https:/,'wss:')+'/hope/stt/stream?ticket='+encodeURIComponent(ticketData.ticket);
+    const wsUrl=new URL('/api/hope/stt/stream',location.href);
+    wsUrl.protocol=wsUrl.protocol==='https:'?'wss:':'ws:';
+    wsUrl.searchParams.set('ticket',ticketData.ticket);
     socket=new WebSocket(wsUrl);
     HOPE_USAGE_VOICE.stream=stream;HOPE_USAGE_VOICE.socket=socket;HOPE_USAGE_VOICE.recording=true;
     hopeUsageStatus('Connecting to live speech…'+(greetingError?' Hope audio check failed: '+greetingError:''),true,!!greetingError);
@@ -16853,7 +16807,7 @@ async function hopeUsageStartDeepgramStream(greetingError=''){
       hopeUsageStopLiveStream();HOPE_USAGE_VOICE.continuous=false;HOPE_USAGE_VOICE.recording=false;
       let detail='';
       try{
-        const probe=await fetch(base+'/hope/stt/probe?ticket='+encodeURIComponent(ticketData.ticket),{method:'POST'});
+        const probe=await fetch('/api/hope/stt/probe?ticket='+encodeURIComponent(ticketData.ticket),{method:'POST'});
         const result=await probe.json().catch(()=>({}));
         if(result.ok)detail=' Deepgram accepted a fresh server-side check; the browser WebSocket was blocked or interrupted.';
         else if(result.status)detail=' Deepgram returned HTTP '+result.status+(result.error?' — '+result.error:'')+'.';
@@ -16954,16 +16908,10 @@ async function hopeUsageSpeak(reply,turnId,options={}){
   const audio=aichatTtsAudioEl();
   if(!audio)throw new Error('Hope audio player is unavailable.');
   if(HOPE_USAGE_VOICE.lastObjectUrl){try{URL.revokeObjectURL(HOPE_USAGE_VOICE.lastObjectUrl);}catch(_){}HOPE_USAGE_VOICE.lastObjectUrl='';}
-  const key=localStorage.getItem(EL_KEY_STORAGE);
-  const proxyBase=AIMM_PROXY_URL.replace(/\/+$/,'');
-  const url=AIMM_PROXY_URL?proxyBase+'/hope/tts':'https://api.elevenlabs.io/v1/text-to-speech/'+encodeURIComponent(HOPE_USAGE_VOICE_ID)+'?output_format=mp3_44100_128';
-  const headers={'Content-Type':'application/json'};
-  if(AIMM_PROXY_URL){const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE)||'';if(!token)throw new Error('Add the Hope usage test access token in Settings → API Keys.');headers.Authorization='Bearer '+token;}
-  else if(key)headers['xi-api-key']=key;
   TTS.abort=new AbortController();TTS.loadingIdx=-2;
   let resp,blob;
   try{
-    resp=await fetch(url,{method:'POST',headers,body:JSON.stringify({text,model_id:'eleven_flash_v2_5',voice_settings:{stability:0.5,similarity_boost:0.8,speed:1}}),signal:TTS.abort.signal});
+    resp=await fetch('/api/hope/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,model_id:'eleven_flash_v2_5',voice_settings:{stability:0.5,similarity_boost:0.8,speed:1}}),signal:TTS.abort.signal});
     if(!resp.ok){const detail=await resp.text().catch(()=> '');throw new Error('Hope speech failed (HTTP '+resp.status+')'+(detail?': '+detail.slice(0,180):''));}
     const billed=resp.headers.get('character-cost');
     const chars=Number(resp.headers.get('x-character-count'))||text.length;
@@ -17008,8 +16956,6 @@ async function hopeUsageSendLunaTurn(options={}){
   let imageUrl='';
   if(pendingImage){try{imageUrl=await aimmAiFitImage(pendingImage.dataUrl);}catch(e){aichatStatus(e.message||'Luna could not read the screenshot.','err');return;}}
   if(HOPE_KB_DECISION.question!==text)hopeWebSearchBeginTurn(text);
-  const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE)||'';
-  if(!token){aichatStatus('Add the Hope usage test access token in Settings → API Keys for Luna.','err');return;}
   const userMsg={role:'user',content:text||'(see attached image)',source:options.source||'voice'};
   if(pendingImage){userMsg.image={...pendingImage};AICHAT.pendingImage=null;renderAiChatImagePreview();}
   AICHAT.history.push(userMsg);input.value='';aichatRender();aichatSave();
@@ -17033,8 +16979,10 @@ async function hopeUsageSendLunaTurn(options={}){
     const compact={genre:ctx.genre,genre_label:ctx.genre_label,platform:ctx.platform,platform_label:ctx.platform_label,chain:ctx.chain,meters:ctx.meters,flagged_symptoms:ctx.flagged_symptoms,plugins_inventory:ctx.plugins_inventory,active_tab:activeTabId()};
     ctxBlock='\n\n=== COMPACT LIVE AIMM STATE ===\n'+JSON.stringify(compact)+'\nUse get_context when Kev asks about detailed measurements, stem selection, playback or Fix Queue. Use plugin lookup tools before recommending or applying a plugin.';
   }catch(e){ctxBlock='\n\n(workbench context unavailable: '+(e.message||e)+')';}
-  const tools=(options.noTools?[]:hopeUsageSelectTools(text)).map(t=>({type:'function',name:t.name,description:t.description,parameters:t.input_schema,strict:false}));
-  const base=AIMM_PROXY_URL.replace(/\/+$/,'');
+  const availableTools=options.noTools?[]:hopeUsageSelectTools(text);
+  // The web fallback is the final entry in the catalogue. Reserve its slot when capping the list.
+  const turnTools=availableTools.length>40?[...availableTools.slice(0,39),availableTools.at(-1)]:availableTools;
+  const tools=turnTools.map(t=>({type:'function',name:t.name,description:t.description,parameters:t.input_schema,strict:false}));
   if(pendingImage){
     const last=history[history.length-1];
     if(last)last.content=[{type:'input_text',text:String(last.content||'See attached screenshot.')},{type:'input_image',image_url:imageUrl}];
@@ -17055,13 +17003,15 @@ async function hopeUsageSendLunaTurn(options={}){
     if(speechRemainder.length>260){const cut=speechRemainder.lastIndexOf(' ',240);if(cut>60){enqueueSpeech(speechRemainder.slice(0,cut));speechRemainder=speechRemainder.slice(cut+1);}}
     if(flush&&speechRemainder.trim()){enqueueSpeech(speechRemainder);speechRemainder='';}
   };
-  const proxyUrl=base+'/hope/luna';
   try{
     const loopLimit=options.source==='chat'?8:4;
     while(loops++<loopLimit){
-      const response=await fetch(proxyUrl,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({input:inputItems,max_output_tokens:options.source==='chat'?1000:220,tools}),signal:abort.signal});
-      if(!response.ok){let detail='';try{const error=await response.json();detail=error.error||'';}catch(_){}throw new Error(detail||'GPT-6 Luna request failed (HTTP '+response.status+').');}
-      if(!response.body)throw new Error('GPT-6 Luna returned no streaming response.');
+      const response=await fetch('/api/hope/luna',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input:inputItems,max_output_tokens:options.source==='chat'?1000:220,tools}),signal:abort.signal,redirect:'manual'});
+      if(!response.ok){
+        const status=response.type==='opaqueredirect'?401:response.status;
+        throw Object.assign(new Error(hopeChatRequestFailure(status)),{status});
+      }
+      if(!response.body)throw new Error("Hope's service is not available right now.");
       const stream=await hopeUsageReadLunaStream(response.body.getReader(),new TextDecoder(),delta=>{finalText+=delta;if(!enforceVagueVideo){speechRemainder+=delta;const body=thinkEl.querySelector('.body');if(body){body.textContent=finalText;body.style.whiteSpace='pre-wrap';}takeSpeechSentences(false);}setLabel('Hope is replying');aichatScrollToBottom();});
       finalText=stream.text;let completed=stream.response;const incomplete=stream.terminal==='response.incomplete';
       inputTokens+=Number(stream.usage.input_tokens)||0;outputTokens+=Number(stream.usage.output_tokens)||0;cachedTokens+=Number(stream.usage.input_tokens_details?.cached_tokens)||0;
@@ -17076,7 +17026,7 @@ async function hopeUsageSendLunaTurn(options={}){
         setLabel(hopeToolThinkingLabel(call.name));
         let executed;
         try{
-          executed=await hopeUsageExecuteLunaCall(call,{base,token,signal:abort.signal,onStatus:label=>aichatStatus(label+'…','busy')});
+          executed=await hopeUsageExecuteLunaCall(call,{signal:abort.signal,onStatus:label=>aichatStatus(label+'…','busy')});
         }finally{setLabel('Thinking');}
         const {args,result}=executed;
         webSearchRequests+=Number(result&&result.web_search_requests)||0;
@@ -17109,10 +17059,11 @@ async function hopeUsageSendLunaTurn(options={}){
     else if(options.hopeTurnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus(hopeUsageTurnSummary()+' · Luna '+tokenTotal.toLocaleString()+' tokens ($'+cost.toFixed(5)+')');
   }catch(e){
     if(e.name!=='AbortError'){
-      const vagueFallback=enforceVagueVideo&&HOPE_KB_DECISION.vagueVideo?.usable
+      const vagueFallback=!e.status&&enforceVagueVideo&&HOPE_KB_DECISION.vagueVideo?.usable
         ? hopeVagueVideoApplyModelReply(HOPE_KB_DECISION.vagueVideo,'').spokenAnswer
         : '';
-      const failureReply=vagueFallback||'I couldn’t reach Luna just now: '+(e.message||String(e));
+      const reason=e.name==='TypeError'?hopeChatRequestFailure(0):(e.message||hopeChatRequestFailure(0));
+      const failureReply=vagueFallback||reason;
       AICHAT.history.push({role:'ai',content:failureReply,source:options.source||'voice'});
       aichatRender();aichatSave();
       if(vagueFallback){
@@ -17120,7 +17071,7 @@ async function hopeUsageSendLunaTurn(options={}){
         if(options.speakReply)await hopeUsageSpeak(vagueFallback,turnId).catch(()=>{});
         if(options.hopeTurnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus(hopeUsageTurnSummary());
       }else{
-        aichatStatus('Luna connection failed. Check the Hope voice status.','err');
+        aichatStatus(reason,'err');
         if(options.hopeTurnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus('Luna could not answer: '+(e.message||String(e)),false,true);
       }
     }
@@ -17128,6 +17079,14 @@ async function hopeUsageSendLunaTurn(options={}){
     if(HOPE_USAGE_VOICE.lunaAbort===abort)HOPE_USAGE_VOICE.lunaAbort=null;
     thinkEl.remove();AICHAT.busy=false;if(send)send.disabled=false;
   }
+}
+
+function hopeChatRequestFailure(status){
+  if(status===401||status===403)return 'You need to sign in again (refresh the page).';
+  if(status===429)return 'Hope is being used too quickly. Wait a minute and try again.';
+  if(status===413)return 'This message is too large. Try a shorter message or a smaller image.';
+  if(status===400)return 'Hope could not read this request. Try sending it again.';
+  return "Hope's service is not available right now.";
 }
 
 function aimmBuildFixQueueQuestion({item, ordinal, sourceLabel, engineerNote=false}={}){
@@ -17538,7 +17497,7 @@ function hopePluginSummary(){
 function hopeSettingsStatus(){
   const selected=document.getElementById('aiChatModel')?.value||null;
   const credits=account=>{const item=elLoadCostAccount(account);const used=item.creditsUsed??null,limit=item.creditsLimit??null;return {credits_used:used,credits_limit:limit,credits_remaining:used!=null&&limit!=null?limit-used:null};};
-  return {ok:true,providers:{luna:!!AIMM_PROXY_URL,elevenlabs:!!(AIMM_PROXY_URL||localStorage.getItem(EL_KEY_STORAGE)),luna_usage_access:!!localStorage.getItem(RT_KEY_STORAGE),companion:pcCompanionConnected===true},credits:{elevenlabs_primary:credits('primary'),elevenlabs_backup:credits('backup')},models:{typed_chat:selected,tts:document.getElementById('aiChatTtsModel')?.value||null},companion:{connected:pcCompanionConnected===true,scanning:!!(pcCompanionCapability?.scanning||pcCompanionBusy),last_scan_at:INV_SCAN_INFO.generatedAt||null}};
+  return {ok:true,providers:{luna:true,elevenlabs:!!(AIMM_PROXY_URL||localStorage.getItem(EL_KEY_STORAGE)),luna_usage_access:true,companion:pcCompanionConnected===true},credits:{elevenlabs_primary:credits('primary'),elevenlabs_backup:credits('backup')},models:{typed_chat:selected,tts:document.getElementById('aiChatTtsModel')?.value||null},companion:{connected:pcCompanionConnected===true,scanning:!!(pcCompanionCapability?.scanning||pcCompanionBusy),last_scan_at:INV_SCAN_INFO.generatedAt||null}};
 }
 let hopeReferenceBridge=null;
 // A cued external video starts reading immediately; subsequent questions share the request.
@@ -19939,12 +19898,9 @@ async function elStart(startOptions={}){
       try {
         const decision=hopeKnowledgeDecision({tool:'web_search_fallback',route:'agent'});
         if(!decision.allow)return JSON.stringify({error:decision.message});
-        const base = AIMM_PROXY_URL.replace(/\/+$/, '');
-        const token = localStorage.getItem(HOPE_STT_TOKEN_STORAGE) || '';
-        if (!token) return JSON.stringify({ error: 'Hope usage access token is not configured.' });
-        const response = await fetch(base + '/hope/web-search', {
+        const response = await fetch('/api/hope/web-search', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ query: String(args?.query || '') })
         });
         let result;
@@ -21674,7 +21630,6 @@ window.addEventListener('pagehide', () => {
 
 // Load saved key + prefs.
 rtLoadKey();
-hopeUsageLoadToken();
 rtLoadPrefs();
 elLoadKey();
 elLoadAgentId();
@@ -26033,7 +25988,6 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
     window.__hopeMixReadWired = true;
 
     const esc = (s)=> (typeof escapeHtml === 'function') ? escapeHtml(String(s==null?'':s)) : String(s==null?'':s);
-    const lunaToken = () => { try { return localStorage.getItem(HOPE_STT_TOKEN_STORAGE); } catch(_){ return null; } };
     const callLive = () => (typeof EL !== 'undefined' && EL && EL.active && EL.conversation && typeof EL.conversation.sendContextualUpdate === 'function');
 
     // ── MC_FIXMOVES — KB-grounded read + per-fix moves, cached per analysisRev ──
@@ -26078,9 +26032,7 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
           window.mcFixQueue.breakdownData().analysisRev === thisRev;
         if (rev === thisRev && (read || Object.keys(movesById).length)) return;
         rev = thisRev; movesById = {}; read = '';
-        const key = lunaToken();
-        if (!key || !list || !list.length){
-          // No AIMM access token configured (or nothing to grade yet) — the
+        if (!list || !list.length){
           pushRead(d, list); return;
         }
         if (inflight === thisRev) return; // already generating for this exact analysis

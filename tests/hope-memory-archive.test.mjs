@@ -6,10 +6,9 @@ const html=readFileSync(new URL('../standalone/assets/index.html',import.meta.ur
 const section=(a,b)=>html.slice(html.indexOf(a),html.indexOf(b,html.indexOf(a)));
 function setup(facts, reply='{"merges":[],"core_ids":[]}'){
   const data=new Map(); let calls=0, saves=0;
-  data.set('token','yes');
   const ctx=vm.createContext({
     STATE:{profileFacts:facts,profile:''},PROFILE_CORE_MAX_FACTS:15,PROFILE_MAX_LEN:1500,
-    PROFILE_MIGRATION_KEY:'migration',PROFILE_BACKUP_KEY:'backup',HOPE_STT_TOKEN_STORAGE:'token',
+    PROFILE_MIGRATION_KEY:'migration',PROFILE_BACKUP_KEY:'backup',
     PROFILE_CATEGORIES:[{id:'misc',label:'Misc'}],TextEncoder,Date,console,
     localStorage:{getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v)},
     isMeaningfulFactText:t=>typeof t==='string' && t.length>=3,
@@ -33,12 +32,8 @@ test('consolidation preserves every fact, merges originals into archive, and pro
   assert.equal(env.ctx.STATE.profileFacts.find(f=>f.id===merged).tier,'core');
   assert.ok(env.ctx.buildProfileDigest().length>0);
 });
-test('migration backs up once, retries without a token, and sets version after save',async()=>{
+test('migration backs up and sets the version without a browser token',async()=>{
   const env=setup([fact('a','Durable preference')]);
-  env.data.delete('token');
-  await env.ctx.migrateProfileFacts();
-  assert.equal(env.data.has('backup'),false);
-  env.data.set('token','yes');
   await env.ctx.migrateProfileFacts();
   assert.deepEqual(JSON.parse(env.data.get('backup')).facts.map(f=>f.id),['a']);
   assert.equal(env.data.get('migration'),'1');

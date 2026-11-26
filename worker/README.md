@@ -1,9 +1,10 @@
 # AIMM key relay (Cloudflare Worker)
 
-The Worker holds OpenAI and ElevenLabs keys as **server-side secrets**. The
-page calls `/hope/ai` for small Luna tasks and `/hope/luna` for Hope chat. It
-relays ElevenLabs REST calls. The browser needs the AIMM access token for Luna;
-provider keys and agent IDs stay out of the browser.
+The proxy Worker holds OpenAI and ElevenLabs keys as server-side secrets.
+The signed-in AIMM page calls same-origin `/api/hope/*` routes for Hope chat,
+speech and small Luna tasks. The AIMM Worker forwards them to this proxy
+using the shared `HOPE_INTERNAL_TOKEN` secret. The page needs no saved Hope
+token. Direct legacy proxy clients can still authenticate with `HOPE_STT_TOKEN`.
 
 The Settings → Costs ElevenLabs card can read a second account through
 `GET /elevenlabs-backup/v1/user/subscription`. Configure the optional Worker
@@ -41,6 +42,8 @@ npx wrangler deploy
 #    paste the key, press Enter; nothing is written to disk or the repo)
 npx wrangler secret put ELEVENLABS_API_KEY
 npx wrangler secret put OPENAI_API_KEY
+npx wrangler secret put HOPE_INTERNAL_TOKEN
+# Optional for legacy direct proxy clients:
 npx wrangler secret put HOPE_STT_TOKEN
 ```
 
@@ -51,16 +54,16 @@ npx wrangler secret put HOPE_STT_TOKEN
 2. Edit code → replace the hello-world with the contents of
    `worker/src/index.js` → Save and deploy.
 3. Worker → Settings → Variables and Secrets → add **`OPENAI_API_KEY`**,
-   **`ELEVENLABS_API_KEY`**, and **`HOPE_STT_TOKEN`** as Secrets.
+   **`ELEVENLABS_API_KEY`**, and **`HOPE_INTERNAL_TOKEN`** as Secrets. Set
+   **`HOPE_STT_TOKEN`** if legacy direct proxy clients still use it.
 
 > If the deployed URL ends up different from
 > `https://aimm-proxy.kevinlelitte.workers.dev` (e.g. a different worker
 > name), update `AIMM_PROXY_URL` in `index.html` to match and push — the URL
 > is not a secret.
 
-On each browser, enter the AIMM access token in Settings → API Keys. The
-ElevenLabs key field uses an `aimm-proxy-managed` placeholder; the Worker adds
-the provider key server-side.
+Configure the same `HOPE_INTERNAL_TOKEN` secret on the Access-protected AIMM
+Worker. Hope uses the signed-in session for its same-origin requests.
 
 ## Durable captures (KV) — Hope's roadmap inbox, cross-device
 
@@ -87,34 +90,19 @@ gracefully to the old per-browser behaviour.
 
 ## Hope usage-test streaming speech (Deepgram Flux + ElevenLabs Flash)
 
-The optional **Usage test** voice mode streams microphone audio through
-`/hope/stt/stream` to Deepgram Flux (`/v2/listen`). Flux interim transcripts
-appear in AIMM while Kev speaks; its end-of-turn event sends the transcript to
-the Luna/tool loop. Cloudflare holds `DEEPGRAM_API_KEY` as a Worker
-secret. The browser authenticates to `POST /hope/stt/ticket` with the existing
-private `HOPE_STT_TOKEN`; the Worker returns a signed ticket that expires after
-60 seconds, then uses it to authorize the streaming WebSocket. The permanent
-Deepgram key is never sent to the browser. Audio passes through the Worker in
-memory and is not written to KV or R2. A rate-limit binding caps the route at
-8 connections per minute per client IP per Cloudflare location.
+The optional **Usage test** voice mode requests a signed 60-second ticket
+through `POST /api/hope/stt/ticket`. The same-origin WebSocket at
+`/api/hope/stt/stream` passes microphone audio through the proxy to Deepgram
+Flux (`/v2/listen`). Its end-of-turn event sends the transcript to Luna and
+the client-side tool loop. `/api/hope/stt/probe` uses the ticket to diagnose
+failed WebSocket handshakes. Audio is processed in memory.
 
-Hope's reply continues to use the dedicated `/hope/tts` endpoint and the
-ElevenLabs Flash v2.5 voice key (`HOPE_USAGE_TTS_API_KEY`), so her Hope voice is
-retained. Typed-chat Speak/Stop uses `/hope/read-aloud`, the same voice and TTS-only
-Worker secret, with the allowlisted app origins, per-IP rate limit, and 2,400-character
-cap. It does not require `HOPE_STT_TOKEN`; each request consumes ElevenLabs credits.
-The LLM reply and TTS audio are still collected before playback;
-this implementation streams speech recognition, not generated reply audio.
-Cloudflare's prior Whisper `/hope/stt` batch endpoint remains available for
-legacy calls but is no longer the Usage test's live speech path.
-
-Deploy the updated Worker source and set `DEEPGRAM_API_KEY` as a Worker
-**Secret**. Confirm the existing `HOPE_STT_TOKEN`, `HOPE_STT_LIMIT`, and
-`HOPE_USAGE_TTS_API_KEY` remain configured. For local/branch app testing, keep
-the allowed origin list in sync with the test page's actual origin. After both
-the Worker and app are deployed, start a short Usage test and confirm live
-transcript updates, one complete spoken answer, and actual Deepgram/ElevenLabs/LLM
-usage before making any savings claim.
+Spoken replies use `/api/hope/tts` and typed-chat read-aloud uses
+`/api/hope/read-aloud`. Both use Hope's ElevenLabs Flash voice, the
+`HOPE_USAGE_TTS_API_KEY` Worker secret and a 2,400-character cap. The proxy's
+rate-limit binding groups internal traffic under the `internal` key. The
+legacy Whisper WAV endpoint is available at `/hope/stt` on the proxy and
+`/api/hope/stt` on the signed-in site.
 
 ## Semantic search (Voyage + Vectorize + Cohere)
 

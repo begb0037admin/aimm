@@ -6,7 +6,7 @@ import vm from 'node:vm';
 const html = await readFile(new URL('../standalone/assets/index.html', import.meta.url), 'utf8');
 const workerSource = await readFile(new URL('../worker/src/index.js', import.meta.url), 'utf8');
 const worker = (await import(`data:text/javascript;base64,${Buffer.from(workerSource).toString('base64')}`)).default;
-const route = 'https://aimm-proxy.kevinlelitte.workers.dev/hope/ai';
+const route = '/api/hope/ai';
 const env = {HOPE_STT_TOKEN:'valid-token',OPENAI_API_KEY:'server-key',HOPE_STT_LIMIT:{limit:async()=>({success:true})}};
 function request(token, body={system:'Follow instructions',user:'Summarise this',max_output_tokens:3000}){
   return new Request('https://worker.test/hope/ai',{method:'POST',headers:{Origin:'https://aimixmasters.com','Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{})},body:JSON.stringify(body)});
@@ -68,8 +68,7 @@ function featureContext(source, reply, overrides={}){
   const calls=[];
   const elements={autoFillBtn:{textContent:'Auto-fill',disabled:false},revertFillBtn:{style:{}},reviewStarsBtn:{textContent:'Re-rank',disabled:false},importPaste:{value:'FabFilter Pro-Q 3'},importParseBtn:{disabled:false},importCommitBtn:{disabled:false}};
   const context=vm.createContext({
-    HOPE_STT_TOKEN_STORAGE:'token-key',AIMM_PROXY_URL:'https://aimm-proxy.kevinlelitte.workers.dev',
-    localStorage:{getItem:()=> 'valid-token'},
+    localStorage:{getItem:()=>null},
     fetch:async (url,options)=>{calls.push({url,options});return {ok:true,json:async()=>({text:reply,usage:{input_tokens:10,output_tokens:5}})};},
     document:{getElementById:id=>elements[id]||{value:'',style:{},disabled:false}},
     BUSES:[{id:'master',label:'Master'}],STATE:{chain:{master:[{n:'Pro-Q 3',notes:''}]},topPicksOverride:null,genre:'trap'},
@@ -86,14 +85,14 @@ function featureContext(source, reply, overrides={}){
   return {context,calls};
 }
 for(const [name, source] of Object.entries(featureSources)){
-  test(`${name} builds an authenticated /hope/ai request`,async()=>{
+  test(`${name} uses the same-origin Hope AI route without a browser token`,async()=>{
     const replies={extractProfile:'[]',autoFillChainSettings:'{"buses":{}}',rerankTopPicksWithClaude:'{"trap":["Pro-Q 3"],"hiphop":[],"rnb":[],"pop":[],"afrobeats":[],"lofi":[]}',kbCallHaikuSummary:'Short useful summary',kbExtractMetadata:'{"title":"Title","source":"","tags":[],"summary":"Summary"}',parseImportWithClaude:'{"plugins":[]}',research:'Research answer https://example.com'};
     const {context,calls}=featureContext(source,replies[name]);
     const args={extractProfile:['Transcript text',[]],autoFillChainSettings:[],rerankTopPicksWithClaude:[],kbCallHaikuSummary:['Raw research'],kbExtractMetadata:['Raw research','note.txt'],parseImportWithClaude:[],research:['Question','Context']}[name];
     await vm.runInContext(`${name}(...${JSON.stringify(args)})`,context);
     assert.equal(calls.length,1,`${name} made one request`);
     assert.equal(calls[0].url,route);
-    assert.equal(calls[0].options.headers.Authorization,'Bearer valid-token');
+    assert.equal(new Headers(calls[0].options.headers).has('Authorization'),false);
     const body=JSON.parse(calls[0].options.body);
     assert.equal(typeof body.system,'string');
     assert.ok(typeof body.user==='string'||Array.isArray(body.user));

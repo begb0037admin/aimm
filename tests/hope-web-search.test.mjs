@@ -8,14 +8,15 @@ const helperStart = html.indexOf('function hopeUsageSelectTools(');
 const helperEnd = html.indexOf('function hopeUsageStatus(', helperStart);
 assert.ok(helperStart >= 0 && helperEnd > helperStart, 'Luna tool helpers are present');
 const helperSource = html.slice(helperStart, helperEnd);
-const lunaTurnStart = html.indexOf('async function hopeUsageSendLunaTurn(');
-const lunaTurnEnd = html.indexOf('function aimmBuildFixQueueQuestion(', lunaTurnStart);
+const app = await readFile(new URL('../standalone/assets/index.html', import.meta.url), 'utf8');
+const lunaTurnStart = app.indexOf('async function hopeUsageSendLunaTurn(');
+const lunaTurnEnd = app.indexOf('function aimmBuildFixQueueQuestion(', lunaTurnStart);
 assert.ok(lunaTurnStart >= 0 && lunaTurnEnd > lunaTurnStart, 'Luna send function is present');
-const lunaTurnSource = html.slice(lunaTurnStart, lunaTurnEnd);
-const lunaReaderStart = html.indexOf('async function hopeUsageReadLunaStream(');
-const lunaReaderEnd = html.indexOf('async function hopeUsageSendLunaTurn(', lunaReaderStart);
+const lunaTurnSource = app.slice(lunaTurnStart, lunaTurnEnd);
+const lunaReaderStart = app.indexOf('async function hopeUsageReadLunaStream(');
+const lunaReaderEnd = app.indexOf('async function hopeUsageSendLunaTurn(', lunaReaderStart);
 assert.ok(lunaReaderStart >= 0 && lunaReaderEnd > lunaReaderStart, 'Luna stream reader helpers are present');
-const lunaReaderSource = html.slice(lunaReaderStart, lunaReaderEnd);
+const lunaReaderSource = app.slice(lunaReaderStart, lunaReaderEnd);
 const requestMatcherStart = html.indexOf('let HOPE_WEB_REQUESTED = false;');
 const requestMatcherEnd = html.indexOf('function hopeUsageGetMode()', requestMatcherStart);
 assert.ok(requestMatcherStart >= 0 && requestMatcherEnd > requestMatcherStart, 'web request matcher is present');
@@ -102,17 +103,22 @@ test('Luna returns streamed partial text when the response is incomplete', async
   const context = vm.createContext({
     AICHAT: { busy: false, history: [], sessionCost: 0 },
     HOPE_USAGE_VOICE: { turnId: 4, sessionTurns: 0, sessionLlmCost: 0, sessionLlmInputTokens: 0, sessionLlmOutputTokens: 0 },
-    HOPE_STT_TOKEN_STORAGE: 'token-key', AIMM_PROXY_URL: 'https://worker.test', HOPE_USAGE_SYSTEM: 'test system', HOPE_INVENTORY_RULES: 'test inventory rules',
+    HOPE_USAGE_SYSTEM: 'test system', HOPE_INVENTORY_RULES: 'test inventory rules',
+    HOPE_COVERAGE_RULES: 'test coverage rules', HOPE_CHAIN_BUILD_RULES: 'test chain rules',
     HOPE_KB_DECISION: { question:'What should I check?', usable:false, searched:false, results:[], garbled:false },
     hopeVagueVideoReference() { return false; },
     hopeWebSearchBeginTurn() {}, hopeShowGarbledRepeat() { return false; },
-    localStorage: { getItem: () => 'test-token' },
+    localStorage: { getItem: () => null },
     document: {
       getElementById(id) { return ({ aiChatInput: input, aiChatSend: send, aiChatTranscript: transcript, aiChatLastCost: cost })[id] || null; },
       createElement() { return thinkEl; }
     },
     AbortController, TextDecoder, DOMException, console: { warn(...args) { warnings.push(args); } },
-    fetch: async () => ({ ok: true, body: new ReadableStream({ start(controller) { controller.enqueue(bytes); controller.close(); } }) }),
+    fetch: async (url, options) => {
+      assert.equal(url, '/api/hope/luna');
+      assert.equal(new Headers(options.headers).has('Authorization'), false);
+      return new Response(new ReadableStream({ start(controller) { controller.enqueue(bytes); controller.close(); } }));
+    },
     hopeUsageSelectTools: () => [],
     aichatRender() {}, aichatSave() {}, aichatScrollToBottom() {},
     aichatStatus(message) { statuses.push(message); },
@@ -130,6 +136,19 @@ test('Luna returns streamed partial text when the response is incomplete', async
   assert.equal(context.HOPE_USAGE_VOICE.sessionLlmInputTokens, 13);
   assert.equal(context.HOPE_USAGE_VOICE.sessionLlmOutputTokens, 7);
   assert.deepEqual(warnings[0], ['[AIMM] Luna reply incomplete:', 'max_output_tokens']);
+
+  for (const [status, reason] of [
+    [401, 'You need to sign in again (refresh the page).'],
+    [429, 'Hope is being used too quickly. Wait a minute and try again.'],
+    [503, "Hope's service is not available right now."],
+  ]) {
+    context.fetch = async () => new Response('upstream details', { status });
+    input.value = 'What should I check?';
+    await vm.runInContext("hopeUsageSendLunaTurn({source:'chat'})", context);
+    assert.equal(context.AICHAT.history.at(-1).content, reason);
+    assert.equal(statuses.at(-1), reason);
+    assert.equal(send.disabled, false);
+  }
 });
 
 test('Luna tool list omits research and keeps the knowledge and web search tools', () => {

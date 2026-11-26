@@ -442,11 +442,11 @@ function cleanProduct(product) {
   const formats = Array.isArray(product.formats) ? product.formats.map(value => String(value || '').trim().slice(0, 24)).filter(Boolean).slice(0, 8) : [];
   return { vendor, name, versions, formats };
 }
-async function readRequestBodyLimited(request, maxBytes) {
+async function readRequestBytesLimited(request, maxBytes) {
   const declaredLength = Number(request.headers.get('Content-Length') || 0);
   if (declaredLength > maxBytes) throw new Error('The inventory sent for checking is too large.');
   const reader = request.body?.getReader();
-  if (!reader) return '';
+  if (!reader) return new Uint8Array(0);
   const chunks = [];
   let size = 0;
   while (true) {
@@ -462,7 +462,11 @@ async function readRequestBodyLimited(request, maxBytes) {
   const bytes = new Uint8Array(size);
   let offset = 0;
   for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
-  return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  return bytes;
+}
+
+async function readRequestBodyLimited(request, maxBytes) {
+  return new TextDecoder('utf-8', { fatal: true }).decode(await readRequestBytesLimited(request, maxBytes));
 }
 async function checkVendorSources(request) {
   const origin = request.headers.get('Origin') || '';
@@ -593,35 +597,118 @@ async function serveMwtm(request, env, key, isManifest = false) {
   return new Response(request.method === 'HEAD' ? null : object.body, { status: 200, headers });
 }
 
-async function explainWithHope(request, env) {
-  if (request.method !== 'POST') return json({ error: 'Use POST for Hope explanations.' }, 405);
-  if (!request.headers.get('Cf-Access-Jwt-Assertion')) return json({ error: 'Sign in to AIMM again.' }, 401);
-  if (!env.HOPE_INTERNAL_TOKEN) return json({ error: 'Hope explanation is not configured.', code: 'no_internal_auth' }, 503);
-  let raw;
-  try { raw = await readRequestBodyLimited(request, 59_999); }
-  catch (_) { return json({ error: 'Hope explanation request was too large.' }, 413); }
-  let body;
-  try {
-    body = JSON.parse(raw);
-  } catch (_) { return json({ error: 'Expected a JSON Hope explanation request.' }, 400); }
-  if (!body || typeof body !== 'object' || Array.isArray(body) ||
-      !Array.isArray(body.input) || body.input.length < 1 || body.input.length > 24 ||
-      !body.input.every(item => item && typeof item === 'object' && !Array.isArray(item) &&
-        (item.role === 'system' || item.role === 'user') && typeof item.content === 'string')) {
-    return json({ error: 'Hope explanation input must contain 1 to 24 text messages.' }, 400);
+const HOPE_PROXY_URL = 'https://aimm-proxy.kevinlelitte.workers.dev';
+const HOPE_SITE_ORIGIN = 'https://aimixmasters.com';
+const HOPE_TICKET_PATTERN = /^\d{13}\.[0-9a-f-]{36}\.[0-9a-f]{64}$/i;
+const hopeObject = value => value && typeof value === 'object' && !Array.isArray(value);
+const hopeText = value => typeof value === 'string' && !!value.trim();
+const hopeImage = value => typeof value === 'string' && /^data:image\/(png|jpeg|webp);base64,/.test(value);
+
+function hopeLunaInput(item) {
+  if (!hopeObject(item)) return false;
+  switch (item.type) {
+    case 'function_call':
+      return hopeText(item.call_id) && hopeText(item.name) && typeof item.arguments === 'string';
+    case 'function_call_output':
+      return hopeText(item.call_id) && typeof item.output === 'string';
+    case 'reasoning':
+      return hopeText(item.id);
+    case 'message':
+    case undefined:
+      return ['system', 'user', 'assistant'].includes(item.role) &&
+        (typeof item.content === 'string' || (Array.isArray(item.content) && item.content.length > 0 &&
+          item.content.every(part => hopeObject(part) &&
+            ((['input_text', 'output_text'].includes(part.type) && typeof part.text === 'string') ||
+             (part.type === 'input_image' && hopeImage(part.image_url)) ||
+             (part.type === 'refusal' && typeof part.refusal === 'string')))));
+    default:
+      return false;
   }
-  const requested = Number(body.max_output_tokens);
-  const forwarded = { ...body, max_output_tokens: Number.isFinite(requested) && requested > 0 ? Math.min(1000, Math.floor(requested)) : 1000 };
-  delete forwarded.tools;
-  delete forwarded.tool_choice;
+}
+
+const hopeInput = (body, validItem) =>
+  Array.isArray(body.input) && body.input.length > 0 && body.input.length <= 24 && body.input.every(validItem);
+const hopeSpeechText = body => hopeText(body.text) && body.text.trim().length <= 2400;
+const HOPE_ROUTES = new Map([
+  ['/api/hope-explain', { path: '/hope/luna', maxBytes: 59_999, explain: true,
+    validate: body => hopeInput(body, item => hopeObject(item) &&
+      ['system', 'user'].includes(item.role) && typeof item.content === 'string') }],
+  ['/api/hope/luna', { path: '/hope/luna', maxBytes: 100_000,
+    validate: body => hopeInput(body, hopeLunaInput) && (body.tools === undefined ||
+      (Array.isArray(body.tools) && body.tools.length <= 40 && body.tools.every(tool => hopeObject(tool) && hopeText(tool.type)))) }],
+  ['/api/hope/ai', { path: '/hope/ai', maxBytes: 100_000,
+    validate: body => typeof body.system === 'string' && (hopeText(body.user) ||
+      (Array.isArray(body.user) && body.user.length > 0 && body.user.every(part => hopeObject(part) &&
+        ((part.type === 'text' && typeof part.text === 'string') || (part.type === 'image' && hopeImage(part.data_url)))))) }],
+  ['/api/hope/web-search', { path: '/hope/web-search', maxBytes: 8_000,
+    validate: body => hopeText(body.query) && body.query.trim().length <= 1000 }],
+  ['/api/hope/tts', { path: '/hope/tts', maxBytes: 15_000, validate: hopeSpeechText }],
+  ['/api/hope/read-aloud', { path: '/hope/read-aloud', maxBytes: 15_000, validate: hopeSpeechText }],
+  ['/api/hope/stt', { path: '/hope/stt', maxBytes: 1_000_000, wav: true }],
+  ['/api/hope/stt/ticket', { path: '/hope/stt/ticket' }],
+  ['/api/hope/stt/probe', { path: '/hope/stt/probe', ticket: true }],
+  ['/api/hope/stt/stream', { path: '/hope/stt/stream', ticket: true, websocket: true }],
+]);
+
+async function forwardHope(request, env, url, route) {
+  const method = route.websocket ? 'GET' : 'POST';
+  if (request.method !== method) return json({ error: route.explain ? 'Use POST for Hope explanations.' : 'Method not allowed.' }, 405);
+  if (!request.headers.get('Cf-Access-Jwt-Assertion')) return json({ error: 'Sign in to AIMM again.' }, 401);
+  const origin = request.headers.get('Origin');
+  if (origin && origin !== url.origin) return json({ error: 'Origin is not allowed.' }, 403);
+  if (!env.HOPE_INTERNAL_TOKEN) {
+    return json({ error: route.explain ? 'Hope explanation is not configured.' : 'Hope is not configured.', code: 'no_internal_auth' }, 503);
+  }
+
+  const headers = { Authorization: 'Bearer ' + env.HOPE_INTERNAL_TOKEN, Origin: HOPE_SITE_ORIGIN };
+  const upstreamUrl = new URL(route.path, HOPE_PROXY_URL);
+  if (route.ticket) {
+    const ticket = url.searchParams.get('ticket') || '';
+    if (!HOPE_TICKET_PATTERN.test(ticket)) return json({ error: 'A valid speech ticket is required.' }, 401);
+    upstreamUrl.searchParams.set('ticket', ticket);
+  }
+  if (route.websocket) {
+    if (request.headers.get('Upgrade')?.toLowerCase() !== 'websocket') return json({ error: 'WebSocket upgrade required.' }, 426);
+    headers.Upgrade = 'websocket';
+  }
+
+  let body;
+  const contentType = (request.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase();
+  if (route.wav) {
+    if (!['audio/wav', 'audio/x-wav'].includes(contentType)) return json({ error: 'Expected a WAV recording.' }, 415);
+    headers['Content-Type'] = contentType;
+    try { body = await readRequestBytesLimited(request, route.maxBytes); }
+    catch (_) { return json({ error: 'Hope recording was too large.' }, 413); }
+    // The proxy validates the PCM format and duration before transcribing.
+    if (body.length < 44 || String.fromCharCode(...body.subarray(0, 4)) !== 'RIFF' ||
+        String.fromCharCode(...body.subarray(8, 12)) !== 'WAVE') return json({ error: 'Expected a WAV recording.' }, 400);
+  } else if (route.validate) {
+    if (!route.explain && contentType !== 'application/json') return json({ error: 'Expected JSON.' }, 415);
+    headers['Content-Type'] = 'application/json';
+    try { body = await readRequestBodyLimited(request, route.maxBytes); }
+    catch (_) { return json({ error: route.explain ? 'Hope explanation request was too large.' : 'Hope request was too large.' }, 413); }
+    let parsed;
+    try { parsed = JSON.parse(body); }
+    catch (_) { return json({ error: route.explain ? 'Expected a JSON Hope explanation request.' : 'Expected a JSON Hope request.' }, 400); }
+    if (!hopeObject(parsed) || !route.validate(parsed)) {
+      return json({ error: route.explain ? 'Hope explanation input must contain 1 to 24 text messages.' : 'Invalid Hope request.' }, 400);
+    }
+    if (route.explain) {
+      const requested = Number(parsed.max_output_tokens);
+      parsed.max_output_tokens = Number.isFinite(requested) && requested > 0 ? Math.min(1000, Math.floor(requested)) : 1000;
+      delete parsed.tools;
+      delete parsed.tool_choice;
+      body = JSON.stringify(parsed);
+    }
+  } else if (request.body) {
+    return json({ error: 'This Hope request does not take a body.' }, 400);
+  }
+
   try {
-    const upstream = await fetch('https://aimm-proxy.kevinlelitte.workers.dev/hope/luna', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + env.HOPE_INTERNAL_TOKEN, Origin: 'https://aimixmasters.com' },
-      body: JSON.stringify(forwarded),
-    });
+    const upstream = await fetch(upstreamUrl.href, { method, headers, body, redirect: 'manual', signal: request.signal });
+    if (!route.explain) return upstream;
     return new Response(upstream.body, { status: upstream.status, headers: { 'Content-Type': upstream.headers.get('Content-Type') || 'application/octet-stream' } });
-  } catch (_) { return json({ error: 'Hope explanation is unavailable.' }, 502); }
+  } catch (_) { return json({ error: route.explain ? 'Hope explanation is unavailable.' : 'Hope is unavailable.' }, 502); }
 }
 
 export default {
@@ -637,7 +724,8 @@ export default {
       return serveMwtm(request, env, key);
     }
     if (url.pathname === '/api/vendor-check') return checkVendorSources(request);
-    if (url.pathname === '/api/hope-explain') return explainWithHope(request, env);
+    const hopeRoute = HOPE_ROUTES.get(url.pathname);
+    if (hopeRoute) return forwardHope(request, env, url, hopeRoute);
     if (url.pathname.startsWith('/docs/') && (request.method === 'GET' || request.method === 'HEAD')) {
       // Knowledge-base and roadmap files live in the repo's docs/ folder, served by GitHub Pages.
       const upstream = await fetch('https://begb0037admin.github.io/aimm' + url.pathname, { cf: { cacheTtl: 300, cacheEverything: true } });

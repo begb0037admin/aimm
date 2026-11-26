@@ -44,6 +44,37 @@ function corsJsonResponse(value, status, origin, request){
   return jsonResponse(value, status, { ...corsHeaders(origin, request) });
 }
 
+function hopeAuth(request, env, origin){
+  if (!env.HOPE_STT_TOKEN && !env.HOPE_INTERNAL_TOKEN) {
+    return corsJsonResponse({ error:'Hope speech access is not configured',code:'no_stt_auth' },503,origin,request);
+  }
+  const supplied = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+  const matches = secret => {
+    const expected = String(secret || '');
+    let mismatch = supplied.length ^ expected.length;
+    for (let i = 0; i < Math.max(supplied.length, expected.length); i++) {
+      mismatch |= (supplied.charCodeAt(i) || 0) ^ (expected.charCodeAt(i) || 0);
+    }
+    return !!expected && mismatch === 0;
+  };
+  const legacy = matches(env.HOPE_STT_TOKEN);
+  const internal = matches(env.HOPE_INTERNAL_TOKEN) && !legacy;
+  if (!legacy && !internal) {
+    return corsJsonResponse({ error:'Hope speech access token is missing or invalid',code:'invalid_stt_auth' },401,origin,request);
+  }
+  return { internal, key: internal ? 'internal' : request.headers.get('CF-Connecting-IP') || 'unknown' };
+}
+
+async function speechTicketRateKey(request, env, origin, ticket){
+  if (env.HOPE_STT_TOKEN && await hopeSpeechTicketValid(ticket, env.HOPE_STT_TOKEN, origin)) {
+    return request.headers.get('CF-Connecting-IP') || 'unknown';
+  }
+  if (env.HOPE_INTERNAL_TOKEN && await hopeSpeechTicketValid(ticket, env.HOPE_INTERNAL_TOKEN, origin)) {
+    return 'internal';
+  }
+  return null;
+}
+
 async function hopeSpeechTicket(secret, origin){
   const expires = Date.now() + 60_000;
   const nonce = crypto.randomUUID();
@@ -417,13 +448,15 @@ export default {
     // Hope speech token in a WebSocket URL.
     if (url.pathname === '/hope/stt/ticket'){
       if (request.method !== 'POST') return corsJsonResponse({ error:'Method not allowed' },405,origin,request);
-      if (!env.HOPE_STT_TOKEN) return corsJsonResponse({ error:'Hope speech access is not configured',code:'no_stt_auth' },503,origin,request);
-      const supplied=(request.headers.get('Authorization')||'').replace(/^Bearer\s+/i,'');
-      const expected=String(env.HOPE_STT_TOKEN);
-      let mismatch=supplied.length^expected.length;
-      for(let i=0;i<Math.max(supplied.length,expected.length);i++)mismatch|=(supplied.charCodeAt(i)||0)^(expected.charCodeAt(i)||0);
-      if(!supplied||mismatch!==0)return corsJsonResponse({ error:'Hope speech access token is missing or invalid',code:'invalid_stt_auth' },401,origin,request);
-      return corsJsonResponse({ ticket:await hopeSpeechTicket(expected,origin),expires_in:60 },200,origin,request);
+      const auth = hopeAuth(request, env, origin);
+      if (auth instanceof Response) return auth;
+      if (auth.internal) {
+        if (!env.HOPE_STT_LIMIT) return corsJsonResponse({error:'Hope speech rate limit is not configured',code:'no_rate_limit'},503,origin,request);
+        const {success} = await env.HOPE_STT_LIMIT.limit({key:auth.key});
+        if (!success) return corsJsonResponse({error:'Hope voice is being used too quickly. Wait a minute and try again.',code:'rate_limited'},429,origin,request);
+      }
+      const signingSecret = auth.internal ? env.HOPE_INTERNAL_TOKEN : env.HOPE_STT_TOKEN;
+      return corsJsonResponse({ ticket:await hopeSpeechTicket(signingSecret,origin),expires_in:60 },200,origin,request);
     }
 
     // A signed, short-lived preflight exposes the actual upstream handshake
@@ -431,7 +464,8 @@ export default {
     if (url.pathname === '/hope/stt/probe'){
       if(request.method!=='POST')return corsJsonResponse({error:'Method not allowed'},405,origin,request);
       if(!env.DEEPGRAM_API_KEY)return corsJsonResponse({ok:false,code:'no_deepgram_key',error:'Deepgram speech is not configured.'},503,origin,request);
-      if(!env.HOPE_STT_TOKEN||!(await hopeSpeechTicketValid(url.searchParams.get('ticket'),env.HOPE_STT_TOKEN,origin)))return corsJsonResponse({ok:false,code:'invalid_ticket',error:'Speech check expired. Restart the microphone.'},401,origin,request);
+      const key = await speechTicketRateKey(request, env, origin, url.searchParams.get('ticket'));
+      if(!key)return corsJsonResponse({ok:false,code:'invalid_ticket',error:'Speech check expired. Restart the microphone.'},401,origin,request);
       try{
         const upstream=await fetch('https://api.deepgram.com/v2/listen?model=flux-general-en&eot_threshold=0.65&eot_timeout_ms=1600&tag=aimm-hope',{
           headers:{Upgrade:'websocket',Authorization:'Token '+String(env.DEEPGRAM_API_KEY).trim()}
@@ -450,11 +484,11 @@ export default {
     if (url.pathname === '/hope/stt/stream'){
       if(request.method!=='GET'||(request.headers.get('Upgrade')||'').toLowerCase()!=='websocket')return corsJsonResponse({ error:'WebSocket upgrade required',code:'upgrade_required' },426,origin,request);
       if(!env.DEEPGRAM_API_KEY)return corsJsonResponse({ error:'Deepgram speech is not configured',code:'no_deepgram_key' },503,origin,request);
-      if(!env.HOPE_STT_TOKEN)return corsJsonResponse({ error:'Hope speech access is not configured',code:'no_stt_auth' },503,origin,request);
-      if(!(await hopeSpeechTicketValid(url.searchParams.get('ticket'),env.HOPE_STT_TOKEN,origin)))return corsJsonResponse({ error:'Speech connection ticket is invalid or expired. Restart the microphone.',code:'invalid_ticket' },401,origin,request);
+      if(!env.HOPE_STT_TOKEN&&!env.HOPE_INTERNAL_TOKEN)return corsJsonResponse({ error:'Hope speech access is not configured',code:'no_stt_auth' },503,origin,request);
+      const key = await speechTicketRateKey(request, env, origin, url.searchParams.get('ticket'));
+      if(!key)return corsJsonResponse({ error:'Speech connection ticket is invalid or expired. Restart the microphone.',code:'invalid_ticket' },401,origin,request);
       if(!env.HOPE_STT_LIMIT)return corsJsonResponse({ error:'Hope speech rate limit is not configured',code:'no_rate_limit' },503,origin,request);
-      const ip=request.headers.get('CF-Connecting-IP')||'unknown';
-      const {success}=await env.HOPE_STT_LIMIT.limit({key:ip});
+      const {success}=await env.HOPE_STT_LIMIT.limit({key});
       if(!success)return corsJsonResponse({ error:'Hope voice is being used too quickly. Wait a minute and try again.',code:'rate_limited' },429,origin,request);
       try{
         const upstream=await fetch('https://api.deepgram.com/v2/listen?model=flux-general-en&eot_threshold=0.65&eot_timeout_ms=1600&tag=aimm-hope',{
@@ -490,17 +524,11 @@ export default {
     // optional usage-based voice mode. Audio is never written to KV or R2.
     if (url.pathname === '/hope/stt'){
       if (request.method !== 'POST') return corsJsonResponse({ error: 'Method not allowed' }, 405, origin, request);
-      if (!env.HOPE_STT_TOKEN) return corsJsonResponse({ error: 'Hope speech access is not configured', code: 'no_stt_auth' }, 503, origin, request);
-      const supplied = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
-      const expected = String(env.HOPE_STT_TOKEN);
-      let mismatch = supplied.length ^ expected.length;
-      const compareLength = Math.max(supplied.length, expected.length);
-      for (let i = 0; i < compareLength; i++) mismatch |= (supplied.charCodeAt(i) || 0) ^ (expected.charCodeAt(i) || 0);
-      if (!supplied || mismatch !== 0) return corsJsonResponse({ error: 'Hope speech access token is missing or invalid', code: 'invalid_stt_auth' }, 401, origin, request);
+      const auth = hopeAuth(request, env, origin);
+      if (auth instanceof Response) return auth;
       if (!env.AI) return corsJsonResponse({ error: 'Workers AI binding is not configured', code: 'no_ai_binding' }, 501, origin, request);
       if (!env.HOPE_STT_LIMIT) return corsJsonResponse({ error: 'Hope transcription rate limit is not configured', code: 'no_rate_limit' }, 503, origin, request);
-      const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
-      const { success } = await env.HOPE_STT_LIMIT.limit({ key: ip });
+      const { success } = await env.HOPE_STT_LIMIT.limit({ key: auth.key });
       if (!success) return corsJsonResponse({ error: 'Hope voice is being used too quickly. Wait a minute and try again.', code: 'rate_limited' }, 429, origin, request);
       const contentType = String(request.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase();
       if (contentType !== 'audio/wav' && contentType !== 'audio/x-wav') {
@@ -568,22 +596,11 @@ export default {
     // route. The key remains a Worker secret; model responses are not stored.
     if (url.pathname === '/hope/luna'){
       if(request.method!=='POST')return corsJsonResponse({error:'Method not allowed'},405,origin,request);
-      if(!env.HOPE_STT_TOKEN&&!env.HOPE_INTERNAL_TOKEN)return corsJsonResponse({error:'Hope speech access is not configured',code:'no_stt_auth'},503,origin,request);
-      const supplied=(request.headers.get('Authorization')||'').replace(/^Bearer\s+/i,'');
-      const matches=expected=>{
-        expected=String(expected||'');
-        let mismatch=supplied.length^expected.length;
-        for(let i=0;i<Math.max(supplied.length,expected.length);i++)mismatch|=(supplied.charCodeAt(i)||0)^(expected.charCodeAt(i)||0);
-        return !!expected&&mismatch===0;
-      };
-      const speechAuth=matches(env.HOPE_STT_TOKEN);
-      const internalMatch=matches(env.HOPE_INTERNAL_TOKEN);
-      const internalAuth=!speechAuth&&internalMatch;
-      if(!supplied||(!speechAuth&&!internalAuth))return corsJsonResponse({error:'Hope speech access token is missing or invalid',code:'invalid_stt_auth'},401,origin,request);
+      const auth = hopeAuth(request, env, origin);
+      if (auth instanceof Response) return auth;
       if(!env.OPENAI_API_KEY)return corsJsonResponse({error:'GPT-6 Luna is not configured on the AIMM Worker',code:'no_openai_key'},503,origin,request);
       if(!env.HOPE_STT_LIMIT)return corsJsonResponse({error:'Hope speech rate limit is not configured',code:'no_rate_limit'},503,origin,request);
-      const ip=request.headers.get('CF-Connecting-IP')||'unknown';
-      const {success}=await env.HOPE_STT_LIMIT.limit({key:internalAuth?'internal':ip});
+      const {success}=await env.HOPE_STT_LIMIT.limit({key:auth.key});
       if(!success)return corsJsonResponse({error:'Hope voice is being used too quickly. Wait a minute and try again.',code:'rate_limited'},429,origin,request);
       let body;
       try{body=await readJson(request);}
@@ -592,9 +609,9 @@ export default {
         return corsJsonResponse({error:'Luna request is empty or too large',code:'luna_request_too_large'},413,origin,request);
       const safeBody={
         model:'gpt-6-luna',reasoning:{effort:'low'},input:body.input,
-        max_output_tokens:Math.max(64,Math.min(internalAuth?1000:1200,Number(body.max_output_tokens)||220)),
+        max_output_tokens:Math.max(64,Math.min(1200,Math.floor(Number(body.max_output_tokens)||220))),
         stream:true,store:false,
-        ...(!internalAuth&&Array.isArray(body.tools)&&body.tools.length?{tools:body.tools.slice(0,40),tool_choice:'auto'}:{})
+        ...(Array.isArray(body.tools)&&body.tools.length?{tools:body.tools.slice(0,40),tool_choice:'auto'}:{})
       };
       try{
         const upstream=await fetch('https://api.openai.com/v1/responses',{
@@ -615,15 +632,11 @@ export default {
     // /hope/ai — small, non-streaming Luna tasks for page features.
     if (url.pathname === '/hope/ai'){
       if(request.method!=='POST')return corsJsonResponse({error:'Method not allowed'},405,origin,request);
-      if(!env.HOPE_STT_TOKEN)return corsJsonResponse({error:'Hope speech access is not configured',code:'no_stt_auth'},503,origin,request);
-      const supplied=(request.headers.get('Authorization')||'').replace(/^Bearer\s+/i,'');
-      const expected=String(env.HOPE_STT_TOKEN);
-      let mismatch=supplied.length^expected.length;
-      for(let i=0;i<Math.max(supplied.length,expected.length);i++)mismatch|=(supplied.charCodeAt(i)||0)^(expected.charCodeAt(i)||0);
-      if(!supplied||mismatch!==0)return corsJsonResponse({error:'Hope speech access token is missing or invalid',code:'invalid_stt_auth'},401,origin,request);
+      const auth = hopeAuth(request, env, origin);
+      if (auth instanceof Response) return auth;
       if(!env.OPENAI_API_KEY)return corsJsonResponse({error:'GPT-6 Luna is not configured on the AIMM Worker',code:'no_openai_key'},503,origin,request);
       if(!env.HOPE_STT_LIMIT)return corsJsonResponse({error:'Hope speech rate limit is not configured',code:'no_rate_limit'},503,origin,request);
-      const {success}=await env.HOPE_STT_LIMIT.limit({key:request.headers.get('CF-Connecting-IP')||'unknown'});
+      const {success}=await env.HOPE_STT_LIMIT.limit({key:auth.key});
       if(!success)return corsJsonResponse({error:'Hope AI is being used too quickly. Wait a minute and try again.',code:'rate_limited'},429,origin,request);
       let body;
       try{body=await readJson(request);}catch(_){return corsJsonResponse({error:'Expected a JSON Luna request',code:'invalid_luna_request'},400,origin,request);}
@@ -649,18 +662,14 @@ export default {
 
     // /hope/web-search — one Luna web-search call for Luna's KB fallback.
     // OpenAI credentials stay in Worker Secrets; callers use the same
-    // short-lived Hope usage token and per-IP rate limit as /hope/luna.
+    // Hope bearer authentication and rate limit as /hope/luna.
     if (url.pathname === '/hope/web-search'){
       if(request.method!=='POST')return corsJsonResponse({error:'Method not allowed'},405,origin,request);
-      if(!env.HOPE_STT_TOKEN)return corsJsonResponse({error:'Hope speech access is not configured',code:'no_stt_auth'},503,origin,request);
-      const supplied=(request.headers.get('Authorization')||'').replace(/^Bearer\s+/i,'');
-      const expected=String(env.HOPE_STT_TOKEN);
-      let mismatch=supplied.length^expected.length;
-      for(let i=0;i<Math.max(supplied.length,expected.length);i++)mismatch|=(supplied.charCodeAt(i)||0)^(expected.charCodeAt(i)||0);
-      if(!supplied||mismatch!==0)return corsJsonResponse({error:'Hope speech access token is missing or invalid',code:'invalid_stt_auth'},401,origin,request);
+      const auth = hopeAuth(request, env, origin);
+      if (auth instanceof Response) return auth;
       if(!env.OPENAI_API_KEY)return corsJsonResponse({error:'GPT-6 Luna is not configured on the AIMM Worker',code:'no_openai_key'},503,origin,request);
       if(!env.HOPE_STT_LIMIT)return corsJsonResponse({error:'Hope web-search rate limit is not configured',code:'no_rate_limit'},503,origin,request);
-      const {success}=await env.HOPE_STT_LIMIT.limit({key:request.headers.get('CF-Connecting-IP')||'unknown'});
+      const {success}=await env.HOPE_STT_LIMIT.limit({key:auth.key});
       if(!success)return corsJsonResponse({error:'Hope web search is being used too quickly. Wait a minute and try again.',code:'rate_limited'},429,origin,request);
       let body;
       try{body=await readJson(request);}catch(_){return corsJsonResponse({error:'Expected a JSON web-search request',code:'invalid_web_search_request'},400,origin,request);}
@@ -679,32 +688,21 @@ export default {
       }catch(_){return corsJsonResponse({error:'Could not reach Luna web search',code:'web_search_unavailable'},502,origin,request);}
     }
 
-    // /hope/tts — private Flash speech endpoint for the optional Usage route.
-    // /hope/read-aloud — one-click typed-chat read-back; allowed origins,
-    // per-IP rate limit and a 2,400-character cap bound use of the TTS-only key
-    // without requiring the separate microphone/Usage access token.
+    // Hope speech synthesis for spoken replies and typed-chat read-aloud.
     if (url.pathname === '/hope/tts' || url.pathname === '/hope/read-aloud'){
       if (request.method !== 'POST') return corsJsonResponse({ error: 'Method not allowed' }, 405, origin, request);
-      if (url.pathname === '/hope/tts'){
-        if (!env.HOPE_STT_TOKEN) return corsJsonResponse({ error: 'Hope speech access is not configured', code: 'no_stt_auth' }, 503, origin, request);
-        const supplied = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
-        const expected = String(env.HOPE_STT_TOKEN);
-        let mismatch = supplied.length ^ expected.length;
-        const compareLength = Math.max(supplied.length, expected.length);
-        for (let i = 0; i < compareLength; i++) mismatch |= (supplied.charCodeAt(i) || 0) ^ (expected.charCodeAt(i) || 0);
-        if (!supplied || mismatch !== 0) return corsJsonResponse({ error: 'Hope speech access token is missing or invalid', code: 'invalid_stt_auth' }, 401, origin, request);
-      }
+      const auth = hopeAuth(request, env, origin);
+      if (auth instanceof Response) return auth;
       if (!env.HOPE_USAGE_TTS_API_KEY) return corsJsonResponse({ error: 'Hope usage speech is not configured', code: 'no_tts_key' }, 503, origin, request);
       if (!env.HOPE_STT_LIMIT) return corsJsonResponse({ error: 'Hope speech rate limit is not configured', code: 'no_rate_limit' }, 503, origin, request);
-      const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
-      const { success } = await env.HOPE_STT_LIMIT.limit({ key: ip });
+      const { success } = await env.HOPE_STT_LIMIT.limit({ key: auth.key });
       if (!success) return corsJsonResponse({ error: 'Hope voice is being used too quickly. Wait a minute and try again.', code: 'rate_limited' }, 429, origin, request);
       const declaredBytes = Number(request.headers.get('Content-Length'));
       if (Number.isFinite(declaredBytes) && declaredBytes > 15000) return corsJsonResponse({ error: 'Speech text is too large', code: 'text_too_large' }, 413, origin, request);
       let body;
       try { body = await readJson(request); }
       catch(_){ return corsJsonResponse({ error: 'Expected JSON speech text', code: 'invalid_tts_request' }, 400, origin, request); }
-      const text = typeof body.text === 'string' ? body.text.trim() : '';
+      const text = typeof body?.text === 'string' ? body.text.trim() : '';
       if (!text) return corsJsonResponse({ error: 'Speech text is required', code: 'empty_tts_text' }, 400, origin, request);
       if (text.length > 2400) return corsJsonResponse({ error: 'Speech text exceeds the 2400-character limit', code: 'text_too_large' }, 413, origin, request);
       try {
