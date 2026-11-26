@@ -39,7 +39,7 @@ test('proxy accepts either token, rejects wrong tokens, and caps Luna chat', asy
   } finally { globalThis.fetch = original; }
   assert.deepEqual(keys, ['192.0.2.1', 'internal']);
   for (const payload of payloads) {
-    assert.equal(payload.tools.length, 40);
+    assert.equal(payload.tools.length, 41);
     assert.deepEqual(payload.tools[0], { type: 'web_search' });
     assert.equal(payload.tool_choice, 'auto');
     assert.equal(payload.max_output_tokens, 1200);
@@ -225,8 +225,8 @@ test('site validates each Hope request before forwarding', async () => {
     globalThis.fetch = async () => { forwarded = true; };
     const invalid = [
       ['/luna', { input: [{}] }, 400],
-      ['/luna', { ...chatBody, tools: Array(41).fill(chatBody.tools[0]) }, 400],
-      ['/luna', { input: [{ role: 'user', content: 'é'.repeat(55_000) }] }, 413],
+      ['/luna', { ...chatBody, tools: Array(129).fill(chatBody.tools[0]) }, 400],
+      ['/luna', { input: [{ role: 'user', content: 'é'.repeat(200_000) }] }, 413],
       ['/ai', { system: 'Be brief', user: {} }, 400],
       ['/web-search', { query: 'x'.repeat(1001) }, 400],
       ['/tts', { text: '' }, 400],

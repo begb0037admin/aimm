@@ -1,3 +1,5 @@
+const LUNA_MAX_TOOLS = 128;
+const LUNA_MAX_REQUEST_BYTES = 400_000;
 const VENDOR_SOURCES = [
   { id: 'fabfilter', url: 'https://www.fabfilter.com/download', matches: ['fabfilter'], parser: 'fabfilter' },
   { id: 'arturia', url: 'https://www.arturia.com/support/downloads-manuals/product/', matches: ['arturia'], parser: 'arturia-product' },
@@ -633,9 +635,9 @@ const HOPE_ROUTES = new Map([
   ['/api/hope-explain', { path: '/hope/luna', maxBytes: 59_999, explain: true,
     validate: body => hopeInput(body, item => hopeObject(item) &&
       ['system', 'user'].includes(item.role) && typeof item.content === 'string') }],
-  ['/api/hope/luna', { path: '/hope/luna', maxBytes: 100_000,
+  ['/api/hope/luna', { path: '/hope/luna', maxBytes: LUNA_MAX_REQUEST_BYTES,
     validate: body => hopeInput(body, hopeLunaInput) && (body.tools === undefined ||
-      (Array.isArray(body.tools) && body.tools.length <= 40 && body.tools.every(tool => hopeObject(tool) && hopeText(tool.type)))) }],
+      (Array.isArray(body.tools) && body.tools.length <= LUNA_MAX_TOOLS && body.tools.every(tool => hopeObject(tool) && hopeText(tool.type)))) }],
   ['/api/hope/ai', { path: '/hope/ai', maxBytes: 100_000,
     validate: body => typeof body.system === 'string' && (hopeText(body.user) ||
       (Array.isArray(body.user) && body.user.length > 0 && body.user.every(part => hopeObject(part) &&

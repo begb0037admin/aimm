@@ -1,3 +1,5 @@
+const LUNA_MAX_TOOLS = 128;
+const LUNA_MAX_REQUEST_BYTES = 400_000;
 // AIMM key relay — Cloudflare Worker
 //
 // Holds the real OpenAI + ElevenLabs API keys as Worker secrets and
@@ -728,13 +730,15 @@ export default {
       let body;
       try{body=await readJson(request);}
       catch(_){return corsJsonResponse({error:'Expected a JSON Luna request',code:'invalid_luna_request'},400,origin,request);}
-      if(!body||!Array.isArray(body.input)||!body.input.length||body.input.length>24||JSON.stringify(body).length>100000)
+      if(!body||!Array.isArray(body.input)||!body.input.length||body.input.length>24||new TextEncoder().encode(JSON.stringify(body)).length>LUNA_MAX_REQUEST_BYTES)
         return corsJsonResponse({error:'Luna request is empty or too large',code:'luna_request_too_large'},413,origin,request);
+      if(Array.isArray(body.tools)&&body.tools.length>LUNA_MAX_TOOLS)
+        return corsJsonResponse({error:'Luna request exceeds the 128 tool limit',code:'luna_too_many_tools'},400,origin,request);
       const safeBody={
         model:'gpt-6-luna',reasoning:{effort:'low'},input:body.input,
         max_output_tokens:Math.max(64,Math.min(1200,Math.floor(Number(body.max_output_tokens)||220))),
         stream:true,store:false,
-        ...(Array.isArray(body.tools)&&body.tools.length?{tools:body.tools.slice(0,40),tool_choice:'auto'}:{})
+        ...(Array.isArray(body.tools)&&body.tools.length?{tools:body.tools,tool_choice:'auto'}:{})
       };
       try{
         const upstream=await fetch('https://api.openai.com/v1/responses',{

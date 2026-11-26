@@ -16,7 +16,7 @@ test('undo tool schema and walkthrough are present in each catalogue',()=>{
     assert.ok(tool);
     assert.deepEqual(tool.parameters,{type:'object',properties:{id:{type:'string',description:'Optional Fix Queue id such as "#01". Omit to reopen the most recently marked-done fix.'}},required:[]});
   }
-  assert.equal((html.match(/UNDO: When Kev says 'undo that'/g)||[]).length,2);
+  assert.equal((html.match(/UNDO: When Kev says 'undo that'/g)||[]).length,3);
   assert.match(html,/remove_plugin_from_bus, or use clear_plugin_settings[\s\S]*?call unmark_fix_applied/);
   assert.match(html,/Never undo without Kev asking/);
 });
