@@ -213,3 +213,61 @@ test('deleting a dashboard video removes its vector chunks and index entry',asyn
   assert.equal(data.has('kb-vec-manifest:'+sampleId),false);
   assert.deepEqual(JSON.parse(data.get('yt-user:index')),[]);
 });
+
+test('channel search resolves handles, URLs and exact names and caps continuation results at 40',async()=>{
+  const {request,env}=setup();
+  delete env.APIFY_TOKEN;
+  delete env.AIMM_KV;
+  const channelId='UC'+'A'.repeat(22);
+  const row=index=>({richItemRenderer:{content:{videoRenderer:{
+    videoId:'channel'+String(index).padStart(4,'0'),title:{runs:[{text:'Lesson '+index}]},lengthText:{simpleText:'8:30'}
+  }}}});
+  const initial={
+    metadata:{channelMetadataRenderer:{title:'Mix Studio'}},
+    contents:{twoColumnBrowseResultsRenderer:{tabs:[{tabRenderer:{selected:true,content:{richGridRenderer:{
+      contents:[...Array.from({length:30},(_,i)=>row(i)),{continuationItemRenderer:{continuationEndpoint:{continuationCommand:{token:'more'}}}}]
+    }}}}]}}
+  };
+  const calls=[];
+  const original=globalThis.fetch;
+  globalThis.fetch=async (url,options)=>{
+    const {host,pathname}=new URL(url);
+    calls.push([host,pathname]);
+    if(pathname==='/youtubei/v1/search'){
+      const {query,params}=JSON.parse(options.body);
+      assert.equal(params,'EgIQAg%3D%3D');
+      const match={channelRenderer:{channelId,title:{simpleText:'Mix Studio'}}};
+      return Response.json({contents:{twoColumnSearchResultsRenderer:{primaryContents:{sectionListRenderer:{
+        contents:[{itemSectionRenderer:{contents:query==='Ambiguous Studio'?
+          [{channelRenderer:{channelId,title:{simpleText:query}}},{channelRenderer:{channelId:'UC'+'B'.repeat(22),title:{simpleText:query}}}]:[match]}}]
+      }}}}});
+    }
+    if(pathname==='/youtubei/v1/browse'){
+      assert.equal(JSON.parse(options.body).continuation,'more');
+      return Response.json({onResponseReceivedActions:[{appendContinuationItemsAction:{continuationItems:
+        Array.from({length:22},(_,i)=>row(i+29))
+      }}]});
+    }
+    if(pathname==='/@missing/videos')return new Response('',{status:404});
+    assert.ok(['/\x40mixstudio/videos','/channel/'+channelId+'/videos'].includes(pathname),pathname);
+    return new Response('<script>var ytInitialData = '+JSON.stringify(initial)+';</script>');
+  };
+  try{
+    for(const query of ['@mixstudio','https://m.youtube.com/@mixstudio/about?si=share','mix studio']){
+      const response=await request('/kb/search-youtube','POST',{query,channel:true});
+      assert.equal(response.status,200,query);
+      const {channel,videos}=await response.json();
+      assert.equal(channel,'Mix Studio');
+      assert.equal(videos.length,40);
+      assert.equal(new Set(videos.map(video=>video.video_id)).size,40);
+      assert.deepEqual(videos.at(-1),{video_id:'channel0039',title:'Lesson 39',channel,duration:'8:30',url:'https://www.youtube.com/watch?v=channel0039'});
+    }
+    for(const query of ['@missing','Not the exact name','Ambiguous Studio','https://example.com/@mixstudio']){
+      const response=await request('/kb/search-youtube','POST',{query,channel:true});
+      assert.equal(response.status,404,query);
+      assert.match((await response.json()).error,/Could not resolve YouTube channel/);
+    }
+    assert.ok(calls.every(([host])=>host==='www.youtube.com'));
+    assert.equal(calls.filter(([,path])=>path==='/youtubei/v1/browse').length,3);
+  }finally{globalThis.fetch=original;}
+});

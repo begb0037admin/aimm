@@ -207,6 +207,85 @@ function youtubeVideoId(value){
   return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : null;
 }
 
+function youtubeText(value){
+  return value?.simpleText || value?.runs?.map(run=>run.text).join('') || '';
+}
+
+async function youtubeInnertube(method,body){
+  const response = await fetch('https://www.youtube.com/youtubei/v1/'+method+'?prettyPrint=false',{
+    method:'POST',headers:{'Content-Type':'application/json'},signal:AbortSignal.timeout(6000),
+    body:JSON.stringify({context:{client:{clientName:'WEB',clientVersion:'2.20250101.00.00',hl:'en',gl:'GB'}},...body})
+  });
+  if (!response.ok) throw new Error('YouTube '+method+' failed');
+  return response.json();
+}
+
+async function youtubeSearchResults(body){
+  const payload = await youtubeInnertube('search',body);
+  const sections = payload?.contents?.twoColumnSearchResultsRenderer?.primaryContents?.sectionListRenderer?.contents || [];
+  return sections.flatMap(section=>section?.itemSectionRenderer?.contents || []);
+}
+
+function youtubeChannelPath(input){
+  if (/^@[^/\s?#]+$/u.test(input)) return '/'+encodeURIComponent(input).replace(/^%40/,'@');
+  if (/^UC[A-Za-z0-9_-]{22}$/.test(input)) return '/channel/'+input;
+  const url = new URL(/^https?:\/\//i.test(input) ? input : 'https://'+input);
+  if (!['youtube.com','www.youtube.com','m.youtube.com','music.youtube.com'].includes(url.hostname)) return '';
+  return url.pathname.match(/^\/(?:@[^/]+|(?:channel|c|user)\/[^/]+)(?=\/|$)/i)?.[0] || '';
+}
+
+function youtubeChannelVideo(item,channel){
+  const video = item?.richItemRenderer?.content?.videoRenderer || item?.gridVideoRenderer;
+  if (!video || !/^[A-Za-z0-9_-]{11}$/.test(video.videoId)) return null;
+  return {video_id:video.videoId,title:youtubeText(video.title)||'YouTube video',channel,duration:youtubeText(video.lengthText)||null,
+    url:'https://www.youtube.com/watch?v='+video.videoId};
+}
+
+async function youtubeChannelVideos(query){
+  let path;
+  try { path = youtubeChannelPath(query); } catch (_) {}
+  if (!path && !/^@|^https?:|(?:^|\.)youtube\.com\//i.test(query)){
+    const results = await youtubeSearchResults({query,params:'EgIQAg%3D%3D'});
+    const ids = new Set(results.map(result=>result?.channelRenderer).filter(channel=>
+      /^UC[A-Za-z0-9_-]{22}$/.test(channel?.channelId) &&
+      youtubeText(channel.title).normalize('NFKC').toLowerCase()===query.normalize('NFKC').toLowerCase()
+    ).map(channel=>channel.channelId));
+    if (ids.size === 1) path = '/channel/'+[...ids][0];
+  }
+  if (!path) return null;
+  const response = await fetch('https://www.youtube.com'+path+'/videos?hl=en&gl=GB',{
+    headers:{'Accept-Language':'en-GB,en;q=0.9'},signal:AbortSignal.timeout(6000)
+  });
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error('YouTube channel page failed');
+  const html = await response.text();
+  const raw = html.match(/(?:var ytInitialData\s*=|window\["ytInitialData"\]\s*=)\s*(\{.*?\});?\s*<\/script>/s)?.[1];
+  if (!raw) throw new Error('YouTube channel data was unavailable');
+  const payload = JSON.parse(raw);
+  const channel = payload?.metadata?.channelMetadataRenderer?.title;
+  if (!channel) return null;
+  const tabs = payload?.contents?.twoColumnBrowseResultsRenderer?.tabs || [];
+  const selected = tabs.find(entry=>entry?.tabRenderer?.selected)?.tabRenderer?.content;
+  let items = selected?.richGridRenderer?.contents ||
+    selected?.sectionListRenderer?.contents?.flatMap(section=>section?.itemSectionRenderer?.contents?.flatMap(item=>item?.gridRenderer?.items || []) || []) || [];
+  const videos = new Map();
+  for (let page=0;page<2;page++){
+    for (const item of items){
+      const video = youtubeChannelVideo(item,channel);
+      if (video) videos.set(video.video_id,video);
+      if (videos.size===40) break;
+    }
+    const continuation = items.find(item=>item?.continuationItemRenderer)?.continuationItemRenderer?.continuationEndpoint?.continuationCommand?.token;
+    if (videos.size===40 || !continuation || page===1) break;
+    try {
+      const next = await youtubeInnertube('browse',{continuation});
+      items = (next.onResponseReceivedActions || next.onResponseReceivedEndpoints || [])
+        .flatMap(action=>action.appendContinuationItemsAction?.continuationItems || []);
+    } catch (_) { break; }
+  }
+  return {channel,videos:[...videos.values()]};
+}
+
 function youtubeChunks(segments){
   const chunks = [], words = [];
   for (const segment of segments){
@@ -776,35 +855,34 @@ export default {
     }
     if (url.pathname === '/kb/search-youtube'){
       if (request.method !== 'POST') return corsJsonResponse({ error:'Method not allowed' },405,origin,request);
-      if (!env.APIFY_TOKEN || !env.AIMM_KV) return corsJsonResponse({ error:'Video search is unavailable right now.' },503,origin,request);
       if (Number(request.headers.get('content-length') || 0) > 2048) return corsJsonResponse({ error:'Request is too long' },413,origin,request);
       let body;
       try { body = await request.text(); if (body.length > 2048) throw new Error(); body = JSON.parse(body); }
       catch (_) { return corsJsonResponse({ error:'Invalid request' },400,origin,request); }
       const query = typeof body?.query === 'string' ? body.query.trim().slice(0,200) : '';
       if (!query) return corsJsonResponse({ error:'Enter a video topic.' },400,origin,request);
+      if (body.channel === true){
+        try {
+          const channel = await youtubeChannelVideos(query);
+          if (channel) return corsJsonResponse({query,...channel},200,origin,request);
+          return corsJsonResponse({error:'Could not resolve YouTube channel "'+query+'". Try its exact @handle or channel URL.'},404,origin,request);
+        } catch (_) {
+          return corsJsonResponse({error:'Could not load YouTube channel "'+query+'". Try again in a moment.'},502,origin,request);
+        }
+      }
+      if (!env.APIFY_TOKEN || !env.AIMM_KV) return corsJsonResponse({ error:'Video search is unavailable right now.' },503,origin,request);
       let items;
-      const innertubeController = new AbortController();
-      const innertubeTimer = setTimeout(()=>innertubeController.abort(),6000);
       try {
-        const upstream = await fetch('https://www.youtube.com/youtubei/v1/search?prettyPrint=false',{
-          method:'POST',headers:{'Content-Type':'application/json'},signal:innertubeController.signal,
-          body:JSON.stringify({context:{client:{clientName:'WEB',clientVersion:'2.20250101.00.00',hl:'en',gl:'GB'}},query})
-        });
-        if (!upstream.ok) throw new Error('Innertube search failed');
-        const payload = await upstream.json();
-        const sections = payload?.contents?.twoColumnSearchResultsRenderer?.primaryContents?.sectionListRenderer?.contents || [];
-        items = sections.flatMap(section=>section?.itemSectionRenderer?.contents || [])
+        items = (await youtubeSearchResults({query}))
           .map(entry=>entry?.videoRenderer).filter(video=>video && /^[A-Za-z0-9_-]{11}$/.test(video.videoId)).map(video=>({
             id:video.videoId,
-            title:video.title?.runs?.map(run=>run.text).join('') || video.title?.simpleText,
-            channel:video.ownerText?.runs?.map(run=>run.text).join('') || video.ownerText?.simpleText,
-            duration:video.lengthText?.simpleText || video.lengthText?.runs?.map(run=>run.text).join('') || null,
-            views:Number((video.viewCountText?.simpleText || video.viewCountText?.runs?.map(run=>run.text).join('') || '').match(/[\d,]+/)?.[0].replace(/,/g,'')) || 0,
-            description:video.descriptionSnippet?.runs?.map(run=>run.text).join('') || video.descriptionSnippet?.simpleText || ''
+            title:youtubeText(video.title),
+            channel:youtubeText(video.ownerText),
+            duration:youtubeText(video.lengthText) || null,
+            views:Number(youtubeText(video.viewCountText).match(/[\d,]+/)?.[0].replace(/,/g,'')) || 0,
+            description:youtubeText(video.descriptionSnippet)
           }));
       } catch (_) { items = []; }
-      finally { clearTimeout(innertubeTimer); }
       if (!items.length){
         const apifyController = new AbortController();
         const apifyTimer = setTimeout(()=>apifyController.abort(),25000);

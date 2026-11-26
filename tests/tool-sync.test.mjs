@@ -26,3 +26,18 @@ test('agent tool list and shared handler cover every non-retired page tool',()=>
   const list=sourceText.slice(sourceText.indexOf('const AIMM_NEW_AGENT_TOOLS ='),sourceText.indexOf(';',sourceText.indexOf('const AIMM_NEW_AGENT_TOOLS =')));
   for(const name of newToolNames)assert.ok(list.includes("'"+name+"'"),name+' missing from registration list');
 });
+test('Playlist tool definitions agree across the page and all exports',()=>{
+  const names=['open_library_channel','show_library_picks','add_videos_to_library','add_video_to_library'];
+  const docs=readFileSync(new URL('../docs/HOPE_PLUGIN_TOOLS.md',import.meta.url),'utf8');
+  for(const path of ['../elevenlabs-client-tools.json','../new-hope-tools.json']){
+    const catalog=JSON.parse(readFileSync(new URL(path,import.meta.url),'utf8'));
+    for(const name of names){
+      const {type,...tool}=catalog.find(tool=>tool.name===name);
+      assert.deepEqual(tool,pageTools.find(tool=>tool.name===name));
+      assert.ok(docs.includes('`'+name+'('),name);
+    }
+  }
+  const description=pageTools.find(tool=>tool.name==='add_video_to_library').description;
+  assert.match(description,/clear instruction to add it is enough/);
+  assert.match(description,/unprompted offer.*read_video_transcript and sharing the findings/);
+});

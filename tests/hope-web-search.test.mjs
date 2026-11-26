@@ -105,6 +105,7 @@ test('Luna returns streamed partial text when the response is incomplete', async
     HOPE_USAGE_VOICE: { turnId: 4, sessionTurns: 0, sessionLlmCost: 0, sessionLlmInputTokens: 0, sessionLlmOutputTokens: 0 },
     HOPE_USAGE_SYSTEM: 'test system', HOPE_INVENTORY_RULES: 'test inventory rules',
     HOPE_COVERAGE_RULES: 'test coverage rules', HOPE_CHAIN_BUILD_RULES: 'test chain rules',
+    HOPE_LIBRARY_RULES: 'test library rules',
     HOPE_KB_DECISION: { question:'What should I check?', usable:false, searched:false, results:[], garbled:false },
     hopeVagueVideoReference() { return false; },
     hopeWebSearchBeginTurn() {}, hopeShowGarbledRepeat() { return false; },

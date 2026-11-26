@@ -144,7 +144,7 @@
   },
   {
     "name": "add_video_to_library",
-    "description": "Add a YouTube video to Hope’s transcript library only after Kev has heard the findings from read_video_transcript and clearly says to add it. First call with confirmed false for the summary; call with confirmed true only after that clear instruction.",
+    "description": "Add a YouTube video to Hope’s transcript library. Kev’s clear instruction to add it is enough; ingestion reads the transcript. For your own unprompted offer, offer only after read_video_transcript and sharing the findings. First call with confirmed false for the summary; use confirmed true only after Kev clearly asks or agrees to add it.",
     "parameters": {
       "type": "object",
       "properties": {
@@ -159,6 +159,75 @@
       },
       "required": [
         "video_id",
+        "confirmed"
+      ]
+    }
+  },
+  {
+    "name": "open_library_channel",
+    "description": "Open a YouTube channel in the Library Playlist and return up to 40 videos with titles, durations and library status. Pass Kev’s topic as query when he asks for channel recommendations.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "description": "YouTube @handle, channel URL, or exact channel name."
+        },
+        "query": {
+          "type": "string",
+          "description": "Optional topic to filter the channel’s videos."
+        },
+        "switch_to_library": {
+          "type": "boolean",
+          "description": "Switch to the Library tab. Defaults to true when omitted."
+        }
+      },
+      "required": [
+        "channel"
+      ]
+    }
+  },
+  {
+    "name": "show_library_picks",
+    "description": "Show only the selected videos in the existing Library Playlist for Kev to preview. This does not add them.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "video_ids": {
+          "type": "array",
+          "description": "1 to 15 YouTube video IDs in the order they should appear.",
+          "items": {
+            "type": "string",
+            "description": "Exact 11-character YouTube video ID."
+          }
+        }
+      },
+      "required": [
+        "video_ids"
+      ]
+    }
+  },
+  {
+    "name": "add_videos_to_library",
+    "description": "Add up to 10 YouTube videos sequentially to the AIMM Library. Call with confirmed false first for the summary. Use confirmed true only after Kev clearly asks or agrees to add the videos. Returns a result for each video.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "video_ids": {
+          "type": "array",
+          "description": "1 to 10 YouTube video IDs to add to the AIMM Library.",
+          "items": {
+            "type": "string",
+            "description": "Exact 11-character YouTube video ID."
+          }
+        },
+        "confirmed": {
+          "type": "boolean",
+          "description": "False for the summary. True only after Kev clearly asks or agrees to add these videos."
+        }
+      },
+      "required": [
+        "video_ids",
         "confirmed"
       ]
     }

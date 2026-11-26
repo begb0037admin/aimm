@@ -4,8 +4,9 @@ import {test} from 'node:test';
 import vm from 'node:vm';
 
 const html=readFileSync(new URL('../standalone/assets/index.html',import.meta.url),'utf8');
-const source=html.slice(html.indexOf("      case 'add_video_to_library':{"),html.indexOf("      case 'inventory_navigate':{"));
+const source=html.slice(html.indexOf("      case 'add_video_to_library':{"),html.indexOf("      case 'open_library_channel':{"));
 const helper=html.slice(html.indexOf('const HOPE_VIDEO_TRANSCRIPTS=new Map();'),html.indexOf('async function handleToolCall(name,args){'));
+const metadata=html.slice(html.indexOf('async function libPlayerYouTubeMetadata('),html.indexOf('async function libPlayerSearchYouTube('));
 const readSource=html.slice(html.indexOf("      case 'read_video_transcript':{"),html.indexOf("      case 'add_video_to_library':{"));
 const runSource=`async function run(name,args){switch(name){${source}}}`;
 const id='AbCdEfGhI12';
@@ -15,8 +16,9 @@ const registration=JSON.parse(readFileSync(new URL('../new-hope-tools.json',impo
 function context(overrides={}){
   const ctx={YT_KB:{videos:[]},LIB_SEARCH:{videos:[{video_id:id,title:'Drum lesson',channel:'Studio'}],adding:new Set(),addError:''},
     ensureYtKbLoaded:async()=>{},loadYtKb:async()=>{},kbYtWorking:false,libPlayerAddToHope:async()=>{},
+    fetch:async()=>Response.json({title:'Drum lesson',author_name:'Studio'}),AbortSignal,
     document:{getElementById:()=>({textContent:''})},setTimeout,clearTimeout,...overrides};
-  vm.runInNewContext(runSource,ctx);
+  vm.runInNewContext(metadata+runSource,ctx);
   return ctx;
 }
 
@@ -47,10 +49,9 @@ test('read_video_transcript uses peek and selects relevant chunks without loadin
   assert.equal(calls[0].url,'https://worker.example/kb/peek-youtube');
   assert.deepEqual(JSON.parse(calls[0].options.body),{url:'https://www.youtube.com/watch?v='+id});
   for(const list of [tools,registration])assert.deepEqual(list.find(x=>x.name==='read_video_transcript').parameters.required,['video_id']);
-  assert.match(tools.find(x=>x.name==='add_video_to_library').description,/heard the findings/);
 });
 
-test('preview gives metadata without adding; confirmed call verifies refreshed KB',async()=>{
+test('a direct add request needs no transcript preview and verifies the refreshed KB',async()=>{
   let adds=0;
   const ctx=context({libPlayerAddToHope:async()=>{adds++;ctx.YT_KB.videos.push({video_id:id,title:'Drum lesson',added:true});}});
   const preview=await ctx.run('add_video_to_library',{video_id:id,confirmed:false});
@@ -79,9 +80,10 @@ test('failed add cannot claim success and invalid IDs are rejected',async()=>{
 
 test('server-side duplicate refreshes a stale in-page KB before success',async()=>{
   let refreshes=0;
-  const ctx=context({loadYtKb:async()=>{refreshes++;ctx.YT_KB.videos.push({video_id:id,title:'Drum lesson',channel:'Studio'});}});
+  const ctx=context({libPlayerAddToHope:async()=>({already:true}),loadYtKb:async()=>{refreshes++;ctx.YT_KB.videos.push({video_id:id,title:'Drum lesson',channel:'Studio'});}});
   const result=await ctx.run('add_video_to_library',{video_id:id,confirmed:true});
   assert.equal(result.ok,true);
+  assert.equal(result.already_in_library,true);
   assert.equal(refreshes,1);
   assert.ok(ctx.YT_KB.videos.some(video=>video.video_id===id));
 });
@@ -90,4 +92,35 @@ test('add_custom_plugin still has no confirmed parameter or gate',()=>{
   assert.ok(!tools.find(x=>x.name==='add_custom_plugin').parameters.properties.confirmed);
   const block=html.slice(html.indexOf("case 'add_custom_plugin':"),html.indexOf("case 'remove_custom_plugin':"));
   assert.doesNotMatch(block,/args\.confirmed/);
+});
+
+test('a confirmed batch processes videos in order, skips known IDs, and continues after a failure',async()=>{
+  const known='ZyXwVuTsR98', failed='QwErTyUiO12', last='TuVwXyZaB12';
+  const events=[];
+  const ctx=context({libPlayerAddToHope:async video_id=>{
+    events.push(['start',video_id]);
+    await Promise.resolve();
+    if(video_id===failed)ctx.LIB_SEARCH.addError='No captions';
+    else {
+      assert.equal(ctx.YT_KB.videos.some(video=>video.video_id===video_id),false);
+      ctx.YT_KB.videos.push({video_id,title:'Drum lesson'});
+    }
+    events.push(['end',video_id]);
+  }});
+  ctx.YT_KB.videos.push({video_id:known,title:'Already filed'});
+  const batch=html.slice(html.indexOf("case 'add_videos_to_library':"),html.indexOf("case 'inventory_navigate':"));
+  vm.runInNewContext(helper+`async function handleToolCall(name,args){switch(name){${batch} default:return run(name,args);}}`,ctx);
+  const call=async args=>JSON.parse(JSON.stringify(await ctx.handleToolCall('add_videos_to_library',args)));
+  assert.equal((await call({video_ids:Array(11).fill(id),confirmed:true})).ok,false);
+  assert.equal((await call({video_ids:[id],confirmed:'true'})).ok,false);
+  const video_ids=[failed,known,id,last];
+  const preview=await call({video_ids,confirmed:false});
+  assert.equal(preview.needs_confirmation,true);
+  assert.match(preview.summary,/Already filed \(already in library\)/);
+  assert.deepEqual(events,[]);
+  const result=await call({video_ids,confirmed:true});
+  assert.equal(result.ok,false);
+  assert.deepEqual(result.results.map(video=>video.status),['failed','already in library','added','added']);
+  assert.equal(result.results[0].reason,'No captions');
+  assert.deepEqual(events,[['start',failed],['end',failed],['start',id],['end',id],['start',last],['end',last]]);
 });

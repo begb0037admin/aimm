@@ -485,3 +485,58 @@ test('Enter searches text immediately and a bare link stays playable when metada
   assert.match(h.rows.innerHTML,/YouTube video/);
   assert.match(h.rows.innerHTML,/Not in library/);
 });
+
+test('Hope opens a channel, shows only the picks, and clears back to the full channel',async()=>{
+  const known=video('AbCdEfGhI12','Logic EQ','Studio');
+  const pick=video('ZyXwVuTsR98','Logic compressor','Studio');
+  const other=video('QwErTyUiO12','Weekly vlog','Studio');
+  const nodes={
+    libPlayerSearch:{value:'',focus(){}},libPlayerSearchClear:{hidden:true},
+    libPlayerChannelFilter:{value:'',setAttribute(){},removeAttribute(){}},libPlayerChannelField:{classList:{remove(){}}},
+    libPlayerRows:{innerHTML:''},libPlayerCount:{textContent:''}
+  };
+  const calls=[];
+  let missing=false;
+  const ctx=setup({
+    AIMM_PROXY_URL:'https://worker.example',YT_KB:{videos:[known]},ensureYtKbLoaded:async()=>{},
+    document:{getElementById:id=>nodes[id],removeEventListener(){}},
+    fetch:async(url,options)=>{
+      calls.push([url,JSON.parse(options.body)]);
+      return missing?Response.json({error:'Could not resolve YouTube channel.'},{status:404}):
+        Response.json({channel:'Studio',videos:[{...pick,duration:'12:30'},known,other]});
+    }
+  });
+  const validation=html.slice(html.indexOf('function hopeLibraryVideoIdsError('),html.indexOf('async function handleToolCall('));
+  const cases=html.slice(html.indexOf("case 'open_library_channel':"),html.indexOf("case 'add_videos_to_library':"));
+  vm.runInNewContext(validation+`async function handleToolCall(name,args){switch(name){
+    case 'switch_tab': switched = args.tab; return {ok:true}; ${cases}
+  }}`,ctx);
+  ctx.switched=null;
+  const run=async(name,args)=>JSON.parse(JSON.stringify(await ctx.handleToolCall(name,args)));
+  const ids=()=>[...nodes.libPlayerRows.innerHTML.matchAll(/data-video-id="([^"]+)"/g)].map(match=>match[1]);
+  const channel=await run('open_library_channel',{channel:'@studio',query:'Logic EQ'});
+  assert.equal(ctx.switched,'library');
+  assert.equal(nodes.libPlayerSearch.value,'@studio');
+  assert.deepEqual(calls,[['https://worker.example/kb/search-youtube',{query:'@studio',channel:true}]]);
+  assert.deepEqual(channel,{ok:true,channel:'Studio',videos:[
+    {video_id:known.video_id,title:known.title,duration:null,in_library:true},
+    {video_id:pick.video_id,title:pick.title,duration:'12:30',in_library:false}
+  ]});
+  assert.deepEqual(ids(),[known.video_id,pick.video_id]);
+  assert.match(nodes.libPlayerRows.innerHTML,/class="result-row".*On YouTube|On YouTube.*class="result-row"/);
+  assert.match(nodes.libPlayerRows.innerHTML,/class="rm">In library/);
+  assert.match(nodes.libPlayerRows.innerHTML,/class="rm">Not in library/);
+  assert.match(nodes.libPlayerRows.innerHTML,/class="add-hope".*Add to Hope/);
+  assert.equal((await run('show_library_picks',{video_ids:[]})).ok,false);
+  assert.deepEqual(await run('show_library_picks',{video_ids:[pick.video_id]}),{ok:true,count:1,video_ids:[pick.video_id]});
+  assert.deepEqual(ids(),[pick.video_id]);
+  assert.equal(nodes.libPlayerCount.textContent,'1');
+  assert.match(nodes.libPlayerRows.innerHTML,/class="result-row".*libPlayerPlayExternal/);
+  ctx.libPlayerSearchClear();
+  assert.deepEqual(ids(),[pick.video_id,known.video_id,other.video_id]);
+  missing=true;
+  ctx.switched=null;
+  assert.deepEqual(await run('open_library_channel',{channel:'Missing Channel',switch_to_library:false}),
+    {ok:false,error:'Could not resolve YouTube channel.'});
+  assert.equal(ctx.switched,null);
+});

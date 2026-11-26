@@ -1,0 +1,197 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Insight redesign v2 - Knowledge base (preview only)</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>
+*{box-sizing:border-box}body{margin:0;background:#000;color:#c4cad3;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:28px}
+.page{max-width:1400px;margin:0 auto}.lbl{margin:28px 0 12px;font:700 13px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#9aa0a6}
+@keyframes kbYtSweep{0%{margin-left:-50%}100%{margin-left:100%}}
+/* INSIGHT v2 (Jules). All rules scoped to #knowledge. Replaces the whole block at "#knowledge{--insight-ink..." through "#knowledge :focus-visible".
+   Unit: --u is 1px times the text-size setting, so calc(20*var(--u)) = 20px at 100%. Palette: section colour (--c), teal, neutrals only. */
+#knowledge{--u:calc(1px*var(--inv-text-scale,1));--ink:#c4cad3;--hi:#e5e7ea;--dim:#9aa0a6;--track:#2a2e35;--black:#0b0d10;--teal:#2dd4bf;--tools:#e8b45a;--over:#f97316;
+  --gutter:calc(12*var(--u));--rowx:calc(12*var(--u));--glyph:calc(18*var(--u));--cgap:calc(14*var(--u));--gap:calc(12*var(--u))}
+#knowledge button{font-family:inherit}
+#knowledge :focus{outline:0}
+#knowledge .section-head{margin-bottom:calc(24*var(--u))}
+#knowledge .section-head h2{font:500 calc(30*var(--u))/1.2 Inter,sans-serif;letter-spacing:-.035em;text-transform:none}
+#knowledge .section-head .blurb{font-size:calc(14*var(--u));color:var(--dim)}
+
+/* 1. SECTION HEAD (a plain heading, NOT a card: the cards are the categories, as in Plugins and MixBus) */
+#knowledge .insight-sec{margin:0 0 calc(40*var(--u))}   /* page level is neutral: no section colour. Colour lives on each category card (section 3). */
+#knowledge .sec-bar{display:flex;align-items:baseline;gap:var(--gap);width:100%;margin:0 0 calc(12*var(--u));padding:0;background:none;border:0;color:#f3f4f6;font:700 calc(22*var(--u))/1.25 Inter,sans-serif;text-align:left;cursor:default}
+#knowledge .sec-bar>span:first-child{flex:1}
+#knowledge .sec-read{font-size:calc(14*var(--u));font-weight:600;color:var(--dim);text-align:right}
+#knowledge .sec-fold{display:none}
+#knowledge .meter{height:4px;margin:0 0 calc(16*var(--u));background:var(--track)}
+#knowledge .meter i{display:block;width:var(--p,0%);height:100%;background:#e5e7ea}   /* neutral fill; warn and full turn yellow and orange */
+#knowledge .meter.warn i{background:var(--tools)}#knowledge .meter.full i{background:var(--over)}
+/* over-limit line (new element, rendered only when used >= cap) */
+#knowledge .budget-note{margin:0 0 calc(16*var(--u));padding:0;font:600 calc(15*var(--u))/1.5 Inter,sans-serif;color:var(--hi)}
+#knowledge .budget-note[hidden]{display:none}
+#knowledge .budget-note b{color:var(--over);font-weight:700}
+
+/* 2. TOOLBAR: sits on the page background (no card). One row, uses the width. [primary actions] [paste field, grows] [text actions, right]. Wraps cleanly. */
+#knowledge .kb-toolbar,#knowledge .hope-memory-meta{display:flex;align-items:center;flex-wrap:wrap;gap:var(--gap);margin:0 0 calc(16*var(--u));padding:0;background:transparent;border:0}
+#knowledge .kb-toolbar .btn,#knowledge .hope-memory-meta .btn,#knowledge .kb-yt .btn{min-height:calc(44*var(--u));padding:0 calc(18*var(--u));border:0;border-radius:10px;background:var(--track);color:#d5d8dc;font:700 calc(15*var(--u))/1.2 Inter,sans-serif;display:inline-flex;align-items:center;gap:calc(8*var(--u));cursor:pointer}
+#knowledge .kb-toolbar .btn.amber,#knowledge .hope-memory-meta .btn.purple,#knowledge .kb-yt .btn.amber{background:var(--teal);color:var(--black)}
+#knowledge .kb-toolbar .btn:hover,#knowledge .hope-memory-meta .btn:hover,#knowledge .kb-yt .btn:hover:not(:disabled){background:#fff;color:var(--black)}
+#knowledge .kb-toolbar .btn:focus-visible,#knowledge .hope-memory-meta .btn:focus-visible,#knowledge .kb-yt .btn:focus-visible{background:#fff;color:var(--black);box-shadow:inset 0 0 0 2px var(--black)}
+#knowledge .btn.txt,#knowledge .kb-toolbar .btn[onclick^="expandAll"],#knowledge .kb-toolbar .btn[onclick^="collapseAll"],#knowledge .hope-memory-meta .btn[onclick^="expandAll"],#knowledge .hope-memory-meta .btn[onclick^="collapseAll"],#knowledge .hope-memory-meta .btn[onclick^="clearAll"]{background:transparent;color:var(--dim);padding:0 calc(12*var(--u))}
+#knowledge .kb-toolbar .btn.txt:hover,#knowledge .hope-memory-meta .btn.txt:hover,#knowledge .btn.txt:hover{background:transparent;color:#fff}   /* text actions: ink brightens, no fill */
+#knowledge .kb-toolbar .btn.txt:focus-visible,#knowledge .btn.txt:focus-visible{background:transparent;color:#fff;box-shadow:inset 0 0 0 2px #fff}
+#knowledge .toolbar-end{margin-left:auto;padding-left:calc(16*var(--u));display:flex;align-items:center;gap:calc(4*var(--u))}
+#knowledge .kb-yt{display:flex;align-items:center;gap:var(--gap);flex:1 1 calc(340*var(--u));min-width:0;padding:0}
+#knowledge .kb-yt[hidden]{display:flex}
+#knowledge .kb-yt-in{flex:1 1 auto;min-width:0;min-height:calc(44*var(--u));padding:0 calc(16*var(--u));background:var(--track);border:0;border-radius:10px;color:var(--hi);font:calc(15*var(--u))/1.2 Inter,sans-serif}
+#knowledge .kb-yt-in::placeholder{color:var(--dim)}
+#knowledge .kb-yt-in:focus{box-shadow:inset 0 0 0 2px #fff}
+#knowledge .kb-yt-in[readonly]{opacity:.7}
+#knowledge .kb-yt .btn:disabled{background:var(--track);color:var(--dim);cursor:default}
+#knowledge .kb-yt-msg{flex:1 1 100%;margin:calc(-4*var(--u)) 0 calc(16*var(--u));font:calc(14*var(--u))/1.5 Inter,sans-serif;color:var(--ink)}
+#knowledge .kb-yt-msg[hidden]{display:none}#knowledge .kb-yt-msg b{color:var(--hi);font-weight:600}
+#knowledge .kb-yt-msg.is-warn{color:var(--tools)}#knowledge .kb-yt-msg.is-stop{color:var(--over)}
+#knowledge .kb-yt-progress{height:2px;margin:0 0 calc(16*var(--u));background:var(--track)}#knowledge .kb-yt-progress i{display:block;height:100%;width:50%;background:#e5e7ea;animation:kbYtSweep 1.4s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){#knowledge .kb-yt-progress i{animation:none}}
+#knowledge .kb-bytes-meter,#knowledge .hope-bytes-meter{display:none}
+#knowledge .hope-status{color:var(--dim);font-size:calc(14*var(--u));margin:0 0 calc(12*var(--u))}
+
+/* 3. CATEGORY CARDS. Each category is ONE outlined unit exactly like a Plugins sidebar card and a MixBus bus:
+   1px solid section colour, radius 12, #1a1d21, overflow hidden, solid section-colour bar (48px, 16px/700 black) with the fold glyph at the RIGHT,
+   rows inside on 8px 2px padding with 3px between rows, 12px between cards. The section itself has no border, so there are no double borders. */
+#knowledge .kb-list,#knowledge #hopeMemoryCategories{display:flex;flex-direction:column;gap:var(--gap);padding:0}
+#knowledge .hope-memory-wrap{margin:0}
+#knowledge .fact-cat-card{--c:var(--section-colour,#9aa0a6);margin:0;background:#1a1d21;border:1px solid var(--c);border-radius:12px;overflow:hidden}
+/* CATEGORY COLOURS. Set --section-colour per card, exactly as Plugins does with data-inv-section. Palette only: blue #36a8ed, yellow #e8b45a, purple #b970ff, pink #f472b6, orange #f97316. Teal is never a category colour (it means open/selected).
+   Neighbouring cards never share a colour (six categories, five colours, blue used twice). Selectors use the existing data-collapse-id, so no markup change is needed. */
+#knowledge .fact-cat-card[data-collapse-id="kbc-mixing"]{--section-colour:#36a8ed}
+#knowledge .fact-cat-card[data-collapse-id="kbc-producers"]{--section-colour:#f472b6}
+#knowledge .fact-cat-card[data-collapse-id="kbc-refs"]{--section-colour:#b970ff}
+#knowledge .fact-cat-card[data-collapse-id="kbc-mastering"]{--section-colour:#f97316}   /* Master = orange, as MixBus */
+#knowledge .fact-cat-card[data-collapse-id="kbc-vocals"]{--section-colour:#e8b45a}      /* Vocal = yellow, as MixBus */
+#knowledge .fact-cat-card[data-collapse-id="kbc-workflow"]{--section-colour:#36a8ed}
+/* Hope's memory category colours: NOT designed yet (on hold). */
+#knowledge .fact-cat-head{display:flex;align-items:center;gap:var(--gap);min-height:calc(48*var(--u));margin:0;padding:calc(8*var(--u)) var(--gap) calc(8*var(--u)) calc(14*var(--u));background:var(--c);border:0;border-radius:0;color:var(--black);font:700 calc(16*var(--u))/1.25 Inter,sans-serif;cursor:pointer}
+#knowledge .fact-cat-head>div{display:none}
+#knowledge .fact-cat-label{font:inherit;letter-spacing:0;text-transform:none;color:var(--black)}
+#knowledge .fact-cat-count{margin:0;color:var(--black);font:600 calc(15*var(--u))/1.3 Inter,sans-serif;font-variant-numeric:tabular-nums;opacity:.8}   /* count right beside the name */
+#knowledge .collapse-chev{order:3;margin-left:auto;flex:none;width:calc(22*var(--u));color:var(--black);font:500 calc(22*var(--u))/1 Inter,sans-serif;text-align:center;transform:none!important}
+#knowledge .fact-cat-head:hover{background:var(--c);color:var(--black)}   /* no hover change, same as Plugins and MixBus bars */
+#knowledge .fact-cat-head:focus-visible{outline:2px solid #fff;outline-offset:calc(-3*var(--u))}   /* MixBus bar focus */
+#knowledge .kb-cat-list,#knowledge .facts-list{min-height:0;padding:calc(8*var(--u)) calc(2*var(--u)) 0;gap:0}
+#knowledge .fact-cat-card.collapsed>.kb-cat-list,#knowledge .fact-cat-card.collapsed>.facts-list,#knowledge .fact-cat-card.collapsed>.insight-add,#knowledge .fact-cat-card.collapsed>.fact-add-row{display:none}
+#knowledge .insight-add,#knowledge .fact-add-mini{display:flex;align-items:center;gap:var(--cgap);width:calc(100% - 4*var(--u));min-height:calc(46*var(--u));margin:calc(3*var(--u)) calc(2*var(--u)) calc(8*var(--u));padding:0 var(--rowx);background:transparent;border:0;border-radius:10px;color:var(--ink);font:700 calc(15*var(--u))/1.3 Inter,sans-serif;text-align:left;cursor:pointer}
+#knowledge .insight-add::before,#knowledge .fact-add-mini::before{content:'+';flex:none;width:var(--glyph);text-align:center;color:var(--c);font:700 calc(22*var(--u))/1 Inter,sans-serif}
+#knowledge .insight-add:hover,#knowledge .fact-add-mini:hover{color:#fff}   /* add row: label brightens, no fill */
+#knowledge .insight-add:focus-visible,#knowledge .fact-add-mini:focus-visible{color:#fff;box-shadow:inset 0 0 0 2px #fff}
+#knowledge .fact-add-row{padding:0;display:block}
+
+/* 4. NOTE ROW */
+#knowledge .kb-card,#knowledge .fact-chip{margin-top:calc(3*var(--u));padding:calc(18*var(--u)) var(--rowx);background:transparent;border:0;border-radius:10px;color:var(--ink)}
+#knowledge .kb-card.active{border:0}
+/* NOTE ROW = ZONES SEPARATED BY SPACE (no boxes, no rules). Three layouts chosen by the width of the CARD (container query), so it follows the app column, not the window:
+   WIDE (card >= 1180px): grip | READING COLUMN (title, then the summary below) | CALM COLUMN (date/source, tags: dim, secondary) | ACTIONS | TICK, with 28-32px gutters between zones.
+   MEDIUM (760-1179px): grip | content (title, date/source, tags) | actions | tick.
+   NARROW (< 760px): grip | content | tick, actions drop under the content.
+   .kb-main uses display:contents so its children join the row grid without a markup change. */
+#knowledge .kb-card{container-type:inline-size}
+#knowledge .kb-card .kb-row1{display:grid;grid-template-columns:var(--glyph) minmax(0,1fr) auto calc(24*var(--u));column-gap:0;row-gap:0;margin:0;align-items:start}
+#knowledge .kb-card .kb-main{display:contents}
+#knowledge .kb-grip{grid-column:1;grid-row:1 / span 4;color:var(--dim);font-size:calc(19*var(--u));letter-spacing:0;cursor:grab}
+#knowledge .kb-title{grid-column:2;grid-row:1;padding-left:var(--cgap)}
+#knowledge .kb-meta{grid-column:2;grid-row:2;padding-left:var(--cgap)}
+#knowledge .kb-tags{grid-column:2;grid-row:3;padding-left:var(--cgap)}
+#knowledge .kb-summary-status{grid-column:2;grid-row:4;padding-left:var(--cgap)}
+#knowledge .kb-card .kb-actions{grid-column:3;grid-row:1;justify-self:end;margin:calc(-7*var(--u)) 0 0}   /* 36px buttons centred on the 22px title line */
+#knowledge .kb-state{grid-column:4;grid-row:1;padding-left:calc(20*var(--u))}
+#knowledge .kb-title{font:600 calc(16*var(--u))/1.4 Inter,sans-serif;color:var(--hi);white-space:normal;overflow:visible}
+#knowledge .kb-meta,#knowledge .kb-tags{margin:calc(3*var(--u)) 0 0;color:var(--dim);font-size:calc(14*var(--u));line-height:1.5;overflow-wrap:anywhere}
+#knowledge .kb-meta a{color:inherit;text-decoration:none}
+#knowledge .kb-state{display:flex;justify-content:flex-end;align-items:flex-start;text-align:right;margin-top:calc(-1*var(--u))}   /* just the tick or dash, level with the title */
+#knowledge .kb-active-toggle{display:block;min-width:calc(24*var(--u));height:calc(24*var(--u));padding:0;background:transparent;border:0;color:var(--hi);font-size:calc(20*var(--u));line-height:1;cursor:pointer}
+#knowledge .kb-active-toggle.on{background:transparent;border:0;color:var(--hi)}
+/* Per-note token or byte counts are NOT displayed anywhere (Kevin, 22 Nov 2026). Codex removes the .kb-counts element from the template; the header read-out ("3 of 5 active · 873 / 8000 bytes") is the only count shown. */
+#knowledge .kb-counts{display:none}
+/* actions: three tiers. View group (Summary, View/Hide) bold bright; edit group (Edit, Re-summarise); Delete dim, pushed to the far right */
+#knowledge .kb-card .kb-actions{display:flex;flex-wrap:wrap;align-items:center;gap:calc(2*var(--u)) calc(4*var(--u))}
+#knowledge .kb-card .kb-actions button{min-height:calc(36*var(--u));margin:0;padding:0 calc(14*var(--u));background:transparent;border:0;border-radius:8px;color:var(--ink);font:600 calc(14*var(--u))/1.3 Inter,sans-serif;cursor:pointer;text-decoration:none}
+#knowledge .kb-card .kb-actions button:nth-child(-n+2){color:var(--hi);font-weight:700;text-align:center}
+#knowledge .kb-card .kb-actions button:nth-child(1){min-width:calc(100*var(--u))}   /* Summary and Raw take the same width, so the calm column lines up on every row */
+#knowledge .kb-card .kb-actions button:nth-child(2){min-width:calc(68*var(--u))}   /* View and Hide likewise */
+#knowledge .kb-card .kb-actions button:last-of-type{color:var(--dim)}   /* Delete: last in the same row, same gap, dim ink */
+#knowledge .kb-card .kb-actions button:disabled{opacity:.55;cursor:default}
+#knowledge .kb-summary-status{font-size:calc(14*var(--u));color:var(--dim);margin-top:calc(6*var(--u))}
+
+/* BETWEEN-entry divider: 1px #2a2e35 across the full card width between every entry (a note with its open summary is one entry). Equal space above and below: each entry has 14px top and bottom padding. Not a box, not a highlight. Fact rows use the same rule. */
+#knowledge .kb-card+.kb-card,#knowledge .fact-chip+.fact-chip{margin:0 calc(-2*var(--u));padding-left:calc(var(--rowx) + 2*var(--u));padding-right:calc(var(--rowx) + 2*var(--u));border-top:1px solid var(--track);border-radius:0}
+
+/* NOTE ROW HOVER: the title brightens. No fill, no underline, no highlight, no glow, no tint anywhere in Insight. Text actions brighten to white on hover.
+   KEYBOARD focus only (:focus-visible, never on mouse click) shows a 2px white inner ring on the focused action, the one exception to "no rings" because focus must stay visible. */
+#knowledge .kb-card:hover .kb-title{color:#fff}
+#knowledge .kb-card.off:hover .kb-title{color:var(--ink)}
+#knowledge .kb-card .kb-actions button:hover:not(:disabled){background:transparent;color:#fff;box-shadow:none}
+#knowledge .kb-card .kb-actions button:focus-visible{background:transparent;color:#fff;box-shadow:inset 0 0 0 2px #fff}
+#knowledge .kb-card .kb-active-toggle:hover{color:#fff}
+#knowledge .kb-card .kb-active-toggle:focus-visible{box-shadow:inset 0 0 0 2px #fff;border-radius:6px}
+
+/* OPEN note: NO marker. No rule, no tint, no colour change. It simply shows its summary below a hairline, the View button reads Hide, and the Summary/Raw label says which text Hope receives. */
+#knowledge .kb-card.expanded{background:transparent;color:var(--ink)}
+#knowledge .kb-card.expanded .kb-body{display:block}
+#knowledge .kb-card .kb-body{display:none;margin:calc(18*var(--u)) calc(12*var(--u)) 0 calc(32*var(--u));padding:calc(20*var(--u)) 0 0;background:transparent;border:0;border-top:1px solid #23272d;border-radius:0;color:#d5d8dc;font:400 calc(15*var(--u))/1.65 Inter,sans-serif;white-space:pre-wrap;max-height:none;overflow:visible}   /* WITHIN-entry hairline: inset to the text column and a step dimmer (#23272d) than the between-entry line, so the summary split never reads as an entry boundary */
+#knowledge .kb-card .kb-body{padding-right:max(0px,calc(100% - 78ch))}   /* readable line length */
+
+/* INACTIVE */
+#knowledge .kb-card.off .kb-title{color:var(--dim);text-decoration:line-through;text-decoration-thickness:1px}
+#knowledge .kb-card.off :is(.kb-grip,.kb-meta,.kb-tags){opacity:.7}
+#knowledge .kb-card.off .kb-body{color:var(--dim)}
+
+/* 5. HOPE'S MEMORY: ON HOLD. Kevin 22 Nov 2026: memory is being rethought (small core memory + searchable archive, mostly hidden). No fact-row CSS is specified here. The shared patterns above (section card, bar, meter, budget-note, toolbar, category row, add row, focus) are what memory will reuse. */
+
+/* 6. DRAG, DROP, EMPTY */
+#knowledge .fact-chip.sortable-ghost,#knowledge .kb-card.sortable-ghost{opacity:.35;background:transparent;border:0}   /* no fill while dragging */
+#knowledge .fact-chip.sortable-drag,#knowledge .kb-card.sortable-drag{background:#1a1d21;color:var(--ink);border:0;box-shadow:0 8px 24px rgba(0,0,0,.55)}   /* lifted, as MixBus sortable-drag */
+#knowledge.kb-drag-over{outline:0}
+#knowledge.kb-drag-over::before{content:'Drop files to import. PDF, DOCX, TXT, MD or JSON';background:var(--track);color:#fff;border:0;box-shadow:none;padding:calc(20*var(--u)) calc(32*var(--u));border-radius:12px;font-size:calc(16*var(--u))}   /* neutral card, no teal flood */
+#knowledge .insight-empty{max-width:calc(78ch);margin:0;padding:calc(8*var(--u)) 0 calc(16*var(--u));font:calc(15*var(--u))/1.6 Inter,sans-serif;color:var(--dim)}   /* plain text, no dashed box. Used when a section has nothing yet. */
+#knowledge .insight-empty b{color:var(--hi);font-weight:600}
+/* Empty library: message left, Add note right (two zones), wraps when narrow */
+#knowledge .insight-empty-row{display:flex;align-items:center;justify-content:space-between;gap:var(--gap) calc(24*var(--u));flex-wrap:wrap;padding:calc(8*var(--u)) 0 calc(16*var(--u))}
+#knowledge .insight-empty-row .insight-empty{padding:0}
+#knowledge .insight-empty-row .kb-toolbar{margin:0}
+/* container queries last so they override the base rows above */
+@container (min-width:1180px){
+  #knowledge .kb-card .kb-row1{grid-template-columns:var(--glyph) minmax(0,1fr) minmax(calc(200*var(--u)),calc(300*var(--u))) auto calc(44*var(--u))}
+  #knowledge .kb-card .kb-meta{grid-column:3;grid-row:1;padding-left:calc(32*var(--u))}
+  #knowledge .kb-card .kb-tags{grid-column:3;grid-row:2;padding-left:calc(32*var(--u))}
+  #knowledge .kb-card .kb-actions{grid-column:4;padding-left:calc(32*var(--u))}
+  #knowledge .kb-card .kb-state{grid-column:5;justify-content:flex-end}
+  #knowledge .kb-card .kb-grip{grid-row:1 / span 3}
+  #knowledge .kb-meta,#knowledge .kb-tags{margin-top:0}
+  #knowledge .kb-tags{margin-top:calc(4*var(--u))}
+  #knowledge .kb-meta{line-height:calc(22*var(--u))}   /* date/source sits on the title line */
+}
+@container (max-width:759px){
+  #knowledge .kb-card .kb-row1{grid-template-columns:var(--glyph) minmax(0,1fr) calc(24*var(--u))}
+  #knowledge .kb-card .kb-actions{grid-column:2 / span 2;grid-row:5;justify-self:start;margin:calc(10*var(--u)) 0 0 calc(var(--cgap) - 14*var(--u))}
+  #knowledge .kb-card .kb-state{grid-column:3;padding-left:0}
+}
+
+/* preview-only: pinned hover and focus states */
+#knowledge .kb-toolbar .btn.is-hover,#knowledge .hope-memory-meta .btn.is-hover,#knowledge .kb-yt .btn.is-hover:not(:disabled){background:#fff;color:var(--black)}
+#knowledge .kb-toolbar .btn.is-focus,#knowledge .hope-memory-meta .btn.is-focus,#knowledge .kb-yt .btn.is-focus{background:#fff;color:var(--black);box-shadow:inset 0 0 0 2px var(--black)}
+#knowledge .kb-toolbar .btn.txt.is-hover,#knowledge .hope-memory-meta .btn.txt.is-hover,#knowledge .btn.txt.is-hover{background:transparent;color:#fff}   /* text actions: ink brightens, no fill */
+#knowledge .kb-toolbar .btn.txt.is-focus,#knowledge .btn.txt.is-focus{background:transparent;color:#fff;box-shadow:inset 0 0 0 2px #fff}
+#knowledge .fact-cat-head.is-hover{background:var(--c);color:var(--black)}   /* no hover change, same as Plugins and MixBus bars */
+#knowledge .fact-cat-head.is-focus{outline:2px solid #fff;outline-offset:calc(-3*var(--u))}   /* MixBus bar focus */
+#knowledge .insight-add.is-hover,#knowledge .fact-add-mini.is-hover{color:#fff}   /* add row: label brightens, no fill */
+#knowledge .insight-add.is-focus,#knowledge .fact-add-mini.is-focus{color:#fff;box-shadow:inset 0 0 0 2px #fff}
+#knowledge .kb-card.is-hover .kb-title{color:#fff}
+#knowledge .kb-card.off.is-hover .kb-title{color:var(--ink)}
+#knowledge .kb-card .kb-actions button.is-hover:not(:disabled){background:transparent;color:#fff;box-shadow:none}
+#knowledge .kb-card .kb-actions button.is-focus{background:transparent;color:#fff;box-shadow:inset 0 0 0 2px #fff}
+#knowledge .kb-card .kb-active-toggle.is-hover{color:#fff}
+#knowledge .kb-card .kb-active-toggle.is-focus{box-shadow:inset 0 0 0 2px #fff;border-radius:6px}
+</style></head><body><div class="page"><div class="panel" id="knowledge">
+<div class="section-head"><h2>Build a library of useful mix knowledge</h2><div class="blurb">Save research, notes, and references Hope can use in future sessions.</div></div>
+<div class="lbl">1 Knowledge base: each category is one outlined card in its own palette colour (Wheezy row = pinned hover; Edit on Streaming loudness = pinned keyboard focus; Mastering holds the open note: no marker, just the summary below a hairline)</div>
+<section class="insight-sec" data-sec="kb"><div class="sec-bar"><span>Knowledge base</span><span class="sec-read">3 of 5 active · 873 / 8000 bytes</span></div><div class="meter " style="--p:10.9%"></div><div class="kb-toolbar"><button class="btn amber">+ Add note</button><button class="btn ghost sm">↓ Import</button><button class="btn ghost sm">↑ Export</button><div class="kb-yt"><input class="kb-yt-in" placeholder="Paste a YouTube link" aria-label="YouTube link"><button class="btn amber" disabled>Add</button></div><div class="toolbar-end"><button class="btn txt">Expand all</button><button class="btn txt">Collapse all</button></div></div><div class="kb-yt-msg">Added: <b>You’ve got an NS10 in your Pocket</b>, 2 chunks. Summary note added.</div><div class="kb-list"><div class="fact-cat-card collapsible collapsed" data-collapse-id="kbc-mixing"><div class="fact-cat-head" role="button" tabindex="0" onclick="var p=this.parentElement;p.classList.toggle('collapsed');this.querySelector('.collapse-chev').textContent=p.classList.contains('collapsed')?'+':'−'"><span class="fact-cat-label">Mixing techniques</span><span class="fact-cat-count">0</span><span class="collapse-chev">+</span><div></div></div><div class="kb-cat-list"></div><button class="insight-add" type="button">Add note</button></div><div class="fact-cat-card collapsible" data-collapse-id="kbc-producers"><div class="fact-cat-head" role="button" tabindex="0" onclick="var p=this.parentElement;p.classList.toggle('collapsed');this.querySelector('.collapse-chev').textContent=p.classList.contains('collapsed')?'+':'−'"><span class="fact-cat-label">Producer interviews / chains</span><span class="fact-cat-count">2</span><span class="collapse-chev">−</span><div></div></div><div class="kb-cat-list"><div class="kb-card active"><div class="kb-row1"><span class="kb-grip"><svg viewBox="0 0 16 24"><circle cx="5" cy="6" r="1.5"/><circle cx="11" cy="6" r="1.5"/><circle cx="5" cy="12" r="1.5"/><circle cx="11" cy="12" r="1.5"/><circle cx="5" cy="18" r="1.5"/><circle cx="11" cy="18" r="1.5"/></svg></span><div class="kb-main"><div class="kb-title">Metro Boomin 808 and sub chain breakdown</div><div class="kb-meta">22/11/2026 · <a>youtube.com</a></div><div class="kb-tags">808, sub, sidechain</div><div class="kb-actions"><button class="kb-mode-pill">Raw</button><button class="btn ghost sm">View</button><button class="btn ghost sm">Edit</button><button class="btn ghost sm">Re-summarise</button><button class="btn ghost sm">Delete</button></div></div><div class="kb-state"><button class="kb-active-toggle on">✓</button></div></div><div class="kb-body"></div></div><div class="kb-card active is-hover"><div class="kb-row1"><span class="kb-grip"><svg viewBox="0 0 16 24"><circle cx="5" cy="6" r="1.5"/><circle cx="11" cy="6" r="1.5"/><circle cx="5" cy="12" r="1.5"/><circle cx="11" cy="12" r="1.5"/><circle cx="5" cy="18" r="1.5"/><circle cx="11" cy="18" r="1.5"/></svg></span><div class="kb-main"><div class="kb-title">Wheezy on vocal stacking and ad-lib widths</div><div class="kb-meta">20/11/2026 · <a>NotebookLM</a></div><div class="kb-tags">vocals, stereo width</div><div class="kb-actions"><button class="kb-mode-pill">Summary</button><button class="btn ghost sm">View</button><button class="btn ghost sm">Edit</button><button class="btn ghost sm">Re-summarise</button><button class="btn ghost sm">Delete</button></div></div><div class="kb-state"><button class="kb-active-toggle on">✓</button></div></div><div class="kb-body"></div></div></div><button class="insight-add" type="button">Add note</button></div><div class="fact-cat-card collapsible collapsed" data-collapse-id="kbc-refs"><div class="fact-cat-head" role="button" tabindex="0" onclick="var p=this.parentElement;p.classList.toggle('collapsed');this.querySelector('.collapse-chev').textContent=p.classList.contains('collapsed')?'+':'−'"><span class="fact-cat-label">Reference tracks</span><span class="fact-cat-count">0</span><span class="collapse-chev">+</span><div></div></div><div class="kb-cat-list"></div><button class="insight-add" type="button">Add note</button></div><div class="fact-cat-card collapsible" data-collapse-id="kbc-mastering"><div class="fact-cat-head" role="button" tabindex="0" onclick="var p=this.parentElement;p.classList.toggle('collapsed');this.querySelector('.collapse-chev').textContent=p.classList.contains('collapsed')?'+':'−'"><span class="fact-cat-label">Mastering</span><span class="fact-cat-count">2</span><span class="collapse-chev">−</span><div></div></div><div class="kb-cat-list"><div class="kb-card active expanded"><div class="kb-row1"><span class="kb-grip"><svg viewBox="0 0 16 24"><circle cx="5" cy="6" r="1.5"/><circle cx="11" cy="6" r="1.5"/><circle cx="5" cy="12" r="1.5"/><circle cx="11" cy="12" r="1.5"/><circle cx="5" cy="18" r="1.5"/><circle cx="11" cy="18" r="1.5"/></svg></span><div class="kb-main"><div class="kb-title">Turn Your Phone Into a Live NS10 Monitor</div><div class="kb-meta">22/11/2026 · <a>youtu.be</a></div><div class="kb-tags">mixing, monitoring, translation, plugin, streaming</div><div class="kb-actions"><button class="kb-mode-pill">Summary</button><button class="btn ghost sm">Hide</button><button class="btn ghost sm">Edit</button><button class="btn ghost sm">Re-summarise</button><button class="btn ghost sm">Delete</button></div></div><div class="kb-state"><button class="kb-active-toggle on">✓</button></div></div><div class="kb-body">The video compares the phone’s small speaker to the NS-10, which studios used to check whether mixes translated to home and car speakers. Emit is placed last on the DAW channel; its Stream button sends the live session to an iPhone on the same network, where it can be monitored while mixing or mastering. A share link also lets managers, artists, or other listeners hear the live stream in a browser on a desktop or phone.</div></div><div class="kb-card active"><div class="kb-row1"><span class="kb-grip"><svg viewBox="0 0 16 24"><circle cx="5" cy="6" r="1.5"/><circle cx="11" cy="6" r="1.5"/><circle cx="5" cy="12" r="1.5"/><circle cx="11" cy="12" r="1.5"/><circle cx="5" cy="18" r="1.5"/><circle cx="11" cy="18" r="1.5"/></svg></span><div class="kb-main"><div class="kb-title">Streaming loudness targets 2026</div><div class="kb-meta">22/11/2026 · <a>spotify.com</a></div><div class="kb-tags">lufs, streaming</div><div class="kb-actions"><button class="kb-mode-pill">Summary</button><button class="btn ghost sm">View</button><button class="btn ghost sm is-focus">Edit</button><button class="btn ghost sm">Re-summarise</button><button class="btn ghost sm">Delete</button></div></div><div class="kb-state"><button class="kb-active-toggle on">✓</button></div></div><div class="kb-body"></div></div></div><button class="insight-add" type="button">Add note</button></div><div class="fact-cat-card collapsible" data-collapse-id="kbc-vocals"><div class="fact-cat-head" role="button" tabindex="0" onclick="var p=this.parentElement;p.classList.toggle('collapsed');this.querySelector('.collapse-chev').textContent=p.classList.contains('collapsed')?'+':'−'"><span class="fact-cat-label">Vocal techniques</span><span class="fact-cat-count">1</span><span class="collapse-chev">−</span><div></div></div><div class="kb-cat-list"><div class="kb-card off"><div class="kb-row1"><span class="kb-grip"><svg viewBox="0 0 16 24"><circle cx="5" cy="6" r="1.5"/><circle cx="11" cy="6" r="1.5"/><circle cx="5" cy="12" r="1.5"/><circle cx="11" cy="12" r="1.5"/><circle cx="5" cy="18" r="1.5"/><circle cx="11" cy="18" r="1.5"/></svg></span><div class="kb-main"><div class="kb-title">Vocal chain for melodic trap leads</div><div class="kb-meta">22/11/2026 · <a>NotebookLM</a></div><div class="kb-tags">vocals, de-esser</div><div class="kb-actions"><button class="kb-mode-pill">Summary</button><button class="btn ghost sm">View</button><button class="btn ghost sm">Edit</button><button class="btn ghost sm">Re-summarise</button><button class="btn ghost sm">Delete</button></div></div><div class="kb-state"><button class="kb-active-toggle">–</button></div></div><div class="kb-body"></div></div></div><button class="insight-add" type="button">Add note</button></div><div class="fact-cat-card collapsible collapsed" data-collapse-id="kbc-workflow"><div class="fact-cat-head" role="button" tabindex="0" onclick="var p=this.parentElement;p.classList.toggle('collapsed');this.querySelector('.collapse-chev').textContent=p.classList.contains('collapsed')?'+':'−'"><span class="fact-cat-label">Workflow</span><span class="fact-cat-count">0</span><span class="collapse-chev">+</span><div></div></div><div class="kb-cat-list"></div><button class="insight-add" type="button">Add note</button></div></div></section>
+<div class="lbl">2 Over the limit</div><section class="insight-sec" data-sec="kb"><div class="sec-bar"><span>Knowledge base</span><span class="sec-read">5 of 5 active · 8412 / 8000 bytes</span></div><div class="meter full" style="--p:100%"></div><div class="budget-note" role="status"><b>Over the limit.</b> Turn off notes you do not need so Hope’s prompt stays short.</div><div class="kb-list"><div class="fact-cat-card collapsible" data-collapse-id="kbc-mastering"><div class="fact-cat-head" role="button" tabindex="0" onclick="var p=this.parentElement;p.classList.toggle('collapsed');this.querySelector('.collapse-chev').textContent=p.classList.contains('collapsed')?'+':'−'"><span class="fact-cat-label">Mastering</span><span class="fact-cat-count">1</span><span class="collapse-chev">−</span><div></div></div><div class="kb-cat-list"><div class="kb-card active"><div class="kb-row1"><span class="kb-grip"><svg viewBox="0 0 16 24"><circle cx="5" cy="6" r="1.5"/><circle cx="11" cy="6" r="1.5"/><circle cx="5" cy="12" r="1.5"/><circle cx="11" cy="12" r="1.5"/><circle cx="5" cy="18" r="1.5"/><circle cx="11" cy="18" r="1.5"/></svg></span><div class="kb-main"><div class="kb-title">Streaming loudness targets 2026</div><div class="kb-meta">22/11/2026 · <a>spotify.com</a></div><div class="kb-tags">lufs, streaming</div><div class="kb-actions"><button class="kb-mode-pill">Summary</button><button class="btn ghost sm">View</button><button class="btn ghost sm">Edit</button><button class="btn ghost sm">Re-summarise</button><button class="btn ghost sm">Delete</button></div></div><div class="kb-state"><button class="kb-active-toggle on">✓</button></div></div><div class="kb-body"></div></div></div><button class="insight-add" type="button">Add note</button></div></div></section>
+<div class="lbl">3 Empty library</div><section class="insight-sec" data-sec="kb"><div class="sec-bar"><span>Knowledge base</span><span class="sec-read">0 of 0 active · 0 / 8000 bytes</span></div><div class="meter " style="--p:0%"></div><div class="insight-empty-row"><p class="insight-empty"><b>No notes yet.</b> Add one, paste a YouTube link, or drop a file here.</p><div class="kb-toolbar"><button class="btn amber">+ Add note</button></div></div></section>
+<div class="lbl">4 Hope's memory (placeholder)</div><section class="insight-sec" data-sec="memory"><div class="sec-bar"><span>Hope’s memory</span><span class="sec-read">Design on hold</span></div><div class="meter " style="--p:0%"></div><div class="kb-list"><div class="fact-cat-card collapsible" data-collapse-id="pfc-targets"><div class="fact-cat-head" role="button" tabindex="0"><span class="fact-cat-label">Placeholder card</span><span class="collapse-chev">−</span><div></div></div><div class="kb-cat-list"><p class="insight-empty" style="padding:8px 12px 16px"><b>Not designed yet.</b> Memory is being rethought (small core memory plus a searchable archive, mostly hidden). When designed it uses this same outlined card, 48px bar, meter and over-limit line, in the memory palette colours (see the spec table).</p></div></div></div></section>
+</div></div>
+<script>const q=new URLSearchParams(location.search);if(q.get('scale'))document.documentElement.style.setProperty('--inv-text-scale',q.get('scale'));</script></body></html>
