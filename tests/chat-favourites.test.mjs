@@ -23,7 +23,8 @@ test('a Hope reply star saves full text, title, preceding question and source in
 });
 test('chat stars use the shared icon sprite and the Library has one Favourites panel',()=>{
   assert.match(html,/class="aichat-favourite\$\{favEntry/);
-  assert.match(html,/aria-label="\$\{favEntry\?'Remove from Favourites':'Save to Favourites'\}"/);
+  assert.match(html,/const starLabel = favEntry \? 'Remove from favourites' : 'Add to favourites'/);
+  assert.match(html,/aria-label="\$\{starLabel\}"[^>]*title="\$\{starLabel\}"/);
   assert.match(html,/<use href="#i-star"\/>/);
   assert.match(html,/data-sec="chats"[^>]*>.*?Favourites <span class="n" id="libChatCount"/);
   assert.doesNotMatch(html,/id="aiChatToJournal"|No saved chats yet|No favourites yet/);

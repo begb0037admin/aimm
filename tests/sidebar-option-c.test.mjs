@@ -42,7 +42,7 @@ test('accordion preserves state and has one visual selection with accessible foc
   assert.match(html,/--aimm-hover-bg:var\(--aimm-teal\)/);
   assert.doesNotMatch(html,/background:var\(--section-colour,#36a8ed\)!important/);
   assert.doesNotMatch(html,/color-mix\(in srgb,var\(--section-colour,#36a8ed\) 18%,transparent\)/);
-  assert.match(html,/const AIMM_BUILD = '2026-11-23\.64'/);
+  assert.match(html,/const AIMM_BUILD = '2026-11-23\.65'/);
 });
 
 test('sidebar header stays above scrolling rows in every sidebar mode',()=>{

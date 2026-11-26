@@ -662,7 +662,6 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 .aichat-msg .body ul,.aichat-msg .body ol{margin:6px 0 8px 22px}
 .aichat-msg .body li{margin-bottom:3px}
 .aichat-msg .body h2,.aichat-msg .body h3,.aichat-msg .body h4{margin:10px 0 4px;color:#f3f4f6}
-.aichat-actions-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
 
 .aichat-tts-bar{display:flex;align-items:center;gap:8px;font-size:calc(var(--inv-text-scale, 1) * 11px);color:#9ca3af;flex-wrap:wrap}
 /* KNOWLEDGE BASE */
@@ -2993,33 +2992,24 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #hopeRail .aichat-msg.user{display:flex !important;flex-direction:column !important;align-items:flex-end !important;text-align:right !important}
 #hopeRail .aichat-msg.user .who{align-self:flex-end !important}
 #hopeRail .aichat-msg.user .body{margin-left:auto !important;max-width:85% !important;text-align:left !important}
-#hopeRail .aichat-msg.user .aichat-actions-row{justify-content:flex-end !important}
 
 /* ---- Hope panel outline and background, PREVIEW ONLY (Kevin, "not fixed"): the gold edge came from the rail's gradient border. Neutral border, neutral background. ---- */
 #hopeRail,
 #hopeRail:focus-within{border:1px solid #2c3034 !important;background:linear-gradient(180deg,#1b1d20 0%,#15181b 100%) !important;box-shadow:none !important}
-
-/* ---- Copy on YOUR messages sits under the blue bubble, not inside it, PREVIEW ONLY (Kevin, option 2). ---- */
-#hopeRail .aichat-msg.user .body{position:relative !important;margin-bottom:34px !important}
-#hopeRail .aichat-msg.user .body .aichat-actions-row{position:absolute !important;top:100% !important;right:0 !important;margin-top:6px !important;justify-content:flex-end !important}
 
 /* ---- Round: your bubble wider, and Send's teal outline only on hover, PREVIEW ONLY (Kevin) ---- */
 #hopeRail .aichat-msg.user .body{width:70% !important;max-width:85% !important}
 #hopeRail .aichat-compose .send-col #aiChatSend{border:1px solid var(--pv-neutral-bd) !important}
 #hopeRail .aichat-compose .send-col #aiChatSend:is(:hover,:focus-visible):not(:disabled){border:1px solid var(--pv-teal) !important}
 
-/* ---- Hope chat, PREVIEW ONLY, to Kevin's reference (Splice screenshot): your messages = navy bubble, white text, right, no label. Hope = plain text, no bubble, no label. Copy and Speak appear on hover only. ---- */
+/* ---- Hope chat, PREVIEW ONLY, to Kevin's reference (Splice screenshot): your messages = navy bubble, white text, right, no label. Hope = plain text, no bubble, no label. ---- */
 #hopeRail .aichat-msg.user .who{display:none !important}
 #hopeRail .aichat-msg.ai:not(.hope-card) .body,
 #hopeRail .aichat-msg.ai:not(.hope-card):is(:nth-child(odd),:nth-child(even)) .body,
 #hopeRail .aichat-msg.ai:not(.hope-card) .body,
 #hopeRail .hope-empty-greeting .body{background:transparent !important;border:0 !important;padding:0 !important;box-shadow:none !important;border-radius:0 !important;color:#e5e7eb !important}
 #hopeRail .aichat-msg.user .body,
-#hopeRail .aichat-msg.user:is(:nth-child(odd),:nth-child(even)) .body{background:#1e3a6b !important;border:0 !important;border-radius:18px !important;padding:10px 16px !important;width:auto !important;max-width:80% !important;margin-bottom:8px !important;color:#f3f4f6 !important;box-shadow:none !important}
-#hopeRail .aichat-msg .aichat-actions-row{opacity:0 !important;transition:opacity 120ms ease}
-#hopeRail .aichat-msg:hover .aichat-actions-row,
-#hopeRail .aichat-msg .aichat-actions-row:focus-within{opacity:1 !important}
-#hopeRail .aichat-msg.ai .aichat-actions-row{margin-top:6px !important}
+#hopeRail .aichat-msg.user:is(:nth-child(odd),:nth-child(even)) .body{background:#1e3a6b !important;border:0 !important;border-radius:18px !important;padding:10px 16px !important;width:auto !important;max-width:80% !important;color:#f3f4f6 !important;box-shadow:none !important}
 
 /* ---- Pill hover, PREVIEW ONLY (Kevin): on hover, every enabled pill on the screen gets the teal outline, same as Send. Selected pills keep their teal fill. ---- */
 #hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn):hover:not(:disabled),
@@ -3030,12 +3020,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 
 /* Spotify buttons: enabled ones are already teal and keep their fill on hover, so no hover change here. */
 
-/* ---- Copy and Speak OUTSIDE the bubble, for every message, PREVIEW ONLY (Kevin). Error and Hope messages lose their box too. Buttons stay visible. ---- */
 #hopeRail .aichat-msg.system .body,
 #hopeRail .aichat-msg.system:is(:nth-child(odd),:nth-child(even)) .body{background:transparent !important;border:0 !important;padding:0 !important;box-shadow:none !important;color:#e5e7eb !important}
-#hopeRail .aichat-msg .body{position:relative !important;margin-bottom:34px !important}
-#hopeRail .aichat-msg .body .aichat-actions-row{position:absolute !important;top:100% !important;margin-top:6px !important;opacity:1 !important;left:0 !important;right:auto !important;justify-content:flex-start !important}
-#hopeRail .aichat-msg.user .body .aichat-actions-row{left:auto !important;right:0 !important;justify-content:flex-end !important}
 
 /* ---- Send group: fully round ends like the Mix Check pill, PREVIEW ONLY. ---- */
 #hopeRail .aichat-compose .send-col :is(#aiChatSend,#aiChatClear,#hopeVoiceRouteBtn,#hopeAccountBtn){border-radius:999px !important}
@@ -3085,13 +3071,11 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 </style>
 <style id="visual-hope-2026-11-11">
 
-/* ---- Hope rail spacing (Kevin, 11 Nov): more room in the rail head, body and composer; more space between turns (22px, or 38px after Kevin's messages), leaving room under each message for Copy and Speak. Spacing only: no colour or wording change. Live from build 2026-11-11.03. ---- */
+/* ---- Hope rail spacing (Kevin, 11 Nov): more room in the rail head, body, composer and between turns. ---- */
 #hopeRail .rail-head{padding:22px 18px 16px !important}
 #hopeRail .rail-body{padding:14px 16px !important}
 #hopeRail .aichat-compose{padding:14px 16px 14px !important}
 #hopeRail .aichat-msg{margin-bottom:22px !important}
-#hopeRail .aichat-msg.user{margin-bottom:38px !important;padding-bottom:0 !important}
-#hopeRail .aichat-msg.user .body{margin-bottom:0 !important}
 
 /* ---- Chat bubbles (Kevin, 11 Nov). Your messages: blue #2563eb. Hope: purple #7c3aed. White text #ffffff on both bubbles: about 5.2:1 on blue #2563eb and about 5.7:1 on purple #7c3aed, above the 4.5:1 AA target for normal text. Set at Kevin's request. Name tags: the rule below hides only the You and Hope name tags above messages. The greeting and Thinking labels keep their Hope tag, and the NotebookLM prompt label remains visible. Bubble text stays white. Live from build 2026-11-11.06. ---- */
 #hopeRail .aichat-msg.user .who,
@@ -5860,7 +5844,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.64';
+const AIMM_BUILD = '2026-11-23.65';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -15753,14 +15737,19 @@ const HOPE_EMPTY_QUICK_PROMPTS = [
 // rate-limited Worker endpoint; it does not need the optional Usage token.
 const HOPE_READ_ALOUD = { activeIdx: -1, token: 0, audio: null, abort: null, objectUrl: '' };
 const HOPE_READ_ALOUD_MAX_CHARS = 2400;
+const HOPE_READ_ALOUD_PLAY = { label: 'Read aloud', icon: '#i-play' };
+const HOPE_READ_ALOUD_STOP = { label: 'Stop reading', icon: '#i-stop' };
 
 function aichatSyncReadAloudButtons(){
   document.querySelectorAll('.aichat-speak-message').forEach(btn => {
     const idx = Number(btn.getAttribute('data-speak-idx'));
     const active = HOPE_READ_ALOUD.activeIdx === idx;
-    btn.textContent = active ? 'Stop' : 'Speak';
+    const { label, icon } = active ? HOPE_READ_ALOUD_STOP : HOPE_READ_ALOUD_PLAY;
+    btn.querySelector('use').setAttribute('href', icon);
     btn.classList.toggle('playing', active);
     btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    btn.setAttribute('aria-label', label);
+    btn.title = label;
   });
 }
 
@@ -15921,8 +15910,10 @@ function aichatRender(){
       }
       // Reply read-back controls use Hope's ElevenLabs voice through the Worker;
       // they do not modify the message content or open a live voice session.
+      const reading = HOPE_READ_ALOUD.activeIdx === i;
+      const readAloud = reading ? HOPE_READ_ALOUD_STOP : HOPE_READ_ALOUD_PLAY;
       const speakBtn = m.role === 'ai'
-        ? `<button type="button" class="aichat-tts-btn aichat-speak-message${HOPE_READ_ALOUD.activeIdx === i ? ' playing' : ''}" data-speak-idx="${i}" aria-label="${HOPE_READ_ALOUD.activeIdx === i ? 'Stop' : 'Speak this reply, or just its selected text'}" aria-pressed="${HOPE_READ_ALOUD.activeIdx === i}" onclick="aichatSpeakMessage(${i})" title="${HOPE_READ_ALOUD.activeIdx === i ? 'Stop' : 'Speak this reply, or just its selected text'}"><svg class="ic ic-16" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-volume"/></svg></button>`
+        ? `<button type="button" class="aichat-speak-message${reading ? ' playing' : ''}" data-speak-idx="${i}" aria-label="${readAloud.label}" aria-pressed="${reading}" onclick="aichatSpeakMessage(${i})" title="${readAloud.label}"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="${readAloud.icon}"/></svg></button>`
         : '';
       // Copy button — handy for grabbing NotebookLM prompts (and any other
       // Hope/Luna reply) without manually highlighting + Cmd-C. System
@@ -15931,13 +15922,15 @@ function aichatRender(){
       // so Kev can copy them.
       let copyBtn = '';
       if (m.role === 'user' || m.role === 'ai' || isNbPrompt){
-        copyBtn = `<button type="button" class="aichat-copy-btn" id="aichatCopyBtn-${i}" onclick="aichatCopyMessage(${i})" aria-label="Copy message text" title="Copy message text"><svg class="ic ic-16" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-copy"/></svg></button>`;
+        const copyLabel = aichatCopyLabel(m);
+        copyBtn = `<button type="button" class="aichat-copy-btn" id="aichatCopyBtn-${i}" onclick="aichatCopyMessage(${i})" aria-label="${copyLabel}" title="${copyLabel}"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#i-copy"/></svg></button>`;
       }
       const favEntry = m.role === 'ai' && !isNbPrompt ? (STATE.journal||[]).find(e => e.favourite && e.chatMessageId === m.favouriteId) : null;
+      const starLabel = favEntry ? 'Remove from favourites' : 'Add to favourites';
       const starBtn = m.role === 'ai' && !isNbPrompt && String(m.content||'').trim()
-        ? `<button type="button" class="aichat-favourite${favEntry?' on':''}" aria-label="${favEntry?'Remove from Favourites':'Save to Favourites'}" aria-pressed="${!!favEntry}" title="${favEntry?'Remove from Favourites':'Save to Favourites'}" onclick="aichatToggleFavourite(${i})"><svg class="ic ic-16${favEntry?' ic-solid':''}" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-star"/></svg></button>` : '';
-      let actions = (copyBtn || speakBtn || starBtn) ? `<div class="aichat-actions-row">${starBtn}${speakBtn}${copyBtn}</div>` : '';
-      return `<div class="${cls}" data-msg-idx="${i}"><div class="who">${who}</div><div class="body"><div class="aichat-msg-content" data-msg-content="${i}">${body}</div>${cites}${actions}</div></div>`;
+        ? `<button type="button" class="aichat-favourite${favEntry ? ' on' : ''}" aria-label="${starLabel}" aria-pressed="${!!favEntry}" title="${starLabel}" onclick="aichatToggleFavourite(${i})"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#i-star"/></svg></button>` : '';
+      const actions = (copyBtn || speakBtn || starBtn) ? `<div class="aichat-actions-row">${starBtn}${speakBtn}${copyBtn}</div>` : '';
+      return `<div class="${cls}" data-msg-idx="${i}"><div class="who">${who}</div><div class="body"><div class="aichat-msg-content" data-msg-content="${i}">${body}</div>${cites}</div>${actions}</div>`;
     }).join('');
     aichatScrollToBottom();
   }
@@ -15975,6 +15968,10 @@ function aichatRestoreFavourite(){
   saveState();aichatRender();renderJournal();renderFavouritePills();
 }
 // Copy a message's plain-text content to clipboard.
+const aichatCopyTimers = new WeakMap();
+function aichatCopyLabel(message){
+  return message.role === 'ai' ? 'Copy reply' : 'Copy message text';
+}
 function aichatCopyMessage(idx){
   const m=AICHAT.history[idx];
   if(!m||typeof m.content!=='string')return;
@@ -15982,15 +15979,21 @@ function aichatCopyMessage(idx){
   const copiedText=m.kind==='notebooklm-prompt'?aimmNotebookLmCopyText(m):m.content;
   const flash = (ok) => {
     if (!btn) return;
+    const icon = btn.querySelector('use');
+    icon.setAttribute('href', ok ? '#i-check' : '#i-copy');
     btn.setAttribute('aria-label', ok ? 'Copied' : 'Copy failed');
     btn.title = ok ? 'Copied' : 'Copy failed';
     btn.classList.toggle('ok', !!ok);
     btn.classList.toggle('err', !ok);
-    setTimeout(() => {
-      btn.setAttribute('aria-label', 'Copy message text');
-      btn.title = 'Copy message text';
+    clearTimeout(aichatCopyTimers.get(btn));
+    aichatCopyTimers.set(btn, setTimeout(() => {
+      icon.setAttribute('href', '#i-copy');
+      const label = aichatCopyLabel(m);
+      btn.setAttribute('aria-label', label);
+      btn.title = label;
       btn.classList.remove('ok','err');
-    }, 1200);
+      aichatCopyTimers.delete(btn);
+    }, 1500));
   };
   // Prefer the modern Clipboard API; fall back to a hidden textarea + execCommand.
   if (navigator.clipboard && navigator.clipboard.writeText){
@@ -28059,13 +28062,14 @@ code,pre,kbd,samp,.aichat-msg .body code,.aichat-msg .body pre,.journal-body pre
 }
 
 
-/* Hope message actions use the same bare 16px line glyphs as Notes. */
-#hopeRail #aiChatTranscript .aichat-actions-row :is(.aichat-favourite,.aichat-speak-message,.aichat-copy-btn){display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;min-height:0;padding:2px;background:transparent;border:0;border-radius:0;box-shadow:none;transform:none;color:#7b8190;cursor:pointer}
-#hopeRail #aiChatTranscript .aichat-actions-row :is(.aichat-favourite,.aichat-speak-message,.aichat-copy-btn) .ic{width:16px;height:16px}
-#hopeRail #aiChatTranscript .aichat-actions-row :is(.aichat-favourite,.aichat-speak-message,.aichat-copy-btn):is(:hover,:focus-visible,.on,.playing,.ok,.err){color:var(--pv-teal)}
-#hopeRail #aiChatTranscript .aichat-actions-row :is(.aichat-favourite,.aichat-speak-message,.aichat-copy-btn):focus-visible{outline:2px solid var(--pv-teal);outline-offset:2px}
-#hopeRail #aiChatTranscript .aichat-actions-row :is(.aichat-speak-message,.aichat-copy-btn):disabled{opacity:.5;cursor:not-allowed}
-@media (hover:none),(pointer:coarse){#hopeRail .aichat-msg .aichat-actions-row{opacity:1 !important}}
+/* Hope message actions */
+#hopeRail .aichat-actions-row{display:flex;align-items:center;gap:20px;margin:10px 0 0 11px}
+#hopeRail .aichat-msg.user .aichat-actions-row{margin-left:0}
+#hopeRail .aichat-actions-row > button{display:inline-flex;align-items:center;justify-content:center;flex:none;width:28px;height:28px;padding:0;border:0;border-radius:0;background:none;color:#7b8190;cursor:pointer}
+#hopeRail .aichat-actions-row svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#hopeRail .aichat-actions-row > button:is(:hover,:focus-visible,:active,.on,.playing,.ok,.err){color:#2dd4bf}
+#hopeRail .aichat-actions-row > button:focus-visible{outline:1px solid #2dd4bf;outline-offset:2px}
+#hopeRail .aichat-favourite.on use{fill:currentColor}
 </style>
 </body>
 </html>
