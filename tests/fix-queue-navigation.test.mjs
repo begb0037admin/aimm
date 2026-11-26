@@ -20,6 +20,7 @@ function makeQueue(storage, options={}) {
   const events = [];
   const context = {
     document: { getElementById: id => id === 'mcActions' ? host : null },
+    renderStemTransport: () => {},
     localStorage: {
       getItem: key => storage.get(key) ?? null,
       setItem: (key, value) => storage.set(key, value),

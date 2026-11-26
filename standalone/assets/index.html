@@ -1734,16 +1734,15 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #mixcheck.oz-mixcheck .mc-play-toggle{width:24px;height:24px;flex:none;display:grid;justify-items:start;align-items:center;padding:0;border:0;background:none;color:#e8ebee;cursor:pointer}
 /* The play and pause symbols both start at x=5 in the 24px viewBox. */
 #mixcheck.oz-mixcheck .mc-play-toggle svg{width:24px;height:24px;stroke-width:1.5;margin-left:-3.5px}
-#mixcheck.oz-mixcheck .mc-play-toggle:not([aria-disabled="true"]):is(:hover,:focus-visible){color:var(--pv-teal);outline:none}
-#mixcheck.oz-mixcheck .mc-play-toggle[aria-disabled="true"]{opacity:.4;cursor:default;pointer-events:none}
-#mixcheck.oz-mixcheck .mcq-mode:focus-visible{outline:2px solid var(--pv-teal);outline-offset:2px}
-#mixcheck.oz-mixcheck .mcq-modes:not([hidden]){display:flex;gap:36px;min-width:0;flex:none}
-/* Allow for the selected, focused and hovered labels at weight 600 in the 506px column. */
-#mixcheck.oz-mixcheck .mcq-mode{background:none;border:0;padding:0;color:#7b8190;font:500 13.5px var(--aimm-font);letter-spacing:-.1px;cursor:pointer;white-space:nowrap}
-#mixcheck.oz-mixcheck .mcq-mode[aria-pressed="true"],#mixcheck.oz-mixcheck .mcq-mode:hover,#mixcheck.oz-mixcheck .mcq-mode:focus-visible{color:var(--pv-teal);font-weight:600}
+#mixcheck.oz-mixcheck .mc-stem-modes{display:flex;gap:36px;min-width:0;flex:none}
+#mixcheck.oz-mixcheck .mc-stem-mode{background:none;border:0;padding:0;color:#7b8190;font:500 13.5px var(--aimm-font);letter-spacing:-.1px;cursor:pointer;white-space:nowrap}
+#mixcheck.oz-mixcheck [data-stem-transport] button[aria-disabled="true"]{opacity:.4;cursor:default}
+#mixcheck.oz-mixcheck [data-stem-transport] button[aria-disabled="false"]:focus-visible{outline:2px solid var(--pv-teal);outline-offset:2px}
+#mixcheck.oz-mixcheck .mc-play-toggle:not([aria-disabled="true"]):is(:hover,:focus-visible){color:var(--pv-teal)}
+#mixcheck.oz-mixcheck .mc-stem-mode[aria-disabled="false"]:is([aria-pressed="true"],:hover,:focus-visible){color:var(--pv-teal);font-weight:600}
 @container (max-width:899px){#mixcheck.oz-mixcheck .mcq-layout{grid-template-columns:minmax(0,1fr);gap:26px}}
-@container (width < 506px){#mixcheck.oz-mixcheck .mcq-modes:not([hidden]){gap:20px}}
-@container (width < 458px){#mixcheck.oz-mixcheck .mcq-transport{display:block}#mixcheck.oz-mixcheck .mcq-modes:not([hidden]){margin-top:12px;flex-wrap:wrap;gap:12px 20px}}
+@container (width < 506px){#mixcheck.oz-mixcheck .mcq-transport .mc-stem-modes{gap:20px}}
+@container (width < 458px){#mixcheck.oz-mixcheck .mcq-transport{display:block}#mixcheck.oz-mixcheck .mcq-transport .mc-stem-modes{margin-top:12px;flex-wrap:wrap;gap:12px 20px}}
 @media (max-width:600px){#mixcheck.oz-mixcheck #mcActions.oz-card{padding:20px}#mixcheck.oz-mixcheck .mcq-head{gap:12px;flex-wrap:wrap}#mixcheck.oz-mixcheck .mcq-track{flex-basis:100%}#mixcheck.oz-mixcheck .mcq-item{min-height:48px}}
 
 #mixcheck.oz-mixcheck #refDzLoaded.visible{display:flex;flex-direction:column;gap:10px;padding:0} /* board item 18: gap 12->10 */
@@ -2171,15 +2170,8 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 #mcStemStack .mc-stem-clock strong{font-weight:500;color:#e8ebee}
 
 #mcStemStack .mc-stem-transport{display:flex;align-items:center;flex-wrap:wrap;column-gap:36px;row-gap:12px;margin:24px 0 14px;white-space:nowrap}
-#mcStemStack .mc-stem-modes{display:flex;gap:36px;min-width:0;flex:none}
-#mcStemStack .mc-stem-modes button{background:none;border:0;padding:0;color:#7b8190;font:500 13.5px var(--aimm-font);cursor:pointer;white-space:nowrap}
-#mcStemStack .mc-stem-modes button[aria-pressed="true"],#mcStemStack .mc-stem-modes button:not([aria-disabled="true"]):hover,#mcStemStack .mc-stem-modes button:not([aria-disabled="true"]):focus-visible{color:var(--pv-teal);font-weight:600;outline:none}
-/* disabled (no stems) */
-#mcStemStack[data-empty="true"] .mc-stem-modes button{opacity:.4;cursor:default;pointer-events:none}
-#mcStemStack[data-empty="true"] .mc-stem-modes button[aria-pressed="true"]{color:#7b8190;font-weight:500}
-
-@container (width < 472px){#mcStemStack .mc-stem-modes{gap:20px}#mcStemStack .mc-stem-transport{column-gap:24px}}
-@container (width < 412px){#mcStemStack .mc-stem-transport{display:block}#mcStemStack .mc-stem-modes{margin-top:12px;flex-wrap:wrap;gap:12px 20px}}
+@container (width < 472px){#mixcheck.oz-mixcheck .mc-stem-transport .mc-stem-modes{gap:20px}#mcStemStack .mc-stem-transport{column-gap:24px}}
+@container (width < 412px){#mcStemStack .mc-stem-transport{display:block}#mixcheck.oz-mixcheck .mc-stem-transport .mc-stem-modes{margin-top:12px;flex-wrap:wrap;gap:12px 20px}}
 
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-status{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 #mixcheck.oz-mixcheck #mcStemStack .mc-stem-rows{display:grid;gap:8px}
@@ -4027,15 +4019,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
               <div class="mc-stem-track-meta"><h3 class="mc-stem-title" id="mcStemTrackTitle">Stem mix</h3><div class="mc-stem-track-facts"><span id="mcStemKeyFact">Key · —</span><span id="mcStemTempoFact">— BPM</span><span id="mcStemSongName">0 aligned stems</span></div></div>
               <div class="mc-stem-clock"><strong id="mcStemElapsed">0:00</strong><span>/</span><span id="mcStemDuration">0:00</span></div>
             </div>
-            <div class="mc-stem-transport">
-              <button class="mc-stem-play mc-play-toggle" id="mcStemBigPlay" type="button" onclick="if(this.getAttribute('aria-disabled')!=='true')refTogglePlay()" aria-disabled="true" tabindex="-1" aria-label="Play stem mix" title="Play stem mix"><svg class="ic" aria-hidden="true" id="mcStemBigPlaySvg" viewBox="0 0 24 24"><use href="#i-play"/></svg></button>
-              <div class="mc-stem-modes" role="group" aria-label="Stem playback selection">
-                <button type="button" aria-disabled="true" tabindex="-1" data-stem-mode="full" aria-pressed="true">Full song</button>
-                <button type="button" aria-disabled="true" tabindex="-1" data-stem-mode="vocals" aria-pressed="false">Vocals only</button>
-                <button type="button" aria-disabled="true" tabindex="-1" data-stem-mode="instrumental" aria-pressed="false">Instrumental</button>
-                <button type="button" aria-disabled="true" tabindex="-1" data-stem-mode="drums-bass" aria-pressed="false">Drums + Bass</button>
-              </div>
-            </div>
+            <div class="mc-stem-transport" data-stem-transport></div>
             <div class="mc-stem-status" id="mcStemStatus" aria-live="polite"></div>
             <div class="mc-stem-rows" id="mcStemRows"></div>
           </div>
@@ -5876,7 +5860,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.63';
+const AIMM_BUILD = '2026-11-23.64';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -21588,6 +21572,7 @@ function spaceCooldownOk(){
 }
 document.addEventListener('keydown', e=>{
   if (e.code !== 'Space' && e.key !== ' ') return;
+  if (e.target?.closest?.('[data-stem-transport]')) return;
   if (e.repeat){
     const emptyComposerSpaceStart=e.target?.id==='aiChatInput'&&!String(e.target.value||'').trim();
     const draftComposerVoiceStart=e.target?.id==='aiChatInput'&&e.shiftKey;
@@ -21644,6 +21629,7 @@ document.addEventListener('keydown', e=>{
 }, true);
 document.addEventListener('keyup', e=>{
   if (e.code !== 'Space' && e.key !== ' ') return;
+  if (!RT.spaceHeld && e.target?.closest?.('[data-stem-transport]')) return;
   const emptyComposerSpaceStart=e.target?.id==='aiChatInput'&&!String(e.target.value||'').trim();
   const voiceSpaceStarted = RT.spaceHeld;
   if (isTypingTarget(e.target) && !emptyComposerSpaceStart && !voiceSpaceStarted) return;
@@ -23029,7 +23015,7 @@ csInit('csPlatform');
   // one shared mapping so the mix curve AND the genre corridor shift together (their gain-matched
   // alignment is preserved — only the coordinate system gains headroom, the corridor data is untouched).
   function dbToY(db,h){return Y_TOP_PAD*h + (1-Y_TOP_PAD)*h*(1-(db-MIN_DB)/(MAX_DB-MIN_DB));}
-  function refSetEl(id,val){const e=document.getElementById(id);if(e)e.textContent=val;if(id==='refTimeElapsed'||id==='refTimeDuration')stemPlayerSyncTransport();if(id==='mcTempo'||id==='mcKey')stemPlayerSyncMetadata();}
+  function refSetEl(id,val){const e=document.getElementById(id);if(e)e.textContent=val;if(id==='refTimeElapsed'||id==='refTimeDuration')stemPlayerSyncClock();if(id==='mcTempo'||id==='mcKey')stemPlayerSyncMetadata();}
   function refSetHTML(id,val){const e=document.getElementById(id);if(e)e.innerHTML=val;}
   function refSetStyle(id,prop,val){const e=document.getElementById(id);if(e)e.style[prop]=val;}
 
@@ -25982,13 +25968,19 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
       let h='<div class="mcq-head"><span class="mcq-t">Fix Queue</span><span class="mcq-count">'+done+' done'+(skipped?' · '+skipped+' skipped':'')+'</span><span class="mcq-track" role="progressbar" aria-label="Fixes done" aria-valuenow="'+done+'" aria-valuemin="0" aria-valuemax="'+items.length+'"><i style="width:'+(done/items.length*100)+'%"></i></span></div>';
       h+='<div class="mcq-layout"><div class="mcq-left"><div class="mcq-list" role="group" aria-label="Fixes">';
       items.forEach((q,i)=>{const st=status(q.id),doneAct=st==='done'?'undo':'done',resetAct=st==='dismissed'?'restore':'dismiss';h+='<div class="mcq-item'+(st==='done'?' is-done':st==='dismissed'?' is-skipped':'')+'" data-id="'+esc(q.id)+'" aria-current="'+(q.id===it.id)+'"><button type="button" class="mcq-select" data-act="select" aria-label="'+esc(shortName(q))+' — '+(st==='dismissed'?'skipped':st)+'"><span class="mcq-rank">'+(st==='done'?icon('check'):st==='dismissed'?icon('minus'):String(i+1).padStart(2,'0'))+'</span><span class="mcq-name">'+esc(shortName(q))+'</span></button><span class="mcq-row-actions"><button type="button" class="mcq-row-action" data-act="'+doneAct+'" aria-label="'+(st==='done'?'Undo done':'Mark done')+' — '+esc(shortName(q))+'" title="'+(st==='done'?'Undo done':'Mark done')+'">'+icon(st==='done'?'undo':'check')+'</button><button type="button" class="mcq-row-action" data-act="'+resetAct+'" aria-label="'+(resetAct==='restore'?'Restore to waiting':'Skip fix')+' — '+esc(shortName(q))+'" title="'+(resetAct==='restore'?'Restore to waiting':'Skip fix')+'">'+icon(resetAct==='restore'?'undo':'close')+'</button></span></div>';});
-      h+='</div><div class="mcq-transport"><button type="button" class="mcq-play mc-play-toggle" onclick="if(this.getAttribute(\'aria-disabled\')!==\'true\')refTogglePlay()" aria-label="Play stem mix" title="Play stem mix">'+icon('play')+'</button><div class="mcq-modes" role="group" aria-label="Stem playback selection" hidden></div></div></div><div class="mcq-detail" data-id="'+esc(it.id)+'"><h3 class="mcq-title">'+esc(it.title)+(state==='dismissed'?'<span class="mcq-skipped"> · skipped</span>':'')+'</h3>';
+      h+='</div><div class="mcq-transport" data-stem-transport></div></div><div class="mcq-detail" data-id="'+esc(it.id)+'"><h3 class="mcq-title">'+esc(it.title)+(state==='dismissed'?'<span class="mcq-skipped"> · skipped</span>':'')+'</h3>';
       h+='<div class="mcq-section"><span class="mcq-section-label">What we measured</span>'+esc(it.why)+'</div>';
       const note=hopeText(it);
       h+='<div class="mcq-section"><span class="mcq-section-label">Analysis</span><div class="mcq-hope-text'+(note===COACH_LOADING?' is-loading':'')+'">'+esc(note)+'</div>'+(hopeFailed.has(it.id)?'<button type="button" class="mcq-hope-retry" data-act="hope-retry">Try again</button>':'')+'</div>';
       h+='</div></div>';
+      const focused=document.activeElement;
+      const transportFocus=focused?.closest('[data-stem-transport]')&&host.contains(focused)
+        ? (focused.dataset.stemMode? '[data-stem-mode="'+focused.dataset.stemMode+'"]':'.mc-play-toggle')
+        : null;
       host.innerHTML=h;wire(host);
-      if(typeof window.mcFixQueueTransportSync==='function')window.mcFixQueueTransportSync();
+      const transport=host.querySelector('[data-stem-transport]');
+      renderStemTransport(transport);
+      if(transportFocus)transport.querySelector(transportFocus)?.focus({preventScroll:true});
       explainSelected(it);
     }
     function wire(host){
@@ -26750,25 +26742,54 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
     refAvg=null;refAvgLastPlayhead=null;stemLiveSpectrumCache.clear();stemPlaybackSpectrumBuild();
     stemRenderRows();
   }
-  window.mcFixQueueTransportSync=function(){
-    const host=document.getElementById('mcActions');if(!host||!host.querySelector)return;
-    const play=host.querySelector('.mcq-play'),modes=host.querySelector('.mcq-modes');
-    if(play){
-      const available=refActivePlaybackBuffers().length>0;
-      play.setAttribute('aria-disabled',String(!available));
-      if(available)play.removeAttribute('tabindex');else play.tabIndex=-1;
-      syncMixPlayToggle(play);
+  const STEM_PLAYBACK_MODES=[
+    ['full','Full song'],
+    ['vocals','Vocals only'],
+    ['instrumental','Instrumental'],
+    ['drums-bass','Drums + Bass']
+  ];
+  function renderStemTransport(host){
+    if(!host)return;
+    if(!host.firstElementChild){
+      host.innerHTML='<button type="button" class="mc-play-toggle"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-play"/></svg></button>'
+        +'<div class="mc-stem-modes" role="group" aria-label="Stem playback selection">'
+        +STEM_PLAYBACK_MODES.map(([mode,label])=>'<button type="button" class="mc-stem-mode" data-stem-mode="'+mode+'">'+label+'</button>').join('')
+        +'</div>';
+      host.addEventListener('click',handleStemTransportClick);
     }
-    if(modes){const available=!!(stemSession&&stemSession.some(s=>s.status==='ok'));modes.hidden=!available;
-      if(available){modes.innerHTML=[['full','Full song'],['vocals','Vocals only'],['instrumental','Instrumental'],['drums-bass','Drums + Bass']].map(([mode,label])=>'<button type="button" class="mcq-mode" data-mode="'+mode+'" aria-pressed="'+(mode===stemPlaybackMode)+'">'+label+'</button>').join('');modes.querySelectorAll('button').forEach(button=>button.onclick=()=>stemSetPlaybackMode(button.dataset.mode));}
-    }
-  };
+
+    const play=host.firstElementChild;
+    const canPlay=refPlaying||!!(refAnalyser&&refActivePlaybackBuffers().length);
+    const hasStems=!!stemSession?.some(stem=>stem.status==='ok');
+    const playLabel=refPlaying?'Pause stem mix':'Play stem mix';
+    play.setAttribute('aria-disabled',String(!canPlay));
+    play.tabIndex=canPlay?0:-1;
+    play.setAttribute('aria-label',playLabel);
+    play.setAttribute('aria-pressed',String(refPlaying));
+    play.title=canPlay?playLabel:'No playable audio loaded';
+    play.querySelector('use').setAttribute('href',refPlaying?'#i-pause':'#i-play');
+    host.querySelectorAll('[data-stem-mode]').forEach(button=>{
+      button.setAttribute('aria-disabled',String(!hasStems));
+      button.tabIndex=hasStems?0:-1;
+      button.setAttribute('aria-pressed',String(button.dataset.stemMode===stemPlaybackMode));
+      button.title=hasStems?'':'No playable stems loaded';
+    });
+  }
+  function handleStemTransportClick(event){
+    const button=event.target.closest('button');
+    if(!button||button.getAttribute('aria-disabled')==='true')return;
+    const {stemMode}=button.dataset;
+    if(stemMode)stemSetPlaybackMode(stemMode);
+    else window.refTogglePlay();
+  }
+  function syncStemTransports(){
+    document.querySelectorAll('[data-stem-transport]').forEach(renderStemTransport);
+  }
   function stemSetPlaybackMode(mode){
-    if(!['full','vocals','instrumental','drums-bass'].includes(mode))return;
     stemPlaybackMode=mode;stemSoloKeys.clear();
     if(refPlaying)refRetargetPlayback();
     refAvg=null;refAvgLastPlayhead=null;stemLiveSpectrumCache.clear();stemPlaybackSpectrumBuild();
-    stemRenderRows();window.mcFixQueueTransportSync();
+    stemRenderRows();
   }
   function stemApplySelection(keys){
     const rows=(stemSession||[]).filter(s=>s.status==='ok'),valid=new Set(rows.map(s=>s.key));
@@ -27028,25 +27049,11 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
     keyFact.textContent='Key · '+(key&&key!=='– –'?key+' approx':'—');
     tempoFact.textContent=tempo&&tempo!=='– –'?tempo:'— BPM';
   }
-  function syncMixPlayToggle(button){
-    if(!button)return;
-    const isPlaying=button.getAttribute('aria-disabled')!=='true'&&!!refPlaying;
-    const playing=String(isPlaying);
-    if(button.dataset.playing===playing)return;
-    const label=isPlaying?'Pause stem mix':'Play stem mix';
-    button.dataset.playing=playing;
-    button.setAttribute('aria-label',label);
-    button.setAttribute('aria-pressed',playing);
-    button.title=label;
-    button.querySelector('use').setAttribute('href',isPlaying?'#i-pause':'#i-play');
-  }
-  function stemPlayerSyncTransport(){
-    const elapsed=document.getElementById('mcStemElapsed'),duration=document.getElementById('mcStemDuration'),button=document.getElementById('mcStemBigPlay');
-    const disabled=button?.getAttribute('aria-disabled')==='true';
-    if(elapsed)elapsed.textContent=(!disabled&&document.getElementById('refTimeElapsed')?.textContent)||'0:00';
-    if(duration)duration.textContent=(!disabled&&document.getElementById('refTimeDuration')?.textContent)||'0:00';
-    syncMixPlayToggle(button);
-    window.mcFixQueueTransportSync();
+  function stemPlayerSyncClock(){
+    const elapsed=document.getElementById('mcStemElapsed'),duration=document.getElementById('mcStemDuration');
+    const hasStems=!!stemSession?.some(stem=>stem.status==='ok');
+    if(elapsed)elapsed.textContent=(hasStems&&document.getElementById('refTimeElapsed')?.textContent)||'0:00';
+    if(duration)duration.textContent=(hasStems&&document.getElementById('refTimeDuration')?.textContent)||'0:00';
   }
   function stemRenderRows(){
     const stack=document.getElementById('mcStemStack'),rows=document.getElementById('mcStemRows'),status=document.getElementById('mcStemStatus');
@@ -27054,21 +27061,13 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
     const ok=(stemSession||[]).filter(s=>s.status==='ok').length;
     const empty=ok===0;
     stack.dataset.empty=String(empty);
-    stack.querySelectorAll('.mc-stem-transport button').forEach(button=>{
-      button.setAttribute('aria-disabled',String(empty));
-      if(empty)button.tabIndex=-1;else button.removeAttribute('tabindex');
-    });
-    stack.querySelectorAll('.mc-stem-modes button').forEach(button=>{
-      const selected=button.dataset.stemMode===stemPlaybackMode;
-      button.setAttribute('aria-pressed',String(selected));
-      button.onclick=empty?null:()=>stemSetPlaybackMode(button.dataset.stemMode);
-    });
+    syncStemTransports();
     if(!stemSession||!stemSession.length){stack.hidden=true;rows.innerHTML='';status.textContent='';return;}
-    stack.hidden=false;window.mcFixQueueTransportSync();const ref=stemRef(),excluded=stemSession.length-ok;
+    stack.hidden=false;const ref=stemRef(),excluded=stemSession.length-ok;
     const progress=stemDecodeProgress?stemDecodeProgress+' · ':'';
     const active=stemPlaybackRows().map(s=>s.label);
     status.textContent=progress+ok+' aligned'+(active.length?' · audible: '+active.join(' + '):' · all stems muted')+(excluded?' · '+excluded+' excluded':'');
-    stemPlayerSyncMetadata();stemPlayerSyncTransport();
+    stemPlayerSyncMetadata();stemPlayerSyncClock();
     rows.innerHTML=stemSession.map(stem=>{
       const isSelected=stem.status==='ok'&&stemAuditionKeys.includes(stem.key),isSolo=stemSoloKeys.has(stem.key),isImplicitMute=stemSoloKeys.size>0&&!isSolo,isModeMute=!stemSoloKeys.size&&!stemModeIncludes(stem),isMuted=stemMutedKeys.has(stem.key)||isImplicitMute||isModeMute;
       const message=stem.status==='pending'?'Waiting to decode…':stem.message;
@@ -27198,6 +27197,7 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
     // the format summary. mcSetHeader also flips #mcSub visible.
     mcSetHeader(meta.displayName||meta.name, sr, meta.bits, dur);
     refAnalyser=refCtx.createAnalyser();refAnalyser.fftSize=8192;refAnalyser.smoothingTimeConstant=0.82;refAnalyser.connect(refEnsureGain()||refCtx.destination);
+    syncStemTransports();
     refApplyVol(false); // item 13: restore the persisted playback level for this track
     {const rm=document.getElementById('refMeters');if(rm)rm.classList.add('visible');}
     const r=await refAnalyse(refBuffer);
@@ -27280,7 +27280,7 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
     refStartTime=refCtx.currentTime;refPlaying=true;refStopped=false;refAvg=null;
     const pi=document.getElementById('refPlayIcon'),pa=document.getElementById('refPauseIcon');
     if(pi)pi.style.display='none';if(pa)pa.style.display='';
-    stemPlayerSyncTransport();
+    syncStemTransports();
     refSetEl('refSpecStatus','Live · playing');
     document.getElementById('refSpecStatus').className='ref-spec-status-playing';
     cancelAnimationFrame(refRaf);refLiveAnimate();
@@ -27291,7 +27291,7 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
     refPlaying=false;refStopped=false;
     const pi=document.getElementById('refPlayIcon'),pa=document.getElementById('refPauseIcon');
     if(pi)pi.style.display='';if(pa)pa.style.display='none';
-    stemPlayerSyncTransport();
+    syncStemTransports();
     refSetEl('refSpecStatus','paused');document.getElementById('refSpecStatus').className='ref-spec-status-idle';
     cancelAnimationFrame(refRaf);refIdleAnimate();
   }
@@ -27301,7 +27301,7 @@ Explain only. Treat the supplied fix and context as evidence. Do not search, cal
     refPlaying=false;refStopped=true;refStartOffset=0;
     const pi=document.getElementById('refPlayIcon'),pa=document.getElementById('refPauseIcon');
     if(pi)pi.style.display='';if(pa)pa.style.display='none';
-    stemPlayerSyncTransport();
+    syncStemTransports();
     refSetEl('refTimeElapsed','0:00'); // step 5: #mcWave playhead redraws via refIdleAnimate below
     refSetEl('refSpecStatus','stopped');document.getElementById('refSpecStatus').className='ref-spec-status-idle';
     cancelAnimationFrame(refRaf);refIdleAnimate();

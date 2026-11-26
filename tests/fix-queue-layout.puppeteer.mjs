@@ -44,12 +44,12 @@ async function measureInk(page, png, regions) {
   }, { png: Buffer.from(png).toString('base64'), regions });
 }
 
-function loadTestStems() {
-  // Two short PCM stems exercise the real file input and playback-mode renderer.
+function loadTestStems({ tones, duration, folderTitle }) {
+  // PCM stems exercise the real file input and Web Audio playback graph.
   const transfer = new DataTransfer();
   const sampleRate = 44100;
-  const frames = sampleRate * 5;
-  for (const [name, frequency] of [['Bass.wav', 110], ['Vocals.wav', 440]]) {
+  const frames = sampleRate * duration;
+  for (const [name, frequency] of tones) {
     const wav = new DataView(new ArrayBuffer(44 + frames * 2));
     for (const [offset, tag] of [[0, 'RIFF'], [8, 'WAVE'], [12, 'fmt '], [36, 'data']]) {
       for (let i = 0; i < tag.length; i++) wav.setUint8(offset + i, tag.charCodeAt(i));
@@ -66,9 +66,11 @@ function loadTestStems() {
     for (let i = 0; i < frames; i++) {
       wav.setInt16(44 + 2 * i, Math.round(600 * Math.sin(2 * Math.PI * frequency * i / sampleRate)), true);
     }
-    transfer.items.add(new File([wav.buffer], name, { type: 'audio/wav' }));
+    const file = new File([wav.buffer], name, { type: 'audio/wav' });
+    if (folderTitle) Object.defineProperty(file, 'webkitRelativePath', { value: folderTitle + '/' + name });
+    transfer.items.add(file);
   }
-  const input = document.getElementById('refFileInput');
+  const input = document.getElementById(folderTitle ? 'refFolderInput' : 'refFileInput');
   input.files = transfer.files;
   input.dispatchEvent(new Event('change', { bubbles: true }));
 }
@@ -95,8 +97,8 @@ test('Fix Queue and Stem mix transport layouts and shared playback', async t => 
       document.querySelector('.tab[data-tab="mixcheck"]').click();
       window.toggleHopeRail(true);
     });
-    await page.evaluate(loadTestStems);
-    await page.waitForSelector('.mcq-mode[data-mode="drums-bass"]', { visible: true });
+    await page.evaluate(loadTestStems, { tones: [['Bass.wav', 110], ['Vocals.wav', 440]], duration: 5 });
+    await page.waitForSelector('.mcq-transport [data-stem-mode="drums-bass"]', { visible: true });
     await page.evaluate(() => document.fonts.ready);
     const [previewRank, previewPlay] = await measureInk(page, await readFile(preview), [
       { left: 46, right: 70, top: 90, bottom: 106, red: 90 },
@@ -125,7 +127,7 @@ test('Fix Queue and Stem mix transport layouts and shared playback', async t => 
               red,
             };
           };
-          const labels = [...document.querySelectorAll('.mcq-mode')].map(button => {
+          const labels = [...document.querySelectorAll('.mcq-transport .mc-stem-mode')].map(button => {
             const range = document.createRange();
             range.selectNodeContents(button);
             const { left, right, top } = range.getBoundingClientRect();
@@ -135,14 +137,14 @@ test('Fix Queue and Stem mix transport layouts and shared playback', async t => 
             railOpen: document.body.classList.contains('rail-open') && rail.getBoundingClientRect().width > 0
               && rail.contains(document.querySelector('.aichat-layout')),
             ranks: [...document.querySelectorAll('.mcq-rank')].map(rank => rank.getBoundingClientRect().left),
-            playLeft: box('.mcq-play').left,
-            playRight: box('.mcq-play').right,
+            playLeft: box('.mcq-transport .mc-play-toggle').left,
+            playRight: box('.mcq-transport .mc-play-toggle').right,
             toggleCount: document.querySelectorAll('.mcq-transport > button').length,
             leftColumnWidth: column.width,
             leftColumnRight: column.right,
             actions: [...document.querySelectorAll('.mcq-row-actions')].map(row =>
               [...row.children].map(button => button.getBoundingClientRect().left - column.right)),
-            inkRegions: [inkRegion('.mcq-rank', 90), inkRegion('.mcq-play', 175)],
+            inkRegions: [inkRegion('.mcq-rank', 90), inkRegion('.mcq-transport .mc-play-toggle', 175)],
             viewportOverflow: document.documentElement.scrollWidth - innerWidth,
             labels,
           };
@@ -188,8 +190,8 @@ test('Fix Queue and Stem mix transport layouts and shared playback', async t => 
           const detail = card.querySelector('.mcq-detail').getBoundingClientRect();
           const list = card.querySelector('.mcq-list').getBoundingClientRect();
           const transport = card.querySelector('.mcq-transport').getBoundingClientRect();
-          const play = card.querySelector('.mcq-play').getBoundingClientRect();
-          const modes = card.querySelector('.mcq-modes');
+          const play = card.querySelector('.mcq-transport .mc-play-toggle').getBoundingClientRect();
+          const modes = card.querySelector('.mc-stem-modes');
           return {
             columnWidth: left.width,
             stacked: detail.top > left.top && detail.left === left.left,
@@ -228,7 +230,7 @@ test('Fix Queue and Stem mix transport layouts and shared playback', async t => 
       const minimum = await page.$eval('.mcq-transport', transport => {
         const card = transport.closest('#mcActions');
         card.style.width = '506px';
-        const labels = [...transport.querySelectorAll('.mcq-mode')];
+        const labels = [...transport.querySelectorAll('.mc-stem-mode')];
         const widthAt = (label, weight) => {
           label.style.fontWeight = weight;
           const width = label.getBoundingClientRect().width;
@@ -239,9 +241,9 @@ test('Fix Queue and Stem mix transport layouts and shared playback', async t => 
         const extra = labels.map((label, index) => widthAt(label, '600') - regular[index])
           .sort((a, b) => b - a);
         const { paddingLeft, paddingRight, columnGap } = getComputedStyle(transport);
-        const labelGaps = 3 * parseFloat(getComputedStyle(transport.querySelector('.mcq-modes')).columnGap);
+        const labelGaps = 3 * parseFloat(getComputedStyle(transport.querySelector('.mc-stem-modes')).columnGap);
         return parseFloat(paddingLeft) + parseFloat(paddingRight) + parseFloat(columnGap) + labelGaps
-          + transport.querySelector('.mcq-play').getBoundingClientRect().width
+          + transport.querySelector('.mcq-transport .mc-play-toggle').getBoundingClientRect().width
           + regular.reduce((sum, width) => sum + width, 0) + extra[0] + extra[1] + extra[2];
       });
       assert.equal(Math.ceil(minimum), 506, `single row requires ${minimum}px`);
@@ -267,14 +269,14 @@ test('Fix Queue and Stem mix transport layouts and shared playback', async t => 
             meta: box('.mc-stem-track-facts'),
             clock: box('.mc-stem-clock'),
             transport: box('.mc-stem-transport'),
-            play: box('#mcStemBigPlay'),
+            play: box('.mc-stem-transport .mc-play-toggle'),
             transportButtons: document.querySelectorAll('.mc-stem-transport button').length,
-            labels: [...document.querySelectorAll('[data-stem-mode]')].map(button => {
+            labels: [...document.querySelectorAll('.mc-stem-transport [data-stem-mode]')].map(button => {
               const range = document.createRange();
               range.selectNodeContents(button);
               return { ...button.getBoundingClientRect().toJSON(), text: button.textContent, lines: range.getClientRects().length };
             }),
-            surfaces: ['#mcTransport', '#refDropZone', '#mcStemStack', '#mcStemBigPlay', '[data-stem-mode]']
+            surfaces: ['#mcTransport', '#refDropZone', '#mcStemStack', '.mc-stem-transport .mc-play-toggle', '[data-stem-mode]']
               .map(selector => style(selector, ['backgroundColor', 'borderTopWidth', 'borderRadius'])),
             titleStyle: style('#mcStemTrackTitle', ['fontSize', 'fontWeight', 'color']),
             metaStyle: style('.mc-stem-track-facts', ['fontSize', 'fontWeight', 'color']),
@@ -320,7 +322,7 @@ test('Fix Queue and Stem mix transport layouts and shared playback', async t => 
         const layout = await page.evaluate(width => {
           const stack = document.getElementById('mcStemStack');
           stack.style.width = width + 'px';
-          const play = stack.querySelector('.mc-stem-play').getBoundingClientRect();
+          const play = stack.querySelector('.mc-stem-transport .mc-play-toggle').getBoundingClientRect();
           const modes = stack.querySelector('.mc-stem-modes');
           const first = modes.firstElementChild.getBoundingClientRect();
           return {
@@ -361,12 +363,12 @@ test('Fix Queue and Stem mix transport layouts and shared playback', async t => 
         };
         const readSelection = () => page.evaluate(() => [
           document.querySelector('[data-stem-mode][aria-pressed="true"]').dataset.stemMode,
-          document.querySelector('.mcq-mode[aria-pressed="true"]').dataset.mode,
+          document.querySelector('.mcq-transport [data-stem-mode][aria-pressed="true"]').dataset.stemMode,
           window.mcStemAnalysis.playbackState().keys.length,
         ]);
         const assertPlayback = async playing => {
           const state = await page.evaluate(() => ({
-            controls: [...document.querySelectorAll('#mcStemBigPlay, .mcq-play')].map(button => [
+            controls: [...document.querySelectorAll('.mc-stem-transport .mc-play-toggle, .mcq-transport .mc-play-toggle')].map(button => [
               button.getAttribute('aria-label'), button.title, button.getAttribute('aria-pressed'),
               button.querySelector('use').getAttribute('href'),
             ]),
@@ -378,24 +380,153 @@ test('Fix Queue and Stem mix transport layouts and shared playback', async t => 
           assert.equal(state.engine.status, playing ? 'playing' : 'paused');
           return state.engine.elapsed_seconds;
         };
-        await click('[data-stem-mode="full"]');
+        await click('.mc-stem-transport [data-stem-mode="full"]');
         assert.deepEqual(await readSelection(), ['full', 'full', 2]);
-        await click('[data-stem-mode="vocals"]');
+        await click('.mc-stem-transport [data-stem-mode="vocals"]');
         assert.deepEqual(await readSelection(), ['vocals', 'vocals', 1]);
-        await click('.mcq-mode[data-mode="instrumental"]');
+        await click('.mcq-transport [data-stem-mode="instrumental"]');
         assert.deepEqual(await readSelection(), ['instrumental', 'instrumental', 1]);
-        await click('#mcStemBigPlay');
+        await click('.mc-stem-transport .mc-play-toggle');
         await assertPlayback(true);
         await page.waitForFunction(() => window.mcTransport.snapshot().elapsed_seconds > 0.05);
-        await click('.mcq-play');
+        await click('.mcq-transport .mc-play-toggle');
         const pausedAt = await assertPlayback(false);
         assert.ok(pausedAt > 0.05, 'pause preserves the playhead');
-        await click('.mcq-play');
+        await click('.mcq-transport .mc-play-toggle');
         assert.ok(await assertPlayback(true) >= pausedAt, 'play resumes from the paused position');
-        await click('#mcStemBigPlay');
+        await click('.mc-stem-transport .mc-play-toggle');
         await assertPlayback(false);
       });
     }
+
+    await t.test('Six uploaded stems switch seamlessly from either transport at 1500px with Hope open', async t => {
+      const tones = [['Vocals', 211], ['Drums', 347], ['Bass', 523], ['Guitar', 719], ['Keys', 941], ['Other', 1277]];
+      const fixture = { tones: tones.map(([name, hz]) => [name + '.wav', hz]), duration: 12 };
+      const switches = [
+        ['vocals', ['Vocals']],
+        ['instrumental', ['Drums', 'Bass', 'Guitar', 'Keys', 'Other']],
+        ['drums-bass', ['Drums', 'Bass']],
+        ['full', tones.map(([name]) => name)],
+      ];
+      await page.setViewport({ ...viewport, width: 1500, height: 1600 });
+      await page.goto(origin + '/index.html', { waitUntil: 'domcontentloaded' });
+      const read = await page.evaluate(tones => {
+        document.querySelector('.tab[data-tab="mixcheck"]').click();
+        window.toggleHopeRail(true);
+        let analyser;
+        const createAnalyser = AudioContext.prototype.createAnalyser;
+        AudioContext.prototype.createAnalyser = function () {
+          analyser = createAnalyser.call(this);
+          return analyser;
+        };
+        window.stemSourceStarts = 0;
+        const start = AudioBufferSourceNode.prototype.start;
+        AudioBufferSourceNode.prototype.start = function (...args) {
+          window.stemSourceStarts++;
+          return start.apply(this, args);
+        };
+        const elapsed = () => window.mcTransport.snapshot().elapsed_seconds;
+        document.addEventListener('keydown', event => {
+          if (event.target.matches('[data-stem-mode]')) window.switchBefore = elapsed();
+        }, true);
+        document.addEventListener('click', event => {
+          const choice = event.target.closest('[data-stem-mode]');
+          if (choice) window.switchAfter = elapsed();
+        });
+        window.readStemTransportTest = () => {
+          const bins = new Float32Array(analyser.frequencyBinCount);
+          analyser.getFloatFrequencyData(bins);
+          const heard = tones.filter(([, hz]) => {
+            const index = Math.round(hz * analyser.fftSize / analyser.context.sampleRate);
+            return Math.max(...bins.slice(index - 1, index + 2)) > -65;
+          }).map(([name]) => name);
+          const snapshot = window.mcStemAnalysis.snapshot();
+          const controls = [...document.querySelectorAll('[data-stem-transport]')].map(host =>
+            [...host.querySelectorAll('button')].map(button => [
+              button.textContent, button.getAttribute('aria-label'), button.title, button.tabIndex,
+              button.getAttribute('aria-pressed'), button.getAttribute('aria-disabled'),
+            ]));
+          const focus = document.activeElement;
+          const style = getComputedStyle(focus);
+          return {
+            heard, controls, starts: window.stemSourceStarts,
+            before: window.switchBefore, after: window.switchAfter,
+            engine: window.mcTransport.snapshot(),
+            audible: snapshot.playbackStems, audition: snapshot.auditionStems,
+            focus: [focus.dataset.stemMode, style.outlineWidth, style.outlineColor, style.color],
+          };
+        };
+        return [innerWidth, document.body.classList.contains('rail-open'),
+          !!document.querySelector('#hopeRailBody .aichat-layout')];
+      }, tones);
+      assert.deepEqual(read, [1500, true, true]);
+      await page.evaluate(loadTestStems, fixture);
+      await page.waitForSelector('.mcq-transport [data-stem-mode="full"]', { visible: true });
+      await page.$eval('.mc-stem-row[data-role="guitar"]', row => row.click());
+      const compare = async (mode, expected) => {
+        try {
+          await page.waitForFunction(expected => window.readStemTransportTest().heard.join() === expected.join(),
+            { timeout: 3000 }, expected);
+        } catch (error) {
+          const actual = await page.evaluate(() => window.readStemTransportTest());
+          throw new Error('Expected ' + mode + ' audio ' + expected.join(', ') + ', got ' + JSON.stringify(actual), { cause: error });
+        }
+        const state = await page.evaluate(() => window.readStemTransportTest());
+        assert.deepEqual(state.controls[0], state.controls[1]);
+        assert.deepEqual(state.audible, expected);
+        assert.deepEqual(state.heard, expected);
+        assert.deepEqual(state.audition, ['Guitar']);
+        assert.equal(state.engine.status, 'playing');
+        assert.equal(state.controls[0][0][1], 'Pause stem mix');
+        assert.deepEqual(state.controls[0].slice(1).filter(control => control[4] === 'true').map(control => control[0]),
+          [{ full: 'Full song', vocals: 'Vocals only', instrumental: 'Instrumental', 'drums-bass': 'Drums + Bass' }[mode]]);
+        return state;
+      };
+      const traces = [];
+      for (const host of ['.mc-stem-transport', '.mcq-transport']) {
+        const play = host + ' .mc-play-toggle';
+        await page.click(play);
+        const full = await compare('full', tones.map(([name]) => name));
+        assert.equal(full.starts, (traces.length + 1) * 6);
+        await page.waitForFunction(() => window.mcTransport.snapshot().elapsed_seconds > 0.30);
+        const trace = [];
+        for (const [mode, expected] of switches) {
+          await page.$eval(host + ' [data-stem-mode="' + mode + '"]', button => button.focus());
+          await page.keyboard.press('Space');
+          const state = await compare(mode, expected);
+          assert.ok(state.before >= 0.30 && state.after >= state.before && state.after - state.before < 0.20,
+            JSON.stringify({ before: state.before, after: state.after }));
+          assert.equal(state.starts, full.starts, 'mode changes keep every source running');
+          assert.deepEqual(state.focus, [mode, '2px', 'rgb(45, 212, 191)', 'rgb(45, 212, 191)']);
+          t.diagnostic(`${host} ${mode} ${state.before.toFixed(2)} → ${state.after.toFixed(2)} s | audio ${state.heard.join(', ')} | audition ${state.audition.join(', ')}`);
+          trace.push([state.controls, state.heard, state.audition]);
+        }
+        await page.click(play);
+        const paused = await page.evaluate(() => window.readStemTransportTest());
+        assert.equal(paused.engine.status, 'paused');
+        assert.ok(paused.engine.elapsed_seconds >= 0.30);
+        assert.deepEqual(paused.controls[0], paused.controls[1]);
+        assert.equal(paused.controls[0][0][1], 'Play stem mix');
+        t.diagnostic(`${host} paused at ${paused.engine.elapsed_seconds.toFixed(2)} s`);
+        traces.push(trace);
+        await page.evaluate(() => window.mcTransport.stop());
+      }
+      assert.deepEqual(traces[0], traces[1]);
+
+      await page.click('.mcq-transport [data-stem-mode="vocals"]');
+      assert.equal(await page.evaluate(() => window.mcTransport.snapshot().status), 'stopped');
+      await page.click('.mc-stem-transport .mc-play-toggle');
+      await compare('vocals', ['Vocals']);
+      await page.click('.mcq-transport .mc-play-toggle');
+      await page.evaluate(loadTestStems, { ...fixture, folderTitle: 'Next song', duration: 5 });
+      await page.waitForSelector('.mcq-transport [data-stem-mode="full"]', { visible: true });
+      const reset = await page.evaluate(() => window.readStemTransportTest());
+      assert.deepEqual(reset.controls[0], reset.controls[1]);
+      assert.equal(reset.controls[0][1][4], 'true');
+      assert.equal(reset.engine.status, 'stopped');
+      assert.equal(reset.engine.elapsed_seconds, 0);
+      assert.deepEqual(reset.audition, []);
+    });
 
     await t.test('Stem mix transport ignores disabled controls with no playable stems', async () => {
       await page.goto(origin + '/index.html', { waitUntil: 'domcontentloaded' });
