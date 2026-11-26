@@ -7,8 +7,8 @@ const byName=new Map(pageTools.map(t=>[t.name,t]));
 const cases=html.slice(html.indexOf("      case 'snapshots_list':"),html.indexOf("      case 'vocal_favorites_read':"));
 const rescan=html.slice(html.indexOf("      case 'inventory_rescan':"),html.indexOf("      case 'inventory_mark_vendor_app_checked':"));
 function run(code,context){vm.runInNewContext(`async function call(name,args={}){switch(name){${code}default:throw Error(name)}}globalThis.call=call;`,context);return context.call;}
-test('all 18 new schemas are available to both shared routes and writes require confirmed',()=>{
-  assert.equal(newToolNames.length,18);
+test('all new schemas are available to both shared routes and writes require confirmed',()=>{
+  assert.equal(newToolNames.length,15);
   for(const name of newToolNames){const def=byName.get(name);assert.ok(def,name);assert.equal(def.parameters.type,'object');assert.ok(def.description);}
   for(const name of ['snapshots_apply','snapshots_add_note','plugin_tag_set','plugin_hide','saved_target_apply','mixbus_load_preset','mixbus_auto_fill','add_videos_to_library'])assert.ok(byName.get(name).parameters.required.includes('confirmed'),name);
   assert.match(html,/const AICHAT_TOOL_DEFS = TOOL_DEFS\.map/);

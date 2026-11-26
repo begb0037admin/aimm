@@ -41,3 +41,11 @@ test('Playlist tool definitions agree across the page and all exports',()=>{
   assert.match(description,/clear instruction to add it is enough/);
   assert.match(description,/unprompted offer.*read_video_transcript and sharing the findings/);
 });
+
+test('channel guidance and metadata stay aligned',()=>{
+  const tool=pageTools.find(t=>t.name==='open_library_channel');
+  assert.match(tool.description,/spoken name/);
+  assert.match(sourceText,/Never ask for a link or handle/);
+  assert.match(sourceText,/mentioning an alternative if confidence is not high/);
+  for(const field of ['resolved_channel','confidence','alternatives','source','complete','total_videos','note']) assert.ok(sourceText.includes(field),field);
+});

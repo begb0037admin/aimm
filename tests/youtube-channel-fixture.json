@@ -1,0 +1,113 @@
+[
+  {
+    "richItemRenderer": {
+      "content": {
+        "lockupViewModel": {
+          "contentId": "5-e-72xajrQ",
+          "contentType": "LOCKUP_CONTENT_TYPE_VIDEO",
+          "metadata": {
+            "lockupMetadataViewModel": {
+              "title": {
+                "content": "ACE Studio CLI & MCP Tutorial: Smarter Workflow, Full Creative Control"
+              }
+            }
+          },
+          "contentImage": {
+            "thumbnailViewModel": {
+              "overlays": [
+                {
+                  "thumbnailBottomOverlayViewModel": {
+                    "badges": [
+                      {
+                        "thumbnailBadgeViewModel": {
+                          "text": "7:14"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "richItemRenderer": {
+      "content": {
+        "lockupViewModel": {
+          "contentId": "LHWGfpD_Wq4",
+          "contentType": "LOCKUP_CONTENT_TYPE_VIDEO",
+          "metadata": {
+            "lockupMetadataViewModel": {
+              "title": {
+                "content": "Your vocals, your rules. 4 new vocal parameters just dropped in ACE Studio"
+              }
+            }
+          },
+          "contentImage": {
+            "thumbnailViewModel": {
+              "overlays": [
+                {
+                  "thumbnailBottomOverlayViewModel": {
+                    "badges": [
+                      {
+                        "thumbnailBadgeViewModel": {
+                          "text": "0:37"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "richItemRenderer": {
+      "content": {
+        "lockupViewModel": {
+          "contentId": "amx7gYLPW10",
+          "contentType": "LOCKUP_CONTENT_TYPE_VIDEO",
+          "metadata": {
+            "lockupMetadataViewModel": {
+              "title": {
+                "content": "ACE Studio Music Video | Your AI Crew Directs, Casts & Shoots"
+              }
+            }
+          },
+          "contentImage": {
+            "thumbnailViewModel": {
+              "overlays": [
+                {
+                  "thumbnailBottomOverlayViewModel": {
+                    "badges": [
+                      {
+                        "thumbnailBadgeViewModel": {
+                          "text": "1:26"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "continuationItemRenderer": {
+      "continuationEndpoint": {
+        "continuationCommand": {
+          "token": "more"
+        }
+      }
+    }
+  }
+]

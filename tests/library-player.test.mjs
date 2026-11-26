@@ -517,12 +517,13 @@ test('Hope opens a channel, shows only the picks, and clears back to the full ch
   const channel=await run('open_library_channel',{channel:'@studio',query:'Logic EQ'});
   assert.equal(ctx.switched,'library');
   assert.equal(nodes.libPlayerSearch.value,'@studio');
-  assert.deepEqual(calls,[['https://worker.example/kb/search-youtube',{query:'@studio',channel:true}]]);
+  assert.deepEqual(calls,[['https://worker.example/kb/search-youtube',{query:'@studio',channel:true,topic:'Logic EQ',prefer_video_ids:['AbCdEfGhI12']}]]);
   assert.deepEqual(channel,{ok:true,channel:'Studio',videos:[
+    {video_id:pick.video_id,title:pick.title,duration:'12:30',in_library:false},
     {video_id:known.video_id,title:known.title,duration:null,in_library:true},
-    {video_id:pick.video_id,title:pick.title,duration:'12:30',in_library:false}
+    {video_id:other.video_id,title:other.title,duration:null,in_library:false}
   ]});
-  assert.deepEqual(ids(),[known.video_id,pick.video_id]);
+  assert.deepEqual(ids(),[pick.video_id,known.video_id,other.video_id]);
   assert.match(nodes.libPlayerRows.innerHTML,/class="result-row".*On YouTube|On YouTube.*class="result-row"/);
   assert.match(nodes.libPlayerRows.innerHTML,/class="rm">In library/);
   assert.match(nodes.libPlayerRows.innerHTML,/class="rm">Not in library/);

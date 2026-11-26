@@ -153,13 +153,13 @@
   {
     "type": "function",
     "name": "open_library_channel",
-    "description": "Open a YouTube channel in the Library Playlist and return up to 40 videos with titles, durations and library status. Pass Kev’s topic as query when he asks for channel recommendations.",
+    "description": "Open a YouTube channel directly from Kevin’s spoken name in the Library Playlist. Pass his topic as query. Returns resolution confidence, alternatives, coverage and up to 40 videos.",
     "parameters": {
       "type": "object",
       "properties": {
         "channel": {
           "type": "string",
-          "description": "YouTube @handle, channel URL, or exact channel name."
+          "description": "The channel name as Kevin said it."
         },
         "query": {
           "type": "string",

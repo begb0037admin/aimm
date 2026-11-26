@@ -55,7 +55,7 @@ The ElevenLabs agent itself remains unchanged until its client tools and prompt 
 
 # Hope channel picks — build 2026-11-23.67
 
-- `open_library_channel(channel, query?, switch_to_library?)` accepts a YouTube @handle, channel URL or exact channel name. It fills the Playlist search field, switches to Library by default, and uses the Playlist’s title and channel matching for the optional topic. It returns the resolved channel and up to 40 videos with `video_id`, `title`, `duration` and `in_library`. If the channel cannot be resolved, it returns an error.
+- `open_library_channel(channel, query?, switch_to_library?)` opens the spoken channel name directly and searches within the channel when a topic is supplied. It returns up to 40 videos, resolved_channel, confidence, alternatives, source, complete, total_videos and note. Hope says which channel opened, mentions an alternative when confidence is not high, and describes the coverage honestly. She never asks for a link or handle; she asks for spelling only if resolution fails.
 - `show_library_picks(video_ids)` shows 1–15 videos in the supplied order using the existing On YouTube rows and Playlist count. Each row can preview the video and shows Add to Hope or In library. The search clear button restores the full channel list. Selecting a channel in the existing filter exits picks.
 - `add_videos_to_library(video_ids, confirmed)` accepts 1–10 IDs. `confirmed:false` returns a one-line summary with titles and library status. After Kev’s clear yes, `confirmed:true` uses the existing Add to Hope path sequentially and returns `added`, `already in library`, or `failed` with a reason for each distinct ID. The row status updates as each video enters the refreshed library.
 
