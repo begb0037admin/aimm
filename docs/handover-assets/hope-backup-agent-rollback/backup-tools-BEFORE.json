@@ -1,0 +1,3189 @@
+[
+ {
+  "id": "tool_0501ksnpkbjpf06s8pqwsk3sqya1",
+  "tool_config": {
+   "type": "client",
+   "name": "get_context",
+   "description": "Get the current workbench state: genre, loudness target, each bus's chain, meter readings, flagged symptoms, favorite count, custom plugin count. Call this before advising so you know what the producer is actually looking at.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [],
+    "properties": {}
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 25,
+   "avg_latency_secs": 0.13
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_8501ksnpkbspe2ttgqp2tnzsap8k",
+  "tool_config": {
+   "type": "client",
+   "name": "set_genre",
+   "description": "Switch the active genre (changes which plugins are starred as top picks).",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "genre"
+    ],
+    "properties": {
+     "genre": {
+      "type": "string",
+      "description": "genre",
+      "enum": [
+       "hiphop",
+       "rnb",
+       "pop",
+       "afrobeats",
+       "trap",
+       "lofi"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_5401ksnpkc04e039024e1gpbvvzk",
+  "tool_config": {
+   "type": "client",
+   "name": "switch_tab",
+   "description": "Navigate the workbench to a different tab so Kev physically sees what you're working on with him.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "tab"
+    ],
+    "properties": {
+     "tab": {
+      "type": "string",
+      "description": "The tab id to switch to.",
+      "enum": [
+       "chain",
+       "meter",
+       "knowledge",
+       "eq",
+       "library",
+       "marketing",
+       "voice",
+       "community",
+       "snapshots"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 20,
+   "avg_latency_secs": 0.14
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_4901ksnpkc6ten48jssekjb6kpes",
+  "tool_config": {
+   "type": "client",
+   "name": "set_platform",
+   "description": "Change the loudness target / platform (master bus reference).",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "platform"
+    ],
+    "properties": {
+     "platform": {
+      "type": "string",
+      "description": "platform",
+      "enum": [
+       "trap",
+       "spotify",
+       "apple",
+       "soundcloud"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_3601ksnpkcdqexstem2xvvzy0a2g",
+  "tool_config": {
+   "type": "client",
+   "name": "add_plugin_to_bus",
+   "description": "Add a plugin to a bus. The plugin name MUST match something in Kev's library. Position is 1-indexed; omit to append at end.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "bus",
+     "plugin"
+    ],
+    "properties": {
+     "bus": {
+      "type": "string",
+      "description": "bus",
+      "enum": [
+       "master",
+       "vocal",
+       "808",
+       "drums",
+       "fx"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "plugin": {
+      "type": "string",
+      "description": "Plugin name \u00e2\u20ac\u201d must be one Kev owns.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "position": {
+      "type": "integer",
+      "description": "1-indexed insertion point; omit to append",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 14,
+   "avg_latency_secs": 0.12
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_1201ksnpkcmdfr591ktjwbnj1xm7",
+  "tool_config": {
+   "type": "client",
+   "name": "remove_plugin_from_bus",
+   "description": "Remove a plugin from a bus by its 1-indexed position.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "bus",
+     "position"
+    ],
+    "properties": {
+     "bus": {
+      "type": "string",
+      "description": "bus",
+      "enum": [
+       "master",
+       "vocal",
+       "808",
+       "drums",
+       "fx"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "position": {
+      "type": "integer",
+      "description": "position",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 1,
+   "avg_latency_secs": 0.13
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_1201ksnpkctxf9nsn9rvzmm6y2se",
+  "tool_config": {
+   "type": "client",
+   "name": "move_plugin",
+   "description": "Reorder a plugin within a bus. Positions are 1-indexed.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "bus",
+     "from",
+     "to"
+    ],
+    "properties": {
+     "bus": {
+      "type": "string",
+      "description": "bus",
+      "enum": [
+       "master",
+       "vocal",
+       "808",
+       "drums",
+       "fx"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "from": {
+      "type": "integer",
+      "description": "from",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "to": {
+      "type": "integer",
+      "description": "to",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_1201ksnpkd0vf9prgxdv26md12yj",
+  "tool_config": {
+   "type": "client",
+   "name": "clear_bus",
+   "description": "Remove all plugins from a bus.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "bus"
+    ],
+    "properties": {
+     "bus": {
+      "type": "string",
+      "description": "bus",
+      "enum": [
+       "master",
+       "vocal",
+       "808",
+       "drums",
+       "fx"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 7,
+   "avg_latency_secs": 0.12
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_0301ksnpkd7ce06azpz600qkcxjn",
+  "tool_config": {
+   "type": "client",
+   "name": "toggle_symptom",
+   "description": "Toggle a flagged mix symptom in the Troubleshooter. Use the symptom id from list_symptoms.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "symptom"
+    ],
+    "properties": {
+     "symptom": {
+      "type": "string",
+      "description": "symptom",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 4,
+   "avg_latency_secs": 0.11
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_9501ksnpkddrfp2vb4w6nm8sm0vj",
+  "tool_config": {
+   "type": "client",
+   "name": "list_symptoms",
+   "description": "List available symptom ids and their labels.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [],
+    "properties": {}
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 1,
+   "avg_latency_secs": 0.11
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_2101ksnpkdm4fp39ekkxgx3v71ej",
+  "tool_config": {
+   "type": "client",
+   "name": "toggle_favorite",
+   "description": "Heart / un-heart a plugin in the library (fuzzy name match).",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "plugin"
+    ],
+    "properties": {
+     "plugin": {
+      "type": "string",
+      "description": "plugin",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_8501ksnpkdtffgra53nwte36kehj",
+  "tool_config": {
+   "type": "client",
+   "name": "record_meter",
+   "description": "Record a meter reading. meter is one of: iLufs, tp, lra, corr, crest.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "meter",
+     "value"
+    ],
+    "properties": {
+     "meter": {
+      "type": "string",
+      "description": "meter",
+      "enum": [
+       "iLufs",
+       "tp",
+       "lra",
+       "corr",
+       "crest"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "value": {
+      "type": "number",
+      "description": "value",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 2,
+   "avg_latency_secs": 0.12
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_7301ksnpke0we0bbkv31acrtq4k6",
+  "tool_config": {
+   "type": "client",
+   "name": "add_custom_plugin",
+   "description": "Add a plugin to the library that isn't already built in. stage must be one of the known stage ids.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "name",
+     "publisher",
+     "stage"
+    ],
+    "properties": {
+     "name": {
+      "type": "string",
+      "description": "name",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "publisher": {
+      "type": "string",
+      "description": "slate, ssl, ua, softube, sonnox, sonible, sndtoys, izotope, eiosis, weiss, oek, waves, ni, pa, ant, cele, liq, or other",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "publisher_label": {
+      "type": "string",
+      "description": "If publisher is other, supply a label like FabFilter",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "stage": {
+      "type": "string",
+      "description": "stage",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_9701ksnpke78f6k9686gb8j4w2sm",
+  "tool_config": {
+   "type": "client",
+   "name": "remove_custom_plugin",
+   "description": "Remove a CUSTOM plugin from Kev's library. Built-in plugins cannot be removed \u00e2\u20ac\u201d only ones added via add_custom_plugin. Match by name (fuzzy match supported).",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "name"
+    ],
+    "properties": {
+     "name": {
+      "type": "string",
+      "description": "Plugin name. Fuzzy match \u00e2\u20ac\u201d but only custom plugins are eligible.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": false,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_2701ksnpkedwercr2kc603jb5s4w",
+  "tool_config": {
+   "type": "client",
+   "name": "list_plugins",
+   "description": "Search the plugin library. Pass stage_id or search text.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [],
+    "properties": {
+     "stage": {
+      "type": "string",
+      "description": "stage",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "search": {
+      "type": "string",
+      "description": "search",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 6,
+   "avg_latency_secs": 0.13
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_4501ksnpkemmfnza4nmpqvwd2vf3",
+  "tool_config": {
+   "type": "client",
+   "name": "get_library",
+   "description": "Return the full current plugin library grouped by stage. Call this if Kev mentions he just added plugins or you want a fresh dump.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [],
+    "properties": {}
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 3,
+   "avg_latency_secs": 0.13
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_3301ksnpkev1eda9rz81x61z846d",
+  "tool_config": {
+   "type": "client",
+   "name": "set_plugin_settings",
+   "description": "Pin concrete setting notes to a specific plugin on a bus. USE THIS EVERY TIME you give specific parameter values \u00e2\u20ac\u201d the notes persist in the UI so Kev doesn't have to scroll the transcript.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "bus",
+     "settings"
+    ],
+    "properties": {
+     "bus": {
+      "type": "string",
+      "description": "bus",
+      "enum": [
+       "master",
+       "vocal",
+       "808",
+       "drums",
+       "fx"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "plugin": {
+      "type": "string",
+      "description": "Plugin name \u00e2\u20ac\u201d fuzzy match. Use this OR position.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "position": {
+      "type": "integer",
+      "description": "1-indexed position on the bus. Use this OR plugin.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "settings": {
+      "type": "string",
+      "description": "Terse, actionable notes. Prefer one parameter per line. Max ~6 lines.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": false,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 4,
+   "avg_latency_secs": 0.12
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_5701ksnpkf1pfc3a4y40yqt8czrw",
+  "tool_config": {
+   "type": "client",
+   "name": "clear_plugin_settings",
+   "description": "Remove settings notes from a plugin on a bus.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "bus"
+    ],
+    "properties": {
+     "bus": {
+      "type": "string",
+      "description": "bus",
+      "enum": [
+       "master",
+       "vocal",
+       "808",
+       "drums",
+       "fx"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "plugin": {
+      "type": "string",
+      "description": "plugin",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "position": {
+      "type": "integer",
+      "description": "position",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_2001ksnpkff8ee9srwjx0vwrk5t3",
+  "tool_config": {
+   "type": "client",
+   "name": "inspect_app",
+   "description": "Search the live AI Mix Masters source code (index.html) for a term \u00e2\u20ac\u201d function name, button id, CSS class, label text, anything. USE THIS when Kev asks what a button actually does or how something works under the hood.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "query"
+    ],
+    "properties": {
+     "query": {
+      "type": "string",
+      "description": "Case-insensitive search term.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": false,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 9,
+   "avg_latency_secs": 0.2
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_1501ksnpkfnjef99d22t3mx27sm1",
+  "tool_config": {
+   "type": "client",
+   "name": "read_doc",
+   "description": "Read one of Kev's project docs \u00e2\u20ac\u201d CLAUDE.md, ROADMAP.md, README.md, or DASHBOARD.html. USE THIS when Kev asks what's on the roadmap, what shipped recently, or what the handover says.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "name"
+    ],
+    "properties": {
+     "name": {
+      "type": "string",
+      "description": "Which doc to read.",
+      "enum": [
+       "CLAUDE.md",
+       "ROADMAP.md",
+       "README.md",
+       "DASHBOARD.html"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "query": {
+      "type": "string",
+      "description": "Optional case-insensitive search term.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": false,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 17,
+   "avg_latency_secs": 0.26
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_2401ksnpkfvpejrvv67ag2k7fqxz",
+  "tool_config": {
+   "type": "client",
+   "name": "read_yt_knowledge",
+   "description": "Fetch the full transcript of an ingested YouTube video from the YOUTUBE KNOWLEDGE BASE. Call this AFTER search_yt_knowledge has identified a relevant video_id, to pull more of that specific video's transcript. Optionally pass a query to get back only the most relevant chunks (recommended \u2014 keeps output lean). Returns up to ~4KB of transcript content. Brief Kev before calling: 'Let me take a look, checking my notes from that video\u2026'. Cite the video title and channel when you draw from the result.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "video_id"
+    ],
+    "properties": {
+     "video_id": {
+      "type": "string",
+      "description": "The video_id \u2014 from a prior search_yt_knowledge result, or the YOUTUBE TOPIC INDEX fast-path list, e.g. '6WPtHxWkY2k'.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "query": {
+      "type": "string",
+      "description": "Optional keyword or phrase to find the most relevant chunks. E.g. 'quantise', 'drum pattern', 'recording audio'. If omitted, returns the first few chunks.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 30,
+   "avg_latency_secs": 0.29
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_2901ksnpkg29f5ms0p2w8qrv5ae5",
+  "tool_config": {
+   "type": "client",
+   "name": "emit_notebooklm_prompt",
+   "description": "Drop a NotebookLM prompt for a producer or technique into the Conversation transcript as a separate copyable bubble \u00e2\u20ac\u201d without reading the whole template aloud. USE THIS whenever you offer a NotebookLM prompt and Kev says yes.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "topic"
+    ],
+    "properties": {
+     "topic": {
+      "type": "string",
+      "description": "Short, specific topic from Kev's question \u00e2\u20ac\u201d producer or technique name.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": false,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_0801ksnpkg8vfqmbw6xgc9smxnd5",
+  "tool_config": {
+   "type": "client",
+   "name": "capture_to_roadmap",
+   "description": "Capture a concrete idea, bug, polish item, or feature request to Kev's project dashboard inbox. CRITICAL: NEVER say 'I will add it to the roadmap' without calling this tool \u00e2\u20ac\u201d that is confabulation.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "type",
+     "title",
+     "body"
+    ],
+    "properties": {
+     "type": {
+      "type": "string",
+      "description": "type",
+      "enum": [
+       "bug",
+       "backlog",
+       "polish",
+       "followup",
+       "idea"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "title": {
+      "type": "string",
+      "description": "Punchy 5-10 word headline.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "body": {
+      "type": "string",
+      "description": "2-4 sentence description.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "effort": {
+      "type": "string",
+      "description": "Optional rough effort estimate.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "force": {
+      "type": "boolean",
+      "description": "Set true only after Kev confirms he wants to log a near-duplicate.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": false,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 11,
+   "avg_latency_secs": 0.28
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_3901ksnpkgfre74tgp4qeag4c115",
+  "tool_config": {
+   "type": "client",
+   "name": "list_eq_tiles",
+   "description": "List the cards on the Reference tab, optionally filtered by section.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [],
+    "properties": {
+     "section": {
+      "type": "string",
+      "description": "Optional section filter.",
+      "enum": [
+       "freqMap",
+       "loudness",
+       "truePeak",
+       "stereoWidth"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_1101ksnpkgphev9b57zx8dyzbrka",
+  "tool_config": {
+   "type": "client",
+   "name": "add_eq_tile",
+   "description": "Add a custom reference tile to the Reference tab. Lead with your audio mastering knowledge \u00e2\u20ac\u201d suggest the right section and propose a concrete title and body grounded in real ranges.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "section",
+     "title",
+     "body"
+    ],
+    "properties": {
+     "section": {
+      "type": "string",
+      "description": "section",
+      "enum": [
+       "freqMap",
+       "loudness",
+       "truePeak",
+       "stereoWidth"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "title": {
+      "type": "string",
+      "description": "Short title. Max 80 chars.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "body": {
+      "type": "string",
+      "description": "1-6 lines of notes. Max ~600 chars.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": false,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_5701ksnpkgxyfj2ba76m7e6cdvd2",
+  "tool_config": {
+   "type": "client",
+   "name": "remove_eq_tile",
+   "description": "Remove a custom Reference tile by title or id. Built-in tiles cannot be deleted.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [],
+    "properties": {
+     "section": {
+      "type": "string",
+      "description": "section",
+      "enum": [
+       "freqMap",
+       "loudness",
+       "truePeak",
+       "stereoWidth"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "title": {
+      "type": "string",
+      "description": "Tile title to remove (fuzzy match).",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "id": {
+      "type": "string",
+      "description": "Tile id.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_1101ksnpkh4cf7cvrhkf8rz8j1y9",
+  "tool_config": {
+   "type": "client",
+   "name": "list_knowledge_notes",
+   "description": "List Knowledge Base notes \u00e2\u20ac\u201d id, title, source, tags, ts, active flag.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [],
+    "properties": {
+     "active_only": {
+      "type": "boolean",
+      "description": "If true, only notes currently injected into session context are returned.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": false,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_2501ksnpkharehv83ppn8zqr7hkq",
+  "tool_config": {
+   "type": "client",
+   "name": "add_knowledge_note",
+   "description": "Add a research/technique note to Kev's Knowledge Base. Keep titles concise and content focused.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "title",
+     "content"
+    ],
+    "properties": {
+     "title": {
+      "type": "string",
+      "description": "title",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "content": {
+      "type": "string",
+      "description": "The note body. Plain text, can be multi-line.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "source": {
+      "type": "string",
+      "description": "Optional citation.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "tags": {
+      "description": "Optional tags.",
+      "dynamic_variable": "",
+      "constant_value": null,
+      "is_omitted": false,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "description": "tags",
+       "enum": null,
+       "is_system_provided": false,
+       "dynamic_variable": "",
+       "allowed_values": null,
+       "allowed_values_dynamic_variable": "",
+       "constant_value": "",
+       "is_omitted": false
+      }
+     },
+     "activate": {
+      "type": "boolean",
+      "description": "If true, the note becomes part of the voice session context immediately.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_6801ksnpkhhjez1sj2hwgk6py7jx",
+  "tool_config": {
+   "type": "client",
+   "name": "export_knowledge_note",
+   "description": "Export a Knowledge Base note to disk or clipboard.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "target"
+    ],
+    "properties": {
+     "title": {
+      "type": "string",
+      "description": "Note title \u00e2\u20ac\u201d fuzzy match.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "id": {
+      "type": "string",
+      "description": "Note id.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "target": {
+      "type": "string",
+      "description": "download = save a .md file. clipboard = copy text to system clipboard.",
+      "enum": [
+       "download",
+       "clipboard"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": false,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_5601ksnpkhrbetp8aw4cwsneqcas",
+  "tool_config": {
+   "type": "client",
+   "name": "save_preset",
+   "description": "Save the current chain as a named user preset. CRITICAL: if Kev has NOT said what to call the preset, ask him first \u00e2\u20ac\u201d never invent a name. Only call this tool once you have an actual name from him.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "name"
+    ],
+    "properties": {
+     "name": {
+      "type": "string",
+      "description": "The exact name Kev told you to use.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "bus": {
+      "type": "string",
+      "description": "Which bus to save. Default 'all' saves every non-empty bus.",
+      "enum": [
+       "master",
+       "vocal",
+       "808",
+       "drums",
+       "fx",
+       "all"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": false,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_9301ksnpkhz6emf9ha64x0e2kqew",
+  "tool_config": {
+   "type": "client",
+   "name": "open_dashboard",
+   "description": "Opens the live AIMM project dashboard in a new browser tab. Use this when Kev wants to review the roadmap, check what's in flight, or scan the backlog together. Offer it naturally: 'Want me to pull up the dashboard so we can look at it together?' \u00e2\u20ac\u201d then call it if he says yes.",
+   "response_timeout_secs": 30,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [],
+    "properties": {}
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 17,
+   "avg_latency_secs": 0.12
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_7201m1vhkwrje43tmcgw1ka67dy8",
+  "tool_config": {
+   "type": "client",
+   "name": "search_yt_knowledge",
+   "description": "Search the FULL YouTube Knowledge Base (all ingested videos, hundreds and growing) for chunks relevant to a topic. This is the PRIMARY way to discover KB content \u2014 call it on ANY mixing, production, or plugin question before answering from general knowledge. Returns the top-scoring transcript chunks with their video_id/title/channel so you can cite properly. Once you have a promising video_id, call read_yt_knowledge(video_id, query) for more of that specific video. Brief Kev before calling: 'Let me take a look, checking my notes\u2026'. Cite the video title and channel when you draw from the result.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "query"
+    ],
+    "properties": {
+     "query": {
+      "type": "string",
+      "description": "The topic or question to search for, e.g. 'sidechain kick and bass', 'Logic Pro file organization', 'de-essing harsh vocals'.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "n": {
+      "type": "number",
+      "description": "Optional number of chunks to return (default 6, max 10).",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 49,
+   "avg_latency_secs": 0.99
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_2301m5dkgaspf03by1m5xsharc74",
+  "tool_config": {
+   "type": "client",
+   "name": "set_stem_selection",
+   "description": "Control AIMM Mix Check loaded stem audition and playback when Kev asks. Set, add, remove or clear exact loaded stem names; play, pause, stop, seek, skip, set monitor volume, or read status. For play, optional tracks selects the group before playback. Return the confirmed selected tracks and transport state. Do not claim success if the client returns an error.",
+   "response_timeout_secs": 30,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "action"
+    ],
+    "properties": {
+     "action": {
+      "type": "string",
+      "description": "Mix Check control action.",
+      "enum": [
+       "set",
+       "add",
+       "remove",
+       "clear",
+       "play",
+       "pause",
+       "stop",
+       "seek",
+       "skip",
+       "volume",
+       "status"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "tracks": {
+      "description": "Exact loaded stem names or filenames. Required for set, add and remove; optional for play.",
+      "dynamic_variable": "",
+      "constant_value": null,
+      "is_omitted": false,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "description": "One exact loaded stem name or filename.",
+       "enum": null,
+       "is_system_provided": false,
+       "dynamic_variable": "",
+       "allowed_values": null,
+       "allowed_values_dynamic_variable": "",
+       "constant_value": "",
+       "is_omitted": false
+      }
+     },
+     "position_seconds": {
+      "type": "number",
+      "description": "Absolute time in seconds for seek.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "offset_seconds": {
+      "type": "number",
+      "description": "Relative seconds for skip; negative rewinds.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "volume_percent": {
+      "type": "integer",
+      "description": "Monitor playback volume, 0 to 100.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_9501m5dm1v1ye12rvs63wb2yy80n",
+  "tool_config": {
+   "type": "client",
+   "name": "manage_roadmap_inbox",
+   "description": "Manage AIMM dashboard Captured from voice inbox. First list entries to get IDs. Remove only when Kev explicitly asks to delete; promote marks done/actioned; edit changes title/body. Adding is handled by capture_to_roadmap. Return confirmed result.",
+   "response_timeout_secs": 30,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "action"
+    ],
+    "properties": {
+     "action": {
+      "type": "string",
+      "description": "Inbox action.",
+      "enum": [
+       "list",
+       "remove",
+       "promote",
+       "edit"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "id": {
+      "type": "string",
+      "description": "Entry ID from list, preferred target.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "title_match": {
+      "type": "string",
+      "description": "Fallback title substring when ID is unknown.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "new_title": {
+      "type": "string",
+      "description": "Replacement title for edit.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "new_body": {
+      "type": "string",
+      "description": "Replacement body for edit.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_1801m5dm1vpces3an2exf50nw44b",
+  "tool_config": {
+   "type": "client",
+   "name": "propose_mix_move",
+   "description": "Show Kev a structured Mix Move card with an Apply button for one specific processing recommendation. Verify the plugin is in his library first. Use when recommending a concrete EQ, compression or plugin move; let Kev decide whether to apply. Return confirmed card result.",
+   "response_timeout_secs": 30,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "bus",
+     "plugin",
+     "move",
+     "confidence"
+    ],
+    "properties": {
+     "bus": {
+      "type": "string",
+      "description": "Bus for this move.",
+      "enum": [
+       "master",
+       "vocal",
+       "808",
+       "drums",
+       "fx"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "plugin": {
+      "type": "string",
+      "description": "Plugin name from Kev's library.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "move": {
+      "type": "string",
+      "description": "Brief processing move with starting settings.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "why": {
+      "type": "string",
+      "description": "Why this move addresses the heard or measured issue.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "confidence": {
+      "type": "string",
+      "description": "Confidence in the recommendation.",
+      "enum": [
+       "low",
+       "medium",
+       "high"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "settings": {
+      "type": "string",
+      "description": "Optional settings note shown under the plugin when applied.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_0801m5dm1x0ve2c9n2ghaakca3c4",
+  "tool_config": {
+   "type": "client",
+   "name": "mark_fix_applied",
+   "description": "Mark the CURRENT Mix Check fix as applied and advance the Fix Queue to the next item. Call ONLY after Kev confirms he handled the fix you were discussing (you asked 'want me to mark that done and bring in #02?' and he said yes). Never pre-emptively, never to skip a fix he has not acted on. After calling, confirm in one short line and name the next fix.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [],
+    "properties": {
+     "fix_id": {
+      "type": "string",
+      "description": "Optional fix id such as '#01'. Omit to mark the current active fix \u00e2\u20ac\u201d the normal case.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": false,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_8501m5g4nr8ce6vv4hksseaznt6j",
+  "tool_config": {
+   "type": "client",
+   "name": "list_symptom_tiles",
+   "description": "List all troubleshooting tiles currently shown on the Repair tab \u2014 built-in and custom. Use this to find a tile id before deleting, or to check what already exists before adding a similar tile.",
+   "response_timeout_secs": 30,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [],
+    "properties": {}
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_2401m5g4wq64fkq90j8rky3fftn7",
+  "tool_config": {
+   "type": "client",
+   "name": "add_symptom_tile",
+   "description": "Add a custom troubleshooting tile to AIMM\u2019s Repair tab. Provide label, diagnosis, chain as a JSON string containing an array of steps (each step has n exact plugin name, p publisher key, set concrete settings), and optional alt. Every plugin must be confirmed in Kev\u2019s library.",
+   "response_timeout_secs": 30,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "label",
+     "diagnosis",
+     "chain"
+    ],
+    "properties": {
+     "label": {
+      "type": "string",
+      "description": "Short tile label.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "diagnosis": {
+      "type": "string",
+      "description": "Technical diagnosis.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "chain": {
+      "type": "string",
+      "description": "JSON array string of plugin steps, each object has n, p, set.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "alt": {
+      "type": "string",
+      "description": "Optional alternative.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_1901m5g4wt69eh1tx0zwg4en3rkf",
+  "tool_config": {
+   "type": "client",
+   "name": "delete_symptom_tile",
+   "description": "Delete a custom troubleshooting tile by its custom-* id. Call list_symptom_tiles first when the id is unknown. The AIMM app will ask Kev to confirm; if he declines, the tile remains.",
+   "response_timeout_secs": 30,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "id"
+    ],
+    "properties": {
+     "id": {
+      "type": "string",
+      "description": "Custom tile id beginning custom-.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_9201m5qvzdspeqtt80mkkq3cr166",
+  "tool_config": {
+   "type": "client",
+   "name": "web_search_fallback",
+   "description": "Last resort. Call this ONLY after search_yt_knowledge and read_yt_knowledge have returned nothing usable for the question. Never call it first. Use it for live facts such as plugin manuals, release dates or chart data that the knowledge base does not hold.",
+   "response_timeout_secs": 20,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "query"
+    ],
+    "properties": {
+     "query": {
+      "type": "string",
+      "description": "The specific question to search the web for.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 7,
+   "avg_latency_secs": 0.57
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_3601m69mcyy9eb9a8bzawqxntc42",
+  "tool_config": {
+   "type": "client",
+   "name": "pluginhub_navigate",
+   "description": "Navigate the live Plugin Hub sidebar. This opens the Plugins tab if needed, then selects the requested status, Library filter, category, or tool. Returns a snapshot of the whole sidebar plus the selected live view. This changes only the visible view; it does not scan, download, share, or add anything. Use it whenever Kev asks to open or inspect one of the Plugin Hub menu items. Disabled items return their current unavailable reason; connected items can open their existing screen.",
+   "response_timeout_secs": 30,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "item"
+    ],
+    "properties": {
+     "item": {
+      "type": "string",
+      "description": "The exact Plugin Hub sidebar item to open.",
+      "enum": [
+       "all_plugins",
+       "updates_available",
+       "up_to_date",
+       "manual_check",
+       "unchecked",
+       "stale_results",
+       "check_errors",
+       "install_manager",
+       "share_plugin_list",
+       "pluginhub_license",
+       "ilok_license_manager",
+       "library_all_plugins",
+       "plugin_compatibility",
+       "favorites",
+       "my_tags",
+       "tag_manager",
+       "hidden",
+       "eq_filter",
+       "dynamics",
+       "pitch_modulation",
+       "reverb",
+       "delay",
+       "distortion_amps",
+       "utility_metering",
+       "imaging",
+       "instruments_midi",
+       "restoration",
+       "channel_strips_multi_fx"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_7101m69mczncfnms3t8b6c4wrm53",
+  "tool_config": {
+   "type": "client",
+   "name": "pluginhub_search_inventory",
+   "description": "Search the current local Plugin Hub scan, not the separate MixBus catalogue. Returns plug-ins recorded by this browser; synthetic preview rows are explicitly marked and are not proof of installed plug-ins. Search never scans folders or changes MixBus. Use live scan results to verify an installed plug-in before discussing it or adding it to a MixBus.",
+   "response_timeout_secs": 30,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [],
+    "properties": {
+     "query": {
+      "type": "string",
+      "description": "Words from the plug-in or publisher name; an empty query lists the current scanned inventory.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "format": {
+      "type": "string",
+      "description": "Optional exact plug-in format filter.",
+      "enum": [
+       "AU",
+       "VST2",
+       "VST3",
+       "CLAP"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "offset": {
+      "type": "integer",
+      "description": "Zero-based result offset for paging.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "limit": {
+      "type": "integer",
+      "description": "Number of product results to return, maximum 50.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ {
+  "id": "tool_9201m69md0bafhmsvc1ahvgzeb76",
+  "tool_config": {
+   "type": "client",
+   "name": "pluginhub_add_to_bus",
+   "description": "Add an exact plug-in from the current local Plugin Hub scan to a MixBus. Requires its exact installed name and publisher, one of the five buses, and a valid MixBus stage id. Call only when Kev explicitly asks to put that plug-in on a bus. The scan is checked first; no unscanned or invented product can be added through this tool.",
+   "response_timeout_secs": 30,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "plugin",
+     "publisher",
+     "bus",
+     "stage"
+    ],
+    "properties": {
+     "plugin": {
+      "type": "string",
+      "description": "Exact plug-in name returned by pluginhub_search_inventory.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "publisher": {
+      "type": "string",
+      "description": "Exact publisher returned by pluginhub_search_inventory.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "bus": {
+      "type": "string",
+      "description": "MixBus bus to update.",
+      "enum": [
+       "master",
+       "vocal",
+       "808",
+       "drums",
+       "fx"
+      ],
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "stage": {
+      "type": "string",
+      "description": "MixBus stage id from get_library (for example eq-clean, bus-comp, reverb). Use a confident functional match; if uncertain, ask Kev before adding.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "position": {
+      "type": "integer",
+      "description": "Optional 1-based position on the bus; omit to append.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ }
+]
