@@ -120,7 +120,21 @@ test('a confirmed batch processes videos in order, skips known IDs, and continue
   assert.deepEqual(events,[]);
   const result=await call({video_ids,confirmed:true});
   assert.equal(result.ok,false);
+  assert.equal(result.library_count,3);
+  assert.deepEqual(result.added_titles,['Drum lesson','Drum lesson']);
   assert.deepEqual(result.results.map(video=>video.status),['failed','already in library','added','added']);
   assert.equal(result.results[0].reason,'No captions');
   assert.deepEqual(events,[['start',failed],['end',failed],['start',id],['end',id],['start',last],['end',last]]);
 });
+
+ test('Library read filters and caps the results without changing them',async()=>{
+  const ctx=context();
+  ctx.ensureYtKbLoaded=async()=>{};
+  ctx.YT_KB.videos=Array.from({length:105},(_,i)=>({video_id:String(i),title:'Mix '+i,channel:i===0?'Studio':'Other'}));
+  const body=html.slice(html.indexOf("case 'get_library_videos':"),html.indexOf("case 'open_library_channel':"));
+  vm.runInNewContext(`async function read(args){switch('get_library_videos'){${body}}}`,ctx);
+  const all=await ctx.read({});
+  assert.equal(all.library_count,105);assert.equal(all.videos.length,100);assert.equal(all.truncated,true);
+  const filtered=await ctx.read({query:'studio'});
+  assert.equal(filtered.total,1);assert.equal(filtered.videos[0].video_id,'0');assert.equal(ctx.YT_KB.videos.length,105);
+ });

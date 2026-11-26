@@ -55,7 +55,7 @@ The ElevenLabs agent itself remains unchanged until its client tools and prompt 
 
 # Hope channel picks — build 2026-11-23.67
 
-- `open_library_channel(channel, query?, switch_to_library?)` opens the spoken channel name directly and searches within the channel when a topic is supplied. It returns up to 40 videos, resolved_channel, confidence, alternatives, source, complete, total_videos and note. Hope says which channel opened, mentions an alternative when confidence is not high, and describes the coverage honestly. She never asks for a link or handle; she asks for spelling only if resolution fails.
+- `open_library_channel(channel, topic?, more?, switch_to_library?)` opens a channel and filters loaded titles by topic. Use more to load the next uploads page. It returns the channel total and whether more pages remain. Hope says which channel opened, mentions an alternative when confidence is not high, and describes the coverage honestly. She never asks for a link or handle; she asks for spelling only if resolution fails.
 - `show_library_picks(video_ids)` shows 1–15 videos in the supplied order using the existing On YouTube rows and Playlist count. Each row can preview the video and shows Add to Hope or In library. The search clear button restores the full channel list. Selecting a channel in the existing filter exits picks.
 - `add_videos_to_library(video_ids, confirmed)` accepts 1–10 IDs. `confirmed:false` returns a one-line summary with titles and library status. After Kev’s clear yes, `confirmed:true` uses the existing Add to Hope path sequentially and returns `added`, `already in library`, or `failed` with a reason for each distinct ID. The row status updates as each video enters the refreshed library.
 
@@ -70,3 +70,5 @@ Star a Hope reply in the docked chat rail to save that bubble's full text, a sho
 Before calling `emit_notebooklm_prompt`, Hope searches with `search_youtube_videos` and selects 2–5 relevant results where available, preferring Mix With The Masters and strong tutorials. The optional `sources` array holds `{title, url}` pairs using real returned video IDs. Hope never invents links; when no relevant results are found, she omits `sources` and says so. The card shows the sources beneath the prompt in the same bubble, and Copy includes the prompt and source list. The ElevenLabs Hope agent prompt still needs the matching instruction added manually.
 
 `skip_fix(id?, restore?)` skips the current waiting full-mix fix after Kevin’s final no, using `window.mcFixQueue.dismiss`. With `restore:true`, it restores a skipped fix to waiting through `window.mcFixQueue.restore`; pass `id` to target a specific fix. It is registered in the page catalogue and all three tool manifests. ElevenLabs registration is pending.
+
+- `get_library_videos(query?)` reads Library titles, channels and video IDs, up to 100 matches.

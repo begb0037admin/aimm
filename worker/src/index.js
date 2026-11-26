@@ -260,7 +260,7 @@ async function youtubeApi(env,endpoint,params){
     throw Object.assign(new Error('YouTube API error: '+reason),{status:502});
   }return data;
 }
-async function youtubeChannelVideos(query,env,topic='',preferVideoIds=[]){
+async function youtubeChannelVideos(query,env,topic='',preferVideoIds=[],pageToken=''){
   if(!env.YOUTUBE_API_KEY)throw Object.assign(new Error('YouTube channel search is unavailable.'),{status:503});
   const cache=env.AIMM_KV, norm=youtubeChannelNorm(query);
   const get=async key=>{try{return await cache?.get(key,'json');}catch(_){return null;}};
@@ -295,19 +295,6 @@ async function youtubeChannelVideos(query,env,topic='',preferVideoIds=[]){
   ranked.sort((a,b)=>b.score-a.score||b.sub-a.sub);
   const initial=ranked[0],next=ranked[1];
   const ambiguous=next&&(youtubeChannelNorm(initial.item.snippet?.title)===youtubeChannelNorm(next.item.snippet?.title)||initial.score-next.score<10&&next.sub>=initial.sub*.5);
-  if(topic&&!selector&&ambiguous){
-    const sameName=ranked.filter(c=>youtubeChannelNorm(c.item.snippet?.title)===youtubeChannelNorm(initial.item.snippet?.title));
-    const contenders=(sameName.length>1?sameName:ranked).slice(0,3);
-    const words=[...new Set(topic.toLowerCase().normalize('NFKC').split(/[^\p{L}\p{N}]+/u).filter(Boolean))];
-    await Promise.all(contenders.map(async c=>{
-      const key='yt-topic:'+c.item.id+':'+youtubeChannelNorm(topic);let score=await get(key);
-      if(typeof score!=='number'){
-        const result=await youtubeApi(env,'search',{part:'snippet',type:'video',channelId:c.item.id,q:topic,maxResults:5});
-        score=(result.items||[]).filter(v=>{const title=String(v.snippet?.title||'').toLowerCase().normalize('NFKC');return words.some(word=>title.includes(word));}).length;
-        await put(key,score,600);
-      }c.topicScore=score;
-    }));
-  }
   ranked.sort((a,b)=>Number(b.preferred)-Number(a.preferred)||b.topicScore-a.topicScore||b.score-a.score||b.sub-a.sub);
   const best=ranked[0],other=ranked[1];
   const summary=c=>({id:c.id,title:c.snippet?.title||'',handle:c.snippet?.customUrl||null,subscribers:Number(c.statistics?.subscriberCount||0)});
@@ -315,20 +302,23 @@ async function youtubeChannelVideos(query,env,topic='',preferVideoIds=[]){
   const libraryWinner=best.preferred&&ranked.filter(c=>c.preferred).length===1;
   const topicWinner=best.topicScore>0&&ranked.filter(c=>c.preferred===best.preferred&&c.topicScore===best.topicScore).length===1;
   const confidence=libraryWinner||topicWinner||!other?'high':youtubeChannelNorm(best.item.snippet?.title)===youtubeChannelNorm(other.item.snippet?.title)||best.score-other.score<10&&other.sub>=best.sub*.5?'low':best.score>=85?'high':'medium';
-  const listingKey='yt-list:'+resolved.id+':'+youtubeChannelNorm(topic);
+  const token=typeof pageToken==='string'&&/^[A-Za-z0-9_-]{1,500}$/.test(pageToken)?pageToken:'';
+  const listingKey='yt-uploads-v2:'+resolved.id+':'+(token||'first');
   let listing=await get(listingKey);
   if(!listing){
-    let items;
-    if(topic){const r=await youtubeApi(env,'search',{part:'snippet',channelId:resolved.id,q:topic,type:'video',order:'relevance',maxResults:40});items=(r.items||[]).map(v=>v.id?.videoId).filter(Boolean);}
-    else {const uploads=best.item.contentDetails?.relatedPlaylists?.uploads;if(!uploads)throw Object.assign(new Error('YouTube API error: uploads playlist unavailable'),{status:502});
-      const r=await youtubeApi(env,'playlistItems',{part:'contentDetails',playlistId:uploads,maxResults:50});items=(r.items||[]).map(v=>v.contentDetails?.videoId).filter(Boolean);}
-    let details=[];if(items.length){const r=await youtubeApi(env,'videos',{part:'contentDetails,snippet,statistics',id:items.join(','),maxResults:50});details=r.items||[];}
+    const uploads=best.item.contentDetails?.relatedPlaylists?.uploads;
+    if(!uploads)throw Object.assign(new Error('YouTube API error: uploads playlist unavailable'),{status:502});
+    const r=await youtubeApi(env,'playlistItems',{part:'contentDetails',playlistId:uploads,maxResults:50,...(token?{pageToken:token}:{})});
+    const items=(r.items||[]).map(v=>v.contentDetails?.videoId).filter(Boolean);
+    let details=[];if(items.length){const d=await youtubeApi(env,'videos',{part:'contentDetails,snippet,statistics',id:items.join(','),maxResults:50});details=d.items||[];}
     const byId=new Map(details.map(v=>[v.id,v]));
-    const videos=items.map(id=>byId.get(id)).filter(Boolean).map(v=>({v,d:youtubeDuration(v.contentDetails?.duration)})).filter(({v,d})=>d&&d.seconds>60&&v.snippet?.liveBroadcastContent!=='live'&&v.snippet?.liveBroadcastContent!=='upcoming').slice(0,40).map(({v,d})=>({video_id:v.id,title:v.snippet?.title||'YouTube video',channel:resolved.title,duration:d.text,views:Number(v.statistics?.viewCount||0),published:v.snippet?.publishedAt||null,url:'https://www.youtube.com/watch?v='+v.id}));
-    const total=Number(best.item.statistics?.videoCount||0);
-    listing={videos,total_videos:total,complete:!topic&&videos.length===total,...(!videos.length?{note:topic?'no videos matched that topic':'no videos available'}:{})};
+    const videos=items.map(id=>byId.get(id)).filter(Boolean).map(v=>({v,d:youtubeDuration(v.contentDetails?.duration)})).filter(({v,d})=>d&&d.seconds>60&&v.snippet?.liveBroadcastContent!=='live'&&v.snippet?.liveBroadcastContent!=='upcoming').map(({v,d})=>({video_id:v.id,title:v.snippet?.title||'YouTube video',channel:resolved.title,duration:d.text,views:Number(v.statistics?.viewCount||0),published:v.snippet?.publishedAt||null,url:'https://www.youtube.com/watch?v='+v.id}));
+    listing={videos,next_page_token:r.nextPageToken||null};
     await put(listingKey,listing,600);
   }
+  const words=topic.toLowerCase().normalize('NFKC').split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+  const videos=words.length?listing.videos.filter(v=>words.every(word=>v.title.toLowerCase().normalize('NFKC').includes(word))):listing.videos;
+  listing={...listing,videos,total_videos:Number(best.item.statistics?.videoCount||0),complete:!listing.next_page_token,...(!videos.length?{note:topic?'no videos matched that topic on this page':'no videos available on this page'}:{})};
   return {channel:resolved.title,...listing,resolved_channel:resolved,confidence,alternatives,source:'youtube-data-api'};
 }
 
@@ -911,7 +901,7 @@ export default {
       if (!query) return corsJsonResponse({ error:'Enter a video topic.' },400,origin,request);
       if (body.channel === true){
         try {
-          const channel = await youtubeChannelVideos(query,env,typeof body.topic === 'string' ? body.topic.trim().slice(0,200) : '',body.prefer_video_ids);
+          const channel = await youtubeChannelVideos(query,env,typeof body.topic === 'string' ? body.topic.trim().slice(0,200) : '',body.prefer_video_ids,body.page_token);
           if (channel) return corsJsonResponse({query,...channel},200,origin,request);
           return corsJsonResponse({error:'Could not resolve YouTube channel "'+query+'". Please spell the channel name.'},404,origin,request);
         } catch (error) {
