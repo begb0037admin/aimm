@@ -18,7 +18,7 @@
 Channels through the official YouTube Data API (spoken names, right-channel choice, Library-first), Hope opens a channel in the Playlist, shows her picks and adds several videos, the Deepgram (Luna) route now sends every tool (was cut at 39), token-free same-origin Hope routes, backup Hope brain matched to the primary.
 
 ## Tested live on .69 (26 Nov 2026)
-Open a channel by spoken name on Deepgram, ElevenLabs Primary and ElevenLabs Backup; her picks; add several videos; paste a channel into the Playlist search bar. Not yet tested: Fix Queue walkthrough on Deepgram.
+Open a channel by spoken name on Deepgram, ElevenLabs Primary and ElevenLabs Backup; her picks; add several videos; paste a channel into the Playlist search bar; Fix Queue walkthrough and skip on Deepgram (two real fixes from a six-stem mix). Everything on the .69 test list passed.
 
 ## Known limits
 Hope can only browse a channel's newest 22 videos; she cannot read the Library herself to confirm an add.
