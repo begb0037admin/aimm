@@ -26,7 +26,7 @@ Hope can only browse a channel's newest 22 videos; she cannot read the Library h
 ## How to go back to it
 1. Site: `git checkout stable-2026-11-23.69` then `cd standalone && npx -y wrangler@4.161.0 deploy`, or `npx -y wrangler@4.161.0 rollback <version id>`.
 2. Relay: same from `worker/`.
-3. Hope: restore the pinned version of the Primary in ElevenLabs. The Backup's old state is saved only in the session scratchpad.
+3. Hope: restore the pinned version of the Primary in ElevenLabs. The Backup's old state is saved in docs/handover-assets/hope-backup-agent-rollback/.
 
 ---
 
