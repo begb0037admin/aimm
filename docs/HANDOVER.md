@@ -1,3 +1,6 @@
+## 2026-11-26 STABLE BASE: build 2026-11-23.65
+Kevin declared build .65 the stable base build. Git tag `stable-2026-11-23.65` (commit bd49ba03), Worker aimm version e6ce7eab, aimm-proxy version c3d127cc, Hope agent version agtvrsn_3801m89zt4h5f19r3np4gma2dhqs. Full pin list and how to roll back: docs/STABLE_BASE.md. Builds .57 to .65 since the last notes: Fix Queue row tick/cross and transporter under the list (Jules layout), section "Analysis" in an engineer-note voice with the tag line removed, token-free /api/hope-explain (aimm and aimm-proxy secret HOPE_INTERNAL_TOKEN, Origin header fix), Stem mix redesign, one play/pause toggle shared by Stem mix and Fix Queue, stem auto-labelling by file name, icon-only star/play-stop/copy under Hope replies.
+
 ## 2026-11-25 builds 2026-11-23.55 and .56 — Fix Queue side by side, engineering note, Hope personality (LIVE)
 Live on aimixmasters.com (main 3fc87051, Worker `aimm`). ElevenLabs Hope agent_9001m42hnyrwedts40en5a5npapp published version agtvrsn_3801m89zt4h5f19r3np4gma2dhqs.
 - **.55** Fix Queue shows the list on the LEFT and the detail on the RIGHT whenever its container is about 760px or wider (it sits beside the open Hope rail, so about 1000px on a laptop). It stacks only below 760px. The old 1299px stack rule is deleted.
