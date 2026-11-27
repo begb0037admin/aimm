@@ -541,3 +541,28 @@ test('Hope opens a channel, shows only the picks, and clears back to the full ch
     {ok:false,error:'Could not resolve YouTube channel.'});
   assert.equal(ctx.switched,null);
 });
+
+test('Show more appends channel pages and keeps the total',async()=>{
+  const nodes={libPlayerSearch:{value:'@studio'},libPlayerSearchClear:{hidden:false},libPlayerChannelFilter:{value:''},libPlayerRows:{innerHTML:''},libPlayerCount:{textContent:''}};
+  const calls=[];
+  const ctx=setup({AIMM_PROXY_URL:'https://worker.example',document:{getElementById:id=>nodes[id]},fetch:async(_url,options)=>{
+    const body=JSON.parse(options.body);calls.push(body);
+    return Response.json(body.page_token?{channel:'Studio',total_videos:2417,complete:true,videos:[video('BBBBBBBBBBB','Old')]}:{channel:'Studio',total_videos:2417,complete:false,next_page_token:'next',videos:[video('AAAAAAAAAAA','New')]});
+  }});
+  ctx.libPlayerChannelRender=()=>{};
+  await ctx.libPlayerSearchChanged({channel:true,topic:'mix',immediate:true});
+  assert.match(nodes.libPlayerRows.innerHTML,/Show more/);
+  await ctx.libPlayerShowMore();
+  assert.equal(calls[1].page_token,'next');
+  assert.equal(vm.runInNewContext('LIB_SEARCH.videos.length',ctx),2);
+  assert.equal(vm.runInNewContext('LIB_SEARCH.channelResult.total_videos',ctx),2417);
+  assert.doesNotMatch(nodes.libPlayerRows.innerHTML,/Show more/);
+});
+
+test('Library read tool filters and caps results',async()=>{
+  const source=html.slice(html.indexOf("case 'get_library_videos':"),html.indexOf("case 'open_library_channel':"));
+  const ctx={YT_KB:{videos:Array.from({length:105},(_,i)=>({video_id:String(i),title:'Mix '+i,channel:'Studio'}))},ensureYtKbLoaded:async()=>{}};
+  vm.runInNewContext(`async function run(args){switch('get_library_videos'){${source}}}`,ctx);
+  const all=await ctx.run({});assert.equal(all.total,105);assert.equal(all.videos.length,100);assert.equal(all.truncated,true);
+  const filtered=await ctx.run({query:'mix 104'});assert.equal(filtered.total,1);assert.equal(filtered.videos[0].video_id,'104');
+});

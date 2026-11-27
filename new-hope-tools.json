@@ -370,7 +370,7 @@
   },
   {
     "name": "open_library_channel",
-    "description": "Open a YouTube channel directly from Kevin’s spoken name in the Library Playlist. Pass his topic as query. Returns resolution confidence, alternatives, coverage and up to 40 videos.",
+    "description": "Open a YouTube channel directly from Kevin’s spoken name in the Library Playlist. Pass a topic to filter loaded titles. Use more to load older uploads. Returns channel total and coverage.",
     "parameters": {
       "type": "object",
       "properties": {
@@ -381,6 +381,14 @@
         "query": {
           "type": "string",
           "description": "Optional topic to filter the channel’s videos."
+        },
+        "topic": {
+          "type": "string",
+          "description": "Optional topic to filter titles."
+        },
+        "more": {
+          "type": "boolean",
+          "description": "Load the next page of this channel."
         },
         "switch_to_library": {
           "type": "boolean",
@@ -504,6 +512,19 @@
         }
       },
       "required": []
+    }
+  },
+  {
+    "name": "get_library_videos",
+    "description": "Read videos in the Library, with an optional title or channel filter.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Optional title or channel words."
+        }
+      }
     }
   }
 ]
