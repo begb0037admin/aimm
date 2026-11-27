@@ -178,7 +178,7 @@
   },
   {
     "name": "open_library_channel",
-    "description": "Open a YouTube channel directly from Kevin’s spoken name in the Library Playlist. Pass a topic to filter loaded titles. Use more to load older uploads. Returns channel total and coverage.",
+    "description": "Open a YouTube channel directly from Kevin’s spoken name in the Library Playlist. Pass a topic to filter loaded titles. Use more to load older uploads. Returns channel total and coverage. Say the channel name and video count. If not found, say the name heard and ask Kev to say it again or give a video title; do not guess.",
     "parameters": {
       "type": "object",
       "properties": {

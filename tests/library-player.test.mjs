@@ -566,3 +566,11 @@ test('Library read tool filters and caps results',async()=>{
   const all=await ctx.run({});assert.equal(all.total,105);assert.equal(all.videos.length,100);assert.equal(all.truncated,true);
   const filtered=await ctx.run({query:'mix 104'});assert.equal(filtered.total,1);assert.equal(filtered.videos[0].video_id,'104');
 });
+
+test('channel playlist keeps show more without the old status block',()=>{
+  const rows=html.slice(html.indexOf('function libPlayerRenderRows('),html.indexOf('function libPlayerIsChannel('));
+  assert.doesNotMatch(rows,/channelNotice|libPlayerOpenAlternative|videos on channel/);
+  assert.match(rows,/onclick="libPlayerShowMore\(\)">Show more/);
+  assert.match(rows,/search-status/);
+  assert.match(html,/#library \.lp #libPlayerRows > \.tx:hover\{background:#b970ff/);
+});

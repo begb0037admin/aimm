@@ -45,6 +45,9 @@ test('Playlist tool definitions agree across the page and all exports',()=>{
 test('channel guidance and metadata stay aligned',()=>{
   const tool=pageTools.find(t=>t.name==='open_library_channel');
   assert.match(tool.description,/spoken name/);
+  assert.match(tool.description,/channel name and video count/);
+  assert.match(tool.description,/name heard.*say it again.*video title; do not guess/);
+  assert.match(sourceText,/say the channel name and video count/);
   assert.match(sourceText,/Never ask for a link or handle/);
   assert.match(sourceText,/mentioning an alternative if confidence is not high/);
   for(const field of ['resolved_channel','confidence','alternatives','source','complete','total_videos','note']) assert.ok(sourceText.includes(field),field);

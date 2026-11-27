@@ -257,7 +257,7 @@ async function youtubeApi(env,endpoint,params){
   const data=await response.json().catch(()=>({}));
   if(!response.ok){const reason=data.error?.errors?.[0]?.reason||data.error?.status||'unknown error';
     if(response.status===403&&reason==='quotaExceeded')throw Object.assign(new Error('YouTube lookups are used up for today. Try again tomorrow.'),{status:429,code:'quota'});
-    throw Object.assign(new Error('YouTube API error: '+reason),{status:502});
+    throw Object.assign(new Error('YouTube API error: '+reason),{status:502,reason});
   }return data;
 }
 async function youtubeChannelVideos(query,env,topic='',preferVideoIds=[],pageToken=''){
@@ -281,7 +281,6 @@ async function youtubeChannelVideos(query,env,topic='',preferVideoIds=[],pageTok
     if(!selector){const found=await youtubeApi(env,'search',{part:'snippet',type:'channel',q:query,maxResults:5});ids=(found.items||[]).map(x=>x.id?.channelId).filter(Boolean);if(!ids.length)return null;}
     const found=await youtubeApi(env,'channels',{part:'snippet,statistics,contentDetails',...(selector||{id:ids.join(',')}),maxResults:5});
     candidates=found.items||[];if(!candidates.length)return null;
-    await put(resolutionKey,candidates,86400);
   }
   const videoIds=Array.isArray(preferVideoIds)?[...new Set(preferVideoIds.filter(id=>typeof id==='string'&&/^[A-Za-z0-9_-]{11}$/.test(id)))].slice(0,40):[];
   const libraryChannels=new Set(), missing=[];
@@ -296,26 +295,38 @@ async function youtubeChannelVideos(query,env,topic='',preferVideoIds=[],pageTok
   const initial=ranked[0],next=ranked[1];
   const ambiguous=next&&(youtubeChannelNorm(initial.item.snippet?.title)===youtubeChannelNorm(next.item.snippet?.title)||initial.score-next.score<10&&next.sub>=initial.sub*.5);
   ranked.sort((a,b)=>Number(b.preferred)-Number(a.preferred)||b.topicScore-a.topicScore||b.score-a.score||b.sub-a.sub);
-  const best=ranked[0],other=ranked[1];
   const summary=c=>({id:c.id,title:c.snippet?.title||'',handle:c.snippet?.customUrl||null,subscribers:Number(c.statistics?.subscriberCount||0)});
-  const resolved=summary(best.item),alternatives=ranked.slice(1).map(x=>summary(x.item));
-  const libraryWinner=best.preferred&&ranked.filter(c=>c.preferred).length===1;
-  const topicWinner=best.topicScore>0&&ranked.filter(c=>c.preferred===best.preferred&&c.topicScore===best.topicScore).length===1;
-  const confidence=libraryWinner||topicWinner||!other?'high':youtubeChannelNorm(best.item.snippet?.title)===youtubeChannelNorm(other.item.snippet?.title)||best.score-other.score<10&&other.sub>=best.sub*.5?'low':best.score>=85?'high':'medium';
   const token=typeof pageToken==='string'&&/^[A-Za-z0-9_-]{1,500}$/.test(pageToken)?pageToken:'';
-  const listingKey='yt-uploads-v2:'+resolved.id+':'+(token||'first');
-  let listing=await get(listingKey);
-  if(!listing){
-    const uploads=best.item.contentDetails?.relatedPlaylists?.uploads;
-    if(!uploads)throw Object.assign(new Error('YouTube API error: uploads playlist unavailable'),{status:502});
-    const r=await youtubeApi(env,'playlistItems',{part:'contentDetails',playlistId:uploads,maxResults:50,...(token?{pageToken:token}:{})});
-    const items=(r.items||[]).map(v=>v.contentDetails?.videoId).filter(Boolean);
-    let details=[];if(items.length){const d=await youtubeApi(env,'videos',{part:'contentDetails,snippet,statistics',id:items.join(','),maxResults:50});details=d.items||[];}
-    const byId=new Map(details.map(v=>[v.id,v]));
-    const videos=items.map(id=>byId.get(id)).filter(Boolean).map(v=>({v,d:youtubeDuration(v.contentDetails?.duration)})).filter(({v,d})=>d&&d.seconds>60&&v.snippet?.liveBroadcastContent!=='live'&&v.snippet?.liveBroadcastContent!=='upcoming').map(({v,d})=>({video_id:v.id,title:v.snippet?.title||'YouTube video',channel:resolved.title,duration:d.text,views:Number(v.statistics?.viewCount||0),published:v.snippet?.publishedAt||null,url:'https://www.youtube.com/watch?v='+v.id}));
-    listing={videos,next_page_token:r.nextPageToken||null};
-    await put(listingKey,listing,600);
+  const failed=new Set();
+  let best,listing,resolved;
+  for(const candidate of ranked.slice(0,3)){
+    const uploads=candidate.item.contentDetails?.relatedPlaylists?.uploads;
+    if(!uploads){failed.add(candidate.item.id);continue;}
+    const candidateResolved=summary(candidate.item);
+    const listingKey='yt-uploads-v2:'+candidateResolved.id+':'+(token||'first');
+    let candidateListing=await get(listingKey);
+    if(!candidateListing){
+      let r;
+      try{r=await youtubeApi(env,'playlistItems',{part:'contentDetails',playlistId:uploads,maxResults:50,...(token?{pageToken:token}:{})});}
+      catch(error){if(error.reason==='playlistNotFound'){failed.add(candidate.item.id);continue;}throw error;}
+      const items=(r.items||[]).map(v=>v.contentDetails?.videoId).filter(Boolean);
+      let details=[];if(items.length){const d=await youtubeApi(env,'videos',{part:'contentDetails,snippet,statistics',id:items.join(','),maxResults:50});details=d.items||[];}
+      const byId=new Map(details.map(v=>[v.id,v]));
+      const videos=items.map(id=>byId.get(id)).filter(Boolean).map(v=>({v,d:youtubeDuration(v.contentDetails?.duration)})).filter(({v,d})=>d&&d.seconds>60&&v.snippet?.liveBroadcastContent!=='live'&&v.snippet?.liveBroadcastContent!=='upcoming').map(({v,d})=>({video_id:v.id,title:v.snippet?.title||'YouTube video',channel:candidateResolved.title,duration:d.text,views:Number(v.statistics?.viewCount||0),published:v.snippet?.publishedAt||null,url:'https://www.youtube.com/watch?v='+v.id}));
+      candidateListing={videos,next_page_token:r.nextPageToken||null};
+      await put(listingKey,candidateListing,600);
+    }
+    best=candidate;listing=candidateListing;resolved=candidateResolved;break;
   }
+  if(failed.size) candidates=candidates.filter(item=>!failed.has(item.id));
+  if(candidates.length)await put(resolutionKey,candidates,86400);
+  else if(failed.size)await put(resolutionKey,null,60);
+  if(!best)return null;
+  const remaining=ranked.filter(c=>c!==best&&!failed.has(c.item.id)),other=remaining[0];
+  const alternatives=remaining.map(x=>summary(x.item));
+  const libraryWinner=best.preferred&&ranked.filter(c=>!failed.has(c.item.id)&&c.preferred).length===1;
+  const topicWinner=best.topicScore>0&&ranked.filter(c=>!failed.has(c.item.id)&&c.preferred===best.preferred&&c.topicScore===best.topicScore).length===1;
+  const confidence=libraryWinner||topicWinner||!other?'high':youtubeChannelNorm(best.item.snippet?.title)===youtubeChannelNorm(other.item.snippet?.title)||best.score-other.score<10&&other.sub>=best.sub*.5?'low':best.score>=85?'high':'medium';
   const words=topic.toLowerCase().normalize('NFKC').split(/[^\p{L}\p{N}]+/u).filter(Boolean);
   const videos=words.length?listing.videos.filter(v=>words.every(word=>v.title.toLowerCase().normalize('NFKC').includes(word))):listing.videos;
   listing={...listing,videos,total_videos:Number(best.item.statistics?.videoCount||0),complete:!listing.next_page_token,...(!videos.length?{note:topic?'no videos matched that topic on this page':'no videos available on this page'}:{})};
@@ -903,7 +914,7 @@ export default {
         try {
           const channel = await youtubeChannelVideos(query,env,typeof body.topic === 'string' ? body.topic.trim().slice(0,200) : '',body.prefer_video_ids,body.page_token);
           if (channel) return corsJsonResponse({query,...channel},200,origin,request);
-          return corsJsonResponse({error:'Could not resolve YouTube channel "'+query+'". Please spell the channel name.'},404,origin,request);
+          return corsJsonResponse({error:'I heard "'+query+'". Try a different spelling or a video title from the channel.'},404,origin,request);
         } catch (error) {
           return corsJsonResponse({error:error.message||'YouTube channel lookup failed.',...(error.code?{code:error.code}:{})},error.status||502,origin,request);
         }
