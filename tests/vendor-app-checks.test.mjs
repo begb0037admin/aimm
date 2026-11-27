@@ -20,7 +20,7 @@ function harness() {
   const context = vm.createContext({
     localStorage: storage, INV_SYNTHETIC_PREVIEW: false, INV_USER_STATUS_MAX_AGE_DAYS: 30,
     invNorm: value => String(value || '').toLowerCase().replace(/\s+/g, ' ').trim(),
-    invReadProductActions: () => ({}), invGetProductActions: () => ({}),
+    invCanonicalSavedKey: key => key, invReadProductActions: () => ({}), invGetProductActions: () => ({}),
     invSavedVendorStatus: () => null, invKnownVendorRelease: () => null,
     INV_SCOPE: 'up-to-date', invEsc: value => String(value ?? ''),
     invActionKey: (vendor, name) => `${String(vendor).toLowerCase()}|${String(name).toLowerCase()}`,
@@ -83,4 +83,13 @@ test('one product can be unmarked later', () => {
   run('invUnmarkVendorCheck("uaudio|one")');
   assert.equal(counts(run).counts['vendor-app'], 2);
   assert.equal(JSON.parse(data.get('aimm.pluginInventory.vendorAppChecks.v1'))['uaudio|one'], undefined);
+});
+
+test('a check under an old publisher spelling is found and can be removed',()=>{
+  const {run}=harness();
+  run(`invCanonicalSavedKey = key => key.replace(/^uaudio\\|/, 'universal audio|');`);
+  run(`INV_VENDOR_CHECKS={'uaudio|one':{vendorKey:'uaudio',productKey:'one',checkedAt:new Date().toISOString(),installedVersion:'AU:1.0'}}; INV_PRODUCT_VERSIONS=new Map([['universal audio|one','AU:1.0']]);`);
+  assert.ok(run(`invActiveVendorCheck({vendor:'Universal Audio',name:'One',format:'AU',version:'1.0'})`));
+  run(`invUnmarkVendorCheck('universal audio|one')`);
+  assert.equal(run('Object.keys(INV_VENDOR_CHECKS).length'),0);
 });

@@ -12,6 +12,7 @@ function harness({initial=[],fail=false,scope='favorites'}={}){
     invNorm:value=>String(value||'').trim().toLowerCase(),
     invBuildGroups:scan=>scan.map(row=>({...row})),
     invUadSplit:groups=>({owned:groups,notLicensed:[]}),
+    invCanonicalSavedKey:key=>key,
     invFavoriteKey:(name,vendor)=>'inventory:'+vendor.toLowerCase()+'|'+name.toLowerCase(),
     invIsFavorite:(name,vendor)=>favorites.has('inventory:'+vendor.toLowerCase()+'|'+name.toLowerCase()),
     async invToggleFavorite(name,vendor){const key='inventory:'+vendor.toLowerCase()+'|'+name.toLowerCase();calls.toggle++;favorites.has(key)?favorites.delete(key):favorites.add(key);if(!fail)storage.set('trapMasterState_v1',JSON.stringify({favorites:[...favorites]}));return !fail;},
@@ -33,7 +34,7 @@ test('star and unstar save, refresh the open Favorites view and leave the tab an
   assert.match(helper,/await invToggleFavorite\(group.name,group.vendor\)/);
   assert.match(helper,/invRenderInventory\(\)/);
   assert.match(html,/function invFavoriteKey\(name,vendor\)/);
-  assert.match(html,/return toggleFav\(invLegacyFavorite/);
+  assert.match(html,/invFavoriteAliases/);
   assert.match(html,/data-inv-fav-vendor/);
 });
 
@@ -76,7 +77,7 @@ test('the Plugins star control keeps publishers separate and honours unique lega
   const ctx={STATE:{favorites},INV_SCAN_ROWS:rows,INV_SYNTHETIC_PREVIEW:false,INV_SYNTHETIC_FAVORITES:new Set(),
     invNorm:value=>String(value||'').toLowerCase(),invRenderInventory:()=>{},
     UadLicence:{licensed:()=>true},UAD_LICENCE_DATA:null,invGetProductActions:()=>({}),
-    toggleFav:key=>{favorites.has(key)?favorites.delete(key):favorites.add(key);return Promise.resolve(true);},Promise};
+    renderLibrary:()=>{},saveState:()=>Promise.resolve(true),Promise};
   vm.runInNewContext(source+'globalThis.star={get:invIsFavorite,toggle:invToggleFavorite};',ctx);
   assert.equal(ctx.star.get('Pro-Q','FabFilter'),true);
   await ctx.star.toggle('Pro-Q','FabFilter');

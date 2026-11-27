@@ -19,7 +19,7 @@ function harness(rows=[]){
     INV_SCOPE:state.scope,INV_SEARCH:state.search,INV_FORMATS:state.formats,
     document:{querySelector(){clicks++;throw Error('DOM touched');},getElementById(){clicks++;throw Error('DOM touched');}},
     fetch(){fetches++;throw Error('fetch called');},invRenderInventory(){renders++;throw Error('render called');},
-    invNorm:value=>String(value||'').toLowerCase(),
+    invNorm:value=>String(value||'').toLowerCase(),invCanonicalSavedKey:key=>key,invActionKey:(vendor,name)=>vendor.toLowerCase()+'|'+name.toLowerCase(),
     invUadSplit:groups=>({owned:groups,notLicensed:[]}),
     invBuildGroups(scan){
       const groups=new Map();
