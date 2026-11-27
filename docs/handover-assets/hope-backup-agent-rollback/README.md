@@ -16,3 +16,10 @@ No keys are stored here. Known difference: Backup has four extra tools (web_sear
 
 ## 27 Nov 2026: build .70 tools
 Backup updated for build .70 (via relay): created `get_library_videos`; updated `open_library_channel` (topic, more) and `add_videos_to_library` descriptions; Backup now has 86 tools. Settings before the update: libtools-BEFORE.json. The Primary (agent_9001...) is NOT yet updated because the ElevenLabs connector was disconnected: it needs the same three tool changes (create the client tool get_library_videos with the manifest in standalone/assets/hope-tools-manifest.json, update the other two, attach it, publish). Until then Backup is one tool ahead of Primary; the page handles both.
+
+## 27 Nov 2026: Primary updated and both brains matched
+- Primary (agent_9001...) published as agtvrsn_8701m8ebj1hvehp8s7209x7dxbbn (83 tools): created get_library_videos (tool_2301m8ebhq7ff5xrr1t33p4s97hs), updated open_library_channel (topic, more). Rollback = agtvrsn_4701m8bxhhane90s0ry1zhpagmst.
+- Backup: removed the three older pluginhub_* tools, so both brains now have the same 83 tool names and the same 15,812-character prompt.
+- Backup settings aligned to Primary: reasoning effort high -> medium, enable_phoneme_tags false -> true, client events (agent_tool_response instead of agent_chat_response_part), source_attribution true -> false, background sound volume 0.15 with crossfade. Backup state just before this alignment: backup-agent-BEFORE-settings-align.json (it is the Backup with 83 tools, old settings).
+- Left different on purpose: voice_id (Primary FGrulClTgh5TVTUVF8Ns, Backup qFJ4KX1Kat5K6ywU2Rnm, separate ElevenLabs accounts).
+- Not diffed one by one: per-tool timeouts and flags for all 83 tools (Backup tools were built from the same manifest).
