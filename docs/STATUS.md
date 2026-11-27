@@ -161,6 +161,10 @@ Live on aimixmasters.com and aimm.kevinlelitte.workers.dev (page Worker version 
 
 # STATUS.md — AIMM
 
+## 2026-11-27 build 2026-11-23.72 — UAD licence fix (DEPLOYED, site 97fd5cd5; rollback .71 = 441579c5, relay unchanged 75364b20)
+
+The UAD licence check missed products named "Universal Audio: …" or published as "uaudio" (VST2/VST3), so 218 unowned UAD products showed as owned in the Plugins tab and in Hope's inventory answers (e.g. Little Labs VOG). Fixed in uad-licence.js: those forms are now UAD and match the licence map after the prefix is removed; if the map is not loaded, UAD counts as not owned. Live check on Kevin's real scan (1,963 rows): owned 1,145 -> 927, VOG not owned. 308 tests pass. Hope rule added to the page and to both ElevenLabs brains (Primary version agtvrsn_3501m8fb5vraewgtkk2jjv0epjxk, prior agtvrsn_8701m8ebj1hvehp8s7209x7dxbbn; Backup prompt now 16,052 chars, same as Primary). Not done: other publishers also write lowercase vendor codes (ikmultimedia, izotope, plugin-alliance…); effect on the Plugins tab not yet checked.
+
 ## 2026-11-20 build 2026-11-20.8 — Hope inventory reads (DEPLOYED with .9, Worker d5c3c828-99d1-43c2-bdce-4be1e4006a7a; rollback 225ece75 = build .7)
 
 Hope's inventory_search now reads scanned products without switching tabs or changing Plugins filters. It returns the sidebar's product update status, known latest version and loaded duplicate membership, and supports a status filter. The new read-only inventory_summary returns product, format, status and leading vendor counts with scan provenance. Unused-only products are outside the active scan, so search omits the unused field. Added regression tests. The inventory tools are registered on Hope's ElevenLabs agent as described in the .9 entry above; voice test pending.
