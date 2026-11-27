@@ -1,5 +1,28 @@
 # AIMM stable base build
 
+**Stable base: build 2026-11-23.74** (declared by Kevin, 27 Nov 2026). Treat this as the known-good starting point. Anything new is built on top of it, and if something breaks we can return to it. The previous stable bases (.69 and .65) are kept below.
+
+## What is pinned (build .74)
+
+| Part | Pinned to |
+|---|---|
+| Git tag | `stable-2026-11-23.74` (commit 3a477f68 on main) |
+| Worker `aimm` (the site) | version e3ea6d8c-28d5-4000-8df9-9dc08b40aa6e |
+| Worker `aimm-proxy` (relay) | version 75364b20 (unchanged since .71) |
+| Hope Primary agent_9001m42hnyrwedts40en5a5npapp | published version agtvrsn_5801m8fe8fdbegdbbj0gkcrsyqmn |
+| Hope Backup agent_2601kqm4g7txfsvv0pkvpe02389p | same prompt as Primary (16,359 chars), 85 tools; relay only |
+| Tests | 319 Node tests pass |
+
+## What .70 to .74 added
+UAD licence fix (unowned UAD plug-ins no longer shown as owned), one consistent publisher spelling with capitals everywhere, and "I bought the UAD ..." by voice (central owned list in R2, tools uad_find and uad_set_owned on both brains).
+
+## How to go back to .74
+Site: `git checkout stable-2026-11-23.74` then `cd standalone && npx -y wrangler@4.161.0 deploy`, or `wrangler rollback <version id>`. Hope: restore the pinned Primary version; the Backup matches it.
+
+---
+
+# Previous stable base: build .69
+
 **Stable base: build 2026-11-23.69** (declared by Kevin, 26 Nov 2026, after live tests). Treat this as the known-good starting point. Anything new is built on top of it, and if something breaks we can return to it. The previous stable base, build .65, is kept below.
 
 ## What is pinned (build .69)
