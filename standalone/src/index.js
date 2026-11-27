@@ -563,7 +563,7 @@ async function serveMwtm(request, env, key, isManifest = false) {
   if (request.method !== 'GET' && request.method !== 'HEAD') {
     return new Response('Method not allowed', { status: 405, headers: { Allow: 'GET, HEAD' } });
   }
-  if (!key || key.includes('..') || key.includes('\\') || key.includes('\0')) return new Response('Not found', { status: 404 });
+  if (!key || key.toLowerCase().startsWith('config/') || key.includes('..') || key.includes('\\') || key.includes('\0')) return new Response('Not found', { status: 404 });
   const object = await env.MWTM.get(key);
   if (!object || !object.body) return new Response('Not found', { status: 404 });
   const size = object.size;
@@ -713,6 +713,39 @@ async function forwardHope(request, env, url, route) {
   } catch (_) { return json({ error: route.explain ? 'Hope explanation is unavailable.' : 'Hope is unavailable.' }, 502); }
 }
 
+const UAD_OWNED_KEY = 'config/uad-owned.json';
+const UAD_OWNED_LIMIT = 65536;
+function validUadOwned(data) {
+  if (!hopeObject(data) || Object.keys(data).some(k => k !== 'owned') || !Array.isArray(data.owned) || data.owned.length > 500) return false;
+  const keys = new Set();
+  return data.owned.every(item => {
+    if (!hopeObject(item) || Object.keys(item).sort().join(',') !== 'at,key,name,vendor') return false;
+    if (!['key','name','vendor','at'].every(k => typeof item[k] === 'string' && item[k].trim() && item[k].length <= 300)) return false;
+    if (keys.has(item.key) || !Number.isFinite(Date.parse(item.at))) return false;
+    keys.add(item.key); return true;
+  });
+}
+async function uadOwnedRoute(request, env, url) {
+  if (!request.headers.get('Cf-Access-Jwt-Assertion')) return json({error:'Sign in to AIMM again.'},401);
+  const origin=request.headers.get('Origin');
+  if (origin && origin !== url.origin) return json({error:'Origin is not allowed.'},403);
+  if (!['GET','PUT'].includes(request.method)) return json({error:'Method not allowed.'},405);
+  try {
+    if (request.method === 'GET') {
+      const object=await env.MWTM.get(UAD_OWNED_KEY);
+      if (!object) return json({owned:[]});
+      const data=JSON.parse(await object.text());
+      return validUadOwned(data) ? json(data) : json({error:'Saved UAD list is invalid.'},500);
+    }
+    if ((request.headers.get('Content-Type')||'').split(';')[0].trim().toLowerCase() !== 'application/json') return json({error:'Expected JSON.'},415);
+    let body; try { body=await readRequestBodyLimited(request,UAD_OWNED_LIMIT); } catch (_) { return json({error:'UAD list is too large.'},413); }
+    let data; try { data=JSON.parse(body); } catch (_) { return json({error:'Expected JSON.'},400); }
+    if (!validUadOwned(data)) return json({error:'Invalid UAD list.'},400);
+    await env.MWTM.put(UAD_OWNED_KEY,JSON.stringify(data),{httpMetadata:{contentType:'application/json'}});
+    return json({ok:true});
+  } catch (_) { return json({error:'UAD list could not be saved or read.'},500); }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -725,6 +758,7 @@ export default {
       catch { return new Response('Not found', { status: 404 }); }
       return serveMwtm(request, env, key);
     }
+    if (url.pathname === '/api/uad-owned') return uadOwnedRoute(request, env, url);
     if (url.pathname === '/api/vendor-check') return checkVendorSources(request);
     const hopeRoute = HOPE_ROUTES.get(url.pathname);
     if (hopeRoute) return forwardHope(request, env, url, hopeRoute);

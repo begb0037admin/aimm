@@ -254,6 +254,48 @@
     }
   },
   {
+    "name": "uad_find",
+    "description": "Find scanned UAD plug-ins by words in their name, including those not licensed. Read the exact name back.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Words in the plug-in name."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "uad_set_owned",
+    "description": "Mark the exact name from uad_find as owned or not owned. Read the name back and wait for Kev’s clear yes before confirmed true.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Exact name from uad_find."
+        },
+        "owned": {
+          "type": "boolean",
+          "description": "True if owned, false if not owned."
+        },
+        "confirmed": {
+          "type": "boolean",
+          "description": "True only after Kev clearly says yes."
+        }
+      },
+      "required": [
+        "name",
+        "owned",
+        "confirmed"
+      ]
+    }
+  },
+  {
     "name": "inventory_navigate",
     "description": "Navigate the live AIMM inventory sidebar. This opens the Plugins tab if needed, then selects the requested status, Library filter, category, or tool. Returns a snapshot of the whole sidebar plus the selected live view. This changes only the visible view; it does not scan, download, share, or add anything. Use it whenever Kev asks to open or inspect one of the AIMM inventory menu items. Disabled items return their current unavailable reason; connected items can open their existing screen.",
     "parameters": {
