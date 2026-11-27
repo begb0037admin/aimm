@@ -1,3 +1,6 @@
+## 2026-11-27 build 2026-11-23.70 LIVE (site aaa30d32, relay 0ded71d9; rollback to .69 = site e59324e7, relay 696ce5e2)
+Channel paging ("Show more", Hope gets channel total, can load more or search a topic across loaded pages), Hope can read the Library (get_library_videos) and add results include count and titles, Settings text fixed. 299 tests pass. Tag build-2026-11-23.70. Backup Hope brain updated (86 tools). PENDING: Primary Hope brain needs the same three tool changes once the ElevenLabs connector is reconnected; live test of .70 by Kevin.
+
 ## 2026-11-26 STABLE BASE: build 2026-11-23.69 (supersedes .65)
 Kevin declared build .69 the stable base after live tests. Git tag `stable-2026-11-23.69` (commit 7d660ba7), Worker aimm version e59324e7, aimm-proxy version 696ce5e2, Hope Primary agent_9001m42hnyrwedts40en5a5npapp version agtvrsn_4701m8bxhhane90s0ry1zhpagmst. Pins and rollback: docs/STABLE_BASE.md.
 - .66 to .69: token-free same-origin Hope routes, channels through the official YouTube Data API (spoken names, right-channel choice), Hope opens a channel in the Playlist and shows picks, adds several videos, Deepgram (Luna) route sends every tool (was cut at 39).

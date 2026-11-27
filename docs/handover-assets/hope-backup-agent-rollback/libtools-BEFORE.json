@@ -1,0 +1,158 @@
+{
+ "get_library_videos": null,
+ "open_library_channel": {
+  "id": "tool_5001m8cgjj0yfrqat76fg4dcyaph",
+  "tool_config": {
+   "type": "client",
+   "name": "open_library_channel",
+   "description": "Open a YouTube channel directly from Kevin\u2019s spoken name in the Library Playlist. Pass his topic as query. Returns resolution confidence, alternatives, coverage and up to 40 videos.",
+   "response_timeout_secs": 30,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "channel"
+    ],
+    "properties": {
+     "channel": {
+      "type": "string",
+      "description": "The channel name as Kevin said it.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "query": {
+      "type": "string",
+      "description": "Optional topic to filter the channel\u2019s videos.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     },
+     "switch_to_library": {
+      "type": "boolean",
+      "description": "Switch to the Library tab. Defaults to true when omitted.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ },
+ "add_videos_to_library": {
+  "id": "tool_0801m8cgjjgne8cvy4ms3559r54s",
+  "tool_config": {
+   "type": "client",
+   "name": "add_videos_to_library",
+   "description": "Add up to 10 YouTube videos sequentially to the AIMM Library. Call with confirmed false first for the summary. Use confirmed true only after Kev clearly asks or agrees to add the videos. Returns a result for each video.",
+   "response_timeout_secs": 120,
+   "disable_interruptions": false,
+   "interruption_mode": "allow",
+   "force_pre_tool_speech": false,
+   "pre_tool_speech": "auto",
+   "assignments": [],
+   "tool_call_sound": null,
+   "tool_call_sound_behavior": "auto",
+   "tool_error_handling_mode": "auto",
+   "parameters": {
+    "description": "",
+    "dynamic_variable": "",
+    "is_omitted": false,
+    "type": "object",
+    "required": [
+     "video_ids",
+     "confirmed"
+    ],
+    "properties": {
+     "video_ids": {
+      "description": "1 to 10 YouTube video IDs to add to the AIMM Library.",
+      "dynamic_variable": "",
+      "constant_value": null,
+      "is_omitted": false,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "description": "Exact 11-character YouTube video ID.",
+       "enum": null,
+       "is_system_provided": false,
+       "dynamic_variable": "",
+       "allowed_values": null,
+       "allowed_values_dynamic_variable": "",
+       "constant_value": "",
+       "is_omitted": false
+      }
+     },
+     "confirmed": {
+      "type": "boolean",
+      "description": "False for the summary. True only after Kev clearly asks or agrees to add these videos.",
+      "enum": null,
+      "is_system_provided": false,
+      "dynamic_variable": "",
+      "allowed_values": null,
+      "allowed_values_dynamic_variable": "",
+      "constant_value": "",
+      "is_omitted": false
+     }
+    }
+   },
+   "expects_response": true,
+   "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+   },
+   "execution_mode": "immediate"
+  },
+  "access_info": {
+   "is_creator": true,
+   "creator_name": "Kevin",
+   "creator_email": "kevin@lelitte.co.uk",
+   "role": "admin",
+   "anonymous_access_level_override": null,
+   "access_source": "creator"
+  },
+  "usage_stats": {
+   "total_calls": 0,
+   "avg_latency_secs": 0.0
+  },
+  "response_mocks": null
+ }
+}

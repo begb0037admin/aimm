@@ -13,3 +13,6 @@ On 26 Nov 2026 Kevin asked for it to be identical to the Primary (agent_9001m42h
 | primary-prompt.txt | the Primary's prompt that was copied across |
 
 No keys are stored here. Known difference: Backup has four extra tools (web_search_fallback, pluginhub_add_to_bus, pluginhub_navigate, pluginhub_search_inventory) and lacks `research`. A full tool-by-tool comparison with the Primary needs the ElevenLabs connector reconnected.
+
+## 27 Nov 2026: build .70 tools
+Backup updated for build .70 (via relay): created `get_library_videos`; updated `open_library_channel` (topic, more) and `add_videos_to_library` descriptions; Backup now has 86 tools. Settings before the update: libtools-BEFORE.json. The Primary (agent_9001...) is NOT yet updated because the ElevenLabs connector was disconnected: it needs the same three tool changes (create the client tool get_library_videos with the manifest in standalone/assets/hope-tools-manifest.json, update the other two, attach it, publish). Until then Backup is one tool ahead of Primary; the page handles both.
