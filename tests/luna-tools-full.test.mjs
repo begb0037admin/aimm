@@ -42,7 +42,7 @@ test('realistic full request passes site and proxy and forwards all tools',async
    return proxy.fetch(new Request(url,options),env);
   };
   const response=await site.fetch(new Request('https://aimixmasters.com/api/hope/luna',{method:'POST',headers:{'Content-Type':'application/json','Cf-Access-Jwt-Assertion':'valid'},body:JSON.stringify(request)}),env);
-  assert.equal(response.status,200);assert.equal(forwarded.tools.length,80);assert.deepEqual(forwarded.tools.map(t=>t.name),Array.from(tools,t=>t.name));
+  assert.equal(response.status,200);assert.equal(forwarded.tools.length,82);assert.deepEqual(forwarded.tools.map(t=>t.name),Array.from(tools,t=>t.name));
  }finally{globalThis.fetch=original;}
 });
 test('voice and chat share Luna rules and have room for tool arguments',()=>{
