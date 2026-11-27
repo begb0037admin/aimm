@@ -161,6 +161,10 @@ Live on aimixmasters.com and aimm.kevinlelitte.workers.dev (page Worker version 
 
 # STATUS.md — AIMM
 
+## 2026-11-27 build 2026-11-23.73 — Consistent publisher names (DEPLOYED, site 2d6e7928; rollback .72 = 97fd5cd5, relay unchanged)
+
+One spelling and capitals per publisher everywhere (new standalone/assets/publisher-names.js): lowercase scan codes (ikmultimedia, izotope, plugin-alliance, uaudio...) map to one name, "Publisher: " prefixes are stripped from product names, and each product shows once with all its formats (AU/VST2/VST3). New publishers follow the same rules automatically (spaces for hyphen codes, capital first letter); a specific spelling is one line in the overrides table. Old favourites, tags and actions saved under old spellings are still read. Live check on Kevin's real scan: 1,481 -> 939 product groups, owned 721, not licensed 218, VOG not owned, 0 split spellings, 47 publisher cards and none lowercase. 314 tests pass. Known gap: a UAD plug-in bought later is hidden as not licensed until uad-licence.json is refreshed (no override UI since the Not licensed row was removed).
+
 ## 2026-11-27 build 2026-11-23.72 — UAD licence fix (DEPLOYED, site 97fd5cd5; rollback .71 = 441579c5, relay unchanged 75364b20)
 
 The UAD licence check missed products named "Universal Audio: …" or published as "uaudio" (VST2/VST3), so 218 unowned UAD products showed as owned in the Plugins tab and in Hope's inventory answers (e.g. Little Labs VOG). Fixed in uad-licence.js: those forms are now UAD and match the licence map after the prefix is removed; if the map is not loaded, UAD counts as not owned. Live check on Kevin's real scan (1,963 rows): owned 1,145 -> 927, VOG not owned. 308 tests pass. Hope rule added to the page and to both ElevenLabs brains (Primary version agtvrsn_3501m8fb5vraewgtkk2jjv0epjxk, prior agtvrsn_8701m8ebj1hvehp8s7209x7dxbbn; Backup prompt now 16,052 chars, same as Primary). Not done: other publishers also write lowercase vendor codes (ikmultimedia, izotope, plugin-alliance…); effect on the Plugins tab not yet checked.
