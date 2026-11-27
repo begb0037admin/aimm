@@ -5650,6 +5650,7 @@ select,button,input,textarea{font-family:inherit;font-size:calc(var(--inv-text-s
 </script>
 
 <script src="./vocal-favs.js"></script>
+<script src="./publisher-names.js"></script>
 <script src="./uad-licence.js"></script>
 <script src="./mwtm-cue-map.js"></script>
 <script>
@@ -5836,7 +5837,7 @@ window.AimmLocalPlayer={attach};
 })();
 
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('aimm-ready')));
-const AIMM_BUILD = '2026-11-23.72';
+const AIMM_BUILD = '2026-11-23.73';
 try { localStorage.removeItem('aiMixMastersHopeSttToken_v1'); } catch (_) {}
 (function(){
   try{
@@ -7594,16 +7595,27 @@ if(INV_SYNTHETIC_PREVIEW&&new URLSearchParams(window.location.search).get("inven
 }
 const INV_SYNTHETIC_FAVORITES=new Set();
 function invFavoriteKey(name,vendor){return "inventory:"+invNorm(vendor)+"|"+invNorm(name);}
+function invCanonicalSavedKey(key){
+  if(typeof PublisherNames==='undefined')return key;
+  const row=INV_SCAN_ROWS.find(row=>invNorm(row.rawVendor||row.vendor)+'|'+invNorm(row.rawName||row.name)===key);
+  if(row)return invNorm(row.vendor)+'|'+invNorm(row.name);
+  const split=key.indexOf('|');if(split<0)return key;
+  const identity=PublisherNames.identity(key.slice(0,split),key.slice(split+1));
+  return invNorm(identity.vendor)+'|'+invNorm(identity.name);
+}
+function invFavoriteAliases(name,vendor){const key=invFavoriteKey(name,vendor);return Array.from(STATE.favorites).filter(value=>value.startsWith('inventory:')&&invCanonicalSavedKey(value.slice(10))===key.slice(10));}
 function invLegacyFavorite(name){return STATE.favorites.has(name)&&!INV_SCAN_ROWS.some(row=>invNorm(row.name)===invNorm(name)&&INV_SCAN_ROWS.some(other=>invNorm(other.name)===invNorm(name)&&invNorm(other.vendor)!==invNorm(row.vendor)));}
 function invIsFavorite(name,vendor){
   if(!UadLicence.licensed(name,vendor,UAD_LICENCE_DATA,invGetProductActions(vendor,name).treatAsLicensed===true))return false;
   const key=invFavoriteKey(name,vendor);
-  return INV_SYNTHETIC_PREVIEW?INV_SYNTHETIC_FAVORITES.has(key):STATE.favorites.has(key)||invLegacyFavorite(name);
+  return INV_SYNTHETIC_PREVIEW?INV_SYNTHETIC_FAVORITES.has(key):invFavoriteAliases(name,vendor).length>0||invLegacyFavorite(name);
 }
 function invToggleFavorite(name,vendor){
   const key=invFavoriteKey(name,vendor);
   if(INV_SYNTHETIC_PREVIEW){if(INV_SYNTHETIC_FAVORITES.has(key))INV_SYNTHETIC_FAVORITES.delete(key);else INV_SYNTHETIC_FAVORITES.add(key);invRenderInventory();return Promise.resolve(false);}
-  return toggleFav(invLegacyFavorite(name)&&!STATE.favorites.has(key)?name:key);
+  const aliases=invFavoriteAliases(name,vendor),active=aliases.length||invLegacyFavorite(name);
+  if(active){aliases.forEach(value=>STATE.favorites.delete(value));if(invLegacyFavorite(name))STATE.favorites.delete(name);}else STATE.favorites.add(key);
+  renderLibrary();return saveState();
 }
 const INV_DB_NAME = "aimmPluginScanFolders_v1";
 const INV_ROWS_KEY = "aimmPluginInventoryRows_v1";
@@ -7634,6 +7646,7 @@ let INV_COLLECTIONS=invReadCollections(),INV_SELECTED_COLLECTION="";
 function invWriteCollections(){if(INV_SYNTHETIC_PREVIEW)return true;try{localStorage.setItem(INV_COLLECTIONS_KEY,JSON.stringify(INV_COLLECTIONS));return true;}catch(_){return false;}}
 function invRenderCollections(){const select=document.getElementById("invCollectionSelect"),remove=document.querySelector("[data-inv-remove-collection]");if(!select)return;const selected=INV_COLLECTIONS.some(value=>value.id===INV_SELECTED_COLLECTION)?INV_SELECTED_COLLECTION:"";select.replaceChildren();const placeholder=document.createElement("option");placeholder.value="";placeholder.textContent=INV_COLLECTIONS.length?"Choose a collection…":"No saved collections";select.appendChild(placeholder);INV_COLLECTIONS.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(value=>{const option=document.createElement("option");option.value=value.id;option.textContent=value.name;select.appendChild(option);});select.value=selected;if(remove)remove.disabled=!selected;}
 let INV_SCAN_ROWS = INV_SYNTHETIC_PREVIEW?INV_SYNTHETIC_ROWS.map(row=>({...row})): (() => { try { const rows=JSON.parse(localStorage.getItem(INV_ROWS_KEY)||"[]");if(!Array.isArray(rows))return [];const allowed=rows.filter(row=>row&&["AU","VST2","VST3","CLAP"].includes(String(row.format||"").toUpperCase()));if(allowed.length!==rows.length)localStorage.setItem(INV_ROWS_KEY,JSON.stringify(allowed));return allowed; } catch (_) { return []; } })();
+INV_SCAN_ROWS=PublisherNames.normalizeRows(INV_SCAN_ROWS);
 let INV_SCAN_INFO = INV_SYNTHETIC_PREVIEW?{generatedAt:"synthetic-preview",bundles:INV_SYNTHETIC_ROWS.length,folders:0,unreadable:0,truncated:false,partial:false,needsRefresh:false,rootIds:[],configuredRootIds:[],synthetic:true}:(() => { try { const info=JSON.parse(localStorage.getItem(INV_SCAN_KEY)||"{}");return info&&typeof info==="object"&&!Array.isArray(info)?info:{}; } catch (_) { return {}; } })();
 const INV_EXT_FORMAT = {".component":"AU",".vst":"VST2",".vst3":"VST3",".clap":"CLAP"};
 const INV_FORMAT_DIRS = new Set(["components","vst","vst3","clap","plug-ins"]);
@@ -7678,7 +7691,7 @@ const INV_VENDOR_STATUS_ALIASES={
   "aurallysound":"aurally sound","bettermaker":"plugin alliance","lindellplugins":"plugin alliance","pluginalliance":"plugin alliance",
   "harrison":"harrison audio","harrisonaudio":"harrison audio","hitnmix":"hit n mix","knockaudio":"knock audio","pluginsthatknock":"knock audio",
   "noiseworks":"noiseworks","dynassist":"noiseworks","scalermusic":"scaler music","solidstatelogic":"ssl","ssl":"ssl","wavesaudio":"waves","waves":"waves",
-  "universalaudiouadx":"universal audio native","universalaudionative":"universal audio native","spectralayers":"steinberg","steinberg":"steinberg"
+  "uaudio":"universal audio","universalaudiouadx":"universal audio native","universalaudionative":"universal audio native","spectralayers":"steinberg","steinberg":"steinberg"
 };
 function invVendorStatusCanonicalVendor(value){const key=invNorm(value).replace(/[^a-z0-9]/g,"");return INV_VENDOR_STATUS_ALIASES[key]||invNorm(value);}
 const INV_VENDOR_APP_VENDORS=new Set(["universalaudio","universalaudiouadx","uaudio","ikmultimedia","waves","valhalladsp","acondigital","slatedigital","ujam"]);
@@ -7831,6 +7844,7 @@ function pcCompanionAdopt(inventory){
   pcCompanionUnusedEntries=null;
   const formats=new Set(['AU','VST2','VST3','CLAP']);
   INV_SCAN_ROWS=inventory.rows.filter(row=>row&&formats.has(row.format)).map(row=>({...row,source:'companion'}));
+  if(typeof PublisherNames!=='undefined')INV_SCAN_ROWS=PublisherNames.normalizeRows(INV_SCAN_ROWS);
   const roots=Array.isArray(inventory.roots)?inventory.roots:[];
   INV_SCAN_INFO={source:'companion',generatedAt:inventory.scannedAt||null,bundles:Number(inventory.counts?.bundles)||0,folders:roots.filter(root=>root.exists).length,unreadable:Number(inventory.counts?.unreadable)||0,truncated:!!inventory.truncated,partial:!!(inventory.truncated||inventory.counts?.unreadable),needsRefresh:false,rootIds:roots.map(root=>root.id),configuredRootIds:roots.map(root=>root.id)};
   invSaveScan();invRenderInventory();
@@ -8198,7 +8212,7 @@ function invStatusRecordFresh(record,maxAgeDays){
   const checked=Date.parse(record&&record.checkedAt||"");return Number.isFinite(checked)&&checked<=Date.now()+86400000&&Date.now()-checked<=maxAgeDays*86400000;
 }
 function invKnownVendorRelease(row){
-  const keys=invVendorStatusIdentityKeys(row.vendor,row.name),releases=[];keys.forEach(key=>{[INV_AUTO_VENDOR_RELEASES[key],INV_VERIFIED_VENDOR_RELEASES[key]].forEach(release=>{if(release&&invStatusRecordFresh(release,INV_VENDOR_STATUS_SNAPSHOT_DAYS)&&(release.status==="manual-check"||release.latestVersion&&invSafeExternalUrl(release.sourceUrl)))releases.push(release);});});
+  const keys=Array.from(new Set([...invVendorStatusIdentityKeys(row.vendor,row.name),...invVendorStatusIdentityKeys(row.rawVendor||row.vendor,row.rawName||row.name)])),releases=[];keys.forEach(key=>{[INV_AUTO_VENDOR_RELEASES[key],INV_VERIFIED_VENDOR_RELEASES[key]].forEach(release=>{if(release&&invStatusRecordFresh(release,INV_VENDOR_STATUS_SNAPSHOT_DAYS)&&(release.status==="manual-check"||release.latestVersion&&invSafeExternalUrl(release.sourceUrl)))releases.push(release);});});
   releases.sort((a,b)=>Date.parse(b.checkedAt||"")-Date.parse(a.checkedAt||""));return releases[0]||null;
 }
 function invSetVendorCheckButtonState(){const button=document.getElementById("invUpdateCheckBtn");if(!button)return;const hasVersion=INV_SCAN_ROWS.some(row=>row.version||Object.values(row.format_versions||{}).some(Boolean));button.disabled=INV_SYNTHETIC_PREVIEW||!hasVersion||button.dataset.checking==="true";button.textContent=button.dataset.checking==="true"?"Checking AIMM sources…":"Check AIMM vendor sources";button.title=hasVersion?"Compare installed versions with AIMM’s direct publisher release pages.":"Scan plug-in folders before checking vendor versions.";}
@@ -8295,12 +8309,17 @@ function invWriteVendorChecks(value){
   try{localStorage.setItem(INV_VENDOR_CHECK_KEY,JSON.stringify(value));INV_VENDOR_CHECKS=value;return true;}catch(_){return false;}
 }
 function invActiveVendorCheck(row,now=Date.now()){
-  const key=invNorm(row.vendor)+"|"+invNorm(row.name),record=INV_VENDOR_CHECKS[key];
-  if(!record||record.vendorKey!==invNorm(row.vendor)||record.productKey!==invNorm(row.name))return null;
-  const age=now-Date.parse(record.checkedAt),installed=INV_PRODUCT_VERSIONS.get(key)||String(row.version||"");
+  const key=invNorm(row.vendor)+"|"+invNorm(row.name),canonical=typeof invCanonicalSavedKey==="function"?invCanonicalSavedKey:value=>value,entry=Object.entries(INV_VENDOR_CHECKS).find(([oldKey])=>canonical(oldKey)===key),record=INV_VENDOR_CHECKS[key]||entry?.[1];
+  if(!record||canonical(record.vendorKey+"|"+record.productKey)!==key)return null;
+  const age=now-Date.parse(record.checkedAt);let installed=INV_PRODUCT_VERSIONS.get(key)||String(row.version||"");
+  if(entry&&entry[0]!==key&&!Object.prototype.hasOwnProperty.call(INV_VENDOR_CHECKS,key)&&typeof INV_SCAN_ROWS!=="undefined"){
+    const oldRows=INV_SCAN_ROWS.filter(item=>invNorm(item.rawVendor||item.vendor)+"|"+invNorm(item.rawName||item.name)===entry[0]);
+    if(oldRows.length){const versions=new Set();oldRows.forEach(item=>(Array.isArray(item.formats)?item.formats:[item.format]).forEach(format=>versions.add(String(format||"")+":"+String(item.format_versions?.[format]||item.version||""))));installed=Array.from(versions).sort().join(" | ");}
+  }
   return Number.isFinite(age)&&age>=0&&age<INV_VENDOR_CHECK_DAYS*86400000&&record.installedVersion===installed?record:null;
 }
 function invBuildGroups(rows){
+  if(typeof PublisherNames!=='undefined')rows=PublisherNames.normalizeRows(rows);
   const groups=new Map();
   const statusNames=["updates","up-to-date","manual-check","vendor-app","unchecked"],actionCache=new Map(Object.entries(invReadProductActions()));
   const versions=new Map();rows.forEach(row=>{const key=invNorm(row.vendor)+"|"+invNorm(row.name);if(!versions.has(key))versions.set(key,new Set());const formats=Array.isArray(row.formats)?row.formats:[row.format];formats.forEach(format=>versions.get(key).add(String(format||"")+":"+String(row.format_versions&&row.format_versions[format]||row.version||"")));});
@@ -8363,8 +8382,7 @@ function invUndoVendorChecks(){
   INV_VENDOR_CHECK_UNDO=null;invRenderInventory();invStatus("Vendor app checks undone.");return true;
 }
 function invUnmarkVendorCheck(key){
-  if(!Object.prototype.hasOwnProperty.call(INV_VENDOR_CHECKS,key))return;
-  const next={...INV_VENDOR_CHECKS};delete next[key];if(!invWriteVendorChecks(next)){invStatus("The vendor app check could not be removed.","error");return;}
+  const next={...INV_VENDOR_CHECKS};const aliases=Object.keys(next).filter(oldKey=>invCanonicalSavedKey(oldKey)===key);if(!aliases.length)return;aliases.forEach(oldKey=>delete next[oldKey]);if(!invWriteVendorChecks(next)){invStatus("The vendor app check could not be removed.","error");return;}
   INV_VENDOR_CHECK_UNDO=null;invRenderInventory();invStatus("Vendor app check removed.");
 }
 function invStatusLabel(status){
@@ -8668,7 +8686,10 @@ function invActionKey(vendor,name){return invNorm(vendor)+"|"+invNorm(name);}
 let INV_SYNTHETIC_PRODUCT_ACTIONS={};
 function invReadProductActions(){
   if(INV_SYNTHETIC_PREVIEW)return JSON.parse(JSON.stringify(INV_SYNTHETIC_PRODUCT_ACTIONS));
-  try{const value=JSON.parse(localStorage.getItem(INV_PRODUCT_ACTIONS_KEY)||"{}");return value&&typeof value==="object"?value:{}}catch(_){return {}}
+  try{const value=JSON.parse(localStorage.getItem(INV_PRODUCT_ACTIONS_KEY)||"{}");if(!value||typeof value!=="object"||Array.isArray(value))return {};
+    const result={...value},merged={};for(const [key,record] of Object.entries(value)){const canonical=invCanonicalSavedKey(key);if(canonical===key||!record||typeof record!=="object")continue;const previous=merged[canonical]||{};merged[canonical]={...previous,...record,tags:[...new Set([...(previous.tags||[]),...(record.tags||[])])]};}
+    for(const [key,record] of Object.entries(merged)){const current=value[key];if(current?._canonicalSaved)result[key]=current;else result[key]={...record,...(current||{}),tags:[...new Set([...(record.tags||[]),...(current?.tags||[])])]};}return result;
+  }catch(_){return {}}
 }
 function invWriteProductActions(value,allowSyntheticHidden=false){
   if(INV_SYNTHETIC_PREVIEW){
@@ -8677,7 +8698,7 @@ function invWriteProductActions(value,allowSyntheticHidden=false){
     for(const key of keys){const before=INV_SYNTHETIC_PRODUCT_ACTIONS[key]||{},after=next[key]||{},beforeOther={...before},afterOther={...after};delete beforeOther.hidden;delete afterOther.hidden;if(JSON.stringify(beforeOther)!==JSON.stringify(afterOther)){invStatus("Only temporary hide/show changes are enabled in the synthetic sample preview.");return false;}}
     INV_SYNTHETIC_PRODUCT_ACTIONS=JSON.parse(JSON.stringify(next));return true;
   }
-  try{localStorage.setItem(INV_PRODUCT_ACTIONS_KEY,JSON.stringify(value));return true}catch(_){return false}
+  try{const saved={...value};for(const key of Object.keys(saved))if(invCanonicalSavedKey(key)===key&&saved[key]&&typeof saved[key]==="object")saved[key]={...saved[key],_canonicalSaved:true};localStorage.setItem(INV_PRODUCT_ACTIONS_KEY,JSON.stringify(saved));return true}catch(_){return false}
 }
 function invGetProductActions(vendor,name){
   const all=invReadProductActions(),value=all[invActionKey(vendor,name)];
@@ -9652,7 +9673,7 @@ async function invScanNow(options={}){
             statusKind="error";
             if(!saved)statusMessage+=" This refresh could not be saved.";
           }else{
-            INV_SCAN_ROWS=allRows;
+            INV_SCAN_ROWS=PublisherNames.normalizeRows(allRows);
             INV_SCAN_INFO={generatedAt:incomplete?null:new Date().toISOString(),bundles:bundleCount,folders:folderCount,unreadable:unreadable,truncated:truncated,partial:incomplete,needsRefresh:incomplete,rootIds:rootIds,configuredRootIds:rootIds};
             const saved=invSaveScan();
             statusMessage=(incomplete?"Partial scan: ":"Scan complete: ")+bundleCount.toLocaleString()+" plug-in bundles checked; "+allRows.length.toLocaleString()+" readable plug-in records found."+(unreadable?" "+unreadable+" folders or bundles could not be read.":"")+(truncated?" Scan limit reached; some folders may not be included.":"");
@@ -16666,8 +16687,8 @@ const HOPE_USAGE_VOICE = {
   sessionSpeechCreditsKnown:true, sessionLlmCost:0, sessionLlmModel:'', sessionLlmInputTokens:0, sessionLlmOutputTokens:0, lunaAbort:null,
 };
 const HOPE_CHAIN_BUILD_RULES = `Building a chain from a video: 1) Search the videos. Name the video and its creator, and read out the plugin list exactly as the video shows it. Never call something "from the video" if it is not. 2) For each plugin, read vocal_favorites_read for the matching bus chain (vocal, drums, 808 or master) and prefer owned, then close version, then owned equivalent, then Logic Pro 13 stock. Verify scanned ownership. If a video plug-in is swapped, say plainly which favourite replaces it and why. 3) Build the chain on the MixBus first: clear the bus, then use add_plugin_to_bus and the chain tools to add the plugins in the video's order. 4) Go through the chain one plugin at a time. Pin that plugin's settings first, then say them out loud. The highlight moves to that plugin, so Kev can see its settings as you talk. 5) Tell Kev which plugins are swaps and which are exact matches. Only after the chain is on the MixBus, call cue_video with the source video_id (YouTube or mwtm-) without switch_to_library. Do not switch tabs; keep Kev on the MixBus so he can see the chain. Tell Kev the chain is on the MixBus and the video is cued for when he wants it. Set switch_to_library true only when Kev asks to see or watch the video.`;
-const HOPE_INVENTORY_RULES = `Only say Kev has an installed plug-in if inventory_search returned it. UAD plug-ins that are installed but not licensed are not his: say 'installed but not licensed', never recommend them, and offer an owned alternative. Two separate plug-in lists exist. The MixBus library/catalogue in context is what AIMM recommends from; it is not an installed inventory or installed count. Kev's INSTALLED plug-ins are the Plugin Companion scan shown in the Plugins tab. For any question about what he has installed, how many plug-ins he has, updates, duplicates, Unused, vendor apps, a vendor's plug-ins, or the companion, use inventory_summary, inventory_search, inventory_status, inventory_duplicates or inventory_unused as appropriate. Never answer these questions from MixBus catalogue numbers and never guess a number. If no scan is available, say the Plugins tab has no scan loaded and the companion may not be connected. Synthetic preview rows are not installed plug-ins. Use inventory_navigate to open a requested inventory sidebar item and report disabled items' unavailable reason. inventory_search and inventory_summary leave the visible view unchanged. Use inventory_set_favorite for scanned or installed plug-ins, and toggle_favorite only for the MixBus catalogue; say whether the saved change succeeded, was already set, was ambiguous, was not found, or was not saved. Starring needs no confirmation. vocal_favorites_read reads the video favourites; for vocal_favorites_apply, read the proposed counts aloud with confirmed false, wait for Kev’s clear yes, then call confirmed true and report verified starred, already and unresolved counts. When building a chain from a video read the matching bus chain favourites first (vocal, drums, 808 or master) and prefer in order: owned, close version, equivalent, Logic stock; say which video plug-in was swapped for which favourite. inventory_reveal and inventory_rescan use the existing controls. For every inventory change tool — inventory_move_to_unused, inventory_restore, inventory_move_to_trash, inventory_mark_vendor_app_checked, inventory_unmark_vendor_check, inventory_keep_newest_duplicates and inventory_add_to_bus — call with confirmed false first, read the returned summary aloud briefly, wait for Kev's clear yes, then call with confirmed true. Trash needs a separate yes before setting confirmed_trash true. For inventory_add_to_bus, first verify the exact installed name and publisher in the scan and choose a valid bus and stage; only use it when Kev explicitly asks. Menu navigation alone does not authorize scanning folders, downloading installers, sharing the inventory, or changing MixBus.`;
-const HOPE_COVERAGE_RULES = `Only say Kev has an installed plug-in if inventory_search returned it. UAD plug-ins that are installed but not licensed are not his: say 'installed but not licensed', never recommend them, and offer an owned alternative. Hope's active core memory is brief; use memory_search when older preferences or details may be in the archive. Unlicensed UAD products are excluded from the installed library and inventory counts because UA installs products the account may not own. The Plugins summary in your live context is the installed scan, not the MixBus catalogue. After inventory_rescan, use its completed before_total, after_total and lastScanAt; if timed_out, say the scan was not verified. For snapshots_apply, snapshots_add_note, plugin_tag_set, plugin_hide, saved_target_apply, mixbus_load_preset, mixbus_auto_fill and clear_bus, call with confirmed false, read the summary aloud, wait for Kev's clear yes, then repeat with confirmed true. Report a write as successful only when its result says ok true. Mix Check audio-file loading stays manual through the browser file picker. settings_status is read-only; never open Settings or reveal any key, token or secret value. Report only the credits returned by settings_status, never state a dollar spent figure, and say you can't see anything the tool does not return.`;
+const HOPE_INVENTORY_RULES = `Publisher names in the scan use one spelling; use the publisher exactly as inventory_search returns it. Only say Kev has an installed plug-in if inventory_search returned it. UAD plug-ins that are installed but not licensed are not his: say 'installed but not licensed', never recommend them, and offer an owned alternative. Two separate plug-in lists exist. The MixBus library/catalogue in context is what AIMM recommends from; it is not an installed inventory or installed count. Kev's INSTALLED plug-ins are the Plugin Companion scan shown in the Plugins tab. For any question about what he has installed, how many plug-ins he has, updates, duplicates, Unused, vendor apps, a vendor's plug-ins, or the companion, use inventory_summary, inventory_search, inventory_status, inventory_duplicates or inventory_unused as appropriate. Never answer these questions from MixBus catalogue numbers and never guess a number. If no scan is available, say the Plugins tab has no scan loaded and the companion may not be connected. Synthetic preview rows are not installed plug-ins. Use inventory_navigate to open a requested inventory sidebar item and report disabled items' unavailable reason. inventory_search and inventory_summary leave the visible view unchanged. Use inventory_set_favorite for scanned or installed plug-ins, and toggle_favorite only for the MixBus catalogue; say whether the saved change succeeded, was already set, was ambiguous, was not found, or was not saved. Starring needs no confirmation. vocal_favorites_read reads the video favourites; for vocal_favorites_apply, read the proposed counts aloud with confirmed false, wait for Kev’s clear yes, then call confirmed true and report verified starred, already and unresolved counts. When building a chain from a video read the matching bus chain favourites first (vocal, drums, 808 or master) and prefer in order: owned, close version, equivalent, Logic stock; say which video plug-in was swapped for which favourite. inventory_reveal and inventory_rescan use the existing controls. For every inventory change tool — inventory_move_to_unused, inventory_restore, inventory_move_to_trash, inventory_mark_vendor_app_checked, inventory_unmark_vendor_check, inventory_keep_newest_duplicates and inventory_add_to_bus — call with confirmed false first, read the returned summary aloud briefly, wait for Kev's clear yes, then call with confirmed true. Trash needs a separate yes before setting confirmed_trash true. For inventory_add_to_bus, first verify the exact installed name and publisher in the scan and choose a valid bus and stage; only use it when Kev explicitly asks. Menu navigation alone does not authorize scanning folders, downloading installers, sharing the inventory, or changing MixBus.`;
+const HOPE_COVERAGE_RULES = `Publisher names in the scan use one spelling; use the publisher exactly as inventory_search returns it. Only say Kev has an installed plug-in if inventory_search returned it. UAD plug-ins that are installed but not licensed are not his: say 'installed but not licensed', never recommend them, and offer an owned alternative. Hope's active core memory is brief; use memory_search when older preferences or details may be in the archive. Unlicensed UAD products are excluded from the installed library and inventory counts because UA installs products the account may not own. The Plugins summary in your live context is the installed scan, not the MixBus catalogue. After inventory_rescan, use its completed before_total, after_total and lastScanAt; if timed_out, say the scan was not verified. For snapshots_apply, snapshots_add_note, plugin_tag_set, plugin_hide, saved_target_apply, mixbus_load_preset, mixbus_auto_fill and clear_bus, call with confirmed false, read the summary aloud, wait for Kev's clear yes, then repeat with confirmed true. Report a write as successful only when its result says ok true. Mix Check audio-file loading stays manual through the browser file picker. settings_status is read-only; never open Settings or reveal any key, token or secret value. Report only the credits returned by settings_status, never state a dollar spent figure, and say you can't see anything the tool does not return.`;
 const HOPE_LIBRARY_RULES = `CHANNELS AND THE PLAYLIST: In AIMM, the Playlist is the Library’s Playlist panel. Treat “add to playlist”, “add these” and “add to the library” as requests to add to the AIMM Library. When Kev asks for a channel, call open_library_channel directly with the spoken name and his topic as query if given. Never ask for a link or handle. If the channel is not found, say the name heard and ask Kev to say it again or give a video title; do not guess. In one short sentence say the channel name and video count, mentioning an alternative if confidence is not high. Describe coverage honestly: topic results are videos found on that topic, and topic matches cover only pages loaded so far; use more to search older uploads and report the channel total separately. If the channel cannot be opened, say so. If no videos match the topic on the loaded pages, say so and offer to load more if available. Use get_library_videos to check what is in the Library. Otherwise use your judgement to choose up to 10 matches for the mixing, mastering, plug-ins or DAW workflow he cares about. Skip covers, vlogs, ads and gear unboxings unless he asks for them. Call show_library_picks with the chosen IDs so he can preview them in the Playlist. In a couple of friendly sentences, say what you picked and why, then ask whether to add them. Never add without Kev’s clear yes. “Yes”, “add it”, “add them”, “add them all” or an explicit “add to playlist” is enough for the videos he means. For approved picks, call add_videos_to_library with confirmed false first, then confirmed true for the videos he approved and that are still missing. Skip any Kev added by hand and report exactly what was added, skipped or failed. For a standalone request to add one video, use add_video_to_library with confirmed false first, then confirmed true. Ingestion reads the transcript when Kev explicitly asks to add a video. For your own unprompted offer to add an individual video, first call read_video_transcript and share the findings, then wait for his clear yes.`;
 const HOPE_FIX_QUEUE_RULES = `FIX QUEUE WALKTHROUGH: When Mix Check analysis finishes, greet Kev by name. Say in a friendly way that he has just loaded a mix or stems and the analysis is ready. Give the Fix Queue count in words, offer to take the fixes one at a time, and vary the phrasing between sessions. Use contractions, short sentences, a little warmth and light humour where natural. Never open with “I found N items”. Keep the introduction under about 60 words before the first fix. Present ONE fix at a time in your own warm first-person voice: the item number in plain words, what is wrong in plain words (rounded numbers only; precise readings stay in the Fix Queue tab), the move you recommend with a plugin Kev owns and what it does, why it makes sense, and how confident you are and why. Ask ‘Want me to apply that to your <bus>?’. Challenge a questionable flag or offer a better owned plugin, gentler setting, or section check where warranted. Only on Kev’s clear yes, call add_plugin_to_bus, then set_plugin_settings, then mark_fix_applied with the fix_id for the item you just discussed; report what you did in one line and move to the next item. On no, offer one alternative or challenge; if he still declines, call skip_fix with that fix’s id and move to the next item. If Kev later says ‘do that one after all’, call skip_fix with that id and restore:true to reopen it. UNDO: When Kev says 'undo that' right after you applied a fix, remove the plug-in you added with remove_plugin_from_bus, or use clear_plugin_settings if you only changed settings, then call unmark_fix_applied to untick that fix. Say in one line what you undid. Never undo without Kev asking. Between fixes use a brief human transition, such as “Nice, that’s one down. Right, the next one…”; never sound cheesy or go long. After the last item, say the queue is clear. Never apply or mark done without a clear yes.`;
 const LUNA_MAX_TOOLS = 128;
@@ -17400,7 +17421,7 @@ function hopeInventoryGroups(){
     const updateStatus=HOPE_INVENTORY_STATUSES[invPrimaryProductStatus(group.statusCounts)];
     const releases=Array.from(group.formatRows.values()).flat().flatMap(row=>[invKnownVendorRelease(row),row.latestVersion?{latestVersion:row.latestVersion}:null]).filter(release=>release?.latestVersion);
     const latest=releases.map(release=>release.latestVersion).sort((a,b)=>(invCompareVersions(b,a)||0))[0];
-    const duplicate=Array.isArray(pcCompanionDuplicateGroups)&&pcCompanionDuplicateGroups.some(item=>invNorm(item.vendor)===invNorm(group.vendor)&&invNorm(item.name)===invNorm(group.name));
+    const duplicate=Array.isArray(pcCompanionDuplicateGroups)&&pcCompanionDuplicateGroups.some(item=>invCanonicalSavedKey(invNorm(item.vendor)+"|"+invNorm(item.name))===invActionKey(group.vendor,group.name));
     return {group,updateStatus,latest,duplicate};
   });
 }
@@ -17490,7 +17511,7 @@ async function hopeInventorySetFavorite(args){
   let stored=false;
   try{
     const favorites=JSON.parse(localStorage.getItem(STORAGE_KEY))?.favorites;
-    stored=Array.isArray(favorites)&&(favorites.includes(invFavoriteKey(group.name,group.vendor))||favorites.includes(group.name)&&invBuildGroups(INV_SCAN_ROWS).filter(item=>invNorm(item.name)===invNorm(group.name)).length===1)===favorite;
+    stored=Array.isArray(favorites)&&(favorites.some(value=>value.startsWith('inventory:')&&invCanonicalSavedKey(value.slice(10))===invFavoriteKey(group.name,group.vendor).slice(10))||favorites.includes(group.name)&&invBuildGroups(INV_SCAN_ROWS).filter(item=>invNorm(item.name)===invNorm(group.name)).length===1)===favorite;
   }catch(_){}
   invRenderInventory();
   if(!saved||!stored)return {ok:false,code:'not_saved',message:'The favourite change could not be verified in saved storage.'};
