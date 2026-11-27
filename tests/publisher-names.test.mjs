@@ -38,3 +38,10 @@ test('old favourites and product actions remain readable and writes keep a canon
  delete actions['ik multimedia|equalizer'].hidden;assert.equal(ctx.api.invWriteProductActions(actions),true);assert.equal(ctx.api.invReadProductActions()['ik multimedia|equalizer'].hidden,undefined);assert.ok(JSON.parse(saved)['ikmultimedia|equalizer']);
  await ctx.api.invToggleFavorite('Equalizer','IK Multimedia');assert.equal(ctx.api.invIsFavorite('Equalizer','IK Multimedia'),false);await ctx.api.invToggleFavorite('Equalizer','IK Multimedia');assert.ok(favorites.has('inventory:ik multimedia|equalizer'));
 });
+
+
+test('new publisher codes get spaces and capitals',()=>{
+  const P=require('../standalone/assets/publisher-names.js');
+  assert.equal(P.canonicalVendor('brand-new-labs'),'Brand New Labs');
+  assert.equal(P.canonicalVendor('zzzfx'),'Zzzfx');
+});
