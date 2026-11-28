@@ -22,8 +22,8 @@ const ok = body => ({ok:true,json:async()=>body});
 function harness(reply = async path => path === '/status' ? ok({lastScanAt:inventory.scannedAt}) : ok(inventory), permission='granted') {
   const elements = new Map();
   for (const id of ['pcCompanionConnectionStatus','pcCompanionSettingsStatus','pcCompanionConnect','invScanBtn','invSidebarFolderMeta'])
-    elements.set(id,{textContent:'',disabled:false,hidden:false,listeners:{},addEventListener(type,fn){this.listeners[type]=fn;}});
-  const calls=[]; const settingsTab={listeners:{},addEventListener(type,fn){this.listeners[type]=fn;}}; let chromeScans=0, renders=0, saves=0;
+    elements.set(id,{textContent:'',disabled:false,hidden:false,listeners:{},setAttribute(name,value){this[name]=value;},addEventListener(type,fn){this.listeners[type]=fn;}});
+  const calls=[]; const settingsTab={listeners:{},setAttribute(name,value){this[name]=value;},addEventListener(type,fn){this.listeners[type]=fn;}}; let chromeScans=0, renders=0, saves=0;
   const context={
     fetch: async (url,options) => {calls.push({url,options});assert.ok(url.startsWith('http://127.0.0.1:41736/'));return reply(new URL(url).pathname,options);},
     navigator:{permissions:{query:async()=>({state:permission})}},
@@ -87,8 +87,8 @@ test('403 and CORS failures show connection guidance', async()=>{
 });
 
 test('Settings cards use the short labels and hide normal status boxes',()=>{
-  assert.match(html, /id="mcSpotifyCompanionConnect" aria-label="Connect audio reference">Connect<\/button>/);
-  assert.match(html, /id="pcCompanionConnect" aria-label="Connect plugins">Connect<\/button>/);
+  assert.match(html, /id="mcSpotifyCompanionConnect" aria-live="polite" aria-label="Connect audio reference">Connect<\/button>/);
+  assert.match(html, /id="pcCompanionConnect" aria-live="polite" aria-label="Connect plugins">Connect<\/button>/);
   assert.match(html, /id="mcSpotifyCompanionConnectionStatus"[^>]*>Disconnected<\/span>/);
   assert.match(html, /id="pcCompanionConnectionStatus"[^>]*>Disconnected<\/span>/);
   assert.doesNotMatch(html, /id="pcCompanionRescan"/);

@@ -20,6 +20,7 @@ const history=[{role:'user',content:'Can you check the low end of my mix?'},{rol
 const request={input:[{role:'system',content:names.map(block).join('\n\n')+contextText},...history],max_output_tokens:1000,tools};
 
 test('every catalogue tool except research reaches the Luna request',()=>{
+ assert.match(html,/const AIMM_BUILD = '2026-11-23\.75'/);
  const expected=defs.filter(t=>t.name!=='research').map(t=>t.name);
  assert.deepEqual(Array.from(tools,t=>t.name),[...expected,'web_search_fallback']);
  for(const name of ['skip_fix','unmark_fix_applied','mark_fix_applied','add_plugin_to_bus','set_plugin_settings','open_library_channel','show_library_picks','add_videos_to_library'])assert.ok(tools.some(t=>t.name===name),name);
