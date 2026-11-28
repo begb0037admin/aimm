@@ -1,4 +1,7 @@
 ## 2026-11-27 build 2026-11-23.71 LIVE (site 441579c5, relay 75364b20; rollback to .70 = site aaa30d32, relay 0ded71d9)
+
+## Build .75 live (28 Nov 2026)
+One button per companion card (grey Connect / green Connected) on Plugin companion and Audio reference. Site version 17ee63ea-1028-4b60-8800-e62df4495255. Rollback = .74 (e3ea6d8c-28d5-4000-8df9-9dc08b40aa6e). 322 tests pass. Layout not yet checked in a browser.
 Playlist channel status block removed (Jules design, Kevin: too cluttered); "Show more" stays with Library-purple hover; Hope says the channel name and count by voice. A misheard channel name no longer shows "playlistNotFound": the worker tries up to three matches, else says the name heard. open_library_channel wording updated on Primary (tool_9501m8bxfsfxf3w9sgmx114fz3dd) and Backup. 303 tests pass; tag build-2026-11-23.71. KNOWN: a misheard name can now resolve to a different real channel (e.g. "Chord and Revolution" -> "Crimson Chords", confidence low); Hope should confirm when confidence is low. PENDING: Kevin's live test of .71.
 
 ## 2026-11-27 build 2026-11-23.70 LIVE (site aaa30d32, relay 0ded71d9; rollback to .69 = site e59324e7, relay 696ce5e2)
